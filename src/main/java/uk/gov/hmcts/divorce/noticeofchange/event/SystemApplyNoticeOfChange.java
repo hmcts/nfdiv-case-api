@@ -27,7 +27,7 @@ import java.util.Objects;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.caseworker.event.NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -58,7 +58,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(NOTICE_OF_CHANGE_APPLIED)
-            .forStates(POST_SUBMISSION_STATES)
+            .forStates(POST_ISSUE_STATES)
             .name("Notice Of Change Applied")
             .grant(CREATE_READ_UPDATE, NOC_APPROVER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE, CASE_WORKER, SUPER_USER)
