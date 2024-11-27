@@ -343,7 +343,7 @@ aac:
 
 core_case_data:
   api:
-    url: ${CASE_DATA_STORE_BASEURL:http://localhost:4452}
+    url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-aat.service.core-compute-aat.internal}
   search:
     page_size: ${CCD_SEARCH_PAGE_SIZE:50}
     total_max_results: ${CCD_SEARCH_MAX_RESULTS:250}
