@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CaseworkerRemoveFailedSolNoticeOfChange implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_REMOVE_FAILED_SOL_NOC_REQUEST = "caseworker-remove-failed-sol-noc-request";
     public static final String NO_NOC_REQUEST_ERROR = "No NoC Request Found for Case Id: ";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
