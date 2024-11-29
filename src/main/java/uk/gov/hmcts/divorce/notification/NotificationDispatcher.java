@@ -52,19 +52,20 @@ public class NotificationDispatcher {
     private void sendRepresentationGrantedNotifications(boolean isApplicant1, CaseData caseData,
                                                         long caseId, ApplicantNotification applicantNotification) {
         if (isApplicant1) {
+            applicantNotification.sendToApplicant1Offline(caseData, caseId);
+
             if (StringUtils.isNotEmpty(caseData.getApplicant1().getEmail())) {
                 applicantNotification.sendToApplicant1(caseData, caseId);
             }
 
-            applicantNotification.sendToApplicant1Offline(caseData, caseId);
             applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
-
         } else {
+            applicantNotification.sendToApplicant2Offline(caseData, caseId);
+
             if (StringUtils.isNotEmpty(caseData.getApplicant2().getEmail())) {
                 applicantNotification.sendToApplicant2(caseData, caseId);
             }
 
-            applicantNotification.sendToApplicant2Offline(caseData, caseId);
             applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
         }
     }
