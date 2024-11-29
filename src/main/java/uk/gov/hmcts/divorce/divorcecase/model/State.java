@@ -510,6 +510,8 @@ public enum State {
         Applicant2Approved,
         AwaitingPayment,
         AwaitingHWFDecision,
+        AwaitingHWFEvidence,
+        AwaitingHWFPartPayment,
         AwaitingDocuments,
         Submitted,
         Withdrawn,
