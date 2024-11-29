@@ -18,7 +18,6 @@ public class CaseworkerAndSuperUserAccess implements HasAccessControl {
     @Override
     public SetMultimap<HasRole, Permission> getGrants() {
         SetMultimap<HasRole, Permission> grants = HashMultimap.create();
-        grants.putAll(SOLICITOR, Permissions.READ);
         grants.putAll(LEGAL_ADVISOR, Permissions.READ);
         grants.putAll(JUDGE, Permissions.READ);
 
