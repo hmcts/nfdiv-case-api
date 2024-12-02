@@ -73,14 +73,14 @@ public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData
 
             data.getApplicant2().setPhoneNumber(updatedData.getApplicant2().getPhoneNumber());
 
-            boolean contactPrivacyChanged = updatedData.getApplicant2().isConfidentialContactDetails()
-                != data.getApplicant2().isConfidentialContactDetails();
             data.getApplicant2().setContactDetailsType(updatedData.getApplicant2().getContactDetailsType());
             data.getApplicant2().setInRefuge(updatedData.getApplicant2().isConfidentialContactDetails()
                     ? updatedData.getApplicant2().getInRefuge() : YesOrNo.NO);
-
-            boolean addressChanged = isAddressChanged(data, updatedData);
             data.getApplicant2().setAddress(updatedData.getApplicant2().getAddress());
+
+            boolean contactPrivacyChanged = updatedData.getApplicant2().isConfidentialContactDetails()
+                != data.getApplicant2().isConfidentialContactDetails();
+            boolean addressChanged = isAddressChanged(data, updatedData);
 
             if ((addressChanged || contactPrivacyChanged) && isValidState(details.getState())) {
                 log.info("Regenerating divorce application");
