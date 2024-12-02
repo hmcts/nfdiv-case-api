@@ -391,6 +391,10 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
         tabBuilder
             .label("Label-SolicitorService", "serviceMethod=\"solicitorService\"", "### Solicitor Service")
             .field("serviceMethod", SOLE_APPLICATION)
+            .field("solServiceFirstAttemptToServe", "serviceMethod=\"solicitorService\"")
+            .field("solServiceDocumentsPreviouslyReturned", "serviceMethod=\"solicitorService\"")
+            .field("solServiceDetailsOfPreviousService", "serviceMethod=\"solicitorService\"")
+            .field("solServiceDatePreviousServiceReturned", "serviceMethod=\"solicitorService\"")
             .field("solServiceDateOfService", "serviceMethod=\"solicitorService\"")
             .field("solServiceDocumentsServed", "serviceMethod=\"solicitorService\"")
             .field("solServiceOnWhomServed", "serviceMethod=\"solicitorService\"")
