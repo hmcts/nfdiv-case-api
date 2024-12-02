@@ -104,8 +104,10 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
 
     private Map<String, String> notDisputedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
-        templateVars.put(APPLY_FOR_CO_DATE, caseData.getDueDate()
-                .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
+        templateVars.put(APPLY_FOR_CO_DATE, caseData.getDueDate() != null
+            ? caseData.getDueDate().format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference()))
+            : ""
+        );
         return templateVars;
     }
 
