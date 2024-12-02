@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -70,19 +71,10 @@ public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData
         CaseData data = beforeDetails.getData();
 
         if (!ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId())) {
-
-            data.getApplicant2().setPhoneNumber(updatedData.getApplicant2().getPhoneNumber());
-
-            data.getApplicant2().setContactDetailsType(updatedData.getApplicant2().getContactDetailsType());
-            data.getApplicant2().setInRefuge(updatedData.getApplicant2().isConfidentialContactDetails()
-                    ? updatedData.getApplicant2().getInRefuge() : YesOrNo.NO);
-            data.getApplicant2().setAddress(updatedData.getApplicant2().getAddress());
-
-            boolean contactPrivacyChanged = updatedData.getApplicant2().isConfidentialContactDetails()
-                != data.getApplicant2().isConfidentialContactDetails();
-            boolean addressChanged = isAddressChanged(data, updatedData);
-
-            if ((addressChanged || contactPrivacyChanged) && isValidState(details.getState())) {
+            boolean hasChanged = isAddressChanged(data, updatedData)
+                || updatedData.getApplicant2().isConfidentialContactDetails() != data.getApplicant2().isConfidentialContactDetails();
+            updateApplicant2(data.getApplicant2(),updatedData.getApplicant2());
+            if (hasChanged && isValidState(details.getState())) {
                 log.info("Regenerating divorce application");
                 caseTasks(
                     divorceApplicationRemover,
@@ -96,6 +88,14 @@ public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .build();
+    }
+
+    private void updateApplicant2(Applicant dataApplicant2, Applicant updatedApplicant2) {
+        dataApplicant2.setPhoneNumber(updatedApplicant2.getPhoneNumber());
+        dataApplicant2.setContactDetailsType(updatedApplicant2.getContactDetailsType());
+        dataApplicant2.setAddress(updatedApplicant2.getAddress());
+        dataApplicant2.setInRefuge(updatedApplicant2.isConfidentialContactDetails()
+            ? updatedApplicant2.getInRefuge() : YesOrNo.NO);
     }
 
     private boolean isAddressChanged(CaseData data, CaseData updatedData) {
