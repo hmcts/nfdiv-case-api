@@ -20,8 +20,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/swagger-ui/**",
                 "/swagger-ui.html",
                 "/swagger-resources/**",
-                "/payment-test",
-                "/payment-update",
                 "/v3/**",
                 "/favicon.ico",
                 "/health",

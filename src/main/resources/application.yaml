@@ -3,11 +3,6 @@ server:
   shutdown: graceful
   http2:
     enabled: true
-logging:
-  level:
-    org.springframework: DEBUG
-    uk.gov.hmcts.divorce: DEBUG
-    com.fasterxml.jackson.databind: DEBUG
 
 management:
   endpoint:
