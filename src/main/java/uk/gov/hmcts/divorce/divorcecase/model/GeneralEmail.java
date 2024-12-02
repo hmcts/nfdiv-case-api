@@ -124,8 +124,10 @@ public class GeneralEmail {
                 .collect(Collectors.toSet());
 
         return deliveredEmailDocLinks.equals(generalEmailDocLinks())
-                && deliveredEmail.getGeneralEmailParties().equals(generalEmailParties)
-                && deliveredEmail.getGeneralEmailBody().equals(generalEmailDetails);
+                && generalEmailParties != null
+                && generalEmailParties.equals(deliveredEmail.getGeneralEmailParties())
+                && generalEmailDetails != null
+                && generalEmailDetails.equals(deliveredEmail.getGeneralEmailBody());
     }
 
     @JsonIgnore
