@@ -74,7 +74,8 @@ class FinalOrderRequestedNotificationTest {
         data.getApplicant1().setSolicitor(Solicitor.builder()
                 .email(TEST_SOLICITOR_EMAIL).build());
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn((getFinalOrderSolicitorsVars(data, data.getApplicant1())));
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
+                .thenReturn((getFinalOrderSolicitorsVars(data, data.getApplicant1())));
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
@@ -90,7 +91,7 @@ class FinalOrderRequestedNotificationTest {
         );
 
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference());
     }
 
     @Test
@@ -106,7 +107,8 @@ class FinalOrderRequestedNotificationTest {
         data.getApplicant2().setSolicitor(Solicitor.builder()
                 .email(TEST_SOLICITOR_EMAIL).build());
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getFinalOrderSolicitorsVars(data, data.getApplicant2()));
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
+                .thenReturn(getFinalOrderSolicitorsVars(data, data.getApplicant2()));
 
         notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
@@ -122,7 +124,7 @@ class FinalOrderRequestedNotificationTest {
         );
 
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference());
     }
 
     @Test
@@ -222,7 +224,8 @@ class FinalOrderRequestedNotificationTest {
         data.getApplicant1().setSolicitor(Solicitor.builder()
             .email(TEST_SOLICITOR_EMAIL).build());
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn((getFinalOrderSolicitorsVars(data, data.getApplicant1())));
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
+                .thenReturn((getFinalOrderSolicitorsVars(data, data.getApplicant1())));
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
@@ -239,7 +242,7 @@ class FinalOrderRequestedNotificationTest {
         );
 
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference());
     }
 
     @Test
@@ -258,7 +261,8 @@ class FinalOrderRequestedNotificationTest {
         data.getApplicant2().setSolicitor(Solicitor.builder()
             .email(TEST_SOLICITOR_EMAIL).build());
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn((getFinalOrderSolicitorsVars(data, data.getApplicant2())));
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
+                .thenReturn((getFinalOrderSolicitorsVars(data, data.getApplicant2())));
 
         notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
@@ -275,7 +279,7 @@ class FinalOrderRequestedNotificationTest {
         );
 
         verifyNoMoreInteractions(notificationService);
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID);
+        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference());
     }
 
     @Test

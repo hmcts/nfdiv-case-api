@@ -486,13 +486,15 @@ public class CaseData {
     public void updateCaseDataWithPaymentDetails(
         OrderSummary applicationFeeOrderSummary,
         CaseData caseData,
-        String paymentReference
+        String paymentReference,
+        String serviceRequest
     ) {
         var payment = Payment
             .builder()
             .amount(parseInt(applicationFeeOrderSummary.getPaymentTotal()))
             .channel("online")
             .feeCode(applicationFeeOrderSummary.getFees().get(0).getValue().getCode())
+            .serviceRequestReference(serviceRequest)
             .reference(paymentReference)
             .status(SUCCESS)
             .build();
@@ -603,7 +605,7 @@ public class CaseData {
 
         final ListValue<GeneralApplication> generalApplicationListValue = ListValue.<GeneralApplication>builder()
             .id(UUID.randomUUID().toString())
-            .value(generalApplication)
+            .value(generalApplication.toBuilder().build())
             .build();
 
         if (isNull(this.getGeneralApplications())) {
@@ -611,5 +613,7 @@ public class CaseData {
         } else {
             this.getGeneralApplications().add(0, generalApplicationListValue);
         }
+
+        generalApplication.setGeneralApplicationTypeOtherComments(null);
     }
 }

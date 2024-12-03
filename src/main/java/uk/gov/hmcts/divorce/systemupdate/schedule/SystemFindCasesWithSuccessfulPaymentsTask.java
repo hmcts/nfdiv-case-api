@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.payment.PaymentStatusService;
@@ -18,26 +18,24 @@ import java.util.List;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class SystemFindCasesWithSuccessfulPaymentsTask implements Runnable {
 
     private static final String LAST_MODIFIED = "last_modified";
 
-    @Autowired
-    private CcdSearchService ccdSearchService;
+    private final CcdSearchService ccdSearchService;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private PaymentStatusService paymentStatusService;
+    private final PaymentStatusService paymentStatusService;
 
     @Override
     public void run() {
@@ -48,12 +46,14 @@ public class SystemFindCasesWithSuccessfulPaymentsTask implements Runnable {
 
         try {
             final BoolQueryBuilder query = boolQuery()
-                .filter(matchQuery(STATE, AwaitingPayment))
-                .filter(rangeQuery(LAST_MODIFIED)
-                    .gte(LocalDate.now().minusWeeks(2)));
+                    .should(matchQuery(STATE, AwaitingPayment))
+                    .should(matchQuery(STATE, AwaitingFinalOrderPayment))
+                    .minimumShouldMatch(1)
+                    .filter(rangeQuery(LAST_MODIFIED)
+                            .gte(LocalDate.now().minusDays(1)));
 
             final List<CaseDetails> casesInAwaitingPaymentState =
-                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPayment);
+                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPayment, AwaitingFinalOrderPayment);
 
             paymentStatusService.hasSuccessFulPayment(casesInAwaitingPaymentState);
 
