@@ -33,6 +33,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
+import static uk.gov.hmcts.divorce.controller.PaymentCallbackController.PAYMENT_UPDATE_PATH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -125,7 +126,10 @@ class CitizenSubmitApplicationTest {
             .thenReturn(orderSummary());
 
         when(paymentService.createServiceRequestReference(
-            null, caseId, caseData.getApplicant1().getFullName(), orderSummary
+            System.getenv().getOrDefault("CASE_API_URL", "http://localhost:4013") + PAYMENT_UPDATE_PATH,
+            caseId,
+            caseData.getApplicant1().getFullName(),
+            orderSummary
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
@@ -160,7 +164,10 @@ class CitizenSubmitApplicationTest {
             .thenReturn(orderSummary());
 
         when(paymentService.createServiceRequestReference(
-            null, caseId, caseData.getApplicant1().getFullName(), orderSummary
+            System.getenv().getOrDefault("CASE_API_URL", "http://localhost:4013") + PAYMENT_UPDATE_PATH,
+            caseId,
+            caseData.getApplicant1().getFullName(),
+            orderSummary
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);

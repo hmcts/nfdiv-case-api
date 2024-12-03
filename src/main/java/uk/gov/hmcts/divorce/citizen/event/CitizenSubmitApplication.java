@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.payment.PaymentService;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
+import static uk.gov.hmcts.divorce.controller.PaymentCallbackController.PAYMENT_UPDATE_PATH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
@@ -111,7 +112,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
         final Application application = data.getApplication();
 
         final String serviceRequestReference = paymentService.createServiceRequestReference(
-            data.getCitizenPaymentCallbackUrl(),
+            System.getenv().getOrDefault("CASE_API_URL", "http://localhost:4013") + PAYMENT_UPDATE_PATH,
             caseId,
             data.getApplicant1().getFullName(),
             application.getApplicationFeeOrderSummary()
