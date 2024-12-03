@@ -24,8 +24,10 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -43,6 +45,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE_K
 public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String FIND_MATCHES = "caseworker-find-matches";
+    public static final String WILDCARD_SEARCH = ".*";
     private final CcdSearchService ccdSearchService;
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
@@ -83,26 +86,46 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
     }
 
-    List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> getFreshMatches(CaseDetails<CaseData, State> details,
-                                                                                   MarriageDetails marriageDetails) {
-        BoolQueryBuilder nameMatchQuery1 = QueryBuilders.boolQuery()
-            .filter(QueryBuilders.termQuery("data.marriageApplicant1Name.keyword", marriageDetails.getApplicant1Name()))
-            .filter(QueryBuilders.termQuery("data.marriageApplicant2Name.keyword", marriageDetails.getApplicant2Name()));
+    public String[] normalizeAndSplit(String name) {
+        // remove "name changed by Deed Poll" ignoring case
+        String nameWithoutDeedPollStatement = name.replaceAll("(?i)name changed by deed poll", "").trim();
 
-        BoolQueryBuilder nameMatchQuery2 = QueryBuilders.boolQuery()
-            .filter(QueryBuilders.termQuery("data.marriageApplicant1Name.keyword", marriageDetails.getApplicant2Name()))
-            .filter(QueryBuilders.termQuery("data.marriageApplicant2Name.keyword", marriageDetails.getApplicant1Name()));
+        // Split to separate names for search wherever there are non-alphanumeric characters (excluding accented characters)
+        return Arrays.stream(nameWithoutDeedPollStatement.split("[^\\p{L}\\p{N}]+"))
+            .map(String::trim)
+            .filter(part -> !part.isEmpty()) // Ignore empty parts
+            .flatMap(part -> part.contains(" ") ? Arrays.stream(part.split("\\s+")) : Stream.of(part)) // Split on spaces
+            .toArray(String[]::new);
+    }
 
-        BoolQueryBuilder nameMatching = QueryBuilders.boolQuery()
-            .should(nameMatchQuery1)
-            .should(nameMatchQuery2);
+    public List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> getFreshMatches(CaseDetails<CaseData, State> details,
+                                                                                  MarriageDetails marriageDetails) {
+        // clean the names
+        String[] applicant1Names = normalizeAndSplit(marriageDetails.getApplicant1Name());
+        String[] applicant2Names = normalizeAndSplit(marriageDetails.getApplicant2Name());
 
+        BoolQueryBuilder nameMatching = QueryBuilders.boolQuery();
+
+        // handle all combinations of name1 and name2
+        for (String name1 : applicant1Names) {
+            for (String name2 : applicant2Names) {
+                // applicant1 might be applicant2 on another case and vice versa
+                BoolQueryBuilder sameOrderCombo = QueryBuilders.boolQuery()
+                    .filter(createRegexQuery("data.marriageApplicant1Name.keyword", name1))
+                    .filter(createRegexQuery("data.marriageApplicant2Name.keyword", name2));
+
+                BoolQueryBuilder oppOrderCombo = QueryBuilders.boolQuery()
+                    .filter(createRegexQuery("data.marriageApplicant1Name.keyword", name2))
+                    .filter(createRegexQuery("data.marriageApplicant2Name.keyword", name1));
+
+                nameMatching.should(sameOrderCombo).should(oppOrderCombo);
+            }
+        }
         LocalDate marriageDate = marriageDetails.getDate();
-
         List<String> stateValues = POST_SUBMISSION_STATES.stream().map(State::name).toList();
 
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-            .filter(QueryBuilders.termsQuery(STATE_KEY,stateValues))
+            .filter(QueryBuilders.termsQuery(STATE_KEY, stateValues))
             .mustNot(QueryBuilders.termQuery(REFERENCE_KEY, String.valueOf(details.getId())))
             .filter(QueryBuilders.termQuery("data.marriageDate", marriageDate.format(ES_DATE_FORMATTER)))
             .filter(nameMatching);
@@ -111,6 +134,18 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         final var serviceAuth = authTokenGenerator.generate();
         return ccdSearchService.searchForAllCasesWithQuery(boolQuery, user, serviceAuth);
     }
+
+    // Helper method to create name match query
+    private BoolQueryBuilder createRegexQuery(String field, String cleanedName) {
+        return QueryBuilders.boolQuery()
+            .should(QueryBuilders.regexpQuery(field, generateRegexPattern(cleanedName)));
+    }
+
+    String generateRegexPattern(String name) {
+        // Join the parts into a regex pattern with .* between tokens
+        return WILDCARD_SEARCH + name + WILDCARD_SEARCH;
+    }
+
 
     public List<CaseMatch> transformToMatchingCasesList(
         List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseMatchDetails) {
@@ -129,13 +164,13 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
                         ? caseData.getApplicant1().getAddress().getPostCode() : null)
                 .applicant2Postcode(
                     caseData.getApplicant2().getAddress() != null && caseData.getApplicant2().getAddress().getPostCode() != null
-                    ? caseData.getApplicant2().getAddress().getPostCode() : null)
+                        ? caseData.getApplicant2().getAddress().getPostCode() : null)
                 .applicant1Town(
                     caseData.getApplicant1().getAddress() != null && caseData.getApplicant1().getAddress().getPostTown() != null
-                    ? caseData.getApplicant1().getAddress().getPostTown() : null)
+                        ? caseData.getApplicant1().getAddress().getPostTown() : null)
                 .applicant2Town(
                     caseData.getApplicant2().getAddress() != null && caseData.getApplicant2().getAddress().getPostTown() != null
-                    ? caseData.getApplicant2().getAddress().getPostTown() : null)
+                        ? caseData.getApplicant2().getAddress().getPostTown() : null)
                 .caseLink(CaseLink.builder()
                     .caseReference(String.valueOf(caseDetail.getId()))
                     .build())
