@@ -14,21 +14,6 @@
   "applicant1SolicitorName": "Applicant 1 Solicitor",
   "applicant1SolicitorEmail": "applicant1.solicitor@example.com",
   "applicant2SolicitorRepresented": "Yes",
-  "applicant2SolFinalOrderFeeOrderSummary": {
-    "PaymentTotal": "55000",
-    "PaymentReference": null,
-    "Fees": [
-      {
-        "id": null,
-        "value": {
-          "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
-          "FeeVersion": "5",
-          "FeeCode": "FEE0002",
-          "FeeAmount": "55000"
-        }
-      }
-    ]
-  },
   "applicant2SolicitorName": "Applicant 2 Solicitor",
   "applicant2SolicitorEmail": "applicant2.solicitor@example.com",
   "divorceWho": "wife",

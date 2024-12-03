@@ -1,9 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import feign.FeignException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
@@ -13,21 +12,16 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
 import java.util.List;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class SolPayment implements CcdPageConfiguration {
 
-    private final PbaService pbaService;
-    private final PaymentSetupService paymentSetupService;
-
-    @Value("${idam.client.redirect_uri}")
-    private String redirectUrl;
+    @Autowired
+    private PbaService pbaService;
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -40,8 +34,7 @@ public class SolPayment implements CcdPageConfiguration {
                 "LabelSolPaymentPara-1",
                 "Amount to pay: **£${solApplicationFeeInPounds}**")
             .complex(CaseData::getApplication)
-                .mandatory(Application::getApplicationFeeOrderSummary)
-                .mandatory(Application::getSolPaymentHowToPay)
+            .mandatory(Application::getSolPaymentHowToPay)
             .done();
     }
 
@@ -66,13 +59,7 @@ public class SolPayment implements CcdPageConfiguration {
             final DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
 
             log.info("PBA Numbers {}, Case Id: {}", pbaNumbersDynamicList, caseId);
-            Application application = caseData.getApplication();
-            application.setPbaNumbers(pbaNumbersDynamicList);
-
-            String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
-                caseData, caseId, redirectUrl
-            );
-            application.setApplicationFeeServiceRequestReference(serviceRequest);
+            caseData.getApplication().setPbaNumbers(pbaNumbersDynamicList);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)

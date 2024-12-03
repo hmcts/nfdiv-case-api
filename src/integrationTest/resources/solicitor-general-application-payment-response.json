@@ -21,7 +21,6 @@
         "id": "${json-unit.any-string}",
         "value": {
           "feeCode": "FEE002",
-          "serviceRequestReference":"test-service-reference",
           "amount": 55000,
           "status": "success",
           "channel": "online"
@@ -56,7 +55,6 @@
       "PaymentTotal": "55000"
     },
     "generalApplicationFeePaymentMethod": "feePayByAccount",
-    "generalApplicationFeeServiceRequestReference": "test-service-reference",
     "generalApplicationFeePbaNumbers": {
       "value": {
         "label": "PBA0012345"
@@ -82,7 +80,6 @@
               }
             }
           ],
-          "generalApplicationFeeServiceRequestReference": "test-service-reference",
           "generalApplicationFeeOrderSummary": {
             "Fees": [
               {

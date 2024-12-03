@@ -60,7 +60,6 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getListOfDivorceDocumentListValue;
@@ -243,7 +242,6 @@ public class SolicitorGeneralApplicationTest {
                 .generalApplicationFee(
                     FeeDetails.builder()
                         .orderSummary(generalApplicationOrderSummary)
-                        .serviceRequestReference(TEST_SERVICE_REFERENCE)
                         .accountReferenceNumber(FEE_ACCOUNT_REF)
                         .pbaNumbers(
                             DynamicList.builder()
@@ -297,8 +295,8 @@ public class SolicitorGeneralApplicationTest {
 
         final var pbaResponse = new PbaResponse(CREATED, null, "1234");
         when(paymentService.processPbaPayment(
+            caseData,
             TEST_CASE_ID,
-            TEST_SERVICE_REFERENCE,
             applicant1Solicitor,
             PBA_NUMBER,
             generalApplicationOrderSummary,
@@ -421,7 +419,6 @@ public class SolicitorGeneralApplicationTest {
                 .generalApplicationFee(
                     FeeDetails.builder()
                         .orderSummary(generalApplicationOrderSummary)
-                        .serviceRequestReference(TEST_SERVICE_REFERENCE)
                         .accountReferenceNumber(FEE_ACCOUNT_REF)
                         .pbaNumbers(
                             DynamicList.builder()
@@ -464,8 +461,8 @@ public class SolicitorGeneralApplicationTest {
 
         final var pbaResponse = new PbaResponse(FORBIDDEN, "Account balance insufficient", null);
         when(paymentService.processPbaPayment(
+            caseData,
             TEST_CASE_ID,
-            TEST_SERVICE_REFERENCE,
             applicant2Solicitor,
             PBA_NUMBER,
             generalApplicationOrderSummary,

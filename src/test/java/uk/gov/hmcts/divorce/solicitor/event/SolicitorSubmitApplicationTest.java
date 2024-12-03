@@ -24,7 +24,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
-import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
 
@@ -36,6 +35,7 @@ import java.util.UUID;
 import static java.lang.Integer.parseInt;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -45,14 +45,19 @@ import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSubmitApplication.SOLICITOR_SUBMIT;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithMarriageDate;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeListValue;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getPbaNumbersForAccount;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -73,9 +78,6 @@ public class SolicitorSubmitApplicationTest {
     private PaymentService paymentService;
 
     @Mock
-    private PaymentSetupService paymentSetupService;
-
-    @Mock
     private SubmissionService submissionService;
 
     @Mock
@@ -88,18 +90,29 @@ public class SolicitorSubmitApplicationTest {
     void shouldSetOrderSummaryAndSolicitorFeesInPoundsAndSolicitorRolesAndPbaNumbersWhenAboutToStartIsInvoked() {
 
         final long caseId = TEST_CASE_ID;
+        final String authorization = "authorization";
+        final OrderSummary orderSummary = mock(OrderSummary.class);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        when(paymentSetupService.createApplicationFeeOrderSummary(caseData, TEST_CASE_ID))
-            .thenReturn(orderSummary);
+        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE)).thenReturn(orderSummary);
+        when(orderSummary.getPaymentTotal()).thenReturn("55000");
 
-        var response = solicitorSubmitApplication.aboutToStart(caseDetails);
+        var midEventCaseData = caseDataWithMarriageDate();
+        midEventCaseData.getApplication().setPbaNumbers(getPbaNumbersForAccount("PBA0012345"));
 
-        assertThat(response.getData().getApplication().getApplicationFeeOrderSummary())
-            .isEqualTo(orderSummary);
+        var pbaResponse
+            = AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(midEventCaseData)
+            .build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorSubmitApplication.aboutToStart(caseDetails);
+
+        assertThat(response.getData().getApplication().getApplicationFeeOrderSummary()).isEqualTo(orderSummary);
+        assertThat(response.getData().getApplication().getSolApplicationFeeInPounds()).isEqualTo("550");
     }
 
     @Test
@@ -135,12 +148,11 @@ public class SolicitorSubmitApplicationTest {
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
-        caseData.getApplication().setApplicationFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
         PbaResponse pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(TEST_CASE_ID, TEST_SERVICE_REFERENCE, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
 
         final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
@@ -258,7 +270,6 @@ public class SolicitorSubmitApplicationTest {
                 .build()
         );
         caseData.getApplication().setFeeAccountReference(FEE_ACCOUNT_REF);
-        caseData.getApplication().setApplicationFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
@@ -275,8 +286,7 @@ public class SolicitorSubmitApplicationTest {
         when(submissionService.submitApplication(caseDetails)).thenReturn(expectedCaseDetails);
 
         var pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(
-            TEST_CASE_ID, TEST_SERVICE_REFERENCE, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
@@ -435,13 +445,12 @@ public class SolicitorSubmitApplicationTest {
         );
         caseData.getApplication().setFeeAccountReference(FEE_ACCOUNT_REF);
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
-        caseData.getApplication().setApplicationFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
 
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
         final var pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(TEST_CASE_ID, TEST_SERVICE_REFERENCE, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
 
         mockExpectedCaseDetails(caseDetails, caseData, Submitted);
@@ -467,13 +476,12 @@ public class SolicitorSubmitApplicationTest {
         );
         caseData.getApplication().setFeeAccountReference(FEE_ACCOUNT_REF);
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
-        caseData.getApplication().setApplicationFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
 
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
         final var pbaResponse = new PbaResponse(FORBIDDEN, "Account balance insufficient", null);
-        when(paymentService.processPbaPayment(TEST_CASE_ID, TEST_SERVICE_REFERENCE, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+        when(paymentService.processPbaPayment(caseData, TEST_CASE_ID, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =

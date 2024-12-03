@@ -24,7 +24,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.payment.PaymentService;
-import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolFinalOrderPayment;
 
@@ -45,10 +44,12 @@ import static uk.gov.hmcts.divorce.common.event.Applicant2SolicitorApplyForFinal
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -84,9 +85,6 @@ class Applicant2SolicitorApplyForFinalOrderTest {
     @Mock
     private PaymentService paymentService;
 
-    @Mock
-    private PaymentSetupService paymentSetupService;
-
     @InjectMocks
     private Applicant2SolicitorApplyForFinalOrder applicant2SolicitorApplyForFinalOrder;
 
@@ -111,7 +109,7 @@ class Applicant2SolicitorApplyForFinalOrderTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        when(paymentSetupService.createFinalOrderFeeOrderSummary(caseData, caseId)).thenReturn(orderSummary);
+        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE)).thenReturn(orderSummary);
         when(orderSummary.getPaymentTotal()).thenReturn("16700");
 
         var midEventCaseData = caseData();
@@ -162,14 +160,13 @@ class Applicant2SolicitorApplyForFinalOrderTest {
         caseData.getFinalOrder().setApplicant2SolFinalOrderFeeAccountReference(FEE_ACCOUNT_REF);
         caseData.getFinalOrder().setApplicant2FinalOrderStatementOfTruth(YES);
         caseData.getFinalOrder().setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
-        caseData.getFinalOrder().setApplicant2FinalOrderFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
         PbaResponse pbaResponse = new PbaResponse(CREATED, null, "1234");
         when(paymentService.processPbaPayment(
+            caseData,
             TEST_CASE_ID,
-            TEST_SERVICE_REFERENCE,
             caseData.getApplicant2().getSolicitor(),
             PBA_NUMBER,
             orderSummary,
@@ -196,7 +193,6 @@ class Applicant2SolicitorApplyForFinalOrderTest {
             .organisationPolicy(organisationPolicy())
             .build());
         caseData.getFinalOrder().setApplicant2SolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
-        caseData.getFinalOrder().setApplicant2FinalOrderFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
         caseData.getFinalOrder().setFinalOrderPbaNumbers(
             DynamicList.builder()
                 .value(DynamicListElement.builder().label(PBA_NUMBER).build())
@@ -210,8 +206,8 @@ class Applicant2SolicitorApplyForFinalOrderTest {
 
         PbaResponse pbaResponse = new PbaResponse(HttpStatus.BAD_REQUEST, "Payment Failed", "1234");
         when(paymentService.processPbaPayment(
+            caseData,
             TEST_CASE_ID,
-            TEST_SERVICE_REFERENCE,
             caseData.getApplicant2().getSolicitor(),
             PBA_NUMBER,
             orderSummary,

@@ -137,8 +137,8 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             }
 
             final PbaResponse response = paymentService.processPbaPayment(
+                data,
                 details.getId(),
-                generalApplication.getGeneralApplicationFee().getServiceRequestReference(),
                 invokingSolicitor,
                 generalApplication.getGeneralApplicationFee().getPbaNumber(),
                 generalApplication.getGeneralApplicationFee().getOrderSummary(),
@@ -148,12 +148,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             final OrderSummary generalApplicationFeeOrderSummary = generalApplication.getGeneralApplicationFee().getOrderSummary();
 
             if (response.getHttpStatus() == CREATED) {
-                data.updateCaseDataWithPaymentDetails(
-                    generalApplicationFeeOrderSummary,
-                    data,
-                    response.getPaymentReference(),
-                    generalApplication.getGeneralApplicationFee().getServiceRequestReference()
-                );
+                data.updateCaseDataWithPaymentDetails(generalApplicationFeeOrderSummary, data, response.getPaymentReference());
             } else {
                 return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .data(details.getData())

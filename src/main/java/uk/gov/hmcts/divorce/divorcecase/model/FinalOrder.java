@@ -307,7 +307,6 @@ public class FinalOrder {
             .amount(parseInt(finalOrderFeeOrderSummary.getPaymentTotal()))
             .channel("online")
             .feeCode(finalOrderFeeOrderSummary.getFees().get(0).getValue().getCode())
-            .serviceRequestReference(applicant2FinalOrderFeeServiceRequestReference)
             .reference(paymentReference)
             .status(SUCCESS)
             .build();
