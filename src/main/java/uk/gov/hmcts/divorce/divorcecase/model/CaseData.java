@@ -486,13 +486,15 @@ public class CaseData {
     public void updateCaseDataWithPaymentDetails(
         OrderSummary applicationFeeOrderSummary,
         CaseData caseData,
-        String paymentReference
+        String paymentReference,
+        String serviceRequest
     ) {
         var payment = Payment
             .builder()
             .amount(parseInt(applicationFeeOrderSummary.getPaymentTotal()))
             .channel("online")
             .feeCode(applicationFeeOrderSummary.getFees().get(0).getValue().getCode())
+            .serviceRequestReference(serviceRequest)
             .reference(paymentReference)
             .status(SUCCESS)
             .build();
