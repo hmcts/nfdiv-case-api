@@ -26,6 +26,20 @@
     "marriageFormationType": "oppositeSexCouple",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "applicant2SolPaymentHowToPay": "feePayByAccount",
+    "applicant2FinalOrderFeeServiceRequestReference": "${json-unit.any-string}",
+    "applicant2SolFinalOrderFeeOrderSummary": {
+      "PaymentTotal": "55000",
+      "Fees": [
+        {
+          "value": {
+            "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
+            "FeeVersion": "5",
+            "FeeCode": "FEE0002",
+            "FeeAmount": "55000"
+          }
+        }
+      ]
+    },
     "finalOrderPbaNumbers": {
       "list_items": [
         {
