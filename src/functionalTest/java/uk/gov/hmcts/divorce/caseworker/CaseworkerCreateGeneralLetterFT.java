@@ -23,7 +23,6 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 public class CaseworkerCreateGeneralLetterFT extends FunctionalTestSuite {
 
     @Test
-    @Disabled("CDAM requires the case to exist")
     public void shouldSetGeneralOrdersAndUpdateCaseDataWhenAboutToSubmitCallbacksIsTriggered() throws Exception {
         final Map<String, Object> caseData = caseData("classpath:request/casedata/ccd-callback-general-letter-about-to-submit.json");
 
