@@ -150,18 +150,26 @@ public class CaseFlagsService {
         Flags app2SolFlags = caseData.getPartyFlags().getApplicant2SolicitorFlags();
 
         caseData.getPartyFlags().setApplicant1Flags(app2Flags);
-        caseData.getPartyFlags().getApplicant1Flags().setRoleOnCase(TEXT_APPLICANT1_FLAGS_ROLE);
-        caseData.getPartyFlags().setApplicant2Flags(app1Flags);
-        caseData.getPartyFlags().getApplicant2Flags().setRoleOnCase(TEXT_APPLICANT2_FLAGS_ROLE);
+        if (app2Flags != null) {
+            caseData.getPartyFlags().getApplicant1Flags().setRoleOnCase(TEXT_APPLICANT1_FLAGS_ROLE);
+            caseData.getPartyFlags().getApplicant1Flags().setGroupId(UUID.fromString(caseData.getPartyFlags().getApplicant1GroupId()));
+        }
 
+        caseData.getPartyFlags().setApplicant2Flags(app1Flags);
+        if (app1Flags != null) {
+            caseData.getPartyFlags().getApplicant2Flags().setRoleOnCase(TEXT_APPLICANT2_FLAGS_ROLE);
+            caseData.getPartyFlags().getApplicant2Flags().setGroupId(UUID.fromString(caseData.getPartyFlags().getApplicant2GroupId()));
+        }
+
+        caseData.getPartyFlags().setApplicant1SolicitorFlags(app2SolFlags);
         if (app2SolFlags != null) {
-            caseData.getPartyFlags().setApplicant1SolicitorFlags(app2SolFlags);
             caseData.getPartyFlags().getApplicant1SolicitorFlags().setRoleOnCase(TEXT_APPLICANT1_SOL_FLAGS_ROLE);
             caseData.getPartyFlags().getApplicant1SolicitorFlags().setGroupId(
                 UUID.fromString(caseData.getPartyFlags().getApplicant1SolicitorGroupId()));
         }
+
+        caseData.getPartyFlags().setApplicant2SolicitorFlags(app1SolFlags);
         if (app1SolFlags != null) {
-            caseData.getPartyFlags().setApplicant2SolicitorFlags(app1SolFlags);
             caseData.getPartyFlags().getApplicant2SolicitorFlags().setRoleOnCase(TEXT_APPLICANT2_SOL_FLAGS_ROLE);
             caseData.getPartyFlags().getApplicant2SolicitorFlags().setGroupId(
                 UUID.fromString(caseData.getPartyFlags().getApplicant2SolicitorGroupId()));
