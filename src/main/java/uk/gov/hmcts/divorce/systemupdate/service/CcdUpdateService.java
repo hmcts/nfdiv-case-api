@@ -37,6 +37,9 @@ public class CcdUpdateService {
 
     private static final String DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY = "No Fault Divorce case submission event";
     private static final String DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION = "Submitting No Fault Divorce Case Event";
+    private static final String SERVICE_ID = "ABA1";
+    private static final String SERVICE_ID_FIELD = "HMCTSServiceId";
+    private static final String SET_OPERATION = "$set";
 
     @Autowired
     private CoreCaseDataApi coreCaseDataApi;
@@ -353,6 +356,18 @@ public class CcdUpdateService {
         supplementaryData.put("supplementary_data_updates",
             singletonMap("$inc",
                 singletonMap("orgs_assigned_users." + orgId, "1")));
+
+        submitSupplementaryDataUpdateToCcd(caseId, authorisation, serviceAuth, supplementaryData);
+    }
+
+    public void submitSupplementaryDataToCcdForServiceID(final String caseId,
+                                                           final String authorisation,
+                                                           final String serviceAuth) {
+        log.info("submitSupplementaryDataToCcdForServiceID Case ID: {}", caseId);
+        Map<String, Map<String, Map<String, Object>>> supplementaryData = new HashMap<>();
+        supplementaryData.put("supplementary_data_updates",
+            singletonMap(SET_OPERATION,
+                singletonMap(SERVICE_ID_FIELD, SERVICE_ID)));
 
         submitSupplementaryDataUpdateToCcd(caseId, authorisation, serviceAuth, supplementaryData);
     }

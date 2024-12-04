@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.notification.SwitchedToSoleFoNotification;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
@@ -43,6 +44,7 @@ public class SwitchedToSoleFinalOrderOffline implements CCDConfig<CaseData, Stat
     private final SwitchedToSoleFoNotification switchedToSoleFoNotification;
 
     private final GeneralReferralService generalReferralService;
+    private final CaseFlagsService caseFlagsService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -73,6 +75,7 @@ public class SwitchedToSoleFinalOrderOffline implements CCDConfig<CaseData, Stat
         if (OfflineWhoApplying.APPLICANT_2.equals(caseData.getFinalOrder().getD36WhoApplying())) {
             // swap data prior to swapping roles.  If data swap fails, aboutToSubmit fails without triggering role swap in IDAM.
             switchToSoleService.switchApplicantData(caseData);
+            caseFlagsService.switchCaseFlags(caseData);
             if (!caseData.getApplication().isPaperCase()) {
                 log.info("Request made via paper to switch to sole for online case id: {}", caseId);
                 switchToSoleService.switchUserRoles(caseData, caseId);

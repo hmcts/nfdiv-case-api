@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.citizen.notification.SwitchToSoleCoNotification;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -57,6 +58,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
     private final CcdUpdateService ccdUpdateService;
+    private final CaseFlagsService caseFlagsService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -90,6 +92,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
             log.info("Request made by applicant to switch to sole for case id: {}", caseId);
             switchToSoleService.switchApplicantData(data);
             switchToSoleService.switchUserRoles(data, caseId);
+            caseFlagsService.switchCaseFlags(data);
         }
 
         // triggered by system update user coming from Offline Document Verified
@@ -99,6 +102,7 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
                 log.info("Request made via paper to switch to sole for online case id: {}", caseId);
                 switchToSoleService.switchUserRoles(data, caseId);
             }
+            caseFlagsService.switchCaseFlags(data);
         }
 
         final var state = details.getState() == JSAwaitingLA ? JSAwaitingLA : AwaitingLegalAdvisorReferral;

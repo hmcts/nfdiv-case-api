@@ -13,13 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.CaseLink;
-import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
-import uk.gov.hmcts.ccd.sdk.type.FieldType;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.ccd.sdk.type.*;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
@@ -337,6 +331,20 @@ public class CaseData {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
     @Builder.Default
     private List<ListValue<CaseMatch>> caseMatches = new ArrayList<>();
+
+    @CCD(
+        label = "Launch the Flags screen",
+        access = {CaseworkerAccess.class}
+    )
+    private FlagLauncher flagLauncher;
+
+    @CCD(access = {CaseworkerAccess.class},
+        label = "Case Flags")
+    private Flags caseFlags;
+
+    @JsonUnwrapped
+    @Builder.Default
+    PartyFlags partyFlags = new PartyFlags();
 
     @JsonIgnore
     public String formatCaseRef(long caseId) {
