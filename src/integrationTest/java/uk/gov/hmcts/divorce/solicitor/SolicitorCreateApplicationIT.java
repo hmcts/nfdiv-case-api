@@ -26,8 +26,11 @@ import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInf
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
+import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
+import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
 import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
+import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.LocalDate;
@@ -40,6 +43,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -51,10 +55,13 @@ import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreateApplication.SO
 import static uk.gov.hmcts.divorce.testutil.CaseDataWireMock.stubForCaseAssignmentRoles;
 import static uk.gov.hmcts.divorce.testutil.CaseDataWireMock.stubForCcdCaseRolesUpdateFailure;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssembly;
+import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesLookup;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SOLICITOR_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
 import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
+import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.buildServiceReferenceRequest;
+import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubCreateServiceRequest;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpoint;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpointForFailure;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_THE_SOL_MID_EVENT_URL;
@@ -88,7 +95,10 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
     PrdOrganisationWireMock.PropertiesInitializer.class,
     CaseDataWireMock.PropertiesInitializer.class,
     DocAssemblyWireMock.PropertiesInitializer.class,
-    IdamWireMock.PropertiesInitializer.class})
+    IdamWireMock.PropertiesInitializer.class,
+    PaymentWireMock.PropertiesInitializer.class,
+    FeesWireMock.PropertiesInitializer.class
+})
 class SolicitorCreateApplicationIT {
 
     private static final String SOLICITOR_CREATE_ABOUT_TO_SUBMIT = "classpath:solicitor-create-about-to-submit-response.json";
@@ -114,6 +124,8 @@ class SolicitorCreateApplicationIT {
         PrdOrganisationWireMock.start();
         IdamWireMock.start();
         CaseDataWireMock.start();
+        PaymentWireMock.start();
+        FeesWireMock.start();
     }
 
     @AfterAll
@@ -122,10 +134,13 @@ class SolicitorCreateApplicationIT {
         PrdOrganisationWireMock.stopAndReset();
         IdamWireMock.stopAndReset();
         CaseDataWireMock.stopAndReset();
+        PaymentWireMock.stopAndReset();
+        FeesWireMock.stopAndReset();
     }
 
     @Test
     void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedCaseDataIsSetCorrectly() throws Exception {
+        final CaseData caseData = caseDataWithApplicant1AndApplicant2Org();
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Divorce application");
@@ -133,13 +148,15 @@ class SolicitorCreateApplicationIT {
         stubGetOrganisationEndpoint(getOrganisationResponseWith(TEST_ORG_ID));
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData, caseData.getApplicant1()));
         stubForDocAssembly();
 
         final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithApplicant1AndApplicant2Org(), SOLICITOR_CREATE)))
+                .content(objectMapper.writeValueAsString(callbackRequest(caseData, SOLICITOR_CREATE)))
                 .accept(APPLICATION_JSON))
             .andExpect(
                 status().isOk()

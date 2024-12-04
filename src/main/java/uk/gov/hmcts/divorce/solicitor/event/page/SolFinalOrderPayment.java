@@ -41,6 +41,10 @@ public class SolFinalOrderPayment implements CcdPageConfiguration {
                 "Amount to pay: **£${applicant2SolFinalOrderFeeInPounds}**")
             .complex(CaseData::getFinalOrder)
                 .mandatory(FinalOrder::getApplicant2SolFinalOrderFeeOrderSummary)
+                .readonly(
+                    FinalOrder::getApplicant2FinalOrderFeeServiceRequestReference,
+                    "applicant2SolPaymentHowToPay=\"NEVER\""
+                )
                 .mandatory(FinalOrder::getApplicant2SolPaymentHowToPay)
             .done();
     }
