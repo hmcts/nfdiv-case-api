@@ -15,10 +15,12 @@ import uk.gov.hmcts.divorce.common.event.page.Applicant2SolFinalOrderExplainWhyN
 import uk.gov.hmcts.divorce.common.notification.Applicant2SolicitorAppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.ApplyForFinalOrderService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPageForApplicant2SolFinalOrder;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolFinalOrderPayAccount;
@@ -42,9 +44,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
 @Component
 @Slf4j
@@ -65,6 +64,9 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private PaymentSetupService paymentSetupService;
 
     @Autowired
     private SolFinalOrderPayment solFinalOrderPayment;
@@ -109,20 +111,10 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         log.info("{} about to start callback invoked for Case Id: {}", FINAL_ORDER_REQUESTED_APP2_SOL, details.getId());
 
-        CaseData data = details.getData();
-        log.info("Retrieving order summary");
-        final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
-
-        data.getFinalOrder().setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
-
-        data.getFinalOrder().setApplicant2SolFinalOrderFeeInPounds(
-            NumberFormat.getNumberInstance().format(
-                new BigDecimal(orderSummary.getPaymentTotal()).movePointLeft(2)
-            )
-        );
+        prepareOrderSummary(details.getData(), details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
+            .data(details.getData())
             .build();
     }
 
@@ -142,8 +134,8 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
                 .map(dynamicList -> dynamicList.getValue().getLabel());
             if (pbaNumber.isPresent()) {
                 final PbaResponse response = paymentService.processPbaPayment(
-                    updatedData,
                     updatedDetails.getId(),
+                    updatedFo.getApplicant2FinalOrderFeeServiceRequestReference(),
                     updatedData.getApplicant2().getSolicitor(),
                     pbaNumber.get(),
                     updatedFo.getApplicant2SolFinalOrderFeeOrderSummary(),
@@ -190,5 +182,19 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
         notificationDispatcher.send(applicant2SolicitorAppliedForFinalOrderNotification, details.getData(), details.getId());
 
         return SubmittedCallbackResponse.builder().build();
+    }
+
+    private void prepareOrderSummary(CaseData data, long caseId) {
+        final FinalOrder finalOrder = data.getFinalOrder();
+
+        final OrderSummary orderSummary = paymentSetupService.createFinalOrderFeeOrderSummary(data, caseId);
+
+        finalOrder.setApplicant2FinalOrderFeeOrderSummary(orderSummary);
+        finalOrder.setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
+        finalOrder.setApplicant2SolFinalOrderFeeInPounds(
+            NumberFormat.getNumberInstance().format(new BigDecimal(
+                orderSummary.getPaymentTotal()).movePointLeft(2)
+            )
+        );
     }
 }
