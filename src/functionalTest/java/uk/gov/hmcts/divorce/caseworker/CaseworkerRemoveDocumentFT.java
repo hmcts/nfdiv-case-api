@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker;
 
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
@@ -31,7 +30,6 @@ public class CaseworkerRemoveDocumentFT extends FunctionalTestSuite {
         "classpath:request/casedata/ccd-callback-caseworker-remove-document-data.json";
 
     @Test
-    @Disabled("CDAM requires the case to exist")
     public void shouldRemoveDocument() throws Exception {
 
         CallbackRequest request = CallbackRequest
@@ -61,7 +59,6 @@ public class CaseworkerRemoveDocumentFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled("CDAM requires the case to exist")
     public void shouldRemoveScannedDocument() throws Exception {
 
         CallbackRequest request = CallbackRequest

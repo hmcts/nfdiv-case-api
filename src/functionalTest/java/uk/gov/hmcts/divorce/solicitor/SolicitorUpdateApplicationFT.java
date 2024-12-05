@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor;
 
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,7 +46,6 @@ public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
 
 
     @Test
-    @Disabled("CDAM requires the case to exist")
     public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
 
         final Map<String, Object> caseData = caseData(REQUEST);
