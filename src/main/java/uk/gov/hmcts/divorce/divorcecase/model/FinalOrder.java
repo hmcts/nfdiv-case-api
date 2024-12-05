@@ -17,6 +17,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2DeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 
@@ -227,7 +228,7 @@ public class FinalOrder {
 
     @CCD(
         label = "Here are your order details",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2DeleteAccess.class}
     )
     private OrderSummary applicant2SolFinalOrderFeeOrderSummary;
 
@@ -239,13 +240,13 @@ public class FinalOrder {
 
     @CCD(
         label = "Here are your order details",
-        access = {DefaultAccess.class, Applicant2Access.class}
+        access = {DefaultAccess.class, Applicant2DeleteAccess.class}
     )
     private OrderSummary applicant2FinalOrderFeeOrderSummary;
 
     @CCD(
         label = "Final Order Fee Service Request Reference",
-        access = {DefaultAccess.class, Applicant2Access.class}
+        access = {DefaultAccess.class, Applicant2DeleteAccess.class}
     )
     private String applicant2FinalOrderFeeServiceRequestReference;
 
@@ -307,6 +308,7 @@ public class FinalOrder {
             .amount(parseInt(finalOrderFeeOrderSummary.getPaymentTotal()))
             .channel("online")
             .feeCode(finalOrderFeeOrderSummary.getFees().get(0).getValue().getCode())
+            .serviceRequestReference(applicant2FinalOrderFeeServiceRequestReference)
             .reference(paymentReference)
             .status(SUCCESS)
             .build();
