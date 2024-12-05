@@ -33,6 +33,7 @@ public final class TestConstants {
     public static final String APP2_SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_URL =
         "/callbacks/mid-event?page=Applicant2SolUpdateContactDetails";
     public static final String CREATE_GENERAL_ORDER_MID_EVENT_URL = "/callbacks/mid-event?page=CreateGeneralOrder";
+    public static final String GENERAL_APPLICATION_SELECT_FEE_MID_EVENT_URL = "/callbacks/mid-event?page=generalApplicationSelectFeeType";
     public static final String CO_REFUSAL_ORDER_WITH_MORE_INFO_MID_EVENT_URL = "/callbacks/mid-event?page=refusalOrderClarification";
     public static final String CO_REFUSAL_ORDER_WITH_AMENDMENTS_MID_EVENT_URL = "/callbacks/mid-event?page=amendApplication";
 
