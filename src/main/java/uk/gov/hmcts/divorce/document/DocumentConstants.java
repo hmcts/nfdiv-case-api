@@ -20,6 +20,7 @@ public final class DocumentConstants {
     public static final String NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER_TEMPLATE_ID = "NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER";
     public static final String SOLICITOR_APPLIED_FOR_FINAL_ORDER_DOCUMENT_NAME = "Solicitor applied for final order";
     public static final String NFD_NOTICE_OF_CHANGE_CONFIRMATION_DOCUMENT_NAME = "Grant of representation";
+    public static final String NFD_PAPER_APPLICATION_RECEIVED_DOCUMENT_NAME = "Paper application received";
     public static final String NFD_NOP_APP1_JS_SOLE_UNDISPUTED = "NFD_NOP_APP1_JS_SOLE_UNDISPUTED";
 
     public static final String PRONOUNCEMENT_LIST_TEMPLATE_ID = "BULK_CASE_PRONOUNCEMENT";
@@ -188,6 +189,8 @@ public final class DocumentConstants {
 
     public static final String NOC_CITIZEN_LETTER_TEMPLATE_ID = "NOC_TO_SOLS_CITIZEN_LETTER";
     public static final String NOC_CITIZEN_LETTER_DOCUMENT_NAME = "Noc";
+
+    public static final String PAPER_APPLICATION_RECEIVED_TEMPLATE_ID = "NFD_APPLICANT_PAPERCASE_RECEIVED";
 
     public static final String APPLICANT1 = "applicant1";
     public static final String APPLICANT2 = "applicant2";

@@ -3,20 +3,25 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.notification.PaperApplicationReceivedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCreatePaperCase.CREATE_PAPER_CASE;
@@ -28,6 +33,11 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerCreatePaperCaseTest {
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+    @Mock
+    private PaperApplicationReceivedNotification paperApplicationReceivedNotification;
     @InjectMocks
     private CaseworkerCreatePaperCase caseworkerCreatePaperCase;
 
@@ -162,5 +172,17 @@ public class CaseworkerCreatePaperCaseTest {
 
         assertThat(submitResponse.getData().getApplicant1().getOffline()).isEqualTo(YES);
         assertThat(submitResponse.getData().getApplicant2().getOffline()).isEqualTo(YES);
+    }
+
+    @Test
+    public void shouldSendNotificationInSubmittedCallBack() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        SubmittedCallbackResponse response = caseworkerCreatePaperCase.submitted(details, details);
+
+        verify(notificationDispatcher).send(paperApplicationReceivedNotification, caseData, TEST_CASE_ID);
     }
 }

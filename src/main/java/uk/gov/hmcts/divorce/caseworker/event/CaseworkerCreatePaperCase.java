@@ -1,15 +1,19 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.notification.PaperApplicationReceivedNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -30,12 +34,19 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
 
     public static final String CREATE_PAPER_CASE = "create-paper-case";
 
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
+
+    @Autowired
+    private PaperApplicationReceivedNotification paperApplicationReceivedNotification;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CREATE_PAPER_CASE)
             .initialState(NewPaperCase)
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .name("Create paper case")
             .description("Create paper case")
             .grant(CREATE_READ_UPDATE, CASE_WORKER, CASE_WORKER_BULK_SCAN, SYSTEMUPDATE)
@@ -65,5 +76,14 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
+                                               final CaseDetails<CaseData, State> beforeDetails) {
+        CaseData data = details.getData();
+
+        notificationDispatcher.send(paperApplicationReceivedNotification, data, details.getId());
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }
