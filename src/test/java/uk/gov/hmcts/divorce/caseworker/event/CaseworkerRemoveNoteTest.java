@@ -39,7 +39,6 @@ public class CaseworkerRemoveNoteTest {
 
     @Test
     void shouldReturnValidationErrorIfNoteIsAdded() {
-
         final ListValue<CaseNote> note1 = ListValue.<CaseNote>builder()
             .value(CaseNote.builder().note("Note 1").build())
             .build();
@@ -66,7 +65,6 @@ public class CaseworkerRemoveNoteTest {
 
     @Test
     void shouldNotReturnValidationErrorIfNoteIsRemoved() {
-
         final ListValue<CaseNote> note1 = ListValue.<CaseNote>builder()
             .value(CaseNote.builder().note("Note 1").build())
             .build();
