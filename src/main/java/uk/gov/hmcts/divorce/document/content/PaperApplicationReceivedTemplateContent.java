@@ -11,8 +11,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Map;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_NAME;
@@ -38,7 +36,7 @@ public class PaperApplicationReceivedTemplateContent {
         templateContent.put(CASE_REFERENCE, formatId(caseId));
         templateContent.put(RECIPIENT_NAME,  applicant.getFullName());
         templateContent.put(RECIPIENT_ADDRESS,  AddressUtil.getPostalAddress(applicant.getAddress()));
-        templateContent.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
+        templateContent.put(IS_DIVORCE, caseData.isDivorce());
         templateContent.put(DATE_OF_RESPONSE, LocalDate.now(clock)
             .plusDays(SUBMISSION_RESPONSE_DAYS).format(DATE_TIME_FORMATTER));
 

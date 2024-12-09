@@ -22,6 +22,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CT
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_NAME;
 import static uk.gov.hmcts.divorce.document.content.PaperApplicationReceivedTemplateContent.DATE_OF_RESPONSE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -71,6 +72,7 @@ class PaperApplicationReceivedTemplateContentTest {
                 entry(RECIPIENT_NAME, "test_first_name test_middle_name test_last_name"),
                 entry(RECIPIENT_ADDRESS, "line 1\ntown\npostcode"),
                 entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT),
+                entry(IS_DIVORCE, true),
                 entry(DATE_OF_RESPONSE, "29 March 2022")
         );
     }
