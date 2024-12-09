@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -55,6 +56,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
     private final ChangeOfRepresentativeService changeOfRepresentativeService;
     private final NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
     private final NotificationDispatcher notificationDispatcher;
+    private final CaseFlagsService caseFlagsService;
 
 
     @Override
@@ -91,7 +93,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         List<String> responseErrors = response.getErrors();
 
         if (Objects.nonNull(responseErrors) && !responseErrors.isEmpty()) {
-            log.info(NOTICE_OF_CHANGE_FAILED_ERROR, details.getId());
+            log.info("Notice of change failed with the following error(s) for CaseID {}:", details.getId());
             responseErrors.forEach(log::info);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -102,6 +104,8 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         }
 
         CaseData responseData = objectMapper.convertValue(data, CaseData.class);
+
+        caseFlagsService.resetSolicitorCaseFlags(responseData, isApplicant1);
 
         try {
             notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, caseData,

@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -54,6 +55,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     private final ChangeOfRepresentativeService changeOfRepresentativeService;
     private final NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
     private final NotificationDispatcher notificationDispatcher;
+    private final CaseFlagsService caseFlagsService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -173,6 +175,25 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             : List.of(APPLICANT_2.getRole(), APPLICANT_2_SOLICITOR.getRole());
 
         NoticeType noticeType = calculateNoticeType(applicant, beforeApplicant);
+
+        log.info("Notice type is : {}", noticeType);
+
+        if (noticeType == NoticeType.ORG_REMOVED || noticeType == NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG) {
+            caseFlagsService.resetSolicitorCaseFlags(data, isApplicant1);
+        }
+
+        /*
+        The below two notice type are set when before and after org are the same. We could have the case where the solicitor
+        might still have changed. Question: How can we best know when solicitor has changed so that we can reset rather than
+        update name in CaseFlags for solicitor?
+         */
+        if (noticeType == NoticeType.NEW_DIGITAL_SOLICITOR_EXISTING_ORG || noticeType == NoticeType.OFFLINE_NOC) {
+            if (isApplicant1) {
+                caseFlagsService.updatePartyNameInCaseFlags(data, CaseFlagsService.PartyFlagType.APPLICANT_1_SOLICITOR);
+            } else {
+                caseFlagsService.updatePartyNameInCaseFlags(data, CaseFlagsService.PartyFlagType.APPLICANT_2_SOLICITOR);
+            }
+        }
 
         noticeType.applyNoticeOfChange(applicant,
             beforeApplicant,

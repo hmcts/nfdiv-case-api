@@ -237,6 +237,20 @@ class CcdUpdateServiceTest {
         );
     }
 
+    @Test
+    public void shouldSetSupplementaryDataForServiceIDInCCD() {
+        ccdUpdateService.submitSupplementaryDataToCcdForServiceID(TEST_CASE_ID.toString(),
+            CASEWORKER_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION);
+
+        verify(coreCaseDataApi).submitSupplementaryData(
+            CASEWORKER_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            TEST_CASE_ID.toString(),
+            Map.of("supplementary_data_updates", Map.of("$set", singletonMap("HMCTSServiceId", "ABA1")))
+        );
+    }
+
     private StartEventResponse getStartEventResponse() {
         return StartEventResponse.builder()
             .eventId(SYSTEM_PROGRESS_HELD_CASE)
