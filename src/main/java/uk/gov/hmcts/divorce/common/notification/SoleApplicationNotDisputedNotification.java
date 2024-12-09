@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -79,7 +78,7 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
 
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
-            state == State.AwaitingConditionalOrder ? SOLE_RESPONDENT_AOS_SUBMITTED_AWAITING_CO :SOLE_RESPONDENT_AOS_SUBMITTED,
+            state == State.AwaitingConditionalOrder ? SOLE_RESPONDENT_AOS_SUBMITTED_AWAITING_CO : SOLE_RESPONDENT_AOS_SUBMITTED,
             notDisputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference(),
             id
