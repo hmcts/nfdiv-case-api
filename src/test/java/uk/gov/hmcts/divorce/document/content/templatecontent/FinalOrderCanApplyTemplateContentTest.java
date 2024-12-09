@@ -81,7 +81,7 @@ class FinalOrderCanApplyTemplateContentTest {
 
         CaseData caseData = validApplicant1CaseData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
-        caseData.getFinalOrder().setDateFinalOrderEligibleFrom(LocalDate.now());
+        caseData.getConditionalOrder().setGrantedDate(LocalDate.now());
         caseData.getApplicant1().setAddress(AddressGlobalUK.builder().addressLine1("test value").build());
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
@@ -100,7 +100,7 @@ class FinalOrderCanApplyTemplateContentTest {
         expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
-        expectedEntries.put(FINAL_ORDER_OVERDUE_DATE, caseData.getFinalOrder().getDateFinalOrderEligibleFrom().plusMonths(12)
+        expectedEntries.put(FINAL_ORDER_OVERDUE_DATE, caseData.getConditionalOrder().getGrantedDate().plusMonths(12)
                 .format(getDateTimeFormatterForPreferredLanguage(caseData.getApplicant1().getLanguagePreference())));
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
