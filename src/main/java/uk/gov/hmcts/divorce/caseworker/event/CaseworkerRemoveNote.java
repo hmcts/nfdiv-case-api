@@ -33,19 +33,18 @@ public class CaseworkerRemoveNote implements CCDConfig<CaseData, State, UserRole
         new PageBuilder(configBuilder
             .event(CASEWORKER_REMOVE_NOTE)
             .forStates(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED)
-            .name("Remove case note")
+            .name("Remove note")
             .description("Remove case note")
             .showEventNotes()
-            .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE))
-            .page("removeNotes")
+            .page("removeNotes", this::midEvent)
             .pageLabel("Remove case note")
             .optional(CaseData::getNotes)
             .done();
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
         final var beforeNotes = beforeDetails.getData().getNotes();

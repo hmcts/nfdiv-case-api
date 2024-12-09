@@ -60,7 +60,7 @@ public class CaseworkerRemoveNoteTest {
             .data(currentCaseData)
             .build();
 
-        var response = caseworkerRemoveNote.aboutToSubmit(currentDetails, beforeDetails);
+        var response = caseworkerRemoveNote.midEvent(currentDetails, beforeDetails);
         assertThat(response.getErrors()).contains(ERROR_NOTE_ADDED);
     }
 
@@ -84,7 +84,7 @@ public class CaseworkerRemoveNoteTest {
             .data(currentCaseData)
             .build();
 
-        var response = caseworkerRemoveNote.aboutToSubmit(currentDetails, beforeDetails);
+        var response = caseworkerRemoveNote.midEvent(currentDetails, beforeDetails);
         assertThat(response.getErrors()).isNullOrEmpty();
     }
 }
