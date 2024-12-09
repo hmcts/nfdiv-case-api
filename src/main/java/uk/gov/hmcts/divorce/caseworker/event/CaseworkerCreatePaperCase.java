@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -46,7 +45,6 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
             .event(CREATE_PAPER_CASE)
             .initialState(NewPaperCase)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted)
             .name("Create paper case")
             .description("Create paper case")
             .grant(CREATE_READ_UPDATE, CASE_WORKER, CASE_WORKER_BULK_SCAN, SYSTEMUPDATE)
@@ -73,17 +71,11 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
             applicant2.setOffline(NO);
         }
 
+        log.info("Triggering paper received notification for Case Id: {}", details.getId());
+        notificationDispatcher.send(paperApplicationReceivedNotification, data, details.getId());
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .build();
-    }
-
-    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
-                                               final CaseDetails<CaseData, State> beforeDetails) {
-        CaseData data = details.getData();
-
-        notificationDispatcher.send(paperApplicationReceivedNotification, data, details.getId());
-
-        return SubmittedCallbackResponse.builder().build();
     }
 }

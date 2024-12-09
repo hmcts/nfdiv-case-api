@@ -18,7 +18,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -175,13 +174,13 @@ public class CaseworkerCreatePaperCaseTest {
     }
 
     @Test
-    public void shouldSendNotificationInSubmittedCallBack() {
+    public void shouldSendNotificationInAboutToSubmitCallBack() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        SubmittedCallbackResponse response = caseworkerCreatePaperCase.submitted(details, details);
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerCreatePaperCase.aboutToSubmit(details, details);
 
         verify(notificationDispatcher).send(paperApplicationReceivedNotification, caseData, TEST_CASE_ID);
     }
