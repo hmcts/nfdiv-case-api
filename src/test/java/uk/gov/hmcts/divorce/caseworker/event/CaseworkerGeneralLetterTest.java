@@ -153,7 +153,7 @@ public class CaseworkerGeneralLetterTest {
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        SubmittedCallbackResponse response = generalLetter.submitted(details, details);
+        AboutToStartOrSubmitResponse response = generalLetter.aboutToSubmit(details, details);
         verify(letterPrinter).sendLetters(
             caseData,
             details.getId(),

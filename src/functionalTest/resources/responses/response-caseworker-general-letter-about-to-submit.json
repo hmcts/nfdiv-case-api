@@ -49,6 +49,7 @@
     "jurisdictionConnections": [
       "A"
     ],
+    "letterPacks": "${json-unit.ignore}",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "applicant1StatementOfTruth": "Yes",
     "applicant2StatementOfTruth": "Yes",
