@@ -103,7 +103,6 @@ public class SoleApplicationNotDisputedNotificationTest {
     @Test
     void shouldSendAosNotDisputedEmailToSoleApplicantWithDivorceContentWhenAwaitingCO() {
         CaseData data = validCaseDataForAosSubmitted();
-        data.setDueDate(LocalDate.now().plusDays(141));
         CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(data);
         details.setId(TEST_CASE_ID);
@@ -118,7 +117,7 @@ public class SoleApplicationNotDisputedNotificationTest {
             eq(SOLE_APPLICANT_AOS_SUBMITTED_AWAITING_CO),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
-                hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER)),
+                hasEntry("apply for CO date", ""),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
@@ -161,7 +160,6 @@ public class SoleApplicationNotDisputedNotificationTest {
     void shouldSendAosNotDisputedEmailToSoleApplicantWithDissolutionContentWhenAwaitingCO() {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDivorceOrDissolution(DISSOLUTION);
-        data.setDueDate(LocalDate.now().plusDays(141));
         CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(data);
         details.setId(TEST_CASE_ID);
@@ -177,7 +175,7 @@ public class SoleApplicationNotDisputedNotificationTest {
             eq(SOLE_APPLICANT_AOS_SUBMITTED_AWAITING_CO),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
-                hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER)),
+                hasEntry("apply for CO date", ""),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
@@ -219,7 +217,6 @@ public class SoleApplicationNotDisputedNotificationTest {
     @Test
     void shouldSendAosNotDisputedEmailToSoleRespondentWithDivorceContentWhenAwaitingCO() {
         CaseData data = validCaseDataForAosSubmitted();
-        data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplicant2().setEmail(null);
         CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(data);
@@ -236,7 +233,7 @@ public class SoleApplicationNotDisputedNotificationTest {
             eq(SOLE_RESPONDENT_AOS_SUBMITTED_AWAITING_CO),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
-                hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER)),
+                hasEntry("apply for CO date", ""),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
@@ -281,7 +278,6 @@ public class SoleApplicationNotDisputedNotificationTest {
     void shouldSendAosNotDisputedEmailToSoleRespondentWithDissolutionContentWhenAwaitingCO() {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDivorceOrDissolution(DISSOLUTION);
-        data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplicant2().setEmail(null);
         CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(data);
@@ -299,7 +295,7 @@ public class SoleApplicationNotDisputedNotificationTest {
             eq(SOLE_RESPONDENT_AOS_SUBMITTED_AWAITING_CO),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
-                hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER)),
+                hasEntry("apply for CO date", ""),
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES)
             )),
@@ -341,7 +337,6 @@ public class SoleApplicationNotDisputedNotificationTest {
     @Test
     void shouldSendAosNotDisputedEmailToSoleRespondentWithWelshPartnerContentWhenAwaitingCO() {
         CaseData data = validCaseDataForAosSubmitted();
-        data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplicant2().setEmail(null);
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
         CaseDetails<CaseData, State> details = new CaseDetails<>();
