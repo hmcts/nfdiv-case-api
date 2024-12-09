@@ -61,9 +61,9 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getListOfDivorceDocumentListValue;
@@ -155,25 +155,26 @@ public class SolicitorGeneralApplicationIT {
         docs.get(0).getValue().setDocumentFileName("Testfile");
         docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
 
+        OrderSummary orderSummary = OrderSummary.builder()
+            .paymentTotal("55000")
+            .fees(List.of(ListValue
+                .<Fee>builder()
+                .id("1")
+                .value(Fee.builder()
+                    .code("FEE002")
+                    .description("fees for divorce")
+                    .build())
+                .build())
+            ).build();
+
         final CaseData caseData = CaseData.builder()
             .documents(CaseDocuments.builder().documentsUploaded(new ArrayList<>()).build())
             .generalApplication(GeneralApplication.builder()
                 .generalApplicationDocuments(docs)
                 .generalApplicationFee(
                     FeeDetails.builder()
-                        .orderSummary(
-                            OrderSummary.builder()
-                                .paymentTotal("55000")
-                                .fees(List.of(ListValue
-                                    .<Fee>builder()
-                                    .id("1")
-                                    .value(Fee.builder()
-                                        .code("FEE002")
-                                        .description("fees for divorce")
-                                        .build())
-                                    .build())
-                                )
-                                .build())
+                        .serviceRequestReference(TEST_SERVICE_REFERENCE)
+                        .orderSummary(orderSummary)
                         .pbaNumbers(
                             DynamicList.builder()
                                 .value(
@@ -220,8 +221,8 @@ public class SolicitorGeneralApplicationIT {
             CreditAccountPaymentResponse
                 .builder()
                 .status(SUCCESS.toString())
-                .caseReference(TEST_CASE_ID.toString())
-                .build()
+                .build(),
+            orderSummary
         );
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
