@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
 import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.AboutToStartOrSubmitCallbackResponse;
 
@@ -45,6 +46,8 @@ import static uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAu
 public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, UserRole> {
     public static final String NOTICE_OF_CHANGE_APPLIED = "notice-of-change-applied";
     public static final String LETTER_TYPE_GRANT_OF_REPRESENTATION = "grant-of-representation";
+    public static final String NOTICE_OF_CHANGE_FAILED_ERROR = "Notice of change failed with the following error(s) for CaseID {}:";
+    public static final String NOTIFICATION_FAILED_ERROR = "nocCitizenToSolsNotifications failed for case Id: {} with message: {}";
 
     private final  AuthTokenGenerator authTokenGenerator;
     private final  ObjectMapper objectMapper;
@@ -104,8 +107,12 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
 
         caseFlagsService.resetSolicitorCaseFlags(responseData, isApplicant1);
 
-        notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, caseData,
+        try {
+            notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, caseData,
                 beforeCaseData, details.getId(), isApplicant1, NEW_DIGITAL_SOLICITOR_NEW_ORG);
+        } catch (final NotificationTemplateException e) {
+            log.error(NOTIFICATION_FAILED_ERROR, details.getId(), e.getMessage(), e);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(responseData)
