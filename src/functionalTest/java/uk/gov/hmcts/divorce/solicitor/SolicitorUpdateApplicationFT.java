@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,9 +36,6 @@ public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
 
     @Autowired
     private IdamService idamService;
-
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
 
     @Autowired
     private CaseDocumentAccessManagement caseDocumentAccessManagement;
@@ -78,7 +74,7 @@ public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
     private uk.gov.hmcts.ccd.sdk.type.Document uploadDocument() throws IOException {
         var document = caseDocumentAccessManagement.upload(
             idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
-            authTokenGenerator.generate(),
+            serviceAuthenticationGenerator.generate("nfdiv_case_api"),
             "",
             "draft-divorce-application-1234567890123456.pdf",
             "/Test.pdf"
