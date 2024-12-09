@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -45,6 +46,7 @@ public class Applicant2SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
     private final NotificationDispatcher notificationDispatcher;
     private final SolicitorSwitchToSoleCoNotification solicitorSwitchToSoleCoNotification;
     private final DocumentGenerator documentGenerator;
+    private final CaseFlagsService caseFlagsService;
 
 
     @Override
@@ -93,6 +95,8 @@ public class Applicant2SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
 
         switchToSoleService.switchUserRoles(data, caseId);
         switchToSoleService.switchApplicantData(data);
+        caseFlagsService.switchCaseFlags(data);
+
 
         // NOTE: Applicant 2 is now Applicant 1
         documentGenerator.generateAndStoreCaseDocument(
