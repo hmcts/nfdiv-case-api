@@ -4,9 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -29,7 +31,9 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMITTED_APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED_AWAITING_CO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED_AWAITING_CO;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
@@ -51,12 +55,15 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
     private int holdingOffsetDays;
 
     @Override
-    public void sendToApplicant1(final CaseData caseData, final Long id) {
+    public void sendToApplicant1(final CaseDetails<CaseData, State> caseDetails) {
+        CaseData caseData = caseDetails.getData();
+        State state = caseDetails.getState();
+        Long id = caseDetails.getId();
         log.info("Sending Aos not disputed notification to applicant");
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            SOLE_APPLICANT_AOS_SUBMITTED,
+            state == State.AwaitingConditionalOrder ? SOLE_APPLICANT_AOS_SUBMITTED_AWAITING_CO : SOLE_APPLICANT_AOS_SUBMITTED,
             notDisputedTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference(),
             id
@@ -64,12 +71,15 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
     }
 
     @Override
-    public void sendToApplicant2(CaseData caseData, Long id) {
+    public void sendToApplicant2(final CaseDetails<CaseData, State> caseDetails) {
+        CaseData caseData = caseDetails.getData();
+        State state = caseDetails.getState();
+        Long id = caseDetails.getId();
         log.info("Sending Aos not disputed notification to respondent");
 
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
-            SOLE_RESPONDENT_AOS_SUBMITTED,
+            state == State.AwaitingConditionalOrder ? SOLE_RESPONDENT_AOS_SUBMITTED_AWAITING_CO :SOLE_RESPONDENT_AOS_SUBMITTED,
             notDisputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference(),
             id
@@ -77,26 +87,30 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
     }
 
     @Override
-    public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
+    public void sendToApplicant1Solicitor(final CaseDetails<CaseData, State> caseDetails) {
+        CaseData caseData = caseDetails.getData();
+        Long id = caseDetails.getId();
         log.info("Sending Aos not disputed notification to applicant's solicitor");
 
         notificationService.sendEmail(
             caseData.getApplicant1().getSolicitor().getEmail(),
             SOLE_AOS_SUBMITTED_APPLICANT_1_SOLICITOR,
-            applicant1SolicitorTemplateVars(caseData, id),
+            solicitorTemplateVars(caseData, id, caseData.getApplicant1()),
             ENGLISH,
             id
         );
     }
 
     @Override
-    public void sendToApplicant2Solicitor(final CaseData caseData, final Long id) {
+    public void sendToApplicant2Solicitor(final CaseDetails<CaseData, State> caseDetails) {
+        CaseData caseData = caseDetails.getData();
+        Long id = caseDetails.getId();
         log.info("Sending Applicant2Solicitor submitted AOS notification to Applicant2Solicitor for: {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant2().getSolicitor().getEmail(),
             SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR,
-            applicant2SolicitorTemplateVars(caseData, id),
+            solicitorTemplateVars(caseData, id, caseData.getApplicant2()),
             caseData.getApplicant2().getLanguagePreference(),
             id
         );
@@ -111,37 +125,6 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
         return templateVars;
     }
 
-    private Map<String, String> applicant1SolicitorTemplateVars(CaseData caseData, Long id) {
-        Map<String, String> templateVars = solicitorTemplateVars(caseData, id, caseData.getApplicant1());
-        Solicitor applicant1Solicitor = caseData.getApplicant1().getSolicitor();
-
-        templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
-        templateVars.put(
-            SOLICITOR_REFERENCE,
-            isNotEmpty(applicant1Solicitor.getReference()) ? applicant1Solicitor.getReference() : NOT_PROVIDED
-        );
-
-        return templateVars;
-    }
-
-    private Map<String, String> applicant2SolicitorTemplateVars(CaseData caseData, Long id) {
-        Map<String, String> templateVars = solicitorTemplateVars(caseData, id, caseData.getApplicant2());
-
-        templateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
-        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
-
-        templateVars.put(ISSUE_DATE_PLUS_141_DAYS,
-            caseData.getApplication().getIssueDate().plusDays(holdingOffsetDays).format(DATE_TIME_FORMATTER));
-
-        templateVars.put(
-            SOLICITOR_REFERENCE,
-            isNotEmpty(caseData.getApplicant2().getSolicitor().getReference())
-                ? caseData.getApplicant2().getSolicitor().getReference()
-                : NOT_PROVIDED);
-
-        return templateVars;
-    }
-
     private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Applicant applicant) {
         var templateVars = commonContent.basicTemplateVars(caseData, id, applicant.getLanguagePreference());
 
@@ -149,8 +132,15 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
-        templateVars.put(ISSUE_DATE_PLUS_37_DAYS, "");
+        templateVars.put(ISSUE_DATE_PLUS_37_DAYS, ""); // Why is this here?? Should it be populated or removed?
+        templateVars.put(ISSUE_DATE_PLUS_141_DAYS,
+            caseData.getApplication().getIssueDate().plusDays(holdingOffsetDays).format(DATE_TIME_FORMATTER));
         templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
+        templateVars.put(
+            SOLICITOR_REFERENCE,
+            isNotEmpty(applicant.getSolicitor().getReference()) ? applicant.getSolicitor().getReference() : NOT_PROVIDED
+        );
 
         templateVars.put(IS_UNDISPUTED, YES);
         templateVars.put(IS_DISPUTED, NO);
