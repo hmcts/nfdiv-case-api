@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
 import java.util.Map;
@@ -69,9 +68,6 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
         = "classpath:responses/response-legal-advisor-make-decision-co-more-info-mid-event.json";
     private static final String CO_REJECTED_MID_EVENT_RESPONSE
         = "classpath:responses/response-legal-advisor-make-decision-co-rejected-mid-event.json";
-
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
 
     @Autowired
     private CaseDocumentAccessManagement caseDocumentAccessManagement;
@@ -297,7 +293,7 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     private uk.gov.hmcts.ccd.sdk.type.Document uploadDocument() throws IOException {
         var document = caseDocumentAccessManagement.upload(
             idamTokenGenerator.generateIdamTokenForSystem(),
-            authTokenGenerator.generate(),
+            serviceAuthenticationGenerator.generate("nfdiv_case_api"),
             "",
             "draft-divorce-application-1234567890123456.pdf",
             "/Test.pdf"
