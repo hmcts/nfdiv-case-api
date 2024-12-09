@@ -71,7 +71,6 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
             applicant2.setOffline(NO);
         }
 
-        log.info("Triggering paper received notification for Case Id: {}", details.getId());
         notificationDispatcher.send(paperApplicationReceivedNotification, data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
