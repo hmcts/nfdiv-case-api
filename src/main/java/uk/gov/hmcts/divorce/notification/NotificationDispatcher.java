@@ -2,8 +2,10 @@ package uk.gov.hmcts.divorce.notification;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -26,6 +28,26 @@ public class NotificationDispatcher {
             applicantNotification.sendToApplicant2Offline(caseData, caseId);
         } else {
             applicantNotification.sendToApplicant2(caseData, caseId);
+        }
+    }
+
+    public void send(final ApplicantNotification applicantNotification, final CaseDetails<CaseData, State> caseDetails) {
+        CaseData caseData = caseDetails.getData();
+
+        if (caseData.getApplicant1().isRepresented() && !caseData.getApplicant1().isApplicantOffline()) {
+            applicantNotification.sendToApplicant1Solicitor(caseDetails);
+        } else if (caseData.getApplicant1().isApplicantOffline()) {
+            applicantNotification.sendToApplicant1Offline(caseDetails);
+        } else {
+            applicantNotification.sendToApplicant1(caseDetails);
+        }
+
+        if (caseData.getApplicant2().isRepresented() && !caseData.getApplicant2().isApplicantOffline()) {
+            applicantNotification.sendToApplicant2Solicitor(caseDetails);
+        } else if (caseData.getApplicant2().isApplicantOffline() || isBlank(caseData.getApplicant2EmailAddress())) {
+            applicantNotification.sendToApplicant2Offline(caseDetails);
+        } else {
+            applicantNotification.sendToApplicant2(caseDetails);
         }
     }
 
