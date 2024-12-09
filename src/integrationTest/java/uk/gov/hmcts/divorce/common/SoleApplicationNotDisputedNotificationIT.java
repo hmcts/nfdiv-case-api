@@ -7,9 +7,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.SoleApplicationNotDisputedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import static java.time.LocalDate.now;
@@ -56,8 +58,11 @@ public class SoleApplicationNotDisputedNotificationIT {
         final CaseData data = validApplicant1CaseData();
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
         data.setDueDate(now().plusDays(141));
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(data);
+        details.setId(TEST_CASE_ID);
 
-        soleApplicationNotDisputedNotification.sendToApplicant1(data, TEST_CASE_ID);
+        soleApplicationNotDisputedNotification.sendToApplicant1(details);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
