@@ -47,7 +47,7 @@ public class GenerateApplyForFinalOrderDocument {
         DocumentType finalOrderDocType = isApplicant1 ? FINAL_ORDER_CAN_APPLY_APP1 : FINAL_ORDER_CAN_APPLY_APP2;
         final Map<String, Object> templateVars =
             commonContent.templateContentCanApplyForCoOrFo(caseData, caseId, applicant, partner, now.toLocalDate());
-        templateVars.put(FINAL_ORDER_OVERDUE_DATE, caseData.getFinalOrder().getDateFinalOrderEligibleFrom().plusMonths(12)
+        templateVars.put(FINAL_ORDER_OVERDUE_DATE, caseData.getConditionalOrder().getGrantedDate().plusMonths(12)
             .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(

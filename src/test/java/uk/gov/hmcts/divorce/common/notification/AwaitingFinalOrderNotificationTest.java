@@ -357,7 +357,7 @@ class AwaitingFinalOrderNotificationTest {
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         LocalDate coGrantedDate = LocalDate.of(2021, 10, 18);
-        data.getFinalOrder().setDateFinalOrderEligibleFrom(coGrantedDate);
+        data.getConditionalOrder().setGrantedDate(coGrantedDate);
 
         when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
                 .thenReturn(getBasicTemplateVars());
