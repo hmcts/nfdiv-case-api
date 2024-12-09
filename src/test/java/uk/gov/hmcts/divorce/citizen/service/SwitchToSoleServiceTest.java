@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -62,6 +63,9 @@ public class SwitchToSoleServiceTest {
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
+
+    @Mock
+    private CaseFlagsService caseFlagsService;
 
     @InjectMocks
     private SwitchToSoleService switchToSoleService;
@@ -147,6 +151,17 @@ public class SwitchToSoleServiceTest {
         OrganisationPolicy<UserRole> newApp2OrgPolicy = caseData.getApplicant2().getSolicitor().getOrganisationPolicy();
         assertThat(newApp1OrgPolicy.getOrgPolicyCaseAssignedRole()).isEqualTo(APPLICANT_1_SOLICITOR);
         assertThat(newApp2OrgPolicy.getOrgPolicyCaseAssignedRole()).isEqualTo(APPLICANT_2_SOLICITOR);
+    }
+
+    @Test
+    void shouldAllCaseFlagsServiceWhenApplicantDataIsSwitched() {
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.setConditionalOrder(ConditionalOrder.builder().d84WhoApplying(APPLICANT_2).build());
+        caseData.setFinalOrder(FinalOrder.builder().build());
+
+        switchToSoleService.switchApplicantData(caseData);
+
+        verify(caseFlagsService).switchCaseFlags(caseData);
     }
 
     @Test

@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -52,6 +53,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
     private final ChangeOfRepresentativeService changeOfRepresentativeService;
     private final NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
     private final NotificationDispatcher notificationDispatcher;
+    private final CaseFlagsService caseFlagsService;
 
 
     @Override
@@ -99,6 +101,8 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         }
 
         CaseData responseData = objectMapper.convertValue(data, CaseData.class);
+
+        caseFlagsService.resetSolicitorCaseFlags(responseData, isApplicant1);
 
         notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, caseData,
                 beforeCaseData, details.getId(), isApplicant1, NEW_DIGITAL_SOLICITOR_NEW_ORG);

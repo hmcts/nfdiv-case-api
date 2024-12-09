@@ -17,6 +17,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListItem;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -83,6 +84,9 @@ class SystemApplyNoticeOfChangeTest {
     @Mock
     private NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
 
+    @Mock
+    private CaseFlagsService caseFlagsService;
+
 
     @InjectMocks
     private SystemApplyNoticeOfChange systemApplyNoticeOfChange;
@@ -129,6 +133,7 @@ class SystemApplyNoticeOfChangeTest {
         verify(changeOfRepresentativeService).buildChangeOfRepresentative(caseData, null, SOLICITOR_NOTICE_OF_CHANGE.getValue(), true);
         verify(notificationDispatcher).sendNOC(nocCitizenToSolsNotifications, caseData, null,
                 TEST_CASE_ID, true, NEW_DIGITAL_SOLICITOR_NEW_ORG);
+        verify(caseFlagsService).resetSolicitorCaseFlags(caseData,true);
 
         assertEquals(NO, caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted());
         assertEquals(NO, caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted());
@@ -155,6 +160,7 @@ class SystemApplyNoticeOfChangeTest {
 
         verify(assignCaseAccessClient).applyNoticeOfChange(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest);
         verify(changeOfRepresentativeService).buildChangeOfRepresentative(caseData, null, SOLICITOR_NOTICE_OF_CHANGE.getValue(), false);
+        verify(caseFlagsService).resetSolicitorCaseFlags(caseData,false);
         assertEquals(NO, caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted());
         assertEquals(NO, caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted());
     }
