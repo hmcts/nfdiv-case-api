@@ -56,7 +56,7 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
-        log.info("Sending Aos disputed notification to applicant");
+        log.info("Sending AOS disputed notification to applicant for: {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
@@ -69,7 +69,7 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        log.info("Sending Aos disputed notification to respondent");
+        log.info("Sending AOS disputed notification to Respondent for: {}", id);
 
         Map<String, String> templateVars = disputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.put(DISPUTED_AOS_FEE,disputedAOSFee);
@@ -84,25 +84,25 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
 
     @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
-        log.info("Sending Aos disputed notification to applicant's solicitor");
+        log.info("Sending AOS disputed notification to Applicant Solicitor for: {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getSolicitor().getEmail(),
             SOLE_AOS_SUBMITTED_APPLICANT_1_SOLICITOR,
-            applicant1SolicitorTemplateVars(caseData, id),
-            ENGLISH,
+            solicitorTemplateVars(caseData, id, caseData.getApplicant1()),
+            ENGLISH, // Why are we forcing english?
             id
         );
     }
 
     @Override
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long id) {
-        log.info("Sending Applicant2Solicitor submitted AOS notification to Applicant2Solicitor for: {}", id);
+        log.info("Sending AOS disputed notification to Respondent Solicitor for: {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant2().getSolicitor().getEmail(),
             SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR,
-            applicant2SolicitorTemplateVars(caseData, id),
+            solicitorTemplateVars(caseData, id, caseData.getApplicant2()),
             caseData.getApplicant2().getLanguagePreference(),
             id
         );
@@ -116,34 +116,6 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
         return templateVars;
     }
 
-    private Map<String, String> applicant1SolicitorTemplateVars(CaseData caseData, Long id) {
-        Map<String, String> templateVars = solicitorTemplateVars(caseData, id, caseData.getApplicant1());
-
-        Solicitor applicant1Solicitor = caseData.getApplicant1().getSolicitor();
-        templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
-
-        templateVars.put(
-            SOLICITOR_REFERENCE,
-            isNotEmpty(applicant1Solicitor.getReference()) ? applicant1Solicitor.getReference() : NOT_PROVIDED
-        );
-
-        return templateVars;
-    }
-
-    private Map<String, String> applicant2SolicitorTemplateVars(CaseData caseData, Long id) {
-        Map<String, String> templateVars = solicitorTemplateVars(caseData, id, caseData.getApplicant2());
-
-        Solicitor applicant2Solicitor = caseData.getApplicant2().getSolicitor();
-        templateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
-        templateVars.put(ISSUE_DATE_PLUS_141_DAYS, "");
-
-        templateVars.put(
-            SOLICITOR_REFERENCE,
-            isNotEmpty(applicant2Solicitor.getReference()) ? applicant2Solicitor.getReference() : NOT_PROVIDED);
-
-        return templateVars;
-    }
-
     private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Applicant applicant) {
         var templateVars = commonContent.basicTemplateVars(caseData, id, applicant.getLanguagePreference());
 
@@ -153,7 +125,13 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
 
         templateVars.put(ISSUE_DATE_PLUS_37_DAYS,
             caseData.getApplication().getIssueDate().plusDays(disputeDueDateOffsetDays).format(DATE_TIME_FORMATTER));
+        templateVars.put(ISSUE_DATE_PLUS_141_DAYS, ""); // Why is this here?? Should it be populated or removed?
         templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
+        templateVars.put(
+            SOLICITOR_REFERENCE,
+            isNotEmpty(applicant.getSolicitor().getReference()) ? applicant.getSolicitor().getReference() : NOT_PROVIDED
+        );
 
         templateVars.put(IS_UNDISPUTED, NO);
         templateVars.put(IS_DISPUTED, YES);
