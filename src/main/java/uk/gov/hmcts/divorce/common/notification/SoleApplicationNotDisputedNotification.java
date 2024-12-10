@@ -58,7 +58,7 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
         CaseData caseData = caseDetails.getData();
         State state = caseDetails.getState();
         Long id = caseDetails.getId();
-        log.info("Sending Aos not disputed notification to applicant");
+        log.info("Sending AOS not disputed notification to Applicant for: {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
@@ -74,7 +74,7 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
         CaseData caseData = caseDetails.getData();
         State state = caseDetails.getState();
         Long id = caseDetails.getId();
-        log.info("Sending Aos not disputed notification to respondent");
+        log.info("Sending AOS not disputed notification to Respondent for: {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
@@ -89,13 +89,13 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
     public void sendToApplicant1Solicitor(final CaseDetails<CaseData, State> caseDetails) {
         CaseData caseData = caseDetails.getData();
         Long id = caseDetails.getId();
-        log.info("Sending Aos not disputed notification to applicant's solicitor");
+        log.info("Sending AOS not disputed notification to Applicant Solicitor for: {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getSolicitor().getEmail(),
             SOLE_AOS_SUBMITTED_APPLICANT_1_SOLICITOR,
             solicitorTemplateVars(caseData, id, caseData.getApplicant1()),
-            ENGLISH,
+            ENGLISH, // Why are we forcing english?
             id
         );
     }
@@ -104,7 +104,7 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
     public void sendToApplicant2Solicitor(final CaseDetails<CaseData, State> caseDetails) {
         CaseData caseData = caseDetails.getData();
         Long id = caseDetails.getId();
-        log.info("Sending Applicant2Solicitor submitted AOS notification to Applicant2Solicitor for: {}", id);
+        log.info("Sending AOS not disputed notification to Respondent Solicitor for: {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant2().getSolicitor().getEmail(),
