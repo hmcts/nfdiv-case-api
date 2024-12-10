@@ -186,6 +186,7 @@ class AwaitingFinalOrderNotificationTest {
         data.setApplicant2(applicant2);
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.getConditionalOrder().setGrantedDate(data.getConditionalOrder().getDecisionDate());
 
         when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getConditionalOrderTemplateVars(SOLE_APPLICATION));
@@ -322,6 +323,7 @@ class AwaitingFinalOrderNotificationTest {
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         LocalDate coGrantedDate = LocalDate.of(2021, 10, 18);
         data.getFinalOrder().setDateFinalOrderEligibleFrom(coGrantedDate);
+        data.getConditionalOrder().setGrantedDate(data.getConditionalOrder().getDecisionDate());
 
         when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
                 .thenReturn(getBasicTemplateVars());
