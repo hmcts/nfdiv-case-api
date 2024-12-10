@@ -255,7 +255,7 @@ class AwaitingFinalOrderNotificationTest {
         data.setApplicant2(applicant2);
         data.setApplicationType(JOINT_APPLICATION);
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
-
+        data.getConditionalOrder().setGrantedDate(data.getConditionalOrder().getDecisionDate());
         when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
 
@@ -440,6 +440,7 @@ class AwaitingFinalOrderNotificationTest {
         caseData.setApplicationType(SOLE_APPLICATION);
 
         awaitingFinalOrderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+        verifyNoInteractions(applyForFinalOrderDocumentPack);
     }
 
 }
