@@ -571,7 +571,7 @@ public class TestDataHelper {
     public static CaseData validCaseDataForAwaitingFinalOrder() {
         CaseData caseData = validCaseWithCourtHearing();
         LocalDateTime dateAndTimeOfHearing = caseData.getConditionalOrder().getDateAndTimeOfHearing();
-        caseData.getConditionalOrder().setGrantedDate( caseData.getConditionalOrder().getDecisionDate());
+        caseData.getConditionalOrder().setGrantedDate(caseData.getConditionalOrder().getDecisionDate());
         FinalOrder finalOrder = caseData.getFinalOrder();
 
         finalOrder.setDateFinalOrderEligibleFrom(caseData.getFinalOrder().getDateFinalOrderEligibleFrom(dateAndTimeOfHearing));
