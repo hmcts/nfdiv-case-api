@@ -49,7 +49,12 @@ public class CitizenSaveAndClose implements CCDConfig<CaseData, State, UserRole>
                                                CaseDetails<CaseData, State> beforeDetails) {
         log.info("CitizenSaveAndClose submitted callback invoked for case id: {}", details.getId());
 
-        saveAndSignOutNotificationHandler.notifyApplicant(details.getData(), details.getId(), request.getHeader(AUTHORIZATION));
+        saveAndSignOutNotificationHandler.notifyApplicant(
+            details.getState(),
+            details.getData(),
+            details.getId(),
+            request.getHeader(AUTHORIZATION)
+        );
 
         return SubmittedCallbackResponse.builder().build();
     }
