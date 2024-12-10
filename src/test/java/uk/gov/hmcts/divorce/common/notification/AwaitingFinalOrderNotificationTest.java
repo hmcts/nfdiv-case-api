@@ -227,6 +227,7 @@ class AwaitingFinalOrderNotificationTest {
         final var applicant2 = getApplicant2(MALE);
         data.setApplicant2(applicant2);
         data.setApplicationType(JOINT_APPLICATION);
+        data.getConditionalOrder().setGrantedDate(data.getConditionalOrder().getDecisionDate());
 
         when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
