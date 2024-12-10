@@ -255,6 +255,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .showCondition("applicant1ContactDetailsType=\"private\"")
             .field("applicant1PhoneNumber")
             .field("applicant1Email")
+            .field("applicant1InRefuge")
             .field("applicant1Address");
     }
 
@@ -264,6 +265,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .showCondition("applicant2ContactDetailsType=\"private\" AND applicationType=\"soleApplication\"")
             .field("applicant2PhoneNumber")
             .field("applicant2Email")
+            .field("applicant2InRefuge")
             .field("applicant2Address");
     }
 
@@ -273,6 +275,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .showCondition("applicant2ContactDetailsType=\"private\" AND applicationType=\"jointApplication\"")
             .field("applicant2PhoneNumber")
             .field("applicant2Email")
+            .field("applicant2InRefuge")
             .field("applicant2Address");
     }
 

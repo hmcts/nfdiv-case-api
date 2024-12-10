@@ -21,6 +21,7 @@ public class UpdateApplicant1ContactDetails implements CcdPageConfiguration {
                 .mandatory(Applicant::getAddress)
                 .label("LabelHorizontalLine1", "<hr>")
                 .mandatory(Applicant::getContactDetailsType)
+                .mandatory(Applicant::getInRefuge, "applicant1ContactDetailsType=\"private\"")
                 .done();
     }
 }
