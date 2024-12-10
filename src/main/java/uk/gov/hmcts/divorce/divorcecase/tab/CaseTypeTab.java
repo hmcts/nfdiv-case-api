@@ -120,6 +120,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildCorrespondenceTab(configBuilder);
         buildAmendedApplicationTab(configBuilder);
         buildChangeOfRepresentativeTab(configBuilder);
+        buildCaseFlagTab(configBuilder);
 
         // Commented out as requested by service team. This can't be available for super users. Maybe we need a "Developer" role?
         //buildLetterPackTab(configBuilder);
@@ -609,6 +610,17 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 .field("changeOrganisationRequestField", NEVER_SHOW)
                 .showCondition(NOTICE_OF_CHANGE_HAS_BEEN_APPLIED)
                 .field("changeOfRepresentatives");
+    }
+
+    private void buildCaseFlagTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("caseFlags", "Case Flags")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
+            .field(CaseData::getInternalFlagLauncher, null, "#ARGUMENT(READ)")
+            .field(CaseData::getCaseFlags, "internalFlagLauncher = \"ALWAYS_HIDE\"")
+            .field("applicant1Flags", "internalFlagLauncher = \"ALWAYS_HIDE\"")
+            .field("applicant2Flags", "internalFlagLauncher = \"ALWAYS_HIDE\"")
+            .field("applicant1SolicitorFlags", "internalFlagLauncher = \"ALWAYS_HIDE\"")
+            .field("applicant2SolicitorFlags", "internalFlagLauncher = \"ALWAYS_HIDE\"");
     }
 
     private void buildMatchesTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
