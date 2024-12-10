@@ -25,17 +25,23 @@ public class CaseworkerManageCaseFlag implements CCDConfig<CaseData, State, User
     public static final String CASEWORKER_MANAGE_CASE_FLAG = "manageFlags";
     private static final String ALWAYS_HIDE = "internalFlagLauncher = \"ALWAYS_HIDE\"";
 
+    private static final String SHOW_CONDITION = "caseFlags=\"*\" OR applicant1Flags=\"*\" OR applicant2Flags=\"*\" "
+        + "OR applicant1SolicitorFlags=\"*\" OR applicant2SolicitorFlags=\"*\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_MANAGE_CASE_FLAG)
             .forStates(POST_SUBMISSION_STATES)
-            .name("Manage Case Flag")
-            .description("Manage Case Flag")
+            .showCondition(SHOW_CONDITION)
+            .name("Manage Flags")
+            .description("Manage Flags")
             .showEventNotes()
+            .showSummary()
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER, CASE_WORKER, LEGAL_ADVISOR, JUDGE))
-            .page("caseworkerManageCaseFlag")
-            .pageLabel("Manage Case Flags")
+            .page("caseworkerManageFlags")
+            .pageLabel("Manage Flags")
             .optional(CaseData::getCaseFlags, ALWAYS_HIDE, true, true)
             .complex(CaseData::getPartyFlags)
             .optional(PartyFlags::getApplicant1Flags, ALWAYS_HIDE, true, true)
