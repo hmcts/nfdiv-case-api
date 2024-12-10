@@ -1,17 +1,21 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.notification.RespondentApplyForFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
@@ -25,15 +29,19 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SystemNotifyRespondentApplyFinalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER = "system-notify-respondent-apply-final-order";
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private RespondentApplyForFinalOrderNotification respondentApplyForFinalOrderNotification;
+    private final RespondentApplyForFinalOrderNotification respondentApplyForFinalOrderNotification;
+
+    private final PaymentSetupService paymentSetupService;
+
+    @Value("${idam.client.redirect_uri}")
+    private String redirectUrl;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -59,8 +67,27 @@ public class SystemNotifyRespondentApplyFinalOrder implements CCDConfig<CaseData
         notificationDispatcher.send(respondentApplyForFinalOrderNotification, caseData, caseId);
 
         caseData.getFinalOrder().setFinalOrderReminderSentApplicant2(YES);
+
+        if (caseData.getApplicant2().isRepresented()) {
+            prepareCaseDataForFinalOrderPbaPayment(caseData, caseId);
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
+    }
+
+    private void prepareCaseDataForFinalOrderPbaPayment(CaseData data, long caseId) {
+        FinalOrder finalOrder = data.getFinalOrder();
+
+        OrderSummary orderSummary = paymentSetupService.createFinalOrderFeeOrderSummary(data, caseId);
+
+        String serviceRequest = paymentSetupService.createFinalOrderFeeServiceRequest(
+            data, caseId, redirectUrl, orderSummary
+        );
+
+        finalOrder.setApplicant2FinalOrderFeeOrderSummary(orderSummary);
+        finalOrder.setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
+        finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequest);
     }
 }
