@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.FinalOrderExplainTheDelay;
@@ -55,8 +54,6 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
 
     private final GeneralReferralService generalReferralService;
 
-    private final CaseFlagsService caseFlagsService;
-
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
@@ -95,7 +92,6 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
             // swap data prior to swapping roles.  If data swap fails, aboutToSubmit fails without triggering role swap in IDAM.
             switchToSoleService.switchApplicantData(caseData);
             switchToSoleService.switchUserRoles(beforeDetails.getData(), caseId);
-            caseFlagsService.switchCaseFlags(caseData);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

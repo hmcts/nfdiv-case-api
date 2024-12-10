@@ -7,7 +7,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -37,9 +36,6 @@ public class Applicant2SolicitorSwitchToSoleFo implements CCDConfig<CaseData, St
 
     @Autowired
     private SwitchToSoleService switchToSoleService;
-
-    @Autowired
-    private CaseFlagsService caseFlagsService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -107,7 +103,6 @@ public class Applicant2SolicitorSwitchToSoleFo implements CCDConfig<CaseData, St
 
         switchToSoleService.switchUserRoles(caseData, caseId);
         switchToSoleService.switchApplicantData(caseData);
-        caseFlagsService.switchCaseFlags(caseData);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

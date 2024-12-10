@@ -12,8 +12,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.Flags;
-import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -57,9 +55,6 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private CaseFlagsService caseFlagsService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -141,8 +136,6 @@ public class CreateTestCase implements CCDConfig<CaseData, State, UserRole> {
         var caseId = details.getId();
         var app2Id = data.getCaseInvite().applicant2UserId();
         var auth = httpServletRequest.getHeader(AUTHORIZATION);
-
-        //caseFlagsService.setSupplementaryDataForCaseFlags(details.getId());
 
         if (data.getApplicant1().isRepresented()) {
             var orgId = details
