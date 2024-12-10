@@ -143,6 +143,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
         caseData.getApplicant2().setOffline(YES);
         caseData.getApplicant1().setAddress(APPLICANT_ADDRESS);
         caseData.getApplicant2().setAddress(APPLICANT_ADDRESS);
+        caseData.getConditionalOrder().setGrantedDate(LocalDate.now());
         caseData.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderEligibleFrom(LocalDate.now())
             .build());
