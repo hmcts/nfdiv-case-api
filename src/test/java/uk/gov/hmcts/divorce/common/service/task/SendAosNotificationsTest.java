@@ -68,7 +68,7 @@ class SendAosNotificationsTest {
 
         sendAosNotifications.apply(caseDetails);
 
-        verify(notificationDispatcher).send(soleApplicationNotDisputedNotification, caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(soleApplicationNotDisputedNotification, caseDetails);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 }
