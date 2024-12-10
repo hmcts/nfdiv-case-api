@@ -143,6 +143,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
         caseData.getApplicant2().setOffline(YES);
         caseData.getApplicant1().setAddress(APPLICANT_ADDRESS);
         caseData.getApplicant2().setAddress(APPLICANT_ADDRESS);
+        caseData.getConditionalOrder().setGrantedDate(LocalDate.now());
         caseData.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderEligibleFrom(LocalDate.now())
             .build());
@@ -199,10 +200,11 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
     }
 
     @Test
-    public void shouldSendEmailsToOnlineApplicantsInJointCase() throws Exception {
+    void shouldSendEmailsToOnlineApplicantsInJointCase() throws Exception {
         final CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        caseData.getConditionalOrder().setGrantedDate(LocalDate.now());
         caseData.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderEligibleFrom(LocalDate.now())
             .dateFinalOrderEligibleToRespondent(LocalDate.now())
@@ -228,7 +230,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
     }
 
     @Test
-    public void shouldSendEmailsToSolicitorsInJointCaseWhenBothApplicantsAreRepresented() throws Exception {
+    void shouldSendEmailsToSolicitorsInJointCaseWhenBothApplicantsAreRepresented() throws Exception {
         final CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitorRepresented(YES);
