@@ -253,7 +253,10 @@ public enum DocumentType implements HasLabel {
     SWITCH_TO_SOLE_CO_LETTER("Switch to Sole Conditional Order Letter", true),
 
     @JsonProperty("grantOfRepresentation")
-    GRANT_OF_REPRESENTATION("NoC grant of representation letter", true);
+    GRANT_OF_REPRESENTATION("NoC grant of representation letter", true),
+
+    @JsonProperty("requestForInformationResponseDoc")
+    REQUEST_FOR_INFORMATION_RESPONSE_DOC("RFI response document", true);
 
     private final String label;
     private final boolean potentiallyConfidential;
