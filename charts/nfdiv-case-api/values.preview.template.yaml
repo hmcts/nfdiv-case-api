@@ -22,6 +22,10 @@ java:
           alias: IDAM_SYSTEM_UPDATE_PASSWORD
         - name: report-email
           alias: REPORT_EMAIL
+        - name: idam-old-divorce-user
+          alias: IDAM_OLD_DIVORCE_USERNAME
+        - name: idam-old-divorce-password
+          alias: IDAM_OLD_DIVORCE_PASSWORD
 nfdiv-frontend:
   enabled: true
   nodejs:
