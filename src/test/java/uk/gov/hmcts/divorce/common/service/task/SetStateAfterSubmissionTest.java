@@ -379,8 +379,6 @@ class SetStateAfterSubmissionTest {
                 .paymentTotal("55000")
                 .build())
             .applicationPayments(singletonList(payment))
-            .applicant1CannotUpload(YES)
-            .applicant1CannotUploadSupportingDocument(Set.of(MARRIAGE_CERTIFICATE))
             .applicant2CannotUpload(YES)
             .applicant2CannotUploadSupportingDocument(Set.of(MARRIAGE_CERTIFICATE))
             .build();
