@@ -10,6 +10,7 @@ public final class DocmosisTemplateConstants {
     public static final String CASE_REFERENCE = "caseReference";
     public static final String ISSUE_DATE = "issueDate";
     public static final String ISSUE_DATE_POPULATED = "issueDatePopulated";
+    public static final String NOT_YET_ISSUED = "notYetIssued";
     public static final String APPLICANT_1_FIRST_NAME = "applicant1FirstName";
     public static final String APPLICANT_1_MIDDLE_NAME = "applicant1MiddleName";
     public static final String APPLICANT_1_LAST_NAME = "applicant1LastName";
