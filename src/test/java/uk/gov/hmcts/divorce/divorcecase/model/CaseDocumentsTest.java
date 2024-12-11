@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -203,7 +204,7 @@ class CaseDocumentsTest {
     }
 
     @Test
-    public void shouldRemoveGivenDocumentType() {
+    void shouldRemoveGivenDocumentType() {
         final CaseDocuments caseDocuments = CaseDocuments.builder()
             .documentsGenerated(Lists.newArrayList(
                 ListValue.<DivorceDocument>builder()
@@ -352,7 +353,7 @@ class CaseDocumentsTest {
     }
 
     @Test
-    public void shouldRemoveGivenConfidentialDocumentType() {
+    void shouldRemoveGivenConfidentialDocumentType() {
         final CaseDocuments caseDocuments = CaseDocuments.builder()
             .confidentialDocumentsGenerated(Lists.newArrayList(
                 ListValue.<ConfidentialDivorceDocument>builder()
@@ -377,7 +378,7 @@ class CaseDocumentsTest {
     }
 
     @Test
-    public void shouldReturnConditionalOrderDocumentWhenExists() {
+    void shouldReturnConditionalOrderDocumentWhenExists() {
 
         final ListValue<DivorceDocument> divorceDocumentListValue = ListValue
             .<DivorceDocument>builder()
@@ -406,7 +407,7 @@ class CaseDocumentsTest {
     }
 
     @Test
-    public void shouldNotReturnConditionalOrderDocumentWhenDoesNotExists() {
+    void shouldNotReturnConditionalOrderDocumentWhenDoesNotExists() {
         final ListValue<DivorceDocument> divorceDocumentListValue = ListValue
             .<DivorceDocument>builder()
             .id(APPLICATION.getLabel())
@@ -426,7 +427,7 @@ class CaseDocumentsTest {
     }
 
     @Test
-    public void shouldNotReturnConditionalOrderDocumentWhenNoCaseDocuments() {
+    void shouldNotReturnConditionalOrderDocumentWhenNoCaseDocuments() {
 
         final CaseDocuments caseDocuments = CaseDocuments.builder().build();
 
@@ -477,4 +478,57 @@ class CaseDocumentsTest {
                 .build())
             .build();
     }
+
+    @Test
+    void shouldPlaceNewDocumentsBeforeExistingDocuments() {
+        ListValue<String> oldDoc1 = ListValue.<String>builder().id("1").value("Old Document 1").build();
+        ListValue<String> oldDoc2 = ListValue.<String>builder().id("2").value("Old Document 2").build();
+        ListValue<String> newDoc1 = ListValue.<String>builder().id(null).value("New Document 1").build();
+        ListValue<String> newDoc2 = ListValue.<String>builder().id(null).value("New Document 2").build();
+
+        List<ListValue<String>> previous = List.of(oldDoc1, oldDoc2);
+        List<ListValue<String>> latest = List.of(newDoc1, newDoc2, oldDoc1, oldDoc2);
+
+        List<ListValue<String>> sorted = CaseDocuments.sortByNewest(previous, latest);
+
+        assertThat(sorted).containsExactly(newDoc1, newDoc2, oldDoc1, oldDoc2);
+    }
+
+    @Test
+    void shouldReturnOnlyOldDocumentsIfNoNewDocumentsExist() {
+        ListValue<String> oldDoc1 = ListValue.<String>builder().id("1").value("Old Document 1").build();
+        ListValue<String> oldDoc2 = ListValue.<String>builder().id("2").value("Old Document 2").build();
+
+        List<ListValue<String>> previous = List.of(oldDoc1, oldDoc2);
+        List<ListValue<String>> latest = List.of(oldDoc1, oldDoc2);
+
+        List<ListValue<String>> sorted = CaseDocuments.sortByNewest(previous, latest);
+
+        assertThat(sorted).containsExactly(oldDoc1, oldDoc2);
+    }
+
+    @Test
+    void shouldHandleEmptyPreviousDocuments() {
+        ListValue<String> newDoc1 = ListValue.<String>builder().id(null).value("New Document 1").build();
+        ListValue<String> newDoc2 = ListValue.<String>builder().id(null).value("New Document 2").build();
+
+        List<ListValue<String>> previous = List.of();
+        List<ListValue<String>> latest = List.of(newDoc1, newDoc2);
+
+        List<ListValue<String>> sorted = CaseDocuments.sortByNewest(previous, latest);
+
+        assertThat(sorted).containsExactly(newDoc1, newDoc2);
+    }
+
+    @Test
+    void shouldHandleEmptyLatestDocuments() {
+        ListValue<String> oldDoc1 = ListValue.<String>builder().id("1").value("Old Document 1").build();
+        List<ListValue<String>> previous = List.of(oldDoc1);
+        List<ListValue<String>> latest = List.of();
+
+        List<ListValue<String>> sorted = CaseDocuments.sortByNewest(previous, latest);
+
+        assertThat(sorted).isEmpty();
+    }
+
 }
