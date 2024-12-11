@@ -367,7 +367,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    public void givenJointApplicationWithoutHWF_WhenApplicant2AwaitingDocuments_ThenShouldSetAwaitingDocumentState() {
+    public void givenJointApplicationWithoutHWF_WhenBothApplicantsAwaitingDocuments_ThenShouldSetAwaitingDocumentState() {
         final var payment = new ListValue<>(null, Payment
             .builder()
             .amount(55000)
@@ -379,6 +379,8 @@ class SetStateAfterSubmissionTest {
                 .paymentTotal("55000")
                 .build())
             .applicationPayments(singletonList(payment))
+            .applicant1CannotUpload(YES)
+            .applicant1CannotUploadSupportingDocument(Set.of(MARRIAGE_CERTIFICATE))
             .applicant2CannotUpload(YES)
             .applicant2CannotUploadSupportingDocument(Set.of(MARRIAGE_CERTIFICATE))
             .build();
