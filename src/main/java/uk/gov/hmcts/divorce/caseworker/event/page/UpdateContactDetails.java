@@ -77,7 +77,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     public static final String SOLICITOR_DETAILS_REMOVED_ERROR = """
         You cannot remove the solicitor %s with this event. Please use Notice of Change if you would like to remove representation.
         """;
-
+    private static final String APPLICANT_REFUGE_LABEL = "Is ${%s} currently resident in a refuge";
     @Override
     public void addTo(final PageBuilder pageBuilder) {
         FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder
@@ -157,6 +157,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                     getLabel(GENDER_HINT_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getContactDetailsType,
                     getLabel(CONTACT_TYPE_LABEL, APPLICANTS_OR_APPLICANT1S, THE_RESPONDENT_OR_APPLICANT2))
+                .optionalWithoutDefaultValue(Applicant::getInRefuge, "applicant1ContactDetailsType=\"private\"",
+                    getLabel(APPLICANT_REFUGE_LABEL, THE_APPLICANT_OR_APPLICANT1))
             .done()
             .complex(CaseData::getApplication)
                 .complex(Application::getMarriageDetails)
@@ -186,6 +188,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                 getLabel(GENDER_HINT_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getContactDetailsType,
                     getLabel(CONTACT_TYPE_LABEL, RESPONDENTS_OR_APPLICANT2S, THE_APPLICANT_OR_APPLICANT1))
+                .optionalWithoutDefaultValue(Applicant::getInRefuge, "applicant2ContactDetailsType=\"private\"",
+                    getLabel(APPLICANT_REFUGE_LABEL, THE_RESPONDENT_OR_APPLICANT2))
                 .optionalWithLabel(Applicant::getAddressOverseas, getLabel(ADDRESS_OVERSEAS_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getAddress, getLabel(ADDRESS_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, RESPONDENTS_OR_APPLICANT2S))
