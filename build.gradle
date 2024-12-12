@@ -25,7 +25,7 @@ plugins {
   id 'org.springframework.boot' version '3.3.5'
   id 'com.github.ben-manes.versions' version '0.51.0'
   id 'hmcts.ccd.sdk' version '5.5.16'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1492'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1495'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -218,7 +218,7 @@ dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
     //CVE-2020-23064
-    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.33'
+    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.34'
     //CVE-2023-5072
     dependency group: 'org.json', name: 'json', version: '20240303'
   }
@@ -250,7 +250,7 @@ ext.libraries = [
 
 dependencies {
 // uncomment for local version
-  //implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
+//  implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '8.0'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.24.2'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.24.2'
@@ -292,6 +292,7 @@ dependencies {
   implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.1.8'
 
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
+  implementation group: 'org.apache.commons', name: 'commons-jcs3-core', version: '3.2.1'
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
   testImplementation libraries.junit5
