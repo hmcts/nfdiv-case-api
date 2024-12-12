@@ -82,8 +82,8 @@ public class CaseworkerRequestForInformationResponse implements CCDConfig<CaseDa
                 AwaitingRequestedInformation,
                 RequestedInformationSubmitted,
                 Submitted)
-            .name("Add Text Only RFI Response")
-            .description("Add Text Only RFI Response")
+            .name("Add RFI Response")
+            .description("Add RFI Response")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
