@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.FlagDetail;
+import uk.gov.hmcts.ccd.sdk.type.FlagVisibility;
 import uk.gov.hmcts.ccd.sdk.type.Flags;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -28,7 +29,6 @@ import static uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService.TEXT_APPL
 import static uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService.TEXT_APPLICANT1_SOL_FLAGS_ROLE;
 import static uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService.TEXT_APPLICANT2_FLAGS_ROLE;
 import static uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService.TEXT_APPLICANT2_SOL_FLAGS_ROLE;
-import static uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService.VISIBILITY_INTERNAL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -71,7 +71,7 @@ class CaseFlagsServiceTest {
         caseFlagsService.initialiseCaseFlags(caseData);
 
         assertThat(caseData.getCaseFlags()).isNotNull();
-        assertThat(caseData.getCaseFlags().getVisibility()).isEqualTo(VISIBILITY_INTERNAL);
+        assertThat(caseData.getCaseFlags().getVisibility()).isEqualTo(FlagVisibility.INTERNAL);
     }
 
     @Test
@@ -121,7 +121,7 @@ class CaseFlagsServiceTest {
         caseFlagsService.initialiseAllInternalPartyFlags(caseData);
 
         assertThat(caseData.getPartyFlags().getApplicant1Flags()).isNotNull();
-        assertThat(caseData.getPartyFlags().getApplicant1Flags().getVisibility()).isEqualTo(VISIBILITY_INTERNAL);
+        assertThat(caseData.getPartyFlags().getApplicant1Flags().getVisibility()).isEqualTo(FlagVisibility.INTERNAL);
     }
 
     @Test
@@ -142,7 +142,7 @@ class CaseFlagsServiceTest {
         caseFlagsService.initialiseAllInternalPartyFlags(caseData);
 
         assertThat(caseData.getPartyFlags().getApplicant2Flags()).isNotNull();
-        assertThat(caseData.getPartyFlags().getApplicant2Flags().getVisibility()).isEqualTo(VISIBILITY_INTERNAL);
+        assertThat(caseData.getPartyFlags().getApplicant2Flags().getVisibility()).isEqualTo(FlagVisibility.INTERNAL);
     }
 
     @Test
@@ -331,9 +331,9 @@ class CaseFlagsServiceTest {
 
         List<ListValue<FlagDetail>> list = getFlagListWithFlag("Test Flag");
 
-        Flags caseFlags = Flags.builder().visibility(VISIBILITY_INTERNAL).details(list).build();
-        Flags applicantFlags = Flags.builder().partyName("Applicant").visibility(VISIBILITY_INTERNAL).details(list).build();
-        Flags solicitorFlags = Flags.builder().partyName("Solicitor").visibility(VISIBILITY_INTERNAL).details(list).build();
+        Flags caseFlags = Flags.builder().visibility(FlagVisibility.INTERNAL).details(list).build();
+        Flags applicantFlags = Flags.builder().partyName("Applicant").visibility(FlagVisibility.INTERNAL).details(list).build();
+        Flags solicitorFlags = Flags.builder().partyName("Solicitor").visibility(FlagVisibility.INTERNAL).details(list).build();
 
         if (hasCaseFlags) {
             caseData.setCaseFlags(caseFlags);
@@ -376,32 +376,32 @@ class CaseFlagsServiceTest {
 
         setGroupIds(caseData);
 
-        final Flags caseFlags = Flags.builder().visibility(VISIBILITY_INTERNAL).details(getFlagListWithFlag("Case Flag 1")).build();
+        final Flags caseFlags = Flags.builder().visibility(FlagVisibility.INTERNAL).details(getFlagListWithFlag("Case Flag 1")).build();
         final Flags applicant1Flags = Flags
             .builder()
             .partyName(applicant1.getFullName())
-            .visibility(VISIBILITY_INTERNAL)
+            .visibility(FlagVisibility.INTERNAL)
             .roleOnCase(TEXT_APPLICANT1_FLAGS_ROLE)
             .details(getFlagListWithFlag("App1 Flag"))
             .build();
         final Flags applicant2Flags = Flags
             .builder()
             .partyName(applicant2.getFullName())
-            .visibility(VISIBILITY_INTERNAL)
+            .visibility(FlagVisibility.INTERNAL)
             .roleOnCase(TEXT_APPLICANT2_FLAGS_ROLE)
             .details(getFlagListWithFlag("App2 Flag"))
             .build();
         final Flags solicitor1Flags = Flags
             .builder()
             .partyName(solicitor1.getName())
-            .visibility(VISIBILITY_INTERNAL)
+            .visibility(FlagVisibility.INTERNAL)
             .roleOnCase(TEXT_APPLICANT1_SOL_FLAGS_ROLE)
             .details(getFlagListWithFlag("Sol1 Flag"))
             .build();
         final Flags solicitor2Flags = Flags
             .builder()
             .partyName(solicitor2.getName())
-            .visibility(VISIBILITY_INTERNAL)
+            .visibility(FlagVisibility.INTERNAL)
             .roleOnCase(TEXT_APPLICANT2_SOL_FLAGS_ROLE)
             .details(getFlagListWithFlag("Sol2 Flag"))
             .build();

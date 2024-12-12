@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.ccd.sdk.type.FlagVisibility;
 import uk.gov.hmcts.ccd.sdk.type.Flags;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -22,7 +23,6 @@ public class CaseFlagsService {
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
 
-    public static final  String VISIBILITY_INTERNAL = "Internal";
     public static final String TEXT_APPLICANT1_FLAGS_ROLE = "applicant or applicant1";
     public static final String TEXT_APPLICANT2_FLAGS_ROLE = "respondent or applicant2";
     public static final String TEXT_APPLICANT1_SOL_FLAGS_ROLE = "applicant or applicant1 solicitor";
@@ -54,7 +54,7 @@ public class CaseFlagsService {
                 .details(new ArrayList<>())
                 .partyName(null)
                 .roleOnCase(null)
-                .visibility(VISIBILITY_INTERNAL)
+                .visibility(FlagVisibility.INTERNAL)
                 .build());
         }
 
@@ -85,7 +85,7 @@ public class CaseFlagsService {
                 .partyName(caseData.getApplicant1().getFullName())
                 .roleOnCase(TEXT_APPLICANT1_FLAGS_ROLE)
                 .groupId(UUID.fromString(caseData.getPartyFlags().getApplicant1GroupId()))
-                .visibility(VISIBILITY_INTERNAL)
+                .visibility(FlagVisibility.INTERNAL)
                 .build());
         }
 
@@ -95,7 +95,7 @@ public class CaseFlagsService {
                 .partyName(caseData.getApplicant2().getFullName())
                 .roleOnCase(TEXT_APPLICANT2_FLAGS_ROLE)
                 .groupId(UUID.fromString(caseData.getPartyFlags().getApplicant2GroupId()))
-                .visibility(VISIBILITY_INTERNAL)
+                .visibility(FlagVisibility.INTERNAL)
                 .build());
         }
 
@@ -106,7 +106,7 @@ public class CaseFlagsService {
                 .partyName(caseData.getApplicant1().getSolicitor().getName())
                 .roleOnCase(TEXT_APPLICANT1_SOL_FLAGS_ROLE)
                 .groupId(UUID.fromString(caseData.getPartyFlags().getApplicant1SolicitorGroupId()))
-                .visibility(VISIBILITY_INTERNAL)
+                .visibility(FlagVisibility.INTERNAL)
                 .build());
         }
 
@@ -117,7 +117,7 @@ public class CaseFlagsService {
                 .partyName(caseData.getApplicant2().getSolicitor().getName())
                 .roleOnCase(TEXT_APPLICANT2_SOL_FLAGS_ROLE)
                 .groupId(UUID.fromString(caseData.getPartyFlags().getApplicant2SolicitorGroupId()))
-                .visibility(VISIBILITY_INTERNAL)
+                .visibility(FlagVisibility.INTERNAL)
                 .build());
         }
     }

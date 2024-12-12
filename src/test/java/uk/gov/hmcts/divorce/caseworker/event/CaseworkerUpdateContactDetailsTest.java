@@ -62,7 +62,7 @@ class CaseworkerUpdateContactDetailsTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        caseworkerUpdateContactDetails.aboutToSubmit(details, null);
+        caseworkerUpdateContactDetails.aboutToSubmit(details, details);
 
         verify(processConfidentialDocumentsService).processDocuments(caseData, details.getId());
     }

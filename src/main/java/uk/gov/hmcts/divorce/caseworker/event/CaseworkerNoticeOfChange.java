@@ -176,24 +176,8 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
 
         NoticeType noticeType = calculateNoticeType(applicant, beforeApplicant);
 
-        log.info("Notice type is : {}", noticeType);
-
-        if (noticeType == NoticeType.ORG_REMOVED || noticeType == NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG) {
-            caseFlagsService.resetSolicitorCaseFlags(data, isApplicant1);
-        }
-
-        /*
-        The below two notice type are set when before and after org are the same. We could have the case where the solicitor
-        might still have changed. Question: How can we best know when solicitor has changed so that we can reset rather than
-        update name in CaseFlags for solicitor?
-         */
-        if (noticeType == NoticeType.NEW_DIGITAL_SOLICITOR_EXISTING_ORG || noticeType == NoticeType.OFFLINE_NOC) {
-            if (isApplicant1) {
-                caseFlagsService.updatePartyNameInCaseFlags(data, CaseFlagsService.PartyFlagType.APPLICANT_1_SOLICITOR);
-            } else {
-                caseFlagsService.updatePartyNameInCaseFlags(data, CaseFlagsService.PartyFlagType.APPLICANT_2_SOLICITOR);
-            }
-        }
+        //Resetting case flags for solicitor when the event is run (as agreed by service)
+        caseFlagsService.resetSolicitorCaseFlags(data, isApplicant1);
 
         noticeType.applyNoticeOfChange(applicant,
             beforeApplicant,
