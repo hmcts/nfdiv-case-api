@@ -84,6 +84,6 @@ public class CaseworkerUpdateContactDetails implements CCDConfig<CaseData, State
     }
 
     boolean hasNameBeenUpdatedForApplicant(Applicant before, Applicant after) {
-        return after.getFullName() == before.getFullName() ? false : true;
+        return after.getFullName().equals(before.getFullName()) ? false : true;
     }
 }
