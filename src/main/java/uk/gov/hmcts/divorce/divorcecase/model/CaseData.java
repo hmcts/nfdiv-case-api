@@ -356,7 +356,8 @@ public class CaseData {
     private Flags caseFlags;
 
     @JsonUnwrapped
-    private PartyFlags partyFlags;
+    @Builder.Default
+    private PartyFlags partyFlags = new PartyFlags();
 
     @JsonIgnore
     public String formatCaseRef(long caseId) {
