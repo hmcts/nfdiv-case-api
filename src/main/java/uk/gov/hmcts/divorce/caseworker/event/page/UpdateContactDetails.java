@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
@@ -225,6 +226,15 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         CaseData caseData = details.getData();
         CaseData caseDataBefore = detailsBefore.getData();
 
+        if (hasTransitionedFromPrivateToPublic(caseDataBefore.getApplicant1().getContactDetailsType(),
+            caseData.getApplicant1().getContactDetailsType())) {
+            caseData.getApplicant1().setInRefuge(null);
+        }
+        if (hasTransitionedFromPrivateToPublic(caseDataBefore.getApplicant2().getContactDetailsType(),
+            caseData.getApplicant2().getContactDetailsType())) {
+            caseData.getApplicant2().setInRefuge(null);
+        }
+
         List<String> solicitorValidationErrors = validateSolicitorDetails(caseDataBefore, caseData);
         if (!solicitorValidationErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -359,5 +369,9 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                 && HUSBAND.equals(divorceWho)
                 && SAME_SEX_COUPLE.equals(formationType);
         }
+    }
+
+    private boolean hasTransitionedFromPrivateToPublic(ContactDetailsType previousType, ContactDetailsType currentType) {
+        return ContactDetailsType.PRIVATE.equals(previousType) && ContactDetailsType.PUBLIC.equals(currentType);
     }
 }
