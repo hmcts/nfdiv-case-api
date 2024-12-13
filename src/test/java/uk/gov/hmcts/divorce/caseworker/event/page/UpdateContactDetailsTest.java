@@ -10,14 +10,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.stream.Stream;
 
-import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
-import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,6 +33,16 @@ import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+
 
 @ExtendWith(MockitoExtension.class)
 class UpdateContactDetailsTest {
