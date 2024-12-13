@@ -27,7 +27,7 @@ public class SendAosNotifications implements CaseTask {
         final var data = details.getData();
 
         if (data.getAcknowledgementOfService().isDisputed()) {
-            notificationDispatcher.send(soleApplicationDisputedNotification, data, details.getId());
+            notificationDispatcher.send(soleApplicationDisputedNotification, details);
         } else {
             notificationDispatcher.send(soleApplicationNotDisputedNotification, details);
         }

@@ -4,8 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -28,8 +30,10 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONS
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMITTED_APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED_AWAITING_CO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED_CO;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
@@ -54,12 +58,15 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
     private String disputedAOSFee; //will pull this in from fee service separate task
 
     @Override
-    public void sendToApplicant1(final CaseData caseData, final Long id) {
+    public void sendToApplicant1(final CaseDetails<CaseData, State> caseDetails) {
+        CaseData caseData = caseDetails.getData();
+        State state = caseDetails.getState();
+        Long id = caseDetails.getId();
         log.info("Sending AOS disputed notification to applicant for: {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED,
+            state == State.AwaitingConditionalOrder ? SOLE_APPLICANT_AOS_SUBMITTED_AWAITING_CO : SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED,
             disputedTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference(),
             id
@@ -67,14 +74,17 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
     }
 
     @Override
-    public void sendToApplicant2(final CaseData caseData, final Long id) {
+    public void sendToApplicant2(final CaseDetails<CaseData, State> caseDetails) {
+        CaseData caseData = caseDetails.getData();
+        State state = caseDetails.getState();
+        Long id = caseDetails.getId();
         log.info("Sending AOS disputed notification to Respondent for: {}", id);
 
         Map<String, String> templateVars = disputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.put(DISPUTED_AOS_FEE,disputedAOSFee);
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
-            SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED,
+            state == State.AwaitingConditionalOrder ? SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED_CO : SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED,
             templateVars,
             caseData.getApplicant2().getLanguagePreference(),
             id
@@ -82,20 +92,24 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
     }
 
     @Override
-    public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
+    public void sendToApplicant1Solicitor(final CaseDetails<CaseData, State> caseDetails) {
+        CaseData caseData = caseDetails.getData();
+        Long id = caseDetails.getId();
         log.info("Sending AOS disputed notification to Applicant Solicitor for: {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getSolicitor().getEmail(),
             SOLE_AOS_SUBMITTED_APPLICANT_1_SOLICITOR,
             solicitorTemplateVars(caseData, id, caseData.getApplicant1()),
-            ENGLISH, // Why are we forcing english?
+            caseData.getApplicant1().getLanguagePreference(),
             id
         );
     }
 
     @Override
-    public void sendToApplicant2Solicitor(final CaseData caseData, final Long id) {
+    public void sendToApplicant2Solicitor(final CaseDetails<CaseData, State> caseDetails) {
+        CaseData caseData = caseDetails.getData();
+        Long id = caseDetails.getId();
         log.info("Sending AOS disputed notification to Respondent Solicitor for: {}", id);
 
         notificationService.sendEmail(
