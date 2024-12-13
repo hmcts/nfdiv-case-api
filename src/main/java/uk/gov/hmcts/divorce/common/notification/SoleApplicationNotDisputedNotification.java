@@ -95,7 +95,7 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
             caseData.getApplicant1().getSolicitor().getEmail(),
             SOLE_AOS_SUBMITTED_APPLICANT_1_SOLICITOR,
             solicitorTemplateVars(caseData, id, caseData.getApplicant1()),
-            ENGLISH, // Why are we forcing english?
+            caseData.getApplicant1().getLanguagePreference(),
             id
         );
     }
