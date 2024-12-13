@@ -78,6 +78,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         You cannot remove the solicitor %s with this event. Please use Notice of Change if you would like to remove representation.
         """;
     private static final String APPLICANT_REFUGE_LABEL = "Is ${%s} currently resident in a refuge";
+
     @Override
     public void addTo(final PageBuilder pageBuilder) {
         FieldCollectionBuilder<CaseData, State, EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder
