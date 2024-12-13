@@ -3,10 +3,12 @@ package uk.gov.hmcts.divorce.document.print.documentpack;
 import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
@@ -20,7 +22,9 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE_UNDISPUTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_DISPUTED_CO_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_UNDEFENDED_CO_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID;
 
 
@@ -66,6 +70,18 @@ public class AosResponseDocumentPack implements DocumentPack {
         ImmutableMap.of(
             COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
             RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID, AOS_RESPONSE_LETTER_DOCUMENT_NAME
+        )
+    );
+
+    static final DocumentPackInfo DISPUTED_AOS_RESPONSE_CO_PACK = new DocumentPackInfo(
+        ImmutableMap.of(
+            DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
+            DocumentType.AOS_RESPONSE_LETTER, Optional.of(RESPONDENT_RESPONDED_DISPUTED_CO_TEMPLATE_ID),
+            DocumentType.RESPONDENT_ANSWERS, Optional.empty()
+        ),
+        ImmutableMap.of(
+            COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
+            RESPONDENT_RESPONDED_DISPUTED_CO_TEMPLATE_ID, AOS_RESPONSE_LETTER_DOCUMENT_NAME
         )
     );
 
@@ -131,6 +147,18 @@ public class AosResponseDocumentPack implements DocumentPack {
         )
     );
 
+    static final DocumentPackInfo UNDISPUTED_AOS_RESPONSE_CO_PACK = new DocumentPackInfo(
+        ImmutableMap.of(
+            DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
+            DocumentType.AOS_RESPONSE_LETTER, Optional.of(RESPONDENT_RESPONDED_UNDEFENDED_CO_TEMPLATE_ID),
+            DocumentType.RESPONDENT_ANSWERS, Optional.empty()
+        ),
+        ImmutableMap.of(
+            COVERSHEET_APPLICANT, COVERSHEET_DOCUMENT_NAME,
+            RESPONDENT_RESPONDED_UNDEFENDED_CO_TEMPLATE_ID, AOS_RESPONSE_LETTER_DOCUMENT_NAME
+        )
+    );
+
     static final DocumentPackInfo APP_2_OFFLINE_SOLICITOR_JS_UNDISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
         ImmutableMap.of(
             DocumentType.COVERSHEET, Optional.of(COVERSHEET_APPLICANT2_SOLICITOR),
@@ -159,6 +187,21 @@ public class AosResponseDocumentPack implements DocumentPack {
 
     @Override
     public DocumentPackInfo getDocumentPack(CaseData caseData, Applicant applicant) {
+        return getDocPack(caseData, applicant);
+    }
+
+    @Override
+    public DocumentPackInfo getDocumentPack(CaseDetails<CaseData, State> caseDetails, Applicant applicant) {
+        if (caseDetails.getState() == State.AwaitingConditionalOrder && !caseDetails.getData().isJudicialSeparationCase()) {
+            return caseDetails.getData().getAcknowledgementOfService().isDisputed()
+                ? DISPUTED_AOS_RESPONSE_CO_PACK
+                : UNDISPUTED_AOS_RESPONSE_CO_PACK;
+        } else {
+            return getDocPack(caseDetails.getData(), applicant);
+        }
+    }
+
+    private DocumentPackInfo getDocPack(CaseData caseData, Applicant applicant) {
         final AcknowledgementOfService acknowledgementOfService = caseData.getAcknowledgementOfService();
         final boolean isApp2Offline = caseData.getApplicant2().isApplicantOffline();
 
