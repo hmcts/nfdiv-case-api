@@ -34,6 +34,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
@@ -58,8 +59,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseDraft;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseJointParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseSoleParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseDraft;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
@@ -72,6 +83,7 @@ import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInf
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -87,6 +99,7 @@ import static feign.Request.HttpMethod.GET;
 import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -99,6 +112,8 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.OTHER;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.RFI_RESPONSE;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.builder;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
@@ -108,8 +123,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
@@ -148,6 +170,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_
 import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SENT_TO_BOTH_APPLICANTS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
@@ -156,6 +179,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntitlementHelper.IS_JOINT;
+import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL;
@@ -178,6 +202,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_FIRM_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_TEXT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 public class TestDataHelper {
@@ -844,6 +869,36 @@ public class TestDataHelper {
         return templateVars;
     }
 
+    public static Map<String, String> getRequestForInformationTemplateVars() {
+        Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.put(IS_JOINT, CommonContent.NO);
+        templateVars.put(WIFE_JOINT, CommonContent.NO);
+        templateVars.put(HUSBAND_JOINT, CommonContent.NO);
+        templateVars.put(CIVIL_PARTNER_JOINT, CommonContent.NO);
+        templateVars.put(SENT_TO_BOTH_APPLICANTS, CommonContent.NO);
+
+        return templateVars;
+    }
+
+    public static Map<String, String> getRequestForInformationTemplateVars(ApplicationType applicationType,
+                                                                           RequestForInformationJointParties parties,
+                                                                           Boolean isDivorce,
+                                                                           Applicant partner) {
+        Map<String, String> templateVars = getRequestForInformationTemplateVars();
+
+        if (applicationType.equals(JOINT_APPLICATION) && parties.equals(BOTH)) {
+            templateVars.put(IS_JOINT, CommonContent.YES);
+            templateVars.put(SENT_TO_BOTH_APPLICANTS, CommonContent.YES);
+            if (isDivorce) {
+                templateVars.put(HUSBAND_JOINT, MALE.equals(partner.getGender()) ? CommonContent.YES : CommonContent.NO);
+                templateVars.put(WIFE_JOINT, FEMALE.equals(partner.getGender()) ? CommonContent.YES : CommonContent.NO);
+            } else {
+                templateVars.put(CIVIL_PARTNER_JOINT, CommonContent.YES);
+            }
+        }
+        return templateVars;
+    }
+
     public static Map<String, String> getBasicTemplateVars() {
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID);
@@ -1357,5 +1412,291 @@ public class TestDataHelper {
                 .documentsGenerated(Lists.newArrayList(coGrantedDoc, coCoverLetterApp1, coCoverLetterApp2))
                 .build())
             .build();
+    }
+
+    public static uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> getRequestForInformationCaseDetails() {
+        CaseData caseData = getRequestForInformationBaseData(SOLE_APPLICATION, true, false);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
+        setRequestForInformationBaseRequestValues(caseData);
+
+        return getRequestForInformationBaseDetails(caseData);
+    }
+
+    public static uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> getRequestForInformationCaseDetails(
+                                                                            RequestForInformationSoleParties soleParties,
+                                                                            Boolean applicantRepresented,
+                                                                            Boolean applicant2Represented
+    ) {
+        CaseData caseData = getRequestForInformationBaseData(SOLE_APPLICATION, applicantRepresented, applicant2Represented);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(soleParties);
+        setRequestForInformationBaseRequestValues(caseData);
+
+        return getRequestForInformationBaseDetails(caseData);
+    }
+
+    public static uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> getRequestForInformationCaseDetails(
+                                                                                RequestForInformationJointParties jointParties,
+                                                                                Boolean applicantRepresented,
+                                                                                Boolean applicant2Represented
+    ) {
+        CaseData caseData = getRequestForInformationBaseData(JOINT_APPLICATION, applicantRepresented, applicant2Represented);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(jointParties);
+        setRequestForInformationBaseRequestValues(caseData);
+
+        return getRequestForInformationBaseDetails(caseData);
+    }
+
+    public static CaseData getRequestForInformationBaseData(ApplicationType applicationType,
+                                                            Boolean applicantRepresented,
+                                                            Boolean applicant2Represented) {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(applicationType);
+        if (applicantRepresented) {
+            caseData.setApplicant1(applicantRepresentedBySolicitor());
+        }
+        if (applicant2Represented) {
+            caseData.setApplicant2(applicantRepresentedBySolicitor());
+            caseData.getApplicant2().setGender(MALE);
+        } else {
+            caseData.setApplicant2(getApplicant(MALE));
+        }
+
+        return caseData;
+    }
+
+    public static void setRequestForInformationBaseRequestValues(CaseData caseData) {
+        caseData.getRequestForInformationList().getRequestForInformation().setValues(caseData);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+    }
+
+    public static uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> getRequestForInformationBaseDetails(CaseData caseData) {
+        final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> details = new uk.gov.hmcts.ccd.sdk.api.CaseDetails<>();
+        details.setData(caseData);
+        details.setState(InformationRequested);
+        details.setId(TEST_CASE_ID);
+
+        return details;
+    }
+
+    public static boolean isApplicant2(CaseData caseData, Applicant applicant) {
+        return caseData.getApplicant2().equals(applicant);
+    }
+
+    public static RequestForInformationResponseDraft getRequestForInformationResponseDraft(CaseData caseData, Applicant applicant) {
+        RequestForInformationResponseDraft draft;
+        if (isApplicant2(caseData, applicant)) {
+            draft = applicant.isRepresented()
+                ? caseData.getRequestForInformationList().getRequestForInformationResponseApplicant2Solicitor()
+                : caseData.getRequestForInformationList().getRequestForInformationResponseApplicant2();
+        } else {
+            draft = applicant.isRepresented()
+                ? caseData.getRequestForInformationList().getRequestForInformationResponseApplicant1Solicitor()
+                : caseData.getRequestForInformationList().getRequestForInformationResponseApplicant1();
+        }
+
+        return draft;
+    }
+
+    public static void addDocumentToRequestForInformationResponseDraft(RequestForInformationResponseDraft draft) {
+        final DivorceDocument uploadedDocument = documentWithType(null).getValue();
+        draft.addDocument(uploadedDocument);
+    }
+
+    public static void addDocumentToRequestForInformationOfflineResponseDraft(RequestForInformationOfflineResponseDraft draft) {
+        final DivorceDocument uploadedDocument = documentWithType(null).getValue();
+        draft.addDocument(uploadedDocument);
+    }
+
+    private static void clearDraft(RequestForInformationList requestForInformationList, boolean isApplicant2, boolean isRepresented) {
+        if (isApplicant2) {
+            if (isRepresented) {
+                requestForInformationList.setRequestForInformationResponseApplicant2Solicitor(new RequestForInformationResponseDraft());
+            } else {
+                requestForInformationList.setRequestForInformationResponseApplicant2(new RequestForInformationResponseDraft());
+            }
+        } else {
+            if (isRepresented) {
+                requestForInformationList.setRequestForInformationResponseApplicant1Solicitor(new RequestForInformationResponseDraft());
+            } else {
+                requestForInformationList.setRequestForInformationResponseApplicant1(new RequestForInformationResponseDraft());
+            }
+        }
+    }
+
+    private static RequestForInformationResponseParties getResponseParty(boolean isApplicant2, boolean isRepresented) {
+        if (isApplicant2) {
+            return isRepresented ? APPLICANT2SOLICITOR : APPLICANT2;
+        } else {
+            return isRepresented ? APPLICANT1SOLICITOR : APPLICANT1;
+        }
+    }
+
+    public static void buildOfflineDraft(CaseData caseData, RequestForInformationOfflineResponseSoleParties soleParty,
+                                         boolean addDetails, boolean addDocument, boolean setAllDocsUploaded, boolean sendNotifications) {
+        caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().setRfiOfflineSoleResponseParties(soleParty);
+        buildOfflineDraft(caseData, addDetails, addDocument, setAllDocsUploaded, sendNotifications);
+    }
+
+    public static void buildOfflineDraft(CaseData caseData, RequestForInformationOfflineResponseJointParties jointParty,
+                                         boolean addDetails, boolean addDocument, boolean setAllDocsUploaded, boolean sendNotifications) {
+        caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().setRfiOfflineJointResponseParties(
+            jointParty
+        );
+        buildOfflineDraft(caseData, addDetails, addDocument, setAllDocsUploaded, sendNotifications);
+    }
+
+    public static void buildOfflineDraft(CaseData caseData,
+                                         boolean addDetails,
+                                         boolean addDocument,
+                                         boolean setAllDocsUploaded,
+                                         boolean sendNotifications
+    ) {
+        RequestForInformationOfflineResponseDraft draft =
+            caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft();
+        if (addDetails) {
+            draft.setRfiOfflineDraftResponseDetails(TEST_TEXT);
+        }
+        if (addDocument) {
+            addDocumentToRequestForInformationOfflineResponseDraft(draft);
+        }
+        if (setAllDocsUploaded) {
+            draft.setRfiOfflineAllDocumentsUploaded(YES);
+        } else {
+            draft.setRfiOfflineAllDocumentsUploaded(NO);
+        }
+        if (sendNotifications) {
+            draft.setRfiOfflineResponseSendNotifications(YES);
+        } else {
+            draft.setRfiOfflineResponseSendNotifications(NO);
+        }
+    }
+
+    public static void buildDraft(CaseData caseData,
+                                  Applicant applicant,
+                                  boolean addDetails,
+                                  boolean addDocument,
+                                  boolean setCannotUpload
+    ) {
+        RequestForInformationResponseDraft draft = getRequestForInformationResponseDraft(caseData, applicant);
+        if (addDetails) {
+            draft.setRfiDraftResponseDetails(TEST_TEXT);
+        }
+        if (addDocument) {
+            addDocumentToRequestForInformationResponseDraft(draft);
+        }
+        if (setCannotUpload) {
+            draft.setRfiDraftResponseCannotUploadDocs(YES);
+        }
+    }
+
+    public static void addResponseToLatestRequestForInformation(CaseData caseData, Applicant applicant) {
+        final boolean isApplicant2 = isApplicant2(caseData, applicant);
+        final RequestForInformationList requestForInformationList = caseData.getRequestForInformationList();
+        final RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        buildDraft(caseData, applicant, true, true, false);
+
+        requestForInformationResponse.setValues(caseData, getResponseParty(isApplicant2, applicant.isRepresented()));
+
+        requestForInformationList.getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        clearDraft(requestForInformationList, isApplicant2, applicant.isRepresented());
+    }
+
+    public static void addCannotUploadResponseToLatestRequestForInformation(CaseData caseData, Applicant applicant) {
+        final boolean isApplicant2 = isApplicant2(caseData, applicant);
+        final RequestForInformationList requestForInformationList = caseData.getRequestForInformationList();
+        final RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        buildDraft(caseData, applicant, true, false, true);
+
+        requestForInformationResponse.setValues(caseData, getResponseParty(isApplicant2, applicant.isRepresented()));
+
+        requestForInformationList.getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        clearDraft(requestForInformationList, isApplicant2, applicant.isRepresented());
+    }
+
+    public static void addNotAllDocsUploadedOfflineResponseToLatestRequestForInformation(CaseData caseData,
+                                                                       RequestForInformationOfflineResponseSoleParties soleParty) {
+        buildOfflineDraft(caseData, soleParty, true, true, false, false);
+        addOfflineResponseToLatestRequestForInformation(caseData);
+    }
+
+    public static void addNotAllDocsUploadedOfflineResponseToLatestRequestForInformation(CaseData caseData,
+                                                                       RequestForInformationOfflineResponseJointParties jointParty) {
+        buildOfflineDraft(caseData, jointParty, true, true, false, false);
+        addOfflineResponseToLatestRequestForInformation(caseData);
+    }
+
+    public static void addOfflineResponseToLatestRequestForInformation(CaseData caseData,
+                                                                       RequestForInformationOfflineResponseSoleParties soleParty) {
+        buildOfflineDraft(caseData, soleParty, true, true, true, false);
+        addOfflineResponseToLatestRequestForInformation(caseData);
+    }
+
+    public static void addOfflineResponseToLatestRequestForInformation(CaseData caseData,
+                                                                       RequestForInformationOfflineResponseJointParties jointParty) {
+        buildOfflineDraft(caseData, jointParty, true, true, true, false);
+        addOfflineResponseToLatestRequestForInformation(caseData);
+    }
+
+    private static void addOfflineResponseToLatestRequestForInformation(CaseData caseData) {
+        final RequestForInformationList requestForInformationList = caseData.getRequestForInformationList();
+        final RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+
+        requestForInformationResponse.setValues(
+            caseData,
+            caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft()
+        );
+
+        requestForInformationList.getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        caseData.getRequestForInformationList().setRequestForInformationOfflineResponseDraft(
+            new RequestForInformationOfflineResponseDraft()
+        );
+    }
+
+    public static void setSendNotificationFlagOnLatestOfflineResponse(CaseData caseData, boolean sendNotifications) {
+        caseData.getRequestForInformationList().getLatestRequest().getLatestResponse().setRfiOfflineResponseNotificationsRequested(
+            YesOrNo.from(sendNotifications)
+        );
+    }
+
+    public static void addRfiResponseDocumentToCaseData(CaseData caseData, Clock clock) {
+        setMockClock(clock);
+
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+        final ListValue<ScannedDocument> scannedRfirDocument = ListValue
+            .<ScannedDocument>builder()
+            .id(OTHER.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .scannedDate(now(clock))
+                    .fileName("RFIR.pdf")
+                    .type(ScannedDocumentType.OTHER)
+                    .url(document)
+                    .build()
+            )
+            .build();
+        caseData.setDocuments(
+            CaseDocuments.builder()
+                .typeOfDocumentAttached(RFI_RESPONSE)
+                .scannedDocuments(List.of(scannedRfirDocument))
+                .scannedDocumentNames(
+                    DynamicList
+                        .builder()
+                        .value(
+                            DynamicListElement
+                                .builder()
+                                .label("RFIR.pdf")
+                                .build()
+                        )
+                        .build()
+                )
+                .build()
+        );
     }
 }

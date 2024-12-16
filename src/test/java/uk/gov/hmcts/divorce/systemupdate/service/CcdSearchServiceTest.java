@@ -772,7 +772,7 @@ class CcdSearchServiceTest {
         final List<CaseDetails> searchResult =
             ccdSearchService.searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult).hasSize(100);
+        assertThat(searchResult.size()).isEqualTo(100);
     }
 
     @Test
@@ -937,7 +937,6 @@ class CcdSearchServiceTest {
 
     @Test
     void shouldReturnAggregatedResultsByStateAndLastStateModifiedDate() {
-        // Arrange
         ReturnedCaseDetails case1 = ReturnedCaseDetails.builder()
             .id(1L)
             .state(State.Submitted) // Assuming State is an enum or object with SUBMITTED
@@ -1044,4 +1043,77 @@ class CcdSearchServiceTest {
         assertThat(result.get("AwaitingAos")).containsEntry("2023-08-20",1L);
     }
 
+    @Test
+    void shouldReturnAllOldDivorceCases() {
+        final BoolQueryBuilder query = boolQuery().must(matchQuery("someField", "someValue"));
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
+
+        final List<CaseDetails> caseDetailsList1 = createCaseDetailsList(PAGE_SIZE, 1);
+        final List<CaseDetails> caseDetailsList2 = createCaseDetailsList(PAGE_SIZE - 1, PAGE_SIZE + 1);
+        final SearchResult searchResult1 = SearchResult.builder().total(PAGE_SIZE).cases(caseDetailsList1).build();
+        final SearchResult searchResult2 = SearchResult.builder().total(PAGE_SIZE - 1).cases(caseDetailsList2).build();
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            "DIVORCE",
+            getSearchSourceBuilder(0, PAGE_SIZE, query).toString()))
+            .thenReturn(searchResult1);
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            "DIVORCE",
+            getSearchSourceBuilder(PAGE_SIZE, PAGE_SIZE, query).toString()))
+            .thenReturn(searchResult2);
+
+        final List<CaseDetails> result = ccdSearchService.searchForOldDivorceCasesWithQuery(query, user, SERVICE_AUTHORIZATION);
+
+        assertThat(result).hasSize(PAGE_SIZE * 2 - 1);
+    }
+
+    @Test
+    void shouldReturnEmptyListWhenNoOldDivorceCasesFound() {
+        final BoolQueryBuilder query = boolQuery().must(matchQuery("someField", "someValue"));
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
+
+        final SearchResult emptySearchResult = SearchResult.builder().total(0).cases(emptyList()).build();
+
+        when(coreCaseDataApi.searchCases(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            SERVICE_AUTHORIZATION,
+            "DIVORCE",
+            getSearchSourceBuilder(0, PAGE_SIZE, query).toString()))
+            .thenReturn(emptySearchResult);
+
+        final List<CaseDetails> result = ccdSearchService.searchForOldDivorceCasesWithQuery(query, user, SERVICE_AUTHORIZATION);
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void shouldThrowCcdSearchCaseExceptionWhenFeignExceptionOccurs() {
+        final BoolQueryBuilder query = boolQuery().must(matchQuery("someField", "someValue"));
+        final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
+
+        doThrow(feignException(500, "Internal Server Error"))
+            .when(coreCaseDataApi).searchCases(
+                SYSTEM_UPDATE_AUTH_TOKEN, SERVICE_AUTHORIZATION, "DIVORCE",
+                getSearchSourceBuilder(0, PAGE_SIZE, query).toString());
+
+        final CcdSearchCaseException exception = assertThrows(
+            CcdSearchCaseException.class,
+            () -> ccdSearchService.searchForOldDivorceCasesWithQuery(query, user, SERVICE_AUTHORIZATION));
+
+        assertThat(exception.getMessage()).contains("Failed to complete search for Old Divorce Cases");
+    }
+
+    private SearchSourceBuilder getSearchSourceBuilder(final int from, final int size, final BoolQueryBuilder query) {
+        return SearchSourceBuilder
+            .searchSource()
+            .sort(DUE_DATE, ASC)
+            .query(query)
+            .from(from)
+            .size(size);
+    }
 }
