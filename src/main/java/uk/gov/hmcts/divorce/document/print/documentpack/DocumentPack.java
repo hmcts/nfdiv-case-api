@@ -1,9 +1,7 @@
 package uk.gov.hmcts.divorce.document.print.documentpack;
 
-import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 /** An implementation of the DocumentPack interface should include all the potential variations of documents that may be sent
  * depending on case data variables, represented as a
@@ -24,8 +22,6 @@ public interface DocumentPack {
      * @return - the document pack to generate
      */
     DocumentPackInfo getDocumentPack(CaseData caseData, Applicant applicant);
-
-    DocumentPackInfo getDocumentPack(CaseDetails<CaseData, State> caseDetails, Applicant applicant);
 
     String getLetterId();
 }
