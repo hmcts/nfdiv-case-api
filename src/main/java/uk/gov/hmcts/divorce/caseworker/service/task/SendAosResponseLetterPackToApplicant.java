@@ -12,6 +12,8 @@ import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.print.documentpack.AosResponseAwaitingConditionalOrderDocumentPack;
 import uk.gov.hmcts.divorce.document.print.documentpack.AosResponseDocumentPack;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -34,7 +36,7 @@ public class SendAosResponseLetterPackToApplicant implements CaseTask {
             } else {
                 log.info("Sending aos response letter (without dispute) pack to bulk print as applicant1 is offline. Case id: {}", caseId);
             }
-            final var documentPack = caseDetails.getState() == State.AwaitingConditionalOrder && !caseDetails.getData().isJudicialSeparationCase()
+            final var documentPack = caseDetails.getState() == AwaitingConditionalOrder && !caseDetails.getData().isJudicialSeparationCase()
                 ? aosResponseAwaitingConditionalOrderDocumentPack.getDocumentPack(caseData, caseData.getApplicant1())
                 : aosResponseDocumentPack.getDocumentPack(caseData, caseData.getApplicant1());
 
