@@ -71,6 +71,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.REQUEST_FOR_INFORMATION_RESPONSE_DOC;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
@@ -351,13 +352,16 @@ public class CaseData {
     @Builder.Default
     private SentNotifications sentNotifications = new SentNotifications();
 
+    @JsonUnwrapped
+    @Builder.Default
+    private RequestForInformationList requestForInformationList = new RequestForInformationList();
+
     @CCD(
         label = "Case matches",
         typeOverride = Collection,
         typeParameterOverride = "CaseMatch",
         access = {CaseworkerAccess.class}
     )
-
     @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
     @Builder.Default
     private List<ListValue<CaseMatch>> caseMatches = new ArrayList<>();
@@ -510,13 +514,15 @@ public class CaseData {
     public void updateCaseDataWithPaymentDetails(
         OrderSummary applicationFeeOrderSummary,
         CaseData caseData,
-        String paymentReference
+        String paymentReference,
+        String serviceRequest
     ) {
         var payment = Payment
             .builder()
             .amount(parseInt(applicationFeeOrderSummary.getPaymentTotal()))
             .channel("online")
             .feeCode(applicationFeeOrderSummary.getFees().get(0).getValue().getCode())
+            .serviceRequestReference(serviceRequest)
             .reference(paymentReference)
             .status(SUCCESS)
             .build();
@@ -605,6 +611,12 @@ public class CaseData {
         if (FINAL_ORDER_APPLICATION.equals(documentType)) {
             finalOrder.setScannedD36Form(divorceDocument.getDocumentLink());
             finalOrder.setDateD36FormScanned(scannedDocument.getScannedDate());
+        }
+
+        if (REQUEST_FOR_INFORMATION_RESPONSE_DOC.equals(documentType)) {
+            RequestForInformationOfflineResponseDraft offlineDraft =
+                this.getRequestForInformationList().getRequestForInformationOfflineResponseDraft();
+            offlineDraft.addDocument(divorceDocument);
         }
     }
 

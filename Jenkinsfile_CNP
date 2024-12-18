@@ -50,6 +50,9 @@ def secrets = [
                 secret('idam-systemupdate-username', 'IDAM_SYSTEM_UPDATE_USERNAME'),
                 secret('idam-systemupdate-password', 'IDAM_SYSTEM_UPDATE_PASSWORD'),
                 secret('report-email', 'REPORT_EMAIL'),
+                secret('idam-old-divorce-user', 'IDAM_OLD_DIVORCE_USERNAME'),
+                secret('idam-old-divorce-password', 'IDAM_OLD_DIVORCE_PASSWORD'),
+                secret('report-email', 'REPORT_EMAIL'),
                 secret('postgres-user', 'POSTGRES_USER'),
                 secret('postgres-password', 'POSTGRES_PASSWORD'),
         ]

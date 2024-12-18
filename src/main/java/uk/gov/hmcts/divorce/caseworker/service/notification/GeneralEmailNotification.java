@@ -156,7 +156,7 @@ public class GeneralEmailNotification {
     }
 
     private Map<String, String> templateVars(final CaseData caseData, final Long caseId) {
-        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId);
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId, null);
         templateVars.put("sot1", "");
         templateVars.put("sot2", "");
         templateVars.put("sot3", "");

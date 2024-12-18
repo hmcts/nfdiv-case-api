@@ -14,7 +14,6 @@ import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 
@@ -26,9 +25,8 @@ class CaseworkerAndSuperUserAccessTest {
         final SetMultimap<HasRole, Permission> grants = new CaseworkerAndSuperUserAccess().getGrants();
 
         assertThat(grants)
-            .hasSize(14)
+            .hasSize(13)
             .contains(
-                entry(SOLICITOR, R),
                 entry(LEGAL_ADVISOR, R),
                 entry(JUDGE, R),
                 entry(SUPER_USER, C),
