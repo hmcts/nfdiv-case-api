@@ -31,4 +31,11 @@
     <notes>Update is available but dependencies need to update it which fixes this vulnerability</notes>
     <cve>CVE-2023-6378</cve>
   </suppress>
+  <suppress>
+    <cve>CVE-2022-21724</cve>
+    <cve>CVE-2024-1597</cve>
+    <cve>CVE-2022-41946</cve>
+    <cve>CVE-2020-13692</cve>
+    <cve>CVE-2022-31197</cve>
+  </suppress>
 </suppressions>

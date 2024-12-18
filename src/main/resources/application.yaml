@@ -17,6 +17,14 @@ management:
     case-document-am-api:
       enabled: ${ENABLE_CDAM:true}
 spring:
+  datasource:
+    url: jdbc:postgresql://${NFD_DB_HOST:localhost}:${NFD_DB_PORT:6432}/${NFD_DB_NAME:nfd}${CMC_DB_CONNECTION_OPTIONS:}
+    type: com.zaxxer.hikari.HikariDataSource
+    username: ${NFD_DB_USERNAME:postgres}
+    password: ${NFD_DB_PASSWORD:postgres}
+  flyway:
+    enabled: ${DATABASE_MIGRATION:false}
+    baseline-on-migrate: true
   application:
     name: NFDIV Case API
   config:
@@ -633,3 +641,8 @@ bulk-action:
   page-size: ${BULK_ACTION_BATCH_SIZE_MAX:50}
 
 SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
+
+es:
+  host: ${ES_HOST:localhost:9200}
+  search:
+    enabled: ${ES_SEARCH_ENABLED:false}

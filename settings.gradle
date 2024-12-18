@@ -10,3 +10,5 @@ pluginManagement {
 }
 
 rootProject.name = 'nfdiv-case-api'
+
+include 'flyway'

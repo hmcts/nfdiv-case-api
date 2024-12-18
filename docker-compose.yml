@@ -1,26 +1,17 @@
 version: '2.1'
 
 services:
-  nfdiv-case-api:
-    build:
-      context: .
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: hmctspublic.azurecr.io/spring-boot/template
+  nfd-database:
+    image: bitnami/postgresql:latest
     environment:
-      # these environment variables are used by java-logging library
-      - ROOT_APPENDER
-      - JSON_CONSOLE_PRETTY_PRINT
-      - ROOT_LOGGING_LEVEL
-      - REFORM_SERVICE_TYPE
-      - REFORM_SERVICE_NAME
-      - REFORM_TEAM
-      - REFORM_ENVIRONMENT
-      - LOGBACK_DATE_FORMAT
-      - LOGBACK_REQUIRE_THREAD
-      - LOGBACK_REQUIRE_ALERT_LEVEL=false
-      - LOGBACK_REQUIRE_ERROR_CODE=false
+      POSTGRESQL_USERNAME: postgres
+      POSTGRESQL_PASSWORD: postgres
+      POSTGRESQL_DATABASE: nfd
+      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - $SERVER_PORT:$SERVER_PORT
+      - 6432:5432
+    volumes:
+      -   nfd-database-data:/var/lib/postgresql/data
+
+volumes:
+  nfd-database-data:
