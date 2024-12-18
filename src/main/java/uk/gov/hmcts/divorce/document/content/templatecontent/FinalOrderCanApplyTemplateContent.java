@@ -65,7 +65,7 @@ public class FinalOrderCanApplyTemplateContent implements TemplateContent {
         templateContent.put(IS_DIVORCE, caseData.isDivorce());
         templateContent.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
-        templateContent.put(FINAL_ORDER_OVERDUE_DATE, caseData.getFinalOrder().getDateFinalOrderEligibleFrom().plusMonths(12)
+        templateContent.put(FINAL_ORDER_OVERDUE_DATE, caseData.getConditionalOrder().getGrantedDate().plusMonths(12)
                 .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         templateContent.put(PARTNER, getPartnerInfo(caseData,applicant,applicant.getLanguagePreference()));
 
