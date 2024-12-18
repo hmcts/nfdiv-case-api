@@ -125,7 +125,7 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
-        templateVars.put(ISSUE_DATE_PLUS_37_DAYS, ""); // Why is this here?? Should it be populated or removed?
+        templateVars.put(ISSUE_DATE_PLUS_37_DAYS, "");
         templateVars.put(ISSUE_DATE_PLUS_141_DAYS,
             caseData.getApplication().getIssueDate().plusDays(holdingOffsetDays).format(DATE_TIME_FORMATTER));
         templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));

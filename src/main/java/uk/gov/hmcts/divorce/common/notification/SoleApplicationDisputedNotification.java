@@ -137,7 +137,7 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
 
         templateVars.put(ISSUE_DATE_PLUS_37_DAYS,
             caseData.getApplication().getIssueDate().plusDays(disputeDueDateOffsetDays).format(DATE_TIME_FORMATTER));
-        templateVars.put(ISSUE_DATE_PLUS_141_DAYS, ""); // Why is this here?? Should it be populated or removed?
+        templateVars.put(ISSUE_DATE_PLUS_141_DAYS, "");
         templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(
