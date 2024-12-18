@@ -40,12 +40,16 @@ public class SendAosResponseLetterPackToApplicant implements CaseTask {
                 ? aosResponseAwaitingConditionalOrderDocumentPack.getDocumentPack(caseData, caseData.getApplicant1())
                 : aosResponseDocumentPack.getDocumentPack(caseData, caseData.getApplicant1());
 
+            final var letterId = caseDetails.getState() == AwaitingConditionalOrder && !caseDetails.getData().isJudicialSeparationCase()
+                ? aosResponseAwaitingConditionalOrderDocumentPack.getLetterId()
+                : aosResponseDocumentPack.getLetterId();
+
             letterPrinter.sendLetters(
                 caseData,
                 caseId,
                 caseData.getApplicant1(),
                 documentPack,
-                aosResponseDocumentPack.getLetterId()
+                letterId
             );
 
         } else {
