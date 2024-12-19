@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitJointApplicationService;
 
 import java.time.LocalDate;
@@ -38,9 +39,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDiv
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -55,6 +53,9 @@ class CitizenSubmitApplicationTest {
 
     @Mock
     private PaymentService paymentService;
+
+    @Mock
+    private PaymentSetupService paymentSetupService;
 
     @Mock
     private SubmissionService submissionService;
@@ -119,17 +120,11 @@ class CitizenSubmitApplicationTest {
         caseDetails.setId(caseId);
         var orderSummary = orderSummary();
 
-        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE))
+        when(paymentSetupService.createApplicationFeeOrderSummary(caseData, TEST_CASE_ID))
             .thenReturn(orderSummary());
 
-        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE))
-            .thenReturn(orderSummary());
-
-        when(paymentService.createServiceRequestReference(
-            System.getenv().getOrDefault("CASE_API_URL", "http://localhost:4013") + PAYMENT_UPDATE_PATH,
-            caseId,
-            caseData.getApplicant1().getFullName(),
-            orderSummary
+        when(paymentSetupService.createApplicationFeeServiceRequest(
+            caseData, caseId, caseData.getCitizenPaymentCallbackUrl()
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
@@ -138,7 +133,7 @@ class CitizenSubmitApplicationTest {
         assertThat(response.getData().getApplication().getApplicationFeeOrderSummary()).isEqualTo(orderSummary);
         assertThat(response.getData().getApplication().getApplicationFeeServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
 
-        verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
+        verify(paymentSetupService).createApplicationFeeOrderSummary(caseData, caseId);
     }
 
     @Test
@@ -160,14 +155,11 @@ class CitizenSubmitApplicationTest {
 
         var orderSummary = orderSummary();
 
-        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE))
+        when(paymentSetupService.createApplicationFeeOrderSummary(caseData, TEST_CASE_ID))
             .thenReturn(orderSummary());
 
-        when(paymentService.createServiceRequestReference(
-            System.getenv().getOrDefault("CASE_API_URL", "http://localhost:4013") + PAYMENT_UPDATE_PATH,
-            caseId,
-            caseData.getApplicant1().getFullName(),
-            orderSummary
+        when(paymentSetupService.createApplicationFeeServiceRequest(
+            caseData, caseId, caseData.getCitizenPaymentCallbackUrl()
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
@@ -176,7 +168,7 @@ class CitizenSubmitApplicationTest {
         assertThat(response.getData().getApplication().getApplicationFeeOrderSummary()).isEqualTo(orderSummary);
         assertThat(response.getData().getApplication().getApplicationFeeServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
 
-        verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
+        verify(paymentSetupService).createApplicationFeeOrderSummary(caseData, caseId);
     }
 
     @Test

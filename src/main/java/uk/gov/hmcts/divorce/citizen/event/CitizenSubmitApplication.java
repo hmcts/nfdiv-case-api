@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 
 import java.util.List;
 
@@ -29,9 +29,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateReadyForPayment;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
 
 @Slf4j
 @Component
@@ -40,7 +37,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
     public static final String CITIZEN_SUBMIT = "citizen-submit-application";
 
     @Autowired
-    private PaymentService paymentService;
+    private PaymentSetupService paymentSetupService;
 
     @Autowired
     private SubmissionService submissionService;
@@ -90,11 +87,9 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             data = submittedDetails.getData();
             state = submittedDetails.getState();
         } else {
-            OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE,
-                EVENT_ISSUE,KEYWORD_DIVORCE);
-            application.setApplicationFeeOrderSummary(orderSummary);
-
-            setServiceRequestReferenceForApplicationPayment(data, details.getId());
+            prepareCaseDataForApplicationPayment(
+                details.getData(), details.getId(), details.getData().getCitizenPaymentCallbackUrl()
+            );
 
             state = AwaitingPayment;
         }
@@ -108,18 +103,14 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             .build();
     }
 
-    public void setServiceRequestReferenceForApplicationPayment(CaseData data, long caseId) {
-        final Application application = data.getApplication();
+    public void prepareCaseDataForApplicationPayment(CaseData data, long caseId, String redirectUrl) {
+        Application application = data.getApplication();
 
-        final String serviceRequestReference = paymentService.createServiceRequestReference(
-            System.getenv().getOrDefault("CASE_API_URL", "http://localhost:4013") + PAYMENT_UPDATE_PATH,
-            caseId,
-            data.getApplicant1().getFullName(),
-            application.getApplicationFeeOrderSummary()
-        );
+        OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(data, caseId);
+        application.setApplicationFeeOrderSummary(orderSummary);
 
-        application.setApplicationFeeServiceRequestReference(serviceRequestReference);
+        String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(data, caseId, redirectUrl);
+        application.setApplicationFeeServiceRequestReference(serviceRequest);
     }
-
 }
 

@@ -15,14 +15,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 
@@ -32,7 +29,7 @@ public class RespondentApplyForFinalOrderTest {
     private ApplyForFinalOrderService applyForFinalOrderService;
 
     @Mock
-    private PaymentService paymentService;
+    private PaymentSetupService paymentSetupService;
 
     @InjectMocks
     private RespondentApplyForFinalOrder respondentApplyForFinalOrder;
@@ -55,12 +52,11 @@ public class RespondentApplyForFinalOrderTest {
         final var orderSummary = orderSummary();
         caseDetails.setId(caseId);
 
-        when(paymentService.getOrderSummaryByServiceEvent(
-            SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE
-        )).thenReturn(orderSummary);
+        when(paymentSetupService.createFinalOrderFeeOrderSummary(caseData, TEST_CASE_ID))
+            .thenReturn(orderSummary);
 
-        when(paymentService.createServiceRequestReference(
-            null, caseId, caseData.getApplicant2().getFullName(), orderSummary
+        when(paymentSetupService.createFinalOrderFeeServiceRequest(
+            caseData, caseId, null, orderSummary
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
 
