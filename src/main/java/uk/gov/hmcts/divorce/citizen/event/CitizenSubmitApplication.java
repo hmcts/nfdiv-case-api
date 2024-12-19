@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
+import static uk.gov.hmcts.divorce.controller.PaymentCallbackController.PAYMENT_UPDATE_PATH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
@@ -87,7 +88,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             state = submittedDetails.getState();
         } else {
             prepareCaseDataForApplicationPayment(
-                details.getData(), details.getId(), details.getData().getCitizenPaymentCallbackUrl()
+                details.getData(), details.getId()
             );
 
             state = AwaitingPayment;
@@ -102,13 +103,13 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             .build();
     }
 
-    public void prepareCaseDataForApplicationPayment(CaseData data, long caseId, String redirectUrl) {
+    public void prepareCaseDataForApplicationPayment(CaseData data, long caseId) {
         Application application = data.getApplication();
 
         OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(data, caseId);
         application.setApplicationFeeOrderSummary(orderSummary);
 
-        String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(data, caseId, redirectUrl);
+        String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(data, caseId);
         application.setApplicationFeeServiceRequestReference(serviceRequest);
     }
 }

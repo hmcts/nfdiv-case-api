@@ -40,9 +40,6 @@ public class SystemNotifyRespondentApplyFinalOrder implements CCDConfig<CaseData
 
     private final PaymentSetupService paymentSetupService;
 
-    @Value("${idam.client.redirect_uri}")
-    private String redirectUrl;
-
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -83,7 +80,7 @@ public class SystemNotifyRespondentApplyFinalOrder implements CCDConfig<CaseData
         OrderSummary orderSummary = paymentSetupService.createFinalOrderFeeOrderSummary(data, caseId);
 
         String serviceRequest = paymentSetupService.createFinalOrderFeeServiceRequest(
-            data, caseId, redirectUrl, orderSummary
+            data, caseId, orderSummary
         );
 
         finalOrder.setApplicant2FinalOrderFeeOrderSummary(orderSummary);

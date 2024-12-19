@@ -332,7 +332,7 @@ uk:
             REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS: '107dfd07-7745-4bb8-abc6-11c9ba19e691'
             NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: 'cfeb62ee-7f2c-4612-bf87-35205ccb26b5'
 s2s-authorised:
-  services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
+  services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator,payment_app}
 
 idam:
   s2s-auth:
