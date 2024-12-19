@@ -76,7 +76,7 @@ public class PaymentSetupServiceTest {
                 .build()
         );
 
-        String response = paymentSetupService.createApplicationFeeServiceRequest(caseData, TEST_CASE_ID, null);
+        String response = paymentSetupService.createApplicationFeeServiceRequest(caseData, TEST_CASE_ID);
 
         verify(paymentService, never()).createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
         assertThat(response).isEqualTo(TEST_SERVICE_REFERENCE);
@@ -96,7 +96,7 @@ public class PaymentSetupServiceTest {
         when(paymentService.createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary))
             .thenReturn(TEST_SERVICE_REFERENCE);
 
-        String response = paymentSetupService.createApplicationFeeServiceRequest(caseData, TEST_CASE_ID, null);
+        String response = paymentSetupService.createApplicationFeeServiceRequest(caseData, TEST_CASE_ID);
 
         verify(paymentService).createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
         assertThat(response).isEqualTo(TEST_SERVICE_REFERENCE);
@@ -145,7 +145,7 @@ public class PaymentSetupServiceTest {
                 .build()
         );
 
-        String response = paymentSetupService.createFinalOrderFeeServiceRequest(caseData, TEST_CASE_ID, null, orderSummary);
+        String response = paymentSetupService.createFinalOrderFeeServiceRequest(caseData, TEST_CASE_ID, orderSummary);
 
         verify(paymentService, never()).createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
         assertThat(response).isEqualTo(TEST_SERVICE_REFERENCE);
@@ -165,7 +165,7 @@ public class PaymentSetupServiceTest {
         when(paymentService.createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary))
             .thenReturn(TEST_SERVICE_REFERENCE);
 
-        String response = paymentSetupService.createFinalOrderFeeServiceRequest(caseData, TEST_CASE_ID, null, orderSummary);
+        String response = paymentSetupService.createFinalOrderFeeServiceRequest(caseData, TEST_CASE_ID, orderSummary);
 
         verify(paymentService).createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
         assertThat(response).isEqualTo(TEST_SERVICE_REFERENCE);

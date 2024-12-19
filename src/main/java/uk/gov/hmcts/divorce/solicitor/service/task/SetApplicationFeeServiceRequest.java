@@ -16,9 +16,6 @@ public class SetApplicationFeeServiceRequest implements CaseTask {
 
     private final PaymentSetupService paymentSetupService;
 
-    @Value("${idam.client.redirect_uri}")
-    private String redirectUrl;
-
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> details) {
         var data = details.getData();
@@ -30,7 +27,7 @@ public class SetApplicationFeeServiceRequest implements CaseTask {
         application.setApplicationFeeOrderSummary(orderSummary);
 
         String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
-            data, details.getId(), redirectUrl
+            data, details.getId()
         );
         application.setApplicationFeeServiceRequestReference(serviceRequest);
 

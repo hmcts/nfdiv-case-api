@@ -26,9 +26,6 @@ public class SolPayment implements CcdPageConfiguration {
     private final PbaService pbaService;
     private final PaymentSetupService paymentSetupService;
 
-    @Value("${idam.client.redirect_uri}")
-    private String redirectUrl;
-
     @Override
     public void addTo(final PageBuilder pageBuilder) {
 
@@ -71,7 +68,7 @@ public class SolPayment implements CcdPageConfiguration {
             application.setPbaNumbers(pbaNumbersDynamicList);
 
             String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
-                caseData, caseId, redirectUrl
+                caseData, caseId
             );
             application.setApplicationFeeServiceRequestReference(serviceRequest);
 
