@@ -96,7 +96,7 @@ class SystemNotifyRespondentApplyFinalOrderTest {
         when(paymentSetupService.createFinalOrderFeeOrderSummary(caseData, TEST_CASE_ID))
             .thenReturn(orderSummary);
 
-        when(paymentSetupService.createFinalOrderFeeServiceRequest(caseData, TEST_CASE_ID, null, orderSummary))
+        when(paymentSetupService.createFinalOrderFeeServiceRequest(caseData, TEST_CASE_ID, orderSummary))
             .thenReturn(TEST_SERVICE_REFERENCE);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =

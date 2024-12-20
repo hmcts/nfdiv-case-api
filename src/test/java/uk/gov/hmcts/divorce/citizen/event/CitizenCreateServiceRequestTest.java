@@ -55,7 +55,7 @@ class CitizenCreateServiceRequestTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        when(paymentSetupService.createApplicationFeeServiceRequest(caseData, caseId, TEST_PAYMENT_CALLBACK_URL))
+        when(paymentSetupService.createApplicationFeeServiceRequest(caseData, caseId))
             .thenReturn(TEST_SERVICE_REFERENCE);
 
         var response = citizenCreateServiceRequest.aboutToSubmit(caseDetails, caseDetails);
@@ -76,7 +76,7 @@ class CitizenCreateServiceRequestTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        when(paymentSetupService.createFinalOrderFeeServiceRequest(caseData, TEST_CASE_ID, TEST_PAYMENT_CALLBACK_URL, orderSummary))
+        when(paymentSetupService.createFinalOrderFeeServiceRequest(caseData, TEST_CASE_ID, orderSummary))
             .thenReturn(TEST_SERVICE_REFERENCE);
 
         var response = citizenCreateServiceRequest.aboutToSubmit(caseDetails, caseDetails);

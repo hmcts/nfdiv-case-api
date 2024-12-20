@@ -27,9 +27,6 @@ public class SolFinalOrderPayment implements CcdPageConfiguration {
 
     private final PaymentSetupService paymentSetupService;
 
-    @Value("${idam.client.redirect_uri}")
-    private String redirectUrl;
-
     @Override
     public void addTo(final PageBuilder pageBuilder) {
 
@@ -74,7 +71,7 @@ public class SolFinalOrderPayment implements CcdPageConfiguration {
             finalOrder.setFinalOrderPbaNumbers(pbaNumbersDynamicList);
 
             String serviceRequest = paymentSetupService.createFinalOrderFeeServiceRequest(
-                caseData, caseId, redirectUrl, finalOrder.getApplicant2SolFinalOrderFeeOrderSummary()
+                caseData, caseId, finalOrder.getApplicant2SolFinalOrderFeeOrderSummary()
             );
             finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequest);
 
