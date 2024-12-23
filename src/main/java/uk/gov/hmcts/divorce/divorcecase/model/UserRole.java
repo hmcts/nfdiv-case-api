@@ -16,6 +16,7 @@ public enum UserRole implements HasRole {
     SYSTEMUPDATE("caseworker-divorce-systemupdate", "CRUD"),
     JUDGE("caseworker-divorce-judge", "CRU"),
     NOC_APPROVER("caseworker-approver", "CRU"),
+    RPA_ROBOT("caseworker-divorce-rparobot", "CRU"),
 
     SOLICITOR("caseworker-divorce-solicitor", "CRU"),
     APPLICANT_1_SOLICITOR("[APPONESOLICITOR]", "CRU"),

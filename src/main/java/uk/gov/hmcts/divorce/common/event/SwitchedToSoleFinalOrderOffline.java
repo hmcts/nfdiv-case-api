@@ -75,7 +75,7 @@ public class SwitchedToSoleFinalOrderOffline implements CCDConfig<CaseData, Stat
             switchToSoleService.switchApplicantData(caseData);
             if (!caseData.getApplication().isPaperCase()) {
                 log.info("Request made via paper to switch to sole for online case id: {}", caseId);
-                switchToSoleService.switchUserRoles(caseData, caseId);
+                switchToSoleService.switchUserRoles(beforeDetails.getData(), caseId);
             }
         }
 

@@ -60,6 +60,7 @@ public class CftLibConfig implements CFTLibConfigurer {
             "citizen",
             "caseworker-divorce",
             "caseworker",
+            "caseworker-divorce-rparobot",
             "payments",
             "pui-case-manager",
             "pui-finance-manager",
