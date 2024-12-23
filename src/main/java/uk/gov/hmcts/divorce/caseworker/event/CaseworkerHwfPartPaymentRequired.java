@@ -15,6 +15,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHWFDecision;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -30,7 +33,15 @@ public class CaseworkerHwfPartPaymentRequired implements CCDConfig<CaseData, Sta
         new PageBuilder(configBuilder
             .event(CASEWORKER_HWF_PART_PAYMENT_REQUIRED)
             .forStateTransition(
-                EnumSet.of(AwaitingDocuments, AwaitingHWFEvidence, AwaitingHWFDecision, AwaitingResponseToHWFDecision),
+                EnumSet.of(
+                    AwaitingDocuments,
+                    AwaitingRequestedInformation,
+                    InformationRequested,
+                    RequestedInformationSubmitted,
+                    AwaitingHWFEvidence,
+                    AwaitingHWFDecision,
+                    AwaitingResponseToHWFDecision
+                ),
                 AwaitingHWFPartPayment
             )
             .name("HWF part payment required")

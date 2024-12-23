@@ -132,7 +132,12 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                 );
 
                 if (response.getHttpStatus() == CREATED) {
-                    caseData.updateCaseDataWithPaymentDetails(applicationFeeOrderSummary, caseData, response.getPaymentReference());
+                    caseData.updateCaseDataWithPaymentDetails(
+                        applicationFeeOrderSummary,
+                        caseData,
+                        response.getPaymentReference(),
+                        caseData.getApplication().getApplicationFeeServiceRequestReference()
+                    );
                 } else {
                     return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                         .data(details.getData())

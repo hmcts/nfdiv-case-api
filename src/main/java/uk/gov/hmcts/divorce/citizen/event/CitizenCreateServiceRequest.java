@@ -7,7 +7,10 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+<<<<<<< HEAD
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+=======
+>>>>>>> master
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
@@ -49,7 +52,7 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
 
         final State state = details.getState();
 
-        if (AwaitingPayment.equals(state) || AwaitingResponseToHWFDecision.equals(state)) {
+        if (AwaitingPayment.equals(state)  || AwaitingResponseToHWFDecision.equals(state)) {
             prepareServiceRequestForApplicationPayment(details.getData(), details.getId());
         } else if (AwaitingFinalOrderPayment.equals(state)) {
             prepareServiceRequestForFinalOrderPayment(details.getData(), details.getId());

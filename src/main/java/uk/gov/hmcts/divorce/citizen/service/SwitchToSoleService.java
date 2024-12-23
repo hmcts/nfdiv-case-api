@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.Document;
@@ -188,6 +189,10 @@ public class SwitchToSoleService {
                                      final String s2sToken,
                                      final String userId,
                                      final UserRole role) {
+        if (StringUtils.isEmpty(userId)) {
+            log.info("Switch to sole User ID is empty, skipping {} role removal for case {}", role, caseId);
+            return;
+        }
 
         caseAssignmentApi.removeCaseUserRoles(
             auth,
@@ -201,6 +206,11 @@ public class SwitchToSoleService {
                                   final String s2sToken,
                                   final String userId,
                                   final UserRole role) {
+
+        if (StringUtils.isEmpty(userId)) {
+            log.info("Switch to sole User ID is empty, skipping {} role grant for case {}", role, caseId);
+            return;
+        }
 
         caseAssignmentApi.addCaseUserRoles(
             auth,
