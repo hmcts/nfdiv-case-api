@@ -73,8 +73,6 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         log.info("Applying notice of change for case id: {}", details.getId());
 
-        String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
-        String s2sToken = authTokenGenerator.generate();
         var changeOrganisationRequest = details.getData().getChangeOrganisationRequestField();
         boolean isApplicant1 = APPLICANT_1_SOLICITOR.getRole().equals(changeOrganisationRequest.getCaseRoleId().getRole());
         CaseData caseData = details.getData();
@@ -87,6 +85,9 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         resetConditionalOrderFields(caseData);
 
         caseFlagsService.resetSolicitorCaseFlags(caseData, isApplicant1);
+
+        String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
+        String s2sToken = authTokenGenerator.generate();
 
         AboutToStartOrSubmitCallbackResponse response =
             assignCaseAccessClient.applyNoticeOfChange(sysUserToken, s2sToken, acaRequest(details));
