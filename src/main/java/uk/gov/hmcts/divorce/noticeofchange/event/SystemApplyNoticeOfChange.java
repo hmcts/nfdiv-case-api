@@ -86,6 +86,8 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
                 SOLICITOR_NOTICE_OF_CHANGE.getValue(), isApplicant1);
         resetConditionalOrderFields(caseData);
 
+        caseFlagsService.resetSolicitorCaseFlags(caseData, isApplicant1);
+
         AboutToStartOrSubmitCallbackResponse response =
             assignCaseAccessClient.applyNoticeOfChange(sysUserToken, s2sToken, acaRequest(details));
 
@@ -93,7 +95,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         List<String> responseErrors = response.getErrors();
 
         if (Objects.nonNull(responseErrors) && !responseErrors.isEmpty()) {
-            log.info("Notice of change failed with the following error(s) for CaseID {}:", details.getId());
+            log.info(NOTICE_OF_CHANGE_FAILED_ERROR, details.getId());
             responseErrors.forEach(log::info);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -104,8 +106,6 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         }
 
         CaseData responseData = objectMapper.convertValue(data, CaseData.class);
-
-        caseFlagsService.resetSolicitorCaseFlags(responseData, isApplicant1);
 
         try {
             notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, caseData,

@@ -176,7 +176,6 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
 
         NoticeType noticeType = calculateNoticeType(applicant, beforeApplicant);
 
-        //Resetting case flags for solicitor when the event is run (as agreed by service)
         caseFlagsService.resetSolicitorCaseFlags(data, isApplicant1);
 
         noticeType.applyNoticeOfChange(applicant,

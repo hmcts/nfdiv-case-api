@@ -48,10 +48,10 @@ public class CaseworkerCreateCaseFlag implements CCDConfig<CaseData, State, User
             .pageLabel("Create flags")
             .optional(CaseData::getCaseFlags, ALWAYS_HIDE, true, true)
             .complex(CaseData::getPartyFlags)
-            .optional(PartyFlags::getApplicant1Flags, ALWAYS_HIDE, true, true)
-            .optional(PartyFlags::getApplicant2Flags, ALWAYS_HIDE, true, true)
-            .optional(PartyFlags::getApplicant1SolicitorFlags, ALWAYS_HIDE, true, true)
-            .optional(PartyFlags::getApplicant2SolicitorFlags, ALWAYS_HIDE, true, true)
+                .optional(PartyFlags::getApplicant1Flags, ALWAYS_HIDE, true, true)
+                .optional(PartyFlags::getApplicant2Flags, ALWAYS_HIDE, true, true)
+                .optional(PartyFlags::getApplicant1SolicitorFlags, ALWAYS_HIDE, true, true)
+                .optional(PartyFlags::getApplicant2SolicitorFlags, ALWAYS_HIDE, true, true)
             .done()
             .optional(CaseData::getInternalFlagLauncher,
                 null, null, null, null, "#ARGUMENT(CREATE,VERSION2.1)");
