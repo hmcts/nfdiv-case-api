@@ -18,7 +18,6 @@ import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
-import static uk.gov.hmcts.divorce.controller.PaymentCallbackController.PAYMENT_UPDATE_PATH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;

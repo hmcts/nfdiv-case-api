@@ -62,9 +62,7 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
     private void prepareServiceRequestForApplicationPayment(CaseData data, long caseId) {
         Application application = data.getApplication();
 
-        String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
-            data, caseId
-        );
+        String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(data, caseId);
 
         application.setApplicationFeeServiceRequestReference(serviceRequest);
     }

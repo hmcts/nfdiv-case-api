@@ -34,7 +34,6 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
-import static uk.gov.hmcts.divorce.controller.PaymentCallbackController.PAYMENT_UPDATE_PATH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;

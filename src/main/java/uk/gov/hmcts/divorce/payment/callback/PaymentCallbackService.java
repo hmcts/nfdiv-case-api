@@ -59,13 +59,10 @@ public class PaymentCallbackService {
     }
 
     private String paymentMadeEvent(State state) {
-        switch(state) {
-            case AwaitingPayment:
-                return CITIZEN_PAYMENT_MADE;
-            case AwaitingFinalOrderPayment:
-                return RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
-            default:
-                return null;
-        }
+        return switch (state) {
+            case AwaitingPayment -> CITIZEN_PAYMENT_MADE;
+            case AwaitingFinalOrderPayment -> RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
+            default -> null;
+        };
     }
 }

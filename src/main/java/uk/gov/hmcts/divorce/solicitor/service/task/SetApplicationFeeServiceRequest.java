@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.service.task;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
