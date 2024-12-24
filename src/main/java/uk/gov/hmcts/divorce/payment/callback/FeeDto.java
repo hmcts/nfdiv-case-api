@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.controller.dto;
+package uk.gov.hmcts.divorce.payment.callback;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;

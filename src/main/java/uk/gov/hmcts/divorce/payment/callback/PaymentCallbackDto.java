@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.controller.dto;
+package uk.gov.hmcts.divorce.payment.callback;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -25,7 +25,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class PaymentDto {
+public class PaymentCallbackDto {
 
     private String id;
 
