@@ -21,6 +21,7 @@ import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
+import static uk.gov.hmcts.divorce.payment.PaymentSetupService.PAYMENT_CALLBACK_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
@@ -78,7 +79,7 @@ public class PaymentSetupServiceTest {
 
         String response = paymentSetupService.createApplicationFeeServiceRequest(caseData, TEST_CASE_ID);
 
-        verify(paymentService, never()).createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
+        verify(paymentService, never()).createServiceRequestReference(PAYMENT_CALLBACK_URL, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
         assertThat(response).isEqualTo(TEST_SERVICE_REFERENCE);
     }
 
@@ -93,12 +94,12 @@ public class PaymentSetupServiceTest {
                 .build()
         );
 
-        when(paymentService.createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary))
+        when(paymentService.createServiceRequestReference(PAYMENT_CALLBACK_URL, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary))
             .thenReturn(TEST_SERVICE_REFERENCE);
 
         String response = paymentSetupService.createApplicationFeeServiceRequest(caseData, TEST_CASE_ID);
 
-        verify(paymentService).createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
+        verify(paymentService).createServiceRequestReference(PAYMENT_CALLBACK_URL, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
         assertThat(response).isEqualTo(TEST_SERVICE_REFERENCE);
     }
 
@@ -147,7 +148,7 @@ public class PaymentSetupServiceTest {
 
         String response = paymentSetupService.createFinalOrderFeeServiceRequest(caseData, TEST_CASE_ID, orderSummary);
 
-        verify(paymentService, never()).createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
+        verify(paymentService, never()).createServiceRequestReference(PAYMENT_CALLBACK_URL, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
         assertThat(response).isEqualTo(TEST_SERVICE_REFERENCE);
     }
 
@@ -162,12 +163,12 @@ public class PaymentSetupServiceTest {
                 .build()
         );
 
-        when(paymentService.createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary))
+        when(paymentService.createServiceRequestReference(PAYMENT_CALLBACK_URL, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary))
             .thenReturn(TEST_SERVICE_REFERENCE);
 
         String response = paymentSetupService.createFinalOrderFeeServiceRequest(caseData, TEST_CASE_ID, orderSummary);
 
-        verify(paymentService).createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
+        verify(paymentService).createServiceRequestReference(PAYMENT_CALLBACK_URL, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
         assertThat(response).isEqualTo(TEST_SERVICE_REFERENCE);
     }
 }
