@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -46,6 +47,7 @@ import static java.lang.Integer.parseInt;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.CasePaymentHistoryViewer;
@@ -67,6 +69,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.REQUEST_FOR_INFORMATION_RESPONSE_DOC;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
@@ -325,6 +328,20 @@ public class CaseData {
     @Builder.Default
     private SentNotifications sentNotifications = new SentNotifications();
 
+    @JsonUnwrapped
+    @Builder.Default
+    private RequestForInformationList requestForInformationList = new RequestForInformationList();
+
+    @CCD(
+        label = "Case matches",
+        typeOverride = Collection,
+        typeParameterOverride = "CaseMatch",
+        access = {CaseworkerAccess.class}
+    )
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
+    @Builder.Default
+    private List<ListValue<CaseMatch>> caseMatches = new ArrayList<>();
+
     @JsonIgnore
     public String formatCaseRef(long caseId) {
         String temp = String.format("%016d", caseId);
@@ -473,13 +490,15 @@ public class CaseData {
     public void updateCaseDataWithPaymentDetails(
         OrderSummary applicationFeeOrderSummary,
         CaseData caseData,
-        String paymentReference
+        String paymentReference,
+        String serviceRequest
     ) {
         var payment = Payment
             .builder()
             .amount(parseInt(applicationFeeOrderSummary.getPaymentTotal()))
             .channel("online")
             .feeCode(applicationFeeOrderSummary.getFees().get(0).getValue().getCode())
+            .serviceRequestReference(serviceRequest)
             .reference(paymentReference)
             .status(SUCCESS)
             .build();
@@ -569,6 +588,19 @@ public class CaseData {
             finalOrder.setScannedD36Form(divorceDocument.getDocumentLink());
             finalOrder.setDateD36FormScanned(scannedDocument.getScannedDate());
         }
+
+        if (REQUEST_FOR_INFORMATION_RESPONSE_DOC.equals(documentType)) {
+            RequestForInformationOfflineResponseDraft offlineDraft =
+                this.getRequestForInformationList().getRequestForInformationOfflineResponseDraft();
+            offlineDraft.addDocument(divorceDocument);
+        }
+    }
+
+    @JsonIgnore
+    public <T> List<T> fromListValueToList(final List<ListValue<T>> targetList) {
+        return targetList.stream()
+            .map(ListValue::getValue)
+            .collect(toList());
     }
 
     @JsonIgnore
@@ -583,7 +615,7 @@ public class CaseData {
 
         final ListValue<GeneralApplication> generalApplicationListValue = ListValue.<GeneralApplication>builder()
             .id(UUID.randomUUID().toString())
-            .value(generalApplication)
+            .value(generalApplication.toBuilder().build())
             .build();
 
         if (isNull(this.getGeneralApplications())) {
@@ -591,5 +623,7 @@ public class CaseData {
         } else {
             this.getGeneralApplications().add(0, generalApplicationListValue);
         }
+
+        generalApplication.setGeneralApplicationTypeOtherComments(null);
     }
 }

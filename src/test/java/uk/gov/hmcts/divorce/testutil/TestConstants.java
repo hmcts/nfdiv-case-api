@@ -14,6 +14,8 @@ public final class TestConstants {
     public static final String TEST_FIRST_NAME = "test_first_name";
     public static final String TEST_MIDDLE_NAME = "test_middle_name";
     public static final String TEST_LAST_NAME = "test_last_name";
+    public static final String TEST_OTHER_NAME = "test_other_name";
+    public static final String TEST_OTHER_EMAIL = "test_other@test.com";
     public static final String TEST_APP2_FIRST_NAME = "test_app2_first_name";
     public static final String TEST_APP2_MIDDLE_NAME = "test_app2_middle_name";
     public static final String TEST_APP2_LAST_NAME = "test_app2_last_name";
@@ -33,6 +35,7 @@ public final class TestConstants {
     public static final String APP2_SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_URL =
         "/callbacks/mid-event?page=Applicant2SolUpdateContactDetails";
     public static final String CREATE_GENERAL_ORDER_MID_EVENT_URL = "/callbacks/mid-event?page=CreateGeneralOrder";
+    public static final String GENERAL_APPLICATION_SELECT_FEE_MID_EVENT_URL = "/callbacks/mid-event?page=generalApplicationSelectFeeType";
     public static final String CO_REFUSAL_ORDER_WITH_MORE_INFO_MID_EVENT_URL = "/callbacks/mid-event?page=refusalOrderClarification";
     public static final String CO_REFUSAL_ORDER_WITH_AMENDMENTS_MID_EVENT_URL = "/callbacks/mid-event?page=amendApplication";
 
@@ -55,6 +58,8 @@ public final class TestConstants {
     public static final String APP_2_CITIZEN_USER_ID = "3";
     public static final String SYSTEM_USER_USER_ID = "4";
     public static final String SUPER_USER_USER_ID = "5";
+    public static final String TEST_SERVICE_REFERENCE = "test-service-reference";
+    public static final String TEST_PAYMENT_CALLBACK_URL = "/payment-callback";
 
     public static final String TEST_SOL_USER_EMAIL = "testsol@test.com";
     public static final String TEST_APPLICANT_2_EMAIL = "testsol@test.com";
@@ -100,6 +105,10 @@ public final class TestConstants {
     public static final String TEST_FINANCIAL_ORDER_POLICY_HEADER_TEXT = "The applicant wants to apply for a financial order.";
     public static final String TEST_FINANCIAL_ORDER_POLICY_HINT_TEXT = "A financial order is a legal document that describes how the "
         + "money and property will be divided. The application will be done separately.";
+
+    public static final String TEST_TEXT = "Test";
+
+    public static final String SMART_SURVEY_TEST_URL = "smartSurveyTestUrl";
 
     private TestConstants() {
     }

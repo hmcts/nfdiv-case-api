@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.math.BigDecimal;
@@ -29,9 +29,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
 @Component
 @Slf4j
@@ -40,7 +37,7 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
 
     public static final String RESPONDENT_APPLY_FINAL_ORDER = "respondent-apply-final-order";
 
-    private final PaymentService paymentService;
+    private final PaymentSetupService paymentSetupService;
 
     private final ApplyForFinalOrderService applyForFinalOrderService;
 
@@ -98,15 +95,21 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
         FinalOrder finalOrder
     ) {
         log.info("Setting Order Summary for Respondent Final Order for Case Id: {}", details.getId());
+        final CaseData data = details.getData();
+        final long caseId = details.getId();
 
-        final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
+        final OrderSummary orderSummary = paymentSetupService.createFinalOrderFeeOrderSummary(data, caseId);
         finalOrder.setApplicant2FinalOrderFeeOrderSummary(orderSummary);
-
         finalOrder.setApplicant2FinalOrderFeeInPounds(
             NumberFormat.getNumberInstance().format(new BigDecimal(
                 orderSummary.getPaymentTotal()).movePointLeft(2)
             )
         );
+
+        String serviceRequest = paymentSetupService.createFinalOrderFeeServiceRequest(
+            data, caseId, data.getCitizenPaymentCallbackUrl(), orderSummary
+        );
+        finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequest);
 
         details.setState(AwaitingFinalOrderPayment);
 

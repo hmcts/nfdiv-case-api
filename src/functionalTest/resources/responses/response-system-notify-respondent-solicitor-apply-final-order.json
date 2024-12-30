@@ -1,0 +1,83 @@
+{
+  "data": {
+    "accessCode": "",
+    "applicant1ContactDetailsType": "private",
+    "applicant1Email": "simulate-delivered2@notifications.service.gov.uk",
+    "applicant1FinancialOrder": "No",
+    "applicant1FirstName": "test_first_name_male",
+    "applicant1Gender": "male",
+    "applicant1Address": {},
+    "sentNotifications": {},
+    "changeOfRepresentatives": [],
+    "coCronRetriesRemindApplicantApplyCo": 0,
+    "applicant1LanguagePreferenceWelsh": "No",
+    "applicant1LastName": "test_last_name",
+    "applicant1LegalProceedings": "Yes",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant1StatementOfTruth": "Yes",
+    "applicant2ContactDetailsType": "public",
+    "applicant2Email": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2FinancialOrder": "No",
+    "applicant2FirstName": "test_first_name_female",
+    "applicant2Gender": "female",
+    "applicant2Address": {},
+    "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
+    "applicant2LanguagePreferenceWelsh": "No",
+    "applicant2LastName": "test_last_name",
+    "applicant2MiddleName": "test_middle_name",
+    "applicant2PrayerDissolveDivorce": ["dissolveDivorce"],
+    "applicant2StatementOfTruth": "Yes",
+    "applicant2SolicitorRepresented": "Yes",
+    "applicant2SolicitorEmail": "testsol@test.com",
+    "applicant2SolicitorName": "The Solicitor",
+    "applicant2FinalOrderFeeOrderSummary": {
+      "Fees": [
+        {
+          "value": {
+            "FeeAmount": "${json-unit.any-string}",
+            "FeeCode": "${json-unit.any-string}",
+            "FeeDescription": "${json-unit.any-string}",
+            "FeeVersion": "${json-unit.any-string}"
+          }
+        }
+      ],
+      "PaymentTotal": "${json-unit.any-string}"
+    },
+    "applicant2SolFinalOrderFeeOrderSummary": {
+      "Fees": [
+        {
+          "value": {
+            "FeeAmount": "${json-unit.any-string}",
+            "FeeCode": "${json-unit.any-string}",
+            "FeeDescription": "${json-unit.any-string}",
+            "FeeVersion": "${json-unit.any-string}"
+          }
+        }
+      ],
+      "PaymentTotal": "${json-unit.any-string}"
+    },
+    "applicant2FinalOrderFeeServiceRequestReference": "${json-unit.any-string}",
+    "applicationType": "soleApplication",
+    "dataVersion": "${json-unit.any-number}",
+    "dateFinalOrderEligibleFrom": "2022-03-10",
+    "dateFinalOrderEligibleToRespondent": "2022-06-10",
+    "divorceOrDissolution": "dissolution",
+    "supplementaryCaseType": "notApplicable",
+    "documentUploadComplete": "Yes",
+    "dueDate": "2020-04-28",
+    "issueDate": "2020-05-28",
+    "jurisdictionApplicant1Residence": "Yes",
+    "jurisdictionApplicant2Residence": "Yes",
+    "jurisdictionConnections": [
+      "A"
+    ],
+    "marriageApplicant1Name": "test_first_name test_last_name",
+    "marriageApplicant2Name": "test_first_name test_last_name",
+    "marriageDate": "1990-06-10",
+    "marriagePlaceOfMarriage": "Somewhere",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "warnings": [],
+    "finalOrderReminderSentApplicant2": "Yes"
+  }
+}

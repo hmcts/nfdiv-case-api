@@ -189,7 +189,10 @@ public class CaseDocuments {
         D84NVA("D84NVA"),
 
         @JsonProperty("D36N")
-        D36N("D36N");
+        D36N("D36N"),
+
+        @JsonProperty("RFIR")
+        RFIR("RFIR");
 
         private final String label;
     }
@@ -206,6 +209,9 @@ public class CaseDocuments {
 
         @JsonProperty("D36")
         FO_D36("Application for a final order (D36)"),
+
+        @JsonProperty("RFIR")
+        RFI_RESPONSE("Request for Information Response"),
 
         @JsonProperty("Other")
         OTHER("Other");
@@ -275,6 +281,20 @@ public class CaseDocuments {
         return !after.stream()
             .allMatch(afterValue -> before.stream()
                 .anyMatch(beforeValue -> Objects.equals(beforeValue.getId(), afterValue.getId())));
+    }
+
+    public static <T> boolean hasDeletedDocuments(final List<ListValue<T>> after,
+                                                final List<ListValue<T>> before) {
+
+        if (isNull(after) && !before.isEmpty()) {
+            return true;
+        } else if (isNull(before)) {
+            return false;
+        }
+
+        return !before.stream()
+            .allMatch(beforeValue -> after.stream()
+                .anyMatch(afterValue -> Objects.equals(beforeValue.getId(), afterValue.getId())));
     }
 
     public static Optional<Document> getFirstDocumentLink(final List<ListValue<DivorceDocument>> documents,

@@ -146,14 +146,14 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
         templateVars.put(DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS,
             caseData.getFinalOrder().getDateFinalOrderEligibleToRespondent()
                     .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
-        templateVars.put(FINAL_ORDER_OVERDUE_DATE, caseData.getFinalOrder().getDateFinalOrderEligibleFrom().plusMonths(12)
+        templateVars.put(FINAL_ORDER_OVERDUE_DATE, caseData.getConditionalOrder().getGrantedDate().plusMonths(12)
             .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         return templateVars;
     }
 
     private Map<String, String> commonSolicitorTemplateVars(CaseData caseData, final Long id, Applicant applicant) {
 
-        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id);
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id, applicant.getLanguagePreference());
 
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData));
@@ -166,7 +166,7 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_SOLE, caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
-        templateVars.put(FINAL_ORDER_OVERDUE_DATE, caseData.getFinalOrder().getDateFinalOrderEligibleFrom().plusMonths(12)
+        templateVars.put(FINAL_ORDER_OVERDUE_DATE, caseData.getConditionalOrder().getGrantedDate().plusMonths(12)
             .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
 
         return templateVars;

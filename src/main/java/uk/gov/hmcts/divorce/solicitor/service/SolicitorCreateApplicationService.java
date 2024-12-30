@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.solicitor.service.task.InitialiseSolicitorCreatedApp
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicant1SolicitorAddress;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicantAddresses;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicantGender;
+import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicationFeeServiceRequest;
 import uk.gov.hmcts.divorce.solicitor.service.task.SolicitorCourtDetails;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -49,6 +50,9 @@ public class SolicitorCreateApplicationService {
     @Autowired
     private SetApplicantAddresses setApplicantAddresses;
 
+    @Autowired
+    private SetApplicationFeeServiceRequest setApplicationFeeServiceRequest;
+
     public CaseDetails<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> caseDetails) {
 
         return caseTasks(
@@ -57,7 +61,8 @@ public class SolicitorCreateApplicationService {
             solicitorCourtDetails,
             setApplicant1SolicitorAddress,
             divorceApplicationDraft,
-            setApplicantGender
+            setApplicantGender,
+            setApplicationFeeServiceRequest
         ).run(caseDetails);
     }
 

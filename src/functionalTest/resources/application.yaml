@@ -11,6 +11,8 @@ azure:
 
 test-url: ${TEST_URL:http://localhost:4013}
 
+report-email: ${REPORT_EMAIL:dummy}
+
 uk:
   gov:
     notify:
@@ -42,6 +44,9 @@ idam:
     id: 'divorce'
     secret: ${OAUTH2_CLIENT_SECRET:dummy}
     redirect_uri: ${IDAM_API_REDIRECT_URL:http://localhost:3001/oauth2/callback}
+  divorce:
+    username: ${IDAM_OLD_DIVORCE_USERNAME:dummysystemupdate@test.com}
+    password: ${IDAM_OLD_DIVORCE_PASSWORD:dummy}
 
 s2s-authorised:
   services: ccd_data
