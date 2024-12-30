@@ -87,15 +87,9 @@ public class PaymentCallbackServiceTest {
 
     @Test
     public void shouldNotProcessCallbackIfCaseNotAwaitingPayment() {
-        PaymentCallbackDto callback = PaymentCallbackDto.builder()
-            .status(PaymentStatus.SUCCESS.toString())
-            .method(PaymentMethodDto.CARD)
-            .ccdCaseNumber(TEST_CASE_ID.toString())
-            .build();
         CaseDetails caseDetails = CaseDetails.builder()
             .state(State.Submitted.toString())
             .build();
-
         var userDetails = UserInfo.builder().uid(SYSTEM_USER_USER_ID).build();
         User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, userDetails);
 
@@ -104,6 +98,11 @@ public class PaymentCallbackServiceTest {
         when(ccdApi.getCase(user.getAuthToken(), TEST_SERVICE_AUTH_TOKEN, TEST_CASE_ID.toString()))
             .thenReturn(caseDetails);
 
+        PaymentCallbackDto callback = PaymentCallbackDto.builder()
+            .status(PaymentStatus.SUCCESS.toString())
+            .method(PaymentMethodDto.CARD)
+            .ccdCaseNumber(TEST_CASE_ID.toString())
+            .build();
         paymentCallbackService.handleCallback(callback);
 
         verifyNoInteractions(ccdUpdateService);
@@ -111,15 +110,9 @@ public class PaymentCallbackServiceTest {
 
     @Test
     public void shouldProcessCitizenApplicationPaymentCallback() {
-        PaymentCallbackDto callback = PaymentCallbackDto.builder()
-            .status(PaymentStatus.SUCCESS.toString())
-            .method(PaymentMethodDto.CARD)
-            .ccdCaseNumber(TEST_CASE_ID.toString())
-            .build();
         CaseDetails caseDetails = CaseDetails.builder()
             .state(State.AwaitingPayment.toString())
             .build();
-
         var userDetails = UserInfo.builder().uid(SYSTEM_USER_USER_ID).build();
         User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, userDetails);
 
@@ -128,6 +121,11 @@ public class PaymentCallbackServiceTest {
         when(ccdApi.getCase(user.getAuthToken(), TEST_SERVICE_AUTH_TOKEN, TEST_CASE_ID.toString()))
             .thenReturn(caseDetails);
 
+        PaymentCallbackDto callback = PaymentCallbackDto.builder()
+            .status(PaymentStatus.SUCCESS.toString())
+            .method(PaymentMethodDto.CARD)
+            .ccdCaseNumber(TEST_CASE_ID.toString())
+            .build();
         paymentCallbackService.handleCallback(callback);
 
         verify(ccdUpdateService).submitEventWithRetry(
@@ -141,11 +139,6 @@ public class PaymentCallbackServiceTest {
 
     @Test
     public void shouldProcessCitizenFinalOrderPaymentCallback() {
-        PaymentCallbackDto callback = PaymentCallbackDto.builder()
-            .status(PaymentStatus.SUCCESS.toString())
-            .method(PaymentMethodDto.CARD)
-            .ccdCaseNumber(TEST_CASE_ID.toString())
-            .build();
         CaseDetails caseDetails = CaseDetails.builder()
             .state(State.AwaitingFinalOrderPayment.toString())
             .build();
@@ -158,6 +151,11 @@ public class PaymentCallbackServiceTest {
         when(ccdApi.getCase(user.getAuthToken(), TEST_SERVICE_AUTH_TOKEN, TEST_CASE_ID.toString()))
             .thenReturn(caseDetails);
 
+        PaymentCallbackDto callback = PaymentCallbackDto.builder()
+            .status(PaymentStatus.SUCCESS.toString())
+            .method(PaymentMethodDto.CARD)
+            .ccdCaseNumber(TEST_CASE_ID.toString())
+            .build();
         paymentCallbackService.handleCallback(callback);
 
         verify(ccdUpdateService).submitEventWithRetry(
