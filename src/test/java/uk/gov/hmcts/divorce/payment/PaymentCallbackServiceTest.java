@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.callback.PaymentCallbackDto;
+import uk.gov.hmcts.divorce.payment.model.callback.PaymentMethodDto;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
@@ -64,7 +65,20 @@ public class PaymentCallbackServiceTest {
     public void shouldNotProcessCallbackIfPaymentNotSuccessful() {
         PaymentCallbackDto callback = PaymentCallbackDto.builder()
                 .status(PaymentStatus.CANCELLED.toString())
+                .method(PaymentMethodDto.CARD)
                 .build();
+
+        paymentCallbackService.handleCallback(callback);
+
+        verifyNoInteractions(ccdUpdateService);
+    }
+
+    @Test
+    public void shouldNotProcessCallbackIfPaymentMethodWasPBA() {
+        PaymentCallbackDto callback = PaymentCallbackDto.builder()
+            .status(PaymentStatus.SUCCESS.toString())
+            .method(PaymentMethodDto.PAYMENT_BY_ACCOUNT)
+            .build();
 
         paymentCallbackService.handleCallback(callback);
 
@@ -75,6 +89,7 @@ public class PaymentCallbackServiceTest {
     public void shouldNotProcessCallbackIfCaseNotAwaitingPayment() {
         PaymentCallbackDto callback = PaymentCallbackDto.builder()
             .status(PaymentStatus.SUCCESS.toString())
+            .method(PaymentMethodDto.CARD)
             .ccdCaseNumber(TEST_CASE_ID.toString())
             .build();
         CaseDetails caseDetails = CaseDetails.builder()
@@ -98,6 +113,7 @@ public class PaymentCallbackServiceTest {
     public void shouldProcessCitizenApplicationPaymentCallback() {
         PaymentCallbackDto callback = PaymentCallbackDto.builder()
             .status(PaymentStatus.SUCCESS.toString())
+            .method(PaymentMethodDto.CARD)
             .ccdCaseNumber(TEST_CASE_ID.toString())
             .build();
         CaseDetails caseDetails = CaseDetails.builder()
@@ -127,6 +143,7 @@ public class PaymentCallbackServiceTest {
     public void shouldProcessCitizenFinalOrderPaymentCallback() {
         PaymentCallbackDto callback = PaymentCallbackDto.builder()
             .status(PaymentStatus.SUCCESS.toString())
+            .method(PaymentMethodDto.CARD)
             .ccdCaseNumber(TEST_CASE_ID.toString())
             .build();
         CaseDetails caseDetails = CaseDetails.builder()

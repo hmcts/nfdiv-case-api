@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.payment.model.callback.PaymentCallbackDto;
+import uk.gov.hmcts.divorce.payment.model.callback.PaymentMethodDto;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
@@ -37,6 +38,11 @@ public class PaymentCallbackService {
 
         if (!PaymentStatus.SUCCESS.getLabel().equalsIgnoreCase(paymentCallback.getStatus())) {
             log.info("Payment unsuccessful for case: {}, not processing callback", caseReference);
+            return;
+        }
+
+        if (!PaymentMethodDto.CARD.equals(paymentCallback.getMethod())) {
+            log.info("Payment method was '{}' for case: {}, not processing callback", paymentCallback.getMethod(), caseReference);
             return;
         }
 

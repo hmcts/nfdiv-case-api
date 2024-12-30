@@ -50,7 +50,7 @@ public class PaymentCallbackDto {
 
     private String channel;
 
-    private String method;
+    private PaymentMethodDto method;
 
     private String paymentReference;
 
