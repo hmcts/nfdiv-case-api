@@ -23,6 +23,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrd
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
@@ -31,8 +32,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.LAReview;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.SeparationOrderGranted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -120,6 +123,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildCorrespondenceTab(configBuilder);
         buildAmendedApplicationTab(configBuilder);
         buildChangeOfRepresentativeTab(configBuilder);
+        buildRequestForInformationTab(configBuilder);
 
         // Commented out as requested by service team. This can't be available for super users. Maybe we need a "Developer" role?
         //buildLetterPackTab(configBuilder);
@@ -143,8 +147,20 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .showCondition("applicationType=\"soleApplication\" AND coSwitchedToSole!=\"Yes\" AND "
                 + notShowForState(
-                Draft, AwaitingHWFDecision, AwaitingPayment, Submitted, AwaitingDocuments,
-                AwaitingAos, AosDrafted, AosOverdue, AwaitingService))
+                    Draft,
+                    AwaitingHWFDecision,
+                    AwaitingPayment,
+                    Submitted,
+                    AwaitingDocuments,
+                    AwaitingRequestedInformation,
+                    InformationRequested,
+                    RequestedInformationSubmitted,
+                    AwaitingAos,
+                    AosDrafted,
+                    AosOverdue,
+                    AwaitingService
+                )
+            )
             .field("applicant2Offline", NEVER_SHOW)
             .label("LabelAosTabOnlineResponse-Heading", "applicant2Offline=\"No\"",
                 "## This is an online AoS response")
@@ -240,6 +256,12 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getGeneralEmails)
             .field("certificateOfServiceDocument")
             .field("coProofOfServiceUploadDocuments");
+    }
+
+    private void buildRequestForInformationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("requestsForInformation", "Requests For Information")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
+            .field("requestsForInformation");
     }
 
     private void buildCorrespondenceTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
