@@ -41,6 +41,7 @@ public class Applicant1SolicitorViewApplicant2ContactDetails implements CCDConfi
             .description("View respondent contact details")
             .showSummary(false)
             .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("applicant2ContactDetails")
@@ -66,6 +67,21 @@ public class Applicant1SolicitorViewApplicant2ContactDetails implements CCDConfi
 
         var applicant2 = details.getData().getApplicant2();
         applicant2.setNonConfidentialAddress(applicant2.getAddress());
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails
+    ) {
+        log.info("{} about to submit callback invoked for Case Id: {}",
+            APPLICANT_1_SOLICITOR_VIEW_APPLICANT_2_CONTACT_INFO, details.getId()
+        );
+
+        details.getData().getApplicant2().setNonConfidentialAddress(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
