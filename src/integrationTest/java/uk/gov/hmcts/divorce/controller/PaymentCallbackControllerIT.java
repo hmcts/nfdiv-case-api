@@ -14,8 +14,8 @@ import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.payment.PaymentCallbackService;
+import uk.gov.hmcts.divorce.payment.model.callback.OnlinePaymentMethod;
 import uk.gov.hmcts.divorce.payment.model.callback.PaymentCallbackDto;
-import uk.gov.hmcts.divorce.payment.model.callback.PaymentMethodDto;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import static org.mockito.Mockito.verify;
@@ -85,7 +85,7 @@ public class PaymentCallbackControllerIT {
     private PaymentCallbackDto cardPaymentCallback() {
         return PaymentCallbackDto.builder()
             .status(PaymentStatus.SUCCESS.toString())
-            .method(PaymentMethodDto.CARD)
+            .method(OnlinePaymentMethod.CARD)
             .ccdCaseNumber(TEST_CASE_ID.toString())
             .build();
     }
