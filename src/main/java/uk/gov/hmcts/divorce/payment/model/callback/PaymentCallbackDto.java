@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
@@ -19,7 +18,7 @@ import java.util.List;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @JsonNaming(SnakeCaseStrategy.class)
-@JsonIgnoreProperties(ignoreUnknown = true, value = {"service_name", "payment_group_reference"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(NON_NULL)
 @Builder
 @AllArgsConstructor
@@ -35,29 +34,24 @@ public class PaymentCallbackDto {
 
     private String reference;
 
-    @JsonProperty("date_created")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "GMT")
     private Date dateCreated;
 
-    @JsonProperty("date_updated")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "GMT")
     private Date dateUpdated;
 
     private String currency;
 
-    @JsonProperty("ccd_case_number")
     private String ccdCaseNumber;
 
     private String channel;
 
-    private PaymentMethodDto method;
+    private OnlinePaymentMethod method;
 
     private String paymentReference;
 
-    @JsonProperty("external_provider")
     private String externalProvider;
 
-    @JsonProperty("external_reference")
     private String externalReference;
 
     private String siteId;
@@ -74,7 +68,6 @@ public class PaymentCallbackDto {
     @NoArgsConstructor
     @JsonNaming(SnakeCaseStrategy.class)
     @JsonInclude(NON_NULL)
-    @EqualsAndHashCode
     public static class LinksDto {
         private LinkDto nextUrl;
         private LinkDto self;
@@ -85,7 +78,6 @@ public class PaymentCallbackDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @JsonInclude(NON_NULL)
-    @EqualsAndHashCode
     public static class LinkDto {
         private String href;
         private String method;

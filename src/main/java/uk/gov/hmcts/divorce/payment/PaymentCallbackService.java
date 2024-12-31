@@ -8,8 +8,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.divorce.payment.model.callback.OnlinePaymentMethod;
 import uk.gov.hmcts.divorce.payment.model.callback.PaymentCallbackDto;
-import uk.gov.hmcts.divorce.payment.model.callback.PaymentMethodDto;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
@@ -41,7 +41,7 @@ public class PaymentCallbackService {
             return;
         }
 
-        if (!PaymentMethodDto.CARD.equals(paymentCallback.getMethod())) {
+        if (!OnlinePaymentMethod.CARD.equals(paymentCallback.getMethod())) {
             log.info("Payment method was '{}' for case: {}, not processing callback", paymentCallback.getMethod(), caseReference);
             return;
         }
@@ -59,7 +59,7 @@ public class PaymentCallbackService {
 
         ccdUpdateService.submitEventWithRetry(
             caseReference,
-            paymentMadeEvent(state),
+            paymentMadeEvent,
             updateSuccessfulPaymentStatus,
             systemUpdateUser,
             serviceAuthorization

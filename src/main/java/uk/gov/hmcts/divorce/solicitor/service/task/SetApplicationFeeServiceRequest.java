@@ -25,9 +25,7 @@ public class SetApplicationFeeServiceRequest implements CaseTask {
         );
         application.setApplicationFeeOrderSummary(orderSummary);
 
-        String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
-            data, details.getId()
-        );
+        String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(data, details.getId());
         application.setApplicationFeeServiceRequestReference(serviceRequest);
 
         return details;

@@ -86,9 +86,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             data = submittedDetails.getData();
             state = submittedDetails.getState();
         } else {
-            prepareCaseDataForApplicationPayment(
-                details.getData(), details.getId()
-            );
+            prepareCaseDataForApplicationPayment(details.getData(), details.getId());
 
             state = AwaitingPayment;
         }

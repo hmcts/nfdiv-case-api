@@ -56,12 +56,8 @@ public class PaymentCallbackControllerIT {
     private PaymentCallbackService paymentCallbackService;
 
     @Test
-    public void givenValidServiceAuthTokenThenDelegateToPaymentCallbackService() throws Exception {
-        PaymentCallbackDto paymentCallback = PaymentCallbackDto.builder()
-            .status(PaymentStatus.SUCCESS.toString())
-            .method(PaymentMethodDto.CARD)
-            .ccdCaseNumber(TEST_CASE_ID.toString())
-            .build();
+    public void givenValidServiceAuthTokenThenProcessesPaymentCallback() throws Exception {
+        PaymentCallbackDto paymentCallback = cardPaymentCallback();
 
         mockMvc.perform(put(PAYMENT_UPDATE_PATH)
                 .contentType(APPLICATION_JSON)
@@ -75,16 +71,22 @@ public class PaymentCallbackControllerIT {
     }
 
     @Test
-    public void givenMissingServiceAuthTokenThenDoesNotUpdatePayment() throws Exception {
-        PaymentCallbackDto paymentCallback = PaymentCallbackDto.builder().build();
-
+    public void givenMissingServiceAuthTokenThenDoesNotProcessCallback() throws Exception {
         mockMvc.perform(put(PAYMENT_UPDATE_PATH)
                         .contentType(APPLICATION_JSON)
                         .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                        .content(objectMapper.writeValueAsString(paymentCallback))
+                        .content(objectMapper.writeValueAsString(cardPaymentCallback()))
                         .accept(APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
 
         verifyNoInteractions(paymentCallbackService);
+    }
+
+    private PaymentCallbackDto cardPaymentCallback() {
+        return PaymentCallbackDto.builder()
+            .status(PaymentStatus.SUCCESS.toString())
+            .method(PaymentMethodDto.CARD)
+            .ccdCaseNumber(TEST_CASE_ID.toString())
+            .build();
     }
 }

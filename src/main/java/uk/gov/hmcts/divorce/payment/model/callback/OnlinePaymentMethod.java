@@ -8,7 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 @Getter
 @AllArgsConstructor
-public enum PaymentMethodDto implements HasLabel {
+public enum OnlinePaymentMethod implements HasLabel {
 
     @JsonProperty("card")
     CARD("Card payment"),
