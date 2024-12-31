@@ -13,14 +13,10 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.citizen.notification.NocSolRemovedSelfAsRepresentativeNotification;
+import uk.gov.hmcts.divorce.citizen.notification.NocSolsToCitizenNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
+import uk.gov.hmcts.divorce.divorcecase.model.*;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant;
-import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor;
 import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -72,6 +68,8 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
     private final ChangeOfRepresentativeService changeOfRepresentativeService;
 
     private final NocSolRemovedSelfAsRepresentativeNotification nocSolRemovedSelfNotifications;
+
+    private final NocSolsToCitizenNotifications nocSolsToCitizenNotifications;
 
     private final NotificationDispatcher notificationDispatcher;
 
@@ -144,6 +142,13 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
         notificationDispatcher.sendNOC(nocSolRemovedSelfNotifications, details.getData(),
             beforeDetails.getData(), details.getId(), wasRepresentingApplicant1, NoticeType.ORG_REMOVED);
 
+        if (data.getApplicationType() == ApplicationType.SOLE_APPLICATION) {
+            final var applicant = wasRepresentingApplicant1 ? data.getApplicant1() : data.getApplicant2();
+            generateCaseInvite(data, wasRepresentingApplicant1, applicant);
+            notificationDispatcher.sendNOCCaseInvite(nocSolsToCitizenNotifications, details.getData(), details.getId(),
+                wasRepresentingApplicant1);
+        }
+
         String litigantName = wasRepresentingApplicant1
             ? data.getApplicant1().getFullName() : data.getApplicant2().getFullName();
 
@@ -181,5 +186,21 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
         String authHeader = httpServletRequest.getHeader(AUTHORIZATION);
 
         return ccdAccessService.isApplicant1(authHeader, caseId);
+    }
+
+    private void generateCaseInvite(final CaseData data, boolean isApplicant1, Applicant applicant) {
+        if (isApplicant1) {
+            CaseInviteApp1 invite = CaseInviteApp1.builder()
+                .applicant1InviteEmailAddress(applicant.getEmail())
+                .build()
+                .generateAccessCode();
+            data.setCaseInviteApp1(invite);
+        } else {
+            CaseInvite invite = CaseInvite.builder()
+                .applicant2InviteEmailAddress(applicant.getEmail())
+                .build()
+                .generateAccessCode();
+            data.setCaseInvite(invite);
+        }
     }
 }
