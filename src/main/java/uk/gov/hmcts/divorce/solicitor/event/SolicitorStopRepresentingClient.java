@@ -15,8 +15,16 @@ import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.citizen.notification.NocSolRemovedSelfAsRepresentativeNotification;
 import uk.gov.hmcts.divorce.citizen.notification.NocSolsToCitizenNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.*;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInviteApp1;
+import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor;
 import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -145,7 +153,7 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
         if (data.getApplicationType() == ApplicationType.SOLE_APPLICATION) {
             final var applicant = wasRepresentingApplicant1 ? data.getApplicant1() : data.getApplicant2();
             generateCaseInvite(data, wasRepresentingApplicant1, applicant);
-            notificationDispatcher.sendNOCCaseInvite(nocSolsToCitizenNotifications, details.getData(), details.getId(),
+            notificationDispatcher.sendNOCCaseInvite(nocSolRemovedSelfNotifications, details.getData(), details.getId(),
                 wasRepresentingApplicant1);
         }
 

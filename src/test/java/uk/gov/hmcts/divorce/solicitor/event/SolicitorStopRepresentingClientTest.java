@@ -31,9 +31,11 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -202,6 +204,59 @@ class SolicitorStopRepresentingClientTest {
         assertThat(result.getConfirmationBody()).isEqualTo(
             String.format(REPRESENTATIVE_REMOVED_CONFIRMATION_LABEL, applicant.getFullName())
         );
+    }
+
+    @Test
+    void shouldInviteApplicant1ToCaseForSoleCase() {
+        final var details = getCaseDetails();
+        final var beforeDetails = getCaseDetails();
+        Applicant applicant = details.getData().getApplicant1();
+        details.getData().setNoticeOfChange(
+            NoticeOfChange.builder().whichApplicant(WhichApplicant.APPLICANT_1).build()
+        );
+        applicant.setFirstName(TEST_FIRST_NAME);
+        applicant.setLastName(TEST_LAST_NAME);
+
+        var result = noticeOfChange.submitted(details, beforeDetails);
+
+        verify(notificationDispatcher).sendNOCCaseInvite(nocSolRemovedSelfNotifications,
+            details.getData(), details.getId(), true);
+    }
+
+    @Test
+    void shouldInviteApplicant2ToCaseForSoleCase() {
+        final var details = getCaseDetails();
+        final var beforeDetails = getCaseDetails();
+        Applicant applicant = details.getData().getApplicant2();
+        details.getData().setNoticeOfChange(
+            NoticeOfChange.builder().whichApplicant(WhichApplicant.APPLICANT_2).build()
+        );
+        applicant.setFirstName(TEST_FIRST_NAME);
+        applicant.setLastName(TEST_LAST_NAME);
+
+        var result = noticeOfChange.submitted(details, beforeDetails);
+
+        verify(notificationDispatcher).sendNOCCaseInvite(nocSolRemovedSelfNotifications,
+            details.getData(), details.getId(), false);
+    }
+
+    @Test
+    void shouldNotInviteApplicant1ToCaseForJointCase() {
+        final var details = getCaseDetails();
+        details.getData().setApplicationType(JOINT_APPLICATION);
+        final var beforeDetails = getCaseDetails();
+        Applicant applicant = details.getData().getApplicant1();
+        details.getData().setNoticeOfChange(
+            NoticeOfChange.builder().whichApplicant(WhichApplicant.APPLICANT_1).build()
+        );
+        applicant.setFirstName(TEST_FIRST_NAME);
+        applicant.setLastName(TEST_LAST_NAME);
+
+        var result = noticeOfChange.submitted(details, beforeDetails);
+
+        verify(notificationDispatcher).sendNOC(nocSolRemovedSelfNotifications, details.getData(),
+            beforeDetails.getData(), details.getId(), true, NoticeType.ORG_REMOVED);
+        verifyNoMoreInteractions(notificationDispatcher);
     }
 
     private void assertSolicitorRemoved(Applicant applicant, UserRole solicitorRole) {
