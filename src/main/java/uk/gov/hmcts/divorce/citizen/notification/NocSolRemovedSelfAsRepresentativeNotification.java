@@ -50,6 +50,7 @@ public class NocSolRemovedSelfAsRepresentativeNotification implements ApplicantN
     private final BulkPrintService bulkPrintService;
 
     public static final String LETTER_TYPE_INVITE_CITIZEN = "invite-citizen";
+    private static final String RECIPIENT_ADDRESS = "address";
     public static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
     public static final String RESPONDENT_SIGN_IN_DISSOLUTION_URL = "respondentSignInDissolutionUrl";
     private static final String SIGN_IN_DIVORCE_URL = "signInDivorceUrl";
@@ -175,6 +176,7 @@ public class NocSolRemovedSelfAsRepresentativeNotification implements ApplicantN
             .getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
         templateContent.put(FIRST_NAME, applicant.getFirstName());
         templateContent.put(LAST_NAME, applicant.getLastName());
+        templateContent.put(RECIPIENT_ADDRESS, applicant.getAddress());
         templateContent.put(CASE_REFERENCE, formatId(caseId));
 
         if (isApplicant1) {
