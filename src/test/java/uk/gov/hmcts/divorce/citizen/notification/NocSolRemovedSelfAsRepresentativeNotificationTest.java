@@ -45,6 +45,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOTICE_OF_CHANGE_APP_INVITE_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_SOL_STOPPED_REP_APP_INVITE_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
@@ -200,7 +201,6 @@ class NocSolRemovedSelfAsRepresentativeNotificationTest {
     @Test
     void testSendToApplicant1Offline() {
         CaseData caseData = createMockCaseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
 
         final Map<String, Object> templateContent = getBasicDocmosisTemplateContent(ENGLISH);
 
@@ -245,6 +245,7 @@ class NocSolRemovedSelfAsRepresentativeNotificationTest {
     @Test
     void testSendToApplicant2Offline() {
         CaseData caseData = createMockCaseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
 
         final Map<String, Object> templateContent = getBasicDocmosisTemplateContent(ENGLISH);
 
@@ -266,7 +267,7 @@ class NocSolRemovedSelfAsRepresentativeNotificationTest {
             templateContent,
             TEST_CASE_ID,
             NFD_SOL_STOPPED_REP_APP_INVITE_TEMPLATE_ID,
-            ENGLISH,
+            WELSH,
             NFD_NOTICE_OF_CHANGE_APP_INVITE_DOCUMENT_NAME))
             .thenReturn(inviteDocument);
         notificationHandler.sendToApplicant2Offline(caseData, TEST_CASE_ID);
@@ -283,7 +284,7 @@ class NocSolRemovedSelfAsRepresentativeNotificationTest {
                 templateContent,
                 TEST_CASE_ID,
                 NFD_SOL_STOPPED_REP_APP_INVITE_TEMPLATE_ID,
-                ENGLISH, NFD_NOTICE_OF_CHANGE_APP_INVITE_DOCUMENT_NAME);
+                WELSH, NFD_NOTICE_OF_CHANGE_APP_INVITE_DOCUMENT_NAME);
     }
 
     private CaseData createMockCaseData() {
