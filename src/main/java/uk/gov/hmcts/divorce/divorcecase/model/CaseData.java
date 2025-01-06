@@ -333,6 +333,7 @@ public class CaseData {
     @CCD(
             label = "Resolved time to live",
             typeOverride = Collection,
+            typeParameterOverride ="TTL",
             access = {TtlProfileAccess.class}
     )
     private TTL timeToLive;
