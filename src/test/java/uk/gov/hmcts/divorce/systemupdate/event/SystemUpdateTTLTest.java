@@ -47,9 +47,9 @@ class SystemUpdateTTLTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = systemUpdateTTL.aboutToStart(beforeDetails);
 
-        assertThat(response.getData().getRetainAndDisponseTimeToLive()).isNotNull();
-        assertThat(response.getData().getRetainAndDisponseTimeToLive().getSystemTTL()).isEqualTo(LocalDate.now().plusMonths(6));
-        assertThat(response.getData().getRetainAndDisponseTimeToLive().getSuspended()).isEqualTo(YesOrNo.NO);
+        assertThat(response.getData().getRetainAndDisposeTimeToLive()).isNotNull();
+        assertThat(response.getData().getRetainAndDisposeTimeToLive().getSystemTTL()).isEqualTo(LocalDate.now().plusMonths(6));
+        assertThat(response.getData().getRetainAndDisposeTimeToLive().getSuspended()).isEqualTo(YesOrNo.NO);
     }
 
 
@@ -58,14 +58,14 @@ class SystemUpdateTTLTest {
 
         CaseDetails<CaseData, State> beforeDetails = getCaseDetails(Draft);
         LocalDate systemTTL = LocalDate.of(2024, 11, 5);
-        beforeDetails.getData().setRetainAndDisponseTimeToLive(TTL.builder()
+        beforeDetails.getData().setRetainAndDisposeTimeToLive(TTL.builder()
                 .systemTTL(systemTTL)
                 .suspended(YesOrNo.YES)
                 .build());
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = systemUpdateTTL.aboutToStart(beforeDetails);
 
-        assertThat(response.getData().getRetainAndDisponseTimeToLive()).isNull();
+        assertThat(response.getData().getRetainAndDisposeTimeToLive()).isNull();
     }
 
     private CaseDetails<CaseData, State> getCaseDetails(State state) {

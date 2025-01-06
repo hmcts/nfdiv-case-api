@@ -49,12 +49,12 @@ public class SystemUpdateTTL implements CCDConfig<CaseData, State, UserRole> {
         log.info("{} about to start callback invoked for Case Id: {}", SYSTEM_UPDATE_TTL, details.getId());
         final CaseData caseData = details.getData();
 
-        if (caseData.getRetainAndDisponseTimeToLive() == null && details.getState() == Draft) {
-            caseData.setRetainAndDisponseTimeToLive(TTL.builder().systemTTL(CURRENT_DATE_PLUS_SIX_MONTH)
+        if (caseData.getRetainAndDisposeTimeToLive() == null && details.getState() == Draft) {
+            caseData.setRetainAndDisposeTimeToLive(TTL.builder().systemTTL(CURRENT_DATE_PLUS_SIX_MONTH)
                     .suspended(YesOrNo.NO)
                     .build());
         } else {
-            caseData.setRetainAndDisponseTimeToLive(null);
+            caseData.setRetainAndDisposeTimeToLive(null);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

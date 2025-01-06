@@ -337,7 +337,7 @@ public class CaseData {
             typeOverride = FieldType.TTL,
             access = {TtlProfileAccess.class}
     )
-    private TTL retainAndDisponseTimeToLive;
+    private TTL retainAndDisposeTimeToLive;
 
     @JsonUnwrapped
     @Builder.Default
