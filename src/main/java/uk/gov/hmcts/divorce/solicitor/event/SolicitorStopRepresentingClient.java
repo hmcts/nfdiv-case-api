@@ -134,6 +134,10 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
             noticeOfChangeService
         );
 
+        if (details.getData().getApplicationType() == ApplicationType.SOLE_APPLICATION) {
+            generateCaseInvite(details.getData(), isRepresentingApplicant1, applicant.apply(details.getData()));
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .build();
@@ -151,8 +155,6 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
             beforeDetails.getData(), details.getId(), wasRepresentingApplicant1, NoticeType.ORG_REMOVED);
 
         if (data.getApplicationType() == ApplicationType.SOLE_APPLICATION) {
-            final var applicant = wasRepresentingApplicant1 ? data.getApplicant1() : data.getApplicant2();
-            generateCaseInvite(data, wasRepresentingApplicant1, applicant);
             notificationDispatcher.sendNOCCaseInvite(nocSolRemovedSelfNotifications, details.getData(), details.getId(),
                 wasRepresentingApplicant1);
         }
