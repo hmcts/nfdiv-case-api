@@ -38,6 +38,7 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
         new CcdRoleConfig("pui-organisation-manager", "PUBLIC"),
         new CcdRoleConfig("pui-user-manager", "PUBLIC"),
         new CcdRoleConfig("TTL_profile", "PUBLIC"),
+        new CcdRoleConfig("idam:cft-ttl-manager", "PUBLIC")
     };
 
     private final CcdEnvironment environment;

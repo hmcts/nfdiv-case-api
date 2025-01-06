@@ -65,7 +65,8 @@ public class CftLibConfig implements CFTLibConfigurer {
             "pui-case-manager",
             "pui-finance-manager",
             "pui-organisation-manager",
-            "pui-user-manager"
+            "pui-user-manager",
+            "idam:cft-ttl-manager"
         );
 
         ResourceLoader resourceLoader = new DefaultResourceLoader();
