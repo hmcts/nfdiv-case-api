@@ -1,8 +1,10 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -13,11 +15,19 @@ import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.util.Set;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -31,14 +41,37 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateTTL.SYSTEM_UPDATE_TTL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 class SetStateAfterSubmissionTest {
 
+    @Mock
+    private IdamService idamService;
+
+    @Mock
+    private AuthTokenGenerator authTokenGenerator;
+
+    @Mock
+    private CcdUpdateService ccdUpdateService;
+
+    private User user;
+
     @InjectMocks
     private SetStateAfterSubmission setStateAfterSubmission;
+
+    @BeforeEach
+    void setUp() {
+        var userDetails = UserInfo.builder().uid(SYSTEM_USER_USER_ID).build();
+        user = new User(SYSTEM_UPDATE_AUTH_TOKEN, userDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+    }
 
     @Test
     void shouldSetAwaitingHwfDecisionStateIfSoleCitizenNeedsHelpWithFees() {
@@ -61,6 +94,7 @@ class SetStateAfterSubmissionTest {
         final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
 
         assertThat(result.getState()).isEqualTo(AwaitingHWFDecision);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_UPDATE_TTL, user, TEST_SERVICE_AUTH_TOKEN);
     }
 
     @Test
@@ -87,6 +121,7 @@ class SetStateAfterSubmissionTest {
         final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
 
         assertThat(result.getState()).isEqualTo(AwaitingPayment);
+        verifyNoInteractions(ccdUpdateService);
     }
 
     @Test
@@ -240,6 +275,7 @@ class SetStateAfterSubmissionTest {
         final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
 
         assertThat(result.getState()).isEqualTo(Submitted);
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_UPDATE_TTL, user, TEST_SERVICE_AUTH_TOKEN);
     }
 
     @Test
