@@ -27,7 +27,7 @@
   {"CaseTypeID": "NFD", "CaseFieldID": "applicant2SolicitorOrganisationPolicy", "ListElementCode": "Organisation.OrganisationName", "UserRole": "caseworker-approver", "CRUD": "CRU"},
   {"CaseTypeID": "NFD", "CaseFieldID": "applicant2SolicitorOrganisationPolicy", "ListElementCode": "PrepopulateToUsersOrganisation", "UserRole": "caseworker-approver", "CRUD": "CRU"},
   {"CaseTypeID": "NFD", "CaseFieldID": "applicant2SolicitorOrganisationPolicy", "ListElementCode": "PreviousOrganisations", "UserRole": "caseworker-approver", "CRUD": "CRU"},
-  {"CaseTypeID": "NFD", "CaseFieldID": "TTL", "ListElementCode": "SystemTTL", "UserRole": "TTL_profile", "CRUD": "CRU"},
-  {"CaseTypeID": "NFD", "CaseFieldID": "TTL", "ListElementCode": "Suspended", "UserRole": "TTL_profile", "CRUD": "CU"},
-  {"CaseTypeID": "NFD", "CaseFieldID": "TTL", "ListElementCode": "OverrideTTL", "UserRole": "TTL_profile", "CRUD": "CU"}
+  {"CaseTypeID": "NFD", "CaseFieldID": "timeToLive", "ListElementCode": "SystemTTL", "UserRole": "TTL_profile", "CRUD": "CRU"},
+  {"CaseTypeID": "NFD", "CaseFieldID": "timeToLive", "ListElementCode": "Suspended", "UserRole": "TTL_profile", "CRUD": "CU"},
+  {"CaseTypeID": "NFD", "CaseFieldID": "timeToLive", "ListElementCode": "OverrideTTL", "UserRole": "TTL_profile", "CRUD": "CU"}
 ]
