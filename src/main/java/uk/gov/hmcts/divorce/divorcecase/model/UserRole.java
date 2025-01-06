@@ -17,6 +17,8 @@ public enum UserRole implements HasRole {
     JUDGE("caseworker-divorce-judge", "CRU"),
     NOC_APPROVER("caseworker-approver", "CRU"),
     RPA_ROBOT("caseworker-divorce-rparobot", "CRU"),
+    TTL_PROFILE("TTL_profile", "CRU"),
+    CFT_TTL_MANAGER("idam:cft-ttl-manager", "CRU"),
 
     SOLICITOR("caseworker-divorce-solicitor", "CRU"),
     APPLICANT_1_SOLICITOR("[APPONESOLICITOR]", "CRU"),

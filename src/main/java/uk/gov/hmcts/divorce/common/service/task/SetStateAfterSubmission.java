@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -7,18 +8,29 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateTTL.SYSTEM_UPDATE_TTL;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class SetStateAfterSubmission implements CaseTask {
+
+    private final CcdUpdateService ccdUpdateService;
+    private final IdamService idamService;
+    private final AuthTokenGenerator authTokenGenerator;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
@@ -38,14 +50,20 @@ public class SetStateAfterSubmission implements CaseTask {
         boolean applicantNeedsHelpWithFees = (isSoleApplication && isHWFApplicant1)
             || (!isSoleApplication && isHWFApplicant1 && isHWFApplicant2);
 
+        final User user = idamService.retrieveSystemUpdateUserDetails();
+        final String serviceAuthorization = authTokenGenerator.generate();
+
         if (applicantNeedsHelpWithFees) {
             caseDetails.setState(AwaitingHWFDecision);
+            ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_UPDATE_TTL, user, serviceAuthorization);
         } else if (applicantIsAwaitingDocuments) {
             caseDetails.setState(AwaitingDocuments);
+            ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_UPDATE_TTL, user, serviceAuthorization);
         } else if (!application.hasBeenPaidFor()) {
             caseDetails.setState(AwaitingPayment);
         } else {
             caseDetails.setState(Submitted);
+            ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_UPDATE_TTL, user, serviceAuthorization);
         }
 
         log.info("State set to {}, CaseID {}", caseDetails.getState(), caseDetails.getId());
