@@ -10,12 +10,15 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.RespondentApplyForFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -25,6 +28,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyRespondentAppl
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 
@@ -42,6 +46,9 @@ class SystemNotifyRespondentApplyFinalOrderTest {
 
     @Mock
     private RespondentApplyForFinalOrderNotification respondentApplyForFinalOrderNotification;
+
+    @Mock
+    private PaymentSetupService paymentSetupService;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -69,6 +76,38 @@ class SystemNotifyRespondentApplyFinalOrderTest {
             systemNotifyRespondentApplyFinalOrder.aboutToSubmit(details, details);
 
         assertThat(response.getData().getFinalOrder().getFinalOrderReminderSentApplicant2()).isEqualTo(YesOrNo.YES);
+    }
+
+    @Test
+    void shouldPrepareCaseDataForPbaPaymentIfTheRespondentIsRepresented() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant2(respondent());
+        caseData.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        OrderSummary orderSummary = new OrderSummary();
+
+        when(httpServletRequest.getHeader(AUTHORIZATION))
+            .thenReturn("auth header");
+
+        when(paymentSetupService.createFinalOrderFeeOrderSummary(caseData, TEST_CASE_ID))
+            .thenReturn(orderSummary);
+
+        when(paymentSetupService.createFinalOrderFeeServiceRequest(caseData, TEST_CASE_ID, null, orderSummary))
+            .thenReturn(TEST_SERVICE_REFERENCE);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            systemNotifyRespondentApplyFinalOrder.aboutToSubmit(details, details);
+
+        FinalOrder responseFinalOrder = response.getData().getFinalOrder();
+
+        assertThat(responseFinalOrder.getFinalOrderReminderSentApplicant2()).isEqualTo(YesOrNo.YES);
+        assertThat(responseFinalOrder.getApplicant2FinalOrderFeeServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
+        assertThat(responseFinalOrder.getApplicant2FinalOrderFeeOrderSummary()).isEqualTo(orderSummary);
+        assertThat(responseFinalOrder.getApplicant2SolFinalOrderFeeOrderSummary()).isEqualTo(orderSummary);
     }
 
     @Test
