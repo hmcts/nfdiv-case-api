@@ -357,6 +357,10 @@ public class PaymentService {
             ).build();
     }
 
+    private String resolveCallbackUrlOrUseDefault(String callBackUrl) {
+        return Optional.ofNullable(callBackUrl).orElse(redirectUrl);
+    }
+
     private Fee getFeeValue(OrderSummary orderSummary) {
         // We are always interested in the first fee. There may be a change in the future
         ListValue<Fee> feeItem = orderSummary.getFees().get(0);
