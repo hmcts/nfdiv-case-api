@@ -62,7 +62,7 @@ public class CitizenUpdateApplication implements CCDConfig<CaseData, State, User
         CaseData caseData = details.getData();
 
         //Set TTL for newly created cases from today's date to 6 months in future
-        if (caseData.getTimeToLive() == null && details.getState() == Draft) {
+        if (caseData.getRetainAndDisponseTimeToLive() == null && details.getState() == Draft) {
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuthorization = authTokenGenerator.generate();
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -330,13 +331,13 @@ public class CaseData {
     @Builder.Default
     private SentNotifications sentNotifications = new SentNotifications();
 
+    @JsonProperty("TTL")
     @CCD(
-            label = "Resolved time to live",
-            typeOverride = Collection,
-            typeParameterOverride ="TTL",
+            label = "Set up TTL",
+            typeOverride = FieldType.TTL,
             access = {TtlProfileAccess.class}
     )
-    private TTL timeToLive;
+    private TTL retainAndDisponseTimeToLive;
 
     @JsonUnwrapped
     @Builder.Default
