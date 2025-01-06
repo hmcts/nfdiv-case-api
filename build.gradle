@@ -24,8 +24,8 @@ plugins {
   id 'org.sonarqube' version '6.0.1.5171'
   id 'org.springframework.boot' version '3.3.5'
   id 'com.github.ben-manes.versions' version '0.51.0'
-  id 'hmcts.ccd.sdk' version '5.5.14'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1495'
+  id 'hmcts.ccd.sdk' version '5.5.16'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1511'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -232,8 +232,8 @@ repositories {
 
 def versions = [
   jackson      : '2.18.2',
-  junit        : '5.11.3',
-  junitPlatform: '1.11.3',
+  junit        : '5.11.4',
+  junitPlatform: '1.11.4',
   lombok       : '1.18.36',
   springBoot   : springBoot.class.package.implementationVersion
 ]
@@ -252,10 +252,10 @@ dependencies {
 // uncomment for local version
 //  implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '8.0'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.24.2'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.24.2'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.24.2'
-  implementation group: 'com.google.guava', name: 'guava', version: '33.3.1-jre'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.24.3'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.24.3'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.24.3'
+  implementation group: 'com.google.guava', name: 'guava', version: '33.4.0-jre'
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
@@ -305,8 +305,8 @@ dependencies {
 
   testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: '1.7.0'
   testImplementation group: 'com.github.stefanbirkner', name: 'system-lambda', version: '1.2.1'
-  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.26.3'
-  testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.26.3'
+  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.0'
+  testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.27.0'
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '4.1.5'
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.1.4'
   testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.2.0'

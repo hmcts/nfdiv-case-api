@@ -47,7 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddress;
 
 @ExtendWith(MockitoExtension.class)
-public class GenerateApplyForFinalOrderDocumentTest {
+class GenerateApplyForFinalOrderDocumentTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -71,6 +71,7 @@ public class GenerateApplyForFinalOrderDocumentTest {
         caseData.setApplicant1(getApplicantWithAddress());
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
         caseData.getFinalOrder().setDateFinalOrderEligibleFrom(LocalDate.now());
+        caseData.getConditionalOrder().setGrantedDate(LocalDate.now());
 
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
@@ -116,6 +117,7 @@ public class GenerateApplyForFinalOrderDocumentTest {
         caseData.setApplicant1(getApplicantWithAddress());
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
         caseData.getFinalOrder().setDateFinalOrderEligibleFrom(LocalDate.now());
+        caseData.getConditionalOrder().setGrantedDate(LocalDate.now());
 
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
@@ -161,6 +163,7 @@ public class GenerateApplyForFinalOrderDocumentTest {
         caseData.setApplicant1(getApplicantWithAddress());
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
         caseData.getFinalOrder().setDateFinalOrderEligibleFrom(LocalDate.now());
+        caseData.getConditionalOrder().setGrantedDate(LocalDate.now());
 
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
@@ -206,6 +209,7 @@ public class GenerateApplyForFinalOrderDocumentTest {
         caseData.setApplicant1(getApplicantWithAddress());
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
         caseData.getFinalOrder().setDateFinalOrderEligibleFrom(LocalDate.now());
+        caseData.getConditionalOrder().setGrantedDate(LocalDate.now());
 
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
