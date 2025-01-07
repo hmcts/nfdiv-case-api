@@ -13,6 +13,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails.APPLICANT_REFUGE_LABEL;
+import static uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails.THE_APPLICANT_OR_APPLICANT1;
+
 public class SolAboutApplicant1 implements CcdPageConfiguration {
 
     private static final String INVALID_EMAIL_ERROR = "You have entered an invalid email address. "
@@ -64,8 +67,9 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                     "${labelContentApplicantsOrApplicant1s} home address")
                 .label("LabelHorizontalLine1-SolAboutApplicant1", DARK_HORIZONTAL_RULE)
                 .mandatory(Applicant::getContactDetailsType)
-                .mandatory(Applicant::getInRefuge)
-                .done();
+                .optionalWithoutDefaultValue(Applicant::getInRefuge, "applicant1ContactDetailsType=\"private\"",
+                    String.format(APPLICANT_REFUGE_LABEL, THE_APPLICANT_OR_APPLICANT1))
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,

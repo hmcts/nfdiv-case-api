@@ -65,7 +65,6 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     private static final String MARRIAGE_CERT_NAME_HINT_LABEL =
         "Enter the ${%s} name exactly as it appears on the certificate. Include any extra text such as 'formally known as'.";
     private static final String APPLICANTS_OR_APPLICANT1S = "labelContentApplicantsOrApplicant1s";
-    private static final String THE_APPLICANT_OR_APPLICANT1 = "labelContentTheApplicantOrApplicant1";
     private static final String RESPONDENTS_OR_APPLICANT2S = "labelContentRespondentsOrApplicant2s";
     private static final String THE_RESPONDENT_OR_APPLICANT2 = "labelContentTheApplicant2";
     public static final String SOLICITOR_FIRM_LABEL = "${%s} solicitor's firm";
@@ -78,7 +77,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     public static final String SOLICITOR_DETAILS_REMOVED_ERROR = """
         You cannot remove the solicitor %s with this event. Please use Notice of Change if you would like to remove representation.
         """;
-    private static final String APPLICANT_REFUGE_LABEL = "Is ${%s} currently resident in a refuge";
+    public static final String APPLICANT_REFUGE_LABEL = "Is ${%s} currently resident in a refuge";
+    public static final String THE_APPLICANT_OR_APPLICANT1 = "labelContentTheApplicantOrApplicant1";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
