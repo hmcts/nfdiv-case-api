@@ -5,6 +5,7 @@ import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -92,6 +93,9 @@ public class PaymentService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Value("${idam.client.redirect_uri}")
+    private String redirectUrl;
 
     public static class PaymentServiceException extends RuntimeException {
         public PaymentServiceException(String message, Throwable cause) {
@@ -342,7 +346,7 @@ public class PaymentService {
         return CreateServiceRequestBody.builder()
             .ccdCaseNumber(caseId)
             .caseReference(caseId)
-            .callBackUrl(callBackUrl)
+            .callBackUrl(resolveCallbackUrlOrUseDefault(callBackUrl))
             .hmctsOrgId(HMCTS_ORG_ID)
             .fees(paymentItemList)
             .casePaymentRequest(
@@ -351,6 +355,10 @@ public class PaymentService {
                     .action("payment")
                     .build()
             ).build();
+    }
+
+    private String resolveCallbackUrlOrUseDefault(String callBackUrl) {
+        return Optional.ofNullable(callBackUrl).orElse(redirectUrl);
     }
 
     private Fee getFeeValue(OrderSummary orderSummary) {
