@@ -12,8 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_WITHDRAWN_OR_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -42,12 +41,13 @@ public class Applicant1SolicitorViewApplicant2ContactDetails implements CCDConfi
             .description("View respondent contact details")
             .showSummary(false)
             .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("applicant2ContactDetails")
             .pageLabel("Respondent Contact Details")
             .complex(CaseData::getApplicant2)
-                .readonly(Applicant::getAddress)
+                .readonly(Applicant::getNonConfidentialAddress)
                 .readonly(Applicant::getPhoneNumber)
                 .readonly(Applicant::getEmail)
             .done();
@@ -58,15 +58,33 @@ public class Applicant1SolicitorViewApplicant2ContactDetails implements CCDConfi
             APPLICANT_1_SOLICITOR_VIEW_APPLICANT_2_CONTACT_INFO, details.getId()
         );
 
-        List<String> errors = new ArrayList<>();
-
         boolean applicantIsConfidential = details.getData().getApplicant2().isConfidentialContactDetails();
         if (applicantIsConfidential) {
-            errors.add(CONFIDENTIAL_APPLICANT_ERROR);
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(CONFIDENTIAL_APPLICANT_ERROR))
+                .build();
         }
 
+        var applicant2 = details.getData().getApplicant2();
+        applicant2.setNonConfidentialAddress(applicant2.getAddress());
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .errors(errors)
+            .data(details.getData())
+            .build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails
+    ) {
+        log.info("{} about to submit callback invoked for Case Id: {}",
+            APPLICANT_1_SOLICITOR_VIEW_APPLICANT_2_CONTACT_INFO, details.getId()
+        );
+
+        details.getData().getApplicant2().setNonConfidentialAddress(null);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
             .build();
     }
 }
