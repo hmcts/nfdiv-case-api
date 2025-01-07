@@ -78,7 +78,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         log.info("Retrieving order summary");
         final CaseData caseData = details.getData();
 
-        if (caseData.getApplicant1().getAddress() == null || caseData.getApplicant2().getAddress() == null) {
+        if (caseData.getApplicant1().getAddress() == null) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(List.of("Please enter an address for the applicant using the 'Amend divorce application' event."))
