@@ -305,7 +305,7 @@ dependencies {
 
   testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: '1.7.0'
   testImplementation group: 'com.github.stefanbirkner', name: 'system-lambda', version: '1.2.1'
-  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.0'
+  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.2'
   testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.27.0'
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '4.1.5'
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.1.4'
