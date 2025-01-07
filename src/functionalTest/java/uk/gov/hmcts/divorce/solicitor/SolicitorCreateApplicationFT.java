@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.solicitor;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
 import java.util.List;
@@ -21,8 +20,6 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.FINANC
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorCreateApplication.SOLICITOR_CREATE;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_1_ADDRESS_LINE_1;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_ADDRESS_LINE_1;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationContactInformation;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
@@ -40,14 +37,6 @@ public class SolicitorCreateApplicationFT extends FunctionalTestSuite {
         caseData.put("applicationType", SOLE_APPLICATION);
         caseData.put("jurisdictionConnections", List.of(APP_1_APP_2_RESIDENT));
         caseData.put("applicant2OrgContactInformation", organisationContactInformation());
-        caseData.put(
-            "applicant1NonConfidentialAddress",
-            AddressGlobalUK.builder().addressLine1(TEST_APPLICANT_1_ADDRESS_LINE_1).build()
-        );
-        caseData.put(
-            "applicant2NonConfidentialAddress",
-            AddressGlobalUK.builder().addressLine1(TEST_APPLICANT_2_ADDRESS_LINE_1).build()
-        );
 
         Response response = triggerCallback(caseData, SOLICITOR_CREATE, ABOUT_TO_SUBMIT_URL);
 

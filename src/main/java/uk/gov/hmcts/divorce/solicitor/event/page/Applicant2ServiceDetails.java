@@ -106,11 +106,12 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                         "${labelContentApplicant2UC} email address",
                         "Enter the email address which they actively use for personal emails. "
                             + "You should avoid using their work email address because it may not be private.")
-                .mandatory(Applicant::getNonConfidentialAddress,
-                     "applicant2SolicitorRepresented=\"Yes\" OR applicant2SolicitorRepresented=\"No\"",
-                     null,
-                     "${labelContentApplicant2UC} postal address",
-                     "This address will be used to notify them about the application")
+
+                .mandatory(Applicant::getAddress,
+                    "applicant2SolicitorRepresented=\"Yes\" OR applicant2SolicitorRepresented=\"No\"",
+                    null,
+                    "${labelContentApplicant2UC} postal address",
+                    "This address will be used to notify them about the application")
                 .mandatory(Applicant::getAddressOverseas,
                     "applicant2SolicitorRepresented=\"Yes\" OR applicant2SolicitorRepresented=\"No\"",
                     null,

@@ -12,7 +12,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_WITHDRAWN_OR_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -28,8 +29,8 @@ public class Applicant2SolicitorViewApplicant1ContactDetails implements CCDConfi
 
     public static final String APPLICANT_2_SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO = "app2-solicitor-view-app1-contact-info";
     public static final String CONFIDENTIAL_APPLICANT_ERROR = """
-        The applicants contact details are confidential. Please complete a general application
-        to seek permission to obtain the address from the court.
+            The applicants contact details are confidential. Please complete a general application
+            to seek permission to obtain the address from the court.
         """;
 
     @Override
@@ -41,13 +42,12 @@ public class Applicant2SolicitorViewApplicant1ContactDetails implements CCDConfi
             .description("View applicant contact details")
             .showSummary(false)
             .aboutToStartCallback(this::aboutToStart)
-            .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("applicant1ContactDetails")
             .pageLabel("Applicant 1 Contact Details")
             .complex(CaseData::getApplicant1)
-                .readonly(Applicant::getNonConfidentialAddress)
+                .readonly(Applicant::getAddress)
                 .readonly(Applicant::getPhoneNumber)
                 .readonly(Applicant::getEmail)
             .done();
@@ -58,33 +58,15 @@ public class Applicant2SolicitorViewApplicant1ContactDetails implements CCDConfi
             APPLICANT_2_SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO, details.getId()
         );
 
+        List<String> errors = new ArrayList<>();
+
         boolean applicantIsConfidential = details.getData().getApplicant1().isConfidentialContactDetails();
         if (applicantIsConfidential) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-             .errors(Collections.singletonList(CONFIDENTIAL_APPLICANT_ERROR))
-             .build();
+            errors.add(CONFIDENTIAL_APPLICANT_ERROR);
         }
 
-        var applicant1 = details.getData().getApplicant1();
-        applicant1.setNonConfidentialAddress(applicant1.getAddress());
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .build();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
-        final CaseDetails<CaseData, State> details,
-        final CaseDetails<CaseData, State> beforeDetails
-    ) {
-        log.info("{} about to submit callback invoked for Case Id: {}",
-            APPLICANT_2_SOLICITOR_VIEW_APPLICANT_1_CONTACT_INFO, details.getId()
-        );
-
-        details.getData().getApplicant1().setNonConfidentialAddress(null);
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
+            .errors(errors)
             .build();
     }
 }

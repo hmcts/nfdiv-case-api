@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.service.task.DivorceApplicationDraft;
 import uk.gov.hmcts.divorce.solicitor.service.task.InitialiseSolicitorCreatedApplication;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicant1SolicitorAddress;
-import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicantAddresses;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicantGender;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicationFeeServiceRequest;
 import uk.gov.hmcts.divorce.solicitor.service.task.SolicitorCourtDetails;
@@ -48,16 +47,12 @@ public class SolicitorCreateApplicationService {
     private SetApplicantGender setApplicantGender;
 
     @Autowired
-    private SetApplicantAddresses setApplicantAddresses;
-
-    @Autowired
     private SetApplicationFeeServiceRequest setApplicationFeeServiceRequest;
 
     public CaseDetails<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> caseDetails) {
 
         return caseTasks(
             initialiseSolicitorCreatedApplication,
-            setApplicantAddresses,
             solicitorCourtDetails,
             setApplicant1SolicitorAddress,
             divorceApplicationDraft,
