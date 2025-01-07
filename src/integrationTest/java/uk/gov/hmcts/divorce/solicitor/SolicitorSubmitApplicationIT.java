@@ -14,8 +14,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
@@ -121,6 +123,7 @@ public class SolicitorSubmitApplicationIT {
     public void createsOrderSummaryToPrepareCaseForPayment() throws Exception {
         var data = caseDataWithStatementOfTruth();
         data.getApplication().setApplicationFeeOrderSummary(null);
+        data.getApplicant1().setAddress(AddressGlobalUK.builder().addressLine1("test").build());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -181,6 +184,11 @@ public class SolicitorSubmitApplicationIT {
 
         CaseData data = new CaseData();
         data.getApplication().setApplicationFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
+        data.setApplicant1(
+            Applicant.builder()
+                .address(AddressGlobalUK.builder().addressLine1("test").build())
+                .build()
+        );
 
         mockMvc.perform(post(ABOUT_TO_START_URL)
                 .contentType(APPLICATION_JSON)
