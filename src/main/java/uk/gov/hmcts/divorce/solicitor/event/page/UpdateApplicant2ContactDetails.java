@@ -26,7 +26,7 @@ public class UpdateApplicant2ContactDetails implements CcdPageConfiguration {
                 .mandatoryWithLabel(Applicant::getContactDetailsType,
                     "Should ${labelContentTheApplicant2} contact details be kept private?")
                 .mandatoryWithoutDefaultValue(Applicant::getInRefuge, "applicant2ContactDetailsType=\"private\"",
-                    "Is ${labelContentTheApplicant2UC} in a refuge?")
+                    "Is ${labelContentTheApplicant2} in a refuge?")
             .done();
     }
 }
