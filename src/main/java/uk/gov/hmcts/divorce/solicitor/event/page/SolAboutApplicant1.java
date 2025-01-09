@@ -67,7 +67,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                     "${labelContentApplicantsOrApplicant1s} home address")
                 .label("LabelHorizontalLine1-SolAboutApplicant1", DARK_HORIZONTAL_RULE)
                 .mandatory(Applicant::getContactDetailsType)
-                .optionalWithoutDefaultValue(Applicant::getInRefuge, "applicant1ContactDetailsType=\"private\"",
+                .mandatoryWithoutDefaultValue(Applicant::getInRefuge, "applicant1ContactDetailsType=\"private\"",
                     String.format(APPLICANT_REFUGE_LABEL, THE_APPLICANT_OR_APPLICANT1))
             .done();
     }
