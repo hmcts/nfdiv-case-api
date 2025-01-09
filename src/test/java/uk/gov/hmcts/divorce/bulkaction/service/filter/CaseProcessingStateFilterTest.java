@@ -78,8 +78,8 @@ class CaseProcessingStateFilterTest {
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                     .id(4L)
                     .state(Archived.name())
-                    .build()
-            ));
+                    .build())
+            );
 
         final CaseFilterProcessingState caseFilterProcessingState = caseProcessingStateFilter.filterProcessingState(
             bulkListCaseDetails,
