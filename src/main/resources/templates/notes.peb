@@ -1,0 +1,8 @@
+# Case {{caseRef}} is {{age}} seconds old!
+
+| Date | Author | Note |
+| ---- | ------ | ---- |
+{% for note in notes %}
+  |{{ note.value.date }} | {{ note.value.author }} | {{ note.value.note }} |
+{% endfor %}
+

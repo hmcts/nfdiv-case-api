@@ -34,6 +34,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAcc
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
+import uk.gov.hmcts.divorce.sow014.lib.MyRadioList;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -52,6 +53,7 @@ import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.CasePaymentHistoryViewer;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.DynamicRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -259,9 +261,31 @@ public class CaseData {
     )
     private CaseLink bulkListCaseReferenceLink;
 
+    @CCD
+    private String markdownTabField;
+    @CCD
+    private YesOrNo leadCase;
+    @CCD
+    private String leadCaseMd;
+    @CCD
+    private String subCaseMd;
+
+    private String adminMd;
+
     @CCD(access = {DefaultAccess.class})
     @JsonUnwrapped
     private RetiredFields retiredFields;
+
+    @CCD(typeOverride = DynamicRadioList)
+    private MyRadioList caseSearchResults;
+    @CCD(label = "Search by applicant name")
+    private String caseSearchTerm;
+
+    @CCD(label = "Search by applicant name")
+    private String callbackJobId;
+    @CCD(typeOverride = DynamicRadioList)
+    private MyRadioList callbackJobs;
+
 
     @CCD(access = {CaseworkerAccess.class})
     private String hyphenatedCaseRef;
@@ -270,8 +294,8 @@ public class CaseData {
     private ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequestField;
 
     @CCD(
-            access = {DefaultAccess.class, AcaSystemUserAccess.class, CaseworkerAccess.class},
-            label = "Change of representatives"
+        access = {DefaultAccess.class, AcaSystemUserAccess.class, CaseworkerAccess.class},
+        label = "Change of representatives"
     )
     @Builder.Default
     private List<ListValue<ChangeOfRepresentative>> changeOfRepresentatives = new ArrayList<>();
@@ -343,7 +367,7 @@ public class CaseData {
     private List<ListValue<CaseMatch>> caseMatches = new ArrayList<>();
 
     @JsonIgnore
-    public String formatCaseRef(long caseId) {
+    public static String formatCaseRef(long caseId) {
         String temp = String.format("%016d", caseId);
         return String.format("%4s-%4s-%4s-%4s",
             temp.substring(0, 4),

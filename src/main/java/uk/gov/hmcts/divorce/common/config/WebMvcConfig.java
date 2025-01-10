@@ -16,6 +16,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(requestInterceptor)
             .excludePathPatterns(
+                "/ccd/**",
                 "/health",
                 "/swagger-ui/**",
                 "/swagger-ui.html",

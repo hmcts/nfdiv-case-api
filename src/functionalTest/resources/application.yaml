@@ -4,6 +4,13 @@ spring:
 
   main:
     allow-bean-definition-overriding: true
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:nfd
+    username: sa
+    password: password
+  flyway:
+    enabled: false
 # because functional tests load up SpringBootTest
 azure:
   application-insights:
@@ -150,3 +157,7 @@ logging:
     org:
       springframework:
         cache: TRACE
+es:
+  host: nfdiv-case-api-pr-4154-es-master:9200
+  search:
+    enabled: true
