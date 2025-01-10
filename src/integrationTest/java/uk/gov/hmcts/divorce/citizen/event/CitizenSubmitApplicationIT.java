@@ -18,14 +18,11 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -96,9 +93,6 @@ public class CitizenSubmitApplicationIT {
     @MockBean
     private AuthTokenGenerator authTokenGenerator;
 
-    @MockBean
-    private IdamService idamService;
-
     @BeforeAll
     static void setUp() {
         FeesWireMock.start();
@@ -145,9 +139,6 @@ public class CitizenSubmitApplicationIT {
 
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
         stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData, caseData.getApplicant1()));
-
-        when(idamService.retrieveSystemUpdateUserDetails())
-            .thenReturn(new User("system-user-token", UserInfo.builder().build()));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)

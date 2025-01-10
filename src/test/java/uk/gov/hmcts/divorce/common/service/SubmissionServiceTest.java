@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.common.service.task.SetApplicant2Email;
 import uk.gov.hmcts.divorce.common.service.task.SetApplicantOfflineStatus;
 import uk.gov.hmcts.divorce.common.service.task.SetDateSubmitted;
 import uk.gov.hmcts.divorce.common.service.task.SetDefaultOrganisationPolicies;
-import uk.gov.hmcts.divorce.common.service.task.SetServiceIdForCaseFlag;
 import uk.gov.hmcts.divorce.common.service.task.SetStateAfterSubmission;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -41,9 +40,6 @@ class SubmissionServiceTest {
     @Mock
     private SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
 
-    @Mock
-    private SetServiceIdForCaseFlag setServiceIdForCaseFlag;
-
     @InjectMocks
     private SubmissionService submissionService;
 
@@ -59,7 +55,6 @@ class SubmissionServiceTest {
         when(setApplicantOfflineStatus.apply(caseDetails)).thenReturn(caseDetails);
         when(setDefaultOrganisationPolicies.apply(caseDetails)).thenReturn(caseDetails);
         when(sendSubmissionNotifications.apply(caseDetails)).thenReturn(expectedCaseDetails);
-        when(setServiceIdForCaseFlag.apply(caseDetails)).thenReturn(expectedCaseDetails);
 
         final CaseDetails<CaseData, State> result = submissionService.submitApplication(caseDetails);
 
@@ -71,6 +66,5 @@ class SubmissionServiceTest {
         verify(setApplicantOfflineStatus).apply(caseDetails);
         verify(setDefaultOrganisationPolicies).apply(caseDetails);
         verify(sendSubmissionNotifications).apply(caseDetails);
-        verify(setServiceIdForCaseFlag).apply(caseDetails);
     }
 }

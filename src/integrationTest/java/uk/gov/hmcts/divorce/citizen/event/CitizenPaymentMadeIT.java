@@ -20,12 +20,8 @@ import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
-import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import uk.gov.service.notify.NotificationClientException;
 
 import java.time.LocalDateTime;
@@ -39,7 +35,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -64,7 +59,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
@@ -97,12 +91,6 @@ public class CitizenPaymentMadeIT {
 
     @MockBean
     private WebMvcConfig webMvcConfig;
-
-    @MockBean
-    private IdamService idamService;
-
-    @MockBean
-    private AuthTokenGenerator authTokenGenerator;
 
     @BeforeAll
     static void setUp() {
@@ -180,10 +168,6 @@ public class CitizenPaymentMadeIT {
 
         data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
-        when(idamService.retrieveSystemUpdateUserDetails())
-            .thenReturn(new User("system-user-token", UserInfo.builder().build()));
-        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
@@ -218,10 +202,6 @@ public class CitizenPaymentMadeIT {
 
         data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
 
-        when(idamService.retrieveSystemUpdateUserDetails())
-            .thenReturn(new User("system-user-token", UserInfo.builder().build()));
-        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
@@ -254,10 +234,6 @@ public class CitizenPaymentMadeIT {
             .build();
 
         data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
-
-        when(idamService.retrieveSystemUpdateUserDetails())
-            .thenReturn(new User("system-user-token", UserInfo.builder().build()));
-        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -295,10 +271,6 @@ public class CitizenPaymentMadeIT {
             .build();
 
         data.getApplication().setApplicationPayments(singletonList(new ListValue<>("1", payment)));
-
-        when(idamService.retrieveSystemUpdateUserDetails())
-            .thenReturn(new User("system-user-token", UserInfo.builder().build()));
-        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
