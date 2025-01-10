@@ -79,14 +79,10 @@ class CaseworkerHwfApplicationAcceptedTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TestConstants.TEST_CASE_ID);
 
-        final CaseDetails<CaseData, State> caseDetailsBefore = new CaseDetails<>();
-        caseDetailsBefore.setState(State.AwaitingHWFDecision);
-        caseDetailsBefore.setId(TestConstants.TEST_CASE_ID);
-
         when(caseworkerHwfApplicationAndPaymentHelper.getState(caseData)).thenReturn(Submitted);
         when(caseworkerHwfApplicationAndPaymentHelper.setDateSubmittedAndDueDate(caseData)).thenReturn(caseData);
 
-        caseworkerHwfApplicationAccepted.aboutToSubmit(caseDetails, caseDetailsBefore);
+        caseworkerHwfApplicationAccepted.aboutToSubmit(caseDetails, null);
 
         verify(caseFlagsService).setSupplementaryDataForCaseFlags(TestConstants.TEST_CASE_ID);
     }

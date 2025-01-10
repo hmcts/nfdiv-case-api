@@ -68,9 +68,7 @@ public class CaseworkerHwfApplicationAccepted implements CCDConfig<CaseData, Sta
         details.setData(caseworkerHwfApplicationAndPaymentHelper.setDateSubmittedAndDueDate(caseData));
         caseworkerHwfApplicationAndPaymentHelper.setRequiredCaseFieldsForPostSubmissionCase(details);
 
-        if (beforeDetails.getState() != State.Submitted && details.getState() == State.Submitted) {
-            caseFlagsService.setSupplementaryDataForCaseFlags(details.getId());
-        }
+        caseFlagsService.setSupplementaryDataForCaseFlags(details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
