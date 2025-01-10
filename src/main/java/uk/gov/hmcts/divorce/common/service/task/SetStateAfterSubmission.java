@@ -20,8 +20,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateTTL.SYSTEM_UPDATE_TTL;
-
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -54,15 +52,12 @@ public class SetStateAfterSubmission implements CaseTask {
 
         if (applicantNeedsHelpWithFees) {
             caseDetails.setState(AwaitingHWFDecision);
-            ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_UPDATE_TTL, user, serviceAuthorization);
         } else if (applicantIsAwaitingDocuments) {
             caseDetails.setState(AwaitingDocuments);
-            ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_UPDATE_TTL, user, serviceAuthorization);
         } else if (!application.hasBeenPaidFor()) {
             caseDetails.setState(AwaitingPayment);
         } else {
             caseDetails.setState(Submitted);
-            ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_UPDATE_TTL, user, serviceAuthorization);
         }
 
         log.info("State set to {}, CaseID {}", caseDetails.getState(), caseDetails.getId());

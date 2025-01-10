@@ -18,7 +18,6 @@ import java.time.LocalDate;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CFT_TTL_MANAGER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.TTL_PROFILE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -26,7 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class SystemUpdateTTL implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String SYSTEM_UPDATE_TTL = "system-update-TTL";
+    public static final String SYSTEM_UPDATE_TTL = "system-update-ttl";
     private static final LocalDate CURRENT_DATE_PLUS_SIX_MONTH = LocalDate.now().plusMonths(6);
 
     @Override
@@ -41,7 +40,7 @@ public class SystemUpdateTTL implements CCDConfig<CaseData, State, UserRole> {
             .description("Resolve time to live")
             .grant(CREATE_READ_UPDATE, TTL_PROFILE));
 
-        configBuilder.caseRoleToAccessProfile(CFT_TTL_MANAGER).accessProfiles("TTL_profile").build();
+       // configBuilder.caseRoleToAccessProfile(CFT_TTL_MANAGER).accessProfiles("TTL_profile").build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
@@ -53,8 +52,6 @@ public class SystemUpdateTTL implements CCDConfig<CaseData, State, UserRole> {
             caseData.setRetainAndDisposeTimeToLive(TTL.builder().systemTTL(CURRENT_DATE_PLUS_SIX_MONTH)
                     .suspended(YesOrNo.NO)
                     .build());
-        } else {
-            caseData.setRetainAndDisposeTimeToLive(null);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
