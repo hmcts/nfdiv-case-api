@@ -159,7 +159,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                     getLabel(GENDER_HINT_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getContactDetailsType,
                     getLabel(CONTACT_TYPE_LABEL, APPLICANTS_OR_APPLICANT1S, THE_RESPONDENT_OR_APPLICANT2))
-                .mandatoryWithoutDefaultValue(Applicant::getInRefuge, "applicant1ContactDetailsType=\"private\"",
+                .optionalWithoutDefaultValue(Applicant::getInRefuge, "applicant1ContactDetailsType=\"private\"",
                     getLabel(APPLICANT_REFUGE_LABEL, THE_APPLICANT_OR_APPLICANT1))
             .done()
             .complex(CaseData::getApplication)
