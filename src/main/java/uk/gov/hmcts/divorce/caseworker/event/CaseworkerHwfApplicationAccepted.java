@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -34,6 +35,7 @@ public class CaseworkerHwfApplicationAccepted implements CCDConfig<CaseData, Sta
     public static final String CASEWORKER_HWF_APPLICATION_ACCEPTED = "caseworker-hwf-application-accepted";
 
     private final CaseworkerHwfApplicationAndPaymentHelper caseworkerHwfApplicationAndPaymentHelper;
+    private final CaseFlagsService caseFlagsService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -65,6 +67,10 @@ public class CaseworkerHwfApplicationAccepted implements CCDConfig<CaseData, Sta
         details.setState(caseworkerHwfApplicationAndPaymentHelper.getState(caseData));
         details.setData(caseworkerHwfApplicationAndPaymentHelper.setDateSubmittedAndDueDate(caseData));
         caseworkerHwfApplicationAndPaymentHelper.setRequiredCaseFieldsForPostSubmissionCase(details);
+
+        if (beforeDetails.getState() != State.Submitted && details.getState() == State.Submitted) {
+            caseFlagsService.setSupplementaryDataForCaseFlags(details.getId());
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
