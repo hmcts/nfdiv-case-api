@@ -16,7 +16,9 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CitizenAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -121,8 +123,18 @@ public class Applicant {
     )
     private String nameChangedHowOtherDetails;
 
-    @CCD(label = "Address")
+    @CCD(
+        label = "Address",
+        access = {DefaultAccessExcludingSolicitor.class, CitizenAccess.class},
+        inheritAccessFromParent = false
+    )
     private AddressGlobalUK address;
+
+    /* Second address field to allow solicitors to enter applicant addresses when creating applications
+     * and view non-confidential addresses for solicitor service. We do not give solicitors read access to the
+     * primary "address" field as it can contain a confidential address. */
+    @CCD(label = "Non-Confidential Address")
+    private AddressGlobalUK nonConfidentialAddress;
 
     @CCD(label = "Is this an international address?")
     private YesOrNo addressOverseas;

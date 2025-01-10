@@ -25,7 +25,7 @@ plugins {
   id 'org.springframework.boot' version '3.3.5'
   id 'com.github.ben-manes.versions' version '0.51.0'
   id 'hmcts.ccd.sdk' version '5.5.16'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1511'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1528'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -305,7 +305,7 @@ dependencies {
 
   testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: '1.7.0'
   testImplementation group: 'com.github.stefanbirkner', name: 'system-lambda', version: '1.2.1'
-  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.0'
+  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.2'
   testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.27.0'
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '4.1.5'
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.1.4'
