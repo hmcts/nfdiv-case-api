@@ -58,6 +58,7 @@ public class CftLibConfig implements CFTLibConfigurer {
             "caseworker-divorce-pcqextractor",
             "caseworker-divorce-systemupdate",
             "caseworker-divorce-bulkscan",
+            "caseworker-divorce-rparobot",
             "caseworker-caa",
             "caseworker-approver",
             "citizen",
