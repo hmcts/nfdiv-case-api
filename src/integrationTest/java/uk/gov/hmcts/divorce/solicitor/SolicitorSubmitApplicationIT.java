@@ -19,6 +19,8 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.PaymentItem;
@@ -29,6 +31,7 @@ import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.io.IOException;
 import java.util.List;
@@ -102,6 +105,9 @@ public class SolicitorSubmitApplicationIT {
 
     @MockBean
     private NotificationService notificationService;
+
+    @MockBean
+    private IdamService idamService;
 
     @BeforeAll
     static void setUp() {
@@ -228,6 +234,10 @@ public class SolicitorSubmitApplicationIT {
         data.getApplication().setPbaNumbers(getPbaNumbersForAccount("PBA0012345"));
         data.getApplication().setApplicationFeeOrderSummary(orderSummaryWithFee());
         data.getApplicant1().getSolicitor().setOrganisationPolicy(organisationPolicy());
+
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(new User("system-user-token", UserInfo.builder().build()));
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         MvcResult mvcResult = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
