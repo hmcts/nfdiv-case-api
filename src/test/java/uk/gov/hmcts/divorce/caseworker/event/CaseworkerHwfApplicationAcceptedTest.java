@@ -8,9 +8,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.testutil.TestConstants;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -26,6 +28,9 @@ class CaseworkerHwfApplicationAcceptedTest {
 
     @Mock
     private CaseworkerHwfApplicationAndPaymentHelper caseworkerHwfApplicationAndPaymentHelper;
+
+    @Mock
+    private CaseFlagsService caseFlagsService;
 
     @InjectMocks
     private CaseworkerHwfApplicationAccepted caseworkerHwfApplicationAccepted;
@@ -65,5 +70,17 @@ class CaseworkerHwfApplicationAcceptedTest {
         caseworkerHwfApplicationAccepted.aboutToSubmit(caseDetails, null);
 
         verify(caseworkerHwfApplicationAndPaymentHelper).setRequiredCaseFieldsForPostSubmissionCase(caseDetails);
+    }
+
+    @Test
+    void shouldCallCaseFlagsServiceToSetHmctsServiceId() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TestConstants.TEST_CASE_ID);
+
+        caseworkerHwfApplicationAccepted.submitted(caseDetails, null);
+
+        verify(caseFlagsService).setSupplementaryDataForCaseFlags(TestConstants.TEST_CASE_ID);
     }
 }
