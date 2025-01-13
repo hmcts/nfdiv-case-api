@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentSetupService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
@@ -45,6 +46,9 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
     @Autowired
     private CaseFlagsService caseFlagsService;
+
+    @Autowired
+    private CcdUpdateService ccdUpdateService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -112,6 +116,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
                                                final CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} submitted callback invoked CaseID: {}", CITIZEN_SUBMIT, details.getId());
         caseFlagsService.setSupplementaryDataForCaseFlags(details.getId());
+
         return SubmittedCallbackResponse.builder().build();
     }
 

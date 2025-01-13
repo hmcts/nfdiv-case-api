@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -66,10 +67,12 @@ public class CaseworkerHwfApplicationAccepted implements CCDConfig<CaseData, Sta
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_HWF_APPLICATION_ACCEPTED, details.getId());
         CaseData caseData = details.getData();
 
+        caseData.setCaseFlagsSetupComplete(YesOrNo.YES);
+
         details.setState(caseworkerHwfApplicationAndPaymentHelper.getState(caseData));
         details.setData(caseworkerHwfApplicationAndPaymentHelper.setDateSubmittedAndDueDate(caseData));
         caseworkerHwfApplicationAndPaymentHelper.setRequiredCaseFieldsForPostSubmissionCase(details);
-
+        
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .state(details.getState())
