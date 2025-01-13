@@ -34,6 +34,7 @@ public class CaseworkerPrepareForCaseFlags implements CCDConfig<CaseData, State,
             .forAllStates()
             .name("Prepare for Case flags")
             .description("Prepare for Case flags")
+            .showCondition("caseFlagsSetupComplete!=\"Yes\"")
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER, SUPER_USER)
