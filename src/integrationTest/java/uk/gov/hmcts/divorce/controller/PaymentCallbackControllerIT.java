@@ -14,8 +14,8 @@ import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.payment.PaymentCallbackService;
-import uk.gov.hmcts.divorce.payment.model.callback.OnlinePaymentMethod;
-import uk.gov.hmcts.divorce.payment.model.callback.PaymentCallbackDto;
+import uk.gov.hmcts.divorce.payment.model.OnlinePaymentMethod;
+import uk.gov.hmcts.divorce.payment.model.PaymentCallbackDto;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import static org.mockito.Mockito.verify;

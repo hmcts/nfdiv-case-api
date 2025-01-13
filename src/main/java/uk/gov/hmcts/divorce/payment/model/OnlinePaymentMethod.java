@@ -1,12 +1,12 @@
-package uk.gov.hmcts.divorce.payment.model.callback;
+package uk.gov.hmcts.divorce.payment.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public enum OnlinePaymentMethod implements HasLabel {
     CARD("card"),
     PAYMENT_BY_ACCOUNT("payment by account");

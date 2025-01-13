@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.common.service.task.UpdateSuccessfulPaymentStatus;
-import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
-import uk.gov.hmcts.divorce.payment.model.callback.OnlinePaymentMethod;
-import uk.gov.hmcts.divorce.payment.model.callback.PaymentCallbackDto;
+import uk.gov.hmcts.divorce.payment.model.OnlinePaymentMethod;
+import uk.gov.hmcts.divorce.payment.model.PaymentCallbackDto;
+import uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
@@ -33,37 +33,47 @@ public class PaymentCallbackService {
 
     private final UpdateSuccessfulPaymentStatus updateSuccessfulPaymentStatus;
 
+    private static final String LOG_NOT_PROCESSING_CALLBACK = """
+        Not processing callback for payment {}, case id: {}, status: {}, payment method: {}
+        """;
+
     public void handleCallback(PaymentCallbackDto paymentCallback) {
-        final String caseReference = paymentCallback.getCcdCaseNumber();
+        final String caseRef = paymentCallback.getCcdCaseNumber();
+        final String paymentRef = paymentCallback.getPayment().getPaymentReference();
+        final ServiceRequestStatus serviceRequestStatus = paymentCallback.getServiceRequestStatus();
+        final OnlinePaymentMethod paymentMethod = paymentCallback.getPayment().getPaymentMethod();
 
-        if (!PaymentStatus.SUCCESS.getLabel().equalsIgnoreCase(paymentCallback.getStatus())) {
-            log.info("Payment unsuccessful for case: {}, not processing callback", caseReference);
-            return;
-        }
-
-        if (!OnlinePaymentMethod.CARD.equals(paymentCallback.getMethod())) {
-            log.info("Payment method was '{}' for case: {}, not processing callback", paymentCallback.getMethod(), caseReference);
+        if (serviceRequestNotPaid(serviceRequestStatus) || isSolicitorPbaPayment(paymentMethod)) {
+            log.info(LOG_NOT_PROCESSING_CALLBACK, paymentRef, caseRef, serviceRequestStatus, paymentMethod);
             return;
         }
 
         final User systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuthorization = authTokenGenerator.generate();
-        final CaseDetails details = coreCaseDataApi.getCase(systemUpdateUser.getAuthToken(), serviceAuthorization, caseReference);
+        final CaseDetails details = coreCaseDataApi.getCase(systemUpdateUser.getAuthToken(), serviceAuthorization, caseRef);
         final State state = State.valueOf(details.getState());
         final String paymentMadeEvent = paymentMadeEvent(state);
 
         if (paymentMadeEvent == null) {
-            log.info("Case not in awaiting payment state: {}, not processing callback", paymentCallback.getCcdCaseNumber());
+            log.info(LOG_NOT_PROCESSING_CALLBACK, paymentRef, caseRef, serviceRequestStatus, paymentMethod);
             return;
         }
 
         ccdUpdateService.submitEventWithRetry(
-            caseReference,
+            caseRef,
             paymentMadeEvent,
             updateSuccessfulPaymentStatus,
             systemUpdateUser,
             serviceAuthorization
         );
+    }
+
+    private boolean serviceRequestNotPaid(ServiceRequestStatus serviceRequestStatus) {
+       return !ServiceRequestStatus.PAID.equals(serviceRequestStatus);
+    }
+
+    private boolean isSolicitorPbaPayment(OnlinePaymentMethod paymentMethod) {
+        return OnlinePaymentMethod.PAYMENT_BY_ACCOUNT.equals(paymentMethod);
     }
 
     private String paymentMadeEvent(State state) {

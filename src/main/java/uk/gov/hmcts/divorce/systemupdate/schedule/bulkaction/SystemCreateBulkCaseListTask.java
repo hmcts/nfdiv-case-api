@@ -74,7 +74,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
 
                 final List<CaseDetails<CaseData, State>> casesAwaitingPronouncement = pages.poll();
 
-                if (minimumCasesToProcess <= casesAwaitingPronouncement.size()) {
+                if (1 <= casesAwaitingPronouncement.size()) {
 
                     final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = createBulkCaseListDetails(casesAwaitingPronouncement);
 
