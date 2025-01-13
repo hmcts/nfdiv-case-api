@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -70,6 +71,20 @@ class CaseworkerHwfApplicationAcceptedTest {
         caseworkerHwfApplicationAccepted.aboutToSubmit(caseDetails, null);
 
         verify(caseworkerHwfApplicationAndPaymentHelper).setRequiredCaseFieldsForPostSubmissionCase(caseDetails);
+    }
+
+    @Test
+    void shouldSetCaseFlagsSetupStatusInAboutToSubmit() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseData.setCaseFlagsSetupComplete(YesOrNo.YES);
+
+        when(caseworkerHwfApplicationAndPaymentHelper.setDateSubmittedAndDueDate(caseData)).thenReturn(caseData);
+
+        var response =  caseworkerHwfApplicationAccepted.aboutToSubmit(caseDetails, null);
+
+        assertThat(response.getData().getCaseFlagsSetupComplete()).isEqualTo(YesOrNo.YES);
     }
 
     @Test

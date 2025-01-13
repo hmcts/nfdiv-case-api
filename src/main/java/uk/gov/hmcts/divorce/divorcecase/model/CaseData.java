@@ -195,6 +195,8 @@ public class CaseData {
     )
     private YesOrNo isJudicialSeparation;
 
+    private YesOrNo caseFlagsSetupComplete;
+
     @CCD(
         label = "Previous Service Applications",
         typeOverride = Collection,
