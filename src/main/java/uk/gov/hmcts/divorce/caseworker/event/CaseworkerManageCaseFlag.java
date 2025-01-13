@@ -30,6 +30,7 @@ public class CaseworkerManageCaseFlag implements CCDConfig<CaseData, State, User
         new PageBuilder(configBuilder
             .event(CASEWORKER_MANAGE_CASE_FLAG)
             .forStates(POST_SUBMISSION_STATES)
+            .showCondition("caseFlagsSetupComplete=\"Yes\"")
             .name("Manage flags")
             .description("Manage flags")
             .showEventNotes()

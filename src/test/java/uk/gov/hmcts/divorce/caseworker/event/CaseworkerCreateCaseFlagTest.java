@@ -43,20 +43,6 @@ class CaseworkerCreateCaseFlagTest {
     }
 
     @Test
-    void shouldSetSupplementaryDataForCaseFlagsInAboutToStartEvent() {
-        Long caseId = TEST_CASE_ID;
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        final CaseData caseData = validApplicant1CaseData();
-        caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerCreateCaseFlag.aboutToStart(caseDetails);
-
-        verify(caseFlagsService).setSupplementaryDataForCaseFlags(TEST_CASE_ID);
-    }
-
-    @Test
     void shouldInitialiseCaseFlagsInAboutToStartEvent() {
         Long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();

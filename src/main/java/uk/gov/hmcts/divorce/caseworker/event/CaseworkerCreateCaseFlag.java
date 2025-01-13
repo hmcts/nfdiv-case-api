@@ -37,6 +37,7 @@ public class CaseworkerCreateCaseFlag implements CCDConfig<CaseData, State, User
         new PageBuilder(configBuilder
             .event(CASEWORKER_CASE_FLAG)
             .forStates(POST_SUBMISSION_STATES)
+            .showCondition("caseFlagsSetupComplete=\"Yes\"")
             .aboutToStartCallback(this::aboutToStart)
             .name("Create flags")
             .description("Create flags")
@@ -61,7 +62,6 @@ public class CaseworkerCreateCaseFlag implements CCDConfig<CaseData, State, User
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_CASE_FLAG, details.getId());
         CaseData data = details.getData();
 
-        caseFlagsService.setSupplementaryDataForCaseFlags(details.getId());
         caseFlagsService.initialiseCaseFlags(data);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
