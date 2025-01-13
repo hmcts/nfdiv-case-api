@@ -195,6 +195,9 @@ public class CaseData {
     )
     private YesOrNo isJudicialSeparation;
 
+    @CCD(
+        access = {DefaultAccess.class}
+    )
     private YesOrNo caseFlagsSetupComplete;
 
     @CCD(
