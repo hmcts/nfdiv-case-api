@@ -79,7 +79,7 @@ public class ESIndexer {
                 // https://github.com/hmcts/rse-cft-lib/blob/94aa0edeb0e1a4337a411ed8e6e20f170ed30bae/cftlib/lib/runtime/compose/logstash/logstash_conf.in#L3
                 var results = c.prepareStatement("""
                     with updated as (
-                      delete from es_queue es where id in (select id from es_queue limit 2000)
+                      delete from es_queue es where id in (select id from es_queue limit 200)
                       returning id
                     )
                       select reference as id, case_type_id, index_id, row_to_json(row)::jsonb as row
