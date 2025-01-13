@@ -69,7 +69,7 @@ public class PaymentCallbackService {
     }
 
     private boolean serviceRequestNotPaid(ServiceRequestStatus serviceRequestStatus) {
-       return !ServiceRequestStatus.PAID.equals(serviceRequestStatus);
+        return !ServiceRequestStatus.PAID.equals(serviceRequestStatus);
     }
 
     private boolean isSolicitorPbaPayment(OnlinePaymentMethod paymentMethod) {

@@ -9,13 +9,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.divorce.common.service.task.UpdateSuccessfulPaymentStatus;
-import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.OnlinePaymentMethod;
 import uk.gov.hmcts.divorce.payment.model.PaymentCallbackDto;
+import uk.gov.hmcts.divorce.payment.model.PaymentCallbackDto.PaymentDto;
+import uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
@@ -64,8 +65,8 @@ public class PaymentCallbackServiceTest {
     @Test
     public void shouldNotProcessCallbackIfPaymentUnsuccessful() {
         PaymentCallbackDto callback = PaymentCallbackDto.builder()
-                .status(PaymentStatus.CANCELLED.toString())
-                .method(OnlinePaymentMethod.CARD)
+                .serviceRequestStatus(ServiceRequestStatus.NOT_PAID)
+                .payment(PaymentDto.builder().paymentMethod(OnlinePaymentMethod.CARD).build())
                 .build();
 
         paymentCallbackService.handleCallback(callback);
@@ -76,8 +77,8 @@ public class PaymentCallbackServiceTest {
     @Test
     public void shouldNotProcessCallbackIfPaymentMethodWasPBA() {
         PaymentCallbackDto callback = PaymentCallbackDto.builder()
-            .status(PaymentStatus.SUCCESS.toString())
-            .method(OnlinePaymentMethod.PAYMENT_BY_ACCOUNT)
+            .serviceRequestStatus(ServiceRequestStatus.PAID)
+            .payment(PaymentDto.builder().paymentMethod(OnlinePaymentMethod.PAYMENT_BY_ACCOUNT).build())
             .build();
 
         paymentCallbackService.handleCallback(callback);
@@ -99,8 +100,8 @@ public class PaymentCallbackServiceTest {
             .thenReturn(caseDetails);
 
         PaymentCallbackDto callback = PaymentCallbackDto.builder()
-            .status(PaymentStatus.SUCCESS.toString())
-            .method(OnlinePaymentMethod.CARD)
+            .serviceRequestStatus(ServiceRequestStatus.PAID)
+            .payment(PaymentDto.builder().paymentMethod(OnlinePaymentMethod.CARD).build())
             .ccdCaseNumber(TEST_CASE_ID.toString())
             .build();
         paymentCallbackService.handleCallback(callback);
@@ -122,8 +123,8 @@ public class PaymentCallbackServiceTest {
             .thenReturn(caseDetails);
 
         PaymentCallbackDto callback = PaymentCallbackDto.builder()
-            .status(PaymentStatus.SUCCESS.toString())
-            .method(OnlinePaymentMethod.CARD)
+            .serviceRequestStatus(ServiceRequestStatus.PAID)
+            .payment(PaymentDto.builder().paymentMethod(OnlinePaymentMethod.CARD).build())
             .ccdCaseNumber(TEST_CASE_ID.toString())
             .build();
         paymentCallbackService.handleCallback(callback);
@@ -152,8 +153,8 @@ public class PaymentCallbackServiceTest {
             .thenReturn(caseDetails);
 
         PaymentCallbackDto callback = PaymentCallbackDto.builder()
-            .status(PaymentStatus.SUCCESS.toString())
-            .method(OnlinePaymentMethod.CARD)
+            .serviceRequestStatus(ServiceRequestStatus.PAID)
+            .payment(PaymentDto.builder().paymentMethod(OnlinePaymentMethod.CARD).build())
             .ccdCaseNumber(TEST_CASE_ID.toString())
             .build();
         paymentCallbackService.handleCallback(callback);

@@ -39,6 +39,7 @@ public class PaymentCallbackDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
+    @Builder
     public static class PaymentDto {
         private BigDecimal paymentAmount;
 
