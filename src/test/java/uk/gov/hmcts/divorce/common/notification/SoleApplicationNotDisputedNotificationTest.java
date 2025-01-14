@@ -26,6 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
@@ -81,6 +82,8 @@ public class SoleApplicationNotDisputedNotificationTest {
         CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(data);
         details.setId(TEST_CASE_ID);
+        details.setState(Holding);
+
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
@@ -136,6 +139,7 @@ public class SoleApplicationNotDisputedNotificationTest {
         CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(data);
         details.setId(TEST_CASE_ID);
+        details.setState(Holding);
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
@@ -194,6 +198,7 @@ public class SoleApplicationNotDisputedNotificationTest {
         CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(data);
         details.setId(TEST_CASE_ID);
+        details.setState(Holding);
 
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
@@ -253,6 +258,7 @@ public class SoleApplicationNotDisputedNotificationTest {
         CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(data);
         details.setId(TEST_CASE_ID);
+        details.setState(Holding);
 
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
@@ -312,9 +318,11 @@ public class SoleApplicationNotDisputedNotificationTest {
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplicant2().setEmail(null);
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.getApplication().setWelshPreviousState(Holding);
         CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(data);
         details.setId(TEST_CASE_ID);
+        details.setState(WelshTranslationReview);
 
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.put(PARTNER, "gŵr");

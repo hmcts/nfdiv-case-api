@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -86,6 +87,7 @@ class SoleApplicationDisputedNotificationTest {
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(data);
         caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setState(Holding);
         ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
@@ -148,6 +150,7 @@ class SoleApplicationDisputedNotificationTest {
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(data);
         caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setState(Holding);
         ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
@@ -212,6 +215,7 @@ class SoleApplicationDisputedNotificationTest {
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(data);
         caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setState(Holding);
         ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
         data.getApplicant2().setEmail(null);
 
@@ -275,9 +279,11 @@ class SoleApplicationDisputedNotificationTest {
         CaseData data = validCaseDataForAosSubmitted();
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
         data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplication().setWelshPreviousState(Holding);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(data);
         caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setState(WelshTranslationReview);
         ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
         data.getApplicant2().setEmail(null);
 
@@ -354,6 +360,7 @@ class SoleApplicationDisputedNotificationTest {
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(data);
         caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setState(Holding);
         ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
         ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputedAOSFee", DISPUTE_FEE);
         data.getApplicant2().setEmail(null);
