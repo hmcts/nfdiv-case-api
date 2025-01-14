@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
@@ -38,9 +39,23 @@ public class SystemUpdateTTL implements CCDConfig<CaseData, State, UserRole> {
             .showCondition(NEVER_SHOW)
             .aboutToStartCallback(this::aboutToStart)
             .description("Resolve time to live")
+                .fields()
+                .complex(CaseData::getRetainAndDisposeTimeToLive)
+                .readonly(TTL::getSystemTTL)
+                .optional(TTL::getOverrideTTL)
+                .optional(TTL::getSuspended)
+                .done()
+            .done()
             .grant(CREATE_READ_UPDATE, TTL_PROFILE));
 
-       // configBuilder.caseRoleToAccessProfile(CFT_TTL_MANAGER).accessProfiles("TTL_profile").build();
+        Arrays.stream(UserRole.values()).forEach(
+                userRole -> {
+                    if (userRole.getRole().contains("caseworker")) {
+                        configBuilder.caseRoleToAccessProfile(userRole).legacyIdamRole()
+                                .accessProfiles(userRole.getRole(), "TTL_profile").build();
+                    }
+                }
+        );
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {

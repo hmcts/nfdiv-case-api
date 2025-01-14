@@ -8,10 +8,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
-import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.idam.User;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -20,14 +16,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class SetStateAfterSubmission implements CaseTask {
-
-    private final CcdUpdateService ccdUpdateService;
-    private final IdamService idamService;
-    private final AuthTokenGenerator authTokenGenerator;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
@@ -46,9 +39,6 @@ public class SetStateAfterSubmission implements CaseTask {
                 || (!isSoleApplication && isApplicant2AwaitingDocuments && !isHWFApplicant2);
         boolean applicantNeedsHelpWithFees = (isSoleApplication && isHWFApplicant1)
             || (!isSoleApplication && isHWFApplicant1 && isHWFApplicant2);
-
-        final User user = idamService.retrieveSystemUpdateUserDetails();
-        final String serviceAuthorization = authTokenGenerator.generate();
 
         if (applicantNeedsHelpWithFees) {
             caseDetails.setState(AwaitingHWFDecision);
