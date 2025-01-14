@@ -8,8 +8,10 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.ProcessConfidentialDocumentsService;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -32,6 +34,9 @@ public class CaseworkerUpdateContactDetails implements CCDConfig<CaseData, State
 
     @Autowired
     private ProcessConfidentialDocumentsService confidentialDocumentsService;
+
+    @Autowired
+    private CaseFlagsService caseFlagsService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -65,8 +70,20 @@ public class CaseworkerUpdateContactDetails implements CCDConfig<CaseData, State
 
         confidentialDocumentsService.processDocuments(caseData, details.getId());
 
+        if (hasNameBeenUpdatedForApplicant(beforeDetails.getData().getApplicant1(), caseData.getApplicant1())) {
+            caseFlagsService.updatePartyNameInCaseFlags(caseData, CaseFlagsService.PartyFlagType.APPLICANT_1);
+        }
+
+        if (hasNameBeenUpdatedForApplicant(beforeDetails.getData().getApplicant2(), caseData.getApplicant2())) {
+            caseFlagsService.updatePartyNameInCaseFlags(caseData, CaseFlagsService.PartyFlagType.APPLICANT_2);
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
+    }
+
+    boolean hasNameBeenUpdatedForApplicant(Applicant before, Applicant after) {
+        return !after.getFullName().equals(before.getFullName());
     }
 }

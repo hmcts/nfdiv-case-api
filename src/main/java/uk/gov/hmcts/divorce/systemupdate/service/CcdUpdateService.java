@@ -361,13 +361,14 @@ public class CcdUpdateService {
     }
 
     public void submitSupplementaryDataToCcdForServiceID(final String caseId,
-                                                         final String authorisation,
-                                                         final String serviceAuth) {
+                                                           final String authorisation,
+                                                           final String serviceAuth) {
         log.info("submitSupplementaryDataToCcdForServiceID Case ID: {}", caseId);
         Map<String, Map<String, Map<String, Object>>> supplementaryData = new HashMap<>();
         supplementaryData.put("supplementary_data_updates",
             singletonMap(SET_OPERATION,
                 singletonMap(SERVICE_ID_FIELD, SERVICE_ID)));
+
         submitSupplementaryDataUpdateToCcd(caseId, authorisation, serviceAuth, supplementaryData);
     }
 
