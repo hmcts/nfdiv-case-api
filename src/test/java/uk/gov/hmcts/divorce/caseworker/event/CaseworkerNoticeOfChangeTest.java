@@ -25,6 +25,7 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -522,8 +523,9 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    void shouldSendCaseInviteToCitizenWhenSoleApplicationAndSolicitorRemoved() {
+    void shouldSendCaseInviteToApplicantWhenSoleApplicationAndSolicitorRemoved() {
         CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
+        beforeCaseData.getApplicant1().setSolicitorRepresented(YES);
         CaseData caseData = createCaseData(APPLICANT_1, false, false, TEST_ORG_ID);
         CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
         CaseDetails<CaseData, State> details = createCaseDetails(caseData);
@@ -535,8 +537,38 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
+    void shouldSendCaseInviteToRespondentWhenSoleApplicationAndSolicitorRemovedAndCaseIssued() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_2, true, false, "OldOrgId");
+        beforeCaseData.getApplicant2().setSolicitorRepresented(YES);
+        CaseData caseData = createCaseData(APPLICANT_2, false, false, TEST_ORG_ID);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher, times(1)).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),false);
+    }
+
+    @Test
+    void shouldNotSendCaseInviteToRespondentWhenSoleApplicationAndSolicitorRemovedAndCaseNotIssued() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_2, true, false, "OldOrgId");
+        beforeCaseData.getApplicant2().setSolicitorRepresented(YES);
+        CaseData caseData = createCaseData(APPLICANT_2, false, false, TEST_ORG_ID);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher,never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),false);
+    }
+
+    @Test
     void shouldNotSendCaseInviteToCitizenWhenJointApplicationAndSolicitorRemoved() {
         CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
+        beforeCaseData.getApplicant1().setSolicitorRepresented(YES);
         CaseData caseData = createCaseData(APPLICANT_1, false, false, TEST_ORG_ID);
         caseData.setApplicationType(JOINT_APPLICATION);
         CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);

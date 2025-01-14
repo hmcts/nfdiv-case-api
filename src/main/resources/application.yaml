@@ -184,7 +184,6 @@ uk:
             NOC_CITIZEN_TO_SOL_EMAIL_CITIZEN: 'd4eb2375-2d61-4a08-88b0-457430056c18'
             NOC_TO_SOLS_EMAIL_NEW_SOL: '77995dff-d5ad-48ee-a3a8-676dd1a878e3'
             NOC_TO_SOLS_EMAIL_OLD_SOL: 'a76a51de-3161-4b6b-91f4-c96e2e77ba44'
-            NOC_TO_SOLS_EMAIL_SOL_REMOVED_SELF_AS_REPRESENTATIVE: '5c1c4c5f-52ae-49a1-966c-a1c369177896'
             REQUEST_FOR_INFORMATION_SOLE: 'e8bab44a-c06b-4538-bab9-ef9bbb0dab11'
             REQUEST_FOR_INFORMATION_SOLICITOR: 'ec9f7b0c-391f-4883-95a0-c496f8f29c00'
             REQUEST_FOR_INFORMATION_SOLICITOR_OTHER_PARTY: '583bda64-88e2-47e4-8cf7-df2c0b09eea0'
@@ -198,8 +197,7 @@ uk:
             AUTOMATED_DAILY_REPORT: '641cb2b6-5895-46c6-886c-8696096e1a43'
             REINVITE_CITIZEN_TO_CASE: '4b746cbd-e65d-4686-bc57-d5771c857c67'
             CITIZEN_EMAIL_UPDATED: 'a2168463-ca67-4b0b-a511-a76c25576fac'
-            NOC_INVITE_CITIZEN: '8d50cac8-9f6f-475a-a4ee-efb237fc6e11'
-            SOL_STOPPED_REP_INVITE_CITIZEN : '7ff9c8b3-000e-4574-87e8-b493c7d00226'
+            NOC_INVITE_CITIZEN: '7ff9c8b3-000e-4574-87e8-b493c7d00226'
           welsh:
             REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT: '6fed53fd-8558-4f9a-8804-8b1004221083'
             SAVE_SIGN_OUT: '01202704-dfb7-48a3-91bd-1bbbbd4ee511'
@@ -326,7 +324,6 @@ uk:
             NOC_CITIZEN_TO_SOL_EMAIL_CITIZEN: 'b3786fd2-4a72-4c5f-b4ed-6635647b1520'
             NOC_TO_SOLS_EMAIL_NEW_SOL: '5fb73af1-33e6-4d0c-ab39-6c32263cbf43'
             NOC_TO_SOLS_EMAIL_OLD_SOL: '061c4c01-9330-485d-ae28-43abb786eb51'
-            NOC_TO_SOLS_EMAIL_SOL_REMOVED_SELF_AS_REPRESENTATIVE: 'cc00b09e-c4d1-4f73-b108-0ef8f3e50139'
             REQUEST_FOR_INFORMATION_SOLE: 'b28844a6-b59e-4f85-96d4-333eb7b948d0'
             REQUEST_FOR_INFORMATION_SOLICITOR: '40da03ef-21a7-4c26-94bb-1fd6f728e60b'
             REQUEST_FOR_INFORMATION_SOLICITOR_OTHER_PARTY: '4572bc59-fa7a-4360-96eb-4c6e344b0db6'
@@ -339,8 +336,7 @@ uk:
             NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: 'cfeb62ee-7f2c-4612-bf87-35205ccb26b5'
             REINVITE_CITIZEN_TO_CASE: '1c682066-7088-4a98-be05-d1ea6cf26f84'
             CITIZEN_EMAIL_UPDATED: '981cdc17-4dc2-4561-a02b-df38f40970e5'
-            NOC_INVITE_CITIZEN: 'bced27cb-9175-4f7c-9f71-af74f7d3a41e'
-            SOL_STOPPED_REP_INVITE_CITIZEN : '60c26fab-8cf1-4350-a2ac-4e740a0b0722'
+            NOC_INVITE_CITIZEN: '60c26fab-8cf1-4350-a2ac-4e740a0b0722'
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
 
@@ -465,8 +461,7 @@ docmosis:
       JUDICIAL_SEPARATION_JOINT_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Joint_V1.docx
       NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2: FL-NFD-GRP-ENG-Grant-Of-Representation-V2.docx
       NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: FL-NFD-GOR-ENG-SOLICITOR-APPLIED-FOR-FINAL-ORDER.docx
-      NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-ENG-Solicitor_removed_LiP_citizen_letter_V1.docx
-      NFD_SOL_STOPPED_REP_INVITE_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_citizen_letter_V1.docx
+      NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_citizen_letter_V1.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V1.docx
@@ -549,8 +544,7 @@ docmosis:
       JUDICIAL_SEPARATION_JOINT_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Joint_V1.docx
       NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2: FL-NFD-GRP-WEL-Grant-Of-Representation.docx
       NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: FL-NFD-GOR-WEL-SOLICITOR-APPLIED-FOR-FINAL-ORDER.docx
-      NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-WEL-Solicitor_removed_LiP_citizen_letter_V1.docx
-      NFD_SOL_STOPPED_REP_INVITE_APP: FL-NFD-GOR-WEL-Solicitor_stopped_representation_citizen_letter_V1.docx
+      NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-WEL-Solicitor_stopped_representation_citizen_letter_V1.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}

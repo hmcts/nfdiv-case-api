@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -213,7 +214,8 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, details.getData(),
             beforeData, details.getId(), isApplicant1, noticeType);
 
-        if ((noticeType == NoticeType.ORG_REMOVED) && shouldSendInviteToParty(data)) {
+        if (hasRepresentationBeenRemoved(isApplicant1, data, beforeData)
+            && shouldSendInviteToParty(data, isApplicant1)) {
             //Send email to party with case invites
             generateCaseInvite(data, isApplicant1, applicant);
             notificationDispatcher.sendNOCCaseInvite(nocSolsToCitizenNotifications, details.getData(), details.getId(),
@@ -336,8 +338,9 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         return solicitor;
     }
 
-    private boolean shouldSendInviteToParty(final CaseData data) {
-        return data.getApplicationType() == ApplicationType.SOLE_APPLICATION;
+    private boolean shouldSendInviteToParty(final CaseData data, boolean isApplicant1) {
+        return ((data.getApplicationType() == ApplicationType.SOLE_APPLICATION)
+            && (isApplicant1 || (!isApplicant1 && ObjectUtils.isNotEmpty(data.getApplication().getIssueDate()))));
     }
 
     private void generateCaseInvite(final CaseData data, boolean isApplicant1, Applicant applicant) {
@@ -354,5 +357,14 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                 .generateAccessCode();
             data.setCaseInvite(invite);
         }
+    }
+
+    private boolean hasRepresentationBeenRemoved(final  boolean isApplicant1,
+                                                 final CaseData caseData,
+                                                 final CaseData previousCaseData) {
+        Applicant beforeApplicant = isApplicant1 ? previousCaseData.getApplicant1() : previousCaseData.getApplicant2();
+        Applicant afterApplicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
+
+        return beforeApplicant.isRepresented() && !afterApplicant.isRepresented();
     }
 }
