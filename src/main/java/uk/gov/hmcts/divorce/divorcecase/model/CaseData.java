@@ -617,6 +617,7 @@ public class CaseData {
     @JsonIgnore
     public void updateCaseWithGeneralApplication() {
         GeneralApplication generalApplication = this.getGeneralApplication();
+        generalApplication.setGeneralApplicationDocument(null);
 
         generalApplication.getGeneralApplicationDocuments().forEach(divorceDocumentListValue -> {
             divorceDocumentListValue.getValue().setDocumentType(DocumentType.GENERAL_APPLICATION);
