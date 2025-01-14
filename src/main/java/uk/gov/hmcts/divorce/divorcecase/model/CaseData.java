@@ -29,6 +29,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAcces
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -281,7 +282,7 @@ public class CaseData {
     private List<ListValue<ChangeOfRepresentative>> changeOfRepresentatives = new ArrayList<>();
 
     @CCD(
-        access = {CaseworkerAccess.class}
+        access = {CaseworkerAccess.class, SolicitorAccess.class}
     )
     @JsonUnwrapped(prefix = "noc")
     private NoticeOfChange noticeOfChange;
