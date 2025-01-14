@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -66,7 +65,6 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         final var currentCaseData = details.getData();
 
         handleDeletionOfGeneralApplicationDocuments(beforeCaseData, currentCaseData);
-
         handleDeletionOfDivorceDocuments(beforeCaseData, currentCaseData);
         handleDeletionOfScannedDocuments(beforeCaseData, currentCaseData);
 
@@ -103,6 +101,10 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         }
     }
 
+    private void handleDeletionOfScannedDocuments(CaseData beforeCaseData, CaseData currentCaseData) {
+        documentRemovalService.handleDeletionOfScannedDocuments(beforeCaseData, currentCaseData);
+    }
+
     private List<ListValue<DivorceDocument>> findDocumentsForRemoval(final List<ListValue<DivorceDocument>> beforeDocs,
                                                                      final List<ListValue<DivorceDocument>> currentDocs) {
 
@@ -117,35 +119,6 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         }
 
         return documentsToRemove;
-    }
-
-    private void handleDeletionOfScannedDocuments(CaseData beforeCaseData, CaseData currentCaseData) {
-
-        List<ListValue<ScannedDocument>> scannedDocsToRemove = new ArrayList<>(
-            findScannedDocumentsForRemoval(
-                beforeCaseData.getDocuments().getScannedDocuments(),
-                currentCaseData.getDocuments().getScannedDocuments()
-        ));
-
-        if (!scannedDocsToRemove.isEmpty()) {
-            documentRemovalService.deleteScannedDocuments(scannedDocsToRemove);
-        }
-    }
-
-    private List<ListValue<ScannedDocument>> findScannedDocumentsForRemoval(final List<ListValue<ScannedDocument>> beforeDocs,
-                                                                            final List<ListValue<ScannedDocument>> currentDocs) {
-
-        List<ListValue<ScannedDocument>> scannedDocsToRemove = new ArrayList<>();
-
-        if (beforeDocs != null && currentDocs != null) {
-            beforeDocs.forEach(document -> {
-                if (!currentDocs.contains(document)) {
-                    scannedDocsToRemove.add(document);
-                }
-            });
-        }
-
-        return scannedDocsToRemove;
     }
 
     private void handleDeletionOfGeneralApplicationDocuments(CaseData beforeCaseData, CaseData currentCaseData) {
