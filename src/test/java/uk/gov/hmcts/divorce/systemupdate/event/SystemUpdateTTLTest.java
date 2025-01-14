@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.TTL;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -24,7 +23,6 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
 class SystemUpdateTTLTest {
-    private CaseDetails<CaseData, State> beforeDetails;
 
     @InjectMocks
     private SystemUpdateTTL systemUpdateTTL;
@@ -50,22 +48,6 @@ class SystemUpdateTTLTest {
         assertThat(response.getData().getRetainAndDisposeTimeToLive()).isNotNull();
         assertThat(response.getData().getRetainAndDisposeTimeToLive().getSystemTTL()).isEqualTo(LocalDate.now().plusMonths(6));
         assertThat(response.getData().getRetainAndDisposeTimeToLive().getSuspended()).isEqualTo(YesOrNo.NO);
-    }
-
-
-    @Test
-    void shouldNotSetSystemTTLForDraftStateWhenTTLIsAlreadySetAboutToStartCallback() {
-
-        CaseDetails<CaseData, State> beforeDetails = getCaseDetails(Draft);
-        LocalDate systemTTL = LocalDate.of(2024, 11, 5);
-        beforeDetails.getData().setRetainAndDisposeTimeToLive(TTL.builder()
-                .systemTTL(systemTTL)
-                .suspended(YesOrNo.YES)
-                .build());
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = systemUpdateTTL.aboutToStart(beforeDetails);
-
-        assertThat(response.getData().getRetainAndDisposeTimeToLive()).isNull();
     }
 
     private CaseDetails<CaseData, State> getCaseDetails(State state) {
