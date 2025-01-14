@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
 import uk.gov.hmcts.divorce.citizen.notification.NocSolRemovedSelfAsRepresentativeNotification;
+import uk.gov.hmcts.divorce.citizen.notification.NocSolsToCitizenNotifications;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
@@ -27,6 +28,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -81,6 +83,9 @@ class SolicitorStopRepresentingClientTest {
 
     @Mock
     private NocSolRemovedSelfAsRepresentativeNotification nocSolRemovedSelfNotifications;
+
+    @Mock
+    private NocSolsToCitizenNotifications nocSolsToCitizenNotifications;
 
     @InjectMocks
     private SolicitorStopRepresentingClient noticeOfChange;
@@ -219,7 +224,7 @@ class SolicitorStopRepresentingClientTest {
 
         var result = noticeOfChange.submitted(details, beforeDetails);
 
-        verify(notificationDispatcher).sendNOCCaseInvite(nocSolRemovedSelfNotifications,
+        verify(notificationDispatcher).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             details.getData(), details.getId(), true);
     }
 
@@ -236,7 +241,7 @@ class SolicitorStopRepresentingClientTest {
 
         var result = noticeOfChange.submitted(details, beforeDetails);
 
-        verify(notificationDispatcher).sendNOCCaseInvite(nocSolRemovedSelfNotifications,
+        verify(notificationDispatcher).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             details.getData(), details.getId(), false);
     }
 
@@ -292,6 +297,7 @@ class SolicitorStopRepresentingClientTest {
                 .organisation(new Organisation(null, null))
             .orgPolicyCaseAssignedRole(APPLICANT_2_SOLICITOR)
             .build());
+        data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         details.setData(data);
         details.setId(TEST_CASE_ID);
 

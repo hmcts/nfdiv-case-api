@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.solicitor.event;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -134,7 +135,7 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
             noticeOfChangeService
         );
 
-        if (details.getData().getApplicationType() == ApplicationType.SOLE_APPLICATION) {
+        if (shouldSendInviteToParty(details.getData(), isRepresentingApplicant1)) {
             generateCaseInvite(details.getData(), isRepresentingApplicant1, applicant.apply(details.getData()));
         }
 
@@ -154,8 +155,8 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
         notificationDispatcher.sendNOC(nocSolRemovedSelfNotifications, details.getData(),
             beforeDetails.getData(), details.getId(), wasRepresentingApplicant1, NoticeType.ORG_REMOVED);
 
-        if (data.getApplicationType() == ApplicationType.SOLE_APPLICATION) {
-            notificationDispatcher.sendNOCCaseInvite(nocSolRemovedSelfNotifications, details.getData(), details.getId(),
+        if (shouldSendInviteToParty(details.getData(), wasRepresentingApplicant1)) {
+            notificationDispatcher.sendNOCCaseInvite(nocSolsToCitizenNotifications, details.getData(), details.getId(),
                 wasRepresentingApplicant1);
         }
 
@@ -196,6 +197,11 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
         String authHeader = httpServletRequest.getHeader(AUTHORIZATION);
 
         return ccdAccessService.isApplicant1(authHeader, caseId);
+    }
+
+    private boolean shouldSendInviteToParty(final CaseData data, boolean isApplicant1) {
+        return ((data.getApplicationType() == ApplicationType.SOLE_APPLICATION)
+            && (isApplicant1 || (!isApplicant1 && ObjectUtils.isNotEmpty(data.getApplication().getIssueDate()))));
     }
 
     private void generateCaseInvite(final CaseData data, boolean isApplicant1, Applicant applicant) {
