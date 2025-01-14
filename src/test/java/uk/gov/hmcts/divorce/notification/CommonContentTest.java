@@ -773,9 +773,13 @@ class CommonContentTest {
             .lastName("Last")
             .build();
 
+        CaseData caseData = CaseData.builder()
+                .applicant1(beforeApplicant)
+                .build();
+
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SMART_SURVEY, "https://testsurveylink"));
 
-        Map<String, String> templateVars = commonContent.nocOldSolsTemplateVars(caseRef, beforeApplicant);
+        Map<String, String> templateVars = commonContent.nocOldSolsTemplateVars(caseRef, caseData, true);
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
         assertEquals("Old Solicitor Name", templateVars.get(CommonContent.NAME));
         assertEquals("First Last", templateVars.get(CommonContent.APPLICANT_NAME));
