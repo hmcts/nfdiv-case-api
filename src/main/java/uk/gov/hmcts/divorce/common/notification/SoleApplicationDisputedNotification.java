@@ -15,6 +15,8 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISPUTED;
@@ -59,13 +61,14 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
     @Override
     public void sendToApplicant1(final CaseDetails<CaseData, State> caseDetails) {
         CaseData caseData = caseDetails.getData();
-        State state = caseDetails.getState();
         Long id = caseDetails.getId();
         log.info("Sending AOS disputed notification to applicant for: {}", id);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            state == State.AwaitingConditionalOrder ? SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED_CO : SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED,
+            getState(caseDetails).equals(AwaitingConditionalOrder)
+                ? SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED_CO
+                : SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED,
             disputedTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference(),
             id
@@ -75,7 +78,6 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
     @Override
     public void sendToApplicant2(final CaseDetails<CaseData, State> caseDetails) {
         CaseData caseData = caseDetails.getData();
-        State state = caseDetails.getState();
         Long id = caseDetails.getId();
         log.info("Sending AOS disputed notification to Respondent for: {}", id);
 
@@ -83,7 +85,9 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
         templateVars.put(DISPUTED_AOS_FEE,disputedAOSFee);
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
-            state == State.AwaitingConditionalOrder ? SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED_CO : SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED,
+            getState(caseDetails).equals(AwaitingConditionalOrder)
+                ? SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED_CO
+                : SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED,
             templateVars,
             caseData.getApplicant2().getLanguagePreference(),
             id
@@ -118,6 +122,12 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
             caseData.getApplicant2().getLanguagePreference(),
             id
         );
+    }
+
+    private State getState(final CaseDetails<CaseData, State> caseDetails) {
+        return WelshTranslationReview.equals(caseDetails.getState())
+            ? caseDetails.getData().getApplication().getWelshPreviousState()
+            : caseDetails.getState();
     }
 
     private Map<String, String> disputedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {

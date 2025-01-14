@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
@@ -291,6 +292,45 @@ class SoleApplicationDisputedNotificationTest {
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                hasEntry(SUBMISSION_RESPONSE_DATE,
+                    data.getApplication().getIssueDate()
+                        .plusDays(DISPUTE_DUE_DATE_OFFSET_DAYS).format(WELSH_DATE_TIME_FORMATTER)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(PARTNER, "gŵr")
+            )),
+            eq(WELSH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendAosDisputedEmailToSoleRespondentWithDivorceContentWhenLangPrefIsWelshAtAwaitingConditionalOrder() {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.getApplication().setWelshPreviousState(AwaitingConditionalOrder);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(data);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setState(WelshTranslationReview);
+        ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
+        data.getApplicant2().setEmail(null);
+
+        Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.put(PARTNER, "gŵr");
+
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(templateVars);
+
+        soleApplicationDisputedNotification.sendToApplicant2(caseDetails);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED_CO),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry(SUBMISSION_RESPONSE_DATE,

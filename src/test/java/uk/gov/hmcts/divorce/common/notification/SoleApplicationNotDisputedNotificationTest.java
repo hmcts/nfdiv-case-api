@@ -26,6 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISPUTED;
@@ -339,10 +340,11 @@ public class SoleApplicationNotDisputedNotificationTest {
         CaseData data = validCaseDataForAosSubmitted();
         data.getApplicant2().setEmail(null);
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.getApplication().setWelshPreviousState(AwaitingConditionalOrder);
         CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(data);
         details.setId(TEST_CASE_ID);
-        details.setState(AwaitingConditionalOrder);
+        details.setState(WelshTranslationReview);
 
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.put(PARTNER, "gŵr");

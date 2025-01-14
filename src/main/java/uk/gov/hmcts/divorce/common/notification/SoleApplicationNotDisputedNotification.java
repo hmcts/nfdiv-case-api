@@ -16,6 +16,7 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISPUTED;
@@ -60,7 +61,9 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            caseDetails.getState() == AwaitingConditionalOrder ? SOLE_APPLICANT_AOS_SUBMITTED_AWAITING_CO : SOLE_APPLICANT_AOS_SUBMITTED,
+            getState(caseDetails).equals(AwaitingConditionalOrder)
+                ? SOLE_APPLICANT_AOS_SUBMITTED_AWAITING_CO
+                : SOLE_APPLICANT_AOS_SUBMITTED,
             notDisputedTemplateVars(caseData, caseDetails.getId(), caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference(),
             caseDetails.getId()
@@ -74,7 +77,9 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
 
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
-            caseDetails.getState() == AwaitingConditionalOrder ? SOLE_RESPONDENT_AOS_SUBMITTED_AWAITING_CO : SOLE_RESPONDENT_AOS_SUBMITTED,
+            getState(caseDetails).equals(AwaitingConditionalOrder)
+                ? SOLE_RESPONDENT_AOS_SUBMITTED_AWAITING_CO
+                : SOLE_RESPONDENT_AOS_SUBMITTED,
             notDisputedTemplateVars(caseData, caseDetails.getId(), caseData.getApplicant2(), caseData.getApplicant1()),
             caseData.getApplicant2().getLanguagePreference(),
             caseDetails.getId()
@@ -107,6 +112,12 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
             caseData.getApplicant2().getLanguagePreference(),
             caseDetails.getId()
         );
+    }
+
+    private State getState(final CaseDetails<CaseData, State> caseDetails) {
+        return WelshTranslationReview.equals(caseDetails.getState())
+            ? caseDetails.getData().getApplication().getWelshPreviousState()
+            : caseDetails.getState();
     }
 
     private Map<String, String> notDisputedTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
