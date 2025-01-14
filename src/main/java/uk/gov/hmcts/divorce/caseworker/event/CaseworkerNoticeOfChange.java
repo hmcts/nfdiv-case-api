@@ -214,7 +214,8 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, details.getData(),
             beforeData, details.getId(), isApplicant1, noticeType);
 
-        if ((noticeType == NoticeType.ORG_REMOVED) && shouldSendInviteToParty(data, isApplicant1)) {
+        if (hasRepresentationBeenRemoved(isApplicant1, data, beforeData)
+            && shouldSendInviteToParty(data, isApplicant1)) {
             //Send email to party with case invites
             generateCaseInvite(data, isApplicant1, applicant);
             notificationDispatcher.sendNOCCaseInvite(nocSolsToCitizenNotifications, details.getData(), details.getId(),
@@ -356,5 +357,14 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                 .generateAccessCode();
             data.setCaseInvite(invite);
         }
+    }
+
+    private boolean hasRepresentationBeenRemoved(final  boolean isApplicant1,
+                                                 final CaseData caseData,
+                                                 final CaseData previousCaseData) {
+        Applicant beforeApplicant = isApplicant1 ? previousCaseData.getApplicant1() : previousCaseData.getApplicant2();
+        Applicant afterApplicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
+
+        return beforeApplicant.isRepresented() && !afterApplicant.isRepresented();
     }
 }
