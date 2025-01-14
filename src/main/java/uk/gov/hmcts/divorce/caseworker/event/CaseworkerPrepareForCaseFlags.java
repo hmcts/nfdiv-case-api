@@ -37,8 +37,7 @@ public class CaseworkerPrepareForCaseFlags implements CCDConfig<CaseData, State,
             .showCondition("caseFlagsSetupComplete!=\"Yes\"")
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE,
-                CASE_WORKER, SUPER_USER)
-            .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
+                CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("prepareForCaseFlags")
             .pageLabel("Prepare for Case flags");
     }
