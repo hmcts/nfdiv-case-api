@@ -49,6 +49,7 @@ public class CaseworkerHwfApplicationAccepted implements CCDConfig<CaseData, Sta
                 RequestedInformationSubmitted,
                 AwaitingHWFEvidence
             )
+            .ttlIncrement(36524)
             .name("HWF application accepted")
             .description("HWF application accepted")
             .aboutToSubmitCallback(this::aboutToSubmit)

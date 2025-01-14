@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenUpdateApplication.CITIZEN_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateTTL.SYSTEM_UPDATE_TTL;
+import static uk.gov.hmcts.divorce.systemupdate.event.ManageCaseTtl.MANAGE_CASE_TTL;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
@@ -70,7 +70,7 @@ class CitizenUpdateApplicationTest {
 
         citizenUpdateApplication.aboutToSubmit(beforeDetails, beforeDetails);
 
-        verify(ccdUpdateService).submitEvent(beforeDetails.getId(), SYSTEM_UPDATE_TTL, user, TEST_SERVICE_AUTH_TOKEN);
+        verify(ccdUpdateService).submitEvent(beforeDetails.getId(), MANAGE_CASE_TTL, user, TEST_SERVICE_AUTH_TOKEN);
     }
 
     @Test

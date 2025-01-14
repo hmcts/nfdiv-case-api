@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateTTL.SYSTEM_UPDATE_TTL;
+import static uk.gov.hmcts.divorce.systemupdate.event.ManageCaseTtl.MANAGE_CASE_TTL;
 
 @Component
 @RequiredArgsConstructor
@@ -66,7 +66,7 @@ public class CitizenUpdateApplication implements CCDConfig<CaseData, State, User
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuthorization = authTokenGenerator.generate();
 
-            ccdUpdateService.submitEvent(details.getId(), SYSTEM_UPDATE_TTL, user, serviceAuthorization);
+            ccdUpdateService.submitEvent(details.getId(), MANAGE_CASE_TTL, user, serviceAuthorization);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
