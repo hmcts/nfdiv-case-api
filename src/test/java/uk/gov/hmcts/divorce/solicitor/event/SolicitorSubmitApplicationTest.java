@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -89,7 +90,8 @@ public class SolicitorSubmitApplicationTest {
 
         final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        final CaseData caseData = CaseData.builder().build();
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.getApplicant1().setAddress(AddressGlobalUK.builder().addressLine1("test").build());
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 

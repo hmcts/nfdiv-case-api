@@ -6,6 +6,8 @@
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicant1SolicitorRepresented": "Yes",
     "applicant1Gender": "male",
+    "applicant1Address": { "AddressLine1": "line1 applicant1" },
+    "applicant2Address": { "AddressLine1": "line1 applicant2" },
     "applicant2Gender": "female",
     "divorceWho": "wife",
     "marriageFormationType": "oppositeSexCouple",
