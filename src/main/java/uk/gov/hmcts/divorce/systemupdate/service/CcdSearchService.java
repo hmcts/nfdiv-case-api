@@ -57,6 +57,7 @@ public class CcdSearchService {
     public static final String ISSUE_DATE = "data.issueDate";
     public static final String DATA = "data.%s";
     public static final String STATE = "state";
+    public static final String SUPPLEMENTARY_DATA = "supplementary_data.%s";
     public static final String FINAL_ORDER_ELIGIBLE_FROM_DATE = "data.dateFinalOrderEligibleFrom";
     public static final String FINAL_ORDER_ELIGIBLE_TO_RESPONDENT_DATE = "data.dateFinalOrderEligibleToRespondent";
     public static final String FINAL_ORDER_SUBMITTED_DATE = "data.dateFinalOrderSubmitted";
