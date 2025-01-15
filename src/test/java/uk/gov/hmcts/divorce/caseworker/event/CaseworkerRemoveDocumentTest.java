@@ -26,7 +26,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
@@ -213,30 +212,6 @@ public class CaseworkerRemoveDocumentTest {
     }
 
     @Test
-    void shouldSkipRemovalIfDocumentsListIsNull() {
-
-        CaseData beforeCaseData = CaseData.builder()
-            .documents(CaseDocuments.builder().build())
-            .build();
-
-        CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder()
-            .data(beforeCaseData)
-            .build();
-
-        CaseData currentCaseData = CaseData.builder()
-            .documents(CaseDocuments.builder().build())
-            .build();
-
-        CaseDetails<CaseData, State> currentDetails = CaseDetails.<CaseData, State>builder()
-            .data(currentCaseData)
-            .build();
-
-        caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
-
-        verifyNoInteractions(documentRemovalService);
-    }
-
-    @Test
     void shouldRemoveScannedDocument() {
 
         final ListValue<ScannedDocument> doc1 = scannedDocumentWithType(
@@ -270,7 +245,7 @@ public class CaseworkerRemoveDocumentTest {
 
         caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
 
-        verify(documentRemovalService).deleteScannedDocuments(List.of(doc2));
+        verify(documentRemovalService).handleDeletionOfScannedDocuments(beforeCaseData, currentCaseData);
     }
 
     @Test

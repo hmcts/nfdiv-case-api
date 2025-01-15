@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -13,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 
 import java.util.List;
 
@@ -27,9 +29,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerRemoveScannedDocument implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_REMOVE_SCANNED_DOCUMENT = "caseworker-remove-scanned-document";
+
+    private final DocumentRemovalService documentRemovalService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -67,6 +72,8 @@ public class CaseworkerRemoveScannedDocument implements CCDConfig<CaseData, Stat
                 .errors(List.of("Scanned documents cannot be added by 'Remove scanned documents'"))
                 .build();
         }
+
+        documentRemovalService.handleDeletionOfScannedDocuments(beforeCaseData, caseData);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
