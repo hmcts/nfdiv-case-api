@@ -1,12 +1,13 @@
 package uk.gov.hmcts.divorce.divorcecase.model.access;
 
-import java.util.Arrays;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+
+import java.util.Arrays;
 
 @Component
 public class RoleToAccessProfiles implements CCDConfig<CaseData, State, UserRole> {
