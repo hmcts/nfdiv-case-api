@@ -5,6 +5,7 @@ java:
   environment:
     CHANGE_ID: ${CHANGE_ID}
     CITIZEN_UPDATE_CASE_STATE_ENABLED: true
+    CASE_API_URL: https://nfdiv-case-api-pr-${CHANGE_ID}.preview.platform.hmcts.net
   keyVaults:
     nfdiv:
       secrets:
