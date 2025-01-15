@@ -18,7 +18,9 @@ import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.solicitor.service.task.DivorceApplicationDraft;
 import uk.gov.hmcts.divorce.solicitor.service.task.InitialiseSolicitorCreatedApplication;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicant1SolicitorAddress;
+import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicantAddresses;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicantGender;
+import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicationFeeServiceRequest;
 import uk.gov.hmcts.divorce.solicitor.service.task.SolicitorCourtDetails;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -69,6 +71,12 @@ class SolicitorCreateApplicationApplicationServiceTest {
     @Mock
     private SetApplicantGender setApplicantGender;
 
+    @Mock
+    private SetApplicantAddresses setApplicantAddresses;
+
+    @Mock
+    private SetApplicationFeeServiceRequest setApplicationFeeServiceRequest;
+
     @InjectMocks
     private SolicitorCreateApplicationService solicitorCreateApplicationService;
 
@@ -86,6 +94,8 @@ class SolicitorCreateApplicationApplicationServiceTest {
         when(setApplicant1SolicitorAddress.apply(caseDetails)).thenReturn(caseDetails);
         when(divorceApplicationDraft.apply(caseDetails)).thenReturn(caseDetails);
         when(setApplicantGender.apply(caseDetails)).thenReturn(caseDetails);
+        when(setApplicantAddresses.apply(caseDetails)).thenReturn(caseDetails);
+        when(setApplicationFeeServiceRequest.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> result = solicitorCreateApplicationService.aboutToSubmit(caseDetails);
 
@@ -94,6 +104,8 @@ class SolicitorCreateApplicationApplicationServiceTest {
         verify(initialiseSolicitorCreatedApplication).apply(caseDetails);
         verify(solicitorCourtDetails).apply(caseDetails);
         verify(divorceApplicationDraft).apply(caseDetails);
+        verify(setApplicantAddresses).apply(caseDetails);
+        verify(setApplicationFeeServiceRequest).apply(caseDetails);
     }
 
     @Test

@@ -18,6 +18,7 @@ public class SolFinalOrderPaymentSummary implements CcdPageConfiguration {
             .pageLabel("Order Summary")
             .complex(CaseData::getFinalOrder)
                 .mandatory(FinalOrder::getApplicant2SolFinalOrderFeeOrderSummary)
+                .readonlyNoSummary(FinalOrder::getApplicant2FinalOrderFeeServiceRequestReference, ALWAYS_HIDE)
                 .complex(FinalOrder::getApplicant2SolFinalOrderHelpWithFees)
                     .readonlyNoSummary(HelpWithFees::getReferenceNumber, ALWAYS_HIDE)
                 .done()

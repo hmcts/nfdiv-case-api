@@ -40,6 +40,7 @@ public class Applicant2SolicitorViewApplicant2ContactDetails implements CCDConfi
                 .readonly(Applicant::getAddress)
                 .readonly(Applicant::getPhoneNumber)
                 .readonly(Applicant::getEmail)
+                .readonly(Applicant::getInRefuge)
             .done();
     }
 }
