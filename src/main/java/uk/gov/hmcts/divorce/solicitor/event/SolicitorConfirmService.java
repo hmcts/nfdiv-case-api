@@ -113,7 +113,6 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             .build();
     }
 
-
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
@@ -156,6 +155,7 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             .description("Solicitor confirm service")
             .showSummary()
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
