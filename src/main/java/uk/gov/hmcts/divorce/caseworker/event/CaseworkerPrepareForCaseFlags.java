@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -35,11 +37,24 @@ public class CaseworkerPrepareForCaseFlags implements CCDConfig<CaseData, State,
             .name("Prepare for Case flags")
             .description("Prepare for Case flags")
             .showCondition("caseFlagsSetupComplete!=\"Yes\"")
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("prepareForCaseFlags")
             .pageLabel("Prepare for Case flags");
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails
+    ) {
+        final CaseData caseData = details.getData();
+        caseData.setCaseFlagsSetupComplete(YesOrNo.YES);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 
     public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
