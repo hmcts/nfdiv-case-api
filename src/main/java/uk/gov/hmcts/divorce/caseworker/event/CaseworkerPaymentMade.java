@@ -49,6 +49,7 @@ public class CaseworkerPaymentMade implements CCDConfig<CaseData, State, UserRol
                 RequestedInformationSubmitted,
                 AwaitingHWFEvidence
             )
+            .ttlIncrement(36524)
             .name("Payment made")
             .description("Payment made")
             .aboutToSubmitCallback(this::aboutToSubmit)

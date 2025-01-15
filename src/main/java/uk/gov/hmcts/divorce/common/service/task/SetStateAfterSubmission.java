@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -17,6 +18,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class SetStateAfterSubmission implements CaseTask {
 
