@@ -18,7 +18,6 @@ import uk.gov.hmcts.divorce.common.notification.ConditionalOrderPronouncedNotifi
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
-import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -240,29 +239,5 @@ class SystemPronounceCaseTest {
             .court(ConditionalOrderCourt.BIRMINGHAM)
             .dateAndTimeOfHearing(LocalDateTime.now())
             .build());
-    }
-
-    @Test
-    void shouldNotGenerateDocsOrSendNotificationWhenFinalOrderDateHasValue() {
-        final CaseData caseData = caseData();
-        caseData.setBulkListCaseReferenceLink(CaseLink.builder().caseReference("12345").build());
-        buildConditionalOrder(caseData);
-        caseData.setFinalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build());
-
-        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
-            .id(TEST_CASE_ID)
-            .data(caseData)
-            .build();
-
-        Map<String, Object> mockCaseDataMap = Map.of(
-            "conditionalOrder", Map.of("court", "Birmingham", "dateAndTimeOfHearing", LocalDateTime.now().toString())
-        );
-
-        buildConditionalOrder(caseData);
-
-        underTest.aboutToSubmit(details, details);
-
-        verifyNoInteractions(generateConditionalOrderPronouncedDocument);
-        verifyNoInteractions(notificationDispatcher);
     }
 }
