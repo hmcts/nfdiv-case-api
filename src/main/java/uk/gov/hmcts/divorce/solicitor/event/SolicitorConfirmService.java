@@ -29,6 +29,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorChangeServiceRequest.NOT_ISSUED_ERROR;
 
 @Slf4j
 @Component
@@ -54,6 +55,7 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             .pageLabel("Certificate of Service - Confirm Service")
             .complex(CaseData::getDocuments)
             .optional(CaseDocuments::getDocumentsUploadedOnConfirmService)
+            .showCondition("issueDate=\"*\"")
             .done()
             .label("petitionerLabel", "Name of Applicant - ${applicant1FirstName} ${applicant1LastName}")
             .label("respondentLabel", "Name of Respondent - ${applicant2FirstName} ${applicant2LastName}")
@@ -81,6 +83,21 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             .done();
     }
 
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("Solicitor confirm service about to start callback invoked with Case Id: {}", details.getId());
+
+        final Application application = details.getData().getApplication();
+        final boolean notIssued = application.getIssueDate() == null;
+
+        if (notIssued) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(NOT_ISSUED_ERROR))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder().build();
+    }
+
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
                                                                   CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
@@ -95,6 +112,7 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             .data(caseData)
             .build();
     }
+
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
