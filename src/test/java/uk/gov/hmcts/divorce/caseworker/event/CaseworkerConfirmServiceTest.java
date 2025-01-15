@@ -37,10 +37,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorService.ServiceProcessedByProcessServer.CONFIRM;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorConfirmService.NOT_ISSUED_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -64,6 +67,33 @@ public class CaseworkerConfirmServiceTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(CASEWORKER_CONFIRM_SERVICE);
+    }
+
+    @Test
+    void shouldNotThrowErrorIfApplicationHasBeenIssued() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 01, 01));
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerConfirmService.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldThrowErrorIfApplicationHasNotBeenIssued() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerConfirmService.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).isEqualTo(List.of(NOT_ISSUED_ERROR));
     }
 
     @Test

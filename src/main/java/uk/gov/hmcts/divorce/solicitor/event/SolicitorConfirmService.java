@@ -39,6 +39,9 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
     public static final String SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR =
         "This event can only be used for a case with Solicitor Service as the service method";
 
+    public static final String NOT_ISSUED_ERROR =
+        "The application must have been issued to use this event";
+
     @Autowired
     private SubmitConfirmService submitConfirmService;
 
@@ -79,6 +82,21 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             .readonly(SolicitorService::getTruthStatement)
             .mandatory(SolicitorService::getServiceSotFirm)
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("Solicitor confirm service about to start callback invoked with Case Id: {}", details.getId());
+
+        final Application application = details.getData().getApplication();
+        final boolean notIssued = application.getIssueDate() == null;
+
+        if (notIssued) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(NOT_ISSUED_ERROR))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder().build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
@@ -138,6 +156,8 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             .description("Solicitor confirm service")
             .showSummary()
             .showEventNotes()
+            .showCondition("issueDate=\"*\"")
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
