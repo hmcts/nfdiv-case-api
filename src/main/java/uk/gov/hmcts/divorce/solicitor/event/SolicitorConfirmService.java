@@ -29,7 +29,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorChangeServiceRequest.NOT_ISSUED_ERROR;
 
 @Slf4j
 @Component
@@ -39,6 +38,9 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
 
     public static final String SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR =
         "This event can only be used for a case with Solicitor Service as the service method";
+
+    public static final String NOT_ISSUED_ERROR =
+        "The application must have been issued to use this event";
 
     @Autowired
     private SubmitConfirmService submitConfirmService;

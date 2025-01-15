@@ -37,7 +37,7 @@ import static uk.gov.hmcts.divorce.common.service.ConfirmService.DOCUMENTS_NOT_U
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorChangeServiceRequest.NOT_ISSUED_ERROR;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorConfirmService.NOT_ISSUED_ERROR;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorConfirmService.SOLICITOR_CONFIRM_SERVICE;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorConfirmService.SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
