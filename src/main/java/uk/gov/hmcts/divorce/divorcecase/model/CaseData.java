@@ -300,7 +300,8 @@ public class CaseData {
     @JsonProperty("TTL")
     @CCD(
         label = "Set up TTL",
-        typeOverride = FieldType.TTL
+        typeOverride = FieldType.TTL,
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private TTL retainAndDisposeTimeToLive;
 
