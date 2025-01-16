@@ -9,10 +9,13 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.common.service.task.SetDefaultOrganisationPolicies;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.testutil.TestConstants;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -30,6 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,6 +41,9 @@ public class CaseworkerProgressPaperCaseTest {
 
     @Mock
     private SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
+
+    @Mock
+    private CaseFlagsService caseFlagsService;
 
     @InjectMocks
     private CaseworkerProgressPaperCase caseworkerProgressPaperCase;
@@ -145,5 +152,32 @@ public class CaseworkerProgressPaperCaseTest {
             "MarriageDate cannot be empty or null",
             "JurisdictionConnections cannot be empty or null"
         );
+    }
+
+    @Test
+    void shouldSetCaseFlagsSetupCompleteFlagInAboutToSubmit() {
+        final long caseId = TEST_CASE_ID;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        CaseData caseData = validApplicant1CaseData();
+        caseData.getApplication().setProgressPaperCase(AWAITING_HWF_DECISION);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerProgressPaperCase.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getCaseFlagsSetupComplete()).isEqualTo(YesOrNo.YES);
+    }
+
+    @Test
+    void shouldCallCaseFlagsServiceToSetHmctsServiceId() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TestConstants.TEST_CASE_ID);
+
+        caseworkerProgressPaperCase.submitted(caseDetails, null);
+
+        verify(caseFlagsService).setSupplementaryDataForCaseFlags(TestConstants.TEST_CASE_ID);
     }
 }
