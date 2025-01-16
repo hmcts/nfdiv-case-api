@@ -7,12 +7,15 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.task.SetDefaultOrganisationPolicies;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 
@@ -39,6 +42,9 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_PROGRESS_PAPER_CASE = "caseworker-progress-paper-case";
+
+    @Autowired
+    private CaseFlagsService caseFlagsService;
 
     @Autowired
     private SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
@@ -84,6 +90,8 @@ public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, U
                 .build();
         }
 
+        caseData.setCaseFlagsSetupComplete(YesOrNo.YES);
+
         if (caseData.getApplication().getProgressPaperCase().equals(SUBMITTED)) {
             final CaseDetails<CaseData, State> result = caseTasks(setDefaultOrganisationPolicies).run(details);
 
@@ -107,5 +115,12 @@ public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, U
                 .state(AwaitingPayment)
                 .build();
         }
+    }
+
+    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
+                                               final CaseDetails<CaseData, State> beforeDetails) {
+        log.info("Add payment submitted callback invoked CaseID: {}", details.getId());
+        caseFlagsService.setSupplementaryDataForCaseFlags(details.getId());
+        return SubmittedCallbackResponse.builder().build();
     }
 }
