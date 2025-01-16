@@ -29,6 +29,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorConfirmService.NOT_ISSUED_ERROR;
 
 @Slf4j
 @Component
@@ -51,6 +52,8 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
             .description("Confirm service")
             .showSummary()
             .showEventNotes()
+            .showCondition("issueDate=\"*\"")
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR, JUDGE))
@@ -79,6 +82,21 @@ public class CaseworkerConfirmService implements CCDConfig<CaseData, State, User
                     .mandatory(SolicitorService::getStatementOfTruth)
                 .done()
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("Caseworker confirm service about to start callback invoked with Case Id: {}", details.getId());
+
+        final Application application = details.getData().getApplication();
+        final boolean notIssued = application.getIssueDate() == null;
+
+        if (notIssued) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(NOT_ISSUED_ERROR))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder().build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
