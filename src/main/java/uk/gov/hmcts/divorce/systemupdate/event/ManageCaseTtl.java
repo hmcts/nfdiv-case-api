@@ -20,7 +20,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class ManageCaseTtl implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String MANAGE_CASE_TTL = "manage-case-ttl";
+    public static final String MANAGE_CASE_TTL = "manageCaseTTL";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
