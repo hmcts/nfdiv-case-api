@@ -298,13 +298,6 @@ public class Applicant {
     }
 
     @JsonIgnore
-    public String getSolicitorAddress() {
-        String firmName = this.getSolicitor().getFirmName();
-        String address = this.getSolicitor().getAddress();
-        return !isNullOrEmpty(firmName) && address.contains(firmName) ? address : firmName + '\n' + address;
-    }
-
-    @JsonIgnore
     public YesOrNo getCorrespondenceAddressIsOverseas() {
         return this.isRepresented() ? this.getSolicitor().getAddressOverseas() : this.addressOverseas;
     }
@@ -312,7 +305,7 @@ public class Applicant {
     @JsonIgnore
     public String getCorrespondenceAddress() {
         if (isRepresented()) {
-            return getSolicitorAddress();
+            return this.solicitor.getFirmAndAddress();
         } else if (!isConfidentialContactDetails() && null != address) {
             return getApplicantAddress();
         }
@@ -322,7 +315,7 @@ public class Applicant {
     @JsonIgnore
     public String getCorrespondenceAddressWithoutConfidentialCheck() {
         if (isRepresented()) {
-            return getSolicitorAddress();
+            return this.solicitor.getFirmAndAddress();
         } else if (null != address) {
             return getApplicantAddress();
         }
