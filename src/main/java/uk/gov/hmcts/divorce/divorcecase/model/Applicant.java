@@ -11,8 +11,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
-import uk.gov.hmcts.ccd.sdk.type.Organisation;
-import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
@@ -21,10 +19,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static com.microsoft.applicationinsights.core.dependencies.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -300,6 +298,13 @@ public class Applicant {
     }
 
     @JsonIgnore
+    public String getSolicitorAddress() {
+        String firmName = this.getSolicitor().getFirmName();
+        String address = this.getSolicitor().getAddress();
+        return !isNullOrEmpty(firmName) && address.contains(firmName) ? address : firmName + '\n' + address;
+    }
+
+    @JsonIgnore
     public YesOrNo getCorrespondenceAddressIsOverseas() {
         return this.isRepresented() ? this.getSolicitor().getAddressOverseas() : this.addressOverseas;
     }
@@ -307,12 +312,7 @@ public class Applicant {
     @JsonIgnore
     public String getCorrespondenceAddress() {
         if (isRepresented()) {
-            return Stream.of(
-                    Optional.ofNullable(solicitor.getOrganisationPolicy())
-                        .map(OrganisationPolicy::getOrganisation).map(Organisation::getOrganisationName).orElse(null),
-                    solicitor.getAddress()
-                ).filter(value -> value != null && !value.isEmpty())
-                .collect(joining("\n"));
+            return getSolicitorAddress();
         } else if (!isConfidentialContactDetails() && null != address) {
             return getApplicantAddress();
         }
@@ -322,12 +322,7 @@ public class Applicant {
     @JsonIgnore
     public String getCorrespondenceAddressWithoutConfidentialCheck() {
         if (isRepresented()) {
-            return Stream.of(
-                    Optional.ofNullable(solicitor.getOrganisationPolicy())
-                        .map(OrganisationPolicy::getOrganisation).map(Organisation::getOrganisationName).orElse(null),
-                    solicitor.getAddress()
-                ).filter(value -> value != null && !value.isEmpty())
-                .collect(joining("\n"));
+            return getSolicitorAddress();
         } else if (null != address) {
             return getApplicantAddress();
         }
