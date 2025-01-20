@@ -67,12 +67,13 @@ public class CaseworkerHwfApplicationAccepted implements CCDConfig<CaseData, Sta
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_HWF_APPLICATION_ACCEPTED, details.getId());
         CaseData caseData = details.getData();
 
+        caseFlagsService.initialiseCaseFlags(caseData);
         caseData.setCaseFlagsSetupComplete(YesOrNo.YES);
 
         details.setState(caseworkerHwfApplicationAndPaymentHelper.getState(caseData));
         details.setData(caseworkerHwfApplicationAndPaymentHelper.setDateSubmittedAndDueDate(caseData));
         caseworkerHwfApplicationAndPaymentHelper.setRequiredCaseFieldsForPostSubmissionCase(details);
-        
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .state(details.getState())
