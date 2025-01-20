@@ -162,13 +162,7 @@ public class AcknowledgementOfService {
         noticeOfProceedingsEmail = applicant.getCorrespondenceEmail();
 
         if (applicant.isRepresented()) {
-            final OrganisationPolicy<UserRole> organisationPolicy = applicant.getSolicitor().getOrganisationPolicy();
-
-            if (nonNull(organisationPolicy) && nonNull(organisationPolicy.getOrganisation())) {
-                noticeOfProceedingsSolicitorFirm = organisationPolicy.getOrganisation().getOrganisationName();
-            } else {
-                noticeOfProceedingsSolicitorFirm = applicant.getSolicitor().getFirmName();
-            }
+            noticeOfProceedingsSolicitorFirm = applicant.getSolicitor().getFirmName();
         }
     }
 

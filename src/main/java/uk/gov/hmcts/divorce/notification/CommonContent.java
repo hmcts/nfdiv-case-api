@@ -359,16 +359,9 @@ public class CommonContent {
         templateVars.put(APPLICATION_REFERENCE, caseId != null ? formatId(caseId) : null);
         templateVars.put(FIRST_NAME, applicant.getFirstName());
         templateVars.put(LAST_NAME, applicant.getLastName());
-        String organisationName = Optional.ofNullable(applicant.getSolicitor())
-            .map(Solicitor::getOrganisationPolicy)
-            .map(OrganisationPolicy::getOrganisation)
-            .map(Organisation::getOrganisationName)
-            .orElse(null);
 
         if (StringUtils.isNotEmpty(applicant.getSolicitor().getFirmName())) {
             templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
-        } else if (organisationName != null) {
-            templateVars.put(SOLICITOR_FIRM, organisationName);
         } else {
             templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getName());
         }
