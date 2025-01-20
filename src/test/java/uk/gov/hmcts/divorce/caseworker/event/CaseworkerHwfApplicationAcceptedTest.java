@@ -88,6 +88,19 @@ class CaseworkerHwfApplicationAcceptedTest {
     }
 
     @Test
+    void shouldInitialiseCaseFlagsInAboutToSubmit() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        when(caseworkerHwfApplicationAndPaymentHelper.setDateSubmittedAndDueDate(caseData)).thenReturn(caseData);
+
+        var response = caseworkerHwfApplicationAccepted.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(caseFlagsService).initialiseCaseFlags(caseData);
+    }
+
+    @Test
     void shouldCallCaseFlagsServiceToSetHmctsServiceId() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();

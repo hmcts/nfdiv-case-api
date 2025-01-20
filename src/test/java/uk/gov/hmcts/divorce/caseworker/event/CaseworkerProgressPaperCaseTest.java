@@ -170,6 +170,21 @@ public class CaseworkerProgressPaperCaseTest {
     }
 
     @Test
+    void shouldInitialiseCaseFlagsInAboutToSubmit() {
+        final long caseId = TEST_CASE_ID;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        CaseData caseData = validApplicant1CaseData();
+        caseData.getApplication().setProgressPaperCase(AWAITING_HWF_DECISION);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(caseId);
+
+        var response = caseworkerProgressPaperCase.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(caseFlagsService).initialiseCaseFlags(caseData);
+    }
+
+    @Test
     void shouldCallCaseFlagsServiceToSetHmctsServiceId() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
