@@ -94,28 +94,25 @@ public class DocumentRemovalServiceTest {
     @Test
     public void shouldDeleteScannedDocumentFromDocManagement() {
         final List<String> systemRoles = List.of("caseworker-divorce");
-        final List<ListValue<ScannedDocument>> scannedDocumentList = scannedDocuments(D8);
         final String userId = UUID.randomUUID().toString();
         final User systemUser = systemUser(systemRoles, userId);
-
-        CaseData beforeData = CaseData.builder()
-            .documents(CaseDocuments.builder().scannedDocuments(scannedDocumentList).build())
-            .build();
-
-
-        CaseData afterData = CaseData.builder()
-            .documents(CaseDocuments.builder().scannedDocuments(Collections.emptyList()).build())
-            .build();
+        final List<ListValue<ScannedDocument>> scannedDocumentList = scannedDocuments(D8);
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
         doNothing().when(documentManagementClient).deleteDocument(
             SYSTEM_USER_USER_ID,
             TEST_SERVICE_AUTH_TOKEN,
             scannedDocumentList.get(0).getValue().getUrl(),
             true
         );
+
+        CaseData beforeData = CaseData.builder()
+            .documents(CaseDocuments.builder().scannedDocuments(scannedDocumentList).build())
+            .build();
+        CaseData afterData = CaseData.builder()
+            .documents(CaseDocuments.builder().scannedDocuments(Collections.emptyList()).build())
+            .build();
 
         documentRemovalService.handleDeletionOfScannedDocuments(beforeData, afterData);
 

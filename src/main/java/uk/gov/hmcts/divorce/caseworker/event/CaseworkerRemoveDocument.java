@@ -101,10 +101,6 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         }
     }
 
-    private void handleDeletionOfScannedDocuments(CaseData beforeCaseData, CaseData currentCaseData) {
-        documentRemovalService.handleDeletionOfScannedDocuments(beforeCaseData, currentCaseData);
-    }
-
     private List<ListValue<DivorceDocument>> findDocumentsForRemoval(final List<ListValue<DivorceDocument>> beforeDocs,
                                                                      final List<ListValue<DivorceDocument>> currentDocs) {
 
@@ -119,6 +115,10 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         }
 
         return documentsToRemove;
+    }
+
+    private void handleDeletionOfScannedDocuments(CaseData beforeCaseData, CaseData currentCaseData) {
+        documentRemovalService.handleDeletionOfScannedDocuments(beforeCaseData, currentCaseData);
     }
 
     private void handleDeletionOfGeneralApplicationDocuments(CaseData beforeCaseData, CaseData currentCaseData) {
