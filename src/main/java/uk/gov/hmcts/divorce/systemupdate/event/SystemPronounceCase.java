@@ -93,7 +93,7 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
         }
         AboutToStartOrSubmitResponse.AboutToStartOrSubmitResponseBuilder<CaseData, State> responseBuilder =
             AboutToStartOrSubmitResponse.builder();
-        if (generateConditionalOrderGrantedDocs(details, beforeDetails)) {
+        if (!hasFinalOrder(details) && generateConditionalOrderGrantedDocs(details, beforeDetails)) {
             notificationDispatcher.send(conditionalOrderPronouncedNotification, caseData, details.getId());
             final State state = caseData.isJudicialSeparationCase() ? SeparationOrderGranted : ConditionalOrderPronounced;
             responseBuilder.state(state);
@@ -101,6 +101,11 @@ public class SystemPronounceCase implements CCDConfig<CaseData, State, UserRole>
         }
 
         return responseBuilder.data(caseData).build();
+    }
+
+    private boolean hasFinalOrder(CaseDetails<CaseData, State> details) {
+        return details.getData().getFinalOrder() != null
+            && details.getData().getFinalOrder().getGrantedDate() != null;
     }
 
     private boolean generateConditionalOrderGrantedDocs(final CaseDetails<CaseData, State> details,
