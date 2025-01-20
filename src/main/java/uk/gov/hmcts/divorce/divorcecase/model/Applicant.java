@@ -161,6 +161,11 @@ public class Applicant {
     private ContactDetailsType contactDetailsType;
 
     @CCD(
+        label = "Is the Applicant currently resident in a refuge?"
+    )
+    private YesOrNo inRefuge;
+
+    @CCD(
         label = "Is represented by a solicitor?",
         access = {AcaSystemUserAccess.class}
     )

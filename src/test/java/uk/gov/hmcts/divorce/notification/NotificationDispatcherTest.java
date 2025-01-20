@@ -111,7 +111,7 @@ class NotificationDispatcherTest {
     }
 
     @Test
-    void shouldNotifyApplicant2OfflineIsApplicant1OffLineTrue() {
+    void shouldNotifyApplicant2OfflineIsApplicant2OffLineTrue() {
 
         final long caseId = TEST_CASE_ID;
         final CaseData caseData = CaseData.builder()
@@ -197,6 +197,7 @@ class NotificationDispatcherTest {
 
         verify(applicantNotification).sendToApplicant1Solicitor(caseData, caseId);
         verify(applicantNotification).sendToApplicant1(caseData, caseId);
+        verify(applicantNotification).sendToApplicant1Offline(caseData, caseId);
     }
 
     @Test
@@ -211,6 +212,7 @@ class NotificationDispatcherTest {
 
         verify(applicantNotification).sendToApplicant2Solicitor(caseData, caseId);
         verify(applicantNotification).sendToApplicant2(caseData, caseId);
+        verify(applicantNotification).sendToApplicant2Offline(caseData, caseId);
     }
 
     @Test
