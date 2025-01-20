@@ -65,6 +65,7 @@ public class Solicitor {
     )
     private String email;
 
+    @Getter(AccessLevel.NONE)
     @CCD(
         label = "Solicitor’s Firm Name"
     )
@@ -148,5 +149,11 @@ public class Solicitor {
             return this.address.substring(0, this.address.indexOf(postcode) + postcode.length());
         }
         return this.address;
+    }
+
+    public String getFirmName() {
+        return isNullOrEmpty(this.firmName) && hasOrgName()
+            ? this.getOrganisationPolicy().getOrganisation().getOrganisationName()
+            : this.firmName;
     }
 }
