@@ -50,6 +50,7 @@ public class CaseworkerPrepareForCaseFlags implements CCDConfig<CaseData, State,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
         final CaseData caseData = details.getData();
+        caseFlagsService.initialiseCaseFlags(caseData);
         caseData.setCaseFlagsSetupComplete(YesOrNo.YES);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

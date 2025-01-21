@@ -53,6 +53,17 @@ public class CaseworkerPrepareForCaseFlagsTest {
     }
 
     @Test
+    void shouldInitialiseCaseFlags() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(CaseData.builder().build());
+        caseDetails.setId(TestConstants.TEST_CASE_ID);
+
+        var response = caseworkerPrepareForCaseFlags.aboutToSubmit(caseDetails, null);
+
+        verify(caseFlagsService).initialiseCaseFlags(caseDetails.getData());
+    }
+
+    @Test
     void shouldSetHmctsServiceIdInSubmittedCallback() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TestConstants.TEST_CASE_ID);
