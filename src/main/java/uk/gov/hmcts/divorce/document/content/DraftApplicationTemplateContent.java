@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -137,11 +138,9 @@ public class DraftApplicationTemplateContent {
             templateContent.put(RESPONDENT_SOLICITOR_EMAIL,
                 isNull(applicant2Solicitor.getEmail()) ? NOT_GIVEN : applicant2Solicitor.getEmail());
             templateContent.put(RESPONDENT_SOLICITOR_FIRM_NAME,
-                isNull(applicant2Solicitor.getOrganisationPolicy())
-                    ? NOT_GIVEN
-                    : applicant2Solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
+                StringUtils.isEmpty(applicant2Solicitor.getFirmName()) ? NOT_GIVEN : applicant2Solicitor.getFirmName());
             templateContent.put(RESPONDENT_SOLICITOR_ADDRESS,
-                isNull(applicant2Solicitor.getAddress()) ? NOT_GIVEN : applicant2Solicitor.getAddress());
+                isNull(applicant2Solicitor.getAddress()) ? NOT_GIVEN : applicant2Solicitor.getFirmAndAddress());
         }
 
         return templateContent;
