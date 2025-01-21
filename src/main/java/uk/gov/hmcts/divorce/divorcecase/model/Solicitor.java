@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.microsoft.applicationinsights.core.dependencies.google.common.base.Strings;
 import io.micrometer.common.util.StringUtils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -162,6 +161,10 @@ public class Solicitor {
     public String getFirmAndAddress() {
         String firmName = this.getFirmName();
         String address = this.getAddress();
-        return !Strings.isNullOrEmpty(firmName) && address.contains(firmName) ? address : firmName + '\n' + address;
+        if (isNullOrEmpty(firmName) || (!isNullOrEmpty(firmName) && address.contains(firmName))) {
+            return address;
+        } else {
+            return firmName + '\n' + address;
+        }
     }
 }
