@@ -16,6 +16,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.FieldType;
+import uk.gov.hmcts.ccd.sdk.type.FlagLauncher;
 import uk.gov.hmcts.ccd.sdk.type.Flags;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -348,6 +349,12 @@ public class CaseData {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
     @Builder.Default
     private List<ListValue<CaseMatch>> caseMatches = new ArrayList<>();
+
+    @CCD(
+        label = "Launch the Flags screen",
+        access = {InternalCaseFlagsAccess.class}
+    )
+    private FlagLauncher internalFlagLauncher;
 
     @CCD(access = {InternalCaseFlagsAccess.class},
         label = "Case Flags")
