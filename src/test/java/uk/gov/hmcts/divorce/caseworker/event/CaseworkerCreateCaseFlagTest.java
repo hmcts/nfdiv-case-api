@@ -43,7 +43,7 @@ class CaseworkerCreateCaseFlagTest {
     }
 
     @Test
-    void shouldInitialiseCaseFlagsInAboutToStartEvent() {
+    void shouldInitialisePartyFlagsInAboutToStartEvent() {
         Long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = validApplicant1CaseData();
@@ -53,6 +53,6 @@ class CaseworkerCreateCaseFlagTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerCreateCaseFlag.aboutToStart(caseDetails);
 
-        verify(caseFlagsService).initialiseCaseFlags(caseData);
+        verify(caseFlagsService).initialiseAllInternalPartyFlags(caseData);
     }
 }

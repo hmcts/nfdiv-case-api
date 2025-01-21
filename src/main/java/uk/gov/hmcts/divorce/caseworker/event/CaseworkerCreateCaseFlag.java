@@ -62,7 +62,7 @@ public class CaseworkerCreateCaseFlag implements CCDConfig<CaseData, State, User
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_CASE_FLAG, details.getId());
         CaseData data = details.getData();
 
-        caseFlagsService.initialiseCaseFlags(data);
+        caseFlagsService.initialiseAllInternalPartyFlags(data);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
