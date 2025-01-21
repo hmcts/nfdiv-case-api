@@ -84,6 +84,8 @@ class NocCitizenToSolsNotificationsTest {
         templateVars.put(LAST_NAME, applicant.getLastName());
         templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
         templateVars.put(SMART_SURVEY, SMART_SURVEY);
+
+        commonContent.getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
         return templateVars;
     }
 
@@ -92,8 +94,10 @@ class NocCitizenToSolsNotificationsTest {
         CaseData caseData = createMockCaseData();
         Long id = 1L;
 
+        var templateVars = getSolTemplateVars(caseData.getApplicant1());
+
         when(commonContent.nocCitizenTemplateVars(id, caseData.getApplicant1()
-        )).thenReturn(getTemplateVars(caseData.getApplicant1()));
+        )).thenReturn(templateVars);
 
         notificationHandler.sendToApplicant1(caseData, id);
 
@@ -112,8 +116,10 @@ class NocCitizenToSolsNotificationsTest {
         CaseData caseData = createMockCaseData();
         Long id = 1L;
 
+        var templateVars = getSolTemplateVars(caseData.getApplicant1());
+
         when(commonContent.nocSolsTemplateVars(id, caseData.getApplicant1()
-        )).thenReturn(getSolTemplateVars(caseData.getApplicant1()));
+        )).thenReturn(templateVars);
 
         notificationHandler.sendToApplicant1Solicitor(caseData, id);
 
@@ -134,8 +140,10 @@ class NocCitizenToSolsNotificationsTest {
         CaseData caseData = createMockCaseData();
         Long id = 1L;
 
+        var templateVars = getSolTemplateVars(caseData.getApplicant2());
+
         when(commonContent.nocCitizenTemplateVars(id, caseData.getApplicant2()
-        )).thenReturn(getTemplateVars(caseData.getApplicant2()));
+        )).thenReturn(templateVars);
 
         notificationHandler.sendToApplicant2(caseData, id);
 
@@ -240,8 +248,10 @@ class NocCitizenToSolsNotificationsTest {
         CaseData caseData = createMockCaseData();
         Long id = 1L;
 
+        var solTemplateVars = getSolTemplateVars(caseData.getApplicant2());
+
         when(commonContent.nocSolsTemplateVars(id, caseData.getApplicant2()
-        )).thenReturn(getSolTemplateVars(caseData.getApplicant2()));
+        )).thenReturn(solTemplateVars);
 
         notificationHandler.sendToApplicant2Solicitor(caseData, id);
 
@@ -261,8 +271,10 @@ class NocCitizenToSolsNotificationsTest {
         CaseData caseData = createMockCaseData();
         Long id = 1L;
 
+        var solTemplateVars = getSolTemplateVars(caseData.getApplicant1());
+
         when(commonContent.nocOldSolsTemplateVars(id, caseData.getApplicant1()
-        )).thenReturn(getSolTemplateVars(caseData.getApplicant1()));
+        )).thenReturn(solTemplateVars);
 
         notificationHandler.sendToApplicant1OldSolicitor(caseData, id);
 
@@ -282,8 +294,10 @@ class NocCitizenToSolsNotificationsTest {
         CaseData caseData = createMockCaseData();
         Long id = 1L;
 
+        var solTemplateVars = getSolTemplateVars(caseData.getApplicant2());
+
         when(commonContent.nocOldSolsTemplateVars(id, caseData.getApplicant2()
-        )).thenReturn(getSolTemplateVars(caseData.getApplicant2()));
+        )).thenReturn(solTemplateVars);
 
         notificationHandler.sendToApplicant2OldSolicitor(caseData, id);
 

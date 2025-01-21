@@ -373,6 +373,10 @@ public class CommonContent {
             templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getName());
         }
         templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
+
+        getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
+
         return templateVars;
     }
 
@@ -387,6 +391,8 @@ public class CommonContent {
                 : NOT_PROVIDED);
         templateVars.put(SMART_SURVEY, getSmartSurvey());
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
+
+        getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
         return templateVars;
     }
 
@@ -400,6 +406,10 @@ public class CommonContent {
         templateVars.put(NAME, beforeApplicant.getSolicitor().getName());
         templateVars.put(APPLICANT_NAME, beforeApplicant.getFullName());
         templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(WEB_FORM_TEXT, getContactWebFormText(beforeApplicant.getLanguagePreference()));
+
+        getPhoneAndOpeningTimes(beforeApplicant.getLanguagePreference(), templateVars);
+
         return templateVars;
     }
 
