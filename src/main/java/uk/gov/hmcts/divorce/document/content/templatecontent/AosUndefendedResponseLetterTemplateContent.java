@@ -91,9 +91,7 @@ public class AosUndefendedResponseLetterTemplateContent implements TemplateConte
         if (caseData.isJudicialSeparationCase()) {
             templateContent.put(RECIPIENT_NAME, caseData.getApplicant1().isRepresented()
                 ? caseData.getApplicant1().getSolicitor().getName() : caseData.getApplicant1().getFullName());
-            templateContent.put(RECIPIENT_ADDRESS, caseData.getApplicant1().isRepresented()
-                ? caseData.getApplicant1().getSolicitor().getAddress()
-                : caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck());
+            templateContent.put(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck());
             templateContent.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
             templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
             templateContent.put(SOLICITOR_NAME, caseData.getApplicant1().isRepresented()
