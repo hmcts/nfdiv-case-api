@@ -116,8 +116,8 @@ class CertificateOfEntitlementTemplateContentTest {
                 APPLICANT_2_SOLICITOR_NAME, TEST_SOLICITOR_NAME,
                 SOLICITOR_NAME, TEST_SOLICITOR_NAME,
                 SOLICITOR_FIRM, TEST_SOLICITOR_FIRM_NAME,
-                SOLICITOR_ADDRESS, "Solicitor Bros\n" +
-                    "Address(addressLine1=sol line1, addressLine2=sol line2, addressLine3=null, postTown=sol city, "
+                SOLICITOR_ADDRESS, "Solicitor Bros\n"
+                    + "Address(addressLine1=sol line1, addressLine2=sol line2, addressLine3=null, postTown=sol city, "
                     + "county=null, postCode=sol postcode, country=null)",
                 SOLICITOR_REFERENCE, TEST_REFERENCE
             )
