@@ -10,7 +10,6 @@
         "OrganisationID": "HEBFGBR"
       }
     },
-    "applicant1SolicitorFirmName": "Test Organisation",
     "applicant2SolicitorOrganisationPolicy": {
       "Organisation": {
         "OrganisationID": "App2OrgPolicy"
