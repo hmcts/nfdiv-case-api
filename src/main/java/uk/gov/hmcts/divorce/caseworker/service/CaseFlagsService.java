@@ -161,12 +161,28 @@ public class CaseFlagsService {
         Flags app1SolFlags = caseData.getPartyFlags().getApplicant1SolicitorFlags();
         Flags app2SolFlags = caseData.getPartyFlags().getApplicant2SolicitorFlags();
 
-        caseData.getPartyFlags().setApplicant1SolicitorFlags(app2SolFlags);
-        if (app2SolFlags != null) {
-            caseData.getPartyFlags().getApplicant1SolicitorFlags().setRoleOnCase(TEXT_APPLICANT1_SOL_FLAGS_ROLE);
-            caseData.getPartyFlags().getApplicant1SolicitorFlags().setGroupId(
-                UUID.fromString(caseData.getPartyFlags().getApplicant1SolicitorGroupId()));
+        if (caseData.getApplicant1().isRepresented()) {
+            caseData.getPartyFlags().setApplicant1SolicitorFlags(app2SolFlags);
+            if (app2SolFlags != null) {
+                caseData.getPartyFlags().getApplicant1SolicitorFlags().setRoleOnCase(TEXT_APPLICANT1_SOL_FLAGS_ROLE);
+                caseData.getPartyFlags().getApplicant1SolicitorFlags().setGroupId(
+                    UUID.fromString(caseData.getPartyFlags().getApplicant1SolicitorGroupId()));
+            }
+        } else {
+            caseData.getPartyFlags().setApplicant1SolicitorFlags(null);
         }
+
+        if (caseData.getApplicant2().isRepresented()) {
+            caseData.getPartyFlags().setApplicant2SolicitorFlags(app1SolFlags);
+            if (app1SolFlags != null) {
+                caseData.getPartyFlags().getApplicant2SolicitorFlags().setRoleOnCase(TEXT_APPLICANT2_SOL_FLAGS_ROLE);
+                caseData.getPartyFlags().getApplicant2SolicitorFlags().setGroupId(
+                    UUID.fromString(caseData.getPartyFlags().getApplicant2SolicitorGroupId()));
+            }
+        } else {
+            caseData.getPartyFlags().setApplicant2SolicitorFlags(null);
+        }
+
 
         caseData.getPartyFlags().setApplicant2SolicitorFlags(app1SolFlags);
         if (app1SolFlags != null) {
