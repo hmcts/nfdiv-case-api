@@ -151,7 +151,7 @@ public class Solicitor {
     }
 
     @JsonIgnore
-    public String getFirmOrOrgName() {
+    public String getPreferredFirmName() {
         return isNullOrEmpty(this.firmName) && hasOrgName()
             ? this.getOrganisationPolicy().getOrganisation().getOrganisationName()
             : this.firmName;
@@ -159,7 +159,7 @@ public class Solicitor {
 
     @JsonIgnore
     public String getFirmAndAddress() {
-        String firmName = this.getFirmOrOrgName();
+        String firmName = this.getPreferredFirmName();
         String address = this.getAddress();
         if (isNullOrEmpty(firmName) || (!isNullOrEmpty(firmName) && address.contains(firmName))) {
             return address;

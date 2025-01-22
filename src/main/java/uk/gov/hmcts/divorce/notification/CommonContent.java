@@ -356,8 +356,8 @@ public class CommonContent {
         templateVars.put(FIRST_NAME, applicant.getFirstName());
         templateVars.put(LAST_NAME, applicant.getLastName());
 
-        if (StringUtils.isNotEmpty(applicant.getSolicitor().getFirmOrOrgName())) {
-            templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmOrOrgName());
+        if (StringUtils.isNotEmpty(applicant.getSolicitor().getPreferredFirmName())) {
+            templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getPreferredFirmName());
         } else {
             templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getName());
         }
