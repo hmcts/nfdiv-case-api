@@ -389,7 +389,7 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
         solicitorTemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         solicitorTemplateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         solicitorTemplateVars.put(SOLICITOR_FIRM, TEST_SOLICITOR_FIRM_NAME);
-        solicitorTemplateVars.put(SOLICITOR_ADDRESS, caseData.getApplicant1().getSolicitor().getAddress());
+        solicitorTemplateVars.put(SOLICITOR_ADDRESS, caseData.getApplicant1().getSolicitor().getFirmAndAddress());
         solicitorTemplateVars.put(DATE, getExpectedLocalDate().format(DATE_TIME_FORMATTER));
         solicitorTemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         solicitorTemplateVars.put(IS_JOINT, true);
@@ -435,7 +435,7 @@ public class ConditionalOrderPronouncedCoverLetterHelperTest {
         solicitorTemplateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         solicitorTemplateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         solicitorTemplateVars.put(SOLICITOR_FIRM, TEST_SOLICITOR_FIRM_NAME);
-        solicitorTemplateVars.put(SOLICITOR_ADDRESS, caseData.getApplicant2().getSolicitor().getAddress());
+        solicitorTemplateVars.put(SOLICITOR_ADDRESS, caseData.getApplicant2().getSolicitor().getFirmAndAddress());
         solicitorTemplateVars.put(DATE, getExpectedLocalDate().format(DATE_TIME_FORMATTER));
         solicitorTemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
         solicitorTemplateVars.put(IS_JOINT, true);
