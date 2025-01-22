@@ -101,8 +101,8 @@ public class NoticeOfProceedingSolicitorContent {
             isApplicantSolicitor ? applicant1Solicitor.hasOrgId() : applicant2Solicitor.hasOrgId());
         templateContent.put(SOLICITOR_NAME, isApplicantSolicitor ? applicant1Solicitor.getName() : applicant2Solicitor.getName());
         templateContent.put(SOLICITOR_ADDRESS, isApplicantSolicitor
-            ? applicant1.getCorrespondenceAddressWithoutConfidentialCheck()
-            : applicant2.getCorrespondenceAddressWithoutConfidentialCheck());
+            ? applicant1Solicitor.getFirmAndAddress()
+            : applicant2Solicitor.getFirmAndAddress());
 
         templateContent.put(
             SOLICITOR_REFERENCE,
