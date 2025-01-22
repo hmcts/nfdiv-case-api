@@ -138,7 +138,7 @@ public class DraftApplicationTemplateContent {
             templateContent.put(RESPONDENT_SOLICITOR_EMAIL,
                 isNull(applicant2Solicitor.getEmail()) ? NOT_GIVEN : applicant2Solicitor.getEmail());
             templateContent.put(RESPONDENT_SOLICITOR_FIRM_NAME,
-                StringUtils.isEmpty(applicant2Solicitor.getFirmName()) ? NOT_GIVEN : applicant2Solicitor.getFirmName());
+                StringUtils.isEmpty(applicant2Solicitor.getFirmOrOrgName()) ? NOT_GIVEN : applicant2Solicitor.getFirmOrOrgName());
             templateContent.put(RESPONDENT_SOLICITOR_ADDRESS,
                 isNull(applicant2Solicitor.getAddress()) ? NOT_GIVEN : applicant2Solicitor.getFirmAndAddress());
         }

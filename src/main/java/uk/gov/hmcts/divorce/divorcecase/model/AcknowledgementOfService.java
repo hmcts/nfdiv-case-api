@@ -160,7 +160,7 @@ public class AcknowledgementOfService {
         noticeOfProceedingsEmail = applicant.getCorrespondenceEmail();
 
         if (applicant.isRepresented()) {
-            noticeOfProceedingsSolicitorFirm = applicant.getSolicitor().getFirmName();
+            noticeOfProceedingsSolicitorFirm = applicant.getSolicitor().getFirmOrOrgName();
         }
     }
 

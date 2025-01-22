@@ -65,7 +65,6 @@ public class Solicitor {
     )
     private String email;
 
-    @Getter(AccessLevel.NONE)
     @CCD(
         label = "Solicitor’s Firm Name"
     )
@@ -151,7 +150,8 @@ public class Solicitor {
         return this.address;
     }
 
-    public String getFirmName() {
+    @JsonIgnore
+    public String getFirmOrOrgName() {
         return isNullOrEmpty(this.firmName) && hasOrgName()
             ? this.getOrganisationPolicy().getOrganisation().getOrganisationName()
             : this.firmName;
@@ -159,7 +159,7 @@ public class Solicitor {
 
     @JsonIgnore
     public String getFirmAndAddress() {
-        String firmName = this.getFirmName();
+        String firmName = this.getFirmOrOrgName();
         String address = this.getAddress();
         if (isNullOrEmpty(firmName) || (!isNullOrEmpty(firmName) && address.contains(firmName))) {
             return address;
