@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.ProcessConfidentialDocumentsService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -78,6 +79,18 @@ public class CaseworkerUpdateContactDetails implements CCDConfig<CaseData, State
             caseFlagsService.updatePartyNameInCaseFlags(caseData, CaseFlagsService.PartyFlagType.APPLICANT_2);
         }
 
+        if (caseData.getApplicant1().isRepresented()
+            && hasNameBeenUpdatedForSolicitor(beforeDetails.getData().getApplicant1().getSolicitor(),
+            details.getData().getApplicant1().getSolicitor())) {
+            caseFlagsService.updatePartyNameInCaseFlags(caseData, CaseFlagsService.PartyFlagType.APPLICANT_1_SOLICITOR);
+        }
+
+        if (caseData.getApplicant2().isRepresented()
+            && hasNameBeenUpdatedForSolicitor(beforeDetails.getData().getApplicant2().getSolicitor(),
+            details.getData().getApplicant2().getSolicitor())) {
+            caseFlagsService.updatePartyNameInCaseFlags(caseData, CaseFlagsService.PartyFlagType.APPLICANT_2_SOLICITOR);
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
@@ -85,5 +98,9 @@ public class CaseworkerUpdateContactDetails implements CCDConfig<CaseData, State
 
     boolean hasNameBeenUpdatedForApplicant(Applicant before, Applicant after) {
         return !after.getFullName().equals(before.getFullName());
+    }
+
+    boolean hasNameBeenUpdatedForSolicitor(Solicitor before, Solicitor after) {
+        return !after.getName().equals(before.getName());
     }
 }
