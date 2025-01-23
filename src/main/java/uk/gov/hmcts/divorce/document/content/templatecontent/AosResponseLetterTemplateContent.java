@@ -14,9 +14,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE_DISPUTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_JS_SOLE_UNDISPUTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_AWAITING_CO_DISPUTED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
@@ -71,7 +73,8 @@ public class AosResponseLetterTemplateContent implements TemplateContent {
             NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED,
             NFD_NOP_APP1_JS_SOLE_DISPUTED,
             NFD_NOP_APP1_JS_SOLE_UNDISPUTED,
-            RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID
+            RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID,
+            RESPONDENT_RESPONDED_AWAITING_CO_DISPUTED_TEMPLATE_ID
         );
     }
 
@@ -97,7 +100,7 @@ public class AosResponseLetterTemplateContent implements TemplateContent {
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
-        templateContent.put(DUE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+        templateContent.put(DUE_DATE, nonNull(caseData.getDueDate()) ? caseData.getDueDate().format(DATE_TIME_FORMATTER) : "");
         templateContent.put(
             WAIT_UNTIL_DATE,
             holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()).format(DATE_TIME_FORMATTER)
