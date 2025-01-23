@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_AWAITING_CO_UNDEFENDED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
@@ -53,7 +54,8 @@ public class AosUndefendedResponseLetterTemplateContent implements TemplateConte
     public List<String> getSupportedTemplates() {
         return List.of(
             NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED,
-            RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID
+            RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID,
+            RESPONDENT_RESPONDED_AWAITING_CO_UNDEFENDED_TEMPLATE_ID
         );
     }
 
