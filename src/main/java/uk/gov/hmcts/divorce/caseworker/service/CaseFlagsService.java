@@ -182,14 +182,6 @@ public class CaseFlagsService {
         } else {
             caseData.getPartyFlags().setApplicant2SolicitorFlags(null);
         }
-
-
-        caseData.getPartyFlags().setApplicant2SolicitorFlags(app1SolFlags);
-        if (app1SolFlags != null) {
-            caseData.getPartyFlags().getApplicant2SolicitorFlags().setRoleOnCase(TEXT_APPLICANT2_SOL_FLAGS_ROLE);
-            caseData.getPartyFlags().getApplicant2SolicitorFlags().setGroupId(
-                UUID.fromString(caseData.getPartyFlags().getApplicant2SolicitorGroupId()));
-        }
     }
 
     public void resetSolicitorCaseFlags(final CaseData caseData, boolean isApplicant) {
