@@ -17,11 +17,11 @@ public class ResetConditionalOrderFlags implements CaseTask {
         log.info("Resetting conditional order flags for case id {} ", caseDetails.getId());
 
         final CaseData data = caseDetails.getData();
-        final boolean conditionalOrderHasBeenRedrafted = State.ConditionalOrderDrafted.equals(caseDetails.getState());
+        final boolean conditionalOrderInProgress = State.ConditionalOrderDrafted.equals(caseDetails.getState());
 
 
         resetConditionalOrderSubmittedFlags(data);
-        if (!conditionalOrderHasBeenRedrafted) {
+        if (!conditionalOrderInProgress) {
             resetConditionalOrderDraftedFlags(data);
         }
 
