@@ -125,8 +125,10 @@ class CaseworkerUpdateContactDetailsTest {
         Solicitor beforeSolicitor = Solicitor.builder().name("Old Name").build();
         Solicitor afterSolicitor = Solicitor.builder().name("New Name").build();
 
-        Applicant beforeApplicant = Applicant.builder().firstName("Test").lastName("Name").solicitorRepresented(YesOrNo.YES).solicitor(beforeSolicitor).build();
-        Applicant afterApplicant = Applicant.builder().firstName("Test").lastName("Name").solicitorRepresented(YesOrNo.YES).solicitor(afterSolicitor).build();
+        Applicant beforeApplicant = Applicant.builder().firstName("Test").lastName("Name")
+            .solicitorRepresented(YesOrNo.YES).solicitor(beforeSolicitor).build();
+        Applicant afterApplicant = Applicant.builder().firstName("Test").lastName("Name")
+            .solicitorRepresented(YesOrNo.YES).solicitor(afterSolicitor).build();
 
         beforeCaseData.setApplicant1(beforeApplicant);
         afterCaseData.setApplicant1(afterApplicant);
@@ -152,8 +154,10 @@ class CaseworkerUpdateContactDetailsTest {
         Solicitor beforeSolicitor = Solicitor.builder().name("Old Name").build();
         Solicitor afterSolicitor = Solicitor.builder().name("New Name").build();
 
-        Applicant beforeApplicant = Applicant.builder().firstName("Test").lastName("Name").solicitorRepresented(YesOrNo.YES).solicitor(beforeSolicitor).build();
-        Applicant afterApplicant = Applicant.builder().firstName("Test").lastName("Name").solicitorRepresented(YesOrNo.YES).solicitor(afterSolicitor).build();
+        Applicant beforeApplicant = Applicant.builder().firstName("Test").lastName("Name")
+            .solicitorRepresented(YesOrNo.YES).solicitor(beforeSolicitor).build();
+        Applicant afterApplicant = Applicant.builder().firstName("Test").lastName("Name")
+            .solicitorRepresented(YesOrNo.YES).solicitor(afterSolicitor).build();
 
         beforeCaseData.setApplicant2(beforeApplicant);
         afterCaseData.setApplicant2(afterApplicant);
