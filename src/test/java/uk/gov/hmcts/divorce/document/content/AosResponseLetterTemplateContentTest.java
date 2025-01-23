@@ -10,7 +10,9 @@ import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
 import uk.gov.hmcts.divorce.document.content.templatecontent.AosResponseLetterTemplateContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
@@ -71,37 +73,8 @@ public class AosResponseLetterTemplateContentTest {
     @Test
     public void shouldSuccessfullyApplyDivorceContent() {
         setMockClock(clock);
-        final Applicant applicant1 = Applicant.builder()
-            .firstName(TEST_FIRST_NAME)
-            .lastName(TEST_LAST_NAME)
-            .offline(YES)
-            .address(AddressGlobalUK.builder()
-                .addressLine1("Correspondence Address")
-                .addressLine2("Line 2")
-                .addressLine3("Line 3")
-                .postTown("Post Town")
-                .county("County")
-                .postCode("Post Code")
-                .country("UK")
-                .build()
-            )
-            .build();
-        final Applicant applicant2 = Applicant.builder()
-            .firstName(TEST_APP2_FIRST_NAME)
-            .lastName(TEST_APP2_LAST_NAME)
-            .offline(YES)
-            .build();
 
-        final CaseData caseData = CaseData.builder()
-            .applicationType(SOLE_APPLICATION)
-            .divorceOrDissolution(DIVORCE)
-            .applicant1(applicant1)
-            .applicant2(applicant2)
-            .dueDate(LocalDate.of(2020, 5, 21))
-            .application(
-                Application.builder().issueDate(LocalDate.of(2020, 1, 1)).build()
-            )
-            .build();
+        final CaseData caseData = getCaseData(DIVORCE);
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("husband");
         when(holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()))
@@ -138,40 +111,50 @@ public class AosResponseLetterTemplateContentTest {
     }
 
     @Test
+    public void shouldSuccessfullyApplyDivorceContentAtAwaitingConditionalOrder() {
+        setMockClock(clock);
+
+        final CaseData caseData = getAwaitingCoCaseData(DIVORCE);
+
+        when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("husband");
+        when(holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()))
+            .thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+
+        final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put("caseReference", formatId(TEST_CASE_ID));
+        expectedEntries.put("applicant1FirstName", TEST_FIRST_NAME);
+        expectedEntries.put("applicant1LastName", TEST_LAST_NAME);
+        expectedEntries.put("applicant2FirstName", TEST_APP2_FIRST_NAME);
+        expectedEntries.put("applicant2LastName", TEST_APP2_LAST_NAME);
+        expectedEntries.put("isDivorce", true);
+        expectedEntries.put("applicant1Address", "Correspondence Address\nLine 2\nLine 3\nPost Town\nCounty\nUK\nPost Code");
+        expectedEntries.put("divorceOrCivilPartnershipEmail", "contactdivorce@justice.gov.uk");
+        expectedEntries.put("divorceOrEndCivilPartnershipApplication", "divorce application");
+        expectedEntries.put("issueDate", "1 January 2020");
+        expectedEntries.put("relation", "husband");
+        expectedEntries.put("waitUntilDate", "21 May 2020");
+        expectedEntries.put("divorceOrEndCivilPartnershipProcess", "divorce process");
+        expectedEntries.put("divorceOrCivilPartnershipProceedings", "divorce proceedings");
+        expectedEntries.put("dueDate", "");
+        expectedEntries.put("date", LocalDate.now().format(DATE_TIME_FORMATTER));
+        expectedEntries.put("divorceOrCivilPartnershipServiceHeader", "The Divorce Service");
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+
+        assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
     public void shouldSuccessfullyApplyDissolutionContent() {
         setMockClock(clock);
-        final Applicant applicant1 = Applicant.builder()
-            .firstName(TEST_FIRST_NAME)
-            .lastName(TEST_LAST_NAME)
-            .offline(YES)
-            .address(AddressGlobalUK.builder()
-                .addressLine1("Correspondence Address")
-                .addressLine2("Line 2")
-                .addressLine3("Line 3")
-                .postTown("Post Town")
-                .county("County")
-                .postCode("Post Code")
-                .country("UK")
-                .build()
-            )
-            .build();
 
-        final Applicant applicant2 = Applicant.builder()
-            .firstName(TEST_APP2_FIRST_NAME)
-            .lastName(TEST_APP2_LAST_NAME)
-            .offline(YES)
-            .build();
-
-        final CaseData caseData = CaseData.builder()
-            .applicationType(SOLE_APPLICATION)
-            .divorceOrDissolution(DISSOLUTION)
-            .applicant1(applicant1)
-            .applicant2(applicant2)
-            .dueDate(LocalDate.of(2020, 5, 21))
-            .application(
-                Application.builder().issueDate(LocalDate.of(2020, 1, 1)).build()
-            )
-            .build();
+        final CaseData caseData = getCaseData(DISSOLUTION);
 
         when(holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()))
             .thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
@@ -208,46 +191,50 @@ public class AosResponseLetterTemplateContentTest {
     }
 
     @Test
+    public void shouldSuccessfullyApplyDissolutionContentAtAwaitingConditionalOrder() {
+        setMockClock(clock);
+
+        final CaseData caseData = getAwaitingCoCaseData(DISSOLUTION);
+
+        when(holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()))
+            .thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+
+
+        final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put("caseReference", formatId(TEST_CASE_ID));
+        expectedEntries.put("applicant1FirstName", TEST_FIRST_NAME);
+        expectedEntries.put("applicant1LastName", TEST_LAST_NAME);
+        expectedEntries.put("applicant1Address", "Correspondence Address\nLine 2\nLine 3\nPost Town\nCounty\nUK\nPost Code");
+        expectedEntries.put("divorceOrCivilPartnershipEmail", "contactdivorce@justice.gov.uk");
+        expectedEntries.put("applicant2FirstName", TEST_APP2_FIRST_NAME);
+        expectedEntries.put("applicant2LastName", TEST_APP2_LAST_NAME);
+        expectedEntries.put("isDivorce", false);
+        expectedEntries.put("divorceOrEndCivilPartnershipApplication", "application to end your civil partnership");
+        expectedEntries.put("issueDate", "1 January 2020");
+        expectedEntries.put("relation", "civil partner");
+        expectedEntries.put("waitUntilDate", "21 May 2020");
+        expectedEntries.put("divorceOrEndCivilPartnershipProcess", "process to end your civil partnership");
+        expectedEntries.put("divorceOrCivilPartnershipProceedings", "proceedings to end your civil partnership");
+        expectedEntries.put("dueDate", "");
+        expectedEntries.put("date", LocalDate.now().format(DATE_TIME_FORMATTER));
+        expectedEntries.put("divorceOrCivilPartnershipServiceHeader", "End A Civil Partnership Service");
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+
+        assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
     public void shouldSuccessfullyApplyDivorceApp1SolicitorJSContent() {
         setMockClock(clock);
-        final Applicant applicant1 = Applicant.builder()
-            .firstName(TEST_FIRST_NAME)
-            .lastName(TEST_LAST_NAME)
-            .offline(YES)
-            .address(AddressGlobalUK.builder()
-                .addressLine1("Correspondence Address")
-                .addressLine2("Line 2")
-                .addressLine3("Line 3")
-                .postTown("Post Town")
-                .county("County")
-                .postCode("Post Code")
-                .country("UK")
-                .build()
-            )
-            .solicitorRepresented(YES)
-            .solicitor(Solicitor.builder()
-                .name("App1Sol Name")
-                .address("App1Sol Address")
-                .reference("App1Sol Ref")
-                .build())
-            .build();
-        final Applicant applicant2 = Applicant.builder()
-            .firstName(TEST_APP2_FIRST_NAME)
-            .lastName(TEST_APP2_LAST_NAME)
-            .offline(YES)
-            .build();
 
-        final CaseData caseData = CaseData.builder()
-            .applicationType(SOLE_APPLICATION)
-            .divorceOrDissolution(DIVORCE)
-            .applicant1(applicant1)
-            .applicant2(applicant2)
-            .dueDate(LocalDate.of(2020, 5, 21))
-            .application(
-                Application.builder().issueDate(LocalDate.of(2020, 1, 1)).build()
-            )
-            .supplementaryCaseType(JUDICIAL_SEPARATION)
-            .build();
+        final CaseData caseData = getJsCaseData(DIVORCE, JUDICIAL_SEPARATION);
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("husband");
         when(holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()))
@@ -287,4 +274,119 @@ public class AosResponseLetterTemplateContentTest {
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
+
+    @Test
+    public void shouldSuccessfullyApplyDivorceApp1SolicitorJSContentAtAwaitingConditionalOrder() {
+        setMockClock(clock);
+
+        final CaseData caseData = getAwaitingCoJsCaseData(DIVORCE, JUDICIAL_SEPARATION);
+
+        when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("husband");
+        when(holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()))
+            .thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+
+        final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put("caseReference", formatId(TEST_CASE_ID));
+        expectedEntries.put("applicant1FirstName", TEST_FIRST_NAME);
+        expectedEntries.put("applicant1LastName", TEST_LAST_NAME);
+        expectedEntries.put("applicant2FirstName", TEST_APP2_FIRST_NAME);
+        expectedEntries.put("applicant2LastName", TEST_APP2_LAST_NAME);
+        expectedEntries.put("isDivorce", true);
+        expectedEntries.put("applicant1Address", "App1Sol Address");
+        expectedEntries.put("divorceOrCivilPartnershipEmail", CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put("divorceOrEndCivilPartnershipApplication", "divorce application");
+        expectedEntries.put("issueDate", "1 January 2020");
+        expectedEntries.put("relation", "husband");
+        expectedEntries.put("waitUntilDate", "21 May 2020");
+        expectedEntries.put("divorceOrEndCivilPartnershipProcess", "divorce process");
+        expectedEntries.put("divorceOrCivilPartnershipProceedings", "divorce proceedings");
+        expectedEntries.put("dueDate", "");
+        expectedEntries.put("date", LocalDate.now().format(DATE_TIME_FORMATTER));
+        expectedEntries.put("divorceOrCivilPartnershipServiceHeader", "The Divorce Service");
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(RECIPIENT_NAME, "App1Sol Name");
+        expectedEntries.put(RECIPIENT_ADDRESS, "App1Sol Address");
+        expectedEntries.put(SOLICITOR_NAME, "App1Sol Name");
+        expectedEntries.put(APPLICANT_2_SOLICITOR_NAME, "Not represented");
+        expectedEntries.put(SOLICITOR_REFERENCE, "App1Sol Ref");
+
+        assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    private Applicant getApplicant1() {
+        return Applicant.builder()
+            .firstName(TEST_FIRST_NAME)
+            .lastName(TEST_LAST_NAME)
+            .offline(YES)
+            .address(AddressGlobalUK.builder()
+                .addressLine1("Correspondence Address")
+                .addressLine2("Line 2")
+                .addressLine3("Line 3")
+                .postTown("Post Town")
+                .county("County")
+                .postCode("Post Code")
+                .country("UK")
+                .build()
+            )
+            .build();
+    }
+
+    private void setRepresented(Applicant applicant) {
+        applicant.setSolicitorRepresented(YES);
+        applicant.setSolicitor(Solicitor.builder()
+                .name("App1Sol Name")
+                .address("App1Sol Address")
+                .reference("App1Sol Ref")
+                .build()
+        );
+    }
+
+    private Applicant getApplicant2() {
+        return Applicant.builder()
+            .firstName(TEST_APP2_FIRST_NAME)
+            .lastName(TEST_APP2_LAST_NAME)
+            .offline(YES)
+            .build();
+    }
+
+    private CaseData getCaseData(final DivorceOrDissolution divorceOrDissolution) {
+        return CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .divorceOrDissolution(divorceOrDissolution)
+            .applicant1(getApplicant1())
+            .applicant2(getApplicant2())
+            .dueDate(LocalDate.of(2020, 5, 21))
+            .application(
+                Application.builder().issueDate(LocalDate.of(2020, 1, 1)).build()
+            )
+            .build();
+    }
+
+    private CaseData getJsCaseData(final DivorceOrDissolution divorceOrDissolution, final SupplementaryCaseType supplementaryCaseType) {
+        CaseData caseData = getCaseData(divorceOrDissolution);
+        caseData.setSupplementaryCaseType(supplementaryCaseType);
+        setRepresented(caseData.getApplicant1());
+        return caseData;
+    }
+
+    private CaseData getAwaitingCoCaseData(final DivorceOrDissolution divorceOrDissolution) {
+        CaseData caseData = getCaseData(divorceOrDissolution);
+        caseData.setDueDate(null);
+        return caseData;
+    }
+
+    private CaseData getAwaitingCoJsCaseData(final DivorceOrDissolution divorceOrDissolution,
+                                             final SupplementaryCaseType supplementaryCaseType) {
+        CaseData caseData = getJsCaseData(divorceOrDissolution, supplementaryCaseType);
+        caseData.setDueDate(null);
+        return caseData;
+    }
+
 }
