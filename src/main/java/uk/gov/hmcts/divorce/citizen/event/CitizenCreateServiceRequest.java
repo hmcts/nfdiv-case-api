@@ -20,6 +20,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPay
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
@@ -39,7 +40,7 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
             .showCondition(NEVER_SHOW)
             .name("Create Payment Service Request")
             .description("Create Payment Service Request")
-            .grant(CREATE_READ_UPDATE, CITIZEN)
+            .grant(CREATE_READ_UPDATE, CITIZEN, SYSTEMUPDATE)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }
 

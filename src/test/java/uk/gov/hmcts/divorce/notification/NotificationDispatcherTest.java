@@ -111,7 +111,7 @@ class NotificationDispatcherTest {
     }
 
     @Test
-    void shouldNotifyApplicant2OfflineIsApplicant1OffLineTrue() {
+    void shouldNotifyApplicant2OfflineIsApplicant2OffLineTrue() {
 
         final long caseId = TEST_CASE_ID;
         final CaseData caseData = CaseData.builder()
@@ -160,6 +160,133 @@ class NotificationDispatcherTest {
     }
 
     @Test
+    void shouldNotifyApplicant2IfNotRepresentedWithCaseInviteUsingCaseDetails() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .solicitorRepresented(NO)
+                .build())
+            .caseInvite(CaseInvite.builder()
+                .applicant2InviteEmailAddress("app2@email.com")
+                .build())
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        notificationDispatcher.send(applicantNotification, caseDetails);
+
+        verify(applicantNotification).sendToApplicant2(caseDetails);
+    }
+
+    @Test
+    void shouldNotifyApplicant1SolicitorIfRepresentedUsingCaseDetails() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .solicitorRepresented(YES)
+                .build())
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        notificationDispatcher.send(applicantNotification, caseDetails);
+
+        verify(applicantNotification).sendToApplicant1Solicitor(caseDetails);
+    }
+
+    @Test
+    void shouldNotifyApplicant1OfflineIfIsApplicant1OffLineTrueUsingCaseDetails() {
+
+        final CaseData caseData = mock(CaseData.class);
+        final Applicant applicant1 = mock(Applicant.class);
+        final Applicant applicant2 = mock(Applicant.class);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        when(caseData.getApplicant1()).thenReturn(applicant1);
+        when(applicant1.isRepresented()).thenReturn(false);
+        when(caseData.getApplicant2()).thenReturn(applicant2);
+        when(applicant2.isRepresented()).thenReturn(true);
+        when(applicant1.isApplicantOffline()).thenReturn(true);
+
+        notificationDispatcher.send(applicantNotification, caseDetails);
+
+        verify(applicantNotification).sendToApplicant1Offline(caseDetails);
+    }
+
+    @Test
+    void shouldNotifyApplicant1IfNotRepresentedUsingCaseDetails() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .solicitorRepresented(NO)
+                .build())
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        notificationDispatcher.send(applicantNotification, caseDetails);
+
+        verify(applicantNotification).sendToApplicant1(caseDetails);
+    }
+
+    @Test
+    void shouldNotifyApplicant2SolicitorIfRepresentedUsingCaseDetails() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .solicitorRepresented(YES)
+                .build())
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        notificationDispatcher.send(applicantNotification, caseDetails);
+
+        verify(applicantNotification).sendToApplicant2Solicitor(caseDetails);
+    }
+
+    @Test
+    void shouldNotifyApplicant2OfflineIsApplicant1OffLineTrueUsingCaseDetails() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .offline(YES)
+                .build())
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        notificationDispatcher.send(applicantNotification, caseDetails);
+
+        verify(applicantNotification).sendToApplicant2Offline(caseDetails);
+    }
+
+    @Test
+    void shouldNotifyApplicant2IfNotRepresentedUsingCaseDetails() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .email("app2@email.com")
+                .solicitorRepresented(NO)
+                .build())
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        notificationDispatcher.send(applicantNotification, caseDetails);
+
+        verify(applicantNotification).sendToApplicant2(caseDetails);
+    }
+
+    @Test
     void shouldSendNOCForNewDigitalSolicitorNewOrg_Applicant1() {
         final long caseId = 12345L;
         final CaseData caseData = new CaseData();
@@ -197,6 +324,7 @@ class NotificationDispatcherTest {
 
         verify(applicantNotification).sendToApplicant1Solicitor(caseData, caseId);
         verify(applicantNotification).sendToApplicant1(caseData, caseId);
+        verify(applicantNotification).sendToApplicant1Offline(caseData, caseId);
     }
 
     @Test
@@ -211,6 +339,7 @@ class NotificationDispatcherTest {
 
         verify(applicantNotification).sendToApplicant2Solicitor(caseData, caseId);
         verify(applicantNotification).sendToApplicant2(caseData, caseId);
+        verify(applicantNotification).sendToApplicant2Offline(caseData, caseId);
     }
 
     @Test
