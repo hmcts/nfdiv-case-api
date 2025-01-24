@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import static java.lang.String.join;
 import static java.time.temporal.ChronoUnit.DAYS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_PRONOUNCED_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43;
@@ -41,6 +42,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDIT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.ENTITLEMENT_GRANTED_DO_NOT_ATTEND_COURT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
@@ -164,7 +166,11 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
             templateVars.put(SOLICITOR_REFERENCE, Objects.nonNull(applicant.getSolicitor().getReference())
                 ? applicant.getSolicitor().getReference()
                 : "not provided");
+
         }
+
+        templateVars.put(CO_PRONOUNCED_DATE, conditionalOrder.getDateAndTimeOfHearing() != null
+                ? conditionalOrder.getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER) : null);
 
         return templateVars;
     }
