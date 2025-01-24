@@ -30,6 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDIC
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURT_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_PRONOUNCED_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_FO_ELIGIBLE_FROM;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
@@ -107,6 +108,9 @@ public class GenerateCertificateOfEntitlementHelperTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().plusDays(43).format(DATE_TIME_FORMATTER));
         applicant1TemplateVars.put(BEFORE_DATE_OF_HEARING,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
+        applicant1TemplateVars.put(IS_DIVORCE, true);
+        applicant1TemplateVars.put(PARTNER, null);
+        applicant1TemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -147,6 +151,7 @@ public class GenerateCertificateOfEntitlementHelperTest {
         applicant1TemplateVars.put(IS_DIVORCE, true);
         applicant1TemplateVars.put(IS_JOINT, false);
         applicant1TemplateVars.put(PARTNER, "Wife");
+        applicant1TemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -184,6 +189,9 @@ public class GenerateCertificateOfEntitlementHelperTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().plusDays(43).format(DATE_TIME_FORMATTER));
         applicant1TemplateVars.put(BEFORE_DATE_OF_HEARING,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
+        applicant1TemplateVars.put(IS_DIVORCE, true);
+        applicant1TemplateVars.put(PARTNER, null);
+        applicant1TemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -249,6 +257,8 @@ public class GenerateCertificateOfEntitlementHelperTest {
         respondentTemplateVars.put(BEFORE_DATE_OF_HEARING,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
         respondentTemplateVars.put(PARTNER, "Husband");
+        respondentTemplateVars.put(IS_DIVORCE, true);
+        respondentTemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -287,6 +297,8 @@ public class GenerateCertificateOfEntitlementHelperTest {
         respondentTemplateVars.put(BEFORE_DATE_OF_HEARING,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
         respondentTemplateVars.put(PARTNER, "Husband");
+        respondentTemplateVars.put(IS_DIVORCE, true);
+        respondentTemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -331,6 +343,7 @@ public class GenerateCertificateOfEntitlementHelperTest {
         respondentTemplateVars.put(IS_DIVORCE, true);
         respondentTemplateVars.put(IS_JOINT, false);
         respondentTemplateVars.put(PARTNER, "Husband");
+        respondentTemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -399,6 +412,9 @@ public class GenerateCertificateOfEntitlementHelperTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().plusDays(43).format(DATE_TIME_FORMATTER));
         applicant2TemplateVars.put(BEFORE_DATE_OF_HEARING,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
+        applicant2TemplateVars.put(IS_DIVORCE, true);
+        applicant2TemplateVars.put(PARTNER, null);
+        applicant2TemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -434,6 +450,10 @@ public class GenerateCertificateOfEntitlementHelperTest {
             caseData.getConditionalOrder().getDateAndTimeOfHearing().plusDays(43).format(DATE_TIME_FORMATTER));
         applicant2TemplateVars.put(BEFORE_DATE_OF_HEARING,
             caseData.getConditionalOrder().getDateAndTimeOfHearing().minusDays(7).format(DATE_TIME_FORMATTER));
+        applicant2TemplateVars.put(IS_DIVORCE, true);
+        applicant2TemplateVars.put(PARTNER, null);
+        applicant2TemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
+
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -475,6 +495,7 @@ public class GenerateCertificateOfEntitlementHelperTest {
         applicant2TemplateVars.put(IS_DIVORCE, true);
         applicant2TemplateVars.put(IS_JOINT, true);
         applicant2TemplateVars.put(PARTNER, "Husband");
+        applicant2TemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));

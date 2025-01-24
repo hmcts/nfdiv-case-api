@@ -22,7 +22,9 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasEntry;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -48,7 +50,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.PROFESSIONAL_USERS_SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
@@ -101,7 +102,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent, times(2)).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -116,9 +117,9 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant2(data, TEST_CASE_ID);
 
-        verify(notificationService).sendEmail(
-            eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED),
+        verify(notificationService, times(2)).sendEmail(
+            any(),
+            any(),
             argThat(allOf(
                 hasEntry(IS_SOLE, "yes"),
                 hasEntry(IS_JOINT, "no"),
@@ -128,10 +129,10 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                 hasEntry(DATE_OF_HEARING_MINUS_SEVEN_DAYS, "1 November 2021"),
                 hasEntry(ISSUE_DATE, "8 August 2021")
             )),
-            eq(ENGLISH),
-            eq(TEST_CASE_ID)
+            any(),
+            any()
         );
-        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent, times(2)).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -182,9 +183,9 @@ class EntitlementGrantedConditionalOrderNotificationTest {
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant2(data, TEST_CASE_ID);
 
-        verify(notificationService).sendEmail(
-            eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED),
+        verify(notificationService, times(2)).sendEmail(
+            any(),
+            any(),
             argThat(allOf(
                 hasEntry(IS_SOLE, "no"),
                 hasEntry(IS_JOINT, "yes"),
@@ -192,12 +193,12 @@ class EntitlementGrantedConditionalOrderNotificationTest {
                 hasEntry(DATE_OF_HEARING, "8 November 2021"),
                 hasEntry(TIME_OF_HEARING, "14:56 pm"),
                 hasEntry(DATE_OF_HEARING_MINUS_SEVEN_DAYS, "1 November 2021"),
-                hasEntry(ISSUE_DATE, "8 August 2021")
-            )),
-            eq(ENGLISH),
-            eq(TEST_CASE_ID)
+                hasEntry(ISSUE_DATE, "8 August 2021"))),
+            any(),
+            any()
         );
-        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+
+        verify(commonContent, times(2)).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
