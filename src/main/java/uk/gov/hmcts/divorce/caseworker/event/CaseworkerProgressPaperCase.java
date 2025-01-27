@@ -91,6 +91,7 @@ public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, U
                 .build();
         }
 
+        caseFlagsService.initialiseCaseFlags(caseData);
         caseData.setCaseFlagsSetupComplete(YesOrNo.YES);
 
         if (caseData.getApplication().getProgressPaperCase().equals(SUBMITTED)) {
