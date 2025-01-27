@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
 import uk.gov.hmcts.divorce.citizen.notification.NocSolsToCitizenNotifications;
@@ -62,6 +63,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     private final NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
     private final NocSolsToCitizenNotifications nocSolsToCitizenNotifications;
     private final NotificationDispatcher notificationDispatcher;
+    private final CaseFlagsService caseFlagsService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -197,6 +199,8 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             : List.of(APPLICANT_2.getRole(), APPLICANT_2_SOLICITOR.getRole());
 
         NoticeType noticeType = calculateNoticeType(applicant, beforeApplicant);
+
+        caseFlagsService.resetSolicitorCaseFlags(data, isApplicant1);
 
         noticeType.applyNoticeOfChange(applicant,
             beforeApplicant,
