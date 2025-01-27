@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
 import uk.gov.hmcts.divorce.citizen.notification.NocSolRemovedSelfAsRepresentativeNotification;
@@ -86,6 +87,9 @@ class SolicitorStopRepresentingClientTest {
 
     @Mock
     private NocSolsToCitizenNotifications nocSolsToCitizenNotifications;
+
+    @Mock
+    private CaseFlagsService caseFlagsService;
 
     @InjectMocks
     private SolicitorStopRepresentingClient noticeOfChange;
@@ -209,6 +213,32 @@ class SolicitorStopRepresentingClientTest {
         assertThat(result.getConfirmationBody()).isEqualTo(
             String.format(REPRESENTATIVE_REMOVED_CONFIRMATION_LABEL, applicant.getFullName())
         );
+    }
+
+    @Test
+    void shouldResetSolicitorCaseFlags() {
+        final var beforeDetails = getCaseDetails();
+        final var details = getCaseDetails();
+        details.setId(TEST_CASE_ID);
+        details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(
+            Organisation.builder()
+                .organisationId(TEST_ORG_ID)
+                .build()
+        );
+        details.getData().getApplicant2().getSolicitor().getOrganisationPolicy().setOrganisation(
+            Organisation.builder()
+                .organisationId(TEST_ORG_ID)
+                .build()
+        );
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(true);
+
+        List<String> roles = List.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
+
+        var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(caseFlagsService).resetSolicitorCaseFlags(details.getData(), true);
     }
 
     @Test

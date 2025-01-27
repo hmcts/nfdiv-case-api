@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.citizen.notification.NocSolRemovedSelfAsRepresentativeNotification;
 import uk.gov.hmcts.divorce.citizen.notification.NocSolsToCitizenNotifications;
@@ -82,6 +83,8 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
 
     private final NotificationDispatcher notificationDispatcher;
 
+    private final CaseFlagsService caseFlagsService;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -125,6 +128,8 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
             ChangeOfRepresentationAuthor.SOLICITOR_STOP_REPRESENTING_CLIENT.getValue(),
             isRepresentingApplicant1
         );
+
+        caseFlagsService.resetSolicitorCaseFlags(details.getData(), isRepresentingApplicant1);
 
         NoticeType.ORG_REMOVED.applyNoticeOfChange(
             applicant.apply(details.getData()),
