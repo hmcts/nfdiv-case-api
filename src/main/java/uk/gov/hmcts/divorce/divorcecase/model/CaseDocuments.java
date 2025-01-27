@@ -225,7 +225,7 @@ public class CaseDocuments {
 
     public static <T> List<ListValue<T>> addDocumentToTop(final List<ListValue<T>> documents, final T value, final String id) {
         final var listItemId = isBlank(id) ? String.valueOf(randomUUID()) : id;
-        final var listValue = new ListValue<T>(listItemId, value);
+        final var listValue = new ListValue<>(listItemId, value);
         final List<ListValue<T>> list = isEmpty(documents) ? new ArrayList<>() : new ArrayList<>(documents);
 
         list.add(0, listValue);
@@ -258,14 +258,14 @@ public class CaseDocuments {
         final var previousDocuments = documentsWithoutIds.getOrDefault(false, new ArrayList<>());
 
         if (null != newDocuments) {
-            sortedDocuments.addAll(0, newDocuments); // add new documents to start of the list
-            sortedDocuments.addAll(1, previousDocuments);
+            sortedDocuments.addAll(newDocuments);
+            sortedDocuments.addAll(previousDocuments);
+
             sortedDocuments.forEach(
                 uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(randomUUID()))
             );
             return sortedDocuments;
         }
-
         return previousDocuments;
     }
 

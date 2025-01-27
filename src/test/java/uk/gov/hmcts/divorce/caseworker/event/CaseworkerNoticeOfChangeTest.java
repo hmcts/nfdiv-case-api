@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
 import uk.gov.hmcts.divorce.citizen.notification.NocSolsToCitizenNotifications;
@@ -47,13 +48,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplica
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOL_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.*;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -82,6 +77,9 @@ class CaseworkerNoticeOfChangeTest {
 
     @Mock
     private ApplicantNotification applicantNotification;
+
+    @Mock
+    private CaseFlagsService caseFlagsService;
 
     @Test
     void configure() {
@@ -508,6 +506,18 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
+    void shouldResetCaseFlagsForSolicitor() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
+        CaseData caseData = createCaseData(APPLICANT_1, true, false, TEST_ORG_ID);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(caseFlagsService, times(1)).resetSolicitorCaseFlags(caseData, true);
+    }
+
+    @Test
     void shouldReturnErrorWhenSolicitorBeingRemovedAndCitizenEmailBeingBlanked() {
         CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
         beforeCaseData.getApplicant1().setEmail(TEST_USER_EMAIL);
@@ -579,7 +589,6 @@ class CaseworkerNoticeOfChangeTest {
         verify(notificationDispatcher,never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             caseData, details.getId(),true);
     }
-
 
     private CaseData createCaseDataNoSols(NoticeOfChange.WhichApplicant whichApplicant) {
         NoticeOfChange noticeOfChange = new NoticeOfChange();
