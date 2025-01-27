@@ -24,6 +24,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService.PartyFlagType;
 import static uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService.TEXT_APPLICANT1_FLAGS_ROLE;
 import static uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService.TEXT_APPLICANT1_SOL_FLAGS_ROLE;
 import static uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService.TEXT_APPLICANT2_FLAGS_ROLE;
@@ -211,6 +212,94 @@ class CaseFlagsServiceTest {
         caseFlagsService.initialiseAllInternalPartyFlags(caseData);
 
         assertThat(caseData.getPartyFlags().getApplicant2SolicitorFlags()).isNull();
+    }
+
+    @Test
+    void shouldUpdateApplicant1NameInFlags() {
+        CaseData caseData = getCaseDataForTest(true, false, false, true, false);
+        caseData.getApplicant1().setFirstName("New");
+        caseData.getApplicant1().setLastName("Name");
+        caseFlagsService.updatePartyNameInCaseFlags(caseData, PartyFlagType.APPLICANT_1);
+
+        assertThat(caseData.getPartyFlags().getApplicant1Flags().getPartyName()).isEqualTo("New Name");
+    }
+
+    @Test
+    void shouldUpdateApplicant2NameInFlags() {
+        CaseData caseData = getCaseDataForTest(false, false, false, true, false);
+        caseData.getApplicant2().setFirstName("New");
+        caseData.getApplicant2().setLastName("Name");
+        caseFlagsService.updatePartyNameInCaseFlags(caseData, PartyFlagType.APPLICANT_2);
+
+        assertThat(caseData.getPartyFlags().getApplicant2Flags().getPartyName()).isEqualTo("New Name");
+    }
+
+    @Test
+    void shouldUpdateApplicant1SolicitorNameInFlags() {
+        CaseData caseData = getCaseDataForTest(true, true, false, true, true);
+        caseData.getApplicant1().getSolicitor().setName("New Name");
+        caseFlagsService.updatePartyNameInCaseFlags(caseData, PartyFlagType.APPLICANT_1_SOLICITOR);
+
+        assertThat(caseData.getPartyFlags().getApplicant1SolicitorFlags().getPartyName()).isEqualTo("New Name");
+    }
+
+    @Test
+    void shouldUpdateApplicant2SolicitorNameInFlags() {
+        CaseData caseData = getCaseDataForTest(false, true, false, true, true);
+        caseData.getApplicant2().getSolicitor().setName("New Name");
+        caseFlagsService.updatePartyNameInCaseFlags(caseData, PartyFlagType.APPLICANT_2_SOLICITOR);
+
+        assertThat(caseData.getPartyFlags().getApplicant2SolicitorFlags().getPartyName()).isEqualTo("New Name");
+    }
+
+    @Test
+    void shouldResetApplicant1SolicitorFlags() {
+        CaseData caseData = getCaseDataForTest(true, true, false, true, true);
+        caseFlagsService.resetSolicitorCaseFlags(caseData, true);
+        assertThat(caseData.getPartyFlags().getApplicant1SolicitorFlags()).isNull();
+    }
+
+    @Test
+    void shouldResetApplicant2SolicitorFlags() {
+        CaseData caseData = getCaseDataForTest(false, true, false, true, true);
+        caseFlagsService.resetSolicitorCaseFlags(caseData, false);
+        assertThat(caseData.getPartyFlags().getApplicant2SolicitorFlags()).isNull();
+    }
+
+    @Test
+    void shouldSwitchApplicantCaseFlagsIfPresent() {
+        CaseData caseData = getCaseDataWithAllPartyFlagsSet();
+
+        caseFlagsService.switchCaseFlags(caseData);
+
+        assertThat(caseData.getPartyFlags().getApplicant1Flags().getPartyName()).isEqualTo("Applicant2 User");
+        assertThat(caseData.getPartyFlags().getApplicant1Flags().getDetails().get(0).getValue().getName()).isEqualTo("App2 Flag");
+        assertThat(caseData.getPartyFlags().getApplicant1Flags().getRoleOnCase()).isEqualTo(TEXT_APPLICANT1_FLAGS_ROLE);
+        assertThat(caseData.getPartyFlags().getApplicant1Flags().getGroupId().toString())
+            .isEqualTo(caseData.getPartyFlags().getApplicant1GroupId());
+        assertThat(caseData.getPartyFlags().getApplicant2Flags().getPartyName()).isEqualTo("Applicant1 User");
+        assertThat(caseData.getPartyFlags().getApplicant2Flags().getDetails().get(0).getValue().getName()).isEqualTo("App1 Flag");
+        assertThat(caseData.getPartyFlags().getApplicant2Flags().getRoleOnCase()).isEqualTo(TEXT_APPLICANT2_FLAGS_ROLE);
+        assertThat(caseData.getPartyFlags().getApplicant2Flags().getGroupId().toString())
+            .isEqualTo(caseData.getPartyFlags().getApplicant2GroupId());
+    }
+
+    @Test
+    void shouldSwitchSolicitorCaseFlagsIfPresent() {
+        CaseData caseData = getCaseDataWithAllPartyFlagsSet();
+
+        caseFlagsService.switchCaseFlags(caseData);
+
+        assertThat(caseData.getPartyFlags().getApplicant1SolicitorFlags().getPartyName()).isEqualTo("Applicant2 Solicitor");
+        assertThat(caseData.getPartyFlags().getApplicant1SolicitorFlags().getDetails().get(0).getValue().getName()).isEqualTo("Sol2 Flag");
+        assertThat(caseData.getPartyFlags().getApplicant1SolicitorFlags().getRoleOnCase()).isEqualTo(TEXT_APPLICANT1_SOL_FLAGS_ROLE);
+        assertThat(caseData.getPartyFlags().getApplicant1SolicitorFlags().getGroupId().toString())
+            .isEqualTo(caseData.getPartyFlags().getApplicant1SolicitorGroupId());
+        assertThat(caseData.getPartyFlags().getApplicant2SolicitorFlags().getPartyName()).isEqualTo("Applicant1 Solicitor");
+        assertThat(caseData.getPartyFlags().getApplicant2SolicitorFlags().getDetails().get(0).getValue().getName()).isEqualTo("Sol1 Flag");
+        assertThat(caseData.getPartyFlags().getApplicant2SolicitorFlags().getRoleOnCase()).isEqualTo(TEXT_APPLICANT2_SOL_FLAGS_ROLE);
+        assertThat(caseData.getPartyFlags().getApplicant2SolicitorFlags().getGroupId().toString())
+            .isEqualTo(caseData.getPartyFlags().getApplicant2SolicitorGroupId());
     }
 
     private CaseData getCaseDataForTest(boolean applicant1,

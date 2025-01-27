@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.CaseInfo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -42,6 +43,8 @@ public class Applicant1SolicitorUpdateContactDetails implements CCDConfig<CaseDa
 
     private final HttpServletRequest request;
 
+    private final CaseFlagsService caseFlagsService;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -49,6 +52,7 @@ public class Applicant1SolicitorUpdateContactDetails implements CCDConfig<CaseDa
             .forStates(POST_SUBMISSION_STATES)
             .name("Update contact info")
             .description("Update contact info")
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
@@ -80,5 +84,18 @@ public class Applicant1SolicitorUpdateContactDetails implements CCDConfig<CaseDa
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder().build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails
+    ) {
+        if (!details.getData().getApplicant1().getSolicitor().getName()
+            .equals(beforeDetails.getData().getApplicant1().getSolicitor().getName())) {
+            caseFlagsService.updatePartyNameInCaseFlags(details.getData(), CaseFlagsService.PartyFlagType.APPLICANT_1_SOLICITOR);
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
     }
 }
