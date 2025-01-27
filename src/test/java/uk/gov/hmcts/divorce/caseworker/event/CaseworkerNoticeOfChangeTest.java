@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -76,6 +77,9 @@ class CaseworkerNoticeOfChangeTest {
 
     @Mock
     private ApplicantNotification applicantNotification;
+
+    @Mock
+    private CaseFlagsService caseFlagsService;
 
     @Test
     void configure() {
@@ -499,6 +503,18 @@ class CaseworkerNoticeOfChangeTest {
 
         verify(notificationDispatcher, times(1)).sendNOC(nocCitizenToSolsNotifications,
             caseData, beforeCaseData, details.getId(),true, NoticeType.ORG_REMOVED);
+    }
+
+    @Test
+    void shouldResetCaseFlagsForSolicitor() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
+        CaseData caseData = createCaseData(APPLICANT_1, true, false, TEST_ORG_ID);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(caseFlagsService, times(1)).resetSolicitorCaseFlags(caseData, true);
     }
 
     private CaseData createCaseDataNoSols(NoticeOfChange.WhichApplicant whichApplicant) {

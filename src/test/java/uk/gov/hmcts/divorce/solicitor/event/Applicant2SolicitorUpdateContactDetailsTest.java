@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.divorcecase.CaseInfo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -21,6 +22,7 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorUpdateContactDetails.INVALID_EMAIL_ERROR;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant2SolicitorUpdateContactDetails.APP2_SOLICITOR_UPDATE_CONTACT_DETAILS;
@@ -37,6 +39,9 @@ class Applicant2SolicitorUpdateContactDetailsTest {
 
     @Mock
     private HttpServletRequest request;
+
+    @Mock
+    private CaseFlagsService caseFlagsService;
 
     @InjectMocks
     private Applicant2SolicitorUpdateContactDetails applicant2SolicitorUpdateContactDetails;
@@ -78,6 +83,18 @@ class Applicant2SolicitorUpdateContactDetailsTest {
             applicant2SolicitorUpdateContactDetails.midEvent(caseDetails, null);
 
         assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldCallCaseFlagsServiceWhenSolicitorNameIsUpdated() {
+        Solicitor beforeSolicitor = Solicitor.builder().name("Old Name").build();
+        Solicitor afterSolicitor = Solicitor.builder().name("New Name").build();
+        var beforeDetails = caseDetailsWithApplicant2Solicitor(beforeSolicitor);
+        var afterDetails = caseDetailsWithApplicant2Solicitor(afterSolicitor);
+
+        var response = applicant2SolicitorUpdateContactDetails.aboutToSubmit(afterDetails, beforeDetails);
+
+        verify(caseFlagsService).updatePartyNameInCaseFlags(afterDetails.getData(), CaseFlagsService.PartyFlagType.APPLICANT_2_SOLICITOR);
     }
 
     private CaseDetails<CaseData, State> caseDetailsWithApplicant2Solicitor(Solicitor solicitor) {
