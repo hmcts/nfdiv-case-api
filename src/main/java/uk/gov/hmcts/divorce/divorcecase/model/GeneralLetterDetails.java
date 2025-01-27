@@ -1,21 +1,16 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.collections.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 
@@ -44,19 +39,4 @@ public class GeneralLetterDetails {
 
     @CCD(label = "Attachments")
     private List<ListValue<Document>> generalLetterAttachmentLinks;
-
-    @JsonIgnore
-    public List<Document> getAttachedDocuments() {
-        if (CollectionUtils.isEmpty(generalLetterAttachmentLinks)) {
-            return Collections.emptyList();
-        }
-
-        return generalLetterAttachmentLinks.stream()
-            .map(attachment -> Optional.ofNullable(attachment)
-                .map(ListValue::getValue)
-                .orElse(null)
-            )
-            .filter(Objects::nonNull)
-            .toList();
-    }
 }

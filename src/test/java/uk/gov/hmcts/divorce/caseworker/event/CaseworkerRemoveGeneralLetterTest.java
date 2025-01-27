@@ -95,7 +95,9 @@ public class CaseworkerRemoveGeneralLetterTest {
         caseworkerRemoveGeneralLetter.aboutToSubmit(outputDetails, inputDetails);
 
         verify(documentRemovalService).deleteDocument(letterThree.getGeneralLetterLink());
-        verify(documentRemovalService).deleteDocument(letterThree.getAttachments().get(0));
+        verify(documentRemovalService).deleteDocument(
+            letterThree.getGeneralLetterAttachmentLinks().get(0).getValue()
+        );
         verifyNoMoreInteractions(documentRemovalService);
     }
 
@@ -119,9 +121,13 @@ public class CaseworkerRemoveGeneralLetterTest {
         verify(documentRemovalService).deleteDocument(letterOne.getGeneralLetterLink());
         verify(documentRemovalService).deleteDocument(letterTwo.getGeneralLetterLink());
         verify(documentRemovalService).deleteDocument(letterThree.getGeneralLetterLink());
-        verify(documentRemovalService).deleteDocument(letterThree.getAttachments().get(0));
+        verify(documentRemovalService).deleteDocument(
+            letterThree.getGeneralLetterAttachmentLinks().get(0).getValue()
+        );
         verify(documentRemovalService).deleteDocument(letterFour.getGeneralLetterLink());
-        verify(documentRemovalService).deleteDocument(letterFour.getAttachments().get(0));
+        verify(documentRemovalService).deleteDocument(
+            letterFour.getGeneralLetterAttachmentLinks().get(0).getValue()
+        );
         verifyNoMoreInteractions(documentRemovalService);
     }
 
