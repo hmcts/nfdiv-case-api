@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,9 +19,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -40,6 +40,28 @@ public class CaseworkerRemoveGeneralLetterTest {
     @Mock
     private DocumentRemovalService documentRemovalService;
 
+    private CaseDetails<CaseData, State> beforeDetails;
+
+    private CaseDetails<CaseData, State> afterDetails;
+
+    @BeforeEach
+    public void setUp() {
+        beforeDetails = getCaseDetails();
+        afterDetails = getCaseDetails();
+        setUpLetters();
+    }
+
+    private void setUpLetters() {
+        List<ListValue<GeneralLetterDetails>> beforeLetters = List.of(
+            getGeneralLetter(1),
+            getGeneralLetter(2),
+            getGeneralLetterWithAttachment(3),
+            getGeneralLetterWithAttachment(4)
+        );
+
+        beforeDetails.getData().setGeneralLetters(beforeLetters);
+        afterDetails.getData().setGeneralLetters(new ArrayList<>(beforeLetters));
+    }
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -54,87 +76,52 @@ public class CaseworkerRemoveGeneralLetterTest {
 
     @Test
     void shouldDeleteLettersWithoutAttachmentsFromDocStore() {
-        GeneralLetterDetails letterOne = getGeneralLetter(1);
-        GeneralLetterDetails letterTwo = getGeneralLetter(2);
-        GeneralLetterDetails letterThree = getGeneralLetterWithAttachment(3);
-        GeneralLetterDetails letterFour = getGeneralLetterWithAttachment(4);
+        afterDetails.getData().getGeneralLetters().remove(1);
 
-        final CaseDetails<CaseData, State> inputDetails = getCaseDetails();
-        inputDetails.getData().setGeneralLetters(
-            getLettersAsListValues(letterOne, letterTwo, letterThree, letterFour)
-        );
+        caseworkerRemoveGeneralLetter.aboutToSubmit(afterDetails, beforeDetails);
 
-        final CaseDetails<CaseData, State> outputDetails = getCaseDetails();
-        outputDetails.getData().setGeneralLetters(
-            getLettersAsListValues(letterOne, letterThree, letterFour)
-        );
-
-        caseworkerRemoveGeneralLetter.aboutToSubmit(outputDetails, inputDetails);
-
-        verify(documentRemovalService).deleteDocument(letterTwo.getGeneralLetterLink());
+        verifyLetterDeletion(1);
         verifyNoMoreInteractions(documentRemovalService);
     }
 
     @Test
     void shouldDeleteLettersWithAttachmentsFromDocStore() {
-        GeneralLetterDetails letterOne = getGeneralLetter(1);
-        GeneralLetterDetails letterTwo = getGeneralLetter(2);
-        GeneralLetterDetails letterThree = getGeneralLetterWithAttachment(3);
-        GeneralLetterDetails letterFour = getGeneralLetterWithAttachment(4);
+        afterDetails.getData().getGeneralLetters().remove(2);
 
-        final CaseDetails<CaseData, State> inputDetails = getCaseDetails();
-        inputDetails.getData().setGeneralLetters(
-            getLettersAsListValues(letterOne, letterTwo, letterThree, letterFour)
-        );
+        caseworkerRemoveGeneralLetter.aboutToSubmit(afterDetails, beforeDetails);
 
-        final CaseDetails<CaseData, State> outputDetails = getCaseDetails();
-        outputDetails.getData().setGeneralLetters(
-            getLettersAsListValues(letterOne, letterTwo, letterFour)
-        );
-
-        caseworkerRemoveGeneralLetter.aboutToSubmit(outputDetails, inputDetails);
-
-        verify(documentRemovalService).deleteDocument(letterThree.getGeneralLetterLink());
-        verify(documentRemovalService).deleteDocument(
-            letterThree.getGeneralLetterAttachmentLinks().get(0).getValue()
-        );
+        verifyLetterDeletion(2);
+        verifyAttachmentDeletion(2);
         verifyNoMoreInteractions(documentRemovalService);
     }
 
     @Test
     void shouldHandleNullAfterLetters() {
-        GeneralLetterDetails letterOne = getGeneralLetter(1);
-        GeneralLetterDetails letterTwo = getGeneralLetter(2);
-        GeneralLetterDetails letterThree = getGeneralLetterWithAttachment(3);
-        GeneralLetterDetails letterFour = getGeneralLetterWithAttachment(4);
+        afterDetails.getData().setGeneralLetters(null);
 
-        final CaseDetails<CaseData, State> inputDetails = getCaseDetails();
-        inputDetails.getData().setGeneralLetters(
-            getLettersAsListValues(letterOne, letterTwo, letterThree, letterFour)
-        );
+        caseworkerRemoveGeneralLetter.aboutToSubmit(afterDetails, beforeDetails);
 
-        final CaseDetails<CaseData, State> outputDetails = getCaseDetails();
-        outputDetails.getData().setGeneralLetters(null);
-
-        caseworkerRemoveGeneralLetter.aboutToSubmit(outputDetails, inputDetails);
-
-        verify(documentRemovalService).deleteDocument(letterOne.getGeneralLetterLink());
-        verify(documentRemovalService).deleteDocument(letterTwo.getGeneralLetterLink());
-        verify(documentRemovalService).deleteDocument(letterThree.getGeneralLetterLink());
-        verify(documentRemovalService).deleteDocument(
-            letterThree.getGeneralLetterAttachmentLinks().get(0).getValue()
-        );
-        verify(documentRemovalService).deleteDocument(letterFour.getGeneralLetterLink());
-        verify(documentRemovalService).deleteDocument(
-            letterFour.getGeneralLetterAttachmentLinks().get(0).getValue()
-        );
+        verifyLetterDeletion(0);
+        verifyLetterDeletion(1);
+        verifyLetterDeletion(2);
+        verifyLetterDeletion(3);
+        verifyAttachmentDeletion(2);
+        verifyAttachmentDeletion(3);
         verifyNoMoreInteractions(documentRemovalService);
     }
 
-    private List<ListValue<GeneralLetterDetails>> getLettersAsListValues(GeneralLetterDetails... letters) {
-        return Arrays.stream(letters)
-            .map(letter -> ListValue.<GeneralLetterDetails>builder().value(letter).build())
-            .collect(Collectors.toList());
+    private void verifyLetterDeletion(int letterIdx) {
+        List<ListValue<GeneralLetterDetails>> letters = beforeDetails.getData().getGeneralLetters();
+
+        verify(documentRemovalService).deleteDocument(letters.get(letterIdx).getValue().getGeneralLetterLink());
+    }
+
+    private void verifyAttachmentDeletion(int letterIdx) {
+        List<ListValue<GeneralLetterDetails>> letters = beforeDetails.getData().getGeneralLetters();
+
+        verify(documentRemovalService).deleteDocument(
+            letters.get(letterIdx).getValue().getGeneralLetterAttachmentLinks().get(0).getValue()
+        );
     }
 
     private uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> getCaseDetails() {
@@ -146,18 +133,21 @@ public class CaseworkerRemoveGeneralLetterTest {
         return details;
     }
 
-    private GeneralLetterDetails getGeneralLetter(int letterId) {
-        return GeneralLetterDetails.builder()
-            .generalLetterLink(Document.builder().url(String.valueOf(letterId)).build())
-            .generalLetterDateTime(
-                LocalDateTime.of(2020, 5, 5, 5, 5 + letterId)
-            )
-            .build();
+    private ListValue<GeneralLetterDetails> getGeneralLetter(int letterId) {
+        return ListValue.<GeneralLetterDetails>builder()
+                .value(
+                    GeneralLetterDetails.builder()
+                        .generalLetterLink(Document.builder().url(String.valueOf(letterId)).build())
+                        .generalLetterDateTime(
+                            LocalDateTime.of(2020, 5, 5, 5, 5 + letterId)
+                        )
+                        .build()
+                ).build();
     }
 
-    private GeneralLetterDetails getGeneralLetterWithAttachment(int letterId) {
-        GeneralLetterDetails letter = getGeneralLetter(letterId);
-        letter.setGeneralLetterAttachmentLinks(List.of(
+    private ListValue<GeneralLetterDetails> getGeneralLetterWithAttachment(int letterId) {
+        ListValue<GeneralLetterDetails> letter = getGeneralLetter(letterId);
+        letter.getValue().setGeneralLetterAttachmentLinks(List.of(
             ListValue.<Document>builder()
                 .value(
                     Document.builder()
