@@ -48,7 +48,7 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
             .grantHistoryOnly(
                 SOLICITOR,
                 LEGAL_ADVISOR))
-            .page("updateApp1Email")
+            .page("updateApp1Email", this::midEvent)
             .pageLabel("Update applicant/applicant1 email")
             .complex(CaseData::getApplicant1)
                 .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, APPLICANTS_OR_APPLICANT1S))
