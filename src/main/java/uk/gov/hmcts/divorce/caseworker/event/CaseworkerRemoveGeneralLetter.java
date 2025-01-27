@@ -88,10 +88,11 @@ public class CaseworkerRemoveGeneralLetter implements CCDConfig<CaseData, State,
             .forEach(documentRemovalService::deleteDocument);
     }
 
-    private <T> Set<T> getListValues(List<ListValue<T>> letters) {
-        return Optional.ofNullable(letters)
+    private <T> Set<T> getListValues(List<ListValue<T>> listElements) {
+        return Optional.ofNullable(listElements)
             .orElse(Collections.emptyList())
             .stream()
+            .filter(Objects::nonNull)
             .map(ListValue::getValue)
             .collect(Collectors.toSet());
     }
