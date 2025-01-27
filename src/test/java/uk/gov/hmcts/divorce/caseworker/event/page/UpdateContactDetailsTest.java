@@ -2,16 +2,26 @@ package uk.gov.hmcts.divorce.caseworker.event.page;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
+import java.util.stream.Stream;
+
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails.SOLICITOR_DETAILS_REMOVED_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -20,6 +30,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.SAME_SEX_
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+
+
+
 
 @ExtendWith(MockitoExtension.class)
 public class UpdateContactDetailsTest {
@@ -244,6 +258,170 @@ public class UpdateContactDetailsTest {
     }
 
     @Test
+    void shouldReturnErrorsIfApplicant1EmailHasBeenRemovedInOnlineCase() {
+        final CaseData caseDataBefore = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .email(TEST_USER_EMAIL)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
+        detailsBefore.setId(TEST_CASE_ID);
+        detailsBefore.setData(caseDataBefore);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder().build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = updateContactDetails.midEvent(details, detailsBefore);
+
+        assertThat(response.getErrors())
+            .isEqualTo(singletonList("Please use the 'Update offline status' event before removing the email address."));
+    }
+
+    @Test
+    void shouldReturnErrorsIfApplicant2EmailHasBeenRemovedInOnlineCase() {
+        final CaseData caseDataBefore = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .email(TEST_USER_EMAIL)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
+        detailsBefore.setId(TEST_CASE_ID);
+        detailsBefore.setData(caseDataBefore);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = updateContactDetails.midEvent(details, detailsBefore);
+
+        assertThat(response.getErrors())
+            .isEqualTo(singletonList("Please use the 'Update offline status' event before removing the email address."));
+    }
+
+    @Test
+    void shouldAllowApplicant1EmailRemovalInOfflineCase() {
+        final CaseData caseDataBefore = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .email(TEST_USER_EMAIL)
+                .offline(YES)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
+        detailsBefore.setId(TEST_CASE_ID);
+        detailsBefore.setData(caseDataBefore);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .offline(YES)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = updateContactDetails.midEvent(details, detailsBefore);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldAllowApplicant2EmailRemovalInOfflineCase() {
+        final CaseData caseDataBefore = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .email(TEST_USER_EMAIL)
+                .offline(YES)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
+        detailsBefore.setId(TEST_CASE_ID);
+        detailsBefore.setData(caseDataBefore);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .offline(YES)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = updateContactDetails.midEvent(details, detailsBefore);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldAllowApplicant1EmailRemovalIfRepresentedCase() {
+        final CaseData caseDataBefore = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .email(TEST_USER_EMAIL)
+                .solicitorRepresented(YES)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
+        detailsBefore.setId(TEST_CASE_ID);
+        detailsBefore.setData(caseDataBefore);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .solicitorRepresented(YES)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = updateContactDetails.midEvent(details, detailsBefore);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldAllowApplicant2EmailRemovalIfRepresentedCase() {
+        final CaseData caseDataBefore = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .email(TEST_USER_EMAIL)
+                .solicitorRepresented(YES)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
+        detailsBefore.setId(TEST_CASE_ID);
+        detailsBefore.setData(caseDataBefore);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .solicitorRepresented(YES)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = updateContactDetails.midEvent(details, detailsBefore);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
     void shouldReturnErrorsWhenApplicant1SolicitorDetailsAreRemoved() {
         final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
         final CaseData caseData = CaseData.builder()
@@ -346,4 +524,86 @@ public class UpdateContactDetailsTest {
                     .build())
                 .build();
     }
+
+    @ParameterizedTest
+    @MethodSource("provideApplicantData")
+    void shouldHandleRefugeFieldForApplicant1(ContactDetailsType previousContactDetailsType,
+                                              YesOrNo previousInRefuge,
+                                              ContactDetailsType currentContactDetailsType,
+                                              YesOrNo currentInRefuge,
+                                              YesOrNo expectedInRefuge) {
+        final CaseData caseDataBefore = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .contactDetailsType(previousContactDetailsType)
+                .inRefuge(previousInRefuge)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .contactDetailsType(currentContactDetailsType)
+                .inRefuge(currentInRefuge) // May be modified in the logic
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
+        detailsBefore.setId(TEST_CASE_ID);
+        detailsBefore.setData(caseDataBefore);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = updateContactDetails.midEvent(details, detailsBefore);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(caseData.getApplicant1().getInRefuge()).isEqualTo(expectedInRefuge);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideApplicantData")
+    void shouldHandleRefugeFieldForApplicant2(ContactDetailsType previousContactDetailsType,
+                                              YesOrNo previousInRefuge,
+                                              ContactDetailsType currentContactDetailsType,
+                                              YesOrNo currentInRefuge,
+                                              YesOrNo expectedInRefuge) {
+        final CaseData caseDataBefore = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .contactDetailsType(previousContactDetailsType)
+                .inRefuge(previousInRefuge)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .contactDetailsType(currentContactDetailsType)
+                .inRefuge(currentInRefuge)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
+        detailsBefore.setId(TEST_CASE_ID);
+        detailsBefore.setData(caseDataBefore);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = updateContactDetails.midEvent(details, detailsBefore);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(caseData.getApplicant2().getInRefuge()).isEqualTo(expectedInRefuge);
+    }
+
+    static Stream<Arguments> provideApplicantData() {
+        return Stream.of(
+            // from PRIVATE to PUBLIC clears refuge
+            Arguments.of(ContactDetailsType.PRIVATE, YES, ContactDetailsType.PUBLIC, YES, null),
+            // No change in PRIVATE but change in refuge updated
+            Arguments.of(ContactDetailsType.PRIVATE, YES, ContactDetailsType.PRIVATE, NO, NO),
+            // from PUBLIC to PRIVATE then sets refuge
+            Arguments.of(ContactDetailsType.PUBLIC, null, ContactDetailsType.PRIVATE, YES, YES)
+        );
+    }
+
 }
