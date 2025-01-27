@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponsePartnerNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationAuthParty;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
