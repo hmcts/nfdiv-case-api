@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -74,11 +75,9 @@ public class CaseworkerRemoveGeneralLetter implements CCDConfig<CaseData, State,
         final List<ListValue<GeneralLetterDetails>> beforeLetters,
         final List<ListValue<GeneralLetterDetails>> afterLetters
     ) {
-        var lettersToRemove = getListValues(beforeLetters);
-
-        lettersToRemove.removeAll(getListValues(afterLetters));
-
-        return lettersToRemove;
+        return Sets.difference(
+            getListValues(beforeLetters), getListValues(afterLetters)
+        );
     }
 
     private void deleteLetterAndAttachments(GeneralLetterDetails letter) {
