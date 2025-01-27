@@ -9,12 +9,14 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
@@ -27,6 +29,7 @@ import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
+import uk.gov.hmcts.divorce.testutil.TestConstants;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,6 +39,7 @@ import java.util.UUID;
 import static java.lang.Integer.parseInt;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -52,6 +56,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
@@ -81,6 +86,9 @@ public class SolicitorSubmitApplicationTest {
     @Mock
     private SolPayment solPayment;
 
+    @Mock
+    private CaseFlagsService caseFlagsService;
+
     @InjectMocks
     private SolicitorSubmitApplication solicitorSubmitApplication;
 
@@ -89,7 +97,8 @@ public class SolicitorSubmitApplicationTest {
 
         final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        final CaseData caseData = CaseData.builder().build();
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.getApplicant1().setAddress(AddressGlobalUK.builder().addressLine1("test").build());
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
@@ -501,6 +510,18 @@ public class SolicitorSubmitApplicationTest {
 
         assertThat(response.getErrors())
             .containsExactly("PBA number not present when payment method is 'Solicitor fee account (PBA)'");
+    }
+
+    @Test
+    void shouldCallCaseFlagsServiceToSetHmctsServiceId() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TestConstants.TEST_CASE_ID);
+
+        solicitorSubmitApplication.submitted(caseDetails, null);
+
+        verify(caseFlagsService).setSupplementaryDataForCaseFlags(TestConstants.TEST_CASE_ID);
     }
 
     private void mockExpectedCaseDetails(CaseDetails<CaseData, State> caseDetails, CaseData caseData, State state) {

@@ -16,6 +16,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.FieldType;
+import uk.gov.hmcts.ccd.sdk.type.FlagLauncher;
+import uk.gov.hmcts.ccd.sdk.type.Flags;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
@@ -30,6 +32,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.InternalCaseFlagsAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -194,6 +197,11 @@ public class CaseData {
     private YesOrNo isJudicialSeparation;
 
     @CCD(
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo caseFlagsSetupComplete;
+
+    @CCD(
         label = "Previous Service Applications",
         typeOverride = Collection,
         typeParameterOverride = "AlternativeServiceOutcome",
@@ -342,6 +350,20 @@ public class CaseData {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
     @Builder.Default
     private List<ListValue<CaseMatch>> caseMatches = new ArrayList<>();
+
+    @CCD(
+        label = "Launch the Flags screen",
+        access = {InternalCaseFlagsAccess.class}
+    )
+    private FlagLauncher internalFlagLauncher;
+
+    @CCD(access = {InternalCaseFlagsAccess.class},
+        label = "Case Flags")
+    private Flags caseFlags;
+
+    @JsonUnwrapped
+    @Builder.Default
+    private PartyFlags partyFlags = new PartyFlags();
 
     @JsonIgnore
     public String formatCaseRef(long caseId) {
@@ -607,6 +629,7 @@ public class CaseData {
     @JsonIgnore
     public void updateCaseWithGeneralApplication() {
         GeneralApplication generalApplication = this.getGeneralApplication();
+        generalApplication.setGeneralApplicationDocument(null);
 
         generalApplication.getGeneralApplicationDocuments().forEach(divorceDocumentListValue -> {
             divorceDocumentListValue.getValue().setDocumentType(DocumentType.GENERAL_APPLICATION);

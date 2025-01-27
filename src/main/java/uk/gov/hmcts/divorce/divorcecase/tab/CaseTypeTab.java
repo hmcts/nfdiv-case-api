@@ -124,6 +124,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildAmendedApplicationTab(configBuilder);
         buildChangeOfRepresentativeTab(configBuilder);
         buildRequestForInformationTab(configBuilder);
+        buildCaseFlagTab(configBuilder);
 
         // Commented out as requested by service team. This can't be available for super users. Maybe we need a "Developer" role?
         //buildLetterPackTab(configBuilder);
@@ -277,6 +278,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .showCondition("applicant1ContactDetailsType=\"private\"")
             .field("applicant1PhoneNumber")
             .field("applicant1Email")
+            .field("applicant1InRefuge")
             .field("applicant1Address");
     }
 
@@ -286,6 +288,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .showCondition("applicant2ContactDetailsType=\"private\" AND applicationType=\"soleApplication\"")
             .field("applicant2PhoneNumber")
             .field("applicant2Email")
+            .field("applicant2InRefuge")
             .field("applicant2Address");
     }
 
@@ -295,6 +298,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .showCondition("applicant2ContactDetailsType=\"private\" AND applicationType=\"jointApplication\"")
             .field("applicant2PhoneNumber")
             .field("applicant2Email")
+            .field("applicant2InRefuge")
             .field("applicant2Address");
     }
 
@@ -631,6 +635,17 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 .field("changeOrganisationRequestField", NEVER_SHOW)
                 .showCondition(NOTICE_OF_CHANGE_HAS_BEEN_APPLIED)
                 .field("changeOfRepresentatives");
+    }
+
+    private void buildCaseFlagTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        configBuilder.tab("caseFlags", "Case Flags")
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
+            .field(CaseData::getInternalFlagLauncher, null, "#ARGUMENT(READ)")
+            .field(CaseData::getCaseFlags, "internalFlagLauncher = \"ALWAYS_HIDE\"")
+            .field("applicant1Flags", "internalFlagLauncher = \"ALWAYS_HIDE\"")
+            .field("applicant2Flags", "internalFlagLauncher = \"ALWAYS_HIDE\"")
+            .field("applicant1SolicitorFlags", "internalFlagLauncher = \"ALWAYS_HIDE\"")
+            .field("applicant2SolicitorFlags", "internalFlagLauncher = \"ALWAYS_HIDE\"");
     }
 
     private void buildMatchesTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
