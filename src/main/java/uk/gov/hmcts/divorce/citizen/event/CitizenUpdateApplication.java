@@ -36,6 +36,7 @@ public class CitizenUpdateApplication implements CCDConfig<CaseData, State, User
                 AwaitingClarification, AwaitingFinalOrder, AwaitingFinalOrderPayment, AwaitingJointFinalOrder,
                 AwaitingRequestedInformation, InformationRequested, RequestedInformationSubmitted)
             .showCondition(NEVER_SHOW)
+            .ttlIncrement(180)
             .name("Patch case")
             .description("Patch a divorce or dissolution")
             .grant(CREATE_READ_UPDATE, CREATOR);
