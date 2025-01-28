@@ -77,7 +77,7 @@ public class PaperApplicationReceivedNotification implements ApplicantNotificati
                                       final Applicant applicant,
                                       final CaseData caseData) {
 
-        boolean isApplicant1 = applicant == caseData.getApplicant1();
+        boolean isApplicant1 = applicant.equals(caseData.getApplicant1());
         String documentName = isApplicant1 ? APPLICANT1_DOCUMENT_NAME : APPLICANT2_DOCUMENT_NAME;
         return caseDataDocumentService.renderDocument(templateContent.getTemplateContent(caseData, caseId, applicant),
             caseId,
