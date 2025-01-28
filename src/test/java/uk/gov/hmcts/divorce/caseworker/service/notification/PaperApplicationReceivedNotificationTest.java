@@ -168,7 +168,8 @@ class PaperApplicationReceivedNotificationTest {
 
         assertThat(caseData.getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
         assertThat(caseData.getDocuments().getDocumentsGenerated().get(0).getValue().getDocumentLink()).isEqualTo(document);
-        assertThat(caseData.getDocuments().getDocumentsGenerated().get(0).getValue().getDocumentType()).isEqualTo(PAPER_APPLICATION_RECEIVED_LETTER);
+        assertThat(caseData.getDocuments().getDocumentsGenerated().get(0).getValue().getDocumentType())
+            .isEqualTo(PAPER_APPLICATION_RECEIVED_LETTER);
     }
 
     @Test
