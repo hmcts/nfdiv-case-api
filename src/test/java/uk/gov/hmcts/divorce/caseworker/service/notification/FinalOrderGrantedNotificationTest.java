@@ -57,7 +57,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINA
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_COPIES;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_ABC;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_COPIES;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
