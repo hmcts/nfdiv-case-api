@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_PAPER_APPLICATION_RECEIVED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.PAPER_APPLICATION_RECEIVED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived.PAPER_APPLICATION_RECEIVED_CONFIDENTIAL_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.PAPER_APPLICATION_RECEIVED_LETTER;

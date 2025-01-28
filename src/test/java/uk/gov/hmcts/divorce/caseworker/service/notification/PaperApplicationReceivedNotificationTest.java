@@ -32,7 +32,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_PAPER_APPLICATION_RECEIVED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.PAPER_APPLICATION_RECEIVED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived.PAPER_APPLICATION_RECEIVED_CONFIDENTIAL_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.PAPER_APPLICATION_RECEIVED_LETTER;
