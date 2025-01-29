@@ -36,7 +36,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINA
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_COPIES;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_ABC;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_COPIES;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
 @Component
@@ -166,7 +166,7 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
             commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
 
         templateVars.put(DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE,
-            formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_ABC)));
+            formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_COPIES)));
 
         return templateVars;
     }
