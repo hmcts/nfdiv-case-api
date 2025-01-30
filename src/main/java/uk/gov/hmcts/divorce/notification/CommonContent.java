@@ -149,6 +149,12 @@ public class CommonContent {
     @Autowired
     private EmailTemplatesConfig config;
 
+    public String getWebFormUrl(LanguagePreference languagePreference) {
+        return WELSH.equals(languagePreference)
+            ? config.getTemplateVars().get(WEBFORM_CY_URL)
+            : config.getTemplateVars().get(WEBFORM_URL);
+    }
+
     public Map<String, String> mainTemplateVars(final CaseData caseData,
                                                 final Long id,
                                                 final Applicant applicant,
@@ -165,10 +171,7 @@ public class CommonContent {
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
-        templateVars.put(WEBFORM_URL,
-            WELSH.equals(applicant.getLanguagePreference())
-                ? config.getTemplateVars().get(WEBFORM_CY_URL)
-                : config.getTemplateVars().get(WEBFORM_URL));
+        templateVars.put(WEBFORM_URL, getWebFormUrl(applicant.getLanguagePreference()));
         templateVars.put(SMART_SURVEY, getSmartSurvey());
 
         getPhoneAndOpeningTimes(languagePreference, templateVars);
