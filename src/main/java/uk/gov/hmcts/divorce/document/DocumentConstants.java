@@ -194,6 +194,12 @@ public final class DocumentConstants {
     public static final String APPLICANT1 = "applicant1";
     public static final String APPLICANT2 = "applicant2";
 
+    public static final String REQUEST_FOR_INFORMATION_LETTER_DOCUMENT_NAME = "RequestForInformationLetter";
+    public static final String REQUEST_FOR_INFORMATION_LETTER_TEMPLATE_ID = "REQUEST_FOR_INFORMATION_LETTER";
+
+    public static final String REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_DOCUMENT_NAME = "RequestForInformationSolicitorLetter";
+    public static final String REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_TEMPLATE_ID = "REQUEST_FOR_INFORMATION_SOLICITOR_LETTER";
+
     private DocumentConstants() {
     }
 }

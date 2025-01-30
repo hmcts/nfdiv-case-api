@@ -255,6 +255,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("grantOfRepresentation")
     GRANT_OF_REPRESENTATION("NoC grant of representation letter", true),
 
+    @JsonProperty("requestForInformation")
+    REQUEST_FOR_INFORMATION("Request for information", true),
+
     @JsonProperty("requestForInformationResponseDoc")
     REQUEST_FOR_INFORMATION_RESPONSE_DOC("RFI response document", true);
 

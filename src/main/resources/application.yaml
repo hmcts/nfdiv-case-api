@@ -465,6 +465,8 @@ docmosis:
       JUDICIAL_SEPARATION_JOINT_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Joint_V1.docx
       NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2: FL-NFD-GRP-ENG-Grant-Of-Representation-V2.docx
       NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: FL-NFD-GOR-ENG-SOLICITOR-APPLIED-FOR-FINAL-ORDER.docx
+      REQUEST_FOR_INFORMATION_LETTER: FL-NFD-GOR-ENG-Request-For-Information.docx
+      REQUEST_FOR_INFORMATION_SOLICITOR_LETTER: FL-NFD-GOR-ENG-Request-For-Information-Solicitor.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V1.docx
@@ -549,6 +551,8 @@ docmosis:
       JUDICIAL_SEPARATION_JOINT_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Joint_V1.docx
       NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2: FL-NFD-GRP-WEL-Grant-Of-Representation.docx
       NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: FL-NFD-GOR-WEL-SOLICITOR-APPLIED-FOR-FINAL-ORDER.docx
+      REQUEST_FOR_INFORMATION_LETTER: FL-NFD-GOR-WEL-Request-For-Information.docx
+      REQUEST_FOR_INFORMATION_SOLICITOR_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Solicitor.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}
