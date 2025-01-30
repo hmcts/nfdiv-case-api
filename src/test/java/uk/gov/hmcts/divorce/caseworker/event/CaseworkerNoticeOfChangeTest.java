@@ -543,6 +543,7 @@ class CaseworkerNoticeOfChangeTest {
         CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
         beforeCaseData.getApplicant1().setSolicitorRepresented(YES);
         CaseData caseData = createCaseData(APPLICANT_1, false, false, TEST_ORG_ID);
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
         CaseDetails<CaseData, State> details = createCaseDetails(caseData);
 
@@ -558,6 +559,7 @@ class CaseworkerNoticeOfChangeTest {
         beforeCaseData.getApplicant2().setSolicitorRepresented(YES);
         CaseData caseData = createCaseData(APPLICANT_2, false, false, TEST_ORG_ID);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
+        caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
         CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
         CaseDetails<CaseData, State> details = createCaseDetails(caseData);
 
@@ -572,6 +574,7 @@ class CaseworkerNoticeOfChangeTest {
         CaseData beforeCaseData = createCaseData(APPLICANT_2, true, false, "OldOrgId");
         beforeCaseData.getApplicant2().setSolicitorRepresented(YES);
         CaseData caseData = createCaseData(APPLICANT_2, false, false, TEST_ORG_ID);
+        caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
         CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
         CaseDetails<CaseData, State> details = createCaseDetails(caseData);
 
@@ -586,6 +589,7 @@ class CaseworkerNoticeOfChangeTest {
         CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
         beforeCaseData.getApplicant1().setSolicitorRepresented(YES);
         CaseData caseData = createCaseData(APPLICANT_1, false, false, TEST_ORG_ID);
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         caseData.setApplicationType(JOINT_APPLICATION);
         CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
         CaseDetails<CaseData, State> details = createCaseDetails(caseData);
@@ -594,6 +598,68 @@ class CaseworkerNoticeOfChangeTest {
 
         verify(notificationDispatcher,never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             caseData, details.getId(),true);
+    }
+
+    @Test
+    void shouldNotSendCaseInviteWhenSoleApplicationAndSolicitorRemovedButApplicantEmailIsNull() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
+        beforeCaseData.getApplicant1().setSolicitorRepresented(YES);
+        CaseData caseData = createCaseData(APPLICANT_1, false, false, TEST_ORG_ID);
+        caseData.getApplicant1().setEmail(null);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher,never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),true);
+    }
+
+    @Test
+    void shouldNotSendCaseInviteWhenSoleApplicationAndSolicitorRemovedButApplicantEmailIsBlank() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
+        beforeCaseData.getApplicant1().setSolicitorRepresented(YES);
+        CaseData caseData = createCaseData(APPLICANT_1, false, false, TEST_ORG_ID);
+        caseData.getApplicant1().setEmail("");
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher,never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),true);
+    }
+
+    @Test
+    void shouldSendCaseInviteToRespondentWhenSoleApplicationAndSolicitorRemovedAndCaseIssuedButEmailIsNull() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_2, true, false, "OldOrgId");
+        beforeCaseData.getApplicant2().setSolicitorRepresented(YES);
+        CaseData caseData = createCaseData(APPLICANT_2, false, false, TEST_ORG_ID);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
+        caseData.getApplicant2().setEmail(null);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher, never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),false);
+    }
+
+    @Test
+    void shouldSendCaseInviteToRespondentWhenSoleApplicationAndSolicitorRemovedAndCaseIssuedButEmailIsBlank() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_2, true, false, "OldOrgId");
+        beforeCaseData.getApplicant2().setSolicitorRepresented(YES);
+        CaseData caseData = createCaseData(APPLICANT_2, false, false, TEST_ORG_ID);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
+        caseData.getApplicant2().setEmail("");
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher, never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),false);
     }
 
     private CaseData createCaseDataNoSols(NoticeOfChange.WhichApplicant whichApplicant) {
@@ -611,6 +677,20 @@ class CaseworkerNoticeOfChangeTest {
         }
         caseData.setApplicationType(SOLE_APPLICATION);
         return caseData;
+    }
+
+    @Test
+    void shouldNotSendCaseInviteWhenRepresentationHasNotBeenRemovedInEvent() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, false, false, "");
+        CaseData caseData = createCaseData(APPLICANT_1, false, false, "");
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher,never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),true);
     }
 
     private CaseData createCaseData(NoticeOfChange.WhichApplicant whichApplicant, boolean areTheyRepresented,

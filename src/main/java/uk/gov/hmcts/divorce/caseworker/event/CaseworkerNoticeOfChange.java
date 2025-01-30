@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -343,7 +344,11 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
     }
 
     private boolean shouldSendInviteToParty(final CaseData data, boolean isApplicant1) {
-        return ((data.getApplicationType() == ApplicationType.SOLE_APPLICATION)
+        Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
+        boolean hasEmailAddressOnCase = StringUtils.isNotEmpty(applicant.getEmail());
+
+        return (hasEmailAddressOnCase
+            && (data.getApplicationType() == ApplicationType.SOLE_APPLICATION)
             && (isApplicant1 || (!isApplicant1 && ObjectUtils.isNotEmpty(data.getApplication().getIssueDate()))));
     }
 
