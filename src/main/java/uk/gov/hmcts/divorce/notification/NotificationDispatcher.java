@@ -145,7 +145,6 @@ public class NotificationDispatcher {
             requestForInformationSendToApplicant2(applicantNotification, caseData, caseId);
         } else if (OTHER.equals(requestForInformation.getRequestForInformationSoleParties())
             || RequestForInformationJointParties.OTHER.equals(requestForInformation.getRequestForInformationJointParties())) {
-
             applicantNotification.sendToOtherRecipient(caseData, caseId);
         } else {
             throw new NotificationTemplateException(
@@ -198,17 +197,33 @@ public class NotificationDispatcher {
 
     private void requestForInformationSendToApplicant1(ApplicantNotification applicantNotification, CaseData caseData, Long caseId) {
         if (caseData.getApplicant1().isRepresented()) {
-            applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
+            if (caseData.getApplicant1().isApplicantOffline()) {
+                applicantNotification.sendToApplicant1SolicitorOffline(caseData, caseId);
+            } else {
+                applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
+            }
         } else {
-            applicantNotification.sendToApplicant1(caseData, caseId);
+            if (caseData.getApplicant1().isApplicantOffline()) {
+                applicantNotification.sendToApplicant1Offline(caseData, caseId);
+            } else {
+                applicantNotification.sendToApplicant1(caseData, caseId);
+            }
         }
     }
 
     private void requestForInformationSendToApplicant2(ApplicantNotification applicantNotification, CaseData caseData, Long caseId) {
         if (caseData.getApplicant2().isRepresented()) {
-            applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
+            if (caseData.getApplicant2().isApplicantOffline()) {
+                applicantNotification.sendToApplicant2SolicitorOffline(caseData, caseId);
+            } else {
+                applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
+            }
         } else {
-            applicantNotification.sendToApplicant2(caseData, caseId);
+            if (caseData.getApplicant2().isApplicantOffline()) {
+                applicantNotification.sendToApplicant2Offline(caseData, caseId);
+            } else {
+                applicantNotification.sendToApplicant2(caseData, caseId);
+            }
         }
     }
 }
