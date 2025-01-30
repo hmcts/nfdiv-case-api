@@ -13,11 +13,19 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_OR_APPLICANT1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
@@ -33,6 +41,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_OR_APPLICANT2;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
@@ -114,6 +125,8 @@ public class DocmosisCommonContent {
         templateContent.put(APPLICANT_1_LAST_NAME, applicant1.getLastName());
         templateContent.put(APPLICANT_2_FIRST_NAME, applicant2.getFirstName());
         templateContent.put(APPLICANT_2_LAST_NAME, applicant2.getLastName());
+        templateContent.put(APPLICANT_OR_APPLICANT1, getApplicantOrApplicant1(caseData, languagePreference));
+        templateContent.put(RESPONDENT_OR_APPLICANT2, getRespondentOrApplicant2(caseData, languagePreference));
         templateContent.put(IS_JOINT, isJoint);
         templateContent.put(IS_DIVORCE, caseData.isDivorce());
         templateContent.put(APPLICANT_1_SOLICITOR_NAME, solicitorName(applicant1, applicant1Solicitor));
@@ -135,5 +148,23 @@ public class DocmosisCommonContent {
 
     private String solicitorReference(Solicitor solicitor) {
         return isNotEmpty(solicitor.getReference()) ? solicitor.getReference() : NOT_PROVIDED;
+    }
+
+    private String getApplicantOrApplicant1(CaseData caseData, LanguagePreference languagePreference) {
+        final boolean isSole = caseData.getApplicationType().isSole();
+        if (WELSH.equals(languagePreference)) {
+            return isSole ? APPLICANT_CY : APPLICANT_1_CY;
+        } else {
+            return isSole ? APPLICANT : APPLICANT_1;
+        }
+    }
+
+    private String getRespondentOrApplicant2(CaseData caseData, LanguagePreference languagePreference) {
+        final boolean isSole = caseData.getApplicationType().isSole();
+        if (WELSH.equals(languagePreference)) {
+            return isSole ? RESPONDENT_CY : APPLICANT_2_CY;
+        } else {
+            return isSole ? RESPONDENT : APPLICANT_2;
+        }
     }
 }
