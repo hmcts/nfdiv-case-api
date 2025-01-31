@@ -59,7 +59,7 @@ public class RequestForInformationTemplateContent implements TemplateContent {
             templateContent.put(RECIPIENT_NAME, applicant.getSolicitor().getName());
         } else {
             templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
-                caseData.getApplicant1().getLanguagePreference());
+                applicant.getLanguagePreference());
             templateContent.put(RECIPIENT_NAME, applicant.getFullName());
         }
 
