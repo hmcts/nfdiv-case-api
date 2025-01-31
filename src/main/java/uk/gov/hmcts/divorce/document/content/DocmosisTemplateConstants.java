@@ -117,7 +117,9 @@ public final class DocmosisTemplateConstants {
     public static final String RESPOND_BY_DATE = "respondByDate";
     public static final String RESPONDENT_SOLICITOR_REGISTERED = "respSolicitorRegistered";
     public static final String NOT_PROVIDED = "Not provided";
+    public static final String NOT_PROVIDED_CY = "Heb ei ddarparu";
     public static final String NOT_REPRESENTED = "Not represented";
+    public static final String NOT_REPRESENTED_CY = "Heb ei gynrychioli";
 
     public static final String PRONOUNCEMENT_JUDGE = "pronouncementJudge";
     public static final String COURT_NAME = "courtName";

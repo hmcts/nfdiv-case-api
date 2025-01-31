@@ -37,7 +37,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
@@ -129,25 +131,28 @@ public class DocmosisCommonContent {
         templateContent.put(RESPONDENT_OR_APPLICANT2, getRespondentOrApplicant2(caseData, languagePreference));
         templateContent.put(IS_JOINT, isJoint);
         templateContent.put(IS_DIVORCE, caseData.isDivorce());
-        templateContent.put(APPLICANT_1_SOLICITOR_NAME, solicitorName(applicant1, applicant1Solicitor));
-        templateContent.put(APPLICANT_2_SOLICITOR_NAME, solicitorName(applicant2, applicant2Solicitor));
+        templateContent.put(APPLICANT_1_SOLICITOR_NAME, solicitorName(applicant1, applicant1Solicitor, languagePreference));
+        templateContent.put(APPLICANT_2_SOLICITOR_NAME, solicitorName(applicant2, applicant2Solicitor, languagePreference));
         templateContent.put(SOLICITOR_NAME, isApplicantSolicitor ? applicant1Solicitor.getName() : applicant2Solicitor.getName());
         templateContent.put(SOLICITOR_ADDRESS, isApplicantSolicitor ? applicant1Solicitor.getAddress() : applicant2Solicitor.getAddress());
-
         templateContent.put(
             SOLICITOR_REFERENCE,
-            isApplicantSolicitor ? solicitorReference(applicant1Solicitor) : solicitorReference(applicant2Solicitor)
+            isApplicantSolicitor
+                ? solicitorReference(applicant1Solicitor, languagePreference)
+                : solicitorReference(applicant2Solicitor, languagePreference)
         );
 
         return templateContent;
     }
 
-    private String solicitorName(Applicant applicant, Solicitor solicitor) {
-        return applicant.isRepresented() ? solicitor.getName() : NOT_REPRESENTED;
+    private String solicitorName(Applicant applicant, Solicitor solicitor, LanguagePreference languagePreference) {
+        String notRepresented = WELSH.equals(languagePreference) ? NOT_REPRESENTED_CY : NOT_REPRESENTED;
+        return applicant.isRepresented() ? solicitor.getName() : notRepresented;
     }
 
-    private String solicitorReference(Solicitor solicitor) {
-        return isNotEmpty(solicitor.getReference()) ? solicitor.getReference() : NOT_PROVIDED;
+    private String solicitorReference(Solicitor solicitor, LanguagePreference languagePreference) {
+        String notProvided = WELSH.equals(languagePreference) ? NOT_PROVIDED_CY : NOT_PROVIDED;
+        return isNotEmpty(solicitor.getReference()) ? solicitor.getReference() : notProvided;
     }
 
     private String getApplicantOrApplicant1(CaseData caseData, LanguagePreference languagePreference) {
