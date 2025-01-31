@@ -109,6 +109,8 @@ public final class TestConstants {
     public static final String TEST_TEXT = "Test";
 
     public static final String SMART_SURVEY_TEST_URL = "smartSurveyTestUrl";
+    public static final String WEBFORM_TEST_URL = "englishWebformUrl";
+    public static final String WEBFORM_TEST_URL_CY = "welshWebformUrl";
 
     private TestConstants() {
     }
