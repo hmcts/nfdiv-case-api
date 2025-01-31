@@ -20,11 +20,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_OR_APPLICANT1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
@@ -38,6 +42,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_OR_APPLICANT2;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_SOLICITOR_NAME;
@@ -60,7 +66,7 @@ class DocmosisCommonContentTest {
     private static final String PHONE_NUMBER = "0300 303 0642";
 
     private static final int EXPECTED_ENTRY_SIZE = 5;
-    private static final int EXPECTED_SOLICITOR_ENTRY_SIZE = 17;
+    private static final int EXPECTED_SOLICITOR_ENTRY_SIZE = 19;
 
     private static final CtscContactDetails CTSC_CONTACT = CtscContactDetails
         .builder()
@@ -155,6 +161,8 @@ class DocmosisCommonContentTest {
                 entry(APPLICANT_1_LAST_NAME, applicant.getLastName()),
                 entry(APPLICANT_2_FIRST_NAME, applicant.getFirstName()),
                 entry(APPLICANT_2_LAST_NAME, applicant.getLastName()),
+                entry(APPLICANT_OR_APPLICANT1, APPLICANT),
+                entry(RESPONDENT_OR_APPLICANT2, RESPONDENT),
                 entry(IS_JOINT, false),
                 entry(IS_DIVORCE, true),
                 entry(APPLICANT_1_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
@@ -205,6 +213,8 @@ class DocmosisCommonContentTest {
                 entry(APPLICANT_1_LAST_NAME, applicant.getLastName()),
                 entry(APPLICANT_2_FIRST_NAME, applicant.getFirstName()),
                 entry(APPLICANT_2_LAST_NAME, applicant.getLastName()),
+                entry(APPLICANT_OR_APPLICANT1, APPLICANT_1),
+                entry(RESPONDENT_OR_APPLICANT2, APPLICANT_2),
                 entry(IS_JOINT, true),
                 entry(IS_DIVORCE, false),
                 entry(APPLICANT_1_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
