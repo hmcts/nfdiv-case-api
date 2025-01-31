@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -14,6 +15,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
 import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
+import uk.gov.hmcts.divorce.citizen.notification.NocSolRemovedCitizenNotification;
 import uk.gov.hmcts.divorce.citizen.notification.NocSolRemovedSelfAsRepresentativeNotification;
 import uk.gov.hmcts.divorce.citizen.notification.NocSolsToCitizenNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -84,6 +86,8 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
     private final NotificationDispatcher notificationDispatcher;
 
     private final CaseFlagsService caseFlagsService;
+
+    private final NocSolRemovedCitizenNotification nocSolRemovedCitizenNotification;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -163,6 +167,8 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
         if (shouldSendInviteToParty(details.getData(), wasRepresentingApplicant1)) {
             notificationDispatcher.sendNOCCaseInvite(nocSolsToCitizenNotifications, details.getData(), details.getId(),
                 wasRepresentingApplicant1);
+        } else {
+            nocSolRemovedCitizenNotification.send(data, wasRepresentingApplicant1, details.getId());
         }
 
         String litigantName = wasRepresentingApplicant1
@@ -205,7 +211,11 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
     }
 
     private boolean shouldSendInviteToParty(final CaseData data, boolean isApplicant1) {
-        return ((data.getApplicationType() == ApplicationType.SOLE_APPLICATION)
+        Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
+        boolean hasEmailAddressOnCase = StringUtils.isNotEmpty(applicant.getEmail());
+
+        return (hasEmailAddressOnCase
+            && (data.getApplicationType() == ApplicationType.SOLE_APPLICATION)
             && (isApplicant1 || (!isApplicant1 && ObjectUtils.isNotEmpty(data.getApplication().getIssueDate()))));
     }
 

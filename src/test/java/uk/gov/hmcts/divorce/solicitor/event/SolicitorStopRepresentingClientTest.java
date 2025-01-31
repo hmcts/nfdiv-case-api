@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
 import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
+import uk.gov.hmcts.divorce.citizen.notification.NocSolRemovedCitizenNotification;
 import uk.gov.hmcts.divorce.citizen.notification.NocSolRemovedSelfAsRepresentativeNotification;
 import uk.gov.hmcts.divorce.citizen.notification.NocSolsToCitizenNotifications;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -33,6 +34,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -55,6 +57,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -90,6 +93,9 @@ class SolicitorStopRepresentingClientTest {
 
     @Mock
     private CaseFlagsService caseFlagsService;
+
+    @Mock
+    private NocSolRemovedCitizenNotification nocSolRemovedCitizenNotification;
 
     @InjectMocks
     private SolicitorStopRepresentingClient noticeOfChange;
@@ -242,7 +248,7 @@ class SolicitorStopRepresentingClientTest {
     }
 
     @Test
-    void shouldInviteApplicant1ToCaseForSoleCase() {
+    void shouldInviteApplicant1ToCaseForSoleCaseIfEmailExists() {
         final var details = getCaseDetails();
         final var beforeDetails = getCaseDetails();
         Applicant applicant = details.getData().getApplicant1();
@@ -251,6 +257,7 @@ class SolicitorStopRepresentingClientTest {
         );
         applicant.setFirstName(TEST_FIRST_NAME);
         applicant.setLastName(TEST_LAST_NAME);
+        applicant.setEmail(TEST_USER_EMAIL);
 
         var result = noticeOfChange.submitted(details, beforeDetails);
 
@@ -259,7 +266,45 @@ class SolicitorStopRepresentingClientTest {
     }
 
     @Test
-    void shouldInviteApplicant2ToCaseForSoleCase() {
+    void shouldNotInviteApplicant1ToCaseForSoleCaseIfEmailIsNull() {
+        final var details = getCaseDetails();
+        final var beforeDetails = getCaseDetails();
+        Applicant applicant = details.getData().getApplicant1();
+        details.getData().setNoticeOfChange(
+            NoticeOfChange.builder().whichApplicant(WhichApplicant.APPLICANT_1).build()
+        );
+        applicant.setFirstName(TEST_FIRST_NAME);
+        applicant.setLastName(TEST_LAST_NAME);
+        applicant.setEmail(null);
+
+        var result = noticeOfChange.submitted(details, beforeDetails);
+
+        verify(notificationDispatcher, never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            details.getData(), details.getId(), true);
+        verify(nocSolRemovedCitizenNotification).send(details.getData(), true, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldNotInviteApplicant1ToCaseForSoleCaseIfEmailIsBlank() {
+        final var details = getCaseDetails();
+        final var beforeDetails = getCaseDetails();
+        Applicant applicant = details.getData().getApplicant1();
+        details.getData().setNoticeOfChange(
+            NoticeOfChange.builder().whichApplicant(WhichApplicant.APPLICANT_1).build()
+        );
+        applicant.setFirstName(TEST_FIRST_NAME);
+        applicant.setLastName(TEST_LAST_NAME);
+        applicant.setEmail("");
+
+        var result = noticeOfChange.submitted(details, beforeDetails);
+
+        verify(notificationDispatcher, never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            details.getData(), details.getId(), true);
+        verify(nocSolRemovedCitizenNotification).send(details.getData(), true, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldInviteRespondentToCaseForSoleCaseIfCaseIssuedAndEmailExists() {
         final var details = getCaseDetails();
         final var beforeDetails = getCaseDetails();
         Applicant applicant = details.getData().getApplicant2();
@@ -268,11 +313,70 @@ class SolicitorStopRepresentingClientTest {
         );
         applicant.setFirstName(TEST_FIRST_NAME);
         applicant.setLastName(TEST_LAST_NAME);
+        applicant.setEmail(TEST_USER_EMAIL);
 
         var result = noticeOfChange.submitted(details, beforeDetails);
 
         verify(notificationDispatcher).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             details.getData(), details.getId(), false);
+    }
+
+    @Test
+    void shouldNotInviteRespondentToCaseForSoleCaseIfCaseNotIssuedAndEmailExists() {
+        final var details = getCaseDetails();
+        final var beforeDetails = getCaseDetails();
+        Applicant applicant = details.getData().getApplicant2();
+        details.getData().setNoticeOfChange(
+            NoticeOfChange.builder().whichApplicant(WhichApplicant.APPLICANT_2).build()
+        );
+        applicant.setFirstName(TEST_FIRST_NAME);
+        applicant.setLastName(TEST_LAST_NAME);
+        applicant.setEmail(TEST_USER_EMAIL);
+        details.getData().getApplication().setIssueDate(null);
+
+        var result = noticeOfChange.submitted(details, beforeDetails);
+
+        verify(notificationDispatcher, never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            details.getData(), details.getId(), false);
+        verify(nocSolRemovedCitizenNotification).send(details.getData(), false, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldNotInviteRespondentToCaseForSoleCaseIfCaseIssuedAndEmailNull() {
+        final var details = getCaseDetails();
+        final var beforeDetails = getCaseDetails();
+        Applicant applicant = details.getData().getApplicant2();
+        details.getData().setNoticeOfChange(
+            NoticeOfChange.builder().whichApplicant(WhichApplicant.APPLICANT_2).build()
+        );
+        applicant.setFirstName(TEST_FIRST_NAME);
+        applicant.setLastName(TEST_LAST_NAME);
+        applicant.setEmail(null);
+
+        var result = noticeOfChange.submitted(details, beforeDetails);
+
+        verify(notificationDispatcher, never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            details.getData(), details.getId(), false);
+        verify(nocSolRemovedCitizenNotification).send(details.getData(), false, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldNotInviteRespondentToCaseForSoleCaseIfCaseIssuedAndEmailBlank() {
+        final var details = getCaseDetails();
+        final var beforeDetails = getCaseDetails();
+        Applicant applicant = details.getData().getApplicant2();
+        details.getData().setNoticeOfChange(
+            NoticeOfChange.builder().whichApplicant(WhichApplicant.APPLICANT_2).build()
+        );
+        applicant.setFirstName(TEST_FIRST_NAME);
+        applicant.setLastName(TEST_LAST_NAME);
+        applicant.setEmail("");
+
+        var result = noticeOfChange.submitted(details, beforeDetails);
+
+        verify(notificationDispatcher, never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            details.getData(), details.getId(), false);
+        verify(nocSolRemovedCitizenNotification).send(details.getData(), false, TEST_CASE_ID);
     }
 
     @Test
@@ -292,6 +396,7 @@ class SolicitorStopRepresentingClientTest {
         verify(notificationDispatcher).sendNOC(nocSolRemovedSelfNotifications, details.getData(),
             beforeDetails.getData(), details.getId(), true, NoticeType.ORG_REMOVED);
         verifyNoMoreInteractions(notificationDispatcher);
+        verify(nocSolRemovedCitizenNotification).send(details.getData(), true, TEST_CASE_ID);
     }
 
     private void assertSolicitorRemoved(Applicant applicant, UserRole solicitorRole) {
