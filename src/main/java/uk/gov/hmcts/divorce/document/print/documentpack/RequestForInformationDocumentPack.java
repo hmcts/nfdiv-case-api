@@ -42,7 +42,7 @@ public class RequestForInformationDocumentPack implements DocumentPack {
     public DocumentPackInfo getDocumentPack(final CaseData caseData, final Applicant applicant) {
         final boolean isApplicantRepresented = applicant.isRepresented();
 
-        return isApplicantRepresented ? APPLICANT_REQUEST_FOR_INFORMATION_PACK : SOLICITOR_REQUEST_FOR_INFORMATION_PACK;
+        return isApplicantRepresented ? SOLICITOR_REQUEST_FOR_INFORMATION_PACK : APPLICANT_REQUEST_FOR_INFORMATION_PACK;
     }
 
     @Override
