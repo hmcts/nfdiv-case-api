@@ -123,6 +123,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.APP_1_APP_2_RESIDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT1SOLICITOR;
@@ -133,8 +134,17 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_OR_APPLICANT1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
@@ -147,11 +157,18 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_OR_APPLICANT2;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
@@ -991,6 +1008,70 @@ public class TestDataHelper {
         templateVars.put(IS_DIVORCE, data.isDivorce());
         templateVars.put(IS_JOINT, !data.getApplicationType().isSole());
         return templateVars;
+    }
+
+    public static Map<String, Object> getBasicSolicitorTemplateContent(
+        CaseData data,
+        boolean isApplicantSolicitor,
+        LanguagePreference languagePreference
+    ) {
+        Map<String, Object> templateVars = getBasicDocmosisTemplateContent(languagePreference);
+        Applicant applicant1 = data.getApplicant1();
+        Applicant applicant2 = data.getApplicant2();
+        Solicitor applicant1Solicitor = applicant1.getSolicitor();
+        Solicitor applicant2Solicitor = applicant2.getSolicitor();
+        boolean isJoint = !data.getApplicationType().isSole();
+
+        templateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
+        templateVars.put(APPLICANT_1_FIRST_NAME, applicant1.getFirstName());
+        templateVars.put(APPLICANT_1_LAST_NAME, applicant1.getLastName());
+        templateVars.put(DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME, applicant2.getFirstName());
+        templateVars.put(DocmosisTemplateConstants.APPLICANT_2_LAST_NAME, applicant2.getLastName());
+        templateVars.put(APPLICANT_OR_APPLICANT1, getApplicantOrApplicant1(data, languagePreference));
+        templateVars.put(RESPONDENT_OR_APPLICANT2, getRespondentOrApplicant2(data, languagePreference));
+        templateVars.put(CommonContent.IS_JOINT, isJoint);
+        templateVars.put(IS_DIVORCE, data.isDivorce());
+        templateVars.put(APPLICANT_1_SOLICITOR_NAME, solicitorName(applicant1, applicant1Solicitor, languagePreference));
+        templateVars.put(APPLICANT_2_SOLICITOR_NAME, solicitorName(applicant2, applicant2Solicitor, languagePreference));
+        templateVars.put(DocmosisTemplateConstants.SOLICITOR_NAME, isApplicantSolicitor
+            ? applicant1Solicitor.getName()
+            : applicant2Solicitor.getName());
+        templateVars.put(SOLICITOR_ADDRESS, isApplicantSolicitor ? applicant1Solicitor.getAddress() : applicant2Solicitor.getAddress());
+        templateVars.put(
+            SOLICITOR_REFERENCE,
+            isApplicantSolicitor
+                ? solicitorReference(applicant1Solicitor, languagePreference)
+                : solicitorReference(applicant2Solicitor, languagePreference)
+        );
+        return templateVars;
+    }
+
+    private static String solicitorName(Applicant applicant, Solicitor solicitor, LanguagePreference languagePreference) {
+        String notRepresented = WELSH.equals(languagePreference) ? NOT_REPRESENTED_CY : NOT_REPRESENTED;
+        return applicant.isRepresented() ? solicitor.getName() : notRepresented;
+    }
+
+    private static String solicitorReference(Solicitor solicitor, LanguagePreference languagePreference) {
+        String notProvided = WELSH.equals(languagePreference) ? NOT_PROVIDED_CY : NOT_PROVIDED;
+        return isNotEmpty(solicitor.getReference()) ? solicitor.getReference() : notProvided;
+    }
+
+    private static String getApplicantOrApplicant1(CaseData caseData, LanguagePreference languagePreference) {
+        final boolean isSole = caseData.getApplicationType().isSole();
+        if (WELSH.equals(languagePreference)) {
+            return isSole ? APPLICANT_CY : APPLICANT_1_CY;
+        } else {
+            return isSole ? DocmosisTemplateConstants.APPLICANT : APPLICANT_1;
+        }
+    }
+
+    private static String getRespondentOrApplicant2(CaseData caseData, LanguagePreference languagePreference) {
+        final boolean isSole = caseData.getApplicationType().isSole();
+        if (WELSH.equals(languagePreference)) {
+            return isSole ? RESPONDENT_CY : APPLICANT_2_CY;
+        } else {
+            return isSole ? RESPONDENT : APPLICANT_2;
+        }
     }
 
     public static GeneralOrder getGeneralOrder(Document ccdDocument) {
