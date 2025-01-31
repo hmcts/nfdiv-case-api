@@ -21,9 +21,11 @@ import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
@@ -302,7 +304,9 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
 
         if (caseData.getApplicationType().isSole()) {
-            isAddressValid(caseData, caseData.getApplicant1(), errors);
+            if (!OTHER.equals(requestForInformation.getRequestForInformationSoleParties())) {
+                isAddressValid(caseData, caseData.getApplicant1(), errors);
+            }
         } else {
             switch (requestForInformation.getRequestForInformationJointParties()) {
                 case APPLICANT1 -> isAddressValid(caseData, caseData.getApplicant1(), errors);
