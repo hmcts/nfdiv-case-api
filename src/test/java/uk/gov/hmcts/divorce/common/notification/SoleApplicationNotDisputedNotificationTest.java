@@ -6,8 +6,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -23,6 +25,9 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISPUTED;
@@ -38,7 +43,9 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMITTED_APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_AOS_SUBMITTED_RESPONDENT_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED_AWAITING_CO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED_AWAITING_CO;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.PROFESSIONAL_USERS_SIGN_IN_URL;
@@ -72,10 +79,15 @@ public class SoleApplicationNotDisputedNotificationTest {
     void shouldSendAosNotDisputedEmailToSoleApplicantWithDivorceContent() {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LocalDate.now().plusDays(141));
+        CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(data);
+        details.setId(TEST_CASE_ID);
+        details.setState(Holding);
+
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        soleApplicationNotDisputedNotification.sendToApplicant1(data, TEST_CASE_ID);
+        soleApplicationNotDisputedNotification.sendToApplicant1(details);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -93,15 +105,46 @@ public class SoleApplicationNotDisputedNotificationTest {
     }
 
     @Test
+    void shouldSendAosNotDisputedEmailToSoleApplicantWithDivorceContentWhenAwaitingCO() {
+        CaseData data = validCaseDataForAosSubmitted();
+        CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(data);
+        details.setId(TEST_CASE_ID);
+        details.setState(AwaitingConditionalOrder);
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        soleApplicationNotDisputedNotification.sendToApplicant1(details);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(SOLE_APPLICANT_AOS_SUBMITTED_AWAITING_CO),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                hasEntry("apply for CO date", ""),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO)
+            )),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
     void shouldSendAosNotDisputedEmailToSoleApplicantWithDissolutionContent() {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDivorceOrDissolution(DISSOLUTION);
         data.setDueDate(LocalDate.now().plusDays(141));
+        CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(data);
+        details.setId(TEST_CASE_ID);
+        details.setState(Holding);
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
 
-        soleApplicationNotDisputedNotification.sendToApplicant1(data, TEST_CASE_ID);
+        soleApplicationNotDisputedNotification.sendToApplicant1(details);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -119,15 +162,48 @@ public class SoleApplicationNotDisputedNotificationTest {
     }
 
     @Test
+    void shouldSendAosNotDisputedEmailToSoleApplicantWithDissolutionContentWhenAwaitingCO() {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.setDivorceOrDissolution(DISSOLUTION);
+        CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(data);
+        details.setId(TEST_CASE_ID);
+        details.setState(AwaitingConditionalOrder);
+        final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2())).thenReturn(templateVars);
+
+        soleApplicationNotDisputedNotification.sendToApplicant1(details);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(SOLE_APPLICANT_AOS_SUBMITTED_AWAITING_CO),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                hasEntry("apply for CO date", ""),
+                hasEntry(IS_DIVORCE, NO),
+                hasEntry(IS_DISSOLUTION, YES)
+            )),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
     void shouldSendAosNotDisputedEmailToSoleRespondentWithDivorceContent() {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplicant2().setEmail(null);
+        CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(data);
+        details.setId(TEST_CASE_ID);
+        details.setState(Holding);
 
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        soleApplicationNotDisputedNotification.sendToApplicant2(data, TEST_CASE_ID);
+        soleApplicationNotDisputedNotification.sendToApplicant2(details);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -135,6 +211,35 @@ public class SoleApplicationNotDisputedNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO)
+            )),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendAosNotDisputedEmailToSoleRespondentWithDivorceContentWhenAwaitingCO() {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.getApplicant2().setEmail(null);
+        CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(data);
+        details.setId(TEST_CASE_ID);
+        details.setState(AwaitingConditionalOrder);
+
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+
+        soleApplicationNotDisputedNotification.sendToApplicant2(details);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(SOLE_RESPONDENT_AOS_SUBMITTED_AWAITING_CO),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                hasEntry("apply for CO date", ""),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
             )),
@@ -150,12 +255,16 @@ public class SoleApplicationNotDisputedNotificationTest {
         data.setDivorceOrDissolution(DISSOLUTION);
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplicant2().setEmail(null);
+        CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(data);
+        details.setId(TEST_CASE_ID);
+        details.setState(Holding);
 
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
-        soleApplicationNotDisputedNotification.sendToApplicant2(data, TEST_CASE_ID);
+        soleApplicationNotDisputedNotification.sendToApplicant2(details);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
@@ -173,22 +282,88 @@ public class SoleApplicationNotDisputedNotificationTest {
     }
 
     @Test
+    void shouldSendAosNotDisputedEmailToSoleRespondentWithDissolutionContentWhenAwaitingCO() {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.setDivorceOrDissolution(DISSOLUTION);
+        data.getApplicant2().setEmail(null);
+        CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(data);
+        details.setId(TEST_CASE_ID);
+        details.setState(AwaitingConditionalOrder);
+
+        final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+
+        soleApplicationNotDisputedNotification.sendToApplicant2(details);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(SOLE_RESPONDENT_AOS_SUBMITTED_AWAITING_CO),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                hasEntry("apply for CO date", ""),
+                hasEntry(IS_DIVORCE, NO),
+                hasEntry(IS_DISSOLUTION, YES)
+            )),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
     void shouldSendAosNotDisputedEmailToSoleRespondentWithWelshPartnerContent() {
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LocalDate.now().plusDays(141));
         data.getApplicant2().setEmail(null);
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.getApplication().setWelshPreviousState(Holding);
+        CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(data);
+        details.setId(TEST_CASE_ID);
+        details.setState(WelshTranslationReview);
 
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.put(PARTNER, "gŵr");
 
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
 
-        soleApplicationNotDisputedNotification.sendToApplicant2(data, TEST_CASE_ID);
+        soleApplicationNotDisputedNotification.sendToApplicant2(details);
 
         verify(notificationService).sendEmail(
             eq(TEST_APPLICANT_2_USER_EMAIL),
             eq(SOLE_RESPONDENT_AOS_SUBMITTED),
+            argThat(allOf(
+                hasEntry(PARTNER, "gŵr")
+            )),
+            eq(WELSH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendAosNotDisputedEmailToSoleRespondentWithWelshPartnerContentWhenAwaitingCO() {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.getApplicant2().setEmail(null);
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+        data.getApplication().setWelshPreviousState(AwaitingConditionalOrder);
+        CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(data);
+        details.setId(TEST_CASE_ID);
+        details.setState(WelshTranslationReview);
+
+        final Map<String, String> templateVars = getMainTemplateVars();
+        templateVars.put(PARTNER, "gŵr");
+
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+
+        soleApplicationNotDisputedNotification.sendToApplicant2(details);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(SOLE_RESPONDENT_AOS_SUBMITTED_AWAITING_CO),
             argThat(allOf(
                 hasEntry(PARTNER, "gŵr")
             )),
@@ -204,12 +379,15 @@ public class SoleApplicationNotDisputedNotificationTest {
         data.getApplicant1().getSolicitor().setName(TEST_SOLICITOR_NAME);
         data.getApplicant1().getSolicitor().setReference(TEST_REFERENCE);
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(data);
+        details.setId(TEST_CASE_ID);
 
         when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
                 .thenReturn(getMainTemplateVars());
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
 
-        soleApplicationNotDisputedNotification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
+        soleApplicationNotDisputedNotification.sendToApplicant1Solicitor(details);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -237,12 +415,15 @@ public class SoleApplicationNotDisputedNotificationTest {
         CaseData data = validCaseDataForAosSubmitted();
         data.setApplicant2(applicantRepresentedBySolicitor());
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(data);
+        details.setId(TEST_CASE_ID);
         ReflectionTestUtils.setField(soleApplicationNotDisputedNotification, "holdingOffsetDays", HOLDING_OFFSET_DAYS);
 
         when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
                 .thenReturn(getMainTemplateVars());
 
-        soleApplicationNotDisputedNotification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
+        soleApplicationNotDisputedNotification.sendToApplicant2Solicitor(details);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -268,12 +449,15 @@ public class SoleApplicationNotDisputedNotificationTest {
         data.setDivorceOrDissolution(DISSOLUTION);
         data.setApplicant2(applicantRepresentedBySolicitor());
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(data);
+        details.setId(TEST_CASE_ID);
         ReflectionTestUtils.setField(soleApplicationNotDisputedNotification, "holdingOffsetDays", HOLDING_OFFSET_DAYS);
 
         when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
                 .thenReturn(getMainTemplateVars());
 
-        soleApplicationNotDisputedNotification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
+        soleApplicationNotDisputedNotification.sendToApplicant2Solicitor(details);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),

@@ -48,6 +48,7 @@ class CitizenCreateServiceRequestTest {
     public void shouldSetServiceRequestForApplicationPaymentIfCaseIsInAwaitingPayment() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = new CaseData();
+        final OrderSummary orderSummary = new OrderSummary();
         caseData.setCitizenPaymentCallbackUrl(TEST_PAYMENT_CALLBACK_URL);
         long caseId = TEST_CASE_ID;
 
@@ -55,6 +56,8 @@ class CitizenCreateServiceRequestTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
+        when(paymentSetupService.createApplicationFeeOrderSummary(caseData, caseId))
+            .thenReturn(orderSummary);
         when(paymentSetupService.createApplicationFeeServiceRequest(caseData, caseId, TEST_PAYMENT_CALLBACK_URL))
             .thenReturn(TEST_SERVICE_REFERENCE);
 
@@ -62,6 +65,8 @@ class CitizenCreateServiceRequestTest {
 
         assertThat(response.getData().getApplication().getApplicationFeeServiceRequestReference())
             .isEqualTo(TEST_SERVICE_REFERENCE);
+        assertThat(response.getData().getApplication().getApplicationFeeOrderSummary())
+            .isEqualTo(orderSummary);
     }
 
     @Test
@@ -76,6 +81,8 @@ class CitizenCreateServiceRequestTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
+        when(paymentSetupService.createFinalOrderFeeOrderSummary(caseData, TEST_CASE_ID))
+                .thenReturn(orderSummary);
         when(paymentSetupService.createFinalOrderFeeServiceRequest(caseData, TEST_CASE_ID, TEST_PAYMENT_CALLBACK_URL, orderSummary))
             .thenReturn(TEST_SERVICE_REFERENCE);
 
@@ -83,5 +90,9 @@ class CitizenCreateServiceRequestTest {
 
         assertThat(response.getData().getFinalOrder().getApplicant2FinalOrderFeeServiceRequestReference())
             .isEqualTo(TEST_SERVICE_REFERENCE);
+        assertThat(response.getData().getFinalOrder().getApplicant2FinalOrderFeeOrderSummary())
+            .isEqualTo(orderSummary);
+        assertThat(response.getData().getFinalOrder().getApplicant2SolFinalOrderFeeOrderSummary())
+            .isEqualTo(orderSummary);
     }
 }
