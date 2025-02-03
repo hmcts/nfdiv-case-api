@@ -15,7 +15,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.EnumSet;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -36,7 +38,7 @@ public class SuperuserWithdrawn implements CCDConfig<CaseData, State, UserRole> 
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SUPERUSER_WITHDRAWN)
-            .forStateTransition(EnumSet.complementOf(POST_SUBMISSION_STATES), Withdrawn)
+            .forStateTransition(PRE_SUBMISSION_STATES, Withdrawn)
             .name("Withdraw")
             .description("Withdrawn")
             .showEventNotes()
