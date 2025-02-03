@@ -399,6 +399,60 @@ class SolicitorStopRepresentingClientTest {
         verify(nocSolRemovedCitizenNotification).send(details.getData(), true, TEST_CASE_ID);
     }
 
+    @Test
+    void shouldSetApplicant2ToOfflineInJointCaseWhenApp1SolicitorStopsRepresentation() {
+        final var beforeDetails = getCaseDetails();
+        final var details = getCaseDetails();
+        details.setId(TEST_CASE_ID);
+        details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(
+            Organisation.builder()
+                .organisationId(TEST_ORG_ID)
+                .build()
+        );
+        details.getData().getApplicant2().getSolicitor().getOrganisationPolicy().setOrganisation(
+            Organisation.builder()
+                .organisationId(TEST_ORG_ID)
+                .build()
+        );
+        details.getData().setApplicationType(JOINT_APPLICATION);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(true);
+
+        List<String> roles = List.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
+
+        var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        assertThat(result.getData().getApplicant2().getOffline()).isEqualTo(YES);
+    }
+
+    @Test
+    void shouldSetApplicant1ToOfflineInJointCaseWhenApp2SolicitorStopsRepresentation() {
+        final var beforeDetails = getCaseDetails();
+        final var details = getCaseDetails();
+        details.setId(TEST_CASE_ID);
+        details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(
+            Organisation.builder()
+                .organisationId(TEST_ORG_ID)
+                .build()
+        );
+        details.getData().getApplicant2().getSolicitor().getOrganisationPolicy().setOrganisation(
+            Organisation.builder()
+                .organisationId(TEST_ORG_ID)
+                .build()
+        );
+        details.getData().setApplicationType(JOINT_APPLICATION);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(false);
+
+        List<String> roles = List.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
+
+        var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        assertThat(result.getData().getApplicant1().getOffline()).isEqualTo(YES);
+    }
+
     private void assertSolicitorRemoved(Applicant applicant, UserRole solicitorRole) {
         final OrganisationPolicy organisationPolicy = applicant.getSolicitor().getOrganisationPolicy();
 

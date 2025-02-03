@@ -126,6 +126,12 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
 
         removeSolicitorDetailsFromCaseData(applicant.apply(details.getData()), orgPolicyRole);
 
+        if (details.getData().getApplicationType() == ApplicationType.JOINT_APPLICATION) {
+            final Applicant otherApplicant = isRepresentingApplicant1 ? details.getData().getApplicant2()
+                : details.getData().getApplicant1();
+            otherApplicant.setOffline(YES);
+        }
+
         changeOfRepresentativeService.buildChangeOfRepresentative(
             details.getData(),
             beforeDetails.getData(),
