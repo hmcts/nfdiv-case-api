@@ -43,10 +43,10 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED_CY;
@@ -57,6 +57,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PH
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.REQUEST_FOR_INFORMATION_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_OR_APPLICANT2;
@@ -67,7 +68,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.HUSBAND_CY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
-import static uk.gov.hmcts.divorce.notification.CommonContent.REQUEST_FOR_INFORMATION_DETAILS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SENT_TO_BOTH_APPLICANTS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE;
@@ -117,7 +117,7 @@ public class RequestForInformationTemplateContentTest {
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT),
             entry(RECIPIENT_NAME, caseData.getApplicant1().getFullName()),
             entry(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck()),
-            entry(ISSUE_DATE, LocalDate.now()),
+            entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
             entry(WEBFORM_URL, WEBFORM_TEST_URL),
             entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
@@ -146,7 +146,7 @@ public class RequestForInformationTemplateContentTest {
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT),
             entry(RECIPIENT_NAME, caseData.getApplicant2().getFullName()),
             entry(RECIPIENT_ADDRESS, caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck()),
-            entry(ISSUE_DATE, LocalDate.now()),
+            entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
             entry(WEBFORM_URL, WEBFORM_TEST_URL),
             entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
@@ -176,7 +176,7 @@ public class RequestForInformationTemplateContentTest {
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY),
             entry(RECIPIENT_NAME, caseData.getApplicant1().getFullName()),
             entry(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck()),
-            entry(ISSUE_DATE, LocalDate.now()),
+            entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
             entry(WEBFORM_URL, WEBFORM_TEST_URL_CY),
             entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
@@ -208,7 +208,7 @@ public class RequestForInformationTemplateContentTest {
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT),
             entry(RECIPIENT_NAME, caseData.getApplicant1().getFullName()),
             entry(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck()),
-            entry(ISSUE_DATE, LocalDate.now()),
+            entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
             entry(WEBFORM_URL, WEBFORM_TEST_URL),
             entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
@@ -241,7 +241,7 @@ public class RequestForInformationTemplateContentTest {
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY),
             entry(RECIPIENT_NAME, caseData.getApplicant1().getFullName()),
             entry(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck()),
-            entry(ISSUE_DATE, LocalDate.now()),
+            entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
             entry(WEBFORM_URL, WEBFORM_TEST_URL_CY),
             entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
@@ -273,7 +273,7 @@ public class RequestForInformationTemplateContentTest {
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT),
             entry(RECIPIENT_NAME, caseData.getApplicant2().getFullName()),
             entry(RECIPIENT_ADDRESS, caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck()),
-            entry(ISSUE_DATE, LocalDate.now()),
+            entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
             entry(WEBFORM_URL, WEBFORM_TEST_URL),
             entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
@@ -306,7 +306,7 @@ public class RequestForInformationTemplateContentTest {
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY),
             entry(RECIPIENT_NAME, caseData.getApplicant2().getFullName()),
             entry(RECIPIENT_ADDRESS, caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck()),
-            entry(ISSUE_DATE, LocalDate.now()),
+            entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
             entry(WEBFORM_URL, WEBFORM_TEST_URL_CY),
             entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
@@ -340,7 +340,7 @@ public class RequestForInformationTemplateContentTest {
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT),
             entry(RECIPIENT_NAME, caseData.getApplicant1().getSolicitor().getName()),
             entry(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck()),
-            entry(ISSUE_DATE, LocalDate.now()),
+            entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
             entry(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName()),
             entry(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName()),
@@ -387,7 +387,7 @@ public class RequestForInformationTemplateContentTest {
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY),
             entry(RECIPIENT_NAME, caseData.getApplicant1().getSolicitor().getName()),
             entry(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck()),
-            entry(ISSUE_DATE, LocalDate.now()),
+            entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
             entry(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName()),
             entry(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName()),
@@ -433,7 +433,7 @@ public class RequestForInformationTemplateContentTest {
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT),
             entry(RECIPIENT_NAME, caseData.getApplicant2().getSolicitor().getName()),
             entry(RECIPIENT_ADDRESS, caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck()),
-            entry(ISSUE_DATE, LocalDate.now()),
+            entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
             entry(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName()),
             entry(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName()),
@@ -480,7 +480,7 @@ public class RequestForInformationTemplateContentTest {
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY),
             entry(RECIPIENT_NAME, caseData.getApplicant2().getSolicitor().getName()),
             entry(RECIPIENT_ADDRESS, caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck()),
-            entry(ISSUE_DATE, LocalDate.now()),
+            entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
             entry(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName()),
             entry(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName()),
@@ -530,7 +530,7 @@ public class RequestForInformationTemplateContentTest {
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT),
             entry(RECIPIENT_NAME, caseData.getApplicant1().getSolicitor().getName()),
             entry(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck()),
-            entry(ISSUE_DATE, LocalDate.now()),
+            entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
             entry(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName()),
             entry(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName()),
@@ -580,7 +580,7 @@ public class RequestForInformationTemplateContentTest {
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY),
             entry(RECIPIENT_NAME, caseData.getApplicant1().getSolicitor().getName()),
             entry(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck()),
-            entry(ISSUE_DATE, LocalDate.now()),
+            entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
             entry(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName()),
             entry(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName()),
@@ -628,7 +628,7 @@ public class RequestForInformationTemplateContentTest {
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT),
             entry(RECIPIENT_NAME, caseData.getApplicant2().getSolicitor().getName()),
             entry(RECIPIENT_ADDRESS, caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck()),
-            entry(ISSUE_DATE, LocalDate.now()),
+            entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
             entry(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName()),
             entry(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName()),
@@ -677,7 +677,7 @@ public class RequestForInformationTemplateContentTest {
             entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY),
             entry(RECIPIENT_NAME, caseData.getApplicant2().getSolicitor().getName()),
             entry(RECIPIENT_ADDRESS, caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck()),
-            entry(ISSUE_DATE, LocalDate.now()),
+            entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
             entry(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName()),
             entry(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName()),

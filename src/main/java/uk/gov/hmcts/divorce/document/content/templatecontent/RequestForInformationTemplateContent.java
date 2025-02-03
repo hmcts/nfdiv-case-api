@@ -17,12 +17,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointP
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.REQUEST_FOR_INFORMATION_DETAILS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
-import static uk.gov.hmcts.divorce.notification.CommonContent.REQUEST_FOR_INFORMATION_DETAILS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SENT_TO_BOTH_APPLICANTS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
@@ -64,7 +64,7 @@ public class RequestForInformationTemplateContent implements TemplateContent {
         }
 
         templateContent.put(RECIPIENT_ADDRESS, applicant.getCorrespondenceAddressWithoutConfidentialCheck());
-        templateContent.put(ISSUE_DATE, LocalDate.now());
+        templateContent.put(DATE, LocalDate.now());
         templateContent.put(CASE_REFERENCE, caseId);
         templateContent.put(WEBFORM_URL, commonContent.getWebFormUrl(applicant.getLanguagePreference()));
         templateContent.put(REQUEST_FOR_INFORMATION_DETAILS, requestForInformation.getRequestForInformationDetails());

@@ -227,6 +227,8 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_2 = "Applicant 2:";
     public static final String APPLICANT_2_CY = "Ceisydd 2:";
 
+    public static final String REQUEST_FOR_INFORMATION_DETAILS = "requestForInformationDetails";
+
     private DocmosisTemplateConstants() {
     }
 }
