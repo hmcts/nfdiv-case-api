@@ -519,6 +519,11 @@ public enum State {
     ));
 
     public static final EnumSet<State> STATES_NOT_WITHDRAWN_OR_REJECTED = EnumSet.complementOf(EnumSet.of(
+        Withdrawn,
+        Rejected
+    ));
+
+    public static final EnumSet<State> STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED = EnumSet.complementOf(EnumSet.of(
         Draft,
         Withdrawn,
         Rejected
