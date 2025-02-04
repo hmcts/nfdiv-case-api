@@ -109,14 +109,6 @@ public class CaseDocuments {
     private List<ListValue<ScannedDocument>> scannedDocuments;
 
     @CCD(
-        label = "Confidential Scanned documents",
-        typeOverride = Collection,
-        typeParameterOverride = "ScannedDocument",
-        access = {SystemUpdateAndSuperUserAccess.class}
-    )
-    private List<ListValue<ScannedDocument>> confidentialScannedDocuments;
-
-    @CCD(
         label = "Upload Answer Received supporting documents",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",

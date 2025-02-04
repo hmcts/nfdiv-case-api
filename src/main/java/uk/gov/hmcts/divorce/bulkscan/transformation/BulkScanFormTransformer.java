@@ -36,7 +36,7 @@ public abstract class BulkScanFormTransformer {
         // Need to store the Exception Record id as part of the CCD data
         caseData.put(BULK_SCAN_CASE_REFERENCE, transformationInput.getId());
 
-        caseData.putAll(transformScannedDocuments(transformationInput));
+        caseData.put("scannedDocuments", transformScannedDocuments(transformationInput));
 
         Map<String, Object> formSpecificMap = runFormSpecificTransformation(
             ocrDataFields,
@@ -48,9 +48,8 @@ public abstract class BulkScanFormTransformer {
         return caseData;
     }
 
-    private Map<String, Object> transformScannedDocuments(final TransformationInput transformationInput) {
+    private List<ListValue<ScannedDocument>> transformScannedDocuments(final TransformationInput transformationInput) {
         List<ListValue<ScannedDocument>> scannedDocuments = new ArrayList<>();
-        List<ListValue<ScannedDocument>> confidentialScannedDocuments = new ArrayList<>();
         transformationInput.getScannedDocuments().forEach(
             inputScannedDoc -> {
                 var scannedDocListValue = ListValue.<ScannedDocument>builder()
@@ -75,18 +74,10 @@ public abstract class BulkScanFormTransformer {
                     .id(UUID.randomUUID().toString())
                     .build();
 
-                if (scannedDocListValue.getValue().getSubtype().equals("Confidential")
-                    || scannedDocListValue.getValue().getSubtype().equals("Confidential D10")) {
-                    confidentialScannedDocuments.add(scannedDocListValue);
-                } else {
-                    scannedDocuments.add(scannedDocListValue);
-                }
+                scannedDocuments.add(scannedDocListValue);
             }
         );
-        Map<String, Object> compiledDocuments = new HashMap<>();
-        compiledDocuments.put("scannedDocuments", scannedDocuments);
-        compiledDocuments.put("confidentialScannedDocuments", confidentialScannedDocuments);
-        return compiledDocuments;
+        return scannedDocuments;
     }
 
     abstract Map<String, Object> runFormSpecificTransformation(

@@ -95,7 +95,6 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
         final CaseData beforeCaseData = beforeDetails.getData();
         caseData.getApplication().setPreviousState(beforeDetails.getState());
         handleScannedDocument(caseData, beforeCaseData);
-        handleConfidentialScannedDocument(caseData, beforeCaseData);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -111,19 +110,6 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
 
         if (mostRecentScannedSubtypeReceived.isPresent()) {
             final ScannedDocument scannedDocument = mostRecentScannedSubtypeReceived.get();
-            handleDocumentWithSubtype(scannedDocument, caseData);
-        }
-    }
-
-    private void handleConfidentialScannedDocument(CaseData caseData, CaseData beforeCaseData) {
-
-        Optional<ScannedDocument> mostRecentConfidentialScannedSubtypeReceived = getMostRecentDocumentFromLists(
-            caseData.getDocuments().getConfidentialScannedDocuments(),
-            beforeCaseData.getDocuments().getConfidentialScannedDocuments()
-        );
-
-        if (mostRecentConfidentialScannedSubtypeReceived.isPresent()) {
-            final ScannedDocument scannedDocument = mostRecentConfidentialScannedSubtypeReceived.get();
             handleDocumentWithSubtype(scannedDocument, caseData);
         }
     }
