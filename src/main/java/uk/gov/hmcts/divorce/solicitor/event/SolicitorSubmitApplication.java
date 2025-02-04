@@ -201,6 +201,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .description("Agree statement of truth, pay & submit")
             .showSummary()
             .showEventNotes()
+            .ttlIncrement(36524)
             .showCondition("applicationType=\"soleApplication\" OR [STATE]=\"Applicant2Approved\"")
             .endButtonLabel("Submit Application")
             .aboutToStartCallback(this::aboutToStart)

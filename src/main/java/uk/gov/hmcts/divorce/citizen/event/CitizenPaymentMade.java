@@ -51,6 +51,7 @@ public class CitizenPaymentMade implements CCDConfig<CaseData, State, UserRole> 
             .event(CITIZEN_PAYMENT_MADE)
             .forStates(AwaitingPayment, AwaitingResponseToHWFDecision)
             .showCondition(NEVER_SHOW)
+            .ttlIncrement(36524)
             .name("Payment made")
             .description("Payment made")
             .retries(120, 120)
