@@ -275,7 +275,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     }
 
     private boolean isApplicantAddressInvalid(Applicant applicant) {
-        return isEmpty(applicant.getCorrespondenceAddressWithoutConfidentialCheck()) && applicant.isApplicantOffline();
+        return applicant.isApplicantOffline() && isEmpty(applicant.getCorrespondenceAddressWithoutConfidentialCheck());
     }
 
     private void isAddressValid(CaseData caseData, Applicant applicant, List<String> errors) {
