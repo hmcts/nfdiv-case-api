@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -15,11 +16,14 @@ import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.COVERSHEET;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.OTHER;
@@ -31,6 +35,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerRemoveScannedDocumentTest {
+
+    @Mock
+    private DocumentRemovalService documentRemovalService;
 
     @InjectMocks
     private CaseworkerRemoveScannedDocument caseworkerRemoveScannedDocument;
@@ -102,6 +109,27 @@ class CaseworkerRemoveScannedDocumentTest {
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0))
             .isEqualTo("Scanned documents cannot be added by 'Remove scanned documents'");
+    }
+
+    @Test
+    void shouldDeleteDocumentsByDelegatingToDocRemovalService() {
+        final ListValue<ScannedDocument> doc1 =
+            getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "d9d.pdf", FORM);
+
+        final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
+        final CaseData previousCaseData = caseData();
+        previousCaseData.getDocuments().setScannedDocuments(List.of(doc1));
+        previousCaseDetails.setData(previousCaseData);
+
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.getDocuments().setScannedDocuments(Collections.emptyList());
+        updatedCaseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerRemoveScannedDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
+
+        verify(documentRemovalService).handleDeletionOfScannedDocuments(previousCaseData, caseData);
     }
 
     private ListValue<ScannedDocument> getDocumentListValue(final String url,
