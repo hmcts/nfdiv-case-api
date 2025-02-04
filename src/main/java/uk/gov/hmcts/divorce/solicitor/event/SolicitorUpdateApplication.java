@@ -95,7 +95,6 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
             .description("Amend divorce application")
             .showSummary()
             .showEventNotes()
-            .ttlIncrement(180)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR));
     }

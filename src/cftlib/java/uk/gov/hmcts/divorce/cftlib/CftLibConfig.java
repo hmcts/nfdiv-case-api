@@ -28,7 +28,7 @@ public class CftLibConfig implements CFTLibConfigurer {
     @Override
     public void configure(CFTLib lib) throws Exception {
         var users = Map.of(
-            "DivCaseWorkerUser@AAT.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-courtadmin_beta", "TTL_profile"),
+            "DivCaseWorkerUser@AAT.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-courtadmin_beta"),
             "DivCaseSuperUser@AAT.com", List.of(
                 "caseworker", "caseworker-divorce", "caseworker-divorce-superuser", "caseworker-divorce-courtadmin_beta"),
             "TEST_CASE_WORKER_USER@mailinator.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-courtadmin_beta"),
@@ -65,8 +65,7 @@ public class CftLibConfig implements CFTLibConfigurer {
             "pui-case-manager",
             "pui-finance-manager",
             "pui-organisation-manager",
-            "pui-user-manager",
-            "TTL_profile"
+            "pui-user-manager"
         );
 
         ResourceLoader resourceLoader = new DefaultResourceLoader();
