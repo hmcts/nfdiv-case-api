@@ -95,6 +95,15 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private static final String NOTICE_OF_CHANGE_HAS_BEEN_APPLIED = "changeOrganisationRequestField=\"*\" OR nocWhichApplicant=\"*\"";
 
+    private static final String AOS_SUBMITTED = "dateAosSubmitted=\"*\"";
+    private static final String AOS_SUBMITTED_APP_2_ONLINE = "dateAosSubmitted=\"*\" AND applicant2Offline=\"No\"";
+    private static final String AOS_SUBMITTED_APP_2_OFFLINE = "dateAosSubmitted=\"*\" AND applicant2Offline=\"Yes\"";
+    private static final String AOS_SUBMITTED_NO_JURISDICTION = "dateAosSubmitted=\"*\" AND jurisdictionAgree=\"No\"";
+    private static final String AOS_SUBMITTED_APP_2_REPRESENTED = "dateAosSubmitted=\"*\" AND applicant2SolicitorRepresented=\"Yes\"";
+    private static final String AOS_SUBMITTED_APP_2_PRIVATE_REPRESENTED =
+        "dateAosSubmitted=\"*\" AND applicant2ContactDetailsType!=\"private\" AND applicant2SolicitorRepresented!=\"Yes\"";
+    private static final String AOS_SUBMITTED_STATEMENT_OF_TRUTH = "dateAosSubmitted=\"*\" AND statementOfTruth!=\"*\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -163,28 +172,27 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 )
             )
             .field("applicant2Offline", NEVER_SHOW)
-            .label("LabelAosTabOnlineResponse-Heading", "applicant2Offline=\"No\"",
+            .label("LabelAosTabOnlineResponse-Heading", AOS_SUBMITTED_APP_2_ONLINE,
                 "## This is an online AoS response")
-            .label("LabelAosTabOfflineResponse-Heading", "applicant2Offline=\"Yes\"",
+            .label("LabelAosTabOfflineResponse-Heading", AOS_SUBMITTED_APP_2_OFFLINE,
                 "## This is an offline AoS response")
-            .field("confirmReadPetition")
-            .field("jurisdictionAgree")
-            .field("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", "jurisdictionAgree=\"No\"")
-            .field("inWhichCountryIsYourLifeMainlyBased", "jurisdictionAgree=\"No\"")
-            .field("intendToDelay")
-            .field("applicant2LegalProceedings")
-            .field("applicant2LegalProceedingsDetails")
-            .field("dueDate")
-            .field("howToRespondApplication")
-            .field("applicant2LanguagePreferenceWelsh")
-            .field("applicant2SolicitorRepresented")
-            .field("applicant2SolicitorEmail","applicant2SolicitorRepresented=\"Yes\"")
-            .field("noticeOfProceedingsEmail",
-                "applicant2ContactDetailsType!=\"private\" AND applicant2SolicitorRepresented!=\"Yes\"")
-            .field("noticeOfProceedingsSolicitorFirm")
+            .field("confirmReadPetition", AOS_SUBMITTED)
+            .field("jurisdictionAgree", AOS_SUBMITTED)
+            .field("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", AOS_SUBMITTED_NO_JURISDICTION)
+            .field("inWhichCountryIsYourLifeMainlyBased", AOS_SUBMITTED_NO_JURISDICTION)
+            .field("intendToDelay", AOS_SUBMITTED)
+            .field("applicant2LegalProceedings", AOS_SUBMITTED)
+            .field("applicant2LegalProceedingsDetails", AOS_SUBMITTED)
+            .field("dueDate", AOS_SUBMITTED)
+            .field("howToRespondApplication", AOS_SUBMITTED)
+            .field("applicant2LanguagePreferenceWelsh", AOS_SUBMITTED)
+            .field("applicant2SolicitorRepresented", AOS_SUBMITTED)
+            .field("applicant2SolicitorEmail", AOS_SUBMITTED_APP_2_REPRESENTED)
+            .field("noticeOfProceedingsEmail", AOS_SUBMITTED_APP_2_PRIVATE_REPRESENTED)
+            .field("noticeOfProceedingsSolicitorFirm", AOS_SUBMITTED)
             .field("applicant2SolicitorRepresented", NEVER_SHOW)
-            .field("statementOfTruth")
-            .field("applicant2StatementOfTruth", "statementOfTruth!=\"*\"")
+            .field("statementOfTruth", AOS_SUBMITTED)
+            .field("applicant2StatementOfTruth", AOS_SUBMITTED_STATEMENT_OF_TRUTH)
             .field("dateAosSubmitted")
             .field("aosIsDrafted", NEVER_SHOW);
     }
