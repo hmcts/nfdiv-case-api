@@ -109,7 +109,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         CaseData responseData = objectMapper.convertValue(data, CaseData.class);
 
         try {
-            notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, caseData,
+            notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, responseData,
                 beforeCaseData, details.getId(), isApplicant1, NEW_DIGITAL_SOLICITOR_NEW_ORG);
         } catch (final NotificationTemplateException e) {
             log.error(NOTIFICATION_FAILED_ERROR, details.getId(), e.getMessage(), e);
