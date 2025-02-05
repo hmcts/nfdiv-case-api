@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.Collections;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -46,7 +47,7 @@ public class CaseworkerResetConditionalOrderFlags implements CCDConfig<CaseData,
 
         new PageBuilder(configBuilder
             .event(CASEWORKER_RESET_CONDITIONAL_ORDER)
-            .forState(AwaitingConditionalOrder)
+            .forStates(AwaitingConditionalOrder, ConditionalOrderDrafted)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .name(RESET_CONDITIONAL_ORDER)
             .description(RESET_CONDITIONAL_ORDER)
