@@ -57,7 +57,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINA
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_COPIES;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_ABC;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_COPIES;
 import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -116,7 +116,7 @@ public class FinalOrderGrantedNotificationTest {
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_ABC)).thenReturn(11.0);
+        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_COPIES)).thenReturn(11.0);
 
         finalOrderGrantedNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
@@ -153,7 +153,7 @@ public class FinalOrderGrantedNotificationTest {
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
-        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_ABC)).thenReturn(11.0);
+        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_COPIES)).thenReturn(11.0);
 
         finalOrderGrantedNotification.sendToApplicant1(caseData, TEST_CASE_ID);
 
@@ -239,7 +239,7 @@ public class FinalOrderGrantedNotificationTest {
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_ABC)).thenReturn(11.0);
+        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_COPIES)).thenReturn(11.0);
 
         finalOrderGrantedNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
@@ -277,7 +277,7 @@ public class FinalOrderGrantedNotificationTest {
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
-        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_ABC)).thenReturn(11.0);
+        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_COPIES)).thenReturn(11.0);
 
         finalOrderGrantedNotification.sendToApplicant2(caseData, TEST_CASE_ID);
 
