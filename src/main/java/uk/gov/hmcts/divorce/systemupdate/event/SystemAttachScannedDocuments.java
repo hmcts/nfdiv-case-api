@@ -131,7 +131,7 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
                 return;
             }
 
-            if (!documentType.isConfidential()) {
+            if (scannedDocumentSubtype != null && !scannedDocumentSubtype.isConfidential()) {
                 caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, scannedDocument);
             }
 
@@ -151,10 +151,8 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
 
         // TODO: extend once Nullity document types added
 
-        if (D10.equals(scannedDocumentSubtype)) {
+        if (D10.equals(scannedDocumentSubtype) || CONFIDENTIAL_D10.equals(scannedDocumentSubtype)) {
             return RESPONDENT_ANSWERS;
-        } else if (CONFIDENTIAL_D10.equals(scannedDocumentSubtype)) {
-            return CONFIDENTIAL_RESPONDENT_ANSWERS;
         } else if (CONFIDENTIAL.equals(scannedDocumentSubtype)) {
             return C8;
         } else if (D84.equals(scannedDocumentSubtype)) {

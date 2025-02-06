@@ -28,6 +28,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -201,17 +202,19 @@ public class CaseDocuments {
         RFIR("RFIR");
 
         private final String label;
+
+        public static final EnumSet<ScannedDocumentSubtypes> CONFIDENTIAL_DOCUMENT_TYPES = EnumSet.of(
+            CONFIDENTIAL_D10, CONFIDENTIAL
+        );
+
+        public boolean isConfidential() {
+            return CONFIDENTIAL_DOCUMENT_TYPES.contains(this);
+        }
     }
 
     @Getter
     @AllArgsConstructor
     public enum OfflineDocumentReceived implements HasLabel {
-
-        @JsonProperty("Confidential")
-        CONFIDENTIAL("Confidential"),
-
-        @JsonProperty("ConfidentialD10")
-        AOS_CONFIDENTIAL_D10("Acknowledgement of service (Confidential D10)"),
 
         @JsonProperty("D10")
         AOS_D10("Acknowledgement of service (D10)"),

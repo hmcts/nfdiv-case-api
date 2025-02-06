@@ -34,7 +34,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.InternalCaseFlagsAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
-import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
@@ -580,18 +579,7 @@ public class CaseData {
         );
     }
 
-    @JsonIgnore
-    public void reclassifyScannedDocumentToChosenDocumentType(
-        DocumentType documentType, Clock clock, ScannedDocument scannedDocument
-    ) {
-        if (documentType.isConfidential()) {
-            reclassifyConfidentialScannedDocumentType(documentType, clock, scannedDocument);
-        } else {
-            reclassifyUnconfidentialScannedDocumentType(documentType, clock, scannedDocument);
-        }
-    }
-
-    private void reclassifyUnconfidentialScannedDocumentType(
+    private void reclassifyScannedDocumentToChosenDocumentType(
         DocumentType documentType, Clock clock, ScannedDocument scannedDocument
     ) {
         DivorceDocument divorceDocument = documents.mapScannedDocumentToDivorceDocument(
@@ -625,23 +613,6 @@ public class CaseData {
                 this.getRequestForInformationList().getRequestForInformationOfflineResponseDraft();
             offlineDraft.addDocument(divorceDocument);
         }
-    }
-
-    private void reclassifyConfidentialScannedDocumentType(
-        DocumentType documentType, Clock clock, ScannedDocument scannedDocument
-    ) {
-        ConfidentialDivorceDocument confidentialDivorceDocument = documents.mapScannedDocumentToConfidentialDivorceDocument(
-            scannedDocument,
-            documentType,
-            clock
-        );
-
-        List<ListValue<ConfidentialDivorceDocument>> updatedConfidentialDocumentsUploaded = addDocumentToTop(
-            documents.getConfidentialDocumentsUploaded(),
-            confidentialDivorceDocument
-        );
-
-        documents.setConfidentialDocumentsUploaded(updatedConfidentialDocumentsUploaded);
     }
 
     @JsonIgnore
