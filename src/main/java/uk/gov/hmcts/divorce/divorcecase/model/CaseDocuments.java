@@ -358,24 +358,13 @@ public class CaseDocuments {
     public DivorceDocument mapScannedDocumentToDivorceDocument(final ScannedDocument scannedDocument,
                                                                final DocumentType documentType,
                                                                final Clock clock) {
+
         return DivorceDocument.builder()
             .documentLink(scannedDocument.getUrl())
             .documentFileName(scannedDocument.getFileName())
             .documentDateAdded(LocalDate.now(clock))
             .documentType(documentType)
             .documentComment("Reclassified scanned document")
-            .build();
-    }
-
-    @JsonIgnore
-    public ConfidentialDivorceDocument mapScannedDocumentToConfidentialDivorceDocument(final ScannedDocument scannedDocument,
-                                                               final DocumentType documentType,
-                                                               final Clock clock) {
-        return ConfidentialDivorceDocument.builder()
-            .documentLink(scannedDocument.getUrl())
-            .documentFileName(scannedDocument.getFileName())
-            .documentDateAdded(LocalDate.now(clock))
-            .documentComment("Reclassified confidential scanned document")
             .build();
     }
 
