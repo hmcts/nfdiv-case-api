@@ -322,7 +322,7 @@ public class CaseDocuments {
             .findFirst();
     }
 
-    public static boolean scannedSubtypeGetsReclassifiedAutomatically(ScannedDocumentSubtypes scannedDocumentSubtype) {
+    public static boolean scannedDocumentReclassifiedAutomatically(ScannedDocumentSubtypes scannedDocumentSubtype) {
         return scannedDocumentSubtype != null && !scannedDocumentSubtype.isConfidential();
     }
 

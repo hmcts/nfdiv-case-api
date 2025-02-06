@@ -47,8 +47,7 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
             .pageLabel("Select Fee Type")
             .complex(CaseData::getGeneralApplication)
                 .mandatory(GeneralApplication::getGeneralApplicationFeeType)
-            .done()
-            .label("dummyLabel", "Refer to the <a href=\"https://www.gov.uk/government/publications/myhmcts-how-to-apply-online-for-a-divorce-or-dissolution\">Solicitor Guidance</a> if you are unsure");
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(

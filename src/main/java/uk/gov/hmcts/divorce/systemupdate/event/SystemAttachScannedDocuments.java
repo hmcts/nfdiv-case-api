@@ -32,8 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.scannedSubtypeGetsReclassifiedAutomatically;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.scannedDocTypeIsReclassifiedAutomatically;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.scannedDocumentReclassifiedAutomatically;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -43,7 +42,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.C8;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONFIDENTIAL_RESPONDENT_ANSWERS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 
@@ -133,7 +131,7 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
                 return;
             }
 
-            if (scannedSubtypeGetsReclassifiedAutomatically(scannedDocumentSubtype)) {
+            if (scannedDocumentReclassifiedAutomatically(scannedDocumentSubtype)) {
                 caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, scannedDocument);
             }
 

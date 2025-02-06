@@ -58,7 +58,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.RFIR;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.scannedSubtypeGetsReclassifiedAutomatically;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.scannedDocumentReclassifiedAutomatically;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.OTHER;
@@ -111,6 +111,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     public static final String REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR
         = "Request for Information Response Partner Notification for Case Id {} failed with message: {}";
 
+    private static final String SCANNED_DOCUMENT_RECLASSIFIED_AUTOMATICALLY =
+        "(scannedSubtypeReceived=\"*\" AND scannedSubtypeReceived!=\"ConfidentialD10\" AND scannedSubtypeReceived=\"Confidential\")";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -130,22 +133,25 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             .complex(CaseData::getDocuments)
                 .readonlyNoSummary(CaseDocuments::getScannedSubtypeReceived, ALWAYS_HIDE)
-                .mandatory(
-                    CaseDocuments::getTypeOfDocumentAttached,
-                    "scannedSubtypeReceived!=\"*\" OR scannedSubtypeReceived!=\"ConfidentialD10\" OR scannedSubtypeReceived=\"Confidential\"",
+                .mandatory(CaseDocuments::getTypeOfDocumentAttached,
+                    SCANNED_DOCUMENT_RECLASSIFIED_AUTOMATICALLY,
                     true
                 )
             .done()
             .complex(CaseData::getAcknowledgementOfService)
-                .label("scannedAosLabel", "Acknowledgement Of Service", "scannedSubtypeReceived=\"D10\"")
+                .label(
+                    "scannedAosLabel",
+                    "Acknowledgement Of Service",
+                    "scannedSubtypeReceived=\"D10\" OR scannedSubtypeReceived=\"ConfidentialD10\""
+                )
                 .mandatory(AcknowledgementOfService::getHowToRespondApplication,
                     "typeOfDocumentAttached=\"D10\" OR scannedSubtypeReceived=\"D10\"")
             .done()
             .complex(CaseData::getDocuments)
                 .mandatory(CaseDocuments::getScannedDocumentNames,
-                        "(scannedSubtypeReceived!=\"*\" OR scannedSubtypeReceived=\"ConfidentialD10\")"
-                            + "AND (typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\") "
-                            + "OR typeOfDocumentAttached=\"RFIR\"")
+                    SCANNED_DOCUMENT_RECLASSIFIED_AUTOMATICALLY
+                        + "AND (typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\") "
+                        + "OR typeOfDocumentAttached=\"RFIR\"")
             .done()
             .complex(CaseData::getConditionalOrder)
                 .label("scannedCoLabel", "Conditional Order", "scannedSubtypeReceived=\"D84\"")
@@ -215,7 +221,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             caseData.getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
         }
 
-        if (!scannedSubtypeGetsReclassifiedAutomatically(scannedSubtypeReceived)) {
+        if (!scannedDocumentReclassifiedAutomatically(scannedSubtypeReceived)) {
             List<DynamicListElement> scannedDocumentNames =
                 emptyIfNull(caseData.getDocuments().getScannedDocuments())
                     .stream()
@@ -268,18 +274,17 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
-        final CaseData caseData = details.getData();
-        final CaseDocuments.OfflineDocumentReceived documentType = caseData.getDocuments().getTypeOfDocumentAttached();
+        CaseData caseData = details.getData();
         log.info("Scanned subtype received is {} for case {}", caseData.getDocuments().getScannedSubtypeReceived(), details.getId());
-        log.info("Type of document attached is {} for case {}", documentType, details.getId());
+        log.info("Type of document attached is {} for case {}", caseData.getDocuments().getTypeOfDocumentAttached(), details.getId());
 
-        if (AOS_D10.equals(documentType)) {
+        if (AOS_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
             return processD10AndSendNotifications(details);
-        } else if (CO_D84.equals(documentType)) {
+        } else if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
             return processD84AndSendNotifications(details);
-        } else if (FO_D36.equals(documentType)) {
+        } else if (FO_D36.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
             return processD36AndSendNotifications(details);
-        } else if (RFI_RESPONSE.equals(documentType)) {
+        } else if (RFI_RESPONSE.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
             return processRfiResponse(details);
         } else {
             State state = caseData.getApplication().getStateToTransitionApplicationTo();
@@ -313,6 +318,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     private AboutToStartOrSubmitResponse<CaseData, State> processD36AndSendNotifications(CaseDetails<CaseData, State> details) {
         log.info("Verifying FO D36 for case {}", details.getId());
         CaseData caseData = details.getData();
+
 
         reclassifyScannedDocumentToChosenDocumentType(caseData, FINAL_ORDER_APPLICATION);
 
@@ -429,7 +435,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     private void reclassifyScannedDocumentToChosenDocumentType(CaseData caseData, DocumentType documentType) {
         CaseDocuments.ScannedDocumentSubtypes scannedDocumentSubtype = caseData.getDocuments().getScannedSubtypeReceived();
 
-        if (!scannedSubtypeGetsReclassifiedAutomatically(scannedDocumentSubtype)) {
+        if (!scannedDocumentReclassifiedAutomatically(scannedDocumentSubtype)) {
             String filename = caseData.getDocuments().getScannedDocumentNames().getValueLabel();
 
             log.info("Reclassifying scanned doc {} to {} doc type", filename, documentType);
