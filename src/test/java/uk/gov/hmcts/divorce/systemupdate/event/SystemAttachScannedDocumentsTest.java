@@ -27,8 +27,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.api.Event.ATTACH_SCANNED_DOCS;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.CONFIDENTIAL;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.CONFIDENTIAL_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
@@ -45,9 +43,6 @@ public class SystemAttachScannedDocumentsTest {
 
     private static final List<ListValue<ScannedDocument>> BEFORE_SCANNED_DOCUMENTS =
         scannedDocuments(asList(D10.getLabel(), D84.getLabel()));
-
-    private static final List<ListValue<ScannedDocument>> BEFORE_CONFIDENTIAL_SCANNED_DOCUMENTS =
-        scannedDocuments(asList(CONFIDENTIAL_D10.getLabel(), CONFIDENTIAL.getLabel()));
 
     @Mock
     private Clock clock;
@@ -108,21 +103,6 @@ public class SystemAttachScannedDocumentsTest {
         assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(1);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"CONFIDENTIAL_D10", "CONFIDENTIAL"})
-    void shouldReclassifyConfidentialScannedDocumentAndAddToConfidentialDocumentsUploadedIfSubtypeIsValid(String subtype) {
-        final List<ListValue<ScannedDocument>> afterScannedDocuments = scannedDocuments(singletonList(subtype));
-        afterScannedDocuments.get(0).getValue().setDeliveryDate(now());
-        afterScannedDocuments.addAll(BEFORE_CONFIDENTIAL_SCANNED_DOCUMENTS);
-        final CaseDetails<CaseData, State> details = getConfidentialCaseDetails(afterScannedDocuments);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = systemAttachScannedDocuments
-            .aboutToSubmit(details, getConfidentialCaseDetails(BEFORE_CONFIDENTIAL_SCANNED_DOCUMENTS));
-
-        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isEqualTo(valueOf(subtype));
-        assertThat(response.getData().getDocuments().getConfidentialDocumentsUploaded()).hasSize(1);
-    }
-
 
     @ParameterizedTest
     @NullSource
@@ -153,16 +133,6 @@ public class SystemAttachScannedDocumentsTest {
             .data(CaseData.builder()
                 .documents(builder()
                     .scannedDocuments(scannedDocuments)
-                    .build())
-                .build())
-            .build();
-    }
-
-    private CaseDetails<CaseData, State> getConfidentialCaseDetails(final List<ListValue<ScannedDocument>> scannedDocuments) {
-        return CaseDetails.<CaseData, State>builder()
-            .data(CaseData.builder()
-                .documents(builder()
-                    .confidentialScannedDocuments(scannedDocuments)
                     .build())
                 .build())
             .build();

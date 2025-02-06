@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.scannedDocReclassifiesAutomatically;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.scannedSubtypeGetsReclassifiedAutomatically;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.scannedDocTypeIsReclassifiedAutomatically;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
@@ -133,7 +133,7 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
                 return;
             }
 
-            if (scannedDocReclassifiesAutomatically(scannedDocumentSubtype)) {
+            if (scannedSubtypeGetsReclassifiedAutomatically(scannedDocumentSubtype)) {
                 caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, scannedDocument);
             }
 

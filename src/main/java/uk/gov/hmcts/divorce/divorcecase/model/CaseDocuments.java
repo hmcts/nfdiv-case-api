@@ -203,12 +203,12 @@ public class CaseDocuments {
 
         private final String label;
 
-        public static final EnumSet<ScannedDocumentSubtypes> CONFIDENTIAL_DOCUMENT_TYPES = EnumSet.of(
+        public static final EnumSet<ScannedDocumentSubtypes> CONFIDENTIAL_SUBTYPES = EnumSet.of(
             CONFIDENTIAL_D10, CONFIDENTIAL
         );
 
         public boolean isConfidential() {
-            return CONFIDENTIAL_DOCUMENT_TYPES.contains(this);
+            return CONFIDENTIAL_SUBTYPES.contains(this);
         }
     }
 
@@ -322,7 +322,7 @@ public class CaseDocuments {
             .findFirst();
     }
 
-    public static boolean scannedDocReclassifiesAutomatically(ScannedDocumentSubtypes scannedDocumentSubtype) {
+    public static boolean scannedSubtypeGetsReclassifiedAutomatically(ScannedDocumentSubtypes scannedDocumentSubtype) {
         return scannedDocumentSubtype != null && !scannedDocumentSubtype.isConfidential();
     }
 

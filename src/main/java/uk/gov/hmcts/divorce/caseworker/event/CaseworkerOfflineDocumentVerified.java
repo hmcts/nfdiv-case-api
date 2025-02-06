@@ -58,7 +58,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.RFIR;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.scannedDocReclassifiesAutomatically;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.scannedSubtypeGetsReclassifiedAutomatically;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.OTHER;
@@ -215,7 +215,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             caseData.getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
         }
 
-        if (!scannedDocReclassifiesAutomatically(scannedSubtypeReceived)) {
+        if (!scannedSubtypeGetsReclassifiedAutomatically(scannedSubtypeReceived)) {
             List<DynamicListElement> scannedDocumentNames =
                 emptyIfNull(caseData.getDocuments().getScannedDocuments())
                     .stream()
@@ -429,7 +429,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     private void reclassifyScannedDocumentToChosenDocumentType(CaseData caseData, DocumentType documentType) {
         CaseDocuments.ScannedDocumentSubtypes scannedDocumentSubtype = caseData.getDocuments().getScannedSubtypeReceived();
 
-        if (!scannedDocReclassifiesAutomatically(scannedDocumentSubtype)) {
+        if (!scannedSubtypeGetsReclassifiedAutomatically(scannedDocumentSubtype)) {
             String filename = caseData.getDocuments().getScannedDocumentNames().getValueLabel();
 
             log.info("Reclassifying scanned doc {} to {} doc type", filename, documentType);

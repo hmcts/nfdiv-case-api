@@ -579,9 +579,11 @@ public class CaseData {
         );
     }
 
-    private void reclassifyScannedDocumentToChosenDocumentType(
-        DocumentType documentType, Clock clock, ScannedDocument scannedDocument
-    ) {
+    @JsonIgnore
+    public void reclassifyScannedDocumentToChosenDocumentType(DocumentType documentType,
+                                                              Clock clock,
+                                                              ScannedDocument scannedDocument) {
+
         DivorceDocument divorceDocument = documents.mapScannedDocumentToDivorceDocument(
             scannedDocument,
             documentType,
