@@ -423,7 +423,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     }
 
     private void reclassifyScannedDocumentToChosenDocumentType(CaseData caseData, DocumentType documentType) {
-        if (isEmpty(caseData.getDocuments().getScannedSubtypeReceived())) {
+        boolean documentTypeIsConfidential = (documentType != null && documentType.isConfidential());
+
+        if (isEmpty(caseData.getDocuments().getScannedSubtypeReceived()) || documentTypeIsConfidential) {
             String filename = caseData.getDocuments().getScannedDocumentNames().getValueLabel();
 
             log.info("Reclassifying scanned doc {} to {} doc type", filename, documentType);

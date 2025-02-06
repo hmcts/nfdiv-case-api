@@ -51,7 +51,6 @@ import static java.lang.Integer.parseInt;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.CasePaymentHistoryViewer;
@@ -71,9 +70,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.C8;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.CONFIDENTIAL_RESPONDENT_ANSWERS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.REQUEST_FOR_INFORMATION_RESPONSE_DOC;
 
@@ -584,49 +581,43 @@ public class CaseData {
     }
 
     @JsonIgnore
-    public void reclassifyScannedDocumentToChosenDocumentType(DocumentType documentType,
-                                                              Clock clock,
-                                                              ScannedDocument scannedDocument) {
-
-        if (CONFIDENTIAL_RESPONDENT_ANSWERS.equals(documentType) || C8.equals(documentType)) {
-            ConfidentialDivorceDocument confidentialDivorceDocument = documents.mapScannedDocumentToConfidentialDivorceDocument(
-                scannedDocument,
-                documentType,
-                clock
-            );
-
-            List<ListValue<ConfidentialDivorceDocument>> updatedConfidentialDocumentsUploaded = addDocumentToTop(
-                documents.getConfidentialDocumentsUploaded(),
-                confidentialDivorceDocument
-            );
-
-            documents.setConfidentialDocumentsUploaded(updatedConfidentialDocumentsUploaded);
+    public void reclassifyScannedDocumentToChosenDocumentType(
+        DocumentType documentType, Clock clock, ScannedDocument scannedDocument
+    ) {
+        if (documentType.isConfidential()) {
+            reclassifyConfidentialScannedDocumentType(documentType, clock, scannedDocument);
         } else {
-            DivorceDocument divorceDocument = documents.mapScannedDocumentToDivorceDocument(
-                scannedDocument,
-                documentType,
-                clock
+            reclassifyUnconfidentialScannedDocumentType(documentType, clock, scannedDocument);
+        }
+    }
+
+    private void reclassifyUnconfidentialScannedDocumentType(
+        DocumentType documentType, Clock clock, ScannedDocument scannedDocument
+    ) {
+        DivorceDocument divorceDocument = documents.mapScannedDocumentToDivorceDocument(
+            scannedDocument,
+            documentType,
+            clock
+        );
+
+        List<ListValue<DivorceDocument>> updatedDocumentsUploaded = addDocumentToTop(
+            documents.getDocumentsUploaded(),
+            divorceDocument
+        );
+
+        documents.setDocumentsUploaded(updatedDocumentsUploaded);
+
+        if (CONDITIONAL_ORDER_APPLICATION.equals(documentType)) {
+            documents.setDocumentsGenerated(
+                addDocumentToTop(documents.getDocumentsGenerated(), divorceDocument)
             );
+            conditionalOrder.setScannedD84Form(divorceDocument.getDocumentLink());
+            conditionalOrder.setDateD84FormScanned(scannedDocument.getScannedDate());
+        }
 
-            List<ListValue<DivorceDocument>> updatedDocumentsUploaded = addDocumentToTop(
-                documents.getDocumentsUploaded(),
-                divorceDocument
-            );
-
-            documents.setDocumentsUploaded(updatedDocumentsUploaded);
-
-            if (CONDITIONAL_ORDER_APPLICATION.equals(documentType)) {
-                documents.setDocumentsGenerated(
-                    addDocumentToTop(documents.getDocumentsGenerated(), divorceDocument)
-                );
-                conditionalOrder.setScannedD84Form(divorceDocument.getDocumentLink());
-                conditionalOrder.setDateD84FormScanned(scannedDocument.getScannedDate());
-            }
-
-            if (FINAL_ORDER_APPLICATION.equals(documentType)) {
-                finalOrder.setScannedD36Form(divorceDocument.getDocumentLink());
-                finalOrder.setDateD36FormScanned(scannedDocument.getScannedDate());
-            }
+        if (FINAL_ORDER_APPLICATION.equals(documentType)) {
+            finalOrder.setScannedD36Form(divorceDocument.getDocumentLink());
+            finalOrder.setDateD36FormScanned(scannedDocument.getScannedDate());
         }
 
         if (REQUEST_FOR_INFORMATION_RESPONSE_DOC.equals(documentType)) {
@@ -636,11 +627,21 @@ public class CaseData {
         }
     }
 
-    @JsonIgnore
-    public <T> List<T> fromListValueToList(final List<ListValue<T>> targetList) {
-        return targetList.stream()
-            .map(ListValue::getValue)
-            .collect(toList());
+    private void reclassifyConfidentialScannedDocumentType(
+        DocumentType documentType, Clock clock, ScannedDocument scannedDocument
+    ) {
+        ConfidentialDivorceDocument confidentialDivorceDocument = documents.mapScannedDocumentToConfidentialDivorceDocument(
+            scannedDocument,
+            documentType,
+            clock
+        );
+
+        List<ListValue<ConfidentialDivorceDocument>> updatedConfidentialDocumentsUploaded = addDocumentToTop(
+            documents.getConfidentialDocumentsUploaded(),
+            confidentialDivorceDocument
+        );
+
+        documents.setConfidentialDocumentsUploaded(updatedConfidentialDocumentsUploaded);
     }
 
     @JsonIgnore
