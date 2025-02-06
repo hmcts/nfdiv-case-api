@@ -1,5 +1,6 @@
 {
   "data": {
+    "changeOfRepresentatives": [],
     "applicationType": "soleApplication",
     "supplementaryCaseType": "judicialSeparation",
     "serviceMethod": "courtService",

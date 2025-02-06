@@ -23,6 +23,8 @@ import static java.util.Optional.ofNullable;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_GRANTED_SOL_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_SOL_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
@@ -104,7 +106,7 @@ public class ConditionalOrderPronouncedTemplateContent implements TemplateConten
         } else {
             templateContent.put(CommonContent.NAME, join(" ", applicant.getFirstName(), applicant.getLastName()));
         }
-        templateContent.put(CommonContent.ADDRESS, applicant.getCorrespondenceAddress());
+        templateContent.put(CommonContent.ADDRESS, applicant.getCorrespondenceAddressWithoutConfidentialCheck());
 
         templateContent.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
         templateContent.put(PRONOUNCEMENT_DATE_PLUS_43,
@@ -132,7 +134,9 @@ public class ConditionalOrderPronouncedTemplateContent implements TemplateConten
             ? conditionalOrder.getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER) : null);
         templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
-        templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant2(), languagePreference));
+
+        templateContent.put(PARTNER, getPartnerInfo(caseData,applicant,languagePreference));
+
         templateContent.put(PLACE_OF_MARRIAGE, caseData.getApplication().getMarriageDetails().getPlaceOfMarriage());
         templateContent.put(COUNTRY_OF_MARRIAGE, caseData.getApplication().getMarriageDetails().getCountryOfMarriage());
         templateContent.put(MARRIAGE_DATE,
@@ -155,22 +159,34 @@ public class ConditionalOrderPronouncedTemplateContent implements TemplateConten
         }
     }
 
+    private String getPartnerInfo(CaseData caseData, Applicant applicant, LanguagePreference languagePreference) {
+        final var applicant1 = caseData.getApplicant1();
+        final var applicant2 = caseData.getApplicant2();
+
+        if (applicant.equals(caseData.getApplicant1())) {
+            return commonContent.getPartner(caseData, caseData.getApplicant2(), languagePreference);
+        }
+        return commonContent.getPartner(caseData, caseData.getApplicant1(), languagePreference);
+    }
+
     void templateVarsForJSSolicitor(Map<String, Object> templateContent,
                                                    final CaseData caseData,
                                                    final Applicant applicant) {
 
+        final Applicant applicant1 = caseData.getApplicant1();
+        final Applicant applicant2 = caseData.getApplicant2();
         templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateContent.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
         templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
-        templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
-        templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
-        templateContent.put(APPLICANT_1_SOLICITOR_NAME, caseData.getApplicant1().getSolicitor() != null
-            ? caseData.getApplicant1().getSolicitor().getName()
+        templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
+        templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
+        templateContent.put(APPLICANT_1_SOLICITOR_NAME, applicant1.isRepresented() && applicant1.getSolicitor() != null
+            ? applicant1.getSolicitor().getName()
             : NOT_REPRESENTED
         );
-        templateContent.put(APPLICANT_2_SOLICITOR_NAME, caseData.getApplicant2().getSolicitor() != null
-            ? caseData.getApplicant2().getSolicitor().getName()
+        templateContent.put(APPLICANT_2_SOLICITOR_NAME, applicant2.isRepresented() && applicant2.getSolicitor() != null
+            ? applicant2.getSolicitor().getName()
             : NOT_REPRESENTED
         );
         templateContent.put(SOLICITOR_REFERENCE, applicant.getSolicitor().getReference() != null
@@ -185,6 +201,7 @@ public class ConditionalOrderPronouncedTemplateContent implements TemplateConten
         return List.of(CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID, JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID,
             CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,
             JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID,
-            JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID, CO_GRANTED_COVER_LETTER_TEMPLATE_ID);
+            JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID, CO_GRANTED_COVER_LETTER_TEMPLATE_ID,
+            CO_GRANTED_SOL_COVER_LETTER_TEMPLATE_ID, CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_SOL_TEMPLATE_ID);
     }
 }

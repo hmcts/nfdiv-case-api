@@ -17,6 +17,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2DeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 
@@ -24,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -57,7 +59,7 @@ public class FinalOrder {
 
     @CCD(
         label = "Date Final Order submitted to HMCTS",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime dateFinalOrderSubmitted;
@@ -102,7 +104,7 @@ public class FinalOrder {
 
     @CCD(
         label = "Has applicant1 applied for a final order?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private YesOrNo applicant1AppliedForFinalOrderFirst;
 
@@ -114,7 +116,7 @@ public class FinalOrder {
 
     @CCD(
         label = "Has ${labelContentApplicant2} applied for a final order?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private YesOrNo applicant2AppliedForFinalOrderFirst;
 
@@ -206,6 +208,19 @@ public class FinalOrder {
     private LocalDateTime dateApplicant2SolAppliedForFinalOrder;
 
     @CCD(
+        label = "Respondent applied for final order?",
+        access = {DefaultAccess.class, Applicant2Access.class}
+    )
+    private YesOrNo applicant2AppliedForFinalOrder;
+
+    @CCD(
+        label = "Date respondent applied for final order",
+        access = {DefaultAccess.class}
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime dateApplicant2AppliedForFinalOrder;
+
+    @CCD(
         label = "Respondent solicitor responsible for final order application",
         access = {DefaultAccess.class}
     )
@@ -213,7 +228,7 @@ public class FinalOrder {
 
     @CCD(
         label = "Here are your order details",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2DeleteAccess.class}
     )
     private OrderSummary applicant2SolFinalOrderFeeOrderSummary;
 
@@ -222,6 +237,24 @@ public class FinalOrder {
         access = {DefaultAccess.class}
     )
     private String applicant2SolFinalOrderFeeInPounds;
+
+    @CCD(
+        label = "Here are your order details",
+        access = {DefaultAccess.class, Applicant2DeleteAccess.class}
+    )
+    private OrderSummary applicant2FinalOrderFeeOrderSummary;
+
+    @CCD(
+        label = "Final Order Fee Service Request Reference",
+        access = {DefaultAccess.class, Applicant2DeleteAccess.class}
+    )
+    private String applicant2FinalOrderFeeServiceRequestReference;
+
+    @CCD(
+        label = "Respondent final order fee (in pounds)",
+        access = {DefaultAccess.class, Applicant2Access.class}
+    )
+    private String applicant2FinalOrderFeeInPounds;
 
     @CCD(
         label = "How is payment being made?",
@@ -259,7 +292,7 @@ public class FinalOrder {
         label = "Payments",
         typeOverride = Collection,
         typeParameterOverride = "Payment",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2Access.class}
     )
     private List<ListValue<Payment>> finalOrderPayments;
 
@@ -275,6 +308,7 @@ public class FinalOrder {
             .amount(parseInt(finalOrderFeeOrderSummary.getPaymentTotal()))
             .channel("online")
             .feeCode(finalOrderFeeOrderSummary.getFees().get(0).getValue().getCode())
+            .serviceRequestReference(applicant2FinalOrderFeeServiceRequestReference)
             .reference(paymentReference)
             .status(SUCCESS)
             .build();
@@ -296,6 +330,10 @@ public class FinalOrder {
     @JsonUnwrapped(prefix = "app2SolFoHWF")
     @CCD(access = {Applicant2Access.class})
     private HelpWithFees applicant2SolFinalOrderHelpWithFees;
+
+    @JsonUnwrapped(prefix = "applicant2FoHWF")
+    @CCD(access = {Applicant2Access.class})
+    private HelpWithFees applicant2FinalOrderHelpWithFees;
 
     @CCD(
         label = "The applicant believes that the facts stated in this application are true.",
@@ -457,6 +495,13 @@ public class FinalOrder {
         access = {DefaultAccess.class}
     )
     private FinalOrderAuthorisation overdueFinalOrderAuthorisation;
+
+    @JsonIgnore
+    public boolean applicant2NeedsHelpWithFees() {
+        return Objects.nonNull(applicant2FinalOrderHelpWithFees)
+            && Objects.nonNull(applicant2FinalOrderHelpWithFees.getNeedHelp())
+            && applicant2FinalOrderHelpWithFees.getNeedHelp().toBoolean();
+    }
 
     @JsonIgnore
     public LocalDate getDateFinalOrderEligibleFrom(LocalDateTime dateTime) {

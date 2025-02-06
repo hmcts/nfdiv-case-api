@@ -14,7 +14,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
-import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
@@ -39,7 +38,6 @@ import uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +53,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_APPLICATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorGeneralApplication.SOLICITOR_GENERAL_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubCreditAccountPayment;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpoint;
@@ -64,10 +61,12 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getListOfDivorceDocumentListValue;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @ExtendWith(SpringExtension.class)
@@ -120,23 +119,14 @@ public class SolicitorGeneralApplicationIT {
     @Test
     public void shouldAddDocumentToDocumentsUploadedWhenGeneralApplicationSubmitted() throws Exception {
 
-        final DivorceDocument document = DivorceDocument.builder()
-            .documentDateAdded(LocalDate.now())
-            .documentLink(
-                Document
-                    .builder()
-                    .url("http://localhost:4200/assets/d11")
-                    .filename("GA.pdf")
-                    .binaryUrl("GA.pdf/binary")
-                    .build()
-            )
-            .documentType(GENERAL_APPLICATION)
-            .build();
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
 
         final CaseData caseData = CaseData.builder()
             .documents(CaseDocuments.builder().documentsUploaded(new ArrayList<>()).build())
             .generalApplication(GeneralApplication.builder()
-                .generalApplicationDocument(document)
+                .generalApplicationDocuments(docs)
                 .build()
             )
             .build();
@@ -161,38 +151,30 @@ public class SolicitorGeneralApplicationIT {
     @Test
     public void shouldAddPaymentWhenGeneralApplicationSubmitted() throws Exception {
 
-        final DivorceDocument document = DivorceDocument.builder()
-            .documentDateAdded(LocalDate.now())
-            .documentLink(
-                Document
-                    .builder()
-                    .url("http://localhost:4200/assets/d11")
-                    .filename("GA.pdf")
-                    .binaryUrl("GA.pdf/binary")
-                    .build()
-            )
-            .documentType(GENERAL_APPLICATION)
-            .build();
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
+
+        OrderSummary orderSummary = OrderSummary.builder()
+            .paymentTotal("55000")
+            .fees(List.of(ListValue
+                .<Fee>builder()
+                .id("1")
+                .value(Fee.builder()
+                    .code("FEE002")
+                    .description("fees for divorce")
+                    .build())
+                .build())
+            ).build();
 
         final CaseData caseData = CaseData.builder()
             .documents(CaseDocuments.builder().documentsUploaded(new ArrayList<>()).build())
             .generalApplication(GeneralApplication.builder()
-                .generalApplicationDocument(document)
+                .generalApplicationDocuments(docs)
                 .generalApplicationFee(
                     FeeDetails.builder()
-                        .orderSummary(
-                            OrderSummary.builder()
-                                .paymentTotal("55000")
-                                .fees(List.of(ListValue
-                                    .<Fee>builder()
-                                    .id("1")
-                                    .value(Fee.builder()
-                                        .code("FEE002")
-                                        .description("fees for divorce")
-                                        .build())
-                                    .build())
-                                )
-                                .build())
+                        .serviceRequestReference(TEST_SERVICE_REFERENCE)
+                        .orderSummary(orderSummary)
                         .pbaNumbers(
                             DynamicList.builder()
                                 .value(
@@ -239,8 +221,8 @@ public class SolicitorGeneralApplicationIT {
             CreditAccountPaymentResponse
                 .builder()
                 .status(SUCCESS.toString())
-                .caseReference(TEST_CASE_ID.toString())
-                .build()
+                .build(),
+            orderSummary
         );
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)

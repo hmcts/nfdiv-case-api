@@ -7,12 +7,15 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.CaseInfo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.service.task.DivorceApplicationDraft;
 import uk.gov.hmcts.divorce.solicitor.service.task.InitialiseSolicitorCreatedApplication;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicant1SolicitorAddress;
+import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicantAddresses;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicantGender;
+import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicationFeeServiceRequest;
 import uk.gov.hmcts.divorce.solicitor.service.task.SolicitorCourtDetails;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -44,24 +47,32 @@ public class SolicitorCreateApplicationService {
     @Autowired
     private SetApplicantGender setApplicantGender;
 
+    @Autowired
+    private SetApplicantAddresses setApplicantAddresses;
+
+    @Autowired
+    private SetApplicationFeeServiceRequest setApplicationFeeServiceRequest;
+
     public CaseDetails<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> caseDetails) {
 
         return caseTasks(
             initialiseSolicitorCreatedApplication,
+            setApplicantAddresses,
             solicitorCourtDetails,
             setApplicant1SolicitorAddress,
             divorceApplicationDraft,
-            setApplicantGender
+            setApplicantGender,
+            setApplicationFeeServiceRequest
         ).run(caseDetails);
     }
 
     public CaseInfo validateSolicitorOrganisationAndEmail(
-        final CaseData caseData,
+        final Solicitor solicitor,
         final Long caseId,
         final String userAuth
     ) {
 
-        if (caseData.getApplicant1().getSolicitor() == null || !caseData.getApplicant1().getSolicitor().hasOrgId()) {
+        if (solicitor == null || !solicitor.hasOrgId()) {
             log.error("CaseId: {}, the applicant org policy is not populated", caseId);
 
             return CaseInfo.builder()
@@ -76,9 +87,7 @@ public class SolicitorCreateApplicationService {
         log.info("Solicitor organisation {} retrieved from Prd Api for case id {} ", solicitorUserOrgId, caseId);
 
         String solicitorSelectedOrgId =
-            caseData
-                .getApplicant1()
-                .getSolicitor()
+            solicitor
                 .getOrganisationPolicy()
                 .getOrganisation()
                 .getOrganisationId();
@@ -91,7 +100,7 @@ public class SolicitorCreateApplicationService {
                 .build();
         }
 
-        boolean validEmail = EmailValidator.getInstance().isValid(caseData.getApplicant1().getSolicitor().getEmail());
+        boolean validEmail = EmailValidator.getInstance().isValid(solicitor.getEmail());
         if (!validEmail) {
             return CaseInfo.builder()
                 .errors(singletonList("You have entered an invalid email address. "

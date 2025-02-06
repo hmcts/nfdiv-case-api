@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.ConfirmService;
 import uk.gov.hmcts.divorce.common.service.SubmitConfirmService;
@@ -38,6 +39,9 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
     public static final String SOLICITOR_SERVICE_AS_THE_SERVICE_METHOD_ERROR =
         "This event can only be used for a case with Solicitor Service as the service method";
 
+    public static final String NOT_ISSUED_ERROR =
+        "The application must have been issued to use this event";
+
     @Autowired
     private SubmitConfirmService submitConfirmService;
 
@@ -58,6 +62,12 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             .label("respondentLabel", "Name of Respondent - ${applicant2FirstName} ${applicant2LastName}")
             .complex(CaseData::getApplication)
             .complex(Application::getSolicitorService)
+            .mandatory(SolicitorService::getFirstAttemptToServe)
+            .mandatory(SolicitorService::getDocumentsPreviouslyReturned, "solServiceFirstAttemptToServe=\"No\"")
+            .mandatory(SolicitorService::getDetailsOfPreviousService, "solServiceDocumentsPreviouslyReturned=\"Yes\""
+                + " AND solServiceFirstAttemptToServe=\"No\"")
+            .mandatory(SolicitorService::getDatePreviousServiceReturned, "solServiceDocumentsPreviouslyReturned=\"Yes\""
+                + " AND solServiceFirstAttemptToServe=\"No\"")
             .mandatory(SolicitorService::getDateOfService)
             .mandatory(SolicitorService::getDocumentsServed)
             .mandatory(SolicitorService::getOnWhomServed)
@@ -72,6 +82,21 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             .readonly(SolicitorService::getTruthStatement)
             .mandatory(SolicitorService::getServiceSotFirm)
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("Solicitor confirm service about to start callback invoked with Case Id: {}", details.getId());
+
+        final Application application = details.getData().getApplication();
+        final boolean notIssued = application.getIssueDate() == null;
+
+        if (notIssued) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(NOT_ISSUED_ERROR))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder().build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
@@ -103,6 +128,20 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
 
         log.info("Due date after submit Task is {}", updateDetails.getData().getDueDate());
 
+        final SolicitorService solicitorService = caseData.getApplication().getSolicitorService();
+
+        if (solicitorService.getFirstAttemptToServe() == YesOrNo.YES) {
+            solicitorService.setDocumentsPreviouslyReturned(null);
+            solicitorService.setDetailsOfPreviousService(null);
+            solicitorService.setDatePreviousServiceReturned(null);
+        }
+
+        if (solicitorService.getFirstAttemptToServe() == YesOrNo.NO
+            && solicitorService.getDocumentsPreviouslyReturned() == YesOrNo.NO) {
+            solicitorService.setDetailsOfPreviousService(null);
+            solicitorService.setDatePreviousServiceReturned(null);
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updateDetails.getData())
             .state(updateDetails.getState())
@@ -117,6 +156,8 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             .description("Solicitor confirm service")
             .showSummary()
             .showEventNotes()
+            .showCondition("issueDate=\"*\"")
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));

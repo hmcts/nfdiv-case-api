@@ -10,7 +10,9 @@ import uk.gov.hmcts.divorce.common.service.task.SendSubmissionNotifications;
 import uk.gov.hmcts.divorce.common.service.task.SetApplicant2Email;
 import uk.gov.hmcts.divorce.common.service.task.SetApplicantOfflineStatus;
 import uk.gov.hmcts.divorce.common.service.task.SetDateSubmitted;
+import uk.gov.hmcts.divorce.common.service.task.SetDefaultOrganisationPolicies;
 import uk.gov.hmcts.divorce.common.service.task.SetStateAfterSubmission;
+import uk.gov.hmcts.divorce.common.service.task.SetupCaseFlags;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
@@ -36,6 +38,12 @@ class SubmissionServiceTest {
     @Mock
     private SendSubmissionNotifications sendSubmissionNotifications;
 
+    @Mock
+    private SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
+
+    @Mock
+    private SetupCaseFlags setupCaseFlags;
+
     @InjectMocks
     private SubmissionService submissionService;
 
@@ -49,7 +57,9 @@ class SubmissionServiceTest {
         when(setDateSubmitted.apply(caseDetails)).thenReturn(caseDetails);
         when(setApplicant2Email.apply(caseDetails)).thenReturn(caseDetails);
         when(setApplicantOfflineStatus.apply(caseDetails)).thenReturn(caseDetails);
+        when(setDefaultOrganisationPolicies.apply(caseDetails)).thenReturn(caseDetails);
         when(sendSubmissionNotifications.apply(caseDetails)).thenReturn(expectedCaseDetails);
+        when(setupCaseFlags.apply(caseDetails)).thenReturn(expectedCaseDetails);
 
         final CaseDetails<CaseData, State> result = submissionService.submitApplication(caseDetails);
 
@@ -59,6 +69,8 @@ class SubmissionServiceTest {
         verify(setDateSubmitted).apply(caseDetails);
         verify(setApplicant2Email).apply(caseDetails);
         verify(setApplicantOfflineStatus).apply(caseDetails);
+        verify(setDefaultOrganisationPolicies).apply(caseDetails);
         verify(sendSubmissionNotifications).apply(caseDetails);
+        verify(setupCaseFlags).apply(caseDetails);
     }
 }

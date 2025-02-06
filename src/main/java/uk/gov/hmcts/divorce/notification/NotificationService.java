@@ -12,6 +12,7 @@ import uk.gov.service.notify.NotificationClient;
 import uk.gov.service.notify.NotificationClientException;
 import uk.gov.service.notify.SendEmailResponse;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -33,11 +34,22 @@ public class NotificationService {
     public void sendEmail(
         String destinationAddress,
         EmailTemplateName template,
-        Map<String, String> templateVars,
+        Map<? extends String, ? extends Object> templateVars,
         LanguagePreference languagePreference,
         Long caseId
     ) {
-        String referenceId = String.format("%s-%s", caseId,  UUID.randomUUID());
+        sendEmailWithString(destinationAddress, template, templateVars, languagePreference, String.valueOf(caseId));
+    }
+
+    public void sendEmailWithString(
+        String destinationAddress,
+        EmailTemplateName template,
+        Map<? extends String, ? extends Object> templateVars,
+        LanguagePreference languagePreference,
+        String identifierString
+    ) {
+        String referenceId = String.format("%s-%s", identifierString, UUID.randomUUID());
+        Map<String, Object> templateVarsObj = (templateVars != null) ? new HashMap<>(templateVars) : null;
 
         try {
             String templateId = emailTemplatesConfig.getTemplates().get(languagePreference).get(template.name());
@@ -48,7 +60,7 @@ public class NotificationService {
                 notificationClient.sendEmail(
                     templateId,
                     destinationAddress,
-                    templateVars,
+                    templateVarsObj,
                     referenceId,
                     replyToId
                 );
@@ -65,7 +77,7 @@ public class NotificationService {
                 notificationClientException
             );
             final String message = notificationClientException.getMessage()
-                + format(" Exception for Case ID: %s", caseId);
+                + format(" Exception for Case ID: %s", identifierString);
             throw new NotificationException(message, notificationClientException);
         }
     }

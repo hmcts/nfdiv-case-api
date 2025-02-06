@@ -20,11 +20,12 @@ import static uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderP
 
 class ConditionalOrderPronouncedDocumentPackTest {
 
-    private final ConditionalOrderPronouncedDocumentPack finalOrderGrantedDocumentPack = new ConditionalOrderPronouncedDocumentPack();
+    private final ConditionalOrderPronouncedDocumentPack conditionalOrderPronouncedDocumentPack =
+        new ConditionalOrderPronouncedDocumentPack();
 
     @Test
     void getCorrectLetterId() {
-        assertThat(finalOrderGrantedDocumentPack.getLetterId()).isEqualTo(LETTER_TYPE_CO_PRONOUNCED);
+        assertThat(conditionalOrderPronouncedDocumentPack.getLetterId()).isEqualTo(LETTER_TYPE_CO_PRONOUNCED);
     }
 
     private static Stream<Object[]> provideTestCases() {
@@ -51,7 +52,15 @@ class ConditionalOrderPronouncedDocumentPackTest {
             new Object[] {false, true, true, ApplicationType.SOLE_APPLICATION, true,
                 "APPLICANT_2_DIV_SOL_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK"},
             new Object[] {false, true, true, ApplicationType.SOLE_APPLICATION, false,
-                "APPLICANT_2_DIV_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK"}
+                "APPLICANT_2_DIV_JUDICIAL_SEPARATION_CONDITIONAL_ORDER_PACK"},
+            new Object[] {true, false, true, ApplicationType.SOLE_APPLICATION, true,
+                "APPLICANT_1_SOL_SOLE_CONDITIONAL_ORDER_PACK"},
+            new Object[] {false, false, true, ApplicationType.SOLE_APPLICATION, true,
+                "APPLICANT_2_SOL_SOLE_CONDITIONAL_ORDER_PACK"},
+            new Object[] {true, false, true, ApplicationType.JOINT_APPLICATION, true,
+                "APPLICANT_1_SOL_JOINT_SEPARATION_CONDITIONAL_ORDER_PACK"},
+            new Object[] {false, false, true, ApplicationType.JOINT_APPLICATION, true,
+                "APPLICANT_2_SOL_JOINT_SEPARATION_CONDITIONAL_ORDER_PACK"}
             );
     }
 

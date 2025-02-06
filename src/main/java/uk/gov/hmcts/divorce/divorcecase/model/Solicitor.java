@@ -12,13 +12,17 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.OrganisationPolicyAccess;
+import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +30,7 @@ import java.util.regex.Pattern;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.divorce.divorcecase.util.SolicitorAddressPopulator.parseOrganisationAddress;
 
 @Data
 @AllArgsConstructor
@@ -104,6 +109,32 @@ public class Solicitor {
             return !isNullOrEmpty(organisationPolicy.getOrganisation().getOrganisationId());
         }
         return false;
+    }
+
+    @JsonIgnore
+    public boolean hasOrgName() {
+        if (null != organisationPolicy && null != organisationPolicy.getOrganisation()) {
+            return !isNullOrEmpty(organisationPolicy.getOrganisation().getOrganisationName());
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public String getOrganisationId() {
+        return Optional.ofNullable(organisationPolicy)
+            .map(OrganisationPolicy::getOrganisation)
+            .map(Organisation::getOrganisationId)
+            .orElse(null);
+    }
+
+    @JsonIgnore
+    public void setAddressToOrganisationDefault(OrganisationsResponse organisationResponse) {
+        if (organisationResponse == null || CollectionUtils.isEmpty(organisationResponse.getContactInformation())) {
+            setAddress(null);
+        } else {
+            setAddress(parseOrganisationAddress(organisationResponse.getContactInformation()));
+        }
+        setAddressOverseas(null);
     }
 
     public String getAddress() {

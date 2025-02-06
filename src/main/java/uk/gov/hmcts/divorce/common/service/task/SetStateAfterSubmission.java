@@ -33,21 +33,17 @@ public class SetStateAfterSubmission implements CaseTask {
             || isSoleApplication && application.isPersonalServiceMethod();
         final boolean isApplicant2AwaitingDocuments = application.hasAwaitingApplicant2Documents();
 
-        if (isSoleApplication && isHWFApplicant1) {
-            if (isApplicant1AwaitingDocuments) {
-                caseDetails.setState(AwaitingDocuments);
-            } else {
-                caseDetails.setState(AwaitingHWFDecision);
-            }
-        } else if (!isSoleApplication && isHWFApplicant1 && isHWFApplicant2) {
-            if (isApplicant1AwaitingDocuments  || isApplicant2AwaitingDocuments) {
-                caseDetails.setState(AwaitingDocuments);
-            } else {
-                caseDetails.setState(AwaitingHWFDecision);
-            }
-        } else if (isApplicant1AwaitingDocuments || !isSoleApplication && isApplicant2AwaitingDocuments) {
+        boolean applicantIsAwaitingDocuments = isApplicant1AwaitingDocuments
+            || (!isSoleApplication && isApplicant2AwaitingDocuments);
+        boolean applicantNeedsHelpWithFees = (isSoleApplication && isHWFApplicant1)
+            || (!isSoleApplication && isHWFApplicant1 && isHWFApplicant2);
+        boolean applicationHasBeenPaidFor = application.hasBeenPaidFor();
+
+        if (applicantNeedsHelpWithFees && !applicationHasBeenPaidFor) {
+            caseDetails.setState(AwaitingHWFDecision);
+        } else if (applicantIsAwaitingDocuments) {
             caseDetails.setState(AwaitingDocuments);
-        } else if (!application.hasBeenPaidFor()) {
+        } else if (!applicationHasBeenPaidFor) {
             caseDetails.setState(AwaitingPayment);
         } else {
             caseDetails.setState(Submitted);

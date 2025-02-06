@@ -18,10 +18,12 @@ import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
+import uk.gov.hmcts.divorce.payment.model.ServiceReferenceResponse;
 import uk.gov.hmcts.divorce.payment.model.StatusHistoriesItem;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -49,8 +51,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0001;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0003;
 import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0004;
@@ -66,6 +70,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOK
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getPbaNumbersForAccount;
@@ -87,6 +92,9 @@ public class PaymentServiceTest {
 
     @Mock
     private PaymentPbaClient paymentPbaClient;
+
+    @Mock
+    private PaymentClient paymentClient;
 
     @Mock
     private HttpServletRequest httpServletRequest;
@@ -205,6 +213,26 @@ public class PaymentServiceTest {
     }
 
     @Test
+    public void shouldSuccessfullyCreateServiceRequests() {
+        var serviceRefResponse = ServiceReferenceResponse.builder().serviceRequestReference(TEST_SERVICE_REFERENCE).build();
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        when(paymentClient.createServiceRequest(
+                eq(TEST_AUTHORIZATION_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CreateServiceRequestBody.class)
+            )
+        ).thenReturn(ResponseEntity.ok().body(serviceRefResponse));
+
+        String result = paymentService.createServiceRequestReference(
+            "payment-callback", TEST_CASE_ID, "respondent", orderSummaryWithFee()
+        );
+
+        assertThat(result).isEqualTo(TEST_SERVICE_REFERENCE);
+    }
+
+    @Test
     public void shouldProcessPbaPaymentSuccessfullyWhenPbaAccountIsValid() {
         var caseData = caseData();
 
@@ -214,6 +242,7 @@ public class PaymentServiceTest {
         when(paymentPbaClient.creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             )
         ).thenReturn(responseEntity);
@@ -221,7 +250,7 @@ public class PaymentServiceTest {
         when(responseEntity.getStatusCode()).thenReturn(CREATED);
 
         PbaResponse response = paymentService.processPbaPayment(
-            caseData, TEST_CASE_ID, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
+            TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
 
         assertThat(response.getErrorMessage()).isNull();
         assertThat(response.getHttpStatus()).isEqualTo(CREATED);
@@ -231,6 +260,7 @@ public class PaymentServiceTest {
         verify(paymentPbaClient).creditAccountPayment(
             eq(TEST_AUTHORIZATION_TOKEN),
             eq(TEST_SERVICE_AUTH_TOKEN),
+            eq(TEST_SERVICE_REFERENCE),
             any(CreditAccountPaymentRequest.class)
         );
     }
@@ -255,11 +285,12 @@ public class PaymentServiceTest {
             .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             );
 
         PbaResponse response = paymentService.processPbaPayment(
-            caseData, TEST_CASE_ID, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
+            TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
 
         assertThat(response.getHttpStatus()).isEqualTo(FORBIDDEN);
         assertThat(response.getErrorMessage())
@@ -290,11 +321,12 @@ public class PaymentServiceTest {
             .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             );
 
         PbaResponse response = paymentService.processPbaPayment(
-            caseData, TEST_CASE_ID, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
+            TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
 
         assertThat(response.getHttpStatus()).isEqualTo(FORBIDDEN);
         assertThat(response.getErrorMessage())
@@ -315,19 +347,121 @@ public class PaymentServiceTest {
         when(paymentPbaClient.creditAccountPayment(
             eq(TEST_AUTHORIZATION_TOKEN),
             eq(TEST_SERVICE_AUTH_TOKEN),
+            eq(TEST_SERVICE_REFERENCE),
             any(CreditAccountPaymentRequest.class)
         )).thenReturn(null);
 
         PbaResponse response = paymentService.processPbaPayment(
-            caseData, TEST_CASE_ID, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
+            TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
 
         assertThat(response.getHttpStatus()).isEqualTo(INTERNAL_SERVER_ERROR);
+        assertThat(response.getErrorMessage())
+            .isEqualTo(
+                "Sorry, there is a problem with the service.\n"
+                    + "Try again later."
+            );
+    }
+
+    @Test
+    public void shouldReturnGenericErrorWhenGatewayTimeout() throws Exception {
+        var caseData = caseData();
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        CreditAccountPaymentResponse creditAccountPaymentResponse = buildPaymentClientResponse(GATEWAY_TIMEOUT.toString(), "Error");
+        byte[] body = new ObjectMapper().writeValueAsString(creditAccountPaymentResponse).getBytes();
+        Request request = Request.create(POST, EMPTY, Map.of(), null, UTF_8, null);
+        FeignException feignException = new FeignException.GatewayTimeout(GATEWAY_TIMEOUT.toString(),request, body, emptyMap());
+
+        doThrow(feignException)
+            .when(paymentPbaClient).creditAccountPayment(
+                eq(TEST_AUTHORIZATION_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                eq(TEST_SERVICE_REFERENCE),
+                any(CreditAccountPaymentRequest.class)
+            );
+
+        PbaResponse response = paymentService.processPbaPayment(
+            TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
+
+        assertThat(response.getHttpStatus()).isEqualTo(GATEWAY_TIMEOUT);
+        assertThat(response.getErrorMessage())
+            .isEqualTo(
+                "Sorry, there is a problem with the service.\n"
+                    + "Try again later."
+            );
+
+    }
+
+    @Test
+    public void shouldReturnGeneralErrorWhenOtherHttpError() throws Exception {
+        var caseData = caseData();
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        CreditAccountPaymentResponse creditAccountPaymentResponse = buildPaymentClientResponse(SERVICE_UNAVAILABLE.toString(), "Error");
+        byte[] body = new ObjectMapper().writeValueAsString(creditAccountPaymentResponse).getBytes();
+        Request request = Request.create(POST, EMPTY, Map.of(), null, UTF_8, null);
+        FeignException feignException = new FeignException.ServiceUnavailable(SERVICE_UNAVAILABLE.toString(),request, body, emptyMap());
+
+        when(objectMapper.readValue(
+            feignException.contentUTF8().getBytes(),
+            CreditAccountPaymentResponse.class
+        )).thenReturn(creditAccountPaymentResponse);
+
+        doThrow(feignException)
+            .when(paymentPbaClient).creditAccountPayment(
+                eq(TEST_AUTHORIZATION_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                eq(TEST_SERVICE_REFERENCE),
+                any(CreditAccountPaymentRequest.class)
+            );
+
+        PbaResponse response = paymentService.processPbaPayment(
+            TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
+
+        assertThat(response.getHttpStatus()).isEqualTo(SERVICE_UNAVAILABLE);
         assertThat(response.getErrorMessage())
             .isEqualTo(
                 "Payment request failed. "
                     + "Please try again after 2 minutes with a different Payment Account, or alternatively use a different payment method. "
                     + "For Payment Account support call 01633 652125 (Option 3) or email MiddleOffice.DDServices@liberata.com."
             );
+
+    }
+
+    @Test
+    public void shouldReturnGenericErrorWhenInternalServerError() throws Exception {
+        var caseData = caseData();
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        CreditAccountPaymentResponse creditAccountPaymentResponse = buildPaymentClientResponse(INTERNAL_SERVER_ERROR.toString(), "Error");
+        byte[] body = new ObjectMapper().writeValueAsString(creditAccountPaymentResponse).getBytes();
+        Request request = Request.create(POST, EMPTY, Map.of(), null, UTF_8, null);
+        FeignException feignException = new FeignException.InternalServerError(INTERNAL_SERVER_ERROR.toString(),request, body, emptyMap());
+
+        doThrow(feignException)
+            .when(paymentPbaClient).creditAccountPayment(
+                eq(TEST_AUTHORIZATION_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                eq(TEST_SERVICE_REFERENCE),
+                any(CreditAccountPaymentRequest.class)
+            );
+
+        PbaResponse response = paymentService.processPbaPayment(
+            TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
+
+        assertThat(response.getHttpStatus()).isEqualTo(INTERNAL_SERVER_ERROR);
+        assertThat(response.getErrorMessage())
+            .isEqualTo(
+                "Sorry, there is a problem with the service.\n"
+                    + "Try again later."
+            );
+
     }
 
     @Test
@@ -351,11 +485,12 @@ public class PaymentServiceTest {
             .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             );
 
         PbaResponse response = paymentService.processPbaPayment(
-            caseData, TEST_CASE_ID, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
+            TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
 
         assertThat(response.getHttpStatus()).isEqualTo(FORBIDDEN);
         assertThat(response.getErrorMessage())
@@ -387,11 +522,12 @@ public class PaymentServiceTest {
             .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             );
 
         PbaResponse response = paymentService.processPbaPayment(
-            caseData, TEST_CASE_ID, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
+            TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
 
         assertThat(response.getHttpStatus()).isEqualTo(FORBIDDEN);
         assertThat(response.getErrorMessage())
@@ -418,11 +554,12 @@ public class PaymentServiceTest {
             .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             );
 
         PbaResponse response = paymentService.processPbaPayment(
-            caseData, TEST_CASE_ID, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
+            TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
 
         assertThat(response.getHttpStatus()).isEqualTo(NOT_FOUND);
         assertThat(response.getErrorMessage())
@@ -454,11 +591,12 @@ public class PaymentServiceTest {
             .when(paymentPbaClient).creditAccountPayment(
                 eq(TEST_AUTHORIZATION_TOKEN),
                 eq(TEST_SERVICE_AUTH_TOKEN),
+                eq(TEST_SERVICE_REFERENCE),
                 any(CreditAccountPaymentRequest.class)
             );
 
         PbaResponse response = paymentService.processPbaPayment(
-            caseData, TEST_CASE_ID, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
+            TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor(), PBA_NUMBER, orderSummaryWithFee(), FEE_ACCOUNT_REF);
 
         assertThat(response.getHttpStatus()).isEqualTo(FORBIDDEN);
         assertThat(response.getErrorMessage())
@@ -488,7 +626,6 @@ public class PaymentServiceTest {
         return CreditAccountPaymentResponse.builder()
             .dateCreated("2021-08-18T10:22:33.449+0000")
             .status("Failed")
-            .paymentGroupReference("2020-1601893353478")
             .statusHistories(
                 singletonList(
                     StatusHistoriesItem.builder()

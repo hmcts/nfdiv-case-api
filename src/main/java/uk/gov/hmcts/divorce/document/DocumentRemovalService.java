@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.document;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -23,6 +24,17 @@ public class DocumentRemovalService {
 
     @Autowired
     private IdamService idamService;
+
+    public void deleteDocument(final Document document) {
+        final var systemUser = idamService.retrieveSystemUpdateUserDetails();
+
+        documentManagementClient.deleteDocument(
+            systemUser.getAuthToken(),
+            authTokenGenerator.generate(),
+            document,
+            true
+        );
+    }
 
     public void deleteDocument(final List<ListValue<DivorceDocument>> documentsToRemove) {
 

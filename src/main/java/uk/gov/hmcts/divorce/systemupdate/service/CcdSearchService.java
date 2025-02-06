@@ -21,11 +21,14 @@ import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.collect.Lists.partition;
@@ -71,6 +74,14 @@ public class CcdSearchService {
     public static final String AOS_RESPONSE = "howToRespondApplication";
     public static final String AWAITING_JS_ANSWER_START_DATE = "awaitingJsAnswerStartDate";
     public static final String SUPPLEMENTARY_CASE_TYPE = "supplementaryCaseType";
+    //.keyword necessary as reference is mapped as text with keyword subfield
+    public static final String REFERENCE_KEY = "reference.keyword";
+    public static final String STATE_KEY = "state.keyword";
+    public static final String DATA_APPLICATION_TYPE = "data.applicationType";
+    public static final String DATA_VERSION = "data.dataVersion";
+    public static final String BULK_CASE_DATA_VERSION = "data.bulkCaseDataVersion";
+
+    private static final DateTimeFormatter CASE_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Value("${core_case_data.search.page_size}")
     private int pageSize;
@@ -83,6 +94,9 @@ public class CcdSearchService {
 
     @Autowired
     private CoreCaseDataApi coreCaseDataApi;
+
+    @Autowired
+    private CoreCaseDataApiWithStateModifiedDate coreCaseDataApiWithStateModifiedDate;
 
     @Autowired
     private CaseDetailsConverter caseDetailsConverter;
@@ -139,6 +153,26 @@ public class CcdSearchService {
             sourceBuilder.toString());
     }
 
+    public ReturnedCases newSearchForCasesWithQuery(final int from,
+                                                    final int size,
+                                                    final BoolQueryBuilder query,
+                                                    final User user,
+                                                    final String serviceAuth) {
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .sort(DUE_DATE, ASC)
+            .query(query)
+            .from(from)
+            .size(size);
+
+        return coreCaseDataApiWithStateModifiedDate.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            getCaseType(),
+            sourceBuilder.toString());
+    }
+
     public List<CaseDetails> searchForCasesWithVersionLessThan(int latestVersion, User user, String serviceAuth) {
 
         final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
@@ -146,11 +180,11 @@ public class CcdSearchService {
             .query(
                 boolQuery()
                     .must(boolQuery()
-                        .mustNot(matchQuery("data.dataVersion", 0))
+                        .mustNot(matchQuery(DATA_VERSION, 0))
                     )
                     .must(boolQuery()
-                        .should(boolQuery().mustNot(existsQuery("data.dataVersion")))
-                        .should(boolQuery().must(rangeQuery("data.dataVersion").lt(latestVersion)))
+                        .should(boolQuery().mustNot(existsQuery(DATA_VERSION)))
+                        .should(boolQuery().must(rangeQuery(DATA_VERSION).lt(latestVersion)))
                     )
                     .mustNot(matchQuery(STATE, Withdrawn))
                     .mustNot(matchQuery(STATE, Rejected))
@@ -173,11 +207,11 @@ public class CcdSearchService {
             .query(
                 boolQuery()
                     .must(boolQuery()
-                        .mustNot(matchQuery("data.bulkCaseDataVersion", 0))
+                        .mustNot(matchQuery(BULK_CASE_DATA_VERSION, 0))
                     )
                     .must(boolQuery()
-                        .should(boolQuery().mustNot(existsQuery("data.bulkCaseDataVersion")))
-                        .should(boolQuery().must(rangeQuery("data.bulkCaseDataVersion").lt(latestVersion)))
+                        .should(boolQuery().mustNot(existsQuery(BULK_CASE_DATA_VERSION)))
+                        .should(boolQuery().must(rangeQuery(BULK_CASE_DATA_VERSION).lt(latestVersion)))
                     )
             )
             .from(0)
@@ -238,11 +272,11 @@ public class CcdSearchService {
         final QueryBuilder query = boolQuery()
             .must(stateQuery)
             .must(boolQuery()
-                    .should(boolQuery()
-                        .must(boolQuery().mustNot(errorCasesExist))
-                        .must(boolQuery().mustNot(processedCases)))
-                    .should(boolQuery()
-                        .must(boolQuery().must(errorCasesExist))));
+                .should(boolQuery()
+                    .must(boolQuery().mustNot(errorCasesExist))
+                    .must(boolQuery().mustNot(processedCases)))
+                .should(boolQuery()
+                    .must(boolQuery().must(errorCasesExist))));
 
         return searchForBulkCases(user, serviceAuth, query);
     }
@@ -304,9 +338,9 @@ public class CcdSearchService {
 
     public List<CaseDetails> searchJointApplicationsWithAccessCodePostIssueApplication(User user, String serviceAuth) {
 
-        final QueryBuilder issueDateExist = existsQuery("data.issueDate");
-        final QueryBuilder jointApplication = matchQuery("data.applicationType", "jointApplication");
-        final QueryBuilder accessCodeNotEmpty = wildcardQuery("data.accessCode", "?*");
+        final QueryBuilder issueDateExist = existsQuery(ISSUE_DATE);
+        final QueryBuilder jointApplication = matchQuery(DATA_APPLICATION_TYPE, "jointApplication");
+        final QueryBuilder accessCodeNotEmpty = wildcardQuery(ACCESS_CODE, "?*");
 
         final QueryBuilder query = boolQuery()
             .must(boolQuery().must(accessCodeNotEmpty))
@@ -338,7 +372,7 @@ public class CcdSearchService {
     public List<CaseDetails> searchJointPaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(User user, String serviceAuth) {
 
         final QueryBuilder applicant2OfflineExist = existsQuery("data.applicant2Offline");
-        final QueryBuilder jointApplication = matchQuery("data.applicationType", "jointApplication");
+        final QueryBuilder jointApplication = matchQuery(DATA_APPLICATION_TYPE, "jointApplication");
         final QueryBuilder newPaperCase = matchQuery("data.newPaperCase", YesOrNo.YES);
 
         final QueryBuilder query = boolQuery()
@@ -371,7 +405,7 @@ public class CcdSearchService {
     public List<CaseDetails> searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(User user, String serviceAuth) {
 
         final QueryBuilder applicant2OfflineExist = existsQuery("data.applicant2Offline");
-        final QueryBuilder soleApplication = matchQuery("data.applicationType", "soleApplication");
+        final QueryBuilder soleApplication = matchQuery(DATA_APPLICATION_TYPE, SOLE_APPLICATION);
         final QueryBuilder newPaperCase = matchQuery("data.newPaperCase", YesOrNo.YES);
         final QueryBuilder applicant2EmailExist = existsQuery("data.applicant2Email");
 
@@ -460,5 +494,103 @@ public class CcdSearchService {
         }
 
         return allCaseDetails;
+    }
+
+    public Map<String, Map<String, Long>> countAllCasesByStateAndLastModifiedDate(
+        final BoolQueryBuilder query, final User user, final String serviceAuth
+    ) {
+        final Map<String, Map<String, Long>> groupedCaseCounts = new HashMap<>();
+
+        int from = 0;
+        int currentQueryCaseCount = pageSize;
+        int allQueriesCaseCount = 0;
+
+        try {
+            while (currentQueryCaseCount == pageSize && allQueriesCaseCount <= totalMaxResults) {
+                final ReturnedCases searchResult = newSearchForCasesWithQuery(from, pageSize, query, user, serviceAuth);
+
+                final List<ReturnedCaseDetails> pageResults = searchResult.getCases();
+
+                updateCountsByStateAndLastModifiedDate(groupedCaseCounts, pageResults);
+
+                from += pageSize;
+                currentQueryCaseCount = pageResults.size();
+                allQueriesCaseCount += pageResults.size();
+            }
+            log.info("Processed {} cases in total", allQueriesCaseCount);
+        } catch (final FeignException e) {
+            final String message = String.format("Failed to complete search for Cases");
+            log.info(message, e);
+            throw new CcdSearchCaseException(message, e);
+        }
+
+        return groupedCaseCounts;
+    }
+
+    public Map<String, Map<String, Long>> updateCountsByStateAndLastModifiedDate(
+        Map<String, Map<String, Long>> aggregatedResults,
+        List<ReturnedCaseDetails> caseBatch
+    ) {
+        caseBatch.stream()
+            .filter(caseDetail -> caseDetail.getState() != null)
+            .forEach(caseDetail -> {
+                String stateName = caseDetail.getState().name();
+                String lastModifiedDate = caseDetail.getLastStateModifiedDate().toLocalDate().format(CASE_DATE_FORMAT);
+
+                Map<String, Long> stateMap = aggregatedResults.computeIfAbsent(stateName, k -> new HashMap<>());
+
+                stateMap.merge(lastModifiedDate, 1L, Long::sum);
+            });
+
+        return aggregatedResults;
+    }
+
+    public List<CaseDetails> searchForOldDivorceCasesWithQuery(final BoolQueryBuilder query,
+                                                               final User user,
+                                                               final String serviceAuth) {
+
+        final Set<CaseDetails> allCaseDetails = new HashSet<>();
+        int from = 0;
+        int totalResults = pageSize;
+
+        try {
+            while (totalResults == pageSize && allCaseDetails.size() <= totalMaxResults) {
+                final SearchResult searchResult = searchOldDivorceCasesWithQuery(from, pageSize, query, user, serviceAuth);
+
+                log.info("Search result old divorce cases is {}", searchResult.toString());
+                final List<CaseDetails> pageResults = searchResult.getCases();
+                allCaseDetails.addAll(pageResults);
+
+                from += pageSize;
+                totalResults = pageResults.size();
+            }
+        } catch (final FeignException e) {
+            final String message = String.format(
+                "Failed to complete search for Old Divorce Cases with query %s", query.toString());
+            log.info(message, e);
+            throw new CcdSearchCaseException(message, e);
+        }
+        log.info("old cases query returned {} for query {}", allCaseDetails.size(), query.toString());
+        return allCaseDetails.stream().toList();
+    }
+
+    private SearchResult searchOldDivorceCasesWithQuery(final int from,
+                                                        final int size,
+                                                        final BoolQueryBuilder query,
+                                                        final User user,
+                                                        final String serviceAuth) {
+
+        final SearchSourceBuilder sourceBuilder = SearchSourceBuilder
+            .searchSource()
+            .sort(DUE_DATE, ASC)
+            .query(query)
+            .from(from)
+            .size(size);
+
+        return coreCaseDataApi.searchCases(
+            user.getAuthToken(),
+            serviceAuth,
+            "DIVORCE",
+            sourceBuilder.toString());
     }
 }

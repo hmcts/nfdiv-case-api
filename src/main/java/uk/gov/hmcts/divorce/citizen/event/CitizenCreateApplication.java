@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.ArrayList;
 
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -37,6 +38,7 @@ public class CitizenCreateApplication implements CCDConfig<CaseData, State, User
         configBuilder
             .event(CITIZEN_CREATE)
             .initialState(Draft)
+            .showCondition(NEVER_SHOW)
             .name("Create draft case")
             .description("Apply for a divorce or dissolution")
             .aboutToSubmitCallback(this::aboutToSubmit)

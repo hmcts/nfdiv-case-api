@@ -1,5 +1,6 @@
 {
   "data": {
+    "changeOfRepresentatives": [],
     "supplementaryCaseType": "notApplicable",
     "applicant1SolicitorOrganisationPolicy": {
       "Organisation": {
@@ -20,21 +21,28 @@
         "id": "${json-unit.any-string}",
         "value": {
           "feeCode": "FEE002",
+          "serviceRequestReference":"test-service-reference",
           "amount": 55000,
           "status": "success",
           "channel": "online"
         }
       }
     ],
-    "generalApplicationDocument": {
-      "documentLink": {
-        "document_url": "http://localhost:4200/assets/d11",
-        "document_filename": "GA.pdf",
-        "document_binary_url": "GA.pdf/binary"
-      },
-      "documentDateAdded": "${json-unit.any-string}",
-      "documentType": "generalApplication"
-    },
+    "generalApplicationDocuments": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "http://localhost:4200/assets/d11",
+            "document_filename": "dummy.file",
+            "document_binary_url": "dummy.file/binary"
+          },
+          "documentDateAdded": "${json-unit.any-string}",
+          "documentFileName": "${json-unit.any-string}",
+          "documentType": "generalApplication"
+        }
+      }
+    ],
     "generalApplicationFeeOrderSummary": {
       "Fees": [
         {
@@ -48,6 +56,7 @@
       "PaymentTotal": "55000"
     },
     "generalApplicationFeePaymentMethod": "feePayByAccount",
+    "generalApplicationFeeServiceRequestReference": "test-service-reference",
     "generalApplicationFeePbaNumbers": {
       "value": {
         "label": "PBA0012345"
@@ -58,15 +67,22 @@
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "generalApplicationDocument": {
-            "documentLink": {
-              "document_url": "http://localhost:4200/assets/d11",
-              "document_filename": "GA.pdf",
-              "document_binary_url": "GA.pdf/binary"
-            },
-            "documentDateAdded": "${json-unit.any-string}",
-            "documentType": "generalApplication"
-          },
+          "generalApplicationDocuments": [
+            {
+              "id": "${json-unit.any-string}",
+              "value": {
+                "documentLink": {
+                  "document_url": "http://localhost:4200/assets/d11",
+                  "document_filename": "dummy.file",
+                  "document_binary_url": "dummy.file/binary"
+                },
+                "documentDateAdded": "${json-unit.any-string}",
+                "documentFileName": "${json-unit.any-string}",
+                "documentType": "generalApplication"
+              }
+            }
+          ],
+          "generalApplicationFeeServiceRequestReference": "test-service-reference",
           "generalApplicationFeeOrderSummary": {
             "Fees": [
               {
@@ -95,10 +111,11 @@
         "value": {
           "documentLink": {
             "document_url": "http://localhost:4200/assets/d11",
-            "document_filename": "GA.pdf",
-            "document_binary_url": "GA.pdf/binary"
+            "document_filename": "dummy.file",
+            "document_binary_url": "dummy.file/binary"
           },
           "documentDateAdded": "${json-unit.any-string}",
+          "documentFileName": "${json-unit.any-string}",
           "documentType": "generalApplication"
         }
       }

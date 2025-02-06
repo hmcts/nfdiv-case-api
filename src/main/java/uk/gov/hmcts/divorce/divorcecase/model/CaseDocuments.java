@@ -195,7 +195,10 @@ public class CaseDocuments {
         D84NVA("D84NVA"),
 
         @JsonProperty("D36N")
-        D36N("D36N");
+        D36N("D36N"),
+
+        @JsonProperty("RFIR")
+        RFIR("RFIR");
 
         private final String label;
     }
@@ -219,6 +222,9 @@ public class CaseDocuments {
         @JsonProperty("D36")
         FO_D36("Application for a final order (D36)"),
 
+        @JsonProperty("RFIR")
+        RFI_RESPONSE("Request for Information Response"),
+
         @JsonProperty("Other")
         OTHER("Other");
 
@@ -231,7 +237,7 @@ public class CaseDocuments {
 
     public static <T> List<ListValue<T>> addDocumentToTop(final List<ListValue<T>> documents, final T value, final String id) {
         final var listItemId = isBlank(id) ? String.valueOf(randomUUID()) : id;
-        final var listValue = new ListValue<T>(listItemId, value);
+        final var listValue = new ListValue<>(listItemId, value);
         final List<ListValue<T>> list = isEmpty(documents) ? new ArrayList<>() : new ArrayList<>(documents);
 
         list.add(0, listValue);
@@ -264,14 +270,14 @@ public class CaseDocuments {
         final var previousDocuments = documentsWithoutIds.getOrDefault(false, new ArrayList<>());
 
         if (null != newDocuments) {
-            sortedDocuments.addAll(0, newDocuments); // add new documents to start of the list
-            sortedDocuments.addAll(1, previousDocuments);
+            sortedDocuments.addAll(newDocuments);
+            sortedDocuments.addAll(previousDocuments);
+
             sortedDocuments.forEach(
                 uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(randomUUID()))
             );
             return sortedDocuments;
         }
-
         return previousDocuments;
     }
 
@@ -287,6 +293,20 @@ public class CaseDocuments {
         return !after.stream()
             .allMatch(afterValue -> before.stream()
                 .anyMatch(beforeValue -> Objects.equals(beforeValue.getId(), afterValue.getId())));
+    }
+
+    public static <T> boolean hasDeletedDocuments(final List<ListValue<T>> after,
+                                                final List<ListValue<T>> before) {
+
+        if (isNull(after) && !before.isEmpty()) {
+            return true;
+        } else if (isNull(before)) {
+            return false;
+        }
+
+        return !before.stream()
+            .allMatch(beforeValue -> after.stream()
+                .anyMatch(afterValue -> Objects.equals(beforeValue.getId(), afterValue.getId())));
     }
 
     public static Optional<Document> getFirstDocumentLink(final List<ListValue<DivorceDocument>> documents,

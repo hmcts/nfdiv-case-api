@@ -84,8 +84,23 @@ TASK_NAME=SystemProgressHeldCasesTask java -jar nfdiv-case-api.jar
 
 # or
 TASK_NAME=SystemProgressHeldCasesTask ./gradlew bootRun
+
+Before running cron/task locally, these changes are required
+Add task name as environment variable
+#e.g.
+Add TASK_NAME=SystemProgressHeldCasesTask in .aat-env file
+
+By default, task will be run against ccd in aat. In order to run it 
+against local ccd, in application.yaml file, change this CASE_DATA_STORE_BASEURL:http://localhost:4452
+or add CASE_DATA_STORE_BASEURL=http://localhost:4452 in .aat-env file
+
+If running against local case api, we need to add below to .aat-env for task
+to run on a different port than on default port 4453 on which case api runs.
+
+Without below step it will throw port in use exception.
+Add SERVER_PORT=[random port] after nfdiv-case-api has started in local.
 ```
 
-## License
+## License 
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

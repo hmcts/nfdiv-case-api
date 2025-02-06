@@ -54,6 +54,8 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
                 .mandatory(GeneralReferral::getGeneralReferralReason)
                 .mandatory(GeneralReferral::getGeneralReferralUrgentCase)
                 .mandatory(GeneralReferral::getGeneralReferralUrgentCaseReason, "generalReferralUrgentCase=\"Yes\"")
+                .mandatory(GeneralReferral::getGeneralReferralFraudCase)
+                .mandatory(GeneralReferral::getGeneralReferralFraudCaseReason, "generalReferralFraudCase=\"Yes\"")
                 .mandatory(GeneralReferral::getGeneralApplicationFrom, "generalReferralReason=\"generalApplicationReferral\"")
                 .optional(GeneralReferral::getGeneralApplicationReferralDate)
                 .mandatory(GeneralReferral::getGeneralReferralType)

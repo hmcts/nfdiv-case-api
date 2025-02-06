@@ -26,8 +26,8 @@ import java.time.LocalDate;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -40,11 +40,11 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerMakeBailiffDecisio
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffRefused;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_ID;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
@@ -136,12 +136,12 @@ public class CaseworkerMakeBailiffDecisionIT {
                 jsonPath("$.data.serviceApplicationDecisionDate").value(getExpectedLocalDate().toString())
             );
 
-        verify(notificationService, never()).sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_REJECTED), anyMap(), eq(ENGLISH),
-            anyLong());
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_GRANTED), anyMap(), eq(ENGLISH), anyLong());
     }
 
     @Test
-    public void shouldGenerateWelshBailiffApplicationApprovedWhenApplicant1LanguagePreferenceIsWelsh() throws Exception {
+    public void shouldGenerateWelshDocumentAndNotificationWhenApplicant1LanguagePreferenceIsWelsh() throws Exception {
         setMockClock(clock);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -167,10 +167,13 @@ public class CaseworkerMakeBailiffDecisionIT {
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn();
+
+        verify(notificationService)
+            .sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_GRANTED), anyMap(), eq(WELSH), anyLong());
     }
 
     @Test
-    public void shouldChangeCaseStateToAwaitingAosAndSetDecisionDateWhenServiceApplicationIsNotGrantedAndServiceTypeIsBailiff()
+    public void shouldChangeCaseStateToBailiffRefusedAndSetDecisionDateWhenServiceApplicationIsNotGrantedAndServiceTypeIsBailiff()
         throws Exception {
         setMockClock(clock);
 
@@ -199,82 +202,12 @@ public class CaseworkerMakeBailiffDecisionIT {
             .andExpect(
                 status().isOk())
             .andExpect(
-                jsonPath("$.state").value(AwaitingAos.name())
+                jsonPath("$.state").value(BailiffRefused.name())
             )
             .andExpect(
-                jsonPath("$.data.alternativeServiceOutcomes[0].value.serviceApplicationDecisionDate")
-                    .value(getExpectedLocalDate().toString())
+                jsonPath("$.data.serviceApplicationDecisionDate").value(getExpectedLocalDate().toString())
             );
 
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_REJECTED), anyMap(), eq(ENGLISH), anyLong());
-    }
-
-    @Test
-    public void shouldSendWelshEmailIfChosenLanguagePreferenceIsWelsh()
-        throws Exception {
-        setMockClock(clock);
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "NFD_Bailiff_Application_Not_Approved_Cy.docx");
-
-        final CaseData caseData = caseData();
-        caseData.getAlternativeService().setReceivedServiceApplicationDate(LocalDate.of(2022, 1, 1));
-        caseData.getAlternativeService().setServiceApplicationGranted(NO);
-        caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(
-                        callbackRequest(
-                            caseData,
-                            CASEWORKER_BAILIFF_DECISION)
-                    )
-                )
-                .accept(APPLICATION_JSON))
-            .andExpect(status().isOk());
-
-        verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(SERVICE_APPLICATION_REJECTED),
-            anyMap(),
-            eq(WELSH),
-            anyLong()
-        );
-    }
-
-    @Test
-    public void shouldGenerateWelshBailiffApplicationNotApprovedWhenApplicant1LanguagePreferenceIsWelsh() throws Exception {
-        setMockClock(clock);
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "NFD_Bailiff_Application_Not_Approved_Cy.docx");
-
-        final CaseData caseData = caseData();
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
-        caseData.getAlternativeService().setReceivedServiceApplicationDate(LocalDate.of(2022, 1, 1));
-        caseData.getAlternativeService().setServiceApplicationGranted(NO);
-        caseData.getAlternativeService().setAlternativeServiceType(BAILIFF);
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(
-                        callbackRequest(
-                            caseData,
-                            CASEWORKER_BAILIFF_DECISION)
-                    )
-                )
-                .accept(APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn();
+        verifyNoInteractions(notificationService);
     }
 }

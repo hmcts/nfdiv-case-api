@@ -8,6 +8,8 @@ springdoc:
   packagesToScan: uk.gov.hmcts.divorce,uk.gov.hmcts.ccd.sdk.runtime
   pathsToMatch: /**
 
+report-email: ${REPORT_EMAIL:dummy}
+
 uk:
   gov:
     notify:
@@ -25,6 +27,7 @@ uk:
           divorceCourtEmail: contactdivorce@justice.gov.uk
           dissolutionCourtEmail: contactdivorce@justice.gov.uk
           webformUrl: ${WEBFORM_URL:https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/}
+          webformCyUrl: ${WEBFORM_CY_URL:https://contact-us-about-a-divorce-application-cy.form.service.justice.gov.uk/}
         templates:
           english:
             SAVE_SIGN_OUT: '70dd0a1e-047f-4baa-993a-e722db17d8ac'
@@ -39,12 +42,15 @@ idam:
   api:
     url: http://localhost:5000
   systemupdate:
-    username: dummy@test.com
-    password: dummy
+    username: ${IDAM_SYSTEM_UPDATE_USERNAME:dummysystemupdate@test.com}
+    password: ${IDAM_SYSTEM_UPDATE_PASSWORD:dummy}
   client:
     id: 'divorce'
     secret: BBBBBBBBBBBBBBBB
     redirect_uri: http://localhost:3001/oauth2/callback
+  divorce:
+    username: ${IDAM_OLD_DIVORCE_USERNAME:dummysystemupdate@test.com}
+    password: ${IDAM_OLD_DIVORCE_PASSWORD:dummy}
 
 s2s-authorised:
   services: ccd_data,bulk_scan_processor,bulk_scan_orchestrator
@@ -94,6 +100,7 @@ docmosis:
       CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx
       CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx
       CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor.docx
+      CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor.docx
       CERTIFICATE_OF_ENTITLEMENT_OFFLINE_RESPONDENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: FL-NFD-GOR-ENG-Sole-Applicant-1-Answers_V4.docx
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-1-Answers.docx
@@ -116,8 +123,8 @@ docmosis:
       NFD_NOP_A1_SOLE_APP1_CIT_CS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-A1-V3.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-A2-V4.docx
       NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V3.docx
-      NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R1-V8.docx
-      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V9.docx
+      NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R1-V10.docx
+      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V11.docx
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_ReIssue_Offline_V1.docx
       NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V3.docx
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V3.docx
@@ -167,6 +174,7 @@ docmosis:
       CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor.docx #TODO: update content
+      CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT_OFFLINE_RESPONDENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx #TODO: update content
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: FL-NFD-GOR-ENG-Sole-Applicant-1-Answers_V4.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-1-Answers.docx #TODO: update content
@@ -198,8 +206,8 @@ docmosis:
       NFD_NOP_A1_SOLE_APP1_CIT_CS: NFD_Notice_Of_Proceedings_Sole_V2_CY.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: NFD_Notice_Of_Proceedings_Overseas_Sole_V3_Cy.docx
       NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V3.docx #TODO: add Welsh translation
-      NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: NFD_Notice_Of_Proceedings_Online_Respondent_Sole_V5_Cy.docx
-      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Paper_Respondent_V6.docx
+      NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Online_Respondent_Sole_V7.docx
+      NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Paper_Respondent_V8.docx
       NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V3.docx  #TODO: add translated content
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V3.docx #TODO: add translated content
       NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V3.docx #TODO: add translated content

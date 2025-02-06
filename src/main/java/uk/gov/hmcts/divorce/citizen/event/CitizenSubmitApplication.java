@@ -8,15 +8,19 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
@@ -27,9 +31,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateReadyForPayment;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
 
 @Slf4j
 @Component
@@ -38,10 +39,16 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
     public static final String CITIZEN_SUBMIT = "citizen-submit-application";
 
     @Autowired
-    private PaymentService paymentService;
+    private PaymentSetupService paymentSetupService;
 
     @Autowired
     private SubmissionService submissionService;
+
+    @Autowired
+    private CaseFlagsService caseFlagsService;
+
+    @Autowired
+    private CcdUpdateService ccdUpdateService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -49,12 +56,14 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
         configBuilder
             .event(CITIZEN_SUBMIT)
             .forStates(Draft, AwaitingPayment, Applicant2Approved)
+            .showCondition(NEVER_SHOW)
             .name("Apply: divorce or dissolution")
             .description("Apply: divorce or dissolution")
             .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CITIZEN)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE)
-            .aboutToSubmitCallback(this::aboutToSubmit);
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -87,9 +96,9 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             data = submittedDetails.getData();
             state = submittedDetails.getState();
         } else {
-            OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE,
-                EVENT_ISSUE,KEYWORD_DIVORCE);
-            application.setApplicationFeeOrderSummary(orderSummary);
+            prepareCaseDataForApplicationPayment(
+                details.getData(), details.getId(), details.getData().getCitizenPaymentCallbackUrl()
+            );
 
             state = AwaitingPayment;
         }
@@ -103,5 +112,22 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             .build();
     }
 
+    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
+                                               final CaseDetails<CaseData, State> beforeDetails) {
+        log.info("{} submitted callback invoked CaseID: {}", CITIZEN_SUBMIT, details.getId());
+        caseFlagsService.setSupplementaryDataForCaseFlags(details.getId());
+
+        return SubmittedCallbackResponse.builder().build();
+    }
+
+    public void prepareCaseDataForApplicationPayment(CaseData data, long caseId, String redirectUrl) {
+        Application application = data.getApplication();
+
+        OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(data, caseId);
+        application.setApplicationFeeOrderSummary(orderSummary);
+
+        String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(data, caseId, redirectUrl);
+        application.setApplicationFeeServiceRequestReference(serviceRequest);
+    }
 }
 

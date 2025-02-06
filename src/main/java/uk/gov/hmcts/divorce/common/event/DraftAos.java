@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2HowToRespondToApplication;
+import uk.gov.hmcts.divorce.common.event.page.Applicant2SolAosAskCourtToDelay;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolAosJurisdiction;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolAosOtherProceedings;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolConfirmContactDetails;
@@ -47,11 +48,14 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String DRAFT_AOS = "draft-aos";
+    public static final String DRAFT_AOS_ALREADY_SUBMITTED_ERROR
+        = "The Acknowledgement Of Service has already been submitted.";
     protected static final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
         new Applicant2SolReviewApplicant1Application(),
         new Applicant2HowToRespondToApplication(),
         new Applicant2SolAosJurisdiction(),
+        new Applicant2SolAosAskCourtToDelay(),
         new Applicant2SolAosOtherProceedings()
     );
     @Autowired
@@ -122,6 +126,10 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     private List<String> validateDraftAos(final CaseData caseData) {
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
         final List<String> errors = new ArrayList<>();
+
+        if (null != acknowledgementOfService && null != acknowledgementOfService.getDateAosSubmitted()) {
+            errors.add(DRAFT_AOS_ALREADY_SUBMITTED_ERROR);
+        }
 
         if (!isNull(acknowledgementOfService) && YES.equals(acknowledgementOfService.getConfirmReadPetition())) {
             errors.add("The Acknowledgement Of Service has already been drafted.");

@@ -8,13 +8,20 @@ public final class DocumentConstants {
     public static final String DIVORCE_APPLICATION_SOLE = "DIVORCE_APPLICATION_SOLE";
     public static final String DIVORCE_APPLICATION_JOINT = "DIVORCE_APPLICATION_JOINT";
     public static final String DIVORCE_APPLICATION_DOCUMENT_NAME = "divorce-application";
+    public static final String DIVORCE_APPLICATION_DOCUMENT_NAME_REG = "regenerated-divorce-application";
     public static final String RESPONDENT_ANSWERS_DOCUMENT_NAME = "respondentAnswers";
     public static final String RESPONDENT_ANSWERS_TEMPLATE_ID = "RESPONDENT_ANSWERS";
     public static final String RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID = "NFD_RESP_RESPONDED_DISPUTED";
+    public static final String RESPONDENT_RESPONDED_AWAITING_CO_DISPUTED_TEMPLATE_ID = "NFD_RESP_RESPONDED_AWAITING_CO_DISPUTED";
     public static final String RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID = "NFD_RESP_RESPONDED_UNDEFENDED";
+    public static final String RESPONDENT_RESPONDED_AWAITING_CO_UNDEFENDED_TEMPLATE_ID = "NFD_RESP_RESPONDED_AWAITING_CO_UNDEFENDED";
     public static final String NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED = "NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED";
     public static final String NFD_NOP_APP1_JS_SOLE_DISPUTED = "NFD_NOP_APP1_JS_SOLE_DISPUTED";
     public static final String NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED = "NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED";
+    public static final String NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1_APP2_TEMPLATE_ID = "NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2";
+    public static final String NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER_TEMPLATE_ID = "NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER";
+    public static final String SOLICITOR_APPLIED_FOR_FINAL_ORDER_DOCUMENT_NAME = "Solicitor applied for final order";
+    public static final String NFD_NOTICE_OF_CHANGE_CONFIRMATION_DOCUMENT_NAME = "Grant of representation";
     public static final String NFD_NOP_APP1_JS_SOLE_UNDISPUTED = "NFD_NOP_APP1_JS_SOLE_UNDISPUTED";
 
     public static final String PRONOUNCEMENT_LIST_TEMPLATE_ID = "BULK_CASE_PRONOUNCEMENT";
@@ -34,9 +41,9 @@ public final class DocumentConstants {
     public static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE = "NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE";
 
     public static final String NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES = "NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES";
-    public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
     public static final String AMENDED_APPLICATION_COVERSHEET_DOCUMENT_NAME = "amendedApplicationCoversheet";
     public static final String CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "conditionalOrderGrantedCoversheet";
+    public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
     public static final String JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "judicialSeparationOrderGrantedCoversheet";
     public static final String JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME
         = "judicialSeparationOrderGrantedSolicitorCoversheet";
@@ -67,6 +74,7 @@ public final class DocumentConstants {
     public static final String JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID = "JUDICIAL_SEPARATION_SOLE_APPLICATION";
     public static final String JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID = "JUDICIAL_SEPARATION_JOINT_APPLICATION";
     public static final String JUDICIAL_SEPARATION_APPLICATION_DOCUMENT_NAME = "judicial-separation-application";
+    public static final String JUDICIAL_SEPARATION_APPLICATION_DOCUMENT_NAME_REG = "regenerated-judicial-separation-application";
 
     public static final String GENERAL_ORDER = "generalOrder";
     public static final String DIVORCE_GENERAL_ORDER = "DIVORCE_GENERAL_ORDER";
@@ -102,6 +110,8 @@ public final class DocumentConstants {
     public static final String CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID = "CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER";
     public static final String CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID
         = "CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER";
+    public static final String CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER_TEMPLATE_ID
+        = "CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER";
     public static final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME = "certificateOfEntitlementCoverLetter";
 
     public static final String USER_ROLES = "user-roles";
@@ -158,15 +168,17 @@ public final class DocumentConstants {
     public static final String SEPARATION_ORDER_PRONOUNCED_DOCUMENT_NAME = "separationOrderGranted";
 
     public static final String CO_GRANTED_COVER_LETTER_TEMPLATE_ID = "CO_GRANTED_COVER_LETTER";
-
+    public static final String CO_GRANTED_SOL_COVER_LETTER_TEMPLATE_ID = "CO_GRANTED_SOL_COVER_LETTER";
+    public static final String CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_SOL_TEMPLATE_ID
+        = "CO_PRONOUNCED_SOL_COVER_LETTER_OFFLINE_RESPONDENT";
     public static final String CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID = "CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT";
-
     public static final String JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID = "JUDICIAL_SEPARATION_ORDER_PRONOUNCED";
     public static final String JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID
         = "JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER";
     public static final String JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID
         = "JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER";
 
+    public static final String FINAL_ORDER_CAN_APPLY_RESPONDENT_TEMPLATE_ID = "FINAL_ORDER_CAN_APPLY_RESPONDENT";
     public static final String FINAL_ORDER_CAN_APPLY_TEMPLATE_ID = "FINAL_ORDER_CAN_APPLY";
     public static final String FINAL_ORDER_CAN_APPLY_DOCUMENT_NAME = "finalOrderCanApply";
 
@@ -175,6 +187,9 @@ public final class DocumentConstants {
 
     public static final String FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME = "FinalOrderGrantedCoverLetter";
     public static final String FINAL_ORDER_COVER_LETTER_TEMPLATE_ID = "FINAL_ORDER_GRANTED_COVER_LETTER";
+
+    public static final String NOC_CITIZEN_LETTER_TEMPLATE_ID = "NOC_TO_SOLS_CITIZEN_LETTER";
+    public static final String NOC_CITIZEN_LETTER_DOCUMENT_NAME = "Noc";
 
     public static final String APPLICANT1 = "applicant1";
     public static final String APPLICANT2 = "applicant2";

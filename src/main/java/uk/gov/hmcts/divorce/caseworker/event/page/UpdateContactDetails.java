@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
@@ -18,8 +19,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import static uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
@@ -41,6 +49,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     private static final String LAST_NAME_LABEL = "${%s} last name";
     private static final String WARNING_LABEL = "### WARNING: Changing the ${%s} gender here means you need "
         + "to Re-Issue the case to update all case documents";
+    private static final String CHANGE_REPRESENTATION_WARNING_LABEL = "### WARNING: Use this event for only minor amendments to the "
+        + "solicitor's details. DO NOT change the firm. Use Notice of change to change the firm.";
     private static final String GENDER_LABEL = "What is the ${%s} gender?";
     private static final String GENDER_HINT_LABEL = "The ${%s} gender is collected for statistical purposes only";
     private static final String CONTACT_TYPE_LABEL = "Keep the ${%s} contact details private from ${%s}?";
@@ -55,7 +65,6 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     private static final String MARRIAGE_CERT_NAME_HINT_LABEL =
         "Enter the ${%s} name exactly as it appears on the certificate. Include any extra text such as 'formally known as'.";
     private static final String APPLICANTS_OR_APPLICANT1S = "labelContentApplicantsOrApplicant1s";
-    private static final String THE_APPLICANT_OR_APPLICANT1 = "labelContentTheApplicantOrApplicant1";
     private static final String RESPONDENTS_OR_APPLICANT2S = "labelContentRespondentsOrApplicant2s";
     private static final String THE_RESPONDENT_OR_APPLICANT2 = "labelContentTheApplicant2";
     public static final String SOLICITOR_FIRM_LABEL = "${%s} solicitor's firm";
@@ -65,6 +74,11 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     public static final String SOLICITOR_S_FIRM_ADDRESS_OVERSEAS_LABEL = "Is ${%s} solicitor's firm address/DX address international?";
     public static final String SOLICITOR_REFERENCE_LABEL = "${%s} solicitor's reference";
     public static final String RESPONDENT_SOLICITOR_EMAIL_LABEL = "${%s} solicitor's email address they used to link the case";
+    public static final String SOLICITOR_DETAILS_REMOVED_ERROR = """
+        You cannot remove the solicitor %s with this event. Please use Notice of Change if you would like to remove representation.
+        """;
+    public static final String APPLICANT_REFUGE_LABEL = "Is ${%s} currently resident in a refuge";
+    public static final String THE_APPLICANT_OR_APPLICANT1 = "labelContentTheApplicantOrApplicant1";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -94,6 +108,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
         fieldCollectionBuilder
             .label("applicantSolicitorDetailsLabel", getLabel(SOLICITOR_DETAILS_LABEL, APPLICANTS_OR_APPLICANT1S))
+            .label("LabelApp1ChangeOfRepresentationWarning", getLabel(CHANGE_REPRESENTATION_WARNING_LABEL))
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getSolicitor)
                     .optionalWithLabel(Solicitor::getReference, "Reference number")
@@ -113,13 +128,12 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         EventBuilder<CaseData, UserRole, State>> fieldCollectionBuilder) {
         fieldCollectionBuilder
             .label("respondentSolicitorDetailsLabel", getLabel(SOLICITOR_DETAILS_LABEL, RESPONDENTS_OR_APPLICANT2S))
+            .label("LabelApp2ChangeOfRepresentationWarning", getLabel(CHANGE_REPRESENTATION_WARNING_LABEL))
             .complex(CaseData::getApplicant2)
                 .complex(Applicant::getSolicitor)
                     .optionalWithLabel(Solicitor::getReference,  getLabel(SOLICITOR_REFERENCE_LABEL, RESPONDENTS_OR_APPLICANT2S))
                     .optionalWithLabel(Solicitor::getEmail,  getLabel(RESPONDENT_SOLICITOR_EMAIL_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .done()
-                .mandatoryWithLabel(Applicant::getSolicitorRepresented,
-                    "Is ${labelContentTheApplicant2} represented by a solicitor?")
                 .complex(Applicant::getSolicitor)
                     .optionalWithLabel(Solicitor::getName, getLabel(SOLICITOR_NAME_LABEL, RESPONDENTS_OR_APPLICANT2S))
                     .optionalWithLabel(Solicitor::getFirmName, getLabel(SOLICITOR_FIRM_LABEL, RESPONDENTS_OR_APPLICANT2S))
@@ -145,6 +159,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                     getLabel(GENDER_HINT_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getContactDetailsType,
                     getLabel(CONTACT_TYPE_LABEL, APPLICANTS_OR_APPLICANT1S, THE_RESPONDENT_OR_APPLICANT2))
+                .optionalWithoutDefaultValue(Applicant::getInRefuge, "applicant1ContactDetailsType=\"private\"",
+                    getLabel(APPLICANT_REFUGE_LABEL, THE_APPLICANT_OR_APPLICANT1))
             .done()
             .complex(CaseData::getApplication)
                 .complex(Application::getMarriageDetails)
@@ -174,6 +190,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                 getLabel(GENDER_HINT_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getContactDetailsType,
                     getLabel(CONTACT_TYPE_LABEL, RESPONDENTS_OR_APPLICANT2S, THE_APPLICANT_OR_APPLICANT1))
+                .optionalWithoutDefaultValue(Applicant::getInRefuge, "applicant2ContactDetailsType=\"private\"",
+                    getLabel(APPLICANT_REFUGE_LABEL, THE_RESPONDENT_OR_APPLICANT2))
                 .optionalWithLabel(Applicant::getAddressOverseas, getLabel(ADDRESS_OVERSEAS_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getAddress, getLabel(ADDRESS_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, RESPONDENTS_OR_APPLICANT2S))
@@ -208,7 +226,23 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         CaseData caseData = details.getData();
         CaseData caseDataBefore = detailsBefore.getData();
 
-        if (!validContactDetails(caseDataBefore, caseData)) {
+        if (hasTransitionedFromPrivateToPublic(caseDataBefore.getApplicant1().getContactDetailsType(),
+            caseData.getApplicant1().getContactDetailsType())) {
+            caseData.getApplicant1().setInRefuge(null);
+        }
+        if (hasTransitionedFromPrivateToPublic(caseDataBefore.getApplicant2().getContactDetailsType(),
+            caseData.getApplicant2().getContactDetailsType())) {
+            caseData.getApplicant2().setInRefuge(null);
+        }
+
+        List<String> solicitorValidationErrors = validateSolicitorDetails(caseDataBefore, caseData);
+        if (!solicitorValidationErrors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(solicitorValidationErrors)
+                .build();
+        }
+
+        if (!validApplicantContactDetails(caseDataBefore, caseData)) {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(singletonList("Please use the 'Update offline status' event before removing the email address."))
@@ -235,7 +269,53 @@ public class UpdateContactDetails implements CcdPageConfiguration {
             .build();
     }
 
-    private boolean validContactDetails(CaseData caseDataBefore, CaseData caseData) {
+    private List<String> validateSolicitorDetails(CaseData caseDataBefore, CaseData caseData) {
+        List<String> solicitorValidationErrors = new ArrayList<>();
+
+        solicitorValidationErrors.addAll(
+            validateSolicitorDetailsNotRemoved(
+                caseDataBefore.getApplicant1().getSolicitor(),
+                caseData.getApplicant1().getSolicitor()
+            )
+        );
+
+        solicitorValidationErrors.addAll(
+            validateSolicitorDetailsNotRemoved(
+                caseDataBefore.getApplicant2().getSolicitor(),
+                caseData.getApplicant2().getSolicitor()
+            )
+        );
+
+        return solicitorValidationErrors;
+    }
+
+    private List<String> validateSolicitorDetailsNotRemoved(Solicitor solicitorBefore, Solicitor solicitorAfter) {
+        List<String> solicitorDetailRemovedErrors = new ArrayList<>();
+
+        if (solicitorBefore == null) {
+            return solicitorDetailRemovedErrors;
+        }
+
+        Map<Function<Solicitor, String>, String> getterToFieldNameMap = Map.of(
+            Solicitor::getName, "name",
+            Solicitor::getEmail, "email address",
+            Solicitor::getPhone, "phone number",
+            Solicitor::getAddress, "postal address"
+        );
+
+        getterToFieldNameMap.forEach((getter, fieldName) -> {
+            String valueBefore = getter.apply(solicitorBefore);
+            String valueAfter = getter.apply(solicitorAfter);
+
+            if (isNotEmpty(valueBefore) && isEmpty(valueAfter)) {
+                solicitorDetailRemovedErrors.add(String.format(SOLICITOR_DETAILS_REMOVED_ERROR, fieldName));
+            }
+        });
+
+        return solicitorDetailRemovedErrors;
+    }
+
+    private boolean validApplicantContactDetails(CaseData caseDataBefore, CaseData caseData) {
 
         if (caseDataBefore.getApplicant1().getEmail() != null && !caseDataBefore.getApplicant1().getEmail().isBlank()) {
             if (!caseDataBefore.getApplicant1().isRepresented()
@@ -289,5 +369,9 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                 && HUSBAND.equals(divorceWho)
                 && SAME_SEX_COUPLE.equals(formationType);
         }
+    }
+
+    private boolean hasTransitionedFromPrivateToPublic(ContactDetailsType previousType, ContactDetailsType currentType) {
+        return ContactDetailsType.PRIVATE.equals(previousType) && ContactDetailsType.PUBLIC.equals(currentType);
     }
 }

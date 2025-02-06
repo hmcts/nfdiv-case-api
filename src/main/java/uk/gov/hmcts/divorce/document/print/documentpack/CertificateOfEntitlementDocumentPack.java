@@ -13,6 +13,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENT
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
@@ -51,6 +52,28 @@ public class CertificateOfEntitlementDocumentPack implements DocumentPack {
             ImmutableMap.of(
                     CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME
             )
+    );
+
+    private static final DocumentPackInfo APPLICANT_1_CERTIFICATE_OF_ENTITLEMENT_PACK_REPRESENTED = new DocumentPackInfo(
+        ImmutableMap.of(
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1,
+            Optional.of(CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER_TEMPLATE_ID),
+            CERTIFICATE_OF_ENTITLEMENT, Optional.empty()
+        ),
+        ImmutableMap.of(
+            CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME
+        )
+    );
+
+    private static final DocumentPackInfo APPLICANT_2_CERTIFICATE_OF_ENTITLEMENT_PACK_REPRESENTED = new DocumentPackInfo(
+        ImmutableMap.of(
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2,
+            Optional.of(CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER_TEMPLATE_ID),
+            CERTIFICATE_OF_ENTITLEMENT, Optional.empty()
+        ),
+        ImmutableMap.of(
+            CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME
+        )
     );
 
     private static final DocumentPackInfo APPLICANT_1_CERTIFICATE_OF_ENTITLEMENT_PACK_JS = new DocumentPackInfo(
@@ -111,11 +134,15 @@ public class CertificateOfEntitlementDocumentPack implements DocumentPack {
         }
 
         if (isApplicant1) {
-            return APPLICANT_1_CERTIFICATE_OF_ENTITLEMENT_PACK;
+            return applicant.isRepresented() ? APPLICANT_1_CERTIFICATE_OF_ENTITLEMENT_PACK_REPRESENTED :
+                APPLICANT_1_CERTIFICATE_OF_ENTITLEMENT_PACK;
         } else {
-            if (isSole) {
+            if (applicant.isRepresented()) {
+                return APPLICANT_2_CERTIFICATE_OF_ENTITLEMENT_PACK_REPRESENTED;
+            } else if (isSole) {
                 return RESPONDENT_CERTIFICATE_OF_ENTITLEMENT_PACK;
             }
+
             return APPLICANT_2_CERTIFICATE_OF_ENTITLEMENT_PACK;
         }
     }

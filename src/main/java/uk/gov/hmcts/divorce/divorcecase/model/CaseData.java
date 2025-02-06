@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,12 +14,16 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.FieldType;
+import uk.gov.hmcts.ccd.sdk.type.FlagLauncher;
+import uk.gov.hmcts.ccd.sdk.type.Flags;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
+import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
@@ -26,11 +31,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAcces
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.InternalCaseFlagsAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -41,8 +48,10 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.CasePaymentHistoryViewer;
@@ -66,6 +75,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.C8;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONFIDENTIAL_RESPONDENT_ANSWERS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.REQUEST_FOR_INFORMATION_RESPONSE_DOC;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
@@ -132,6 +142,9 @@ public class CaseData {
     @CCD(access = {DefaultAccess.class})
     private ConditionalOrder conditionalOrder = new ConditionalOrder();
 
+    @CCD(access = {DefaultAccess.class, Applicant2Access.class})
+    private String citizenPaymentCallbackUrl;
+
     @JsonUnwrapped()
     @Builder.Default
     private FinalOrder finalOrder = new FinalOrder();
@@ -175,11 +188,20 @@ public class CaseData {
     )
     private List<ListValue<GeneralReferral>> generalReferrals;
 
+    @JsonUnwrapped
+    @Builder.Default
+    private Hearing hearing = new Hearing();
+
     @CCD(
         label = "Is case judicial separation?",
         access = {DefaultAccess.class}
     )
     private YesOrNo isJudicialSeparation;
+
+    @CCD(
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo caseFlagsSetupComplete;
 
     @CCD(
         label = "Previous Service Applications",
@@ -255,6 +277,16 @@ public class CaseData {
     @CCD(access = {CaseworkerAccess.class})
     private String hyphenatedCaseRef;
 
+    @CCD(access = {AcaSystemUserAccess.class})
+    private ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequestField;
+
+    @CCD(
+            access = {DefaultAccess.class, AcaSystemUserAccess.class, CaseworkerAccess.class},
+            label = "Change of representatives"
+    )
+    @Builder.Default
+    private List<ListValue<ChangeOfRepresentative>> changeOfRepresentatives = new ArrayList<>();
+
     @CCD(
         access = {CaseworkerAccess.class}
     )
@@ -306,6 +338,34 @@ public class CaseData {
     )
     @Builder.Default
     private SentNotifications sentNotifications = new SentNotifications();
+
+    @JsonUnwrapped
+    @Builder.Default
+    private RequestForInformationList requestForInformationList = new RequestForInformationList();
+
+    @CCD(
+        label = "Case matches",
+        typeOverride = Collection,
+        typeParameterOverride = "CaseMatch",
+        access = {CaseworkerAccess.class}
+    )
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
+    @Builder.Default
+    private List<ListValue<CaseMatch>> caseMatches = new ArrayList<>();
+
+    @CCD(
+        label = "Launch the Flags screen",
+        access = {InternalCaseFlagsAccess.class}
+    )
+    private FlagLauncher internalFlagLauncher;
+
+    @CCD(access = {InternalCaseFlagsAccess.class},
+        label = "Case Flags")
+    private Flags caseFlags;
+
+    @JsonUnwrapped
+    @Builder.Default
+    private PartyFlags partyFlags = new PartyFlags();
 
     @JsonIgnore
     public String formatCaseRef(long caseId) {
@@ -455,13 +515,15 @@ public class CaseData {
     public void updateCaseDataWithPaymentDetails(
         OrderSummary applicationFeeOrderSummary,
         CaseData caseData,
-        String paymentReference
+        String paymentReference,
+        String serviceRequest
     ) {
         var payment = Payment
             .builder()
             .amount(parseInt(applicationFeeOrderSummary.getPaymentTotal()))
             .channel("online")
             .feeCode(applicationFeeOrderSummary.getFees().get(0).getValue().getCode())
+            .serviceRequestReference(serviceRequest)
             .reference(paymentReference)
             .status(SUCCESS)
             .build();
@@ -566,5 +628,43 @@ public class CaseData {
                 finalOrder.setDateD36FormScanned(scannedDocument.getScannedDate());
             }
         }
+
+        if (REQUEST_FOR_INFORMATION_RESPONSE_DOC.equals(documentType)) {
+            RequestForInformationOfflineResponseDraft offlineDraft =
+                this.getRequestForInformationList().getRequestForInformationOfflineResponseDraft();
+            offlineDraft.addDocument(divorceDocument);
+        }
+    }
+
+    @JsonIgnore
+    public <T> List<T> fromListValueToList(final List<ListValue<T>> targetList) {
+        return targetList.stream()
+            .map(ListValue::getValue)
+            .collect(toList());
+    }
+
+    @JsonIgnore
+    public void updateCaseWithGeneralApplication() {
+        GeneralApplication generalApplication = this.getGeneralApplication();
+        generalApplication.setGeneralApplicationDocument(null);
+
+        generalApplication.getGeneralApplicationDocuments().forEach(divorceDocumentListValue -> {
+            divorceDocumentListValue.getValue().setDocumentType(DocumentType.GENERAL_APPLICATION);
+            this.getDocuments().setDocumentsUploaded(
+                addDocumentToTop(this.getDocuments().getDocumentsUploaded(), divorceDocumentListValue.getValue()));
+        });
+
+        final ListValue<GeneralApplication> generalApplicationListValue = ListValue.<GeneralApplication>builder()
+            .id(UUID.randomUUID().toString())
+            .value(generalApplication.toBuilder().build())
+            .build();
+
+        if (isNull(this.getGeneralApplications())) {
+            this.setGeneralApplications(singletonList(generalApplicationListValue));
+        } else {
+            this.getGeneralApplications().add(0, generalApplicationListValue);
+        }
+
+        generalApplication.setGeneralApplicationTypeOtherComments(null);
     }
 }

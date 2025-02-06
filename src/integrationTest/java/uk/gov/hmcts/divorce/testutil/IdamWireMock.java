@@ -101,6 +101,6 @@ public final class IdamWireMock {
             + "&client_secret=BBBBBBBBBBBBBBBB"
             + "&redirect_uri=" + encode("http://localhost:3001/oauth2/callback", UTF_8.name())
             + "&client_id=divorce"
-            + "&username=" + encode("dummy@test.com", UTF_8.name());
+            + "&username=" + encode("dummysystemupdate@test.com", UTF_8.name());
     }
 }

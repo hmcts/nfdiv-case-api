@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -23,10 +24,14 @@ import static uk.gov.hmcts.divorce.common.notification.ConditionalOrderPronounce
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_SOLE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_GRANTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_GRANTED_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED_SOLICITOR;
 
 @Component
 @Slf4j
@@ -44,13 +49,23 @@ public class ServiceApplicationNotification implements ApplicantNotification {
     public void sendToApplicant1(final CaseData caseData, final Long id) {
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            getEmailTemplate(caseData.getAlternativeService(), id),
-            getServiceApplicationVars(caseData, id),
+            getEmailTemplate(caseData, id),
+            getApplicantServiceApplicationVars(caseData, id),
             caseData.getApplicant1().getLanguagePreference(),
             id);
     }
 
-    private Map<String, String> getServiceApplicationVars(final CaseData caseData, final Long id) {
+    @Override
+    public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
+        notificationService.sendEmail(
+            caseData.getApplicant1().getSolicitor().getEmail(),
+            getEmailTemplate(caseData, id),
+            getSolicitorServiceApplicationVars(caseData, id),
+            caseData.getApplicant1().getLanguagePreference(),
+            id);
+    }
+
+    private Map<String, String> getApplicantServiceApplicationVars(final CaseData caseData, final Long id) {
 
         Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
@@ -64,7 +79,26 @@ public class ServiceApplicationNotification implements ApplicantNotification {
         return templateVars;
     }
 
-    private EmailTemplateName getEmailTemplate(final AlternativeService alternativeService, final Long caseId) {
+    private Map<String, String> getSolicitorServiceApplicationVars(final CaseData caseData, final Long id) {
+
+        Map<String, String> templateVars =
+            commonContent.solicitorTemplateVarsPreIssue(caseData, id, caseData.getApplicant1());
+
+        AlternativeServiceType alternativeServiceType = caseData.getAlternativeService().getAlternativeServiceType();
+
+        templateVars.put(IS_DEEMED_SERVICE, DEEMED.equals(alternativeServiceType) ? YES : NO);
+        templateVars.put(IS_DISPENSE_SERVICE, DISPENSED.equals(alternativeServiceType) ? YES : NO);
+        templateVars.put(IS_BAILIFF_SERVICE, BAILIFF.equals(alternativeServiceType) ? YES : NO);
+        templateVars.put(IS_SOLE, caseData.getApplicationType().isSole() ? YES : NO);
+        templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
+
+        return templateVars;
+    }
+
+    private EmailTemplateName getEmailTemplate(final CaseData caseData, final Long caseId) {
+
+        final AlternativeService alternativeService = caseData.getAlternativeService();
+        final Applicant applicant = caseData.getApplicant1();
         if (isNull(alternativeService.getServiceApplicationGranted())) {
             throw new NotificationTemplateException(format(MISSING_FIELD_MESSAGE, "serviceApplicationGranted", caseId));
         }
@@ -72,10 +106,10 @@ public class ServiceApplicationNotification implements ApplicantNotification {
         final AlternativeServiceType alternativeServiceType = alternativeService.getAlternativeServiceType();
         if (alternativeService.isApplicationGranted()) {
             log.info(LOGGER_MESSAGE, alternativeServiceType == null ? "" : alternativeServiceType.getLabel(), "granted");
-            return SERVICE_APPLICATION_GRANTED;
+            return (applicant.isRepresented()) ? SERVICE_APPLICATION_GRANTED_SOLICITOR : SERVICE_APPLICATION_GRANTED;
         } else {
             log.info(LOGGER_MESSAGE, alternativeServiceType == null ? "" : alternativeServiceType.getLabel(), "rejected");
-            return SERVICE_APPLICATION_REJECTED;
+            return (applicant.isRepresented()) ? SERVICE_APPLICATION_REJECTED_SOLICITOR : SERVICE_APPLICATION_REJECTED;
         }
     }
 }

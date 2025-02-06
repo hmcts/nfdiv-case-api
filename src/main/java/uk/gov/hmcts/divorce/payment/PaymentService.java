@@ -5,33 +5,38 @@ import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.payment.model.CasePaymentRequest;
+import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.PaymentItem;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
+import uk.gov.hmcts.divorce.payment.model.ServiceReferenceResponse;
 import uk.gov.hmcts.divorce.payment.model.StatusHistoriesItem;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.Fee.getValueInPence;
-import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.penceToPounds;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0001;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0003;
@@ -44,6 +49,8 @@ import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.NOT_FOUND;
 public class PaymentService {
 
     private static final String DEFAULT_CHANNEL = "default";
+    private static final String ERROR_GENERIC = "Sorry, there is a problem with the service.\n"
+        + "Try again later.";
     public static final String EVENT_ENFORCEMENT = "enforcement";
     public static final String EVENT_GENERAL = "general%20application";
     public static final String EVENT_ISSUE = "issue";
@@ -57,7 +64,7 @@ public class PaymentService {
     public static final String KEYWORD_DEF = "DEF";
     public static final String KEYWORD_NOTICE = "GAOnNotice";
     public static final String KEYWORD_WITHOUT_NOTICE = "GeneralAppWithoutNotice";
-    public static final String KEYWORD_ABC = "ABC";
+    public static final String KEYWORD_COPIES = "CopyElectronic";
 
     private static final String FAMILY = "family";
     private static final String FAMILY_COURT = "family court";
@@ -66,12 +73,17 @@ public class PaymentService {
     public static final String CA_E0001 = "CA-E0001";
     public static final String CA_E0004 = "CA-E0004";
     public static final String CA_E0003 = "CA-E0003";
+    public static final String HMCTS_ORG_ID = "ABA1";
+    private static final String ERROR_SERVICE_REF_REQUEST = "Failed to create service reference for case: %s";
 
     @Autowired
     private HttpServletRequest httpServletRequest;
 
     @Autowired
     private FeesAndPaymentsClient feesAndPaymentsClient;
+
+    @Autowired
+    private PaymentClient paymentClient;
 
     @Autowired
     private PaymentPbaClient paymentPbaClient;
@@ -81,6 +93,58 @@ public class PaymentService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Value("${idam.client.redirect_uri}")
+    private String redirectUrl;
+
+    public static class PaymentServiceException extends RuntimeException {
+        public PaymentServiceException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    public String createServiceRequestReference(
+        String callbackUrl,
+        Long caseId,
+        String responsibleParty,
+        OrderSummary orderSummary
+    ) {
+        try {
+            log.info("Creating service request reference for case id: {}", caseId);
+
+            final Fee fee = getFeeValue(orderSummary);
+            final PaymentItem paymentItem = PaymentItem
+                .builder()
+                .ccdCaseNumber(String.valueOf(caseId))
+                .calculatedAmount(penceToPounds(orderSummary.getPaymentTotal()))
+                .code(fee.getCode())
+                .version(fee.getVersion())
+                .build();
+
+            var serviceReferenceResponse = paymentClient.createServiceRequest(
+                httpServletRequest.getHeader(AUTHORIZATION),
+                authTokenGenerator.generate(),
+                buildServiceRequestBody(callbackUrl, caseId, responsibleParty, singletonList(paymentItem))
+            );
+
+            String serviceReference = Optional.ofNullable(serviceReferenceResponse)
+                .map(response ->
+                    Optional.ofNullable(response.getBody())
+                        .map(ServiceReferenceResponse::getServiceRequestReference)
+                        .filter(serviceRef -> !serviceRef.isEmpty())
+                        .orElseThrow()
+                )
+                .orElseThrow();
+
+            log.info("Successfully created service request reference: {}, for case id: {}", serviceReference, caseId);
+
+            return serviceReference;
+        } catch (FeignException | NoSuchElementException e) {
+            log.error("Failed to create service request reference for case id: {}, error: {}", caseId, e.getMessage());
+
+            throw new PaymentServiceException(String.format(ERROR_SERVICE_REF_REQUEST, caseId), e);
+        }
+    }
 
     public OrderSummary getOrderSummaryByServiceEvent(String service, String event, String keyword) {
         final var feeResponse = feesAndPaymentsClient.getPaymentServiceFee(
@@ -99,14 +163,14 @@ public class PaymentService {
             .build();
     }
 
-    public PbaResponse processPbaPayment(CaseData caseData,
-                                         Long caseId,
+    public PbaResponse processPbaPayment(Long caseId,
+                                         String serviceRequestReference,
                                          Solicitor solicitor,
                                          String pbaNumber,
                                          OrderSummary orderSummary,
                                          String feeAccountReference) {
 
-        log.info("Processing PBA payment for case id {}", caseId);
+        log.info("Processing PBA payment for case id {}, against service reference {}", caseId, serviceRequestReference);
 
         ResponseEntity<CreditAccountPaymentResponse> paymentResponseEntity = null;
 
@@ -114,13 +178,14 @@ public class PaymentService {
             paymentResponseEntity = paymentPbaClient.creditAccountPayment(
                 httpServletRequest.getHeader(AUTHORIZATION),
                 authTokenGenerator.generate(),
-                creditAccountPaymentRequest(caseData, caseId, solicitor, pbaNumber, orderSummary, feeAccountReference)
+                serviceRequestReference,
+                creditAccountPaymentRequest(solicitor, pbaNumber, orderSummary, feeAccountReference)
             );
 
             String paymentReference = Optional.ofNullable(paymentResponseEntity)
                 .map(response ->
                     Optional.ofNullable(response.getBody())
-                        .map(CreditAccountPaymentResponse::getReference)
+                        .map(CreditAccountPaymentResponse::getPaymentReference)
                         .orElseGet(() -> null)
                 )
                 .orElseGet(() -> null);
@@ -143,7 +208,7 @@ public class PaymentService {
             );
             return getPbaErrorResponse(pbaNumber, exception);
         }
-        return new PbaResponse(INTERNAL_SERVER_ERROR, GENERAL.value(), null);
+        return new PbaResponse(INTERNAL_SERVER_ERROR, ERROR_GENERIC, null);
     }
 
     private CreditAccountPaymentResponse getPaymentResponse(FeignException exception) {
@@ -184,6 +249,10 @@ public class PaymentService {
 
         if (httpStatus == HttpStatus.NOT_FOUND) {
             return new PbaResponse(httpStatus, String.format(NOT_FOUND.value(), pbaNumber), null);
+        }
+
+        if (isGenericErrorRequiredForHttpStatus(httpStatus)) {
+            return new PbaResponse(httpStatus, ERROR_GENERIC, pbaNumber);
         }
 
         CreditAccountPaymentResponse creditAccountPaymentResponse = getPaymentResponse(exception);
@@ -253,58 +322,43 @@ public class PaymentService {
         return errorMessage;
     }
 
-    private CreditAccountPaymentRequest creditAccountPaymentRequest(CaseData caseData,
-                                                                    Long caseId,
-                                                                    Solicitor solicitor,
+    private CreditAccountPaymentRequest creditAccountPaymentRequest(Solicitor solicitor,
                                                                     String pbaNumber,
                                                                     OrderSummary orderSummary,
                                                                     String feeAccountReference) {
 
-        var creditAccountPaymentRequest = new CreditAccountPaymentRequest();
-        creditAccountPaymentRequest.setService(DIVORCE_SERVICE);
-        creditAccountPaymentRequest.setCurrency(GBP);
-        creditAccountPaymentRequest.setAccountNumber(pbaNumber);
-        creditAccountPaymentRequest.setCaseType(getCaseType());
-
-        creditAccountPaymentRequest.setOrganisationName(solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
-
-        creditAccountPaymentRequest.setCustomerReference(feeAccountReference);
-
-        final Fee fee = getFeeValue(orderSummary);
-        creditAccountPaymentRequest.setDescription(fee.getDescription());
-
-        creditAccountPaymentRequest.setAmount(orderSummary.getPaymentTotal());
-        creditAccountPaymentRequest.setCcdCaseNumber(String.valueOf(caseId));
-
-        List<PaymentItem> paymentItemList = populateFeesPaymentItems(
-            caseId,
-            orderSummary.getPaymentTotal(),
-            fee,
-            caseData.getApplication().getFeeAccountReference()
-        );
-
-        creditAccountPaymentRequest.setFees(paymentItemList);
-
-        return creditAccountPaymentRequest;
+        return CreditAccountPaymentRequest.builder()
+                .currency(GBP)
+                .accountNumber(pbaNumber)
+                .organisationName(solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName())
+                .customerReference(feeAccountReference)
+                .idempotencyKey(String.valueOf(UUID.randomUUID()))
+                .amount(penceToPounds(orderSummary.getPaymentTotal()))
+            .build();
     }
 
-    private List<PaymentItem> populateFeesPaymentItems(
+    private CreateServiceRequestBody buildServiceRequestBody(
+        String callBackUrl,
         Long caseId,
-        String paymentTotal,
-        Fee fee,
-        String reference
+        String responsibleParty,
+        List<PaymentItem> paymentItemList
     ) {
-        var paymentItem = PaymentItem
-            .builder()
-            .ccdCaseNumber(String.valueOf(caseId))
-            .calculatedAmount(penceToPounds(paymentTotal))
-            .code(fee.getCode())
-            .reference(reference)
-            .version(fee.getVersion())
-            .build();
+        return CreateServiceRequestBody.builder()
+            .ccdCaseNumber(caseId)
+            .caseReference(caseId)
+            .callBackUrl(resolveCallbackUrlOrUseDefault(callBackUrl))
+            .hmctsOrgId(HMCTS_ORG_ID)
+            .fees(paymentItemList)
+            .casePaymentRequest(
+                CasePaymentRequest.builder()
+                    .responsibleParty(responsibleParty)
+                    .action("payment")
+                    .build()
+            ).build();
+    }
 
-
-        return singletonList(paymentItem);
+    private String resolveCallbackUrlOrUseDefault(String callBackUrl) {
+        return Optional.ofNullable(callBackUrl).orElse(redirectUrl);
     }
 
     private Fee getFeeValue(OrderSummary orderSummary) {
@@ -325,5 +379,9 @@ public class PaymentService {
         );
 
         return feeResponse.getAmount();
+    }
+
+    private boolean isGenericErrorRequiredForHttpStatus(HttpStatus httpStatus) {
+        return httpStatus == INTERNAL_SERVER_ERROR || httpStatus == GATEWAY_TIMEOUT;
     }
 }

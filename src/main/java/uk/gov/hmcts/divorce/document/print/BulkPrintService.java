@@ -114,7 +114,8 @@ public class BulkPrintService {
                 )))
             .letterId;
 
-        log.info("Bulk print request sent with letterId: " + sendLetterUUID);
+        String logMsg = "Bulk print request sent with letterId: " + sendLetterUUID;
+        log.info(Boolean.TRUE.equals(print.getIsInternational()) ? "International " + logMsg : logMsg);
 
         for (var letter : print.getLetters()) {
             log.info("Sent document {} for case {} in letter {}", getDocument(letter).getFilename(), print.getCaseRef(), sendLetterUUID);

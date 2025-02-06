@@ -8,6 +8,7 @@
     "applicant1Gender": "male",
     "applicant1Address": {},
     "sentNotifications": {},
+    "changeOfRepresentatives": [],
     "coCronRetriesRemindApplicantApplyCo": 0,
     "applicant1LanguagePreferenceWelsh": "No",
     "applicant1LastName": "test_last_name",

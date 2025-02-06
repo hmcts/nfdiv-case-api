@@ -6,8 +6,10 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
@@ -20,7 +22,14 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import static uk.gov.hmcts.divorce.common.event.RegenerateApplication.REGENERATE_APPLICATION;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.common.event.RegenerateApplicationDocument.REGENERATE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.APPLICANT;
+import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.CHILDREN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -33,6 +42,18 @@ public class CaseworkerUpdateFinRemAndJurisdiction implements CCDConfig<CaseData
     public static final String CASEWORKER_UPDATE_FIN_REM_AND_JURISDICTION = "caseworker-update-fin-rem-and-jurisdiction";
 
     private static final String NEVER_SHOW = "jurisdictionConnections=\"NEVER_SHOW\"";
+
+    public static final String APPLICANT_CONFIRM_FO_PRAYER_THEMSELVES_WARNING =
+        "Applicant must confirm prayer for financial orders for themselves";
+
+    public static final String APPLICANT_CLEAR_FO_PRAYER_THEMSELVES_WARNING =
+        "Applicant must clear prayer for financial orders for themselves";
+
+    public static final String APPLICANT_CONFIRM_FO_PRAYER_CHILDREN_WARNING =
+        "Applicant must confirm prayer for financial orders for the children";
+
+    public static final String APPLICANT_CLEAR_FO_PRAYER_CHILDREN_WARNING =
+        "Applicant must clear prayer for financial orders for the children";
 
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
@@ -48,12 +69,9 @@ public class CaseworkerUpdateFinRemAndJurisdiction implements CCDConfig<CaseData
             .description("Update FinRem and Jurisdiction")
             .showSummary()
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE,
-                SUPER_USER)
-            .grantHistoryOnly(
-                SUPER_USER,
-                LEGAL_ADVISOR,
-                JUDGE)
+            .grant(CREATE_READ_UPDATE, SUPER_USER)
+            .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE)
+            .aboutToSubmitCallback(this::midEvent)
             .submittedCallback(this::submitted))
             .page("updateFinRemAndJurisdiction")
             .complex(CaseData::getLabelContent)
@@ -72,8 +90,25 @@ public class CaseworkerUpdateFinRemAndJurisdiction implements CCDConfig<CaseData
                     "### ${labelContentApplicantsOrApplicant1s} financial order details")
                 .mandatory(Applicant::getFinancialOrder)
                 .mandatory(Applicant::getFinancialOrdersFor, "applicant1FinancialOrder=\"Yes\"")
+                .complex(Applicant::getApplicantPrayer)
+                    .label("Label-CorrectApplicant1FOPrayer", "### The Applicant's prayer details")
+                    .optional(ApplicantPrayer::getPrayerFinancialOrdersThemselves)
+                    .optional(ApplicantPrayer::getPrayerFinancialOrdersChild)
+                    .done()
                 .done()
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
+        CaseDetails<CaseData, State> details,
+        CaseDetails<CaseData, State> beforeDetails
+    ) {
+        log.info("{} midEvent callback invoked for case id: {}", CASEWORKER_UPDATE_FIN_REM_AND_JURISDICTION, details.getId());
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .errors(validateFoPrayer(details.getData().getApplicant1()))
+            .build();
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
@@ -89,5 +124,37 @@ public class CaseworkerUpdateFinRemAndJurisdiction implements CCDConfig<CaseData
         }
 
         return SubmittedCallbackResponse.builder().build();
+    }
+
+    private List<String> validateFoPrayer(Applicant applicant) {
+        List<String> warnings = new ArrayList<>();
+
+        if (applicant.appliedForFinancialOrder()) {
+            if (applicant.getFinancialOrdersFor().contains(APPLICANT)) {
+                if (isEmpty(applicant.getApplicantPrayer().getPrayerFinancialOrdersThemselves())) {
+                    warnings.add(APPLICANT_CONFIRM_FO_PRAYER_THEMSELVES_WARNING);
+                }
+            } else if (!isEmpty(applicant.getApplicantPrayer().getPrayerFinancialOrdersThemselves())) {
+                warnings.add(APPLICANT_CLEAR_FO_PRAYER_THEMSELVES_WARNING);
+            }
+
+            if (applicant.getFinancialOrdersFor().contains(CHILDREN)) {
+                if (isEmpty(applicant.getApplicantPrayer().getPrayerFinancialOrdersChild())) {
+                    warnings.add(APPLICANT_CONFIRM_FO_PRAYER_CHILDREN_WARNING);
+                }
+            } else if (!isEmpty(applicant.getApplicantPrayer().getPrayerFinancialOrdersChild())) {
+                warnings.add(APPLICANT_CLEAR_FO_PRAYER_CHILDREN_WARNING);
+            }
+        } else {
+            if (!isEmpty(applicant.getApplicantPrayer().getPrayerFinancialOrdersThemselves())) {
+                warnings.add(APPLICANT_CLEAR_FO_PRAYER_THEMSELVES_WARNING);
+            }
+
+            if (!isEmpty(applicant.getApplicantPrayer().getPrayerFinancialOrdersChild())) {
+                warnings.add(APPLICANT_CLEAR_FO_PRAYER_CHILDREN_WARNING);
+            }
+        }
+
+        return warnings;
     }
 }
