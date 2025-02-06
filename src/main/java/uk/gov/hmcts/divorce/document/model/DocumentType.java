@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
+import java.util.EnumSet;
+
 @Getter
 @AllArgsConstructor
 public enum DocumentType implements HasLabel {
@@ -259,4 +261,12 @@ public enum DocumentType implements HasLabel {
 
     private final String label;
     private final boolean potentiallyConfidential;
+
+    public static final EnumSet<DocumentType> CONFIDENTIAL_DOCUMENT_TYPES = EnumSet.of(
+        CONFIDENTIAL_RESPONDENT_ANSWERS, C8
+    );
+
+    public boolean isConfidential() {
+        return CONFIDENTIAL_DOCUMENT_TYPES.contains(this);
+    }
 }

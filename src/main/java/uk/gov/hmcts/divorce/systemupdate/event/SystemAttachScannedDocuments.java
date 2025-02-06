@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.CONFIDENTIAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.CONFIDENTIAL_D10;
@@ -126,10 +127,15 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
                 CaseDocuments.ScannedDocumentSubtypes.valueOf(scannedDocument.getSubtype().toUpperCase(Locale.ROOT));
             final DocumentType documentType = getDocumentType(scannedDocumentSubtype);
 
-            if (isNotEmpty(documentType)) {
-                caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, scannedDocument);
-                caseData.getDocuments().setScannedSubtypeReceived(scannedDocumentSubtype);
+            if (isEmpty(documentType)) {
+                return;
             }
+
+            if (!documentType.isConfidential()) {
+                caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, scannedDocument);
+            }
+
+            caseData.getDocuments().setScannedSubtypeReceived(scannedDocumentSubtype);
         }
     }
 
