@@ -322,6 +322,10 @@ public class CaseDocuments {
             .findFirst();
     }
 
+    public static boolean scannedDocReclassifiesAutomatically(ScannedDocumentSubtypes scannedDocumentSubtype) {
+        return scannedDocumentSubtype != null && !scannedDocumentSubtype.isConfidential();
+    }
+
     @JsonIgnore
     public Optional<Document> getFirstGeneratedDocumentLinkWith(final DocumentType documentType) {
         return getFirstDocumentLink(getDocumentsGenerated(), documentType);
