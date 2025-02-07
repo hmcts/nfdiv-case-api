@@ -150,8 +150,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .complex(CaseData::getDocuments)
                 .mandatory(CaseDocuments::getScannedDocumentNames,
                     SCANNED_DOC_MUST_BE_RECLASSIFIED
-                        + "AND (typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\") "
-                        + "OR typeOfDocumentAttached=\"RFIR\"")
+                        + " AND (typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\")"
+                        + " OR typeOfDocumentAttached=\"RFIR\"")
             .done()
             .complex(CaseData::getConditionalOrder)
                 .label("scannedCoLabel", "Conditional Order", "scannedSubtypeReceived=\"D84\"")
