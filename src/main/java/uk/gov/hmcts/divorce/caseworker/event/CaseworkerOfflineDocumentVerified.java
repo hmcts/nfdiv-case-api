@@ -58,7 +58,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.RFIR;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.scannedDocMustBeReclassifiedManually;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.scannedDocMustBeReclassifiedByCaseworker;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.OTHER;
@@ -111,8 +111,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     public static final String REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR
         = "Request for Information Response Partner Notification for Case Id {} failed with message: {}";
 
-    private static final String SCANNED_DOC_MUST_BE_RECLASSIFIED =
-        "(scannedSubtypeReceived!=\"*\" OR scannedSubtypeReceived=\"ConfidentialD10\" OR scannedSubtypeReceived=\"Confidential\")";
+    private static final String SCANNED_DOC_MUST_BE_RECLASSIFIED_BY_CASEWORKER =
+        "scannedSubtypeReceived!=\"*\" OR scannedSubtypeReceived=\"ConfidentialD10\" OR scannedSubtypeReceived=\"ConfidentialC8\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -134,22 +134,18 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .complex(CaseData::getDocuments)
                 .readonlyNoSummary(CaseDocuments::getScannedSubtypeReceived, ALWAYS_HIDE)
                 .mandatory(CaseDocuments::getTypeOfDocumentAttached,
-                    SCANNED_DOC_MUST_BE_RECLASSIFIED,
+                    SCANNED_DOC_MUST_BE_RECLASSIFIED_BY_CASEWORKER,
                     true
                 )
             .done()
             .complex(CaseData::getAcknowledgementOfService)
-                .label(
-                    "scannedAosLabel",
-                    "Acknowledgement Of Service",
-                    "scannedSubtypeReceived=\"D10\" OR scannedSubtypeReceived=\"ConfidentialD10\""
-                )
+                .label("scannedAosLabel", "Acknowledgement Of Service", "scannedSubtypeReceived=\"D10\"")
                 .mandatory(AcknowledgementOfService::getHowToRespondApplication,
                     "typeOfDocumentAttached=\"D10\" OR scannedSubtypeReceived=\"D10\"")
             .done()
             .complex(CaseData::getDocuments)
                 .mandatory(CaseDocuments::getScannedDocumentNames,
-                    SCANNED_DOC_MUST_BE_RECLASSIFIED
+                    String.format("(%s)",SCANNED_DOC_MUST_BE_RECLASSIFIED_BY_CASEWORKER)
                         + " AND (typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\")"
                         + " OR typeOfDocumentAttached=\"RFIR\"")
             .done()
@@ -221,7 +217,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             caseData.getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
         }
 
-        if (scannedDocMustBeReclassifiedManually(scannedSubtypeReceived)) {
+        log.info("Must be reclassified: {}", scannedDocMustBeReclassifiedByCaseworker(scannedSubtypeReceived));
+        log.info("Doc type: {}", caseData.getDocuments().getTypeOfDocumentAttached());
+
+        if (scannedDocMustBeReclassifiedByCaseworker(scannedSubtypeReceived)) {
             List<DynamicListElement> scannedDocumentNames =
                 emptyIfNull(caseData.getDocuments().getScannedDocuments())
                     .stream()
@@ -435,7 +434,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     private void reclassifyScannedDocumentToChosenDocumentType(CaseData caseData, DocumentType documentType) {
         CaseDocuments.ScannedDocumentSubtypes scannedDocumentSubtype = caseData.getDocuments().getScannedSubtypeReceived();
 
-        if (scannedDocMustBeReclassifiedManually(scannedDocumentSubtype)) {
+        if (scannedDocMustBeReclassifiedByCaseworker(scannedDocumentSubtype)) {
             String filename = caseData.getDocuments().getScannedDocumentNames().getValueLabel();
 
             log.info("Reclassifying scanned doc {} to {} doc type", filename, documentType);

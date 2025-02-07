@@ -534,16 +534,16 @@ class CaseDocumentsTest {
 
     @Test
     void shouldRequireManualReclassificationIfScannedDocSubtypeIsNull() {
-        assertTrue(CaseDocuments.scannedDocMustBeReclassifiedManually(null));
+        assertTrue(CaseDocuments.scannedDocMustBeReclassifiedByCaseworker(null));
     }
 
     @Test
     void shouldRequireManualReclassificationIfScannedDocSubtypeIsConfidential() {
-        assertTrue(CaseDocuments.scannedDocMustBeReclassifiedManually(ScannedDocumentSubtypes.CONFIDENTIAL_D10));
+        assertTrue(CaseDocuments.scannedDocMustBeReclassifiedByCaseworker(ScannedDocumentSubtypes.CONFIDENTIAL_D10));
     }
 
     @Test
     void shouldNotRequireManualReclassificationIfScannedDocSubtypeIsUnconfidential() {
-        assertFalse(CaseDocuments.scannedDocMustBeReclassifiedManually(ScannedDocumentSubtypes.D10));
+        assertFalse(CaseDocuments.scannedDocMustBeReclassifiedByCaseworker(ScannedDocumentSubtypes.D10));
     }
 }

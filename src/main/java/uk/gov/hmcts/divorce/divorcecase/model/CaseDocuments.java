@@ -171,8 +171,8 @@ public class CaseDocuments {
     @AllArgsConstructor
     public enum ScannedDocumentSubtypes implements HasLabel {
 
-        @JsonProperty("Confidential")
-        CONFIDENTIAL("Confidential"),
+        @JsonProperty("ConfidentialC8")
+        CONFIDENTIAL("Confidential C8"),
 
         @JsonProperty("ConfidentialD10")
         CONFIDENTIAL_D10("Confidential D10"),
@@ -322,7 +322,7 @@ public class CaseDocuments {
             .findFirst();
     }
 
-    public static boolean scannedDocMustBeReclassifiedManually(ScannedDocumentSubtypes scannedDocumentSubtype) {
+    public static boolean scannedDocMustBeReclassifiedByCaseworker(ScannedDocumentSubtypes scannedDocumentSubtype) {
         return scannedDocumentSubtype == null || scannedDocumentSubtype.isConfidential();
     }
 
