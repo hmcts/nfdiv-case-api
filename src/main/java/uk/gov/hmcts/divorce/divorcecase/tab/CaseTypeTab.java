@@ -391,6 +391,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildScannedDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("scannedDocuments", "Scanned Document")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
+            .showCondition("scannedDocuments=\"*\"")
             .field("scannedDocuments");
     }
 
