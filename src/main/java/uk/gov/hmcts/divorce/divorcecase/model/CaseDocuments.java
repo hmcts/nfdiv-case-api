@@ -203,7 +203,7 @@ public class CaseDocuments {
 
         private final String label;
 
-        public static final EnumSet<ScannedDocumentSubtypes> CONFIDENTIAL_SUBTYPES = EnumSet.of(
+        private static final EnumSet<ScannedDocumentSubtypes> CONFIDENTIAL_SUBTYPES = EnumSet.of(
             CONFIDENTIAL_D10, CONFIDENTIAL
         );
 

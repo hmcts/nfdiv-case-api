@@ -283,7 +283,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
-    void shouldSetStateToHoldingAndReclassifyAosScannedDocumentToRespondentAnswersIfConfidentialD10DocumentSelectedAndFoundInScannedDocNames() {
+    void shouldSetStateToHoldingAndReclassifyConfidentialAosScannedDocumentToRespondentAnswersIfD10SelectedAndFoundInScannedDocNames() {
         setMockClock(clock);
         final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
             .value(
