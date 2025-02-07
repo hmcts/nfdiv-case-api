@@ -104,7 +104,7 @@ public class SystemAttachScannedDocumentsTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"CONFIDENTIAL", "CONFIDENTIAL_D10"})
+    @ValueSource(strings = {"CONFIDENTIAL_D10"})
     void shouldNotReclassifyConfidentialScannedDocumentsAutomatically(String subtype) {
         final List<ListValue<ScannedDocument>> afterScannedDocuments = scannedDocuments(singletonList(subtype));
         afterScannedDocuments.get(0).getValue().setDeliveryDate(now());

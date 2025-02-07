@@ -112,7 +112,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         = "Request for Information Response Partner Notification for Case Id {} failed with message: {}";
 
     private static final String SCANNED_DOC_MUST_BE_RECLASSIFIED_BY_CASEWORKER =
-        "scannedSubtypeReceived!=\"*\" OR scannedSubtypeReceived=\"ConfidentialD10\" OR scannedSubtypeReceived=\"ConfidentialC8\"";
+        "scannedSubtypeReceived!=\"*\" OR scannedSubtypeReceived=\"ConfidentialD10\"";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -216,9 +216,6 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         } else if (RFIR.equals(scannedSubtypeReceived)) {
             caseData.getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
         }
-
-        log.info("Must be reclassified: {}", scannedDocMustBeReclassifiedByCaseworker(scannedSubtypeReceived));
-        log.info("Doc type: {}", caseData.getDocuments().getTypeOfDocumentAttached());
 
         if (scannedDocMustBeReclassifiedByCaseworker(scannedSubtypeReceived)) {
             List<DynamicListElement> scannedDocumentNames =

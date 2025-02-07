@@ -171,11 +171,8 @@ public class CaseDocuments {
     @AllArgsConstructor
     public enum ScannedDocumentSubtypes implements HasLabel {
 
-        @JsonProperty("ConfidentialC8")
-        CONFIDENTIAL("Confidential C8"),
-
         @JsonProperty("ConfidentialD10")
-        CONFIDENTIAL_D10("Confidential D10"),
+        CONFIDENTIAL_D10("D10 Confidential"),
 
         @JsonProperty("D10")
         D10("D10"),
@@ -203,9 +200,7 @@ public class CaseDocuments {
 
         private final String label;
 
-        private static final EnumSet<ScannedDocumentSubtypes> CONFIDENTIAL_SUBTYPES = EnumSet.of(
-            CONFIDENTIAL_D10, CONFIDENTIAL
-        );
+        private static final EnumSet<ScannedDocumentSubtypes> CONFIDENTIAL_SUBTYPES = EnumSet.of(CONFIDENTIAL_D10);
 
         public boolean isConfidential() {
             return CONFIDENTIAL_SUBTYPES.contains(this);
