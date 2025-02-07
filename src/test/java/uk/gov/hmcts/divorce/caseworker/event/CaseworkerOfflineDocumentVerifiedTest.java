@@ -78,6 +78,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.RFI_RESPONSE;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.CONFIDENTIAL_D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
@@ -197,6 +198,120 @@ class CaseworkerOfflineDocumentVerifiedTest {
                 CaseDocuments.builder()
                     .typeOfDocumentAttached(AOS_D10)
                     .scannedDocuments(singletonList(doc1))
+                    .scannedDocumentNames(
+                        DynamicList
+                            .builder()
+                            .value(
+                                DynamicListElement
+                                    .builder()
+                                    .label("doc1.pdf")
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
+            .acknowledgementOfService(AcknowledgementOfService.builder()
+                .howToRespondApplication(DISPUTE_DIVORCE)
+                .build())
+            .build();
+
+        details.setData(caseData);
+
+        final ListValue<DivorceDocument> doc = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(RESPONDENT_ANSWERS)
+                .documentFileName("doc1.pdf")
+                .documentComment("Reclassified scanned document")
+                .documentDateAdded(getExpectedLocalDate())
+                .documentLink(Document
+                    .builder()
+                    .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                    .filename("doc1.pdf")
+                    .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                    .build()
+                )
+                .build())
+            .build();
+
+        List<ListValue<DivorceDocument>> documentsUploaded = new ArrayList<>();
+        documentsUploaded.add(doc);
+
+        final CaseDetails<CaseData, State> updatedDetails = new CaseDetails<>();
+        updatedDetails.setData(CaseData.builder()
+            .documents(
+                CaseDocuments.builder()
+                    .documentsUploaded(documentsUploaded)
+                    .build()
+            )
+            .applicant2(Applicant.builder()
+                .build())
+            .build());
+        updatedDetails.setState(Holding);
+
+        when(submitAosService.submitOfflineAos(details)).thenReturn(updatedDetails);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getState().name()).isEqualTo(Holding.name());
+        assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YES);
+
+        verify(submitAosService).submitOfflineAos(details);
+        verify(submitAosService).submitAosNotifications(details);
+        verifyNoMoreInteractions(submitAosService);
+
+        Document ccdDocument = new Document(
+            "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d",
+            "doc1.pdf",
+            "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary"
+        );
+
+        var divorceDocument = DivorceDocument
+            .builder()
+            .documentLink(ccdDocument)
+            .documentFileName("doc1.pdf")
+            .documentComment("Reclassified scanned document")
+            .documentDateAdded(getExpectedLocalDate())
+            .documentType(RESPONDENT_ANSWERS)
+            .build();
+
+        assertThat(response.getData().getDocuments().getDocumentsUploaded())
+            .extracting("value")
+            .containsExactly(divorceDocument);
+        assertThat(response.getData().getAcknowledgementOfService().getStatementOfTruth()).isEqualTo(YES);
+    }
+
+    @Test
+    void shouldSetStateToHoldingAndReclassifyAosScannedDocumentToRespondentAnswersIfConfidentialD10DocumentSelectedAndFoundInScannedDocNames() {
+        setMockClock(clock);
+        final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
+            .value(
+                ScannedDocument
+                    .builder()
+                    .url(
+                        Document
+                            .builder()
+                            .filename("doc1.pdf")
+                            .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
+                            .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
+                            .build()
+                    )
+                    .fileName("doc1.pdf")
+                    .type(ScannedDocumentType.OTHER)
+                    .subtype(CONFIDENTIAL_D10.getLabel())
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+
+        CaseData caseData = CaseData.builder()
+            .documents(
+                CaseDocuments.builder()
+                    .typeOfDocumentAttached(AOS_D10)
+                    .scannedDocuments(singletonList(doc1))
+                    .scannedSubtypeReceived(CONFIDENTIAL_D10)
                     .scannedDocumentNames(
                         DynamicList
                             .builder()

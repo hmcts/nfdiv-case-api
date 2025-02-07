@@ -6,6 +6,7 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -20,6 +21,7 @@ import java.util.UUID;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -530,4 +532,18 @@ class CaseDocumentsTest {
         assertThat(sorted).isEmpty();
     }
 
+    @Test
+    void shouldRequireManualReclassificationIfScannedDocSubtypeIsNull() {
+        assertTrue(CaseDocuments.scannedDocMustBeReclassifiedManually(null));
+    }
+
+    @Test
+    void shouldRequireManualReclassificationIfScannedDocSubtypeIsConfidential() {
+        assertTrue(CaseDocuments.scannedDocMustBeReclassifiedManually(ScannedDocumentSubtypes.CONFIDENTIAL_D10));
+    }
+
+    @Test
+    void shouldNotRequireManualReclassificationIfScannedDocSubtypeIsUnconfidential() {
+        assertFalse(CaseDocuments.scannedDocMustBeReclassifiedManually(ScannedDocumentSubtypes.D10));
+    }
 }

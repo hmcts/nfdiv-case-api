@@ -103,6 +103,20 @@ public class SystemAttachScannedDocumentsTest {
         assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(1);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"CONFIDENTIAL", "CONFIDENTIAL_D10"})
+    void shouldNotReclassifyConfidentialScannedDocuments(String subtype) {
+        final List<ListValue<ScannedDocument>> afterScannedDocuments = scannedDocuments(singletonList(subtype));
+        afterScannedDocuments.get(0).getValue().setDeliveryDate(now());
+        afterScannedDocuments.addAll(BEFORE_SCANNED_DOCUMENTS);
+        final CaseDetails<CaseData, State> details = getCaseDetails(afterScannedDocuments);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = systemAttachScannedDocuments.aboutToSubmit(details, beforeDetails);
+
+        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isEqualTo(valueOf(subtype));
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNull();
+    }
+
 
     @ParameterizedTest
     @NullSource
