@@ -10,8 +10,10 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.caseworker.service.NoticeOfChangeService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
+import uk.gov.hmcts.divorce.citizen.notification.NocSolsToCitizenNotifications;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
@@ -24,6 +26,7 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,6 +41,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerNoticeOfChange.CASEWORKER_NOTICE_OF_CHANGE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant.APPLICANT_1;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant.APPLICANT_2;
@@ -50,6 +54,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOL_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -67,6 +72,8 @@ class CaseworkerNoticeOfChangeTest {
 
     @Mock
     private NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
+    @Mock
+    private NocSolsToCitizenNotifications nocSolsToCitizenNotifications;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -76,6 +83,9 @@ class CaseworkerNoticeOfChangeTest {
 
     @Mock
     private ApplicantNotification applicantNotification;
+
+    @Mock
+    private CaseFlagsService caseFlagsService;
 
     @Test
     void configure() {
@@ -501,6 +511,157 @@ class CaseworkerNoticeOfChangeTest {
             caseData, beforeCaseData, details.getId(),true, NoticeType.ORG_REMOVED);
     }
 
+    @Test
+    void shouldResetCaseFlagsForSolicitor() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
+        CaseData caseData = createCaseData(APPLICANT_1, true, false, TEST_ORG_ID);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(caseFlagsService, times(1)).resetSolicitorCaseFlags(caseData, true);
+    }
+
+    @Test
+    void shouldReturnErrorWhenSolicitorBeingRemovedAndCitizenEmailBeingBlanked() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
+        beforeCaseData.getApplicant1().setEmail(TEST_USER_EMAIL);
+        CaseData caseData = createCaseData(APPLICANT_1, false, false, TEST_ORG_ID);
+        caseData.getApplicant1().setEmail("");
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        var result = noticeOfChange.midEvent(details, beforeDetails);
+
+        assertThat(result.getErrors()).hasSize(1);
+        assertThat(result.getErrors()).contains("Email address cannot be removed. It can only be updated.");
+    }
+
+    @Test
+    void shouldSendCaseInviteToApplicantWhenSoleApplicationAndSolicitorRemoved() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
+        beforeCaseData.getApplicant1().setSolicitorRepresented(YES);
+        CaseData caseData = createCaseData(APPLICANT_1, false, false, TEST_ORG_ID);
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher, times(1)).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),true);
+    }
+
+    @Test
+    void shouldSendCaseInviteToRespondentWhenSoleApplicationAndSolicitorRemovedAndCaseIssued() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_2, true, false, "OldOrgId");
+        beforeCaseData.getApplicant2().setSolicitorRepresented(YES);
+        CaseData caseData = createCaseData(APPLICANT_2, false, false, TEST_ORG_ID);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
+        caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher, times(1)).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),false);
+    }
+
+    @Test
+    void shouldNotSendCaseInviteToRespondentWhenSoleApplicationAndSolicitorRemovedAndCaseNotIssued() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_2, true, false, "OldOrgId");
+        beforeCaseData.getApplicant2().setSolicitorRepresented(YES);
+        CaseData caseData = createCaseData(APPLICANT_2, false, false, TEST_ORG_ID);
+        caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher,never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),false);
+    }
+
+    @Test
+    void shouldNotSendCaseInviteToCitizenWhenJointApplicationAndSolicitorRemoved() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
+        beforeCaseData.getApplicant1().setSolicitorRepresented(YES);
+        CaseData caseData = createCaseData(APPLICANT_1, false, false, TEST_ORG_ID);
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
+        caseData.setApplicationType(JOINT_APPLICATION);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher,never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),true);
+    }
+
+    @Test
+    void shouldNotSendCaseInviteWhenSoleApplicationAndSolicitorRemovedButApplicantEmailIsNull() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
+        beforeCaseData.getApplicant1().setSolicitorRepresented(YES);
+        CaseData caseData = createCaseData(APPLICANT_1, false, false, TEST_ORG_ID);
+        caseData.getApplicant1().setEmail(null);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher,never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),true);
+    }
+
+    @Test
+    void shouldNotSendCaseInviteWhenSoleApplicationAndSolicitorRemovedButApplicantEmailIsBlank() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
+        beforeCaseData.getApplicant1().setSolicitorRepresented(YES);
+        CaseData caseData = createCaseData(APPLICANT_1, false, false, TEST_ORG_ID);
+        caseData.getApplicant1().setEmail("");
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher,never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),true);
+    }
+
+    @Test
+    void shouldSendCaseInviteToRespondentWhenSoleApplicationAndSolicitorRemovedAndCaseIssuedButEmailIsNull() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_2, true, false, "OldOrgId");
+        beforeCaseData.getApplicant2().setSolicitorRepresented(YES);
+        CaseData caseData = createCaseData(APPLICANT_2, false, false, TEST_ORG_ID);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
+        caseData.getApplicant2().setEmail(null);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher, never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),false);
+    }
+
+    @Test
+    void shouldSendCaseInviteToRespondentWhenSoleApplicationAndSolicitorRemovedAndCaseIssuedButEmailIsBlank() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_2, true, false, "OldOrgId");
+        beforeCaseData.getApplicant2().setSolicitorRepresented(YES);
+        CaseData caseData = createCaseData(APPLICANT_2, false, false, TEST_ORG_ID);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
+        caseData.getApplicant2().setEmail("");
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher, never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),false);
+    }
+
     private CaseData createCaseDataNoSols(NoticeOfChange.WhichApplicant whichApplicant) {
         NoticeOfChange noticeOfChange = new NoticeOfChange();
         noticeOfChange.setWhichApplicant(whichApplicant);
@@ -516,6 +677,20 @@ class CaseworkerNoticeOfChangeTest {
         }
         caseData.setApplicationType(SOLE_APPLICATION);
         return caseData;
+    }
+
+    @Test
+    void shouldNotSendCaseInviteWhenRepresentationHasNotBeenRemovedInEvent() {
+        CaseData beforeCaseData = createCaseData(APPLICANT_1, false, false, "");
+        CaseData caseData = createCaseData(APPLICANT_1, false, false, "");
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
+        CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
+        CaseDetails<CaseData, State> details = createCaseDetails(caseData);
+
+        noticeOfChange.aboutToSubmit(details, beforeDetails);
+
+        verify(notificationDispatcher,never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
+            caseData, details.getId(),true);
     }
 
     private CaseData createCaseData(NoticeOfChange.WhichApplicant whichApplicant, boolean areTheyRepresented,
