@@ -46,6 +46,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SubmitConditionalOrder.SUBMIT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
@@ -147,7 +148,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
@@ -172,7 +173,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
@@ -209,9 +210,9 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
                 .contentType(APPLICATION_JSON)
@@ -235,9 +236,9 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
                 .contentType(APPLICATION_JSON)
@@ -258,7 +259,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YesOrNo.NO).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YesOrNo.NO).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
@@ -283,7 +284,7 @@ public class SubmitConditionalOrderIT {
         verifyJointCOSubmission(
             ConditionalOrder.builder()
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build()
         );
     }
@@ -296,7 +297,7 @@ public class SubmitConditionalOrderIT {
         verifyJointCONotifications(
             ConditionalOrder.builder()
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build(),
             JOINT_APPLIED_FOR_CONDITIONAL_ORDER,
             JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER
@@ -310,7 +311,7 @@ public class SubmitConditionalOrderIT {
         verifyJointCOSubmission(
             ConditionalOrder.builder()
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build()
         );
     }
@@ -322,7 +323,7 @@ public class SubmitConditionalOrderIT {
         verifyJointCONotifications(
             ConditionalOrder.builder()
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build(),
             JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER,
             JOINT_APPLIED_FOR_CONDITIONAL_ORDER
@@ -337,9 +338,9 @@ public class SubmitConditionalOrderIT {
         verifyJointCOSubmission(
             ConditionalOrder.builder()
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build()
         );
     }
@@ -352,9 +353,9 @@ public class SubmitConditionalOrderIT {
         verifyJointCONotifications(
             ConditionalOrder.builder()
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build(),
             JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER,
             JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER
@@ -369,9 +370,9 @@ public class SubmitConditionalOrderIT {
         verifyJointCOSubmission(
             ConditionalOrder.builder()
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build()
         );
     }
@@ -384,9 +385,9 @@ public class SubmitConditionalOrderIT {
         verifyJointCONotifications(
             ConditionalOrder.builder()
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build(),
             JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER,
             JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER
@@ -412,7 +413,7 @@ public class SubmitConditionalOrderIT {
 
         final CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
-        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(Solicitor.builder()
             .name("app1sol")
             .email("app1sol@gm.com")
@@ -421,7 +422,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
@@ -451,7 +452,7 @@ public class SubmitConditionalOrderIT {
 
         final CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
-        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(Solicitor.builder()
             .name("app1sol")
             .email("app1sol@gm.com")
@@ -460,7 +461,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
@@ -497,7 +498,7 @@ public class SubmitConditionalOrderIT {
 
         final CaseData caseData = validApplicant2CaseData();
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
-        caseData.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(Solicitor.builder()
             .name("app2sol")
             .email("app2sol@gm.com")
@@ -506,7 +507,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
@@ -531,7 +532,7 @@ public class SubmitConditionalOrderIT {
 
         final CaseData caseData = validApplicant2CaseData();
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
-        caseData.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(Solicitor.builder()
             .name("app2sol")
             .email("app2sol@gm.com")
@@ -540,7 +541,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
@@ -578,14 +579,14 @@ public class SubmitConditionalOrderIT {
 
         final CaseData caseData = validApplicant2CaseData();
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
-        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(Solicitor.builder()
             .name("app1sol")
             .email("app1sol@gm.com")
             .reference("refxxx1")
             .build());
 
-        caseData.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(Solicitor.builder()
             .name("app2sol")
             .email("app2sol@gm.com")
@@ -594,7 +595,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
@@ -620,14 +621,14 @@ public class SubmitConditionalOrderIT {
 
         final CaseData caseData = validApplicant2CaseData();
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
-        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(Solicitor.builder()
             .name("app1sol")
             .email("app1sol@gm.com")
             .reference("refxxx1")
             .build());
 
-        caseData.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(Solicitor.builder()
             .name("app2sol")
             .email("app2sol@gm.com")
@@ -636,7 +637,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
@@ -668,14 +669,14 @@ public class SubmitConditionalOrderIT {
 
         final CaseData caseData = validApplicant2CaseData();
         caseData.getApplication().setIssueDate(getExpectedLocalDate());
-        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(Solicitor.builder()
             .name("app1sol")
             .email("app1sol@gm.com")
             .reference("refxxx1")
             .build());
 
-        caseData.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(Solicitor.builder()
             .name("app2sol")
             .email("app2sol@gm.com")
@@ -684,7 +685,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YesOrNo.YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
