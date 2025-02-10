@@ -772,6 +772,52 @@ class NotificationDispatcherTest {
     }
 
     @Test
+    void shouldSendRequestForInformationResponseLetterToOfflineApplicant1() {
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT1);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant1Offline(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationResponseEmailToApplicant1Solicitor() {
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT1);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationResponseLetterToOfflineApplicant1Solicitor() {
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT1);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant1SolicitorOffline(caseData, TEST_CASE_ID);
+    }
+
+    @Test
     void shouldSendRequestForInformationResponseEmailToApplicant2() {
         CaseData caseData = caseData();
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
@@ -783,6 +829,52 @@ class NotificationDispatcherTest {
         notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
 
         verify(applicantNotification).sendToApplicant2(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationResponseLetterToOfflineApplicant2() {
+        CaseData caseData = caseData();
+        caseData.getApplicant2().setOffline(YES);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT2);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant2Offline(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationResponseEmailToApplicant2Solicitor() {
+        CaseData caseData = caseData();
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT2);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationResponseLetterToOfflineApplicant2Solicitor() {
+        CaseData caseData = caseData();
+        caseData.getApplicant2().setOffline(YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT2);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant2SolicitorOffline(caseData, TEST_CASE_ID);
     }
 
     @Test
