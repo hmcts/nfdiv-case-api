@@ -169,6 +169,7 @@ public class CommonContent {
             WELSH.equals(applicant.getLanguagePreference())
                 ? config.getTemplateVars().get(WEBFORM_CY_URL)
                 : config.getTemplateVars().get(WEBFORM_URL));
+        templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
         templateVars.put(SMART_SURVEY, getSmartSurvey());
 
         getPhoneAndOpeningTimes(languagePreference, templateVars);

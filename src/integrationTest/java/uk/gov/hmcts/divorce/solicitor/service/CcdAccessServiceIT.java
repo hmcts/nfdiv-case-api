@@ -13,13 +13,17 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRole;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRoleWithOrganisation;
 import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResource;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -84,7 +88,22 @@ public class CcdAccessServiceIT {
     @Test
     void shouldRetryAddCaseRolesThreeTimesWhenAddingCaseRolesThrowsException() {
         when(idamService.retrieveUser(CASEWORKER_AUTH_TOKEN)).thenReturn(caseworkerUser());
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(caseworkerUser());
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        var response = CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().userId("1").caseRole("NOT_THIS_ONE").build(),
+                CaseAssignmentUserRole.builder().userId("2").caseRole("NOT_THIS_ONE").build()
+            ))
+            .build();
+
+        when(caseAssignmentApi.getUserRoles(
+                eq(CASEWORKER_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                anyList()
+            )
+        ).thenReturn(response);
 
         doThrow(feignException(500, "some error"))
             .when(caseAssignmentApi).addCaseUserRoles(
