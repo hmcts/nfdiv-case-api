@@ -5,15 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationAuthParty;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
 
 import java.util.Optional;
 
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_RESPONSE_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_RESPONSE_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER_DOCUMENT_NAME;

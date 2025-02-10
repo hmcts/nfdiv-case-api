@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationAuthParty;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
 
 import java.util.Optional;
 

@@ -91,7 +91,13 @@ public class CitizenRequestForInformationResponseNotification implements Applica
 
             Applicant applicant1 = caseData.getApplicant1();
             var documentPackInfo = requestForInformationResponseDocumentPack.getDocumentPack(caseData, applicant1);
-            letterPrinter.sendLetters(caseData, caseId, applicant1, documentPackInfo, requestForInformationResponseDocumentPack.getLetterId());
+            letterPrinter.sendLetters(
+                caseData,
+                caseId,
+                applicant1,
+                documentPackInfo,
+                requestForInformationResponseDocumentPack.getLetterId()
+            );
         }
     }
 
