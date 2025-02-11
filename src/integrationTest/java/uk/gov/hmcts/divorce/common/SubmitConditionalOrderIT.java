@@ -173,7 +173,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
@@ -210,7 +210,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
@@ -236,7 +236,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
@@ -255,6 +255,9 @@ public class SubmitConditionalOrderIT {
 
     @Test
     void shouldReturnAnErrorIfSoTNotCompleted() throws Exception {
+
+        when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
+
         final CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
@@ -284,7 +287,7 @@ public class SubmitConditionalOrderIT {
         verifyJointCOSubmission(
             ConditionalOrder.builder()
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build()
         );
     }
@@ -297,7 +300,7 @@ public class SubmitConditionalOrderIT {
         verifyJointCONotifications(
             ConditionalOrder.builder()
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build(),
             JOINT_APPLIED_FOR_CONDITIONAL_ORDER,
             JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER
@@ -311,7 +314,7 @@ public class SubmitConditionalOrderIT {
         verifyJointCOSubmission(
             ConditionalOrder.builder()
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build()
         );
     }
@@ -323,7 +326,7 @@ public class SubmitConditionalOrderIT {
         verifyJointCONotifications(
             ConditionalOrder.builder()
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build(),
             JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER,
             JOINT_APPLIED_FOR_CONDITIONAL_ORDER
@@ -340,7 +343,7 @@ public class SubmitConditionalOrderIT {
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
                     .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build()
         );
     }
@@ -355,7 +358,7 @@ public class SubmitConditionalOrderIT {
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
                     .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).confirmInformationStillCorrect(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build(),
             JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER,
             JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER
@@ -370,7 +373,7 @@ public class SubmitConditionalOrderIT {
         verifyJointCOSubmission(
             ConditionalOrder.builder()
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
                     .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build()
@@ -385,7 +388,7 @@ public class SubmitConditionalOrderIT {
         verifyJointCONotifications(
             ConditionalOrder.builder()
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
                     .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build(),
@@ -422,7 +425,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
@@ -461,7 +464,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
@@ -507,7 +510,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
@@ -541,7 +544,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
@@ -595,7 +598,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
@@ -637,7 +640,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
@@ -685,7 +688,7 @@ public class SubmitConditionalOrderIT {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=ConditionalOrderSoT")
