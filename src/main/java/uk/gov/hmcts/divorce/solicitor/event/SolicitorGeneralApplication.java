@@ -27,6 +27,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentSummar
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectFee;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,9 +37,16 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -59,6 +67,17 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
         "General Application payment could not be completed as the invokers organisation policy did not match any on the case";
     private static final String GENERAL_APPLICATION_URGENT_CASE_REASON_ERROR =
         "General Application marked as urgent need an accompanying reason why it is urgent";
+
+    private static final EnumSet<State> GENERAL_APPLICATION_STATES = EnumSet.complementOf(EnumSet.of(
+        Draft,
+        AwaitingApplicant1Response,
+        AwaitingApplicant2Response,
+        Applicant2Approved,
+        AwaitingPayment,
+        Withdrawn,
+        Rejected,
+        Archived
+    ));
 
     @Autowired
     private GeneralApplicationSelectFee generalApplicationSelectFee;
@@ -213,7 +232,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_GENERAL_APPLICATION)
-            .forStates(POST_ISSUE_STATES)
+            .forStates(GENERAL_APPLICATION_STATES)
             .name(GENERAL_APPLICATION)
             .description(GENERAL_APPLICATION)
             .showSummary()
