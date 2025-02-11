@@ -358,7 +358,8 @@ public class SubmitConditionalOrderIT {
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
                     .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                    .statementOfTruth(YES).confirmInformationStillCorrect(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
+                    .statementOfTruth(YES).confirmInformationStillCorrect(YES)
+                        .confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
                 .build(),
             JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER,
             JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER
