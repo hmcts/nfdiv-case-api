@@ -108,6 +108,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationRemindApplicant2Notification.APPLICANT_2_SIGN_IN_DISSOLUTION_URL;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationRemindApplicant2Notification.APPLICANT_2_SIGN_IN_DIVORCE_URL;
+import static uk.gov.hmcts.divorce.common.notification.InviteApplicantToCaseNotification.RESPONDENT_SIGN_IN_DISSOLUTION_URL;
+import static uk.gov.hmcts.divorce.common.notification.InviteApplicantToCaseNotification.RESPONDENT_SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -187,6 +189,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_SIGN_IN_DI
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.RESPONDENT_SIGN_IN_DISSOLUTION_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.RESPONDENT_SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DISSOLUTION_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SIGN_IN_DIVORCE_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_FIRST_NAME;
@@ -856,7 +860,9 @@ public class TestDataHelper {
             SIGN_IN_DIVORCE_URL, SIGN_IN_DIVORCE_TEST_URL,
             SIGN_IN_DISSOLUTION_URL, SIGN_IN_DISSOLUTION_TEST_URL,
             APPLICANT_2_SIGN_IN_DIVORCE_URL, APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL,
-            APPLICANT_2_SIGN_IN_DISSOLUTION_URL, APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL
+            APPLICANT_2_SIGN_IN_DISSOLUTION_URL, APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL,
+            RESPONDENT_SIGN_IN_DIVORCE_URL, RESPONDENT_SIGN_IN_DIVORCE_TEST_URL,
+            RESPONDENT_SIGN_IN_DISSOLUTION_URL, RESPONDENT_SIGN_IN_DISSOLUTION_TEST_URL
         );
     }
 
