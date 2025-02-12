@@ -75,8 +75,13 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
         final boolean mockNotification = Boolean.parseBoolean(System.getenv().get("CREATE_PAPER_CASE_MOCK_NOTIFICATION"));
         final boolean notProd = !"prod".equalsIgnoreCase(System.getenv().get("ENVIRONMENT"));
         if (notProd && mockNotification) {
-            data.setDivorceOrDissolution(DIVORCE);
-            data.setApplicationType(SOLE_APPLICATION);
+            if (data.getDivorceOrDissolution() == null) {
+                data.setDivorceOrDissolution(DIVORCE);
+            }
+
+            if (data.getApplicationType() == null) {
+                data.setApplicationType(SOLE_APPLICATION);
+            }
         }
         notificationDispatcher.send(paperApplicationReceivedNotification, data, details.getId());
 
