@@ -71,7 +71,11 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
             applicant2.setOffline(NO);
         }
 
-        notificationDispatcher.send(paperApplicationReceivedNotification, data, details.getId());
+        final boolean allowNotification = !Boolean.parseBoolean(System.getenv().get("CREATE_PAPER_CASE_BLOCK_NOTIFICATION"));
+        final boolean isProd = "prod".equalsIgnoreCase(System.getenv().get("ENVIRONMENT"));
+        if (isProd || allowNotification) {
+            notificationDispatcher.send(paperApplicationReceivedNotification, data, details.getId());
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
