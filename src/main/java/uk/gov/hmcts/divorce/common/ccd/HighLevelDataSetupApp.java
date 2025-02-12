@@ -36,7 +36,8 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
         new CcdRoleConfig("pui-case-manager", "PUBLIC"),
         new CcdRoleConfig("pui-finance-manager", "PUBLIC"),
         new CcdRoleConfig("pui-organisation-manager", "PUBLIC"),
-        new CcdRoleConfig("pui-user-manager", "PUBLIC")
+        new CcdRoleConfig("pui-user-manager", "PUBLIC"),
+        new CcdRoleConfig("TTL_profile", "PUBLIC")
     };
 
     private final CcdEnvironment environment;

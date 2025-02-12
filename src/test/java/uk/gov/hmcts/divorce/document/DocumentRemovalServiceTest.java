@@ -10,12 +10,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -91,13 +94,12 @@ public class DocumentRemovalServiceTest {
     @Test
     public void shouldDeleteScannedDocumentFromDocManagement() {
         final List<String> systemRoles = List.of("caseworker-divorce");
-        final List<ListValue<ScannedDocument>> scannedDocumentList = scannedDocuments(D8);
         final String userId = UUID.randomUUID().toString();
         final User systemUser = systemUser(systemRoles, userId);
+        final List<ListValue<ScannedDocument>> scannedDocumentList = scannedDocuments(D8);
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
         doNothing().when(documentManagementClient).deleteDocument(
             SYSTEM_USER_USER_ID,
             TEST_SERVICE_AUTH_TOKEN,
@@ -105,7 +107,14 @@ public class DocumentRemovalServiceTest {
             true
         );
 
-        documentRemovalService.deleteScannedDocuments(scannedDocumentList);
+        CaseData beforeData = CaseData.builder()
+            .documents(CaseDocuments.builder().scannedDocuments(scannedDocumentList).build())
+            .build();
+        CaseData afterData = CaseData.builder()
+            .documents(CaseDocuments.builder().scannedDocuments(Collections.emptyList()).build())
+            .build();
+
+        documentRemovalService.handleDeletionOfScannedDocuments(beforeData, afterData);
 
         verify(idamService).retrieveSystemUpdateUserDetails();
         verify(authTokenGenerator).generate();

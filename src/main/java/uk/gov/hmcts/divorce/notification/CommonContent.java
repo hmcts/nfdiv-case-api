@@ -169,6 +169,7 @@ public class CommonContent {
             WELSH.equals(applicant.getLanguagePreference())
                 ? config.getTemplateVars().get(WEBFORM_CY_URL)
                 : config.getTemplateVars().get(WEBFORM_URL));
+        templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
         templateVars.put(SMART_SURVEY, getSmartSurvey());
 
         getPhoneAndOpeningTimes(languagePreference, templateVars);
@@ -397,20 +398,28 @@ public class CommonContent {
     }
 
     public Map<String, String> nocOldSolsTemplateVars(final Long caseId,
-                                                      final Applicant beforeApplicant) {
+                                                      final CaseData beforecaseData,
+                                                      boolean isApplicant1) {
 
-        // note: it's the beforeApplicant needs to be passed in to get the old sols
-        // this can get improved once we are saving noc info out
+        Applicant beforeApplicant = isApplicant1 ? beforecaseData.getApplicant1() : beforecaseData.getApplicant2();
+        Applicant beforePartner = isApplicant1 ? beforecaseData.getApplicant2() : beforecaseData.getApplicant1();
+        Solicitor solicitor = beforeApplicant.getSolicitor();
+        String issueDate = (beforecaseData.getApplication().getIssueDate() != null)
+            ? beforecaseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER)
+            : "N/A";
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(APPLICATION_REFERENCE, caseId != null ? formatId(caseId) : null);
-        templateVars.put(NAME, beforeApplicant.getSolicitor().getName());
+        templateVars.put(NAME, solicitor.getName());
+        templateVars.put(SOLICITOR_REFERENCE, isNotEmpty(solicitor.getReference()) ? solicitor.getReference() : NOT_PROVIDED);
         templateVars.put(APPLICANT_NAME, beforeApplicant.getFullName());
+        templateVars.put(RESPONDENT_NAME, beforePartner.getFullName());
         templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(DATE_OF_ISSUE, issueDate);
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(beforeApplicant.getLanguagePreference()));
 
         getPhoneAndOpeningTimes(beforeApplicant.getLanguagePreference(), templateVars);
 
-        return templateVars;
+       return templateVars;
     }
 
     public void setOverdueAndInTimeVariables(CaseData caseData, Map<String, String> templateVars) {

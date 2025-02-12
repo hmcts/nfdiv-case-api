@@ -56,6 +56,7 @@ public class CaseworkerHWFPartPaymentMade implements CCDConfig<CaseData, State, 
                 Submitted
             )
             .name(EVENT_NAME_AND_DESCRIPTION)
+            .ttlIncrement(36524)
             .description(EVENT_NAME_AND_DESCRIPTION)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showEventNotes()

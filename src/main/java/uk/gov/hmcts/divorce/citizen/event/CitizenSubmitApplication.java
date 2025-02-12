@@ -59,6 +59,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             .showCondition(NEVER_SHOW)
             .name("Apply: divorce or dissolution")
             .description("Apply: divorce or dissolution")
+            .ttlIncrement(36524)
             .retries(120, 120)
             .grant(CREATE_READ_UPDATE, CITIZEN)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE)
