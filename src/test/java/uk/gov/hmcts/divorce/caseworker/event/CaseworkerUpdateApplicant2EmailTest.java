@@ -15,10 +15,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUpdateApplicant2Email.CASEWORKER_UPDATE_APP2_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -46,10 +47,11 @@ public class CaseworkerUpdateApplicant2EmailTest {
     }
 
     @Test
-    void shouldReturnErrorsIfApplicant2EmailHasBeenRemoved() {
+    void shouldSetApplicantOfflineIfApplicant2EmailHasBeenRemoved() {
         final CaseData caseDataBefore = CaseData.builder()
             .applicant2(Applicant.builder()
                 .email(TEST_USER_EMAIL)
+                .offline(NO)
                 .build())
             .build();
 
@@ -58,43 +60,20 @@ public class CaseworkerUpdateApplicant2EmailTest {
         detailsBefore.setData(caseDataBefore);
 
         final CaseData caseData = CaseData.builder()
-            .applicant2(Applicant.builder().build())
+            .applicant2(Applicant.builder().offline(NO).build())
             .build();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.midEvent(details, detailsBefore);
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, detailsBefore);
 
-        assertThat(response.getErrors())
-            .isEqualTo(singletonList("You cannot leave the email field blank. "
-                + "You can only use this event to update the email of the party."));
-    }
-
-    @Test
-    void shouldNotReturnErrorsIfApplicant2EmailUnchanged() {
-        final CaseData caseDataBefore = CaseData.builder()
-            .applicant2(Applicant.builder()
-                .email(TEST_USER_EMAIL)
-                .build())
-            .build();
-
-        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
-        detailsBefore.setId(TEST_CASE_ID);
-        detailsBefore.setData(caseDataBefore);
-
-        final CaseData caseData = CaseData.builder()
-            .applicant2(Applicant.builder().email(TEST_USER_EMAIL).build())
-            .build();
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.midEvent(details, detailsBefore);
-
-        assertThat(response.getErrors()).isNull();
+        assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YES);
+        assertThat(response.getWarnings().size()).isEqualTo(1);
+        assertThat(response.getWarnings().get(0)).isEqualTo("You have removed the email, "
+            + "the party will be offline when you complete the event");
+        verifyNoInteractions(emailUpdateService);
     }
 
     @Test
