@@ -431,6 +431,7 @@ bootWithCCD {
     environment 'ROLE_ASSIGNMENT_URL', 'http://localhost:4096'
     environment 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
     environment 'XUI_MO_PORT', '3009'
+    environment 'CREATE_PAPER_CASE_BLOCK_NOTIFICATION', 'true'
   }
 }
 

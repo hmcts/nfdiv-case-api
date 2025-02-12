@@ -172,6 +172,7 @@ withPipeline(type, product, component) {
     env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
     env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
     env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+    env.CREATE_PAPER_CASE_BLOCK_NOTIFICATION=true
 
     setCommonEnvVariables()
   }
@@ -185,6 +186,7 @@ withPipeline(type, product, component) {
     env.ADMIN_UNLINK_APPLICANT_2_ENABLED=true
     env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
     env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+    env.CREATE_PAPER_CASE_BLOCK_NOTIFICATION=true
     setCommonEnvVariables()
   }
 
@@ -199,6 +201,7 @@ withPipeline(type, product, component) {
     env.IDAM_API_URL_BASE = "https://idam-api.platform.hmcts.net"
     env.S2S_URL_BASE = "http://rpe-service-auth-provider-prod.service.core-compute-prod.internal"
     env.BEFTA_S2S_CLIENT_ID = "ccd_data"
+    env.CREATE_PAPER_CASE_BLOCK_NOTIFICATION=false
 
     // re-run to generate prod definition
     builder.gradle('generateCCDConfig --rerun-tasks')
@@ -211,6 +214,7 @@ withPipeline(type, product, component) {
     env.CCD_DEF_NAME = "demo"
     env.IDAM_API_URL_BASE = "https://idam-api.demo.platform.hmcts.net"
     env.S2S_URL_BASE = "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
+    env.CREATE_PAPER_CASE_BLOCK_NOTIFICATION=true
   }
 
   onPerftest {
