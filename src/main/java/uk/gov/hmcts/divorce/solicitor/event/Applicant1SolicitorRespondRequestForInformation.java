@@ -71,6 +71,7 @@ public class Applicant1SolicitorRespondRequestForInformation implements CCDConfi
                 .page("requestForInformationResponse", this::midEvent)
                 .pageLabel("Submit Response")
                 .complex(CaseData::getRequestForInformationList)
+                    .readonly(RequestForInformationList::getLatestRequestForInformationDetails)
                     .complex(RequestForInformationList::getRequestForInformationResponseApplicant1Solicitor)
                         .optional(RequestForInformationResponseDraft::getRfiDraftResponseDetails)
                         .optional(RequestForInformationResponseDraft::getRfiDraftResponseDocs)
