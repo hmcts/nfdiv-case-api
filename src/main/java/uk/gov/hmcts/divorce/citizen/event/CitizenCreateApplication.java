@@ -39,6 +39,7 @@ public class CitizenCreateApplication implements CCDConfig<CaseData, State, User
             .event(CITIZEN_CREATE)
             .initialState(Draft)
             .showCondition(NEVER_SHOW)
+            .ttlIncrement(180)
             .name("Create draft case")
             .description("Apply for a divorce or dissolution")
             .aboutToSubmitCallback(this::aboutToSubmit)

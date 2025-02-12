@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.service.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -7,11 +8,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,6 +38,9 @@ class CaseProcessingStateFilterTest {
 
     @Mock
     private CcdSearchService ccdSearchService;
+
+    @Mock
+    private ObjectMapper objectMapper;
 
     @InjectMocks
     private CaseProcessingStateFilter caseProcessingStateFilter;
@@ -81,5 +92,43 @@ class CaseProcessingStateFilterTest {
             List.of(bulkListCaseDetailsListValue1, bulkListCaseDetailsListValue3));
         assertThat(caseFilterProcessingState.getErroredCases()).isEqualTo(List.of(bulkListCaseDetailsListValue4));
         assertThat(caseFilterProcessingState.getProcessedCases()).isEqualTo(List.of(bulkListCaseDetailsListValue2));
+    }
+
+    @Test
+    void shouldIdentifyCasesWithFinalOrdersAsProcessed() {
+        final var user = mock(User.class);
+        final var bulkListCaseDetailsListValue1 = getBulkListCaseDetailsListValue("1");
+
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = List.of(
+            bulkListCaseDetailsListValue1
+        );
+
+        CaseDetails completedCaseDetails = uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
+            .id(1L)
+            .state(OfflineDocumentReceived.name())
+            .data(Map.of("finalOrderGrantedDate", "2022-12-01"))
+            .build();
+
+        when(ccdSearchService.searchForCases(List.of("1"), user, SERVICE_AUTHORIZATION))
+            .thenReturn(asList(completedCaseDetails));
+
+        when(objectMapper.convertValue(completedCaseDetails.getData(), CaseData.class)).thenReturn(
+            CaseData.builder().finalOrder(
+                FinalOrder.builder()
+                    .grantedDate(LocalDate.of(2022, Month.DECEMBER, 1).atStartOfDay())
+                    .build()
+            ).build()
+        );
+
+        final CaseFilterProcessingState caseFilterProcessingState = caseProcessingStateFilter.filterProcessingState(
+            bulkListCaseDetails,
+            user,
+            SERVICE_AUTHORIZATION,
+            EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
+            EnumSet.of(ConditionalOrderPronounced));
+
+        assertThat(caseFilterProcessingState.getUnprocessedCases()).isEqualTo(Collections.emptyList());
+        assertThat(caseFilterProcessingState.getErroredCases()).isEqualTo(Collections.emptyList());
+        assertThat(caseFilterProcessingState.getProcessedCases()).isEqualTo(List.of(bulkListCaseDetailsListValue1));
     }
 }

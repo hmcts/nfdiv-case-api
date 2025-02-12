@@ -33,6 +33,12 @@ public class RequestForInformationList {
     private List<ListValue<RequestForInformation>> requestsForInformation;
 
     @CCD(
+        label = "The court has made the following comments:",
+        access = {DefaultAccess.class}
+    )
+    private String latestRequestForInformationDetails;
+
+    @CCD(
         label = "Request for information",
         access = {DefaultAccess.class}
     )
@@ -106,5 +112,6 @@ public class RequestForInformationList {
         }
 
         this.setRequestForInformationAuthParty(requestForInformation.getAuthorisedResponseParty());
+        this.setLatestRequestForInformationDetails(requestForInformation.getRequestForInformationDetails());
     }
 }

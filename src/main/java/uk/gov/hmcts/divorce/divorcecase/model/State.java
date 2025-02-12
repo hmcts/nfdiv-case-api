@@ -240,6 +240,13 @@ public enum State {
 
 
     @CCD(
+        label = "Awaiting response to HWF Decision",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    AwaitingResponseToHWFDecision,
+
+    @CCD(
         label = "Awaiting service",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -565,5 +572,12 @@ public enum State {
         AwaitingBailiffService,
         IssuedToBailiff
     };
+
+    public static final EnumSet<State> STATES_FOR_LINKING_APP2 = EnumSet.complementOf(EnumSet.of(
+        Draft,
+        Withdrawn,
+        Rejected,
+        Archived
+    ));
 }
 
