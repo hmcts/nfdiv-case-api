@@ -419,7 +419,7 @@ public class CommonContent {
 
         getPhoneAndOpeningTimes(beforeApplicant.getLanguagePreference(), templateVars);
 
-       return templateVars;
+        return templateVars;
     }
 
     public void setOverdueAndInTimeVariables(CaseData caseData, Map<String, String> templateVars) {

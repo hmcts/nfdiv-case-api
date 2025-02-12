@@ -275,8 +275,6 @@ class NocCitizenToSolsNotificationsTest {
 
         when(commonContent.nocOldSolsTemplateVars(id, caseData, true
         )).thenReturn(solTemplateVars);
-        when(commonContent.nocOldSolsTemplateVars(id, caseData, true
-        )).thenReturn(getSolTemplateVars(caseData.getApplicant1()));
 
         notificationHandler.sendToApplicant1OldSolicitor(caseData, id);
 
