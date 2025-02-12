@@ -54,6 +54,22 @@ public class NotificationDispatcher {
         }
     }
 
+    public void sendNOCCaseInvite(final ApplicantNotification applicantNotification,
+                                  final CaseData caseData, final Long caseId,
+                                  boolean isApplicant1) {
+        if (isApplicant1) {
+            applicantNotification.sendToApplicant1Offline(caseData, caseId);
+            if (caseData.getApplicant1().getEmail() != null && !caseData.getApplicant1().getEmail().isEmpty()) {
+                applicantNotification.sendToApplicant1(caseData, caseId);
+            }
+        } else {
+            applicantNotification.sendToApplicant2Offline(caseData, caseId);
+            if (caseData.getApplicant2().getEmail() != null && !caseData.getApplicant2().getEmail().isEmpty()) {
+                applicantNotification.sendToApplicant2(caseData, caseId);
+            }
+        }
+    }
+
     private void sendRepresentationGrantedNotifications(boolean isApplicant1, CaseData caseData,
                                                         long caseId, ApplicantNotification applicantNotification) {
         if (isApplicant1) {

@@ -15,13 +15,12 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_FOR_LINKING_APP2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Slf4j
 @Component
-public class SystemLinkApplicant2 implements CCDConfig<CaseData, State, UserRole> {
+public class SystemLinkApplicant1 implements CCDConfig<CaseData, State, UserRole> {
 
     @Autowired
     private CcdAccessService ccdAccessService;
@@ -29,15 +28,15 @@ public class SystemLinkApplicant2 implements CCDConfig<CaseData, State, UserRole
     @Autowired
     private HttpServletRequest httpServletRequest;
 
-    public static final String SYSTEM_LINK_APPLICANT_2 = "system-link-applicant2";
+    public static final String SYSTEM_LINK_APPLICANT_1 = "system-link-applicant1";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
-            .event(SYSTEM_LINK_APPLICANT_2)
-            .forStates(STATES_FOR_LINKING_APP2)
-            .name("Link Applicant 2 to case")
-            .description("Link Applicant 2 to case to enable completion of joint application")
+            .event(SYSTEM_LINK_APPLICANT_1)
+            .forAllStates()
+            .name("Link Applicant 1 to case")
+            .description("Link Applicant 1 to case so they are online")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
@@ -48,15 +47,15 @@ public class SystemLinkApplicant2 implements CCDConfig<CaseData, State, UserRole
 
         CaseData data = details.getData();
 
-        log.info("Linking Applicant 2 to Case");
-        ccdAccessService.linkRespondentToApplication(
+        log.info("Linking Applicant 1 to Case {}", details.getId());
+        ccdAccessService.linkApplicant1(
             httpServletRequest.getHeader(AUTHORIZATION),
             details.getId(),
-            data.getCaseInvite().applicant2UserId()
+            data.getCaseInviteApp1().applicant1UserId()
         );
 
-        data.setCaseInvite(data.getCaseInvite().useAccessCode());
-        data.getApplicant2().setOffline(NO);
+        data.setCaseInviteApp1(data.getCaseInviteApp1().useAccessCode());
+        data.getApplicant1().setOffline(NO);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
