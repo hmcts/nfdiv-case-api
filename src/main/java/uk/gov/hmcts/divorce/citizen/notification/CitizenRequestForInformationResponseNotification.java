@@ -19,6 +19,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_RESPONSE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_RESPONSE_CANNOT_UPLOAD_DOCS;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SOLS_RESPONSE;
 
 @Component
 @RequiredArgsConstructor
@@ -80,6 +81,35 @@ public class CitizenRequestForInformationResponseNotification implements Applica
     }
 
     @Override
+    public void sendToApplicant1Solicitor(CaseData caseData, Long caseId) {
+
+        String party = caseData.getApplicationType().isSole() ? "applicant solicitor" : "applicant 1 solicitor";
+        if (allDocsProvided(
+                caseData,
+                caseId,
+                party
+        )) {
+            log.info(REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_TO_FOR_CASE_ID,
+                    party, caseId);
+
+            Applicant applicant = caseData.getApplicant1();
+
+            notificationService.sendEmail(
+                applicant.getSolicitor().getEmail(),
+                REQUEST_FOR_INFORMATION_SOLS_RESPONSE,
+                applicantTemplateContent(
+                    caseData,
+                    caseId,
+                    applicant,
+                    caseData.getApplicant2()
+                ),
+                applicant.getLanguagePreference(),
+                caseId
+            );
+        }
+    }
+
+    @Override
     public void sendToApplicant1SolicitorOffline(final CaseData caseData, final Long caseId) {
         if (allDocsProvided(
             caseData,
@@ -120,6 +150,30 @@ public class CitizenRequestForInformationResponseNotification implements Applica
             caseData.getApplicant2().getLanguagePreference(),
             caseId
         );
+    }
+
+    @Override
+    public void sendToApplicant2Solicitor(CaseData caseData, Long caseId) {
+        if (allDocsProvided(caseData, caseId, "applicant 2 solicitor")) {
+
+            log.info(REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_TO_FOR_CASE_ID,
+                    "applicant 2 solicitor", caseId);
+
+            Applicant applicant2 = caseData.getApplicant2();
+
+            notificationService.sendEmail(
+                    applicant2.getSolicitor().getEmail(),
+                    REQUEST_FOR_INFORMATION_SOLS_RESPONSE,
+                    applicantTemplateContent(
+                            caseData,
+                            caseId,
+                            applicant2,
+                            caseData.getApplicant1()
+                    ),
+                    applicant2.getLanguagePreference(),
+                    caseId
+            );
+        }
     }
 
     @Override

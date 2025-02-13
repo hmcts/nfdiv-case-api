@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import static java.lang.String.join;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -301,6 +302,15 @@ public class CommonContent {
         templateVars.put(CIVIL_PARTNER_JOINT, jointApplication
             && !caseData.isDivorce()
             ? YES : NO);
+
+        if (applicant.isRepresented()) {
+            templateVars.put(APPLICANT_NAME, applicant.getFullName());
+            templateVars.put(RESPONDENT_NAME, partner.getFullName());
+            templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
+            templateVars.put(SOLICITOR_REFERENCE, nonNull(applicant.getSolicitor().getReference())
+                    ? applicant.getSolicitor().getReference()
+                    : "not provided");
+        }
 
         return templateVars;
     }

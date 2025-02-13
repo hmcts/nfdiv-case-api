@@ -204,6 +204,38 @@ class CaseworkerRequestForInformationResponseTest {
     }
 
     @Test
+    void shouldSendNotificationToRespondingPartySolicitorOnlyOnSoleCase() {
+        final CaseDetails<CaseData, State> caseDetails =
+                getRequestForInformationCaseDetails(RequestForInformationSoleParties.APPLICANT, true, false);
+        caseDetails.setId(TEST_CASE_ID);
+
+        caseworkerRequestForInformationResponse.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).sendRequestForInformationResponseNotification(
+                citizenRequestForInformationResponseNotification,
+                caseDetails.getData(),
+                TEST_CASE_ID
+        );
+        verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldSendNotificationToRespondingPartySolicitorOnlyOnJointCase() {
+        final CaseDetails<CaseData, State> caseDetails =
+                getRequestForInformationCaseDetails(RequestForInformationJointParties.APPLICANT1, true, false);
+        caseDetails.setId(TEST_CASE_ID);
+
+        caseworkerRequestForInformationResponse.submitted(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).sendRequestForInformationResponseNotification(
+                citizenRequestForInformationResponseNotification,
+                caseDetails.getData(),
+                TEST_CASE_ID
+        );
+        verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
     void shouldReturnErrorWhenSendNotificationToRespondingPartyFailsOnSoleCase() {
         final CaseDetails<CaseData, State> caseDetails =
             getRequestForInformationCaseDetails(RequestForInformationSoleParties.APPLICANT, false, false);
