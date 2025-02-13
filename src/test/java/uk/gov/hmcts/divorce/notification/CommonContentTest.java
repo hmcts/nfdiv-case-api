@@ -49,6 +49,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
@@ -81,6 +82,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
@@ -534,6 +536,8 @@ class CommonContentTest {
             .applicant2(respondent())
             .build();
 
+        when(docmosisCommonContent.getSolicitorReference(any(), any())).thenReturn(NOT_PROVIDED);
+
         final Map<String, String> result = commonContent.getCoRefusedSolicitorTemplateVars(caseData, TEST_CASE_ID,
             caseData.getApplicant1(), MORE_INFO);
 
@@ -544,7 +548,7 @@ class CommonContentTest {
                 entry("moreInfo", CommonContent.YES),
                 entry("amendApplication", CommonContent.NO),
                 entry(SOLICITOR_NAME, "The Solicitor"),
-                entry(SOLICITOR_REFERENCE, "Not provided"),
+                entry(SOLICITOR_REFERENCE, NOT_PROVIDED),
                 entry("applicant1Label", "Applicant"),
                 entry("applicant2Label", "Respondent"),
                 entry(ISSUE_DATE, "22 June 2022"),
@@ -566,6 +570,8 @@ class CommonContentTest {
             .build();
 
         caseData.getApplicant2().getSolicitor().setReference("sol2");
+
+        when(docmosisCommonContent.getSolicitorReference(any(), any())).thenReturn(caseData.getApplicant2().getSolicitor().getReference());
 
         final Map<String, String> result = commonContent.getCoRefusedSolicitorTemplateVars(caseData, TEST_CASE_ID,
             caseData.getApplicant2(), REJECT);
@@ -737,6 +743,8 @@ class CommonContentTest {
             .solicitor(solicitor)
             .build();
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SMART_SURVEY, "https://testsurveylink"));
+        when(docmosisCommonContent.getSolicitorReference(any(), any())).thenReturn(solicitor.getReference());
+
         Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, applicant);
 
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
@@ -754,11 +762,13 @@ class CommonContentTest {
             .solicitor(solicitor)
             .build();
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SMART_SURVEY, "https://testsurveylink"));
+        when(docmosisCommonContent.getSolicitorReference(any(), any())).thenReturn(NOT_PROVIDED);
+
         Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, applicant);
 
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
         assertEquals("Solicitor Name", templateVars.get(CommonContent.NAME));
-        assertEquals("Not provided", templateVars.get(SOLICITOR_REFERENCE));
+        assertEquals(NOT_PROVIDED, templateVars.get(SOLICITOR_REFERENCE));
         assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
     }
 

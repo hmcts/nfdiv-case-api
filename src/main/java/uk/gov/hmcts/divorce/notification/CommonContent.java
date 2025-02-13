@@ -206,10 +206,10 @@ public class CommonContent {
     public Map<String, String> solicitorTemplateVarsPreIssue(CaseData data, Long id, Applicant applicant) {
         Map<String, String> templateVars = basicTemplateVars(data, id, applicant.getLanguagePreference());
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
-        templateVars.put(SOLICITOR_REFERENCE,
-            isNotEmpty(applicant.getSolicitor().getReference())
-                ? applicant.getSolicitor().getReference()
-                : NOT_PROVIDED);
+        templateVars.put(SOLICITOR_REFERENCE, docmosisCommonContent.getSolicitorReference(
+            applicant.getSolicitor(),
+            applicant.getLanguagePreference())
+        );
         templateVars.put(APPLICANT_1_FULL_NAME, data.getApplicant1().getFullName());
         templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant2().getFullName());
         templateVars.put(SIGN_IN_URL, getProfessionalUsersSignInUrl(id));
@@ -391,10 +391,10 @@ public class CommonContent {
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(APPLICATION_REFERENCE, caseId != null ? formatId(caseId) : null);
         templateVars.put(NAME, applicant.getSolicitor().getName());
-        templateVars.put(SOLICITOR_REFERENCE,
-            isNotEmpty(applicant.getSolicitor().getReference())
-                ? applicant.getSolicitor().getReference()
-                : NOT_PROVIDED);
+        templateVars.put(SOLICITOR_REFERENCE, docmosisCommonContent.getSolicitorReference(
+            applicant.getSolicitor(),
+            applicant.getLanguagePreference())
+        );
         templateVars.put(SMART_SURVEY, getSmartSurvey());
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
         return templateVars;
@@ -413,7 +413,10 @@ public class CommonContent {
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(APPLICATION_REFERENCE, caseId != null ? formatId(caseId) : null);
         templateVars.put(NAME, solicitor.getName());
-        templateVars.put(SOLICITOR_REFERENCE, isNotEmpty(solicitor.getReference()) ? solicitor.getReference() : NOT_PROVIDED);
+        templateVars.put(SOLICITOR_REFERENCE, docmosisCommonContent.getSolicitorReference(
+                solicitor,
+                beforeApplicant.getLanguagePreference())
+        );
         templateVars.put(APPLICANT_NAME, beforeApplicant.getFullName());
         templateVars.put(RESPONDENT_NAME, beforePartner.getFullName());
         templateVars.put(SMART_SURVEY, getSmartSurvey());
