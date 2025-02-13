@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_WITHDRAWN_OR_REJECTED;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
@@ -23,7 +23,7 @@ public class CaseworkerUploadAmendedApplication implements CCDConfig<CaseData, S
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_UPLOAD_AMENDED_APPLICATION)
-            .forStates(STATES_NOT_WITHDRAWN_OR_REJECTED)
+            .forStates(STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED)
             .name("Upload amended application")
             .description("Upload amended application")
             .showSummary()
