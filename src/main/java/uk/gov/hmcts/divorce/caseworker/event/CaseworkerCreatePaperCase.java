@@ -19,6 +19,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.NewPaperCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_SCAN;
@@ -71,6 +72,17 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
             applicant2.setOffline(NO);
         }
 
+        final boolean mockNotification = Boolean.parseBoolean(System.getenv().get("CREATE_PAPER_CASE_MOCK_NOTIFICATION"));
+        final boolean notProd = !"prod".equalsIgnoreCase(System.getenv().get("ENVIRONMENT"));
+        if (notProd && mockNotification) {
+            if (data.getDivorceOrDissolution() == null) {
+                data.setDivorceOrDissolution(DIVORCE);
+            }
+
+            if (data.getApplicationType() == null) {
+                data.setApplicationType(SOLE_APPLICATION);
+            }
+        }
         notificationDispatcher.send(paperApplicationReceivedNotification, data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
