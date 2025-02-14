@@ -23,6 +23,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
@@ -31,6 +33,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APP_1_SOL_AUTH_TOKEN;
@@ -202,8 +205,25 @@ public class CcdAccessServiceTest {
         when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN))
             .thenReturn(systemUpdateUser);
 
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(systemUpdateUser);
+
         when(authTokenGenerator.generate())
             .thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        var response = CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().userId("1").caseRole("NOT_THIS_ONE").build(),
+                CaseAssignmentUserRole.builder().userId("2").caseRole("[CREATOR]").build()
+            ))
+            .build();
+
+        when(caseAssignmentApi.getUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                anyList()
+            )
+        ).thenReturn(response);
 
         when(caseAssignmentApi.addCaseUserRoles(
                 eq(SYSTEM_UPDATE_AUTH_TOKEN),
@@ -216,7 +236,56 @@ public class CcdAccessServiceTest {
             .doesNotThrowAnyException();
 
         verify(idamService).retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN);
-        verify(authTokenGenerator).generate();
+        verify(authTokenGenerator, times(2)).generate();
+        verify(caseAssignmentApi)
+            .addCaseUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CaseAssignmentUserRolesRequest.class)
+            );
+
+        verifyNoMoreInteractions(idamService, authTokenGenerator, caseAssignmentApi);
+    }
+
+    @Test
+    public void shouldNotThrowAnyExceptionWhenLinkApplicant1ToApplicationIsInvoked() {
+        User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
+
+        when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN))
+            .thenReturn(systemUpdateUser);
+
+        when(idamService.retrieveSystemUpdateUserDetails())
+            .thenReturn(systemUpdateUser);
+
+        when(authTokenGenerator.generate())
+            .thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        var response = CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().userId("1").caseRole("NOT_THIS_ONE").build(),
+                CaseAssignmentUserRole.builder().userId("2").caseRole("NOT_THIS_ONE").build()
+            ))
+            .build();
+
+        when(caseAssignmentApi.getUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                anyList()
+            )
+        ).thenReturn(response);
+
+        when(caseAssignmentApi.addCaseUserRoles(
+                eq(SYSTEM_UPDATE_AUTH_TOKEN),
+                eq(TEST_SERVICE_AUTH_TOKEN),
+                any(CaseAssignmentUserRolesRequest.class)
+            )
+        ).thenReturn(any());
+
+        assertThatCode(() -> ccdAccessService.linkApplicant1(SYSTEM_UPDATE_AUTH_TOKEN, TEST_CASE_ID, APP_2_CITIZEN_USER_ID))
+            .doesNotThrowAnyException();
+
+        verify(idamService).retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN);
+        verify(authTokenGenerator, times(2)).generate();
         verify(caseAssignmentApi)
             .addCaseUserRoles(
                 eq(SYSTEM_UPDATE_AUTH_TOKEN),
@@ -406,5 +475,47 @@ public class CcdAccessServiceTest {
             authToken,
             UserInfo.builder().uid(userId).sub(email).build()
         );
+    }
+
+    @Test
+    void shouldReturnTrueCallingHasCreatorRole() throws NoSuchMethodException  {
+        String userToken = "Bearer SystemUpdateAuthToken";
+        User user = new User(TEST_SERVICE_AUTH_TOKEN, UserInfo.builder().uid("user-id").build());
+        when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN)).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(caseAssignmentApi.getUserRoles(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            List.of(TEST_CASE_ID.toString()),
+            List.of("user-id")
+        )).thenReturn(CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().caseRole(CREATOR.getRole()).build()
+            )).build()
+        );
+
+        boolean result = ccdAccessService.hasCreatorRole(userToken, TEST_CASE_ID);
+        assertTrue(result);
+    }
+
+    @Test
+    void shouldReturnFalseCallingHasCreatorRole() throws NoSuchMethodException  {
+        String userToken = "Bearer SystemUpdateAuthToken";
+        User user = new User(TEST_SERVICE_AUTH_TOKEN, UserInfo.builder().uid("user-id").build());
+        when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN)).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(caseAssignmentApi.getUserRoles(
+            SYSTEM_UPDATE_AUTH_TOKEN,
+            TEST_SERVICE_AUTH_TOKEN,
+            List.of(TEST_CASE_ID.toString()),
+            List.of("user-id")
+        )).thenReturn(CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().caseRole(APPLICANT_1_SOLICITOR.getRole()).build()
+            )).build()
+        );
+
+        boolean result = ccdAccessService.hasCreatorRole(userToken, TEST_CASE_ID);
+        assertFalse(result);
     }
 }

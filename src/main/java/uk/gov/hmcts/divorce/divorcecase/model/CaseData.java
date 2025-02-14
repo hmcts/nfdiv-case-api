@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ import uk.gov.hmcts.ccd.sdk.type.Flags;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
+import uk.gov.hmcts.ccd.sdk.type.TTL;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.model.CaseNote;
 import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
@@ -32,8 +34,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.InternalCaseFlagsAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.TtlProfileAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentative;
@@ -128,6 +132,10 @@ public class CaseData {
     @JsonUnwrapped()
     @CCD(access = {DefaultAccess.class})
     private CaseInvite caseInvite;
+
+    @JsonUnwrapped()
+    @CCD(access = {DefaultAccess.class})
+    private CaseInviteApp1 caseInviteApp1;
 
     @JsonUnwrapped()
     @Builder.Default
@@ -284,7 +292,7 @@ public class CaseData {
     private List<ListValue<ChangeOfRepresentative>> changeOfRepresentatives = new ArrayList<>();
 
     @CCD(
-        access = {CaseworkerAccess.class}
+        access = {CaseworkerAccess.class, SolicitorAccess.class}
     )
     @JsonUnwrapped(prefix = "noc")
     private NoticeOfChange noticeOfChange;
@@ -334,6 +342,14 @@ public class CaseData {
     )
     @Builder.Default
     private SentNotifications sentNotifications = new SentNotifications();
+
+    @JsonProperty("TTL")
+    @CCD(
+            label = "Set up TTL",
+            typeOverride = FieldType.TTL,
+            access = {TtlProfileAccess.class, SystemUpdateAndSuperUserAccess.class}
+    )
+    private TTL retainAndDisposeTimeToLive;
 
     @JsonUnwrapped
     @Builder.Default
