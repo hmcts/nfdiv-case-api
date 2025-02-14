@@ -207,7 +207,6 @@ class CaseworkerRequestForInformationResponseTest {
     void shouldSendNotificationToRespondingPartySolicitorOnlyOnSoleCase() {
         final CaseDetails<CaseData, State> caseDetails =
                 getRequestForInformationCaseDetails(RequestForInformationSoleParties.APPLICANT, true, false);
-        caseDetails.setId(TEST_CASE_ID);
 
         caseworkerRequestForInformationResponse.submitted(caseDetails, caseDetails);
 
@@ -223,7 +222,6 @@ class CaseworkerRequestForInformationResponseTest {
     void shouldSendNotificationToRespondingPartySolicitorOnlyOnJointCase() {
         final CaseDetails<CaseData, State> caseDetails =
                 getRequestForInformationCaseDetails(RequestForInformationJointParties.APPLICANT1, true, false);
-        caseDetails.setId(TEST_CASE_ID);
 
         caseworkerRequestForInformationResponse.submitted(caseDetails, caseDetails);
 

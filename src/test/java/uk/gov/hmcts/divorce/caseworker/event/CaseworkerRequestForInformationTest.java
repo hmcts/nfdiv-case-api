@@ -29,6 +29,7 @@ import static org.mockito.Mockito.doThrow;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.APPLICANT_1;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.APPLICANT_2;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.CANNOT_USE_BOTH_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.CASEWORKER_REQUEST_FOR_INFORMATION;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.MARK_OFFLINE_PARTIES_AS_OFFLINE;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.NO_VALID_ADDRESS_ERROR;
@@ -64,6 +65,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2WithAddress;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddress;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getOfflineSolicitor;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationCaseDetails;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerRequestForInformationTest {
@@ -89,245 +91,39 @@ class CaseworkerRequestForInformationTest {
     }
 
     @Test
-    void shouldReturnErrorWhenApplicant1OnlineApplicant2OfflineNoAddressOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicant2(getApplicant(MALE));
-        caseData.getApplicant2().setOffline(YES);
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
+    void shouldNotReturnErrorIfBothPartiesSelectedAndBothPartiesAreOffline() {
+        CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, false, false);
+        caseDetails.getData().setApplicant1(getApplicantWithAddress());
+        caseDetails.getData().getApplicant1().setOffline(YES);
+        caseDetails.getData().setApplicant2(getApplicant2WithAddress());
+        caseDetails.getData().getApplicant2().setOffline(YES);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(2);
-        assertThat(response.getErrors()).contains(
-            NO_VALID_ADDRESS_ERROR + APPLICANT_2,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE
-        );
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
-    void shouldReturnErrorWhenApplicant1OnlineApplicant2SolicitorOfflineNoAddressOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicant2(applicantRepresentedBySolicitor());
-        caseData.getApplicant2().setOffline(YES);
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
+    void shouldNotReturnErrorIfBothPartiesSelectedAndBothPartiesAreOnline() {
+        CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, false, false);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(2);
-        assertThat(response.getErrors()).contains(
-            NO_VALID_ADDRESS_ERROR + APPLICANT_2 + SOLICITOR,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE
-        );
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
-    void shouldReturnErrorWhenApplicant1OfflineNoAddressApplicant2OnlineOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.getApplicant1().setOffline(YES);
-        caseData.setApplicant2(getApplicant(MALE));
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
+    void shouldReturnErrorIfBothPartiesSelectedAndOnlyOnePartyIsOffline() {
+        CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, false, false);
+        caseDetails.getData().getApplicant1().setOffline(YES);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).hasSize(2);
-        assertThat(response.getErrors()).contains(
-            NO_VALID_ADDRESS_ERROR + APPLICANT_1,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE
-        );
-    }
-
-    @Test
-    void shouldReturnErrorWhenApplicant1OfflineNoAddressApplicant2OnlineNoEmailOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.getApplicant1().setOffline(YES);
-        caseData.setApplicant2(getApplicant(MALE));
-        caseData.getApplicant2().setEmail("");
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
-
-        assertThat(response.getErrors()).hasSize(4);
-        assertThat(response.getErrors()).contains(
-            NO_VALID_ADDRESS_ERROR + APPLICANT_1,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE,
-            NO_VALID_EMAIL_ERROR + APPLICANT_2,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE
-        );
-    }
-
-    @Test
-    void shouldReturnErrorWhenApplicant1OfflineNoAddressApplicant2SolicitorOnlineNoEmailOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.getApplicant1().setOffline(YES);
-        caseData.setApplicant2(applicantRepresentedBySolicitor());
-        caseData.getApplicant2().getSolicitor().setEmail("");
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
-
-        assertThat(response.getErrors()).hasSize(4);
-        assertThat(response.getErrors()).contains(
-            NO_VALID_ADDRESS_ERROR + APPLICANT_1,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE,
-            NO_VALID_EMAIL_ERROR + APPLICANT_2 + SOLICITOR,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE
-        );
-    }
-
-    @Test
-    void shouldReturnErrorWhenApplicant1SolicitorOfflineNoAddressApplicant2OnlineOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicant1(applicantRepresentedBySolicitor());
-        caseData.getApplicant1().setOffline(YES);
-        caseData.setApplicant2(getApplicant(MALE));
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
-
-        assertThat(response.getErrors()).hasSize(2);
-        assertThat(response.getErrors()).contains(
-            NO_VALID_ADDRESS_ERROR + APPLICANT_1 + SOLICITOR,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE
-        );
-    }
-
-    @Test
-    void shouldReturnErrorWhenApplicant1SolicitorOfflineNoAddressApplicant2SolicitorOnlineOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicant1(applicantRepresentedBySolicitor());
-        caseData.getApplicant1().setOffline(YES);
-        caseData.setApplicant2(applicantRepresentedBySolicitor());
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
-
-        assertThat(response.getErrors()).hasSize(2);
-        assertThat(response.getErrors()).contains(
-            NO_VALID_ADDRESS_ERROR + APPLICANT_1 + SOLICITOR,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE
-        );
-    }
-
-    @Test
-    void shouldReturnErrorWhenApplicant1OnlineNoEmailApplicant2OfflineNoAddressOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.getApplicant1().setEmail("");
-        caseData.setApplicant2(getApplicant(MALE));
-        caseData.getApplicant2().setOffline(YES);
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
-
-        assertThat(response.getErrors()).hasSize(4);
-        assertThat(response.getErrors()).contains(
-            NO_VALID_EMAIL_ERROR + APPLICANT_1,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE,
-            NO_VALID_ADDRESS_ERROR + APPLICANT_2,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE
-        );
-    }
-
-    @Test
-    void shouldReturnErrorWhenApplicant1SolicitorOnlineNoEmailApplicant2OfflineWithNoAddressOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicant1(applicantRepresentedBySolicitor());
-        caseData.getApplicant1().getSolicitor().setEmail("");
-        caseData.setApplicant2(getApplicant(MALE));
-        caseData.getApplicant2().setOffline(YES);
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
-
-        assertThat(response.getErrors()).hasSize(4);
-        assertThat(response.getErrors()).contains(
-            NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE,
-            NO_VALID_ADDRESS_ERROR + APPLICANT_2,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE
-        );
-    }
-
-    @Test
-    void shouldReturnErrorWhenApplicant1OnlineNoEmailApplicant2SolicitorOfflineWithNoAddressOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.getApplicant1().setEmail("");
-        caseData.setApplicant2(applicantRepresentedBySolicitor());
-        caseData.getApplicant2().setOffline(YES);
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
-
-        assertThat(response.getErrors()).hasSize(4);
-        assertThat(response.getErrors()).contains(
-            NO_VALID_EMAIL_ERROR + APPLICANT_1,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE,
-            NO_VALID_ADDRESS_ERROR + APPLICANT_2 + SOLICITOR,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE
-        );
-    }
-
-    @Test
-    void shouldReturnErrorWhenApplicant1SolicitorOnlineNoEmailApplicant2SolicitorOfflineWithNoAddressOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicant1(applicantRepresentedBySolicitor());
-        caseData.getApplicant1().getSolicitor().setEmail("");
-        caseData.setApplicant2(applicantRepresentedBySolicitor());
-        caseData.getApplicant2().setOffline(YES);
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRequestForInformation.midEvent(caseDetails, caseDetails);
-
-        assertThat(response.getErrors()).hasSize(4);
-        assertThat(response.getErrors()).contains(
-            NO_VALID_EMAIL_ERROR + APPLICANT_1 + SOLICITOR,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE,
-            NO_VALID_ADDRESS_ERROR + APPLICANT_2 + SOLICITOR,
-            MARK_OFFLINE_PARTIES_AS_OFFLINE
-        );
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(CANNOT_USE_BOTH_ERROR);
     }
 
     @Test
@@ -2270,5 +2066,4 @@ class CaseworkerRequestForInformationTest {
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(InformationRequested);
     }
-
 }

@@ -131,31 +131,31 @@ public class DocmosisCommonContent {
         templateContent.put(RESPONDENT_OR_APPLICANT2, getRespondentOrApplicant2(caseData, languagePreference));
         templateContent.put(IS_JOINT, isJoint);
         templateContent.put(IS_DIVORCE, caseData.isDivorce());
-        templateContent.put(APPLICANT_1_SOLICITOR_NAME, solicitorName(applicant1, applicant1Solicitor, languagePreference));
-        templateContent.put(APPLICANT_2_SOLICITOR_NAME, solicitorName(applicant2, applicant2Solicitor, languagePreference));
+        templateContent.put(APPLICANT_1_SOLICITOR_NAME, getSolicitorName(applicant1, applicant1Solicitor, languagePreference));
+        templateContent.put(APPLICANT_2_SOLICITOR_NAME, getSolicitorName(applicant2, applicant2Solicitor, languagePreference));
         templateContent.put(SOLICITOR_NAME, isApplicantSolicitor ? applicant1Solicitor.getName() : applicant2Solicitor.getName());
         templateContent.put(SOLICITOR_ADDRESS, isApplicantSolicitor ? applicant1Solicitor.getAddress() : applicant2Solicitor.getAddress());
         templateContent.put(
             SOLICITOR_REFERENCE,
             isApplicantSolicitor
-                ? solicitorReference(applicant1Solicitor, languagePreference)
-                : solicitorReference(applicant2Solicitor, languagePreference)
+                ? getSolicitorReference(applicant1Solicitor, languagePreference)
+                : getSolicitorReference(applicant2Solicitor, languagePreference)
         );
 
         return templateContent;
     }
 
-    private String solicitorName(Applicant applicant, Solicitor solicitor, LanguagePreference languagePreference) {
+    public String getSolicitorName(Applicant applicant, Solicitor solicitor, LanguagePreference languagePreference) {
         String notRepresented = WELSH.equals(languagePreference) ? NOT_REPRESENTED_CY : NOT_REPRESENTED;
         return applicant.isRepresented() ? solicitor.getName() : notRepresented;
     }
 
-    private String solicitorReference(Solicitor solicitor, LanguagePreference languagePreference) {
+    public String getSolicitorReference(Solicitor solicitor, LanguagePreference languagePreference) {
         String notProvided = WELSH.equals(languagePreference) ? NOT_PROVIDED_CY : NOT_PROVIDED;
         return isNotEmpty(solicitor.getReference()) ? solicitor.getReference() : notProvided;
     }
 
-    private String getApplicantOrApplicant1(CaseData caseData, LanguagePreference languagePreference) {
+    public String getApplicantOrApplicant1(CaseData caseData, LanguagePreference languagePreference) {
         final boolean isSole = caseData.getApplicationType().isSole();
         if (WELSH.equals(languagePreference)) {
             return isSole ? APPLICANT_CY : APPLICANT_1_CY;
@@ -164,7 +164,7 @@ public class DocmosisCommonContent {
         }
     }
 
-    private String getRespondentOrApplicant2(CaseData caseData, LanguagePreference languagePreference) {
+    public String getRespondentOrApplicant2(CaseData caseData, LanguagePreference languagePreference) {
         final boolean isSole = caseData.getApplicationType().isSole();
         if (WELSH.equals(languagePreference)) {
             return isSole ? RESPONDENT_CY : APPLICANT_2_CY;

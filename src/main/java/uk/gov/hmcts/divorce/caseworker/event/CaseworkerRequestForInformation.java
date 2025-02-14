@@ -24,6 +24,7 @@ import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
@@ -53,6 +54,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         = "Unable to send Request for Information Notification for Case Id: ";
     public static final String NO_VALID_EMAIL_ERROR = "You cannot send an email because no email address has been provided for: ";
     public static final String NO_VALID_ADDRESS_ERROR = "You cannot send a letter because no address has been provided for: ";
+    public static final String CANNOT_USE_BOTH_ERROR = "You cannot select Both parties unless both parties have the same offline state";
     public static final String THE_APPLICANT = "the Applicant";
     public static final String APPLICANT_1 = "Applicant 1";
     public static final String APPLICANT_2 = "Applicant 2";
@@ -114,9 +116,20 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
 
         log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_REQUEST_FOR_INFORMATION, details.getId());
 
+        CaseData data = details.getData();
+
+        if (!data.getApplicationType().isSole()
+            && BOTH.equals(data.getRequestForInformationList().getRequestForInformation().getRequestForInformationJointParties())
+            && !validateOfflineStateForBothParties(data)
+        ) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(CANNOT_USE_BOTH_ERROR))
+                .build();
+        }
+
         List<String> errors = new ArrayList<>();
-        areAddressesValid(details.getData(), errors);
-        areEmailsValid(details.getData(), errors);
+        areAddressesValid(data, errors);
+        areEmailsValid(data, errors);
         if (!errors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(errors)
@@ -124,7 +137,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
+            .data(data)
             .build();
     }
 
@@ -314,5 +327,12 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
                 default -> { }
             }
         }
+    }
+
+    private boolean validateOfflineStateForBothParties(CaseData caseData) {
+        boolean applicant1IsOffline = caseData.getApplicant1().isApplicantOffline();
+        boolean applicant2IsOffline = caseData.getApplicant2().isApplicantOffline();
+
+        return applicant1IsOffline == applicant2IsOffline;
     }
 }

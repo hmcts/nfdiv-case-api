@@ -206,7 +206,7 @@ public final class DocmosisTemplateConstants {
 
     public static final String COURTS_AND_TRIBUNALS_SERVICE_HEADER = "courtsAndTribunalsServiceHeader";
     public static final String COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT = "HM Courts & Tribunals Service";
-    public static final String COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY = "Gwasanaeth Llysoedd a Thribiwnlysoedd EM";
+    public static final String COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY = "Gwasanaeth Llysoedd a Thribiwnlysoedd EF";
 
     public static final String CONTACT_EMAIL = "contactEmail";
 
