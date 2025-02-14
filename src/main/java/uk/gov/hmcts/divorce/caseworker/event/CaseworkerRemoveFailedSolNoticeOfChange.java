@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.Collections;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -30,7 +31,7 @@ public class CaseworkerRemoveFailedSolNoticeOfChange implements CCDConfig<CaseDa
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_REMOVE_FAILED_SOL_NOC_REQUEST)
-            .forAllStates()
+            .forStates(STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED)
             .name("Remove Failed Sol NoC Request")
             .description("Remove Failed Solicitor Notice of Change Request")
             .showSummary()
