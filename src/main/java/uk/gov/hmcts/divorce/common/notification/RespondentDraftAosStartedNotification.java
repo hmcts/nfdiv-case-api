@@ -21,7 +21,7 @@ import java.util.UUID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_DRAFT_AOS_STARTED_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_DRAFT_AOS_STARTED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NAME;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_DRAFT_AOS_STARTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_DRAFT_AOS_STARTED_APPLICATION;
 
 @Component
 @Slf4j
@@ -32,7 +32,7 @@ public class RespondentDraftAosStartedNotification implements ApplicantNotificat
 
     private final NotificationService notificationService;
     private final CommonContent commonContent;
-    private final RespondentDraftAosStartedTemplateContent templateContent;
+    private final RespondentDraftAosStartedTemplateContent respondentDraftAosStartedTemplateContent;
     private final CaseDataDocumentService caseDataDocumentService;
     private final BulkPrintService bulkPrintService;
 
@@ -47,7 +47,7 @@ public class RespondentDraftAosStartedNotification implements ApplicantNotificat
 
         notificationService.sendEmail(
                 applicant.getEmail(),
-                RESPONDENT_DRAFT_AOS_STARTED,
+                RESPONDENT_DRAFT_AOS_STARTED_APPLICATION,
                 templateContent,
                 applicant.getLanguagePreference(),
                 id);
@@ -79,7 +79,7 @@ public class RespondentDraftAosStartedNotification implements ApplicantNotificat
     private Document generateDocument(final long caseId,
                                       final Applicant applicant,
                                       final CaseData caseData) {
-        return caseDataDocumentService.renderDocument(templateContent.getTemplateContent(caseData, caseId, applicant),
+        return caseDataDocumentService.renderDocument(respondentDraftAosStartedTemplateContent.getTemplateContent(caseData, caseId, applicant),
                 caseId,
                 RESPONDENT_DRAFT_AOS_STARTED_APPLICATION_TEMPLATE_ID,
                 applicant.getLanguagePreference(),

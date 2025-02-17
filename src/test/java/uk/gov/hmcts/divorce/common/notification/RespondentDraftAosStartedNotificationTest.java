@@ -76,7 +76,7 @@ class RespondentDraftAosStartedNotificationTest {
 
         verify(notificationService).sendEmail(
                 eq(caseData.getApplicant1().getEmail()),
-                eq(EmailTemplateName.RESPONDENT_DRAFT_AOS_STARTED),
+                eq(EmailTemplateName.RESPONDENT_DRAFT_AOS_STARTED_APPLICATION),
                 anyMap(),
                 eq(caseData.getApplicant1().getLanguagePreference()),
                 eq(id)
