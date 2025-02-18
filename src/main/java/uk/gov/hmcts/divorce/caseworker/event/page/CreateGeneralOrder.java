@@ -17,13 +17,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.GeneralOrderTemplateContent;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 
+import static com.microsoft.applicationinsights.core.dependencies.google.common.base.Strings.isNullOrEmpty;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_ORDER;
 
@@ -32,6 +34,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_ORDER;
 public class CreateGeneralOrder implements CcdPageConfiguration {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final String NO_DETAILS_OR_SELECTED_DOCUMENT_ERROR = "You must either enter details or select a scanned document.";
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -52,7 +55,7 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
                 .optional(GeneralOrder::getGeneralOrderJudgeOrLegalAdvisorType)
                 .optional(GeneralOrder::getGeneralOrderJudgeOrLegalAdvisorName)
                 .optional(GeneralOrder::getGeneralOrderJudgeOrLegalAdvisorVenue)
-                .mandatory(GeneralOrder::getGeneralOrderDetails)
+                .optional(GeneralOrder::getGeneralOrderDetails)
             .done()
             .complex(CaseData::getDocuments)
                 .optional(CaseDocuments::getScannedDocumentNames)
@@ -67,6 +70,14 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
 
         final CaseData caseData = details.getData();
         final GeneralOrder generalOrder = caseData.getGeneralOrder();
+        final DynamicList scannedDocNames = caseData.getDocuments().getScannedDocumentNames();
+        final String selectedScannedDoc = scannedDocNames == null ? null : scannedDocNames.getValue().getLabel();
+
+        if (isNullOrEmpty(generalOrder.getGeneralOrderDetails()) && isNullOrEmpty(selectedScannedDoc)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(NO_DETAILS_OR_SELECTED_DOCUMENT_ERROR))
+                .build();
+        }
 
         final Long caseId = details.getId();
 
@@ -75,14 +86,13 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
         log.info("Generating general order document for templateId : {} case caseId: {}",
             DIVORCE_GENERAL_ORDER, caseId);
 
-        DynamicList scannedDocNames = caseData.getDocuments().getScannedDocumentNames();
-        String selectedScannedDoc = scannedDocNames == null ? null : scannedDocNames.getValue().getLabel();
         if (selectedScannedDoc != null) {
             ListValue<ScannedDocument> scannedDoc = caseData.getDocuments().getScannedDocuments().stream()
                 .filter(g -> g.getValue().getFileName().equals(selectedScannedDoc))
                 .findFirst()
                 .orElseThrow();
             generalOrder.setGeneralOrderScannedDraft(scannedDoc.getValue());
+            generalOrder.setGeneralOrderUseScannedDraft(YES);
         } else {
             Document generalOrderDocument = caseDataDocumentService.renderDocument(
                 generalOrderTemplateContent.apply(caseData, caseId),
@@ -92,6 +102,7 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
                 filename
             );
             generalOrder.setGeneralOrderDraft(generalOrderDocument);
+            generalOrder.setGeneralOrderUseScannedDraft(NO);
         }
 
         caseData.setGeneralOrder(generalOrder);

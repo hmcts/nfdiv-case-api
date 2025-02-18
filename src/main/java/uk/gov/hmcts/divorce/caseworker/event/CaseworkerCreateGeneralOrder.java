@@ -24,7 +24,6 @@ import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
-import java.time.Clock;
 import java.util.List;
 import java.util.UUID;
 
@@ -116,7 +115,7 @@ public class CaseworkerCreateGeneralOrder implements CCDConfig<CaseData, State, 
 
         String fileName;
         Document documentLink;
-        if (generalOrder.getGeneralOrderDraft() == null) {
+        if (generalOrder.getGeneralOrderUseScannedDraft().toBoolean()) {
             fileName = generalOrder.getGeneralOrderScannedDraft().getFileName();
             documentLink = generalOrder.getGeneralOrderScannedDraft().getUrl();
         } else {
