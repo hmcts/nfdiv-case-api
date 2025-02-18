@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -68,7 +69,6 @@ public class GeneralEmailNotification {
         String emailTo = null;
         EmailTemplateName templateId;
 
-        Map<String, String> templateVars = templateVars(caseData, caseId);
         List<ListValue<Document>> documents = new ArrayList<>();
 
         GeneralEmail generalEmail = caseData.getGeneralEmail();
@@ -76,6 +76,13 @@ public class GeneralEmailNotification {
         if (generalEmail == null) {
             return;
         }
+
+        GeneralParties parties = generalEmail.getGeneralEmailParties();
+        LanguagePreference languagePreference = (APPLICANT.equals(parties)) ? caseData.getApplicant1().getLanguagePreference()
+            : (RESPONDENT.equals(parties)) ? caseData.getApplicant2().getLanguagePreference() : ENGLISH;
+
+        Map<String, String> templateVars = templateVars(caseData, caseId, languagePreference);
+
         if (!CollectionUtils.isEmpty(generalEmail.getGeneralEmailAttachments())) {
 
             templateVars.put(DOCUMENTS_AVAILABLE,"yes");
@@ -90,8 +97,6 @@ public class GeneralEmailNotification {
 
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, generalEmail.getGeneralEmailOtherRecipientName());
         templateVars.put(GENERAL_EMAIL_DETAILS, generalEmail.getGeneralEmailDetails());
-
-        GeneralParties parties = generalEmail.getGeneralEmailParties();
 
         if (APPLICANT.equals(parties)) {
             if (caseData.getApplicant1().isRepresented()) {
@@ -130,7 +135,7 @@ public class GeneralEmailNotification {
                 emailTo,
                 templateId,
                 templateVarsObj,
-                ENGLISH,
+                languagePreference,
                 caseId
             );
             log.info("Successfully sent general email notification for case id: {}", caseId);
@@ -155,8 +160,8 @@ public class GeneralEmailNotification {
         return templateVarsObj;
     }
 
-    private Map<String, String> templateVars(final CaseData caseData, final Long caseId) {
-        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId, null);
+    private Map<String, String> templateVars(final CaseData caseData, final Long caseId, LanguagePreference languagePreference) {
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId, languagePreference);
         templateVars.put("sot1", "");
         templateVars.put("sot2", "");
         templateVars.put("sot3", "");
