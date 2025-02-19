@@ -149,7 +149,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
         templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         templateContent.put(SOLICITOR_NAME, "App1 Solicitor Name");
         templateContent.put(SOLICITOR_FIRM, "App1 Solicitor Firm");
-        templateContent.put(SOLICITOR_ADDRESS, "App1 Solicitor Address");
+        templateContent.put(SOLICITOR_ADDRESS, "App1 Solicitor Firm\nApp1 Solicitor Address");
         templateContent.put(SOLICITOR_REFERENCE, "App1 SolicitorReference");
         templateContent.put(APPLICANT_1_SOLICITOR_NAME, "App1 Solicitor Name");
         templateContent.put(APPLICANT_2_SOLICITOR_NAME, "App2 Solicitor Name");
@@ -221,7 +221,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
         templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         templateContent.put(SOLICITOR_NAME, "App1 Solicitor Name");
         templateContent.put(SOLICITOR_FIRM, "App1 Solicitor Firm");
-        templateContent.put(SOLICITOR_ADDRESS, "App1 Solicitor Address");
+        templateContent.put(SOLICITOR_ADDRESS, "App1 Solicitor Firm\nApp1 Solicitor Address");
         templateContent.put(SOLICITOR_REFERENCE, "not provided");
         templateContent.put(APPLICANT_1_SOLICITOR_NAME, "App1 Solicitor Name");
         templateContent.put(APPLICANT_2_SOLICITOR_NAME, "not represented");
@@ -339,7 +339,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
         templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         templateContent.put(SOLICITOR_NAME, "App1 Solicitor Name");
         templateContent.put(SOLICITOR_FIRM, "App1 Solicitor Firm");
-        templateContent.put(SOLICITOR_ADDRESS, "App1 Solicitor Address");
+        templateContent.put(SOLICITOR_ADDRESS, "App1 Solicitor Firm\nApp1 Solicitor Address");
         templateContent.put(SOLICITOR_REFERENCE, "App1 SolicitorReference");
         templateContent.put(APPLICANT_1_SOLICITOR_NAME, "App1 Solicitor Name");
         templateContent.put(APPLICANT_2_SOLICITOR_NAME, "App2 Solicitor Name");
@@ -403,7 +403,7 @@ class GenerateJudicialSeparationCORefusedForAmendmentCoverLetterTest {
         templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         templateContent.put(SOLICITOR_NAME, "App1 Solicitor Name");
         templateContent.put(SOLICITOR_FIRM, "App1 Solicitor Firm");
-        templateContent.put(SOLICITOR_ADDRESS, "App1 Solicitor Address");
+        templateContent.put(SOLICITOR_ADDRESS, "App1 Solicitor Firm\nApp1 Solicitor Address");
         templateContent.put(SOLICITOR_REFERENCE, "not provided");
         templateContent.put(APPLICANT_1_SOLICITOR_NAME, "App1 Solicitor Name");
         templateContent.put(APPLICANT_2_SOLICITOR_NAME, "not represented");
