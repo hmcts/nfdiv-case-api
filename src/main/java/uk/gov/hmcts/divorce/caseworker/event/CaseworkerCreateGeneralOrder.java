@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.event.page.CreateGeneralOrder;
 import uk.gov.hmcts.divorce.caseworker.event.page.GeneralOrderDraft;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
