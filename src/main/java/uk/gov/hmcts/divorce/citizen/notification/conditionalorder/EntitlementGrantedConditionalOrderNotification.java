@@ -170,7 +170,8 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
         }
 
         templateVars.put(CO_PRONOUNCED_DATE, conditionalOrder.getDateAndTimeOfHearing() != null
-                ? conditionalOrder.getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER) : null);
+                ? conditionalOrder.getDateAndTimeOfHearing().format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference()))
+                : null);
 
         return templateVars;
     }
