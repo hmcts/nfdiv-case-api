@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
@@ -23,6 +24,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPaymentSummary;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolStatementOfTruth;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -55,6 +57,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     private final SolPayment solPayment;
     private final SubmissionService submissionService;
     private final PaymentSetupService paymentSetupService;
+    private final CaseFlagsService caseFlagsService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -174,6 +177,13 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .build();
     }
 
+    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
+                                               final CaseDetails<CaseData, State> beforeDetails) {
+        log.info("{} submitted callback invoked CaseID: {}", SOLICITOR_SUBMIT, details.getId());
+        caseFlagsService.setSupplementaryDataForCaseFlags(details.getId());
+        return SubmittedCallbackResponse.builder().build();
+    }
+
     private void updateApplicant2DigitalDetails(CaseData caseData) {
         if (caseData.getApplicant2().getSolicitor() != null
             && caseData.getApplicant2().getSolicitor().getOrganisationPolicy() != null) {
@@ -191,10 +201,12 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .description("Agree statement of truth, pay & submit")
             .showSummary()
             .showEventNotes()
+            .ttlIncrement(36524)
             .showCondition("applicationType=\"soleApplication\" OR [STATE]=\"Applicant2Approved\"")
             .endButtonLabel("Submit Application")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(
                 CASE_WORKER,

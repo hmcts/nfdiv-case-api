@@ -137,7 +137,7 @@ public class CertificateOfEntitlementTemplateContent implements TemplateContent 
 
             templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
             templateContent.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
-            templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
+            templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getFirmAndAddress());
             templateContent.put(SOLICITOR_REFERENCE, Objects.nonNull(applicant.getSolicitor().getReference())
                 ? applicant.getSolicitor().getReference()
                 : "not provided");

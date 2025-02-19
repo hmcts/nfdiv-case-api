@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -55,6 +56,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
     private final ChangeOfRepresentativeService changeOfRepresentativeService;
     private final NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
     private final NotificationDispatcher notificationDispatcher;
+    private final CaseFlagsService caseFlagsService;
 
 
     @Override
@@ -71,8 +73,6 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         log.info("Applying notice of change for case id: {}", details.getId());
 
-        String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
-        String s2sToken = authTokenGenerator.generate();
         var changeOrganisationRequest = details.getData().getChangeOrganisationRequestField();
         boolean isApplicant1 = APPLICANT_1_SOLICITOR.getRole().equals(changeOrganisationRequest.getCaseRoleId().getRole());
         CaseData caseData = details.getData();
@@ -83,6 +83,11 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         changeOfRepresentativeService.buildChangeOfRepresentative(caseData, null,
                 SOLICITOR_NOTICE_OF_CHANGE.getValue(), isApplicant1);
         resetConditionalOrderFields(caseData);
+
+        caseFlagsService.resetSolicitorCaseFlags(caseData, isApplicant1);
+
+        String sysUserToken = idamService.retrieveSystemUpdateUserDetails().getAuthToken();
+        String s2sToken = authTokenGenerator.generate();
 
         AboutToStartOrSubmitCallbackResponse response =
             assignCaseAccessClient.applyNoticeOfChange(sysUserToken, s2sToken, acaRequest(details));
@@ -104,7 +109,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         CaseData responseData = objectMapper.convertValue(data, CaseData.class);
 
         try {
-            notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, caseData,
+            notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, responseData,
                 beforeCaseData, details.getId(), isApplicant1, NEW_DIGITAL_SOLICITOR_NEW_ORG);
         } catch (final NotificationTemplateException e) {
             log.error(NOTIFICATION_FAILED_ERROR, details.getId(), e.getMessage(), e);

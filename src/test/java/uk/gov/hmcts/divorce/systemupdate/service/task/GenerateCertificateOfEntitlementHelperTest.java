@@ -173,7 +173,7 @@ public class GenerateCertificateOfEntitlementHelperTest {
 
         Map<String, Object> applicant1TemplateVars = getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH);
         applicant1TemplateVars.put(NAME, caseData.getApplicant1().getSolicitor().getName());
-        applicant1TemplateVars.put(ADDRESS, caseData.getApplicant1().getSolicitor().getAddress());
+        applicant1TemplateVars.put(ADDRESS, caseData.getApplicant1().getSolicitor().getFirmAndAddress());
         applicant1TemplateVars.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         applicant1TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
 
@@ -280,7 +280,7 @@ public class GenerateCertificateOfEntitlementHelperTest {
 
         Map<String, Object> respondentTemplateVars = getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH);
         respondentTemplateVars.put(NAME, caseData.getApplicant2().getSolicitor().getName());
-        respondentTemplateVars.put(ADDRESS, caseData.getApplicant2().getSolicitor().getAddress());
+        respondentTemplateVars.put(ADDRESS, caseData.getApplicant2().getSolicitor().getFirmAndAddress());
         respondentTemplateVars.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         respondentTemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
 
@@ -434,7 +434,7 @@ public class GenerateCertificateOfEntitlementHelperTest {
 
         Map<String, Object> applicant2TemplateVars = getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH);
         applicant2TemplateVars.put(NAME, caseData.getApplicant2().getSolicitor().getName());
-        applicant2TemplateVars.put(ADDRESS, caseData.getApplicant2().getSolicitor().getAddress());
+        applicant2TemplateVars.put(ADDRESS, caseData.getApplicant2().getSolicitor().getFirmAndAddress());
         applicant2TemplateVars.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         applicant2TemplateVars.put(CASE_REFERENCE, formatId(TEST_CASE_ID));
 
