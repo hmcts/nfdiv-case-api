@@ -100,7 +100,9 @@ public class NoticeOfProceedingSolicitorContent {
         templateContent.put(APPLICANT_SOLICITOR_REGISTERED,
             isApplicantSolicitor ? applicant1Solicitor.hasOrgId() : applicant2Solicitor.hasOrgId());
         templateContent.put(SOLICITOR_NAME, isApplicantSolicitor ? applicant1Solicitor.getName() : applicant2Solicitor.getName());
-        templateContent.put(SOLICITOR_ADDRESS, isApplicantSolicitor ? applicant1Solicitor.getAddress() : applicant2Solicitor.getAddress());
+        templateContent.put(SOLICITOR_ADDRESS, isApplicantSolicitor
+            ? applicant1Solicitor.getFirmAndAddress()
+            : applicant2Solicitor.getFirmAndAddress());
 
         templateContent.put(
             SOLICITOR_REFERENCE,
@@ -139,8 +141,8 @@ public class NoticeOfProceedingSolicitorContent {
         }
 
         if (caseData.isJudicialSeparationCase()) {
-            templateContent.put(APPLICANT_2_SOLICITOR_ADDRESS, applicant2Solicitor.getAddress());
-            templateContent.put(APPLICANT_1_SOLICITOR_ADDRESS, applicant1Solicitor.getAddress());
+            templateContent.put(APPLICANT_2_SOLICITOR_ADDRESS, applicant2.getSolicitor().getFirmAndAddress());
+            templateContent.put(APPLICANT_1_SOLICITOR_ADDRESS, applicant1.getSolicitor().getFirmAndAddress());
             templateContent.put(IS_APP1_REPRESENTED, applicant1.isRepresented());
             templateContent.put(ADDRESS_BASED_OVERSEAS, !AddressUtil.isEnglandOrWales(applicant2.getAddress()));
         }
