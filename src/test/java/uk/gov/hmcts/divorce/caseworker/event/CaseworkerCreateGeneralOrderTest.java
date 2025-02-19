@@ -29,11 +29,13 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCreateGeneralOrder.CASEWORKER_CREATE_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.addScannedDocument;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceGeneralOrderListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getGeneralOrder;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getGeneralOrderDocument;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getScannedGeneralOrderDocument;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.setScannedDocumentNames;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerCreateGeneralOrderTest {
@@ -59,6 +61,27 @@ public class CaseworkerCreateGeneralOrderTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .containsExactly(CASEWORKER_CREATE_GENERAL_ORDER);
+    }
+
+    @Test
+    public void shouldReturnListOfScannedDocumentNames() throws Exception {
+        final CaseData caseData = caseData();
+
+        ScannedDocument scannedDocument = getScannedGeneralOrderDocument();
+        addScannedDocument(caseData, scannedDocument);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartResponse = caseworkerCreateGeneralOrder.aboutToStart(details);
+
+        final CaseData expectedData = caseData();
+        addScannedDocument(expectedData, scannedDocument);
+        setScannedDocumentNames(expectedData);
+
+        assertThat(aboutToStartResponse.getData().getDocuments().getScannedDocumentNames().getListItems().get(0).getLabel())
+            .isEqualTo(expectedData.getDocuments().getScannedDocumentNames().getListItems().get(0).getLabel());
     }
 
     @Test
