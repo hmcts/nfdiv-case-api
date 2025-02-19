@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.common.notification.EmailUpdatedNotification;
 import uk.gov.hmcts.divorce.common.notification.InviteApplicantToCaseNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -19,8 +18,6 @@ public class EmailUpdateService {
 
     @Autowired
     InviteApplicantToCaseNotification inviteApplicantToCaseNotification;
-    @Autowired
-    EmailUpdatedNotification emailUpdatedNotification;
     @Autowired
     NotificationDispatcher notificationDispatcher;
 
@@ -46,8 +43,6 @@ public class EmailUpdateService {
 
         sendInviteToApplicantEmail(data, caseDetails.getId(), isApplicant1);
 
-        sendNotificationToOldEmail(beforeCaseDetails, applicant.getEmail(), isApplicant1);
-
         return caseDetails;
     }
 
@@ -70,10 +65,5 @@ public class EmailUpdateService {
 
     public void sendInviteToApplicantEmail(final CaseData caseData, Long id, boolean isApplicant1) {
         inviteApplicantToCaseNotification.send(caseData, id, isApplicant1);
-    }
-
-    public void sendNotificationToOldEmail(final CaseDetails<CaseData, State> caseDetails,
-                                           String newEmail, boolean isApplicant1) {
-        emailUpdatedNotification.send(caseDetails.getData(), caseDetails.getId(), newEmail, isApplicant1);
     }
 }

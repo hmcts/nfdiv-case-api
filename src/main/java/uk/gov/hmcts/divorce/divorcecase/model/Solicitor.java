@@ -149,4 +149,22 @@ public class Solicitor {
         }
         return this.address;
     }
+
+    @JsonIgnore
+    public String getPreferredFirmName() {
+        return isNullOrEmpty(this.firmName) && hasOrgName()
+            ? this.getOrganisationPolicy().getOrganisation().getOrganisationName()
+            : this.firmName;
+    }
+
+    @JsonIgnore
+    public String getFirmAndAddress() {
+        String firmName = this.getPreferredFirmName();
+        String address = this.getAddress();
+        if (isNullOrEmpty(firmName) || (!isNullOrEmpty(firmName) && address.contains(firmName))) {
+            return address;
+        } else {
+            return firmName + '\n' + address;
+        }
+    }
 }

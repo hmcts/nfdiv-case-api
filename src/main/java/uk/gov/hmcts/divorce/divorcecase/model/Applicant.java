@@ -11,8 +11,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
-import uk.gov.hmcts.ccd.sdk.type.Organisation;
-import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
@@ -21,7 +19,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -307,12 +304,7 @@ public class Applicant {
     @JsonIgnore
     public String getCorrespondenceAddress() {
         if (isRepresented()) {
-            return Stream.of(
-                    Optional.ofNullable(solicitor.getOrganisationPolicy())
-                        .map(OrganisationPolicy::getOrganisation).map(Organisation::getOrganisationName).orElse(null),
-                    solicitor.getAddress()
-                ).filter(value -> value != null && !value.isEmpty())
-                .collect(joining("\n"));
+            return this.solicitor.getFirmAndAddress();
         } else if (!isConfidentialContactDetails() && null != address) {
             return getApplicantAddress();
         }
@@ -322,12 +314,7 @@ public class Applicant {
     @JsonIgnore
     public String getCorrespondenceAddressWithoutConfidentialCheck() {
         if (isRepresented()) {
-            return Stream.of(
-                    Optional.ofNullable(solicitor.getOrganisationPolicy())
-                        .map(OrganisationPolicy::getOrganisation).map(Organisation::getOrganisationName).orElse(null),
-                    solicitor.getAddress()
-                ).filter(value -> value != null && !value.isEmpty())
-                .collect(joining("\n"));
+            return this.solicitor.getFirmAndAddress();
         } else if (null != address) {
             return getApplicantAddress();
         }
