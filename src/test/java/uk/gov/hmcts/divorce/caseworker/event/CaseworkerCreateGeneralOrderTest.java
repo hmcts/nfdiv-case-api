@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.caseworker.event.page.CreateGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
@@ -31,6 +32,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceGeneralOrderListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getGeneralOrder;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getGeneralOrderDocument;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getScannedGeneralOrderDocument;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseworkerCreateGeneralOrderTest {
@@ -62,15 +65,9 @@ public class CaseworkerCreateGeneralOrderTest {
     public void shouldSetGeneralOrderDocumentsWhenThereIsNoExistingGeneralOrder() throws Exception {
         final CaseData caseData = caseData();
 
-        String documentUrl = "http://localhost:8080/1234";
+        final Document generalOrderDocument = getGeneralOrderDocument();
 
-        Document generalOrder = new Document(
-            documentUrl,
-            "generalOrder2021-07-16 11:10:34.pdf",
-            documentUrl + "/binary"
-        );
-
-        caseData.setGeneralOrder(getGeneralOrder(generalOrder));
+        caseData.setGeneralOrder(getGeneralOrder(generalOrderDocument));
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -82,31 +79,21 @@ public class CaseworkerCreateGeneralOrderTest {
 
         assertThat(submitResponse.getData().getGeneralOrder()).isNull();
         assertThat(submitResponse.getData().getGeneralOrders())
-            .containsExactly(getDivorceGeneralOrderListValue(generalOrder, LIST_VALUE_ID_1));
+            .containsExactly(getDivorceGeneralOrderListValue(generalOrderDocument, LIST_VALUE_ID_1));
     }
 
     @Test
     public void shouldAddLatestGeneralOrderDocumentToTopWhenThereIsExistingGeneralOrder() throws Exception {
         final CaseData caseData = caseData();
 
-        String documentUrl = "http://localhost:8080/4567";
+        Document generalOrderDocument1 = getGeneralOrderDocument();
 
-        Document generalOrder1 = new Document(
-            documentUrl,
-            "generalOrder2020-07-16 11:10:34.pdf",
-            documentUrl + "/binary"
-        );
+        Document generalOrderDocument2 = getGeneralOrderDocument();
 
-        Document generalOrder2 = new Document(
-            documentUrl,
-            "generalOrder2021-07-16 11:10:34.pdf",
-            documentUrl + "/binary"
-        );
-
-        caseData.setGeneralOrder(getGeneralOrder(generalOrder2));
+        caseData.setGeneralOrder(getGeneralOrder(generalOrderDocument2));
 
         final List<ListValue<DivorceGeneralOrder>> generalOrders = new ArrayList<>();
-        generalOrders.add(getDivorceGeneralOrderListValue(generalOrder1, LIST_VALUE_ID_1));
+        generalOrders.add(getDivorceGeneralOrderListValue(generalOrderDocument1, LIST_VALUE_ID_1));
         caseData.setGeneralOrders(generalOrders);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -119,8 +106,31 @@ public class CaseworkerCreateGeneralOrderTest {
 
         assertThat(submitResponse.getData().getGeneralOrder()).isNull();
         assertThat(submitResponse.getData().getGeneralOrders()).containsExactly(
-            getDivorceGeneralOrderListValue(generalOrder2, LIST_VALUE_ID_2),
-            getDivorceGeneralOrderListValue(generalOrder1, LIST_VALUE_ID_1)
+            getDivorceGeneralOrderListValue(generalOrderDocument2, LIST_VALUE_ID_2),
+            getDivorceGeneralOrderListValue(generalOrderDocument1, LIST_VALUE_ID_1)
         );
+    }
+
+    @Test
+    public void shouldSetGeneralOrderScannedDocument() throws Exception {
+        final CaseData caseData = caseData();
+
+        final Document generalOrder = getGeneralOrderDocument();
+
+        final ScannedDocument scannedGeneralOrderDocument = getScannedGeneralOrderDocument();
+
+        caseData.setGeneralOrder(getGeneralOrder(scannedGeneralOrderDocument));
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        when(documentIdProvider.documentId()).thenReturn(LIST_VALUE_ID_1);
+
+        AboutToStartOrSubmitResponse<CaseData, State> submitResponse = caseworkerCreateGeneralOrder.aboutToSubmit(details, details);
+
+        assertThat(submitResponse.getData().getGeneralOrder()).isNull();
+        assertThat(submitResponse.getData().getGeneralOrders())
+            .containsExactly(getDivorceGeneralOrderListValue(generalOrder, LIST_VALUE_ID_1));
     }
 }
