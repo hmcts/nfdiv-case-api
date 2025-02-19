@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -40,28 +41,30 @@ public class EmailUpdateService {
 
         final Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
         final Applicant partner = isApplicant1 ? data.getApplicant2() : data.getApplicant1();
-        final Applicant beforeApplicant = isApplicant1 ? beforeData.getApplicant1() : beforeData.getApplicant2();
 
-        if (isEmailBeingRemoved(beforeApplicant, applicant)) {
-            if (doesApplicantNeedToBeMadeOffline(data,isApplicant1)) {
-                log.info("Party will be made offline and any case access removed for Case Id: {}", caseDetails.getId());
-                final var roles = (data.getApplicationType() == ApplicationType.SOLE_APPLICATION)
-                    ? isApplicant1 ? List.of(CREATOR.getRole()) : List.of(APPLICANT_2.getRole())
-                    : List.of(CREATOR.getRole(), APPLICANT_2.getRole());
+        if (willApplicantBeMadeOffline(caseDetails, beforeCaseDetails, isApplicant1)) {
+            log.info("Party will be made offline and any case access removed for Case Id: {}", caseDetails.getId());
+            final var roles = (data.getApplicationType() == ApplicationType.SOLE_APPLICATION)
+                ? isApplicant1 ? List.of(CREATOR.getRole()) : List.of(APPLICANT_2.getRole())
+                : List.of(CREATOR.getRole(), APPLICANT_2.getRole());
 
-                applicant.setOffline(YesOrNo.YES);
-                if (data.getApplicationType() == ApplicationType.JOINT_APPLICATION) {
-                    partner.setOffline(YesOrNo.YES);
-                }
-                ccdAccessService.removeUsersWithRole(caseDetails.getId(), roles);
+            applicant.setOffline(YesOrNo.YES);
+            if (data.getApplicationType() == ApplicationType.JOINT_APPLICATION) {
+                partner.setOffline(YesOrNo.YES);
             }
+            ccdAccessService.removeUsersWithRole(caseDetails.getId(), roles);
+
         } else {
             if (applicant.getEmail() == null || applicant.getEmail().isBlank()
                 || applicant.isRepresented()) {
                 return caseDetails;
             }
-            //Do not send invite to respondent if sole application and case hasn't been issued
-            if (data.getApplicationType().isSole() && (data.getApplication().getIssueDate() == null) && !isApplicant1) {
+
+            boolean isRespondentAndSoleCaseNotIssued = data.getApplicationType().isSole()
+                && data.getApplication().getIssueDate() == null
+                && !isApplicant1;
+
+            if (isRespondentAndSoleCaseNotIssued) {
                 return caseDetails;
             }
             createCaseInvite(data, isApplicant1);
@@ -104,8 +107,7 @@ public class EmailUpdateService {
     }
 
     private boolean isEmailBeingRemoved(final Applicant before, final Applicant after) {
-        if (before.getEmail() != null && !before.getEmail().isBlank()
-            && (after.getEmail() == null || after.getEmail().isBlank())) {
+        if (!StringUtils.isEmpty(before.getEmail()) && StringUtils.isEmpty(after.getEmail())) {
             return true;
         }
         return false;
