@@ -115,7 +115,7 @@ class EmailUpdateServiceTest {
     }
 
     @Test
-    void shouldProgressInviteApplicant2AndJointApplicationNotIssuedYet() {
+    void shouldInviteApplicant2EvenWhenJointApplicationNotIssuedYet() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.getApplication().setIssueDate(null);
         caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
