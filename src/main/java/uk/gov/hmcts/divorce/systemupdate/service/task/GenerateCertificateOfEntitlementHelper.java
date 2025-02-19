@@ -13,10 +13,12 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static java.lang.String.join;
 import static java.util.Objects.nonNull;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
@@ -35,6 +37,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
@@ -99,8 +102,10 @@ public class GenerateCertificateOfEntitlementHelper {
             templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
         }
 
-        templateContent.put(CO_PRONOUNCED_DATE, conditionalOrder.getDateAndTimeOfHearing() != null
-                ? conditionalOrder.getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER) : null);
+        DateTimeFormatter dateFormatter = WELSH == applicant.getLanguagePreference() ? WELSH_DATE_TIME_FORMATTER : DATE_TIME_FORMATTER;
+
+        templateContent.put(CO_PRONOUNCED_DATE, dateAndTimeOfHearing != null
+                ? conditionalOrder.getDateAndTimeOfHearing().format(dateFormatter) : null);
         templateContent.put(PARTNER, commonContent.getPartner(caseData, partner, applicant.getLanguagePreference()));
         templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
 
