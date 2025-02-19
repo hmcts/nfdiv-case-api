@@ -39,6 +39,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 public class GenerateCertificateOfEntitlementHelper {
@@ -102,7 +103,7 @@ public class GenerateCertificateOfEntitlementHelper {
             templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
         }
 
-        DateTimeFormatter dateFormatter = WELSH == applicant.getLanguagePreference() ? WELSH_DATE_TIME_FORMATTER : DATE_TIME_FORMATTER;
+        DateTimeFormatter dateFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
 
         templateContent.put(CO_PRONOUNCED_DATE, dateAndTimeOfHearing != null
                 ? conditionalOrder.getDateAndTimeOfHearing().format(dateFormatter) : null);
