@@ -9,6 +9,7 @@
   "generalOrderDivorceParties": [
     "respondent"
   ],
+  "generalOrderUseScannedDraft": "No",
   "generalOrderRecitals": "test recitals",
   "generalOrderJudgeOrLegalAdvisorType": "districtJudge",
   "generalOrderJudgeOrLegalAdvisorName": "some name",
