@@ -172,7 +172,7 @@ public class CaseDocuments {
     public enum ScannedDocumentSubtypes implements HasLabel {
 
         @JsonProperty("ConfidentialD10")
-        CONFIDENTIAL_D10("D10 Confidential"),
+        D10_CONFIDENTIAL("D10 Confidential"),
 
         @JsonProperty("D10")
         D10("D10"),
@@ -200,7 +200,7 @@ public class CaseDocuments {
 
         private final String label;
 
-        private static final EnumSet<ScannedDocumentSubtypes> CONFIDENTIAL_SUBTYPES = EnumSet.of(CONFIDENTIAL_D10);
+        private static final EnumSet<ScannedDocumentSubtypes> CONFIDENTIAL_SUBTYPES = EnumSet.of(D10_CONFIDENTIAL);
 
         public boolean isConfidential() {
             return CONFIDENTIAL_SUBTYPES.contains(this);

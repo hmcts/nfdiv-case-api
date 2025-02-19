@@ -78,7 +78,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.RFI_RESPONSE;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.CONFIDENTIAL_D10;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10_CONFIDENTIAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
@@ -299,7 +299,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
                     )
                     .fileName("doc1.pdf")
                     .type(ScannedDocumentType.OTHER)
-                    .subtype(CONFIDENTIAL_D10.getLabel())
+                    .subtype(D10_CONFIDENTIAL.getLabel())
                     .build()
             )
             .build();
@@ -311,7 +311,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
                 CaseDocuments.builder()
                     .typeOfDocumentAttached(AOS_D10)
                     .scannedDocuments(singletonList(doc1))
-                    .scannedSubtypeReceived(CONFIDENTIAL_D10)
+                    .scannedSubtypeReceived(D10_CONFIDENTIAL)
                     .scannedDocumentNames(
                         DynamicList
                             .builder()

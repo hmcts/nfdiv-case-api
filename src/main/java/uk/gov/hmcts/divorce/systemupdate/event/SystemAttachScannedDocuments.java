@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.CONFIDENTIAL_D10;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10_CONFIDENTIAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
@@ -149,7 +149,7 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
 
         // TODO: extend once Nullity document types added
 
-        if (D10.equals(scannedDocumentSubtype) || CONFIDENTIAL_D10.equals(scannedDocumentSubtype)) {
+        if (D10.equals(scannedDocumentSubtype) || D10_CONFIDENTIAL.equals(scannedDocumentSubtype)) {
             return RESPONDENT_ANSWERS;
         } else if (D84.equals(scannedDocumentSubtype)) {
             return CONDITIONAL_ORDER_APPLICATION;
