@@ -27,8 +27,8 @@ import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10_CONFIDENTIAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10_CONFIDENTIAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.scannedDocMustBeReclassifiedByCaseworker;
