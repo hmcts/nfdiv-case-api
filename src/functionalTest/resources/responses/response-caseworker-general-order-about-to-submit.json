@@ -25,7 +25,8 @@
           },
           "generalOrderDivorceParties": [
             "respondent"
-          ]
+          ],
+          "generalOrderUseScannedDraft": "No"
         }
       }
     ],
