@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_ORDER;
 public class CreateGeneralOrder implements CcdPageConfiguration {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private static final String NO_DETAILS_OR_SELECTED_DOCUMENT_ERROR = "You must either enter details or select a scanned document.";
+    public static final String NO_DETAILS_OR_SELECTED_DOCUMENT_ERROR = "You must either enter details or select a scanned document.";
 
     @Autowired
     private CaseDataDocumentService caseDataDocumentService;
@@ -81,8 +81,6 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
 
         final Long caseId = details.getId();
 
-        final String filename = GENERAL_ORDER + LocalDateTime.now(clock).format(formatter);
-
         log.info("Generating general order document for templateId : {} case caseId: {}",
             DIVORCE_GENERAL_ORDER, caseId);
 
@@ -99,7 +97,7 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
                 caseId,
                 DIVORCE_GENERAL_ORDER,
                 caseData.getApplicant1().getLanguagePreference(),
-                filename
+                GENERAL_ORDER + LocalDateTime.now(clock).format(formatter)
             );
             generalOrder.setGeneralOrderDraft(generalOrderDocument);
             generalOrder.setGeneralOrderUseScannedDraft(NO);
