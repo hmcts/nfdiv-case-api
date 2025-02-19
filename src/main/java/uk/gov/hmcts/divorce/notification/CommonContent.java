@@ -365,6 +365,9 @@ public class CommonContent {
         }
         templateVars.put(SMART_SURVEY, getSmartSurvey());
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
+
+        getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
+
         return templateVars;
     }
 
@@ -379,6 +382,8 @@ public class CommonContent {
                 : NOT_PROVIDED);
         templateVars.put(SMART_SURVEY, getSmartSurvey());
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
+
+        getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
         return templateVars;
     }
 
@@ -401,6 +406,9 @@ public class CommonContent {
         templateVars.put(SMART_SURVEY, getSmartSurvey());
         templateVars.put(DATE_OF_ISSUE, issueDate);
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(beforeApplicant.getLanguagePreference()));
+
+        getPhoneAndOpeningTimes(beforeApplicant.getLanguagePreference(), templateVars);
+
         return templateVars;
     }
 
