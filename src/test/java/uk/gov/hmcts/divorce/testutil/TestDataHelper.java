@@ -1025,6 +1025,10 @@ public class TestDataHelper {
             .build();
     }
 
+    public static GeneralOrder getGeneralOrder() {
+        return getGeneralOrder((Document) null);
+    }
+
     public static Document getGeneralOrderDocument() {
         String documentUrl = "http://localhost:8080/1234";
         return new Document(
@@ -1043,9 +1047,6 @@ public class TestDataHelper {
             .build();
     }
 
-    public static GeneralOrder getGeneralOrder() {
-        return getGeneralOrder((Document) null);
-    }
 
     public static ListValue<DivorceGeneralOrder> getDivorceGeneralOrderListValue(Document ccdDocument, String listValueId) {
         DivorceDocument generalOrderDocument = DivorceDocument
