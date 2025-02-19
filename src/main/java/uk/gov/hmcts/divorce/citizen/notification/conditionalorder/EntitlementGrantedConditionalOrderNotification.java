@@ -42,7 +42,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDIT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.ENTITLEMENT_GRANTED_DO_NOT_ATTEND_COURT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
@@ -170,8 +169,8 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
         }
 
         templateVars.put(CO_PRONOUNCED_DATE, conditionalOrder.getDateAndTimeOfHearing() != null
-                ? conditionalOrder.getDateAndTimeOfHearing().format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference()))
-                : null);
+                ? conditionalOrder.getDateAndTimeOfHearing()
+                .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())) : null);
 
         return templateVars;
     }
