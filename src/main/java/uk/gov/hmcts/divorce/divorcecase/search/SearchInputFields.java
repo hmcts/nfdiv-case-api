@@ -59,6 +59,10 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
         SearchField.<UserRole>builder().label("Solicitor firm name").id(APPLICANT_1_FIRM_NAME).build(),
         SearchField.<UserRole>builder().label("Type of service").id(ALTERNATIVE_SERVICE_TYPE).build(),
         SearchField.<UserRole>builder().label("Applicant first name").id(APPLICANT_1_FIRST_NAME).build(),
+        SearchField.<UserRole>builder().label("Document Control Number")
+            .id("scannedDocuments")
+            .listElementCode("controlNumber")
+            .build(),
         SearchField.<UserRole>builder().label("Applicant last name").id(APPLICANT_1_LAST_NAME).build(),
         SearchField.<UserRole>builder().label("Applicant email").id(APPLICANT_1_EMAIL).build(),
         SearchField.<UserRole>builder().label("Applicant postcode")
