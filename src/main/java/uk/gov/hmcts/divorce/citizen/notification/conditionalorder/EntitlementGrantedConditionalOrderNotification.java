@@ -102,7 +102,7 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
 
         List.of(emailTemplateName, ENTITLEMENT_GRANTED_DO_NOT_ATTEND_COURT).forEach(templateId ->
                 notificationService.sendEmail(
-                        caseData.getApplicant1().getEmail(),
+                        caseData.getApplicant2().getEmail(),
                         templateId,
                         templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
                         caseData.getApplicant2().getLanguagePreference(),
