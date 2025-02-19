@@ -4,13 +4,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.InviteApplicantToCaseNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInviteApp1;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+
+import java.util.List;
+
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 
 @Service
 @Slf4j
@@ -20,29 +28,45 @@ public class EmailUpdateService {
     InviteApplicantToCaseNotification inviteApplicantToCaseNotification;
     @Autowired
     NotificationDispatcher notificationDispatcher;
+    @Autowired
+    CcdAccessService ccdAccessService;
 
     public CaseDetails<CaseData, State> processEmailUpdate(final CaseDetails<CaseData, State> caseDetails,
                                                       final CaseDetails<CaseData, State> beforeCaseDetails,
                                                       boolean isApplicant1) {
 
         final CaseData data = caseDetails.getData();
+        final CaseData beforeData = beforeCaseDetails.getData();
 
-        Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
+        final Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
+        final Applicant partner = isApplicant1 ? data.getApplicant2() : data.getApplicant1();
+        final Applicant beforeApplicant = isApplicant1 ? beforeData.getApplicant1() : beforeData.getApplicant2();
 
-        if (applicant.getEmail() == null || applicant.getEmail().isBlank()
-            || applicant.isRepresented()) {
-            return caseDetails;
+        if (isEmailBeingRemoved(beforeApplicant, applicant)) {
+            if (doesApplicantNeedToBeMadeOffline(data,isApplicant1)) {
+                log.info("Party will be made offline and any case access removed for Case Id: {}", caseDetails.getId());
+                final var roles = (data.getApplicationType() == ApplicationType.SOLE_APPLICATION)
+                    ? isApplicant1 ? List.of(CREATOR.getRole()) : List.of(APPLICANT_2.getRole())
+                    : List.of(CREATOR.getRole(), APPLICANT_2.getRole());
+
+                applicant.setOffline(YesOrNo.YES);
+                if (data.getApplicationType() == ApplicationType.JOINT_APPLICATION) {
+                    partner.setOffline(YesOrNo.YES);
+                }
+                ccdAccessService.removeUsersWithRole(caseDetails.getId(), roles);
+            }
+        } else {
+            if (applicant.getEmail() == null || applicant.getEmail().isBlank()
+                || applicant.isRepresented()) {
+                return caseDetails;
+            }
+            //Do not send invite to respondent if sole application and case hasn't been issued
+            if (data.getApplicationType().isSole() && (data.getApplication().getIssueDate() == null) && !isApplicant1) {
+                return caseDetails;
+            }
+            createCaseInvite(data, isApplicant1);
+            sendInviteToApplicantEmail(data, caseDetails.getId(), isApplicant1);
         }
-
-        //Do not send invite to respondent if sole application and case hasn't been issued
-        if (data.getApplicationType().isSole() && (data.getApplication().getIssueDate() == null) && !isApplicant1) {
-            return  caseDetails;
-        }
-
-        createCaseInvite(data, isApplicant1);
-
-        sendInviteToApplicantEmail(data, caseDetails.getId(), isApplicant1);
-
         return caseDetails;
     }
 
@@ -63,7 +87,41 @@ public class EmailUpdateService {
         }
     }
 
-    public void sendInviteToApplicantEmail(final CaseData caseData, Long id, boolean isApplicant1) {
+    private void sendInviteToApplicantEmail(final CaseData caseData, Long id, boolean isApplicant1) {
         inviteApplicantToCaseNotification.send(caseData, id, isApplicant1);
+    }
+
+    public boolean willApplicantBeMadeOffline(final CaseDetails<CaseData, State> caseDetails,
+                                              final CaseDetails<CaseData, State> beforeCaseDetails,
+                                              boolean isApplicant1) {
+        final CaseData data = caseDetails.getData();
+        final CaseData beforeData = beforeCaseDetails.getData();
+
+        final Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
+        final Applicant beforeApplicant = isApplicant1 ? beforeData.getApplicant1() : beforeData.getApplicant2();
+
+        return isEmailBeingRemoved(beforeApplicant, applicant) && doesApplicantNeedToBeMadeOffline(data, isApplicant1);
+    }
+
+    private boolean isEmailBeingRemoved(final Applicant before, final Applicant after) {
+        if (before.getEmail() != null && !before.getEmail().isBlank()
+            && (after.getEmail() == null || after.getEmail().isBlank())) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean doesApplicantNeedToBeMadeOffline(CaseData caseData, boolean isApplicant1) {
+        final Applicant applicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
+        final Applicant partner = isApplicant1 ? caseData.getApplicant2() : caseData.getApplicant1();
+        ApplicationType applicationType = caseData.getApplicationType();
+
+        if (applicationType == ApplicationType.SOLE_APPLICATION && applicant.isRepresented()) {
+            return false;
+        }
+        if (applicationType == ApplicationType.JOINT_APPLICATION && (applicant.isRepresented() || partner.isRepresented())) {
+            return false;
+        }
+        return true;
     }
 }

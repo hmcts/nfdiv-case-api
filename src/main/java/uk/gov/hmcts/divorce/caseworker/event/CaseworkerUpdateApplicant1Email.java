@@ -7,7 +7,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.EmailUpdateService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -15,7 +14,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static java.util.Collections.singletonList;
+import java.util.ArrayList;
+import java.util.List;
+
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -49,11 +50,26 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
             .grantHistoryOnly(
                 SOLICITOR,
                 LEGAL_ADVISOR))
-            .page("updateApp1Email")
+            .page("updateApp1Email", this::midEvent)
             .pageLabel("Update applicant/applicant1 email")
             .complex(CaseData::getApplicant1)
                 .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, APPLICANTS_OR_APPLICANT1S))
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails
+    ) {
+        List<String> warnings = new ArrayList<>();
+        if (emailUpdateService.willApplicantBeMadeOffline(details, beforeDetails, true)) {
+            warnings.add("You have removed the email, "
+                + "the party will be offline when you complete the event");
+        }
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .warnings(warnings)
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -62,29 +78,11 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
     ) {
         log.info("{} aboutToSubmit callback invoked for Case Id: {}", CASEWORKER_UPDATE_APP1_EMAIL, details.getId());
 
-        if (isEmailBeingRemoved(beforeDetails.getData(), details.getData())) {
-            details.getData().getApplicant1().setOffline(YesOrNo.YES);
-
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(details.getData())
-                .warnings(singletonList("You have removed the email, "
-                    + "the party will be offline when you complete the event"))
-                .build();
-        }
-
         final CaseDetails<CaseData, State> result = emailUpdateService.processEmailUpdate(details, beforeDetails, true);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(result.getData())
             .build();
-    }
-
-    private boolean isEmailBeingRemoved(CaseData caseDataBefore, CaseData caseData) {
-        if (caseDataBefore.getApplicant1().getEmail() != null && !caseDataBefore.getApplicant1().getEmail().isBlank()
-            && (caseData.getApplicant1().getEmail() == null || caseData.getApplicant1().getEmail().isBlank())) {
-            return true;
-        }
-        return false;
     }
 
     private String getLabel(final String label, final Object... value) {

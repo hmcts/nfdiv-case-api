@@ -17,9 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUpdateApplicant1Email.CASEWORKER_UPDATE_APP1_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -47,33 +45,45 @@ public class CaseworkerUpdateApplicant1EmailTest {
     }
 
     @Test
-    void shouldSetApplicantOfflineIfApplicant1EmailHasBeenRemoved() {
-        final CaseData caseDataBefore = CaseData.builder()
-            .applicant1(Applicant.builder()
-                .email(TEST_USER_EMAIL)
-                .offline(NO)
-                .build())
-            .build();
-
-        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
-        detailsBefore.setId(TEST_CASE_ID);
-        detailsBefore.setData(caseDataBefore);
-
+    void shouldReturnWarningInMidEventIfApplicable() {
         final CaseData caseData = CaseData.builder()
-            .applicant1(Applicant.builder().offline(NO).build())
+            .applicant1(Applicant.builder()
+                .offline(YES)
+                .email(TEST_USER_EMAIL)
+                .build())
             .build();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant1Email.aboutToSubmit(details, detailsBefore);
+        when(emailUpdateService.willApplicantBeMadeOffline(details, details, true)).thenReturn(true);
 
-        assertThat(response.getData().getApplicant1().getOffline()).isEqualTo(YES);
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant1Email.midEvent(details, details);
+
+        verify(emailUpdateService).willApplicantBeMadeOffline(details, details, true);
         assertThat(response.getWarnings().size()).isEqualTo(1);
-        assertThat(response.getWarnings().get(0)).isEqualTo("You have removed the email, "
-                    + "the party will be offline when you complete the event");
-        verifyNoInteractions(emailUpdateService);
+    }
+
+    @Test
+    void shouldNotReturnWarningInMidEventIfNotApplicable() {
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .offline(YES)
+                .email(TEST_USER_EMAIL)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        when(emailUpdateService.willApplicantBeMadeOffline(details, details, true)).thenReturn(false);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant1Email.midEvent(details, details);
+
+        verify(emailUpdateService).willApplicantBeMadeOffline(details, details, true);
+        assertThat(response.getWarnings().size()).isEqualTo(0);
     }
 
     @Test
