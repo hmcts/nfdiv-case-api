@@ -107,23 +107,14 @@ public class EmailUpdateService {
     }
 
     private boolean isEmailBeingRemoved(final Applicant before, final Applicant after) {
-        if (!StringUtils.isEmpty(before.getEmail()) && StringUtils.isEmpty(after.getEmail())) {
-            return true;
-        }
-        return false;
+        return !StringUtils.isEmpty(before.getEmail()) && StringUtils.isEmpty(after.getEmail());
     }
 
     private boolean doesApplicantNeedToBeMadeOffline(CaseData caseData, boolean isApplicant1) {
         final Applicant applicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
         final Applicant partner = isApplicant1 ? caseData.getApplicant2() : caseData.getApplicant1();
-        ApplicationType applicationType = caseData.getApplicationType();
+        boolean isJoint = caseData.getApplicationType() == ApplicationType.JOINT_APPLICATION;
 
-        if (applicationType == ApplicationType.SOLE_APPLICATION && applicant.isRepresented()) {
-            return false;
-        }
-        if (applicationType == ApplicationType.JOINT_APPLICATION && (applicant.isRepresented() || partner.isRepresented())) {
-            return false;
-        }
-        return true;
+        return !(applicant.isRepresented() || (isJoint && partner.isRepresented()));
     }
 }
