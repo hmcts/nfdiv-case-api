@@ -161,7 +161,9 @@ public class Solicitor {
     public String getFirmAndAddress() {
         String firmName = this.getPreferredFirmName();
         String address = this.getAddress();
-        if (isNullOrEmpty(firmName) || (!isNullOrEmpty(firmName) && !isNullOrEmpty(address) && address.contains(firmName))) {
+        if (isNullOrEmpty(address)) {
+            return firmName;
+        } else if (isNullOrEmpty(firmName) || (!isNullOrEmpty(firmName) && address.contains(firmName))) {
             return address;
         } else {
             return firmName + '\n' + address;
