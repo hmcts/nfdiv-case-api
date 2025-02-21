@@ -218,7 +218,7 @@ dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
     //CVE-2020-23064
-    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.36'
+    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '11.0.4'
     //CVE-2023-5072
     dependency group: 'org.json', name: 'json', version: '20250107'
   }
