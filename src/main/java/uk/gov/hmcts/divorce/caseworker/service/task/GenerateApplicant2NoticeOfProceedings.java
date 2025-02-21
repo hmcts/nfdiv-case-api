@@ -85,10 +85,10 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
         final boolean isSoleApplication = caseData.getApplicationType().isSole();
 
         if (isSoleApplication) {
-            boolean generateCaseInvite = !(caseData.getCaseInvite() != null
-                && StringUtils.isNotEmpty(caseData.getCaseInvite().accessCode()));
+            boolean userAlreadyHasCaseInvite = caseData.getCaseInvite() != null
+                && StringUtils.isNotEmpty(caseData.getCaseInvite().accessCode());
 
-            if (generateCaseInvite) {
+            if (!userAlreadyHasCaseInvite) {
                 caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
             }
 
