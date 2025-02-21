@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.solicitor.event;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -14,8 +15,11 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.GeneralApplicationSelectApplicationType;
 import uk.gov.hmcts.divorce.common.event.page.GeneralApplicationUploadDocument;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -25,6 +29,7 @@ import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentConfirmation;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentSummary;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectFee;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.EnumSet;
@@ -37,6 +42,7 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
@@ -54,6 +60,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_WITHOUT_NOTICE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
 @Slf4j
 @Component
@@ -89,10 +99,16 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
     private OrganisationClient organisationClient;
 
     @Autowired
+    private CcdAccessService ccdAccessService;
+
+    @Autowired
     private HttpServletRequest request;
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
+
+    @Value("${idam.client.redirect_uri}")
+    private String redirectUrl;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -146,7 +162,8 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
         }
 
         if (generalApplication.getGeneralApplicationFee().isPaymentMethodPba()) {
-            final Solicitor invokingSolicitor = getInvokingSolicitor(data, request.getHeader(AUTHORIZATION));
+            final Applicant invokingParty = getInvokingParty(data, request.getHeader(AUTHORIZATION));
+            final Solicitor invokingSolicitor = invokingParty.getSolicitor();
 
             if (isNull(invokingSolicitor)) {
                 return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -154,6 +171,8 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
                     .errors(singletonList(GENERAL_APPLICATION_ORG_POLICY_ERROR))
                     .build();
             }
+
+            prepareCaseDataForGeneralApplicationPayment(details, invokingSolicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
 
             final PbaResponse response = paymentService.processPbaPayment(
                 details.getId(),
@@ -189,14 +208,14 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             .build();
     }
 
-    private Solicitor getInvokingSolicitor(final CaseData caseData, final String userAuth) {
+    private Applicant getInvokingParty(final CaseData caseData, final String userAuth) {
 
         if (!caseData.getApplicant2().isRepresented()) {
-            return caseData.getApplicant1().getSolicitor();
+            return caseData.getApplicant1();
         }
 
         if (!caseData.getApplicant1().isRepresented()) {
-            return caseData.getApplicant2().getSolicitor();
+            return caseData.getApplicant2();
         }
 
         String applicant1SolicitorSelectedOrgId =
@@ -220,12 +239,37 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             .getOrganisationIdentifier();
 
         if (solicitorUserOrgId.equalsIgnoreCase(applicant1SolicitorSelectedOrgId)) {
-            return caseData.getApplicant1().getSolicitor();
+            return caseData.getApplicant1();
         } else if (solicitorUserOrgId.equalsIgnoreCase(applicant2SolicitorSelectedOrgId)) {
-            return caseData.getApplicant2().getSolicitor();
+            return caseData.getApplicant2();
         } else {
             return null;
         }
+    }
+
+    private void prepareCaseDataForGeneralApplicationPayment(CaseDetails<CaseData, State> details, String responsibleParty) {
+        CaseData data = details.getData();
+        GeneralApplicationFee feeType = data.getGeneralApplication().getGeneralApplicationFeeType();
+        FeeDetails feeDetails = data.getGeneralApplication().getGeneralApplicationFee();
+
+        prepareOrderSummary(feeType, feeDetails);
+        prepareServiceRequest(details.getId(), data, feeDetails, responsibleParty);
+    }
+
+    private void prepareOrderSummary(GeneralApplicationFee feeType, FeeDetails feeDetails) {
+        String keyword = FEE0227.getLabel().equals(feeType.getLabel())
+            ? KEYWORD_NOTICE
+            : KEYWORD_WITHOUT_NOTICE;
+
+        var orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, keyword);
+        feeDetails.setOrderSummary(orderSummary);
+    }
+
+    private void prepareServiceRequest(long caseId, CaseData data, FeeDetails feeDetails, String responsibleParty) {
+        final String serviceRequest = paymentService.createServiceRequestReference(
+            redirectUrl, caseId, responsibleParty, feeDetails.getOrderSummary()
+        );
+        feeDetails.setServiceRequestReference(serviceRequest);
     }
 
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

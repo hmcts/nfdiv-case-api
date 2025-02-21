@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.payment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
+import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.payment.model.CasePaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
@@ -21,17 +24,24 @@ import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.PaymentItem;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.payment.model.ServiceReferenceResponse;
+import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto;
+import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto.FeeDto;
+import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto.PaymentDto;
+import uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus;
 import uk.gov.hmcts.divorce.payment.model.StatusHistoriesItem;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static java.util.Collections.singletonList;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -43,6 +53,7 @@ import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0003;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.CAE0004;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.GENERAL;
 import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.NOT_FOUND;
+import static uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus.NOT_PAID;
 
 @Service
 @Slf4j
@@ -75,6 +86,8 @@ public class PaymentService {
     public static final String CA_E0003 = "CA-E0003";
     public static final String HMCTS_ORG_ID = "ABA1";
     private static final String ERROR_SERVICE_REF_REQUEST = "Failed to create service reference for case: %s";
+    private static final String DIVORCE_APPLICATION_FEE_CODE = "FEE0002";
+    private static final Set<String> SINGLE_USE_FEE_CODES = Set.of(DIVORCE_APPLICATION_FEE_CODE);
 
     @Autowired
     private HttpServletRequest httpServletRequest;
@@ -90,6 +103,9 @@ public class PaymentService {
 
     @Autowired
     private AuthTokenGenerator authTokenGenerator;
+
+    @Autowired
+    private IdamService idamService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -120,6 +136,11 @@ public class PaymentService {
                 .code(fee.getCode())
                 .version(fee.getVersion())
                 .build();
+
+            Optional<ServiceRequestDto> serviceRequest = findServiceRequestInPaymentsDatabase(caseId, fee, responsibleParty);
+            if (serviceRequest.isPresent()) {
+                return serviceRequest.get().getPaymentGroupReference();
+            }
 
             var serviceReferenceResponse = paymentClient.createServiceRequest(
                 httpServletRequest.getHeader(AUTHORIZATION),
@@ -161,6 +182,40 @@ public class PaymentService {
             .fees(singletonList(getFee(feeResponse)))
             .paymentTotal(getValueInPence(feeResponse.getAmount()))
             .build();
+    }
+
+    private Optional<ServiceRequestDto> findServiceRequestInPaymentsDatabase(Long caseId, Fee fee, String responsibleParty) {
+        final User user = idamService.retrieveSystemUpdateUserDetails();
+
+        List<ServiceRequestDto> serviceRequests = paymentClient.getServiceRequests(
+            user.getAuthToken(),
+            authTokenGenerator.generate(),
+            String.valueOf(caseId)
+        ).getServiceRequests();
+
+        return serviceRequests.stream()
+            .filter(sr -> serviceRequestHasSameFeeAndParty(sr, fee, responsibleParty))
+            .findAny();
+    }
+
+    private boolean serviceRequestHasSameFeeAndParty(ServiceRequestDto serviceRequest, Fee fee, String organisationName) {
+        String feeCode = fee.getCode();
+        BigDecimal feeAmount = new BigDecimal(penceToPounds(fee.getAmount()));
+
+        ServiceRequestStatus serviceRequestStatus = serviceRequest.getServiceRequestStatus();
+        List<FeeDto> serviceRequestFees = serviceRequest.getFees();
+        List<PaymentDto> serviceRequestPayments = serviceRequest.getPayments();
+
+        boolean isUnpaid = NOT_PAID.equals(serviceRequestStatus);
+        boolean usesSameFeeCode = isNotEmpty(serviceRequestFees) && serviceRequestFees.stream().anyMatch(
+            srFee -> feeCode.equals(srFee.getCode()) && feeAmount.compareTo(srFee.getAmountDue()) == 0
+        );
+        boolean createdByTheSameOrganisation = isNotEmpty(serviceRequestPayments) && serviceRequestPayments.stream().anyMatch(
+            srPayment -> StringUtils.isNotBlank(organisationName) && organisationName.equals(srPayment.getOrganisationName())
+        );
+        boolean feeExpectedOncePerCase = SINGLE_USE_FEE_CODES.contains(fee.getCode());
+
+        return isUnpaid && usesSameFeeCode && (createdByTheSameOrganisation || feeExpectedOncePerCase);
     }
 
     public PbaResponse processPbaPayment(Long caseId,
