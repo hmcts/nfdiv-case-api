@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.document.print.documentpack.ApplyForFinalOrderDocume
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
 
 import java.util.Map;
 
@@ -27,9 +27,9 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_APP
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_APPLY_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_NOTICE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 
 @Component
 @Slf4j

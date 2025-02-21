@@ -23,7 +23,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentConfirmation;
@@ -60,10 +60,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_WITHOUT_NOTICE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_NOTICE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_WITHOUT_NOTICE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 
 @Slf4j
 @Component

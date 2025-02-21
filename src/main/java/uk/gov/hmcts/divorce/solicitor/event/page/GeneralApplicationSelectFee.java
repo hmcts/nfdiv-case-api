@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 

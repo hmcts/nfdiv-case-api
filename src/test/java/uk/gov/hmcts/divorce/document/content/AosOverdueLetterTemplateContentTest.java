@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.document.content.templatecontent.AosOverdueLetterTemplateContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 
 import java.time.LocalDate;

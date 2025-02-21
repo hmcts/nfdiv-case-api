@@ -34,7 +34,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.penceToPounds;
-import static uk.gov.hmcts.divorce.payment.PaymentService.HMCTS_ORG_ID;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.HMCTS_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;

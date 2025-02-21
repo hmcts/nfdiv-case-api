@@ -35,9 +35,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_NOTICE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorGeneralApplication.SOLICITOR_GENERAL_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesLookup;
 import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.buildServiceReferenceRequest;

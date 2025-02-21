@@ -66,12 +66,12 @@ public class ServiceRequestDto {
     public static class FeeDto {
         private String code;
 
-        private BigDecimal calculatedAmount;
+        private String calculatedAmount;
 
-        private BigDecimal netAmount;
+        private String netAmount;
 
         private String caseReference;
 
-        private BigDecimal amountDue;
+        private String amountDue;
     }
 }
