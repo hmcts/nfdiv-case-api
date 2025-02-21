@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce.payment.service;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -9,6 +11,7 @@ import uk.gov.hmcts.divorce.payment.client.PaymentClient;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +24,7 @@ import static uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus.NOT_PAID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ServiceRequestSearchService {
     private final PaymentClient paymentClient;
 
@@ -28,18 +32,25 @@ public class ServiceRequestSearchService {
 
     private final AuthTokenGenerator authTokenGenerator;
 
-    public Optional<ServiceRequestDto> findUnusedServiceRequest(Long caseId, Fee fee, String responsibleParty) {
+    public Optional<ServiceRequestDto> findUnpaidServiceRequest(Long caseId, Fee fee, String responsibleParty) {
+        List<ServiceRequestDto> serviceRequests;
         final User user = idamService.retrieveSystemUpdateUserDetails();
 
-        List<ServiceRequestDto> serviceRequests = paymentClient.getServiceRequests(
-            user.getAuthToken(),
-            authTokenGenerator.generate(),
-            String.valueOf(caseId)
-        ).getServiceRequests();
+        try {
+            serviceRequests = paymentClient.getServiceRequests(
+                user.getAuthToken(),
+                authTokenGenerator.generate(),
+                String.valueOf(caseId)
+            ).getServiceRequests();
 
-        return serviceRequests.stream()
-            .filter(sr -> serviceRequestIsUnpaidAndMatchesFee(sr, fee, responsibleParty))
-            .findAny();
+            return serviceRequests.stream()
+                .filter(sr -> serviceRequestIsUnpaidAndMatchesFee(sr, fee, responsibleParty))
+                .findAny();
+        } catch (FeignException e) {
+            log.info("No service requests found for: {}, Exception: {}", caseId, e.getMessage());
+        }
+
+        return Optional.empty();
     }
 
     private boolean serviceRequestIsUnpaidAndMatchesFee(ServiceRequestDto sr, Fee fee, String responsibleParty) {
@@ -48,10 +59,10 @@ public class ServiceRequestSearchService {
         }
 
         String expectedFee = fee.getCode();
-        String expectedAmountDue = penceToPounds(fee.getAmount());
+        BigDecimal expectedAmountDue = new BigDecimal(penceToPounds(fee.getAmount()));
 
         boolean feeCodeMatches = sr.getFees().stream()
-            .anyMatch(f -> expectedFee.equals(f.getCode()) && expectedAmountDue.equals(f.getAmountDue()));
+            .anyMatch(f -> expectedFee.equals(f.getCode()) && expectedAmountDue.compareTo(f.getAmountDue()) == 0);
         boolean feeExpectedOncePerCase = SINGLE_USE_FEE_CODES.contains(fee.getCode());
         boolean srCreatedByTheSameParty = isNotEmpty(sr.getPayments()) && sr.getPayments().stream()
             .anyMatch(p -> isNotBlank(responsibleParty) && responsibleParty.equals(p.getOrganisationName()));

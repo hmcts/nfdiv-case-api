@@ -125,11 +125,13 @@ public class PaymentService {
                 .version(fee.getVersion())
                 .build();
 
-            Optional<ServiceRequestDto> serviceRequest = serviceRequestSearchService.findUnusedServiceRequest(
+            Optional<ServiceRequestDto> unpaidServiceRequest = serviceRequestSearchService.findUnpaidServiceRequest(
                 caseId, fee, responsibleParty
             );
-            if (serviceRequest.isPresent()) {
-                return serviceRequest.get().getPaymentGroupReference();
+            if (unpaidServiceRequest.isPresent()) {
+                String serviceRequestReference = unpaidServiceRequest.get().getPaymentGroupReference();
+                log.info("Found unpaid service request: {}, for case: {}", serviceRequestReference, caseId);
+                return serviceRequestReference;
             }
 
             var serviceReferenceResponse = paymentClient.createServiceRequest(

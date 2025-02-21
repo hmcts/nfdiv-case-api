@@ -10,9 +10,7 @@ public final class FeesAndPayConstants {
     public static final String JURISDICTION_2 = "jurisdiction2";
     public static final String SERVICE = "service";
     public static final String KEYWORD = "keyword";
-
     public static final String DIVORCE_APPLICATION_FEE_CODE = "FEE0002";
-
     public static final Set<String> SINGLE_USE_FEE_CODES = Set.of(DIVORCE_APPLICATION_FEE_CODE);
 
     private FeesAndPayConstants() {
