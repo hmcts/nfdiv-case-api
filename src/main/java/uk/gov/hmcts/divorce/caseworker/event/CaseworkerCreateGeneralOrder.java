@@ -137,10 +137,6 @@ public class CaseworkerCreateGeneralOrder implements CCDConfig<CaseData, State, 
             .generalOrderDivorceParties(generalOrder.getGeneralOrderDivorceParties())
             .build();
 
-        if (YES.equals(generalOrder.getGeneralOrderUseScannedDraft())) {
-            divorceGeneralOrder.setGeneralOrderFromScannedDoc(YES);
-        }
-
         ListValue<DivorceGeneralOrder> divorceGeneralOrderListValue =
             ListValue
                 .<DivorceGeneralOrder>builder()

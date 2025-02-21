@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.Set;
@@ -25,9 +24,4 @@ public class DivorceGeneralOrder {
         label = "General Order Parties"
     )
     private Set<GeneralOrderDivorceParties> generalOrderDivorceParties;
-
-    @CCD(
-        label = "Paper General Order"
-    )
-    private YesOrNo generalOrderFromScannedDoc;
 }

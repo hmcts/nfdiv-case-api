@@ -31,7 +31,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.microsoft.applicationinsights.core.dependencies.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
@@ -55,11 +54,9 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
     public static final String CASEWORKER_GRANT_FINAL_ORDER = "caseworker-grant-final-order";
     private static final String ALWAYS_HIDE = "generalOrderDocumentNames=\"ALWAYS_HIDE\"";
-    public static final String SEE_DOCUMENT_FOR_JUDGE_NAME = "See Attached General Order For Authorising Judge";
     public static final String ERROR_NO_CO_GRANTED_DATE = "No Conditional Order Granted Date found.  Unable to continue.";
     public static final String ERROR_NO_GENERAL_ORDER = "No general order documents found.  Unable to continue.";
     public static final String ERROR_CASE_NOT_ELIGIBLE = "Case is not yet eligible for Final Order";
-    public static final String ERROR_NO_JUDGE_NAME = "You must enter the name of the Authorising Judge.";
 
     private final Clock clock;
     private final DocumentGenerator documentGenerator;
@@ -80,7 +77,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR, JUDGE))
-            .page("expediteFinalOrder", this::midEvent)
+            .page("expediteFinalOrder")
             .showCondition("isFinalOrderOverdue=\"Yes\"")
             .pageLabel("Expedite Final Order")
             .complex(CaseData::getFinalOrder)
@@ -91,7 +88,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             .done()
             .complex(CaseData::getFinalOrder)
                 .complex(FinalOrder::getOverdueFinalOrderAuthorisation)
-                    .optional(FinalOrderAuthorisation::getFinalOrderJudgeName)
+                    .mandatory(FinalOrderAuthorisation::getFinalOrderJudgeName)
                 .done()
             .done()
             .page("grantFinalOrder")
@@ -148,37 +145,6 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             .build();
 
         caseData.getDocuments().setGeneralOrderDocumentNames(generalOrderDocumentNamesDynamicList);
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .build();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
-        CaseDetails<CaseData, State> details,
-        CaseDetails<CaseData, State> detailsBefore
-    ) {
-        log.info("Mid-event callback triggered for GrantFinalOrder");
-
-        final CaseData caseData = details.getData();
-
-        final String foGrantingGeneralOrderName = caseData.getDocuments()
-            .getGeneralOrderDocumentNames().getValue().getLabel();
-
-        final List<ListValue<DivorceGeneralOrder>> generalOrderList = caseData.getGeneralOrders();
-        ListValue<DivorceGeneralOrder> generalOrderToGrantFinalOrder = generalOrderList.stream()
-            .filter(g -> g.getValue().getGeneralOrderDocument().getDocumentFileName().equals(foGrantingGeneralOrderName))
-            .findFirst()
-            .orElseThrow();
-
-        String judgeName = caseData.getFinalOrder().getOverdueFinalOrderAuthorisation().getFinalOrderJudgeName();
-        if (YesOrNo.YES.equals(generalOrderToGrantFinalOrder.getValue().getGeneralOrderFromScannedDoc()) && isNullOrEmpty(judgeName)) {
-            caseData.getFinalOrder().getOverdueFinalOrderAuthorisation().setFinalOrderJudgeName(SEE_DOCUMENT_FOR_JUDGE_NAME);
-        } else if (isNullOrEmpty(judgeName)) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(Collections.singletonList(ERROR_NO_JUDGE_NAME))
-                .build();
-        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
