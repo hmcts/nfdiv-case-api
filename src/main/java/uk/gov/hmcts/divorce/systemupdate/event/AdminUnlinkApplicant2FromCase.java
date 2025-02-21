@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_WITHDRAWN_OR_REJECTED;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -33,7 +33,7 @@ public class AdminUnlinkApplicant2FromCase implements CCDConfig<CaseData, State,
         if (Boolean.parseBoolean(System.getenv().get("ADMIN_UNLINK_APPLICANT_2_ENABLED"))) {
             configBuilder
                 .event(ADMIN_UNLINK_APPLICANT_2)
-                .forStates(STATES_NOT_WITHDRAWN_OR_REJECTED)
+                .forStates(STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED)
                 .name("Unlink Applicant2 from case")
                 .grant(CREATE_READ_UPDATE, SUPER_USER)
                 .retries(120, 120)
