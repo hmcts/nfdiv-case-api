@@ -18,16 +18,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -40,14 +37,11 @@ import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_NOTICE
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorGeneralApplication.SOLICITOR_GENERAL_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesLookup;
-import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.buildServiceReferenceRequest;
-import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubCreateServiceRequest;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.GENERAL_APPLICATION_SELECT_FEE_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 
 @ExtendWith(SpringExtension.class)
@@ -59,7 +53,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
     FeesWireMock.PropertiesInitializer.class
 })
 public class GeneralApplicationSelectFeeIT {
-    private static final String PBA_NUMBER = "PBA0012345";
 
     @Autowired
     private MockMvc mockMvc;
@@ -69,9 +62,6 @@ public class GeneralApplicationSelectFeeIT {
 
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
-
-    @MockBean
-    private CcdAccessService ccdAccessService;
 
     @MockBean
     private PbaService pbaService;
@@ -105,10 +95,8 @@ public class GeneralApplicationSelectFeeIT {
         request.getCaseDetails().setState(AwaitingAos.name());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(ccdAccessService.isApplicant1(any(String.class), any(Long.class))).thenReturn(true);
 
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson(), EVENT_GENERAL, SERVICE_OTHER, KEYWORD_NOTICE);
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData, caseData.getApplicant1()));
 
         mockMvc.perform(post(GENERAL_APPLICATION_SELECT_FEE_MID_EVENT_URL)
                 .contentType(APPLICATION_JSON)
@@ -119,9 +107,6 @@ public class GeneralApplicationSelectFeeIT {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.generalApplicationFeeOrderSummary.PaymentTotal")
                 .value("1000")
-            )
-            .andExpect(jsonPath("$.data.generalApplicationFeeServiceRequestReference")
-                .value(TEST_SERVICE_REFERENCE)
             )
             .andReturn()
             .getResponse()
