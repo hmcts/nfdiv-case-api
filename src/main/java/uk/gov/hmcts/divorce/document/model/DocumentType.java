@@ -67,6 +67,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("conditionalOrderGranted")
     CONDITIONAL_ORDER_GRANTED("Conditional Order Granted", false),
 
+    @JsonProperty("conditionalOrderGrantedDoNotAttendCourt")
+    CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT("Certificate of entitlement do not attend court", false),
+
     @JsonProperty("coGrantedCoversheet")
     CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1("Applicant/Applicant 1 Conditional order granted cover letter", true),
 

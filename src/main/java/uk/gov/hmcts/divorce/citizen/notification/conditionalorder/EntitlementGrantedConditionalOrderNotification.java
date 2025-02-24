@@ -16,11 +16,13 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import static java.lang.String.join;
 import static java.time.temporal.ChronoUnit.DAYS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_PRONOUNCED_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43;
@@ -37,6 +39,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENC
 import static uk.gov.hmcts.divorce.notification.CommonContent.TIME_OF_HEARING;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.ENTITLEMENT_GRANTED_DO_NOT_ATTEND_COURT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
@@ -54,14 +57,15 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
-        log.info("Sending entitlement granted on conditional order notification to applicant 1 for case : {}", id);
+        log.info("Sending entitlement granted on conditional order and do not attend court notifications to applicant 1 for case : {}", id);
 
-        notificationService.sendEmail(
-            caseData.getApplicant1().getEmail(),
-            CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED,
-            templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
-            caseData.getApplicant1().getLanguagePreference(),
-            id);
+        List.of(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED, ENTITLEMENT_GRANTED_DO_NOT_ATTEND_COURT).forEach(templateId ->
+                notificationService.sendEmail(
+                        caseData.getApplicant1().getEmail(),
+                        templateId,
+                        templateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+                        caseData.getApplicant1().getLanguagePreference(),
+                        id));
     }
 
     @Override
@@ -79,7 +83,7 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
         if (!caseData.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant1()) {
-            log.info("Sending certificate of entitlement letter to applicant 1 for case: {}", caseId);
+            log.info("Sending certificate of entitlement and do not attend court letters to applicant 1 for case: {}", caseId);
 
             sendLettersToParty(caseData, caseId, caseData.getApplicant1());
 
@@ -89,18 +93,19 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        log.info("Sending entitlement granted on conditional order notification to applicant 2 for case : {}", id);
+        log.info("Sending entitlement granted on conditional order and do not attend court notifications to applicant 2 for case : {}", id);
 
         EmailTemplateName emailTemplateName =
-            caseData.getApplicationType().isSole()
-                ? SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED : CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
+                caseData.getApplicationType().isSole()
+                        ? SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED : CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 
-        notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
-            emailTemplateName,
-            templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-            caseData.getApplicant2().getLanguagePreference(),
-            id);
+        List.of(emailTemplateName, ENTITLEMENT_GRANTED_DO_NOT_ATTEND_COURT).forEach(templateId ->
+                notificationService.sendEmail(
+                        caseData.getApplicant2().getEmail(),
+                        templateId,
+                        templateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+                        caseData.getApplicant2().getLanguagePreference(),
+                        id));
     }
 
     @Override
@@ -119,7 +124,7 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
         if (!caseData.getConditionalOrder().hasOfflineCertificateOfEntitlementBeenSentToApplicant2()) {
-            log.info("Sending certificate of entitlement letter to applicant 2 for case: {}", caseId);
+            log.info("Sending certificate of entitlement and do not attend court letters to applicant 2 for case: {}", caseId);
 
             sendLettersToParty(caseData, caseId, caseData.getApplicant2());
 
@@ -160,7 +165,12 @@ public class EntitlementGrantedConditionalOrderNotification implements Applicant
             templateVars.put(SOLICITOR_REFERENCE, Objects.nonNull(applicant.getSolicitor().getReference())
                 ? applicant.getSolicitor().getReference()
                 : "not provided");
+
         }
+
+        templateVars.put(CO_PRONOUNCED_DATE, conditionalOrder.getDateAndTimeOfHearing() != null
+                ? conditionalOrder.getDateAndTimeOfHearing()
+                .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())) : null);
 
         return templateVars;
     }

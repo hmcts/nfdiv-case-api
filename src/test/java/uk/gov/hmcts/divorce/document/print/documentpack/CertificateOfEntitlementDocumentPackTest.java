@@ -19,6 +19,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENT
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
@@ -89,7 +90,11 @@ class CertificateOfEntitlementDocumentPackTest {
                                            String templateId) {
         var documentPack = certificateOfEntitlementDocumentPack.getDocumentPack(caseData, applicant);
 
-        assertThat(documentPack.documentPack()).hasSize(2);
+        if (documentPack.documentPack().containsKey(CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT)) {
+            assertThat(documentPack.documentPack()).hasSize(3);
+        } else {
+            assertThat(documentPack.documentPack()).hasSize(2);
+        }
         assertThat(documentPack.documentPack()).containsEntry(documentType,
                 Optional.of(templateId));
         assertThat(documentPack.documentPack()).containsEntry(CERTIFICATE_OF_ENTITLEMENT, Optional.empty());

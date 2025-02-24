@@ -30,6 +30,7 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.removeExistingDocuments
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT;
 
 @RequiredArgsConstructor
 @Component
@@ -73,7 +74,7 @@ public class SystemUpdateCaseWithCourtHearing implements CCDConfig<CaseData, Sta
             details.getId()
         );
 
-        removeExistingDocuments(caseData, List.of(CERTIFICATE_OF_ENTITLEMENT));
+        removeExistingDocuments(caseData, List.of(CERTIFICATE_OF_ENTITLEMENT, CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
