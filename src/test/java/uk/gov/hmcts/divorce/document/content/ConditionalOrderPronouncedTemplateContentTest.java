@@ -340,7 +340,7 @@ class ConditionalOrderPronouncedTemplateContentTest {
         assertThat(templateContentMap).contains(
             entry(SOLICITOR_NAME, "Solicitor Name"),
             entry(SOLICITOR_FIRM, "Solicitor Firm"),
-            entry(SOLICITOR_ADDRESS, "Solicitor Address"),
+            entry(SOLICITOR_ADDRESS, "Solicitor Firm\nSolicitor Address"),
             entry(IS_JOINT, true),
             entry(APPLICANT_1_FULL_NAME, "Applicant 1 Full Name"),
             entry(APPLICANT_2_FULL_NAME, "Applicant 2 Full Name"),

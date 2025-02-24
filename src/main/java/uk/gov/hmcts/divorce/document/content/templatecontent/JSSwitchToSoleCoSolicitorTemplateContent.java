@@ -49,7 +49,7 @@ public class JSSwitchToSoleCoSolicitorTemplateContent implements TemplateContent
             caseData.getApplicant1().getLanguagePreference());
 
         templateContent.put(RESPONDENT_SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
-        templateContent.put(RESPONDENT_SOLICITOR_ADDRESS, caseData.getApplicant2().getSolicitor().getAddress());
+        templateContent.put(RESPONDENT_SOLICITOR_ADDRESS, caseData.getApplicant2().getSolicitor().getFirmAndAddress());
         templateContent.put(CASE_REFERENCE, formatId(caseId));
 
         templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
