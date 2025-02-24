@@ -28,9 +28,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.caseworker.event.page.CreateGeneralOrder.NO_DETAILS_OR_SELECTED_DOCUMENT_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.ScannedGeneralOrderOrGeneratedGeneralOrder.GENERATED_GENERAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.model.ScannedGeneralOrderOrGeneratedGeneralOrder.SCANNED_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DIVORCE_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -94,7 +94,7 @@ public class CreateGeneralOrderTest {
         GeneralOrder actualGeneralOrder = midEventResponse.getData().getGeneralOrder();
 
         assertThat(actualGeneralOrder.getGeneralOrderDraft()).isEqualTo(generalOrderDocument);
-        assertThat(actualGeneralOrder.getGeneralOrderUseScannedDraft()).isEqualTo(NO);
+        assertThat(actualGeneralOrder.getScannedGeneralOrderOrGeneratedGeneralOrder()).isEqualTo(GENERATED_GENERAL_ORDER);
 
         verify(generalOrderTemplateContent).apply(caseData, TEST_CASE_ID);
         verify(caseDataDocumentService).renderDocument(
@@ -110,13 +110,13 @@ public class CreateGeneralOrderTest {
     void shouldUpdateCaseWithScannedGeneralOrderDocumentWhenMidEventCallbackIsTriggered() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
-        caseData.setGeneralOrder(getGeneralOrder());
 
         final ScannedDocument scannedGeneralOrderDocument = getScannedGeneralOrderDocument();
 
         addScannedDocument(caseData, scannedGeneralOrderDocument);
         setScannedDocumentNames(caseData);
         setSelectedScannedDocument(caseData, 0);
+        caseData.setGeneralOrder(getGeneralOrder(scannedGeneralOrderDocument));
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -132,24 +132,6 @@ public class CreateGeneralOrderTest {
         verifyNoInteractions(caseDataDocumentService);
 
         assertThat(actualGeneralOrder.getGeneralOrderScannedDraft()).isEqualTo(scannedGeneralOrderDocument);
-        assertThat(actualGeneralOrder.getGeneralOrderUseScannedDraft()).isEqualTo(YES);
-    }
-
-    @Test
-    void shouldReturnErrorWhenMidEventCallbackIsTriggeredWithNoDetailsNoSelectedScannedDoc() {
-        final CaseData caseData = caseData();
-        caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
-        caseData.setGeneralOrder(getGeneralOrder());
-        caseData.getGeneralOrder().setGeneralOrderDetails(null);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setId(TEST_CASE_ID);
-
-        AboutToStartOrSubmitResponse<CaseData, State> midEventResponse =
-            createGeneralOrder.midEvent(details, details);
-
-        assertThat(midEventResponse.getErrors()).hasSize(1);
-        assertThat(midEventResponse.getErrors()).contains(NO_DETAILS_OR_SELECTED_DOCUMENT_ERROR);
+        assertThat(actualGeneralOrder.getScannedGeneralOrderOrGeneratedGeneralOrder()).isEqualTo(SCANNED_GENERAL_ORDER);
     }
 }

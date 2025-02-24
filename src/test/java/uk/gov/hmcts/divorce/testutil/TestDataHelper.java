@@ -68,6 +68,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseDraft;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
+import uk.gov.hmcts.divorce.divorcecase.model.ScannedGeneralOrderOrGeneratedGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorService;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -132,6 +133,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationRespon
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
+import static uk.gov.hmcts.divorce.divorcecase.model.ScannedGeneralOrderOrGeneratedGeneralOrder.GENERATED_GENERAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.model.ScannedGeneralOrderOrGeneratedGeneralOrder.SCANNED_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
@@ -1003,6 +1006,7 @@ public class TestDataHelper {
     public static GeneralOrder getGeneralOrder(Document ccdDocument) {
         return GeneralOrder
             .builder()
+            .scannedGeneralOrderOrGeneratedGeneralOrder(GENERATED_GENERAL_ORDER)
             .generalOrderDate(LocalDate.of(2021, 1, 1))
             .generalOrderDetails("some details")
             .generalOrderDivorceParties(Set.of(GeneralOrderDivorceParties.RESPONDENT))
@@ -1011,17 +1015,15 @@ public class TestDataHelper {
             .generalOrderDraft(ccdDocument)
             .generalOrderJudgeOrLegalAdvisorName("some name")
             .generalOrderJudgeOrLegalAdvisorVenue("Petty France, London")
-            .generalOrderUseScannedDraft(NO)
             .build();
     }
 
     public static GeneralOrder getGeneralOrder(ScannedDocument ccdDocument) {
         return GeneralOrder
             .builder()
-            .generalOrderDate(LocalDate.of(2021, 1, 1))
+            .scannedGeneralOrderOrGeneratedGeneralOrder(SCANNED_GENERAL_ORDER)
             .generalOrderDivorceParties(Set.of(GeneralOrderDivorceParties.RESPONDENT))
             .generalOrderScannedDraft(ccdDocument)
-            .generalOrderUseScannedDraft(YES)
             .build();
     }
 
