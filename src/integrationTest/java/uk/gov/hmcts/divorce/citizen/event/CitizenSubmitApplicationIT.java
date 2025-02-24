@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
@@ -93,6 +94,9 @@ public class CitizenSubmitApplicationIT {
     @MockBean
     private AuthTokenGenerator authTokenGenerator;
 
+    @MockBean
+    private ServiceRequestSearchService serviceRequestSearchService;
+
     @BeforeAll
     static void setUp() {
         FeesWireMock.start();
@@ -111,7 +115,7 @@ public class CitizenSubmitApplicationIT {
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1()));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1().getFullName()));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -138,7 +142,7 @@ public class CitizenSubmitApplicationIT {
         caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
 
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData, caseData.getApplicant1()));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData, caseData.getApplicant1().getFullName()));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -214,7 +218,7 @@ public class CitizenSubmitApplicationIT {
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData, caseData.getApplicant1()));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData, caseData.getApplicant1().getFullName()));
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)

@@ -294,6 +294,9 @@ public class SolicitorGeneralApplicationTest {
         when(organisationClient.getUserOrganisation(AUTH_HEADER_VALUE, TEST_AUTHORIZATION_TOKEN))
             .thenReturn(organisationsResponse);
         when(organisationsResponse.getOrganisationIdentifier()).thenReturn("App1OrgPolicy");
+        when(paymentService.createServiceRequestReference(
+            null, TEST_CASE_ID, "", generalApplicationOrderSummary)
+        ).thenReturn(TEST_SERVICE_REFERENCE);
 
         final var pbaResponse = new PbaResponse(CREATED, null, "1234");
         when(paymentService.processPbaPayment(
@@ -461,6 +464,9 @@ public class SolicitorGeneralApplicationTest {
         when(organisationClient.getUserOrganisation(AUTH_HEADER_VALUE, TEST_AUTHORIZATION_TOKEN))
             .thenReturn(organisationsResponse);
         when(organisationsResponse.getOrganisationIdentifier()).thenReturn("App2OrgPolicy");
+        when(paymentService.createServiceRequestReference(
+            null, TEST_CASE_ID, "", generalApplicationOrderSummary)
+        ).thenReturn(TEST_SERVICE_REFERENCE);
 
         final var pbaResponse = new PbaResponse(FORBIDDEN, "Account balance insufficient", null);
         when(paymentService.processPbaPayment(

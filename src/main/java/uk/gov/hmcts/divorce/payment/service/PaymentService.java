@@ -134,10 +134,12 @@ public class PaymentService {
                 return serviceRequestReference;
             }
 
+            var serviceReqBody = buildServiceRequestBody(callbackUrl, caseId, responsibleParty, singletonList(paymentItem));
+
             var serviceReferenceResponse = paymentClient.createServiceRequest(
                 httpServletRequest.getHeader(AUTHORIZATION),
                 authTokenGenerator.generate(),
-                buildServiceRequestBody(callbackUrl, caseId, responsibleParty, singletonList(paymentItem))
+                serviceReqBody
             );
 
             String serviceReference = Optional.ofNullable(serviceReferenceResponse)

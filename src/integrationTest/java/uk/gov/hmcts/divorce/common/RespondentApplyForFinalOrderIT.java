@@ -25,6 +25,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
@@ -92,6 +93,9 @@ public class RespondentApplyForFinalOrderIT {
     @MockBean
     private AuthTokenGenerator authTokenGenerator;
 
+    @MockBean
+    private ServiceRequestSearchService serviceRequestSearchService;
+
     @BeforeAll
     static void setUp() {
         PaymentWireMock.start();
@@ -110,7 +114,7 @@ public class RespondentApplyForFinalOrderIT {
         final CaseData data = caseDetails.getData();
 
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson(), EVENT_GENERAL, SERVICE_OTHER, KEYWORD_NOTICE);
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant2()));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant2().getFullName()));
 
         performRespondentApplyForFinalRequest(caseDetails.getData(), ABOUT_TO_SUBMIT_URL)
             .andExpect(status().isOk())

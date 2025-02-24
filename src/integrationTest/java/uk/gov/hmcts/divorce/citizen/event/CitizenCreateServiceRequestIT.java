@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -69,6 +70,9 @@ public class CitizenCreateServiceRequestIT {
     @MockBean
     private AuthTokenGenerator authTokenGenerator;
 
+    @MockBean
+    private ServiceRequestSearchService serviceRequestSearchService;
+
     @BeforeAll
     static void setUp() {
         PaymentWireMock.start();
@@ -85,7 +89,7 @@ public class CitizenCreateServiceRequestIT {
         data.getApplication().setApplicationFeeOrderSummary(orderSummary());
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1()));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1().getFullName()));
 
         triggerCitizenCreateServiceRequest(data, AwaitingPayment)
             .andExpect(jsonPath("$.data.applicationFeeServiceRequestReference")
@@ -98,7 +102,7 @@ public class CitizenCreateServiceRequestIT {
         data.getFinalOrder().setApplicant2FinalOrderFeeOrderSummary(orderSummary());
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1()));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1().getFullName()));
 
         triggerCitizenCreateServiceRequest(data, AwaitingFinalOrderPayment)
             .andExpect(jsonPath("$.data.applicant2FinalOrderFeeServiceRequestReference")
