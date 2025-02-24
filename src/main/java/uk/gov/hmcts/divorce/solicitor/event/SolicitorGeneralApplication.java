@@ -10,12 +10,13 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.GeneralApplicationSelectApplicationType;
 import uk.gov.hmcts.divorce.common.event.page.GeneralApplicationUploadDocument;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
@@ -23,8 +24,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentConfirmation;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentSummary;
@@ -35,6 +36,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -162,8 +164,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
         }
 
         if (generalApplication.getGeneralApplicationFee().isPaymentMethodPba()) {
-            final Applicant invokingParty = getInvokingParty(data, request.getHeader(AUTHORIZATION));
-            final Solicitor invokingSolicitor = invokingParty.getSolicitor();
+            final Solicitor invokingSolicitor = getInvokingSolicitor(data, request.getHeader(AUTHORIZATION));
 
             if (isNull(invokingSolicitor)) {
                 return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -172,7 +173,13 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
                     .build();
             }
 
-            prepareCaseDataForGeneralApplicationPayment(details, invokingSolicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
+            String invokingOrganisation = Optional.of(invokingSolicitor)
+                .map(Solicitor::getOrganisationPolicy)
+                .map(OrganisationPolicy::getOrganisation)
+                .map(Organisation::getOrganisationName)
+                .orElse("");
+
+            prepareCaseDataForGeneralApplicationPayment(details, invokingOrganisation);
 
             final PbaResponse response = paymentService.processPbaPayment(
                 details.getId(),
@@ -208,29 +215,29 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             .build();
     }
 
-    private Applicant getInvokingParty(final CaseData caseData, final String userAuth) {
+    private Solicitor getInvokingSolicitor(final CaseData caseData, final String userAuth) {
 
         if (!caseData.getApplicant2().isRepresented()) {
-            return caseData.getApplicant1();
+            return caseData.getApplicant1().getSolicitor();
         }
 
         if (!caseData.getApplicant1().isRepresented()) {
-            return caseData.getApplicant2();
+            return caseData.getApplicant2().getSolicitor();
         }
 
         String applicant1SolicitorSelectedOrgId =
             Objects.requireNonNull(caseData
-                .getApplicant1()
-                .getSolicitor()
-                .getOrganisationPolicy())
+                    .getApplicant1()
+                    .getSolicitor()
+                    .getOrganisationPolicy())
                 .getOrganisation()
                 .getOrganisationId();
 
         String applicant2SolicitorSelectedOrgId =
             Objects.requireNonNull(caseData
-                .getApplicant2()
-                .getSolicitor()
-                .getOrganisationPolicy())
+                    .getApplicant2()
+                    .getSolicitor()
+                    .getOrganisationPolicy())
                 .getOrganisation()
                 .getOrganisationId();
 
@@ -239,9 +246,9 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             .getOrganisationIdentifier();
 
         if (solicitorUserOrgId.equalsIgnoreCase(applicant1SolicitorSelectedOrgId)) {
-            return caseData.getApplicant1();
+            return caseData.getApplicant1().getSolicitor();
         } else if (solicitorUserOrgId.equalsIgnoreCase(applicant2SolicitorSelectedOrgId)) {
-            return caseData.getApplicant2();
+            return caseData.getApplicant2().getSolicitor();
         } else {
             return null;
         }
