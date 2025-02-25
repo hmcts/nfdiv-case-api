@@ -87,7 +87,7 @@ public class GeneralOrder {
     private ScannedDocument generalOrderScannedDraft;
 
     @CCD(
-        label = "Scanned Document or Generate Document?",
+        label = "Select a scanned order or generate a document?",
         access = {CaseworkerAccessOnlyAccess.class}
     )
     private ScannedGeneralOrderOrGeneratedGeneralOrder scannedGeneralOrderOrGeneratedGeneralOrder;

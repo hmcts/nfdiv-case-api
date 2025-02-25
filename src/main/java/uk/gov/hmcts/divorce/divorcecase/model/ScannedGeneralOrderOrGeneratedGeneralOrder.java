@@ -10,10 +10,10 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 public enum ScannedGeneralOrderOrGeneratedGeneralOrder implements HasLabel {
 
     @JsonProperty("scanned")
-    SCANNED_GENERAL_ORDER("Scanned"),
+    SCANNED_GENERAL_ORDER("Scanned Order"),
 
     @JsonProperty("generated")
-    GENERATED_GENERAL_ORDER("Generated");
+    GENERATED_GENERAL_ORDER("Generate a Document");
 
     private final String label;
 
