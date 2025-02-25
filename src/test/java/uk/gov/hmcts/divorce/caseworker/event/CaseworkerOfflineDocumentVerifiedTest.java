@@ -58,7 +58,6 @@ import java.util.List;
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -78,7 +77,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.RFI_RESPONSE;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10_CONFIDENTIAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
@@ -170,7 +168,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
-    void shouldSetStateToHoldingAndReclassifyAosScannedDocumentToRespondentAnswersIfD10DocumentSelectedAndFoundInScannedDocNames() {
+    void shouldSetStateToHoldingAndReclassifyAosScannedDocumentIfD10DocumentSelectedAndFoundInScannedDocNames() {
         setMockClock(clock);
         final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
             .value(
@@ -283,7 +281,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
-    void shouldSetStateToHoldingAndReclassifyConfidentialAosScannedDocumentToRespondentAnswersIfD10SelectedAndFoundInScannedDocNames() {
+    void shouldSetStateToHoldingAndReclassifyConfidentialAosScannedDocumentIfD10SelectedAndFoundInScannedDocNames() {
         setMockClock(clock);
         final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
             .value(
@@ -390,146 +388,11 @@ class CaseworkerOfflineDocumentVerifiedTest {
             .documentType(RESPONDENT_ANSWERS)
             .build();
 
+        verify(submitAosService).submitAosNotifications(details);
         assertThat(response.getData().getDocuments().getDocumentsUploaded())
             .extracting("value")
             .containsExactly(divorceDocument);
         assertThat(response.getData().getAcknowledgementOfService().getStatementOfTruth()).isEqualTo(YES);
-    }
-
-    @Test
-    void shouldSetStateToHoldingAndSkipDocumentReclassificationIfD10DocumentSelectedAndScannedSubtypeReceivedIsD10() {
-
-        final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
-            .value(
-                ScannedDocument
-                    .builder()
-                    .url(
-                        Document
-                            .builder()
-                            .filename("doc1.pdf")
-                            .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
-                            .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
-                            .build()
-                    )
-                    .fileName("doc1.pdf")
-                    .type(ScannedDocumentType.OTHER)
-                    .subtype("d10")
-                    .build()
-            )
-            .build();
-
-        final ListValue<DivorceDocument> doc = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(RESPONDENT_ANSWERS)
-                .documentFileName("doc1.pdf")
-                .documentComment("Reclassified scanned document")
-                .documentDateAdded(getExpectedLocalDate())
-                .documentLink(Document
-                    .builder()
-                    .url("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d")
-                    .filename("doc1.pdf")
-                    .binaryUrl("http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary")
-                    .build()
-                )
-                .build())
-            .build();
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-
-        CaseData caseData = CaseData.builder()
-            .documents(
-                CaseDocuments.builder()
-                    .documentsUploaded(singletonList(doc))
-                    .scannedSubtypeReceived(D10)
-                    .scannedDocuments(singletonList(doc1))
-                    .typeOfDocumentAttached(AOS_D10)
-                    .build()
-            )
-            .acknowledgementOfService(AcknowledgementOfService.builder()
-                .howToRespondApplication(DISPUTE_DIVORCE)
-                .build())
-            .build();
-
-        details.setData(caseData);
-
-        final CaseDetails<CaseData, State> updatedDetails = new CaseDetails<>();
-        updatedDetails.setData(CaseData.builder()
-            .documents(
-                CaseDocuments.builder()
-                    .documentsUploaded(singletonList(doc))
-                    .scannedSubtypeReceived(D10)
-                    .scannedDocuments(singletonList(doc1))
-                    .build()
-            )
-            .applicant2(Applicant.builder()
-                .build())
-            .build());
-        updatedDetails.setState(Holding);
-
-        when(submitAosService.submitOfflineAos(details)).thenReturn(updatedDetails);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
-
-        assertThat(response.getState().name()).isEqualTo(Holding.name());
-        assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YES);
-        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNull();
-
-        verify(submitAosService).submitOfflineAos(details);
-        verify(submitAosService).submitAosNotifications(details);
-        verifyNoMoreInteractions(submitAosService);
-    }
-
-    @Test
-    void shouldSetStateToHoldingAndSkipReclassifyIfSelectedD10DocumentIsNotFoundInScannedDocNames() {
-        final ListValue<ScannedDocument> doc1 = scannedDocument("doc1.pdf");
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-
-        CaseData caseData = CaseData.builder()
-            .documents(
-                CaseDocuments.builder()
-                    .typeOfDocumentAttached(AOS_D10)
-                    .scannedDocuments(singletonList(doc1))
-                    .scannedDocumentNames(
-                        DynamicList
-                            .builder()
-                            .value(
-                                DynamicListElement
-                                    .builder()
-                                    .label("doc2.pdf")
-                                    .build()
-                            )
-                            .build()
-                    )
-                    .build()
-            )
-            .acknowledgementOfService(AcknowledgementOfService.builder()
-                .howToRespondApplication(DISPUTE_DIVORCE)
-                .build())
-            .build();
-
-        details.setData(caseData);
-
-
-        final CaseDetails<CaseData, State> updatedDetails = new CaseDetails<>();
-        updatedDetails.setData(CaseData.builder()
-            .applicant2(Applicant.builder()
-                .build())
-            .build());
-        updatedDetails.setState(Holding);
-
-        when(submitAosService.submitOfflineAos(details)).thenReturn(updatedDetails);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
-
-        assertThat(response.getState().name()).isEqualTo(Holding.name());
-        assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YES);
-        assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNull();
-
-        verify(submitAosService).submitOfflineAos(details);
-        verify(submitAosService).submitAosNotifications(details);
-        verifyNoMoreInteractions(submitAosService);
     }
 
     @Test
@@ -1339,27 +1202,6 @@ class CaseworkerOfflineDocumentVerifiedTest {
         verify(generalReferralService).caseWorkerGeneralReferral(details);
     }
 
-
-    @Test
-    void shouldSendOfflineNotifications() {
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        CaseData caseData = CaseData.builder()
-            .applicationType(JOINT_APPLICATION)
-            .documents(CaseDocuments.builder().typeOfDocumentAttached(AOS_D10).scannedSubtypeReceived(D10).build())
-            .application(Application.builder()
-                .issueDate(LocalDate.of(2022, 1, 1))
-                .stateToTransitionApplicationTo(Holding)
-                .build())
-            .build();
-        details.setData(caseData);
-
-        when(submitAosService.submitOfflineAos(any())).thenReturn(details);
-
-        caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
-
-        verify(submitAosService).submitAosNotifications(details);
-        verifyNoMoreInteractions(submitAosService);
-    }
 
     @Test
     void shouldNotSetDynamicListWithScannedDocumentNamesIfScannedSubtypeReceivedIsPopulated() {

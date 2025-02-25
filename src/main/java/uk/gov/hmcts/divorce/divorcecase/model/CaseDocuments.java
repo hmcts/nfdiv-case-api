@@ -200,7 +200,7 @@ public class CaseDocuments {
 
         private final String label;
 
-        private static final EnumSet<ScannedDocumentSubtypes> CONFIDENTIAL_SUBTYPES = EnumSet.of(D10_CONFIDENTIAL);
+        private static final EnumSet<ScannedDocumentSubtypes> CONFIDENTIAL_SUBTYPES = EnumSet.of(D10_CONFIDENTIAL, D10);
 
         public boolean isConfidential() {
             return CONFIDENTIAL_SUBTYPES.contains(this);
