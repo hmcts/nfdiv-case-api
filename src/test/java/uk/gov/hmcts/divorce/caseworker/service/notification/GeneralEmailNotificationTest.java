@@ -38,6 +38,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_OTHER_PARTY;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_PETITIONER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_PETITIONER_SOLICITOR;
@@ -315,6 +316,68 @@ public class GeneralEmailNotificationTest {
             eq(GENERAL_EMAIL_PETITIONER),
             anyMap(),
             eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+    }
+
+    @Test
+    public void shouldSendWelshEmailNotificationToApplicant() throws Exception {
+        final var caseData = caseData();
+
+        final var applicant1 = getApplicant();
+        applicant1.setLanguagePreferenceWelsh(YES);
+        caseData.setApplicant1(applicant1);
+
+        final var marriageDetails = new MarriageDetails();
+        marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
+
+        caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
+
+        caseData.setGeneralEmail(GeneralEmail
+            .builder()
+            .generalEmailDetails("some details")
+            .generalEmailParties(APPLICANT)
+            .build()
+        );
+
+        generalEmailNotification.send(caseData, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(GENERAL_EMAIL_PETITIONER),
+            anyMap(),
+            eq(WELSH),
+            eq(TEST_CASE_ID)
+        );
+    }
+
+    @Test
+    void shouldSendWelshEmailNotificationToRespondent() throws Exception {
+        final var caseData = caseData();
+
+        final var applicant2 = getApplicant();
+        applicant2.setLanguagePreferenceWelsh(YES);
+        caseData.setApplicant2(applicant2);
+
+        final var marriageDetails = new MarriageDetails();
+        marriageDetails.setApplicant2Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
+
+        caseData.setApplication(Application.builder().marriageDetails(marriageDetails).build());
+
+        caseData.setGeneralEmail(GeneralEmail
+            .builder()
+            .generalEmailDetails("some details")
+            .generalEmailParties(RESPONDENT)
+            .build()
+        );
+
+        generalEmailNotification.send(caseData, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(GENERAL_EMAIL_RESPONDENT),
+            anyMap(),
+            eq(WELSH),
             eq(TEST_CASE_ID)
         );
     }

@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.common.notification.EmailUpdatedNotification;
 import uk.gov.hmcts.divorce.common.notification.InviteApplicantToCaseNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -27,8 +26,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseDa
 class EmailUpdateServiceTest {
     @Mock
     InviteApplicantToCaseNotification inviteApplicantToCaseNotification;
-    @Mock
-    EmailUpdatedNotification emailUpdatedNotification;
     @InjectMocks
     private EmailUpdateService emailUpdateService;
 
@@ -44,7 +41,6 @@ class EmailUpdateServiceTest {
         final CaseDetails<CaseData, State> newDetails = emailUpdateService.processEmailUpdate(details, details, true);
 
         verifyNoInteractions(inviteApplicantToCaseNotification);
-        verifyNoInteractions(emailUpdatedNotification);
     }
 
     @Test
@@ -59,7 +55,6 @@ class EmailUpdateServiceTest {
         final CaseDetails<CaseData, State> newDetails = emailUpdateService.processEmailUpdate(details, details, true);
 
         verifyNoInteractions(inviteApplicantToCaseNotification);
-        verifyNoInteractions(emailUpdatedNotification);
     }
 
     @Test
@@ -74,7 +69,6 @@ class EmailUpdateServiceTest {
         final CaseDetails<CaseData, State> newDetails = emailUpdateService.processEmailUpdate(details, details, true);
 
         verifyNoInteractions(inviteApplicantToCaseNotification);
-        verifyNoInteractions(emailUpdatedNotification);
     }
 
     @Test
@@ -90,7 +84,6 @@ class EmailUpdateServiceTest {
         final CaseDetails<CaseData, State> newDetails = emailUpdateService.processEmailUpdate(details, details, false);
 
         verifyNoInteractions(inviteApplicantToCaseNotification);
-        verifyNoInteractions(emailUpdatedNotification);
     }
 
     @Test
@@ -106,7 +99,6 @@ class EmailUpdateServiceTest {
         final CaseDetails<CaseData, State> newDetails = emailUpdateService.processEmailUpdate(details, details, false);
 
         verify(inviteApplicantToCaseNotification).send(caseData,TEST_CASE_ID,false);
-        verify(emailUpdatedNotification).send(caseData,TEST_CASE_ID,TEST_USER_EMAIL,false);
     }
 
     @Test
@@ -122,7 +114,6 @@ class EmailUpdateServiceTest {
         final CaseDetails<CaseData, State> newDetails = emailUpdateService.processEmailUpdate(details, details, false);
 
         verify(inviteApplicantToCaseNotification).send(caseData,TEST_CASE_ID,false);
-        verify(emailUpdatedNotification).send(caseData,TEST_CASE_ID,TEST_USER_EMAIL,false);
     }
 
     @Test
