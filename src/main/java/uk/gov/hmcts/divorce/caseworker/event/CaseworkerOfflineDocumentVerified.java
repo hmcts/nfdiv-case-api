@@ -55,6 +55,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.RFI_RESPONSE;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10_CONFIDENTIAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.RFIR;
@@ -114,6 +115,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     private static final String SCANNED_DOC_MUST_BE_RECLASSIFIED_BY_CASEWORKER =
         "scannedSubtypeReceived!=\"*\" OR scannedSubtypeReceived=\"ConfidentialD10\" OR scannedSubtypeReceived=\"D10\"";
 
+    private static final String DOCUMENT_TYPE_IS_D10 = "typeOfDocumentAttached=\"D10\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -139,12 +142,12 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 )
             .done()
             .complex(CaseData::getAcknowledgementOfService)
-                .label("scannedAosLabel", "Acknowledgement Of Service")
-                .mandatory(AcknowledgementOfService::getHowToRespondApplication, "typeOfDocumentAttached=\"D10\"")
+                .label("scannedAosLabel", "Acknowledgement Of Service", DOCUMENT_TYPE_IS_D10)
+                .mandatory(AcknowledgementOfService::getHowToRespondApplication, DOCUMENT_TYPE_IS_D10)
             .done()
             .complex(CaseData::getDocuments)
                 .mandatory(CaseDocuments::getScannedDocumentNames,
-                    String.format("(%s)",SCANNED_DOC_MUST_BE_RECLASSIFIED_BY_CASEWORKER)
+                    String.format("(%s)", SCANNED_DOC_MUST_BE_RECLASSIFIED_BY_CASEWORKER)
                         + " AND (typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\")"
                         + " OR typeOfDocumentAttached=\"RFIR\"")
             .done()
@@ -206,7 +209,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         var caseData = details.getData();
         CaseDocuments.ScannedDocumentSubtypes scannedSubtypeReceived = caseData.getDocuments().getScannedSubtypeReceived();
 
-        if (D10.equals(scannedSubtypeReceived)) {
+        if (D10.equals(scannedSubtypeReceived) || D10_CONFIDENTIAL.equals(scannedSubtypeReceived)) {
             caseData.getDocuments().setTypeOfDocumentAttached(AOS_D10);
         } else if (D84.equals(scannedSubtypeReceived)) {
             caseData.getDocuments().setTypeOfDocumentAttached(CO_D84);
