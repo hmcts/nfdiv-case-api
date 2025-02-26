@@ -79,7 +79,8 @@ public class RespondentDraftAosStartedNotification implements ApplicantNotificat
     private Document generateDocument(final long caseId,
                                       final Applicant applicant,
                                       final CaseData caseData) {
-        return caseDataDocumentService.renderDocument(respondentDraftAosStartedTemplateContent.getTemplateContent(caseData, caseId, applicant),
+        return caseDataDocumentService
+                .renderDocument(respondentDraftAosStartedTemplateContent.getTemplateContent(caseData, caseId, applicant),
                 caseId,
                 RESPONDENT_DRAFT_AOS_STARTED_APPLICATION_TEMPLATE_ID,
                 applicant.getLanguagePreference(),
