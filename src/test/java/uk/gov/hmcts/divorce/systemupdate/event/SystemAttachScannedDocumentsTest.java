@@ -90,7 +90,7 @@ public class SystemAttachScannedDocumentsTest {
 
 
     @ParameterizedTest
-    @ValueSource(strings = {"D10", "D84", "D36"})
+    @ValueSource(strings = {"D84", "D36"})
     void shouldReclassifyScannedDocumentAndAddToDocumentsUploadedIfSubtypeIsValid(String subtype) {
         final List<ListValue<ScannedDocument>> afterScannedDocuments = scannedDocuments(singletonList(subtype));
         afterScannedDocuments.get(0).getValue().setDeliveryDate(now());

@@ -544,6 +544,6 @@ class CaseDocumentsTest {
 
     @Test
     void shouldNotRequireManualReclassificationIfScannedDocSubtypeIsUnconfidential() {
-        assertFalse(CaseDocuments.scannedDocMustBeReclassifiedByCaseworker(ScannedDocumentSubtypes.D10));
+        assertFalse(CaseDocuments.scannedDocMustBeReclassifiedByCaseworker(ScannedDocumentSubtypes.D84));
     }
 }
