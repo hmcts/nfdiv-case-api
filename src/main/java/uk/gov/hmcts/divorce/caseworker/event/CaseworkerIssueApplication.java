@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
@@ -46,6 +47,9 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
     private static final String ALWAYS_HIDE = "marriageApplicant1Name=\"ALWAYS_HIDE\"";
 
+    private static final String WARNING_LABEL = "### There is no address for the Respondent, "
+        + "you need to provide a reason for issuing the application without the address for the respondent";
+
     @Autowired
     private IssueApplicationService issueApplicationService;
 
@@ -81,15 +85,22 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             .complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getMarriageOrCivilPartnership, ALWAYS_HIDE)
             .done()
+            .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
+            .complex(CaseData::getApplicant2)
+                .readonlyNoSummary(Applicant::getAddress, ALWAYS_HIDE)
+            .done()
+            .label("eventWarning", WARNING_LABEL, "applicationType=\"soleApplication\" AND applicant2Address!=\"*\"")
             .complex(CaseData::getApplication)
+                .mandatory(Application::getReasonIssuedWithoutAddress,
+                    "applicationType=\"soleApplication\" AND applicant2Address!=\"*\"")
                 .complex(Application::getMarriageDetails)
                     .optional(MarriageDetails::getDate)
                     .optional(MarriageDetails::getApplicant1Name)
                     .optional(MarriageDetails::getApplicant2Name)
                     .mandatory(MarriageDetails:: getCountryOfMarriage)
                     .mandatory(MarriageDetails::getPlaceOfMarriage)
-                    .done()
-                .done();
+                .done()
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
