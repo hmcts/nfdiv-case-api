@@ -12,12 +12,14 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import java.util.List;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_DRAFT_AOS_STARTED_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_URL;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
@@ -48,6 +50,10 @@ public class RespondentDraftAosStartedTemplateContent implements TemplateContent
         templateContent.put(ADDRESS, AddressUtil.getPostalAddress(applicant.getAddress()));
         templateContent.put(IS_DIVORCE,  caseData.isDivorce());
         templateContent.put(PARTNER,  commonContent.getPartner(caseData, applicant, applicant.getLanguagePreference()));
+        templateContent.put(WEBFORM_URL,
+                WELSH.equals(applicant.getLanguagePreference())
+                        ? "https://contact-us-about-a-divorce-application-cy.form.service.justice.gov.uk/"
+                        : "https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/");
 
         return templateContent;
     }
