@@ -30,7 +30,9 @@ public class CertificateOfEntitlementCoverLetterTemplateContent implements Templ
 
     @Override
     public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
+        var applicant1 = caseData.getApplicant1();
+        var partner = applicant1.equals(applicant) ? caseData.getApplicant2() : applicant1;
         return generateCertificateOfEntitlementHelper.getTemplateContent(
-                caseData, caseId, applicant, caseData.getApplicant2());
+                caseData, caseId, applicant, partner);
     }
 }

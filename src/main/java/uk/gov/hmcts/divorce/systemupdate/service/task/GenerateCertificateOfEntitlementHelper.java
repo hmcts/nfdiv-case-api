@@ -96,17 +96,13 @@ public class GenerateCertificateOfEntitlementHelper {
 
         templateContent.put(BEFORE_DATE_OF_HEARING, beforeDateOfHearing);
 
-        if (caseData.isJudicialSeparationCase()) {
-            templateContent.put(IS_DIVORCE, caseData.isDivorce());
-            templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
-        }
-
         DateTimeFormatter dateFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
 
         templateContent.put(CO_PRONOUNCED_DATE, dateAndTimeOfHearing != null
                 ? conditionalOrder.getDateAndTimeOfHearing().format(dateFormatter) : null);
         templateContent.put(PARTNER, commonContent.getPartner(caseData, partner, applicant.getLanguagePreference()));
         templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
+        templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
 
         return templateContent;
     }
