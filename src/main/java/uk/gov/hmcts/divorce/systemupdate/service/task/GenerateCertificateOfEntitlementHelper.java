@@ -18,6 +18,7 @@ import java.util.Map;
 
 import static java.lang.String.join;
 import static java.util.Objects.nonNull;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
@@ -34,6 +35,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_URL;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -103,6 +105,10 @@ public class GenerateCertificateOfEntitlementHelper {
         templateContent.put(PARTNER, commonContent.getPartner(caseData, partner, applicant.getLanguagePreference()));
         templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
+        templateContent.put(WEBFORM_URL,
+                WELSH.equals(applicant.getLanguagePreference())
+                        ? "https://contact-us-about-a-divorce-application-cy.form.service.justice.gov.uk/"
+                        : "https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/");
 
         return templateContent;
     }
