@@ -45,6 +45,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_URL;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -111,6 +112,8 @@ public class GenerateCertificateOfEntitlementHelperTest {
         applicant1TemplateVars.put(IS_DIVORCE, true);
         applicant1TemplateVars.put(PARTNER, null);
         applicant1TemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
+        applicant1TemplateVars.put(IS_JOINT, false);
+        applicant1TemplateVars.put(WEBFORM_URL, "https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -152,6 +155,7 @@ public class GenerateCertificateOfEntitlementHelperTest {
         applicant1TemplateVars.put(IS_JOINT, false);
         applicant1TemplateVars.put(PARTNER, "Wife");
         applicant1TemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
+        applicant1TemplateVars.put(WEBFORM_URL, "https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -192,6 +196,8 @@ public class GenerateCertificateOfEntitlementHelperTest {
         applicant1TemplateVars.put(IS_DIVORCE, true);
         applicant1TemplateVars.put(PARTNER, null);
         applicant1TemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
+        applicant1TemplateVars.put(IS_JOINT, false);
+        applicant1TemplateVars.put(WEBFORM_URL, "https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -259,6 +265,8 @@ public class GenerateCertificateOfEntitlementHelperTest {
         respondentTemplateVars.put(PARTNER, "Husband");
         respondentTemplateVars.put(IS_DIVORCE, true);
         respondentTemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
+        respondentTemplateVars.put(IS_JOINT, false);
+        respondentTemplateVars.put(WEBFORM_URL, "https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -299,6 +307,8 @@ public class GenerateCertificateOfEntitlementHelperTest {
         respondentTemplateVars.put(PARTNER, "Husband");
         respondentTemplateVars.put(IS_DIVORCE, true);
         respondentTemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
+        respondentTemplateVars.put(IS_JOINT, false);
+        respondentTemplateVars.put(WEBFORM_URL, "https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -344,6 +354,7 @@ public class GenerateCertificateOfEntitlementHelperTest {
         respondentTemplateVars.put(IS_JOINT, false);
         respondentTemplateVars.put(PARTNER, "Husband");
         respondentTemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
+        respondentTemplateVars.put(WEBFORM_URL, "https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -415,6 +426,8 @@ public class GenerateCertificateOfEntitlementHelperTest {
         applicant2TemplateVars.put(IS_DIVORCE, true);
         applicant2TemplateVars.put(PARTNER, null);
         applicant2TemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
+        applicant2TemplateVars.put(IS_JOINT, true);
+        applicant2TemplateVars.put(WEBFORM_URL, "https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -453,7 +466,8 @@ public class GenerateCertificateOfEntitlementHelperTest {
         applicant2TemplateVars.put(IS_DIVORCE, true);
         applicant2TemplateVars.put(PARTNER, null);
         applicant2TemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
-
+        applicant2TemplateVars.put(IS_JOINT, true);
+        applicant2TemplateVars.put(WEBFORM_URL, "https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
@@ -496,6 +510,7 @@ public class GenerateCertificateOfEntitlementHelperTest {
         applicant2TemplateVars.put(IS_JOINT, true);
         applicant2TemplateVars.put(PARTNER, "Husband");
         applicant2TemplateVars.put(CO_PRONOUNCED_DATE, "28 April 2022");
+        applicant2TemplateVars.put(WEBFORM_URL, "https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/");
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH))
             .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
