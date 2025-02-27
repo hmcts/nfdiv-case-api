@@ -38,26 +38,18 @@ public class SystemCancelCaseInvite implements CCDConfig<CaseData, State, UserRo
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         long caseId = details.getId();
-        CaseData data = details.getData();
-        CaseData beforeData = beforeDetails.getData();
-        log.info("System cancel user invite for case id: {}",  caseId);
+        log.info("{} aboutToSubmit callback invoked for case id: {}",  SYSTEM_CANCEL_CASE_INVITE, caseId);
 
-        boolean app1InviteWasCancelled = app1InviteWasCancelled(data, beforeData);
-        log.info("Case invite cancelled by {} for case id: {}",
-            app1InviteWasCancelled ? "Applicant 1" : "Respondent/Applicant 2", caseId
-        );
-
-        if (!app1InviteWasCancelled) {
-            data.setCaseInvite(data.getCaseInvite().useAccessCode());
-        }
+        boolean app1InviteWasCancelled = app1InviteWasCancelled(details.getData(), beforeDetails.getData());
+        log.info("Case invite cancelled by {} for case id: {}", app1InviteWasCancelled ? "Applicant 1" : "Respondent/Applicant 2", caseId);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .build();
     }
 
-    private boolean app1InviteWasCancelled(CaseData data, CaseData beforeDate) {
-        return app1AccessCodePresent(data) && !app1AccessCodePresent(beforeDate);
+    private boolean app1InviteWasCancelled(CaseData data, CaseData beforeData) {
+        return app1AccessCodePresent(beforeData) && !app1AccessCodePresent(data);
     }
 
     private boolean app1AccessCodePresent(CaseData data) {
