@@ -8,7 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,9 +30,9 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_NOTICE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 
 @Component
 @Slf4j

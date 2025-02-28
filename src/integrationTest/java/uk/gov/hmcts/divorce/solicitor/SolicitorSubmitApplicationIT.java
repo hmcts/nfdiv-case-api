@@ -128,7 +128,7 @@ public class SolicitorSubmitApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1()));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1().getFullName()));
 
         mockMvc.perform(post(ABOUT_TO_START_URL)
                 .contentType(APPLICATION_JSON)
@@ -149,7 +149,7 @@ public class SolicitorSubmitApplicationIT {
     public void createsServiceRequestToPrepareCaseForPayment() throws Exception {
         var data = caseDataWithOrderSummary();
         data.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
-        var serviceRequestBody = buildServiceReferenceRequest(data, data.getApplicant1());
+        var serviceRequestBody = buildServiceReferenceRequest(data, data.getApplicant1().getFullName());
         serviceRequestBody.setFees(List.of(
             PaymentItem.builder()
                 .ccdCaseNumber(TEST_CASE_ID.toString())

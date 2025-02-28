@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.payment;
+package uk.gov.hmcts.divorce.payment.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import uk.gov.hmcts.divorce.payment.model.CaseServiceRequestsResponse;
 import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.ServiceReferenceResponse;
@@ -31,4 +32,12 @@ public interface PaymentClient {
         @RequestHeader(AUTHORIZATION) String authorisation,
         @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorisation,
         CreateServiceRequestBody createServiceRequestBody);
+
+    @GetMapping(value = "/cases/{ccdCaseNumber}/paymentgroups",
+        headers = CONTENT_TYPE + "=" + APPLICATION_JSON_VALUE)
+    CaseServiceRequestsResponse getServiceRequests(
+        @RequestHeader(AUTHORIZATION) String authorisation,
+        @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorisation,
+        @PathVariable("ccdCaseNumber") String ccdCaseNumber
+    );
 }
