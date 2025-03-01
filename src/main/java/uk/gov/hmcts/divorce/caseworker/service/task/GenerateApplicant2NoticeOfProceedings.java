@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
@@ -22,7 +23,6 @@ import java.time.Clock;
 import java.util.Map;
 
 import static java.time.LocalDateTime.now;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.formatDocumentName;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
@@ -171,27 +171,33 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
             boolean reissuedAsOfflineAOS = OFFLINE_AOS.equals(caseData.getApplication().getReissueOption());
 
-            if (applicant2.isBasedOverseas()) {
+            var app2CorrespondenceAddressIsOverseas = applicant2.getCorrespondenceAddressIsOverseas() == YesOrNo.YES;
+            var app2BasedOverseas = applicant2.isBasedOverseas();
+
+            if (app2BasedOverseas || app2CorrespondenceAddressIsOverseas) {
                 log.info("Generating NOP for overseas respondent for sole case id {} ", caseId);
                 generateNoticeOfProceedings(
                     caseData,
                     caseId,
-                    NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES,
+                    app2CorrespondenceAddressIsOverseas ? NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE : NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES,
                     noticeOfProceedingContent.apply(caseData, caseId, applicant1, applicant2LanguagePreference)
                 );
-                log.info("Generating coversheet for overseas respondent for sole case id {} ", caseId);
-                generateCoversheet.generateCoversheet(
-                    caseData,
-                    caseId,
-                    COVERSHEET_APPLICANT,
-                    coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
-                    caseData.getApplicant2().getLanguagePreference()
-                );
-            } else if (isEmpty(applicant2.getEmail()) || reissuedAsOfflineAOS) {
+
+                if (app2BasedOverseas) {
+                    log.info("Generating coversheet for overseas respondent for sole case id {} ", caseId);
+                    generateCoversheet.generateCoversheet(
+                            caseData,
+                            caseId,
+                            COVERSHEET_APPLICANT,
+                            coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
+                            caseData.getApplicant2().getLanguagePreference()
+                    );
+                }
+            } else if (reissuedAsOfflineAOS) {
                 generateNoticeOfProceedings(
                     caseData,
                     caseId,
-                    reissuedAsOfflineAOS ? NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE : NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE,
+                    NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE,
                     noticeOfProceedingContent.apply(caseData, caseId, applicant1, applicant2LanguagePreference));
                 generateCoversheet.generateCoversheet(
                     caseData,
