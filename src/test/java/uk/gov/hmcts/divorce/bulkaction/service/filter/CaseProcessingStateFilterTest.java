@@ -73,18 +73,22 @@ class CaseProcessingStateFilterTest {
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                     .id(TEST_CASE_ID)
                     .state(AwaitingPronouncement.name())
+                    .data(caseData)
                     .build(),
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                     .id(2L)
                     .state(ConditionalOrderPronounced.name())
+                    .data(caseData)
                     .build(),
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                     .id(3L)
                     .state(OfflineDocumentReceived.name())
+                    .data(caseData)
                     .build(),
                 uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                     .id(4L)
                     .state(Archived.name())
+                    .data(caseData)
                     .build())
             );
 
