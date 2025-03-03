@@ -46,9 +46,11 @@ public class CaseProcessingStateFilter {
                 State state = State.valueOf(caseDetails.getState());
                 CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
 
+                var caseIsAlreadyPronounced = !isEmpty(caseData.getFinalOrder())
+                        && !isEmpty(caseData.getFinalOrder().getDateFinalOrderEligibleFrom());
+
                 if (postStates.contains(state) || hasFinalOrder(caseData)
-                        || (state.equals(State.OfflineDocumentReceived)
-                        && (!isEmpty(caseData.getFinalOrder()) && !isEmpty(caseData.getFinalOrder().getDateFinalOrderEligibleFrom())))) {
+                        || (state.equals(State.OfflineDocumentReceived) && caseIsAlreadyPronounced)) {
 
                     log.info(
                         "Case ID {} will be skipped and moved to processed list as already processed",
