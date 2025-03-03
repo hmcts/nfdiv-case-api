@@ -25,11 +25,7 @@ plugins {
   id 'org.springframework.boot' version '3.3.5'
   id 'com.github.ben-manes.versions' version '0.52.0'
   id 'hmcts.ccd.sdk' version '5.5.16'
-<<<<<<< Updated upstream
   id 'com.github.hmcts.rse-cft-lib' version '0.19.1604'
-=======
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1573'
->>>>>>> Stashed changes
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -502,11 +498,4 @@ task fortifyScan(type: JavaExec) {
     mainClass = 'uk.gov.hmcts.fortifyclient.FortifyClientMainApp'
     classpath += sourceSets.test.runtimeClasspath
     jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
-}
-
-task generateCCDConfigForDemo(type: Exec) {
-  group 'ccd tasks'
-  environment 'CASE_API_URL', 'http://nfdiv-case-api-demo.service.core-compute-demo.internal'
-
-  commandLine 'sh', '-c', './gradlew generateCCDConfig && ./gradlew buildCCDXlsx'
 }
