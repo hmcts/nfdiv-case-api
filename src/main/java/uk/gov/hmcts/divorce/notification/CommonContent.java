@@ -3,8 +3,6 @@ package uk.gov.hmcts.divorce.notification;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.Organisation;
-import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -18,7 +16,6 @@ import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.lang.String.join;
 import static java.util.Objects.isNull;
@@ -169,6 +166,7 @@ public class CommonContent {
             WELSH.equals(applicant.getLanguagePreference())
                 ? config.getTemplateVars().get(WEBFORM_CY_URL)
                 : config.getTemplateVars().get(WEBFORM_URL));
+        templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
         templateVars.put(SMART_SURVEY, getSmartSurvey());
 
         getPhoneAndOpeningTimes(languagePreference, templateVars);
@@ -359,20 +357,17 @@ public class CommonContent {
         templateVars.put(APPLICATION_REFERENCE, caseId != null ? formatId(caseId) : null);
         templateVars.put(FIRST_NAME, applicant.getFirstName());
         templateVars.put(LAST_NAME, applicant.getLastName());
-        String organisationName = Optional.ofNullable(applicant.getSolicitor())
-            .map(Solicitor::getOrganisationPolicy)
-            .map(OrganisationPolicy::getOrganisation)
-            .map(Organisation::getOrganisationName)
-            .orElse(null);
 
-        if (StringUtils.isNotEmpty(applicant.getSolicitor().getFirmName())) {
-            templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
-        } else if (organisationName != null) {
-            templateVars.put(SOLICITOR_FIRM, organisationName);
+        if (StringUtils.isNotEmpty(applicant.getSolicitor().getPreferredFirmName())) {
+            templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getPreferredFirmName());
         } else {
             templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getName());
         }
         templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
+
+        getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
+
         return templateVars;
     }
 
@@ -387,19 +382,33 @@ public class CommonContent {
                 : NOT_PROVIDED);
         templateVars.put(SMART_SURVEY, getSmartSurvey());
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
+
+        getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
         return templateVars;
     }
 
     public Map<String, String> nocOldSolsTemplateVars(final Long caseId,
-                                                      final Applicant beforeApplicant) {
+                                                      final CaseData beforecaseData,
+                                                      boolean isApplicant1) {
 
-        // note: it's the beforeApplicant needs to be passed in to get the old sols
-        // this can get improved once we are saving noc info out
+        Applicant beforeApplicant = isApplicant1 ? beforecaseData.getApplicant1() : beforecaseData.getApplicant2();
+        Applicant beforePartner = isApplicant1 ? beforecaseData.getApplicant2() : beforecaseData.getApplicant1();
+        Solicitor solicitor = beforeApplicant.getSolicitor();
+        String issueDate = (beforecaseData.getApplication().getIssueDate() != null)
+            ? beforecaseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER)
+            : "N/A";
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(APPLICATION_REFERENCE, caseId != null ? formatId(caseId) : null);
-        templateVars.put(NAME, beforeApplicant.getSolicitor().getName());
+        templateVars.put(NAME, solicitor.getName());
+        templateVars.put(SOLICITOR_REFERENCE, isNotEmpty(solicitor.getReference()) ? solicitor.getReference() : NOT_PROVIDED);
         templateVars.put(APPLICANT_NAME, beforeApplicant.getFullName());
+        templateVars.put(RESPONDENT_NAME, beforePartner.getFullName());
         templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(DATE_OF_ISSUE, issueDate);
+        templateVars.put(WEB_FORM_TEXT, getContactWebFormText(beforeApplicant.getLanguagePreference()));
+
+        getPhoneAndOpeningTimes(beforeApplicant.getLanguagePreference(), templateVars);
+
         return templateVars;
     }
 

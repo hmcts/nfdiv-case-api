@@ -19,9 +19,13 @@ public final class DocumentConstants {
     public static final String NFD_NOP_APP1_JS_SOLE_DISPUTED = "NFD_NOP_APP1_JS_SOLE_DISPUTED";
     public static final String NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED = "NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED";
     public static final String NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1_APP2_TEMPLATE_ID = "NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2";
+    public static final String NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP_INVITE_TEMPLATE_ID = "NFD_NOTICE_OF_CHANGE_INVITE_APP";
+    public static final String NFD_SOL_STOPPED_REP_NOTIFY_APP_TEMPLATE_ID = "NFD_SOL_STOPPED_REP_NOTIFY_APP";
+    public static final String NFD_SOL_STOPPED_REP_NOTIFY_APP_DOCUMENT_NAME = "Citizen Letter - Solicitor Stopped Representation";
     public static final String NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER_TEMPLATE_ID = "NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER";
     public static final String SOLICITOR_APPLIED_FOR_FINAL_ORDER_DOCUMENT_NAME = "Solicitor applied for final order";
     public static final String NFD_NOTICE_OF_CHANGE_CONFIRMATION_DOCUMENT_NAME = "Grant of representation";
+    public static final String NFD_NOTICE_OF_CHANGE_APP_INVITE_DOCUMENT_NAME = "Case invitation to Citizen";
     public static final String NFD_NOP_APP1_JS_SOLE_UNDISPUTED = "NFD_NOP_APP1_JS_SOLE_UNDISPUTED";
 
     public static final String PRONOUNCEMENT_LIST_TEMPLATE_ID = "BULK_CASE_PRONOUNCEMENT";
@@ -192,6 +196,8 @@ public final class DocumentConstants {
 
     public static final String NOC_CITIZEN_LETTER_TEMPLATE_ID = "NOC_TO_SOLS_CITIZEN_LETTER";
     public static final String NOC_CITIZEN_LETTER_DOCUMENT_NAME = "Noc";
+
+    public static final String PAPER_APPLICATION_RECEIVED_TEMPLATE_ID = "NFD_APPLICANT_PAPERCASE_RECEIVED";
 
     public static final String APPLICANT1 = "applicant1";
     public static final String APPLICANT2 = "applicant2";

@@ -49,6 +49,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_FIRM_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 
 @ExtendWith(MockitoExtension.class)
@@ -120,6 +121,7 @@ class DocmosisCommonContentTest {
             .name(TEST_SOLICITOR_NAME)
             .email(TEST_SOLICITOR_EMAIL)
             .address(TEST_SOLICITOR_ADDRESS)
+            .firmName(TEST_SOLICITOR_FIRM_NAME)
             .build();
 
         Applicant applicant = Applicant.builder()
@@ -160,7 +162,7 @@ class DocmosisCommonContentTest {
                 entry(APPLICANT_1_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 entry(APPLICANT_2_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 entry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
-                entry(SOLICITOR_ADDRESS, TEST_SOLICITOR_ADDRESS));
+                entry(SOLICITOR_ADDRESS, TEST_SOLICITOR_FIRM_NAME + "\n" + TEST_SOLICITOR_ADDRESS));
     }
 
     @Test

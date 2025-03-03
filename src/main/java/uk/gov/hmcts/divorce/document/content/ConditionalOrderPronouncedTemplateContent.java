@@ -160,9 +160,6 @@ public class ConditionalOrderPronouncedTemplateContent implements TemplateConten
     }
 
     private String getPartnerInfo(CaseData caseData, Applicant applicant, LanguagePreference languagePreference) {
-        final var applicant1 = caseData.getApplicant1();
-        final var applicant2 = caseData.getApplicant2();
-
         if (applicant.equals(caseData.getApplicant1())) {
             return commonContent.getPartner(caseData, caseData.getApplicant2(), languagePreference);
         }
@@ -177,7 +174,7 @@ public class ConditionalOrderPronouncedTemplateContent implements TemplateConten
         final Applicant applicant2 = caseData.getApplicant2();
         templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateContent.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
-        templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
+        templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getFirmAndAddress());
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
         templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
