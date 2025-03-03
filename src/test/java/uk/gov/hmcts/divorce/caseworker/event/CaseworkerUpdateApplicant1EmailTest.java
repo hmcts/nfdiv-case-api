@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -46,55 +45,45 @@ public class CaseworkerUpdateApplicant1EmailTest {
     }
 
     @Test
-    void shouldReturnErrorsIfApplicant1EmailHasBeenRemoved() {
-        final CaseData caseDataBefore = CaseData.builder()
+    void shouldReturnWarningInMidEventIfApplicable() {
+        final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()
+                .offline(YES)
                 .email(TEST_USER_EMAIL)
                 .build())
-            .build();
-
-        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
-        detailsBefore.setId(TEST_CASE_ID);
-        detailsBefore.setData(caseDataBefore);
-
-        final CaseData caseData = CaseData.builder()
-            .applicant1(Applicant.builder().build())
             .build();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant1Email.midEvent(details, detailsBefore);
+        when(emailUpdateService.willApplicantBeMadeOffline(details, details, true)).thenReturn(true);
 
-        assertThat(response.getErrors())
-            .isEqualTo(singletonList("You cannot leave the email field blank. "
-                + "You can only use this event to update the email of the party."));
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant1Email.midEvent(details, details);
+
+        verify(emailUpdateService).willApplicantBeMadeOffline(details, details, true);
+        assertThat(response.getWarnings().size()).isEqualTo(1);
     }
 
     @Test
-    void shouldNotReturnErrorsIfApplicant1EmailUnchanged() {
-        final CaseData caseDataBefore = CaseData.builder()
+    void shouldNotReturnWarningInMidEventIfNotApplicable() {
+        final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()
+                .offline(YES)
                 .email(TEST_USER_EMAIL)
                 .build())
-            .build();
-
-        final CaseDetails<CaseData, State> detailsBefore = new CaseDetails<>();
-        detailsBefore.setId(TEST_CASE_ID);
-        detailsBefore.setData(caseDataBefore);
-
-        final CaseData caseData = CaseData.builder()
-            .applicant1(Applicant.builder().email(TEST_USER_EMAIL).build())
             .build();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant1Email.midEvent(details, detailsBefore);
+        when(emailUpdateService.willApplicantBeMadeOffline(details, details, true)).thenReturn(false);
 
-        assertThat(response.getErrors()).isNull();
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant1Email.midEvent(details, details);
+
+        verify(emailUpdateService).willApplicantBeMadeOffline(details, details, true);
+        assertThat(response.getWarnings().size()).isEqualTo(0);
     }
 
     @Test
