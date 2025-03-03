@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +61,12 @@ class CaseProcessingStateFilterTest {
             bulkListCaseDetailsListValue3,
             bulkListCaseDetailsListValue4
         );
+
+        Map<String, Object> caseData = new HashMap<>();
+        caseData.put("dueDate", LocalDate.of(2022, 1, 1));
+
+        when(objectMapper.convertValue(caseData, CaseData.class))
+                .thenReturn(CaseData.builder().dueDate(LocalDate.of(2022, 1, 1)).build());
 
         when(ccdSearchService.searchForCases(List.of("1", "2", "3", "4"), user, SERVICE_AUTHORIZATION))
             .thenReturn(asList(
@@ -126,6 +133,44 @@ class CaseProcessingStateFilterTest {
             SERVICE_AUTHORIZATION,
             EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
             EnumSet.of(ConditionalOrderPronounced));
+
+        assertThat(caseFilterProcessingState.getUnprocessedCases()).isEqualTo(Collections.emptyList());
+        assertThat(caseFilterProcessingState.getErroredCases()).isEqualTo(Collections.emptyList());
+        assertThat(caseFilterProcessingState.getProcessedCases()).isEqualTo(List.of(bulkListCaseDetailsListValue1));
+    }
+
+    @Test
+    void shouldFilterBulkListCaseDetailsIntoProcessableCasesWhenAlreadyPronouncedAndStateIsOfflineDocumentReceived() {
+        final var user = mock(User.class);
+        final var bulkListCaseDetailsListValue1 = getBulkListCaseDetailsListValue("1");
+
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = List.of(
+                bulkListCaseDetailsListValue1
+        );
+
+        CaseDetails completedCaseDetails = uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
+                .id(1L)
+                .state(OfflineDocumentReceived.name())
+                .data(Map.of("dateFinalOrderEligibleFrom", "2022-12-01"))
+                .build();
+
+        when(ccdSearchService.searchForCases(List.of("1"), user, SERVICE_AUTHORIZATION))
+                .thenReturn(asList(completedCaseDetails));
+
+        when(objectMapper.convertValue(completedCaseDetails.getData(), CaseData.class)).thenReturn(
+                CaseData.builder().finalOrder(
+                        FinalOrder.builder()
+                                .grantedDate(LocalDate.of(2022, Month.DECEMBER, 1).atStartOfDay())
+                                .build()
+                ).build()
+        );
+
+        final CaseFilterProcessingState caseFilterProcessingState = caseProcessingStateFilter.filterProcessingState(
+                bulkListCaseDetails,
+                user,
+                SERVICE_AUTHORIZATION,
+                EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived),
+                EnumSet.of(ConditionalOrderPronounced));
 
         assertThat(caseFilterProcessingState.getUnprocessedCases()).isEqualTo(Collections.emptyList());
         assertThat(caseFilterProcessingState.getErroredCases()).isEqualTo(Collections.emptyList());

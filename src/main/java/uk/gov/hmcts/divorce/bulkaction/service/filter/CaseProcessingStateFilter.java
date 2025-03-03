@@ -18,6 +18,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -44,7 +46,10 @@ public class CaseProcessingStateFilter {
                 State state = State.valueOf(caseDetails.getState());
                 CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
 
-                if (postStates.contains(state) || hasFinalOrder(caseData)) {
+                if (postStates.contains(state) || hasFinalOrder(caseData)
+                        || (state.equals(State.OfflineDocumentReceived))
+                        && (!isEmpty(caseData.getFinalOrder()) && !isEmpty(caseData.getFinalOrder().getDateFinalOrderEligibleFrom()))) {
+
                     log.info(
                         "Case ID {} will be skipped and moved to processed list as already processed",
                         caseDetails.getId());
