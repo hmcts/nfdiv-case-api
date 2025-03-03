@@ -2013,6 +2013,7 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.setDueDate(LocalDate.now().plusDays(14));
         caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(NO);
+        caseData.getApplicant2().setAddressOverseas(YES);
         addGeneratedDocuments(caseData);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
