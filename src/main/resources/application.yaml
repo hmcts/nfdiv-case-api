@@ -203,6 +203,7 @@ uk:
             REINVITE_CITIZEN_TO_CASE: '4b746cbd-e65d-4686-bc57-d5771c857c67'
             NOC_INVITE_CITIZEN: '7ff9c8b3-000e-4574-87e8-b493c7d00226'
             SOLICITOR_STOP_REPRESENTATION_SELF_NOTIFY_CITIZEN: 'a892b125-2dad-4769-ad77-55ba648fe677'
+            RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: '8977e26f-15f7-494c-b3de-036d8fe76cfa'
           welsh:
             REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT: '6fed53fd-8558-4f9a-8804-8b1004221083'
             SAVE_SIGN_OUT: '01202704-dfb7-48a3-91bd-1bbbbd4ee511'
@@ -347,6 +348,7 @@ uk:
             REINVITE_CITIZEN_TO_CASE: '1c682066-7088-4a98-be05-d1ea6cf26f84'
             NOC_INVITE_CITIZEN: '60c26fab-8cf1-4350-a2ac-4e740a0b0722'
             SOLICITOR_STOP_REPRESENTATION_SELF_NOTIFY_CITIZEN: 'a892b125-2dad-4769-ad77-55ba648fe677' #TODO - Welsh translation needed
+            RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: '6b3000f3-deb6-49a8-8021-93f6f96e5f25'
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
 
@@ -476,6 +478,7 @@ docmosis:
       NFD_APPLICANT_PAPERCASE_RECEIVED: FL-NFD-GOR-ENG-PaperCase-Received-Applicant.docx
       NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_citizen_letter_V1.docx
       NFD_SOL_STOPPED_REP_NOTIFY_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_notify_citizen_V1.docx
+      RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-ENG-Respondent-Started-Drafting-AoS-Application.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V1.docx
@@ -563,6 +566,7 @@ docmosis:
       NFD_APPLICANT_PAPERCASE_RECEIVED: FL-NFD-GOR-WEL-PaperCase-Received-Applicant.docx
       NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-WEL-Solicitor_stopped_representation_citizen_letter_V1.docx
       NFD_SOL_STOPPED_REP_NOTIFY_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_notify_citizen_V1.docx #TODO: update Welsh content
+      RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-WEL-Respondent-Started-Drafting-AoS-Application-Cy.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}
