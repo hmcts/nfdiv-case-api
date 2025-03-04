@@ -23,6 +23,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.payment.model.PaymentItem;
+import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
@@ -51,9 +52,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_2_SOLICITOR_APPLIED_FOR_FINAL_ORDER;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_NOTICE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesLookup;
@@ -114,6 +115,9 @@ public class Applicant2SolicitorApplyForFinalOrderIT {
     @MockBean
     private NotificationService notificationService;
 
+    @MockBean
+    private ServiceRequestSearchService serviceRequestSearchService;
+
     @BeforeAll
     static void setUp() {
         PaymentWireMock.start();
@@ -154,7 +158,7 @@ public class Applicant2SolicitorApplyForFinalOrderIT {
             data.getApplication().getApplicationFeeOrderSummary()
         );
         data.getFinalOrder().setApplicant2SolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
-        var serviceRequestBody = buildServiceReferenceRequest(data, data.getApplicant2());
+        var serviceRequestBody = buildServiceReferenceRequest(data, data.getApplicant2().getFullName());
         serviceRequestBody.setFees(List.of(
             PaymentItem.builder()
                 .ccdCaseNumber(TEST_CASE_ID.toString())
