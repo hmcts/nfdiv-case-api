@@ -101,6 +101,7 @@ import static java.lang.String.join;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
@@ -131,6 +132,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationRespon
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties.APPLICANT2SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
+import static uk.gov.hmcts.divorce.divorcecase.model.ScannedGeneralOrderOrGeneratedGeneralOrder.GENERATED_GENERAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.model.ScannedGeneralOrderOrGeneratedGeneralOrder.SCANNED_GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
@@ -1002,6 +1005,7 @@ public class TestDataHelper {
     public static GeneralOrder getGeneralOrder(Document ccdDocument) {
         return GeneralOrder
             .builder()
+            .scannedGeneralOrderOrGeneratedGeneralOrder(GENERATED_GENERAL_ORDER)
             .generalOrderDate(LocalDate.of(2021, 1, 1))
             .generalOrderDetails("some details")
             .generalOrderDivorceParties(Set.of(GeneralOrderDivorceParties.RESPONDENT))
@@ -1013,9 +1017,37 @@ public class TestDataHelper {
             .build();
     }
 
-    public static GeneralOrder getGeneralOrder() {
-        return getGeneralOrder(null);
+    public static GeneralOrder getGeneralOrder(ScannedDocument ccdDocument) {
+        return GeneralOrder
+            .builder()
+            .scannedGeneralOrderOrGeneratedGeneralOrder(SCANNED_GENERAL_ORDER)
+            .generalOrderDivorceParties(Set.of(GeneralOrderDivorceParties.RESPONDENT))
+            .generalOrderScannedDraft(ccdDocument)
+            .build();
     }
+
+    public static GeneralOrder getGeneralOrder() {
+        return getGeneralOrder((Document) null);
+    }
+
+    public static Document getGeneralOrderDocument() {
+        String documentUrl = "http://localhost:8080/1234";
+        return new Document(
+            documentUrl,
+            "scannedGeneralOrder2020-07-16 11:10:34.pdf",
+            documentUrl + "/binary"
+        );
+    }
+
+    public static ScannedDocument getScannedGeneralOrderDocument() {
+        return ScannedDocument.builder()
+            .scannedDate(LocalDateTime.now())
+            .fileName("scannedGeneralOrder2020-07-16 11:10:34.pdf")
+            .type(ScannedDocumentType.OTHER)
+            .url(getGeneralOrderDocument())
+            .build();
+    }
+
 
     public static ListValue<DivorceGeneralOrder> getDivorceGeneralOrderListValue(Document ccdDocument, String listValueId) {
         DivorceDocument generalOrderDocument = DivorceDocument
@@ -1721,5 +1753,40 @@ public class TestDataHelper {
                 )
                 .build()
         );
+    }
+
+    public static void addScannedDocument(CaseData caseData, ScannedDocument scannedDocument) {
+        List<ListValue<ScannedDocument>> scannedDocuments = caseData.getDocuments().getScannedDocuments();
+        if (scannedDocuments == null) {
+            scannedDocuments = new ArrayList<>();
+        }
+        final ListValue<ScannedDocument> listValue = new ListValue<>();
+        listValue.setValue(scannedDocument);
+        scannedDocuments.add(listValue);
+        caseData.getDocuments().setScannedDocuments(scannedDocuments);
+    }
+
+    public static void setScannedDocumentNames(CaseData caseData) {
+        List<DynamicListElement> scannedDocumentNames =
+            emptyIfNull(caseData.getDocuments().getScannedDocuments())
+                .stream()
+                .map(scannedDocListValue ->
+                    DynamicListElement
+                        .builder()
+                        .label(scannedDocListValue.getValue().getFileName())
+                        .code(UUID.randomUUID()).build()
+                ).toList();
+
+        DynamicList scannedDocNamesDynamicList = DynamicList
+            .builder()
+            .listItems(scannedDocumentNames)
+            .build();
+
+        caseData.getDocuments().setScannedDocumentNames(scannedDocNamesDynamicList);
+    }
+
+    public static void setSelectedScannedDocument(CaseData caseData, Integer documentIndex) {
+        final DynamicListElement selectedDocument = caseData.getDocuments().getScannedDocumentNames().getListItems().get(documentIndex);
+        caseData.getDocuments().getScannedDocumentNames().setValue(selectedDocument);
     }
 }
