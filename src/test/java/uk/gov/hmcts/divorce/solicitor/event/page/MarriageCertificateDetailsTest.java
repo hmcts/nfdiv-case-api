@@ -10,6 +10,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
+import java.time.LocalDate;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -67,5 +70,31 @@ public class MarriageCertificateDetailsTest {
         assertNotNull(response);
         assertFalse(response.getErrors().isEmpty());
         assertEquals(caseData, response.getData());
+    }
+
+    @Test
+    public void shouldReturnErrorsIfMarriageCertificateNamesHaveInvalidCharacters() {
+        final CaseData caseData = caseData();
+        caseData.setApplication(Application.builder()
+            .marriageDetails(MarriageDetails.builder()
+                .marriedInUk(NO)
+                .date(LocalDate.now().minusYears(1).minusDays(1))
+                .placeOfMarriage("Maldives")
+                .applicant1Name("Inva1id Name")
+                .applicant2Name("Invalid N@me")
+                .build())
+            .build());
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNotNull();
+        assertThat(response.getErrors().size()).isEqualTo(2);
+        assertThat(response.getErrors().get(0)).isEqualTo(
+            "Applicant or Applicant 1 name on marriage certificate has invalid characters");
+        assertThat(response.getErrors().get(1)).isEqualTo(
+            "Respondent or Applicant 2 name on marriage certificate has invalid characters");
     }
 }
