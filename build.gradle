@@ -25,7 +25,7 @@ plugins {
   id 'org.springframework.boot' version '3.3.5'
   id 'com.github.ben-manes.versions' version '0.52.0'
   id 'hmcts.ccd.sdk' version '5.5.16'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1597'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1609'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -59,7 +59,7 @@ sourceSets {
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(17)
+    languageVersion = JavaLanguageVersion.of(21)
   }
 }
 
@@ -189,7 +189,8 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/divorce/notification/GetAllTemplatesFromNotify.java',
   '**/uk/gov/hmcts/divorce/common/config/**',
   '**/uk/gov/hmcts/divorce/divorcecase/model/**',
-  '**/uk/gov/hmcts/divorce/divorcecase/tab/**'
+  '**/uk/gov/hmcts/divorce/divorcecase/tab/**',
+  '**/uk/gov/hmcts/divorce/systemupdate/event/SystemCorrectTtl.java'
 ]
 
 sonarqube {
@@ -229,7 +230,7 @@ repositories {
 }
 
 def versions = [
-  jackson      : '2.18.2',
+  jackson      : '2.18.3',
   junit        : '5.11.4',
   junitPlatform: '1.11.4',
   lombok       : '1.18.36',
@@ -498,4 +499,3 @@ task fortifyScan(type: JavaExec) {
     classpath += sourceSets.test.runtimeClasspath
     jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
-

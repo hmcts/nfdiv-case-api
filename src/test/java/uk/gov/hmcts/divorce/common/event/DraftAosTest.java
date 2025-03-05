@@ -14,12 +14,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -38,6 +40,8 @@ class DraftAosTest {
     @Mock
     private AddMiniApplicationLink addMiniApplicationLink;
 
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
     @InjectMocks
     private DraftAos draftAos;
 
@@ -95,6 +99,8 @@ class DraftAosTest {
 
         assertThat(response.getState()).isEqualTo(AwaitingConditionalOrder);
         assertThat(response.getData().getAcknowledgementOfService().getAosIsDrafted()).isEqualTo(YES);
+
+        verify(notificationDispatcher).send(any(), any(), any());
     }
 
     @Test
