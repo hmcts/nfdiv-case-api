@@ -67,12 +67,11 @@ public class GenerateD10FormTest {
     }
 
     @Test
-    void shouldGenerateD10DocumentAndAddToListOfDocumentsGeneratedForApp2Offline() throws IOException {
+    void shouldGenerateD10DocumentAndAddToListOfDocumentsGeneratedForApp2AddressOverseas() throws IOException {
         final CaseData caseData = validApplicant1CaseData();
         caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getApplication().setServiceMethod(COURT_SERVICE);
         caseData.getApplicant2().setSolicitorRepresented(YES);
-        caseData.getApplicant2().setOffline(YES);
+        caseData.getApplicant2().setAddressOverseas(YES);
         caseData.setSupplementaryCaseType(NA);
         Solicitor solicitor = Solicitor.builder()
             .organisationPolicy(OrganisationPolicy.<UserRole>builder()

@@ -45,6 +45,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
@@ -210,13 +211,13 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
     }
 
     @Test
-    void shouldGenerateR2WhenSoleWithAppNotRepresentedAndOffline() {
+    void shouldGenerateR1WhenSoleWithAppNotRepresentedAndOffline() {
         setMockClock(clock);
         MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
-        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         caseData.getApplicant2().setEmail(null);
 
         final Map<String, Object> templateContent = new HashMap<>();
@@ -225,7 +226,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContent, NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE);
+        verifyInteractions(caseData, templateContent, NFD_NOP_R1_SOLE_APP2_CIT_ONLINE);
         verify(generateCoversheet)
             .generateCoversheet(
                 caseData,
@@ -272,6 +273,29 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
                 templateContent,
                 ENGLISH
             );
+        assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
+        classMock.close();
+    }
+
+    @Test
+    void shouldGenerateR2WhenSoleAndRespondentAddressIsOverseas() {
+        setMockClock(clock);
+        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
+        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
+
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
+        caseData.getApplicant2().setAddressOverseas(YES);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
+
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE);
+        verifyNoInteractions(generateCoversheet);
+
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
         classMock.close();
