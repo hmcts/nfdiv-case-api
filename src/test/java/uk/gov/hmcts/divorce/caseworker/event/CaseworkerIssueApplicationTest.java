@@ -167,6 +167,8 @@ class CaseworkerIssueApplicationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
         assertThat(response.getErrors()).isNotNull();
+
+        validationUtilMockedStatic.close();
     }
 
     @Test

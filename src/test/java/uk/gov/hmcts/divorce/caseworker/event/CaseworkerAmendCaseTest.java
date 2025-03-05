@@ -98,5 +98,7 @@ class CaseworkerAmendCaseTest {
         assertThat(response.getErrors()).isNotNull();
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors().get(0)).isEqualTo("Error");
+
+        validationUtilMockedStatic.close();
     }
 }
