@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
@@ -24,9 +23,7 @@ public class SolAboutApplicant1Test {
     @Test
     public void shouldReturnErrorIfEmailValidationFails() {
         final CaseData caseData = caseData();
-        caseData.setApplicant1(Applicant.builder()
-                .email("invalidEmail")
-            .build());
+        caseData.getApplicant1().setEmail("invalidEmail");
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -42,9 +39,7 @@ public class SolAboutApplicant1Test {
     @Test
     public void shouldNotReturnErrorIfEmailValidationPasses() {
         final CaseData caseData = caseData();
-        caseData.setApplicant1(Applicant.builder()
-            .email(TEST_USER_EMAIL)
-            .build());
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -53,5 +48,26 @@ public class SolAboutApplicant1Test {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertNull(response.getErrors());
+    }
+
+    @Test
+    public void shouldReturnErrorIfApplicant1NameHasInvalidCharacters() {
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setFirstName("F!rstName");
+        caseData.getApplicant1().setMiddleName("M1ddleName");
+        caseData.getApplicant1().setLastName("La$tName");
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+        assertEquals(response.getErrors().size(), 3);
+        assertThat(response.getErrors())
+            .containsExactlyInAnyOrder(
+                "Applicant or Applicant 1 first name has invalid characters",
+                "Applicant or Applicant 1 middle name has invalid characters",
+                "Applicant or Applicant 1 last name has invalid characters"
+            );
     }
 }
