@@ -18,7 +18,6 @@ import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D11;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.D36;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +30,7 @@ public class GenerateD11FormTest {
     private GenerateD11Form generateD11Form;
 
     @Test
-    void shouldGenerateD36DocumentAndAddToListOfDocumentsGenerated() throws IOException {
+    void shouldGenerateD11DocumentAndAddToListOfDocumentsGenerated() throws IOException {
         final CaseData caseData = CaseData.builder().build();
         caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
 
@@ -46,14 +45,14 @@ public class GenerateD11FormTest {
         generateD11Form.generateD11Document(caseData);
         verify(generateFormHelper).addFormToGeneratedDocuments(
             caseData,
-            D36,
+            D11,
             "D11",
             "D11.pdf",
             "/D11.pdf");
     }
 
     @Test
-    void shouldNotGenerateD36DocumentIfOneHasAlreadyBeenGenerated() {
+    void shouldNotGenerateD11DocumentIfOneHasAlreadyBeenGenerated() {
         final ListValue<DivorceDocument> d11Document = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
                 .documentType(D11)
