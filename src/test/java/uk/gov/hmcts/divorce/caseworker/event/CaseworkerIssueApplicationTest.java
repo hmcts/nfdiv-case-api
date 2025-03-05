@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -19,6 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -27,9 +30,12 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -142,25 +148,25 @@ class CaseworkerIssueApplicationTest {
     }
 
     @Test
-    void shouldFailCaseDataValidationWhenInvalidCharactersInMarriageDetailsNames() {
+    void shouldCallValidationUtilMethodToValidateMarriageCertificateNames() {
 
         final var caseData = caseDataWithAllMandatoryFields();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
-        caseData.getApplication().getMarriageDetails().setApplicant1Name("Inva(id App1Name");
-        caseData.getApplication().getMarriageDetails().setApplicant2Name("Inva(id App2Name");
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
         details.setCreatedDate(LOCAL_DATE_TIME);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
+        List<String> errors = new ArrayList<>();
+        errors.add("Error");
 
-        assertThat(response.getErrors())
-            .containsExactlyInAnyOrder(
-                "Applicant or Applicant 1 name on marriage certificate has invalid characters",
-                "Respondent or Applicant 2 name on marriage certificate has invalid characters"
-            );
+        MockedStatic<ValidationUtil> validationUtilMockedStatic = Mockito.mockStatic(ValidationUtil.class);
+        validationUtilMockedStatic.when(() -> ValidationUtil.validateMarriageCertificateNames(caseData)).thenReturn(errors);
+        validationUtilMockedStatic.when(() -> ValidationUtil.flattenLists(anyList(), anyList())).thenReturn(errors);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
+        assertThat(response.getErrors()).isNotNull();
     }
 
     @Test

@@ -46,6 +46,7 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SUBMITTED_DATE_IS_NULL;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.isNameValid;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validName;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateAllNamesForAllowedCharacters;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
@@ -711,6 +712,33 @@ public class CaseValidationTest {
             "Applicant or Applicant 1 name on marriage certificate has invalid characters",
             "Respondent or Applicant 2 name on marriage certificate has invalid characters"
         );
+    }
+
+    @Test
+    public void shouldReturnNoErrorsWhenAllNamesAreValid() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.getApplication().getMarriageDetails().setApplicant1Name("Valid app_licant-namé");
+        caseData.getApplication().getMarriageDetails().setApplicant2Name("Valid respondent-namé");
+        caseData.getApplicant1().setFirstName("Valid");
+        caseData.getApplicant1().setLastName("Valid");
+        caseData.getApplicant2().setFirstName("Valid");
+        caseData.getApplicant2().setLastName("Valid");
+
+        List<String> errors = validateAllNamesForAllowedCharacters(caseData);
+
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    void shouldReturnEmptyListWhenArgumentIsNull() {
+        List<String> response = validName(null, "test");
+        assertThat(response).isEmpty();
+    }
+
+    @Test
+    void shouldReturnEmptyListWhenArgumentIsEmpty() {
+        List<String> response = validName("", "test");
+        assertThat(response).isEmpty();
     }
 
     @ParameterizedTest
