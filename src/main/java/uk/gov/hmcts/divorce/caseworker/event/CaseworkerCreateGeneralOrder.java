@@ -31,6 +31,10 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -153,8 +157,14 @@ public class CaseworkerCreateGeneralOrder implements CCDConfig<CaseData, State, 
         //clear general order field so that on next general order old data is not shown
         data.setGeneralOrder(null);
 
+        State state = details.getState();
+        if (isScannedGeneralOrder && YES.equals(data.getFinalOrder().getIsFinalOrderOverdue()) && OfflineDocumentReceived.equals(state)) {
+            state = GeneralConsiderationComplete;
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
+            .state(state)
             .build();
     }
 }
