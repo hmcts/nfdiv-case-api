@@ -40,6 +40,9 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
 
     public static final String SUBMIT_CLARIFICATION = "submit-clarification";
     private static final String NEVER_SHOW = "coRefusalDecision=\"NEVER_SHOW\"";
+    private static final String SUBMIT_CLARIFICATION_CO_SOL_GUIDE = "<a href=\"https://www.gov.uk/government/publications/myhmcts-how-to-"
+            + "make-follow-up-applications-for-a-divorce-or-dissolution/respond-to-a-conditional-order-refusal"
+            + " target=\"_blank\" rel=\"noopener noreferrer\">Respond to a conditional order refusal - GOV.UK</a>";
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
@@ -78,7 +81,8 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
                 .readonly(ConditionalOrder::getRefusalClarificationAdditionalInfo)
                 .mandatory(ConditionalOrder::getClarificationResponses)
                 .optional(ConditionalOrder::getClarificationUploadDocuments)
-            .done();
+            .done()
+            .label("submitClarificationSolGuide", SUBMIT_CLARIFICATION_CO_SOL_GUIDE);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,

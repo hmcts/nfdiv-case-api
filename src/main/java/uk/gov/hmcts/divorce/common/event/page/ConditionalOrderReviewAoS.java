@@ -21,6 +21,9 @@ import java.util.List;
 public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
 
     private static final String NEVER_SHOW = "coApplicant1ConfirmInformationStillCorrect=\"NEVER_SHOW\"";
+    private static final String DRAFT_CO_SOL_GUIDE = "<a href=\"https://www.gov.uk/government/publications/myhmcts-how-to-make-"
+            + "follow-up-applications-for-a-divorce-or-dissolution/3e3c9dbf-2d30-4f76-9142-cea2cd1548dd"
+            + " target=\"_blank\" rel=\"noopener noreferrer\">Apply for a conditional order – sole application - GOV.UK</a>";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
@@ -62,7 +65,8 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
                 "ConditionalOrderReviewAoSNo",
                 "You must select yes to apply for a conditional order",
                 "coApplicant1ApplyForConditionalOrder=\"No\" AND applicationType=\"soleApplication\""
-            );
+            )
+            .label("draftConditionalOrderSolGuide", DRAFT_CO_SOL_GUIDE);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(

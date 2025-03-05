@@ -17,6 +17,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 public class MarriageIrretrievablyBrokenForApplicant2 implements CcdPageConfiguration {
 
     private static final String ALWAYS_HIDE = "applicant2ScreenHasMarriageBroken=\"ALWAYS_HIDE\"";
+    private static final String APPLICANT_2_APPROVE_SOL_GUIDE = "<a href=\"https://www.gov.uk/government/publications/myhmcts-"
+            + "how-to-apply-online-for-a-divorce-or-dissolution"
+            + " target=\"_blank\" rel=\"noopener noreferrer\">MyHMCTS: How to apply online for a divorce or dissolution - GOV.UK</a>";
+
 
     @Autowired
     private MarriageIrretrievablyBroken marriageIrretrievablyBroken;
@@ -39,7 +43,7 @@ public class MarriageIrretrievablyBrokenForApplicant2 implements CcdPageConfigur
                 "The ${labelContentMarriageOrCivilPartnership} must have broken down irretrievably "
                     + "for the applicant 2 to ${labelContentDivorceOrLegallyEnd}.",
                 "applicant2ScreenHasMarriageBroken=\"No\""
-            );
+            ).label("applicant2ApproveSolGuide", APPLICANT_2_APPROVE_SOL_GUIDE);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details,

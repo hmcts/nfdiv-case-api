@@ -17,6 +17,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 @Slf4j
 public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
 
+    private static final String APPLY_FOR_DIVORCE_SOL_GUIDE = "<a href=\"https://www.gov.uk/government/publications/myhmcts-how-to-apply-online-for"
+            + "-a-divorce-or-dissolution\" target=\"_blank\" rel=\"noopener noreferrer\">"
+            + "MyHMCTS: How to apply online for a divorce or dissolution - GOV.UK</a>";
+
     @Override
     public void addTo(final PageBuilder pageBuilder) {
 
@@ -66,7 +70,8 @@ public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
                     + "\nThe other party joins and reviews the application before it's submitted.",
                 "divorceOrDissolution = \"divorce\" OR divorceOrDissolution = \"dissolution\"")
             .mandatory(CaseData::getApplicationType,
-                "divorceOrDissolution = \"divorce\" OR divorceOrDissolution = \"dissolution\"");
+                "divorceOrDissolution = \"divorce\" OR divorceOrDissolution = \"dissolution\"")
+            .label("applyForDivorceSolGuide", APPLY_FOR_DIVORCE_SOL_GUIDE);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
