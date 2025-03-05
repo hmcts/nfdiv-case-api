@@ -2,11 +2,17 @@ package uk.gov.hmcts.divorce.caseworker.event.page;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -129,61 +135,27 @@ public class CorrectPaperCaseTest {
     }
 
     @Test
-    public void shouldReturnErrorsIfNamesContainInvalidCharacters() {
+    public void shouldCallValidationUtilMethodToValidateAllNames() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().setApplicant2StatementOfTruth(YES);
-        caseData.getApplication().getMarriageDetails().setApplicant1Name("Inva(id App1Name");
-        caseData.getApplication().getMarriageDetails().setApplicant2Name("Inva(id App2Name");
-        caseData.getApplicant1().setFirstName("Inva(id");
-        caseData.getApplicant1().setMiddleName("Inva1id");
-        caseData.getApplicant1().setLastName("Inva$id");
-        caseData.getApplicant2().setFirstName("Inva(id");
-        caseData.getApplicant2().setMiddleName("Inva1id");
-        caseData.getApplicant2().setLastName("Inva$id");
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
+
+        List<String> errors = new ArrayList<>();
+        errors.add("Error");
+
+        MockedStatic<ValidationUtil> validationUtilMockedStatic = Mockito.mockStatic(ValidationUtil.class);
+        validationUtilMockedStatic.when(() -> ValidationUtil.validateAllNamesForAllowedCharacters(caseData)).thenReturn(errors);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors())
-            .containsExactlyInAnyOrder(
-                "Applicant or Applicant 1 first name has invalid characters",
-                "Applicant or Applicant 1 middle name has invalid characters",
-                "Applicant or Applicant 1 last name has invalid characters",
-                "Respondent or Applicant 2 first name has invalid characters",
-                "Respondent or Applicant 2 middle name has invalid characters",
-                "Respondent or Applicant 2 last name has invalid characters",
-                "Applicant or Applicant 1 name on marriage certificate has invalid characters",
-                "Respondent or Applicant 2 name on marriage certificate has invalid characters"
-            );
-    }
-
-    @Test
-    public void shouldNotReturnErrorsIfNamesContainValidCharacters() {
-        final CaseData caseData = validApplicant2CaseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
-        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
-        caseData.getApplication().setApplicant1StatementOfTruth(YES);
-        caseData.getApplication().setApplicant2StatementOfTruth(YES);
-        caseData.getApplication().getMarriageDetails().setApplicant1Name("Valid app_licant-namé");
-        caseData.getApplication().getMarriageDetails().setApplicant2Name("Valid respondent-namé");
-        caseData.getApplicant1().setFirstName("Valid");
-        caseData.getApplicant1().setLastName("Valid");
-        caseData.getApplicant2().setFirstName("Valid");
-        caseData.getApplicant2().setLastName("Valid");
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
-
-        assertThat(response.getErrors()).isEmpty();
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors().get(0)).isEqualTo("Error");
     }
 }

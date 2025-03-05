@@ -6,6 +6,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
@@ -15,7 +17,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -355,56 +360,23 @@ public class UpdateContactDetailsTest {
         caseData.getApplicant2().setGender(FEMALE);
         caseData.getApplication().setDivorceWho(WIFE);
         caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
-        caseData.getApplication().getMarriageDetails().setApplicant1Name("Inva(id App1Name");
-        caseData.getApplication().getMarriageDetails().setApplicant2Name("Inva(id App2Name");
-        caseData.getApplicant1().setFirstName("Inva(id");
-        caseData.getApplicant1().setMiddleName("Inva1id");
-        caseData.getApplicant1().setLastName("Inva$id");
-        caseData.getApplicant2().setFirstName("Inva(id");
-        caseData.getApplicant2().setMiddleName("Inva1id");
-        caseData.getApplicant2().setLastName("Inva$id");
+
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
+
+        List<String> errors = new ArrayList<>();
+        errors.add("Error");
+
+        MockedStatic<ValidationUtil> validationUtilMockedStatic = Mockito.mockStatic(ValidationUtil.class);
+        validationUtilMockedStatic.when(() -> ValidationUtil.validateAllNamesForAllowedCharacters(caseData)).thenReturn(errors);
 
         AboutToStartOrSubmitResponse<CaseData, State> response
             = updateContactDetails.midEvent(details, details);
 
         assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors())
-            .containsExactlyInAnyOrder(
-                "Applicant or Applicant 1 first name has invalid characters",
-                "Applicant or Applicant 1 middle name has invalid characters",
-                "Applicant or Applicant 1 last name has invalid characters",
-                "Respondent or Applicant 2 first name has invalid characters",
-                "Respondent or Applicant 2 middle name has invalid characters",
-                "Respondent or Applicant 2 last name has invalid characters",
-                "Applicant or Applicant 1 name on marriage certificate has invalid characters",
-                "Respondent or Applicant 2 name on marriage certificate has invalid characters"
-            );
-    }
-
-    @Test
-    void shouldNotReturnErrorsWhenApplicantNamesInMarriageDetailsHaveValidCharacters() {
-        final CaseData caseData = CaseData.builder().build();
-        caseData.getApplicant1().setGender(MALE);
-        caseData.getApplicant2().setGender(FEMALE);
-        caseData.getApplication().setDivorceWho(WIFE);
-        caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
-        caseData.getApplication().getMarriageDetails().setApplicant1Name("Valid app_licant-namé");
-        caseData.getApplication().getMarriageDetails().setApplicant2Name("Valid respondent-namé");
-        caseData.getApplicant1().setFirstName("Valid");
-        caseData.getApplicant1().setLastName("Valid");
-        caseData.getApplicant2().setFirstName("Valid");
-        caseData.getApplicant2().setLastName("Valid");
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response
-            = updateContactDetails.midEvent(details, details);
-
-        assertThat(response.getErrors()).isNull();
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors().get(0)).isEqualTo("Error");
     }
 
     private Applicant applicantAndSolicitorWithContactDetails(String name, String email, String address, String phone) {

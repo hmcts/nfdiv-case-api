@@ -3,6 +3,8 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -11,12 +13,16 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyList;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAmendCase.CASEWORKER_AMEND_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.LESS_THAN_ONE_YEAR_SINCE_SUBMISSION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -71,43 +77,26 @@ class CaseworkerAmendCaseTest {
     }
 
     @Test
-    void shouldReturnErrorIfMarriageDetailsApplicantNamesHaveInvalidCharacters() {
+    void shouldCallValidationUtilMethodToValidateMarriageCertificateNames() {
         final CaseData caseData = caseDataWithMarriageDate();
-        caseData.getApplication().setDateSubmitted(LocalDateTime.now());
-        caseData.getApplication().getMarriageDetails().setDate(
-            LocalDate.from(caseData.getApplication().getDateSubmitted().minusYears(1).minusDays(1))
-        );
-        caseData.getApplication().getMarriageDetails().setApplicant1Name("Inva(id App1Name");
-        caseData.getApplication().getMarriageDetails().setApplicant2Name("Inva(id App2Name");
+
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setState(State.Submitted);
+
+        List<String> errors = new ArrayList<>();
+        errors.add("Error");
+
+        MockedStatic<ValidationUtil> validationUtilMockedStatic = Mockito.mockStatic(ValidationUtil.class);
+        validationUtilMockedStatic.when(() -> ValidationUtil.validateMarriageCertificateNames(caseData)).thenReturn(errors);
+        validationUtilMockedStatic.when(() -> ValidationUtil.validateMarriageDate(
+            caseData, "MarriageDate", true)).thenReturn(Collections.emptyList());
+        validationUtilMockedStatic.when(() -> ValidationUtil.flattenLists(anyList(), anyList())).thenReturn(errors);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendCase.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors().size()).isEqualTo(2);
-        assertThat(response.getErrors().get(0)).isEqualTo(
-            "Applicant or Applicant 1 name on marriage certificate has invalid characters");
-        assertThat(response.getErrors().get(1)).isEqualTo(
-            "Respondent or Applicant 2 name on marriage certificate has invalid characters");
-    }
-
-    @Test
-    void shouldNotReturnErrorIfMarriageDetailsApplicantNamesHaveValidCharacters() {
-        final CaseData caseData = caseDataWithMarriageDate();
-        caseData.getApplication().setDateSubmitted(LocalDateTime.now());
-        caseData.getApplication().getMarriageDetails().setDate(
-            LocalDate.from(caseData.getApplication().getDateSubmitted().minusYears(1).minusDays(1))
-        );
-        caseData.getApplication().getMarriageDetails().setApplicant1Name("Valid app_licant-namé");
-        caseData.getApplication().getMarriageDetails().setApplicant2Name("Valid respondent-namé");
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setState(State.Submitted);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendCase.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getErrors()).isNull();
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors().get(0)).isEqualTo("Error");
     }
 }
