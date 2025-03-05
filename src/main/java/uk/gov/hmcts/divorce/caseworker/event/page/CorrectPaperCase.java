@@ -24,6 +24,7 @@ import java.util.List;
 import static uk.gov.hmcts.ccd.sdk.api.Event.EventBuilder;
 import static uk.gov.hmcts.ccd.sdk.api.FieldCollection.FieldCollectionBuilder;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SOT_REQUIRED;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateAllNamesForAllowedCharacters;
 
 public class CorrectPaperCase implements CcdPageConfiguration {
 
@@ -346,6 +347,11 @@ public class CorrectPaperCase implements CcdPageConfiguration {
 
         if (!data.getApplicationType().isSole() && !application.hasApplicant2StatementOfTruth()) {
             errors.add("Statement of truth must be accepted by Applicant 2 for joint applications");
+        }
+
+        List<String> nameValidationErrors = validateAllNamesForAllowedCharacters(data);
+        if (nameValidationErrors != null) {
+            errors.addAll(nameValidationErrors);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

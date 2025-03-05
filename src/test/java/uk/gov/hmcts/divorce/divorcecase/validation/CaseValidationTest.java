@@ -1,6 +1,9 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -21,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.YEARS;
@@ -40,7 +44,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERV
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateChangeServiceRequest;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SUBMITTED_DATE_IS_NULL;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.isNameValid;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateAllNamesForAllowedCharacters;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
@@ -678,5 +684,54 @@ public class CaseValidationTest {
         List<String> errors = validateChangeServiceRequest(caseData);
 
         assertThat(errors).isEmpty();
+    }
+
+    @Test
+    public void shouldValidateNamesWithInvalidCharacters() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.getApplication().getMarriageDetails().setApplicant1Name("Inva(id App1Name");
+        caseData.getApplication().getMarriageDetails().setApplicant2Name("Inva(id App2Name");
+        caseData.getApplicant1().setFirstName("Inva(id");
+        caseData.getApplicant1().setMiddleName("Inva1id");
+        caseData.getApplicant1().setLastName("Inva$id");
+        caseData.getApplicant2().setFirstName("Inva(id");
+        caseData.getApplicant2().setMiddleName("Inva1id");
+        caseData.getApplicant2().setLastName("Inva$id");
+
+        List<String> errors = validateAllNamesForAllowedCharacters(caseData);
+
+        assertThat(errors).isNotNull();
+        assertThat(errors).containsExactlyInAnyOrder(
+            "Applicant or Applicant 1 first name has invalid characters",
+            "Applicant or Applicant 1 middle name has invalid characters",
+            "Applicant or Applicant 1 last name has invalid characters",
+            "Respondent or Applicant 2 first name has invalid characters",
+            "Respondent or Applicant 2 middle name has invalid characters",
+            "Respondent or Applicant 2 last name has invalid characters",
+            "Applicant or Applicant 1 name on marriage certificate has invalid characters",
+            "Respondent or Applicant 2 name on marriage certificate has invalid characters"
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideNameData")
+    void testNameForValidCharacters(String value,
+                                    boolean expectedOutcome) {
+        boolean result = isNameValid(value);
+        assertThat(result).isEqualTo(expectedOutcome);
+    }
+
+    static Stream<Arguments> provideNameData() {
+        return Stream.of(
+            Arguments.of("Test User", true),
+            Arguments.of("test_first_name test_last_name", true),
+            Arguments.of("Test_User", true),
+            Arguments.of("Test'User", true),
+            Arguments.of("Test-User", true),
+            Arguments.of("Tést User", true),
+            Arguments.of("Test1 User", false),
+            Arguments.of("Test$ User", false),
+            Arguments.of("Test Useς", false)
+        );
     }
 }

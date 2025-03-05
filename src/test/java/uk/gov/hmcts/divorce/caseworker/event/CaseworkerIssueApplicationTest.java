@@ -142,6 +142,28 @@ class CaseworkerIssueApplicationTest {
     }
 
     @Test
+    void shouldFailCaseDataValidationWhenInvalidCharactersInMarriageDetailsNames() {
+
+        final var caseData = caseDataWithAllMandatoryFields();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().getMarriageDetails().setApplicant1Name("Inva(id App1Name");
+        caseData.getApplication().getMarriageDetails().setApplicant2Name("Inva(id App2Name");
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+        details.setCreatedDate(LOCAL_DATE_TIME);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
+
+        assertThat(response.getErrors())
+            .containsExactlyInAnyOrder(
+                "Applicant or Applicant 1 name on marriage certificate has invalid characters",
+                "Respondent or Applicant 2 name on marriage certificate has invalid characters"
+            );
+    }
+
+    @Test
     void shouldSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfSolicitorService() {
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
@@ -313,9 +335,9 @@ class CaseworkerIssueApplicationTest {
         caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
         caseData.getApplication().getJurisdiction().setApplicant1Residence(YES);
         caseData.getApplication().getJurisdiction().setApplicant2Residence(YES);
-        caseData.getApplication().getMarriageDetails().setApplicant1Name("app1Name");
+        caseData.getApplication().getMarriageDetails().setApplicant1Name("appOneName");
         caseData.getApplication().getMarriageDetails().setDate(LocalDate.of(2009, 1, 1));
-        caseData.getApplication().getMarriageDetails().setApplicant2Name("app2Name");
+        caseData.getApplication().getMarriageDetails().setApplicant2Name("appTwoName");
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
         return caseData;
     }

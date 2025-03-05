@@ -348,6 +348,65 @@ public class UpdateContactDetailsTest {
         assertThat(response.getErrors()).isNull();
     }
 
+    @Test
+    void shouldReturnErrorsWhenApplicantNamesInMarriageDetailsHaveInvalidCharacters() {
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplication().setDivorceWho(WIFE);
+        caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
+        caseData.getApplication().getMarriageDetails().setApplicant1Name("Inva(id App1Name");
+        caseData.getApplication().getMarriageDetails().setApplicant2Name("Inva(id App2Name");
+        caseData.getApplicant1().setFirstName("Inva(id");
+        caseData.getApplicant1().setMiddleName("Inva1id");
+        caseData.getApplicant1().setLastName("Inva$id");
+        caseData.getApplicant2().setFirstName("Inva(id");
+        caseData.getApplicant2().setMiddleName("Inva1id");
+        caseData.getApplicant2().setLastName("Inva$id");
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response
+            = updateContactDetails.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNotNull();
+        assertThat(response.getErrors())
+            .containsExactlyInAnyOrder(
+                "Applicant or Applicant 1 first name has invalid characters",
+                "Applicant or Applicant 1 middle name has invalid characters",
+                "Applicant or Applicant 1 last name has invalid characters",
+                "Respondent or Applicant 2 first name has invalid characters",
+                "Respondent or Applicant 2 middle name has invalid characters",
+                "Respondent or Applicant 2 last name has invalid characters",
+                "Applicant or Applicant 1 name on marriage certificate has invalid characters",
+                "Respondent or Applicant 2 name on marriage certificate has invalid characters"
+            );
+    }
+
+    @Test
+    void shouldNotReturnErrorsWhenApplicantNamesInMarriageDetailsHaveValidCharacters() {
+        final CaseData caseData = CaseData.builder().build();
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplication().setDivorceWho(WIFE);
+        caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
+        caseData.getApplication().getMarriageDetails().setApplicant1Name("Valid app_licant-namé");
+        caseData.getApplication().getMarriageDetails().setApplicant2Name("Valid respondent-namé");
+        caseData.getApplicant1().setFirstName("Valid");
+        caseData.getApplicant1().setLastName("Valid");
+        caseData.getApplicant2().setFirstName("Valid");
+        caseData.getApplicant2().setLastName("Valid");
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response
+            = updateContactDetails.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
     private Applicant applicantAndSolicitorWithContactDetails(String name, String email, String address, String phone) {
         return Applicant.builder()
                 .solicitor(Solicitor.builder()

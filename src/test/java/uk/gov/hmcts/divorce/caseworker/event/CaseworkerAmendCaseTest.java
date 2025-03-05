@@ -69,4 +69,45 @@ class CaseworkerAmendCaseTest {
         assertThat(response.getErrors()).isNull();
         assertThat(response.getWarnings()).isNull();
     }
+
+    @Test
+    void shouldReturnErrorIfMarriageDetailsApplicantNamesHaveInvalidCharacters() {
+        final CaseData caseData = caseDataWithMarriageDate();
+        caseData.getApplication().setDateSubmitted(LocalDateTime.now());
+        caseData.getApplication().getMarriageDetails().setDate(
+            LocalDate.from(caseData.getApplication().getDateSubmitted().minusYears(1).minusDays(1))
+        );
+        caseData.getApplication().getMarriageDetails().setApplicant1Name("Inva(id App1Name");
+        caseData.getApplication().getMarriageDetails().setApplicant2Name("Inva(id App2Name");
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(State.Submitted);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendCase.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNotNull();
+        assertThat(response.getErrors().size()).isEqualTo(2);
+        assertThat(response.getErrors().get(0)).isEqualTo(
+            "Applicant or Applicant 1 name on marriage certificate has invalid characters");
+        assertThat(response.getErrors().get(1)).isEqualTo(
+            "Respondent or Applicant 2 name on marriage certificate has invalid characters");
+    }
+
+    @Test
+    void shouldNotReturnErrorIfMarriageDetailsApplicantNamesHaveValidCharacters() {
+        final CaseData caseData = caseDataWithMarriageDate();
+        caseData.getApplication().setDateSubmitted(LocalDateTime.now());
+        caseData.getApplication().getMarriageDetails().setDate(
+            LocalDate.from(caseData.getApplication().getDateSubmitted().minusYears(1).minusDays(1))
+        );
+        caseData.getApplication().getMarriageDetails().setApplicant1Name("Valid app_licant-namé");
+        caseData.getApplication().getMarriageDetails().setApplicant2Name("Valid respondent-namé");
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(State.Submitted);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAmendCase.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+    }
 }
