@@ -1,10 +1,10 @@
-package uk.gov.hmcts.divorce.payment;
+package uk.gov.hmcts.divorce.payment.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +13,10 @@ import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.payment.client.FeesAndPaymentsClient;
+import uk.gov.hmcts.divorce.payment.client.PaymentClient;
+import uk.gov.hmcts.divorce.payment.client.PaymentPbaClient;
 import uk.gov.hmcts.divorce.payment.model.CasePaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
@@ -21,6 +25,7 @@ import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.PaymentItem;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.payment.model.ServiceReferenceResponse;
+import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto;
 import uk.gov.hmcts.divorce.payment.model.StatusHistoriesItem;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -46,6 +51,7 @@ import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.NOT_FOUND;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class PaymentService {
 
     private static final String DEFAULT_CHANNEL = "default";
@@ -76,23 +82,21 @@ public class PaymentService {
     public static final String HMCTS_ORG_ID = "ABA1";
     private static final String ERROR_SERVICE_REF_REQUEST = "Failed to create service reference for case: %s";
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
 
-    @Autowired
-    private FeesAndPaymentsClient feesAndPaymentsClient;
+    private final FeesAndPaymentsClient feesAndPaymentsClient;
 
-    @Autowired
-    private PaymentClient paymentClient;
+    private final PaymentClient paymentClient;
 
-    @Autowired
-    private PaymentPbaClient paymentPbaClient;
+    private final PaymentPbaClient paymentPbaClient;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final IdamService idamService;
+
+    private final ObjectMapper objectMapper;
+
+    private final ServiceRequestSearchService serviceRequestSearchService;
 
     @Value("${idam.client.redirect_uri}")
     private String redirectUrl;
@@ -121,10 +125,21 @@ public class PaymentService {
                 .version(fee.getVersion())
                 .build();
 
+            Optional<ServiceRequestDto> unpaidServiceRequest = serviceRequestSearchService.findUnpaidServiceRequest(
+                caseId, fee, responsibleParty
+            );
+            if (unpaidServiceRequest.isPresent()) {
+                String serviceRequestReference = unpaidServiceRequest.get().getPaymentGroupReference();
+                log.info("Found unpaid service request: {}, for case: {}", serviceRequestReference, caseId);
+                return serviceRequestReference;
+            }
+
+            var serviceReqBody = buildServiceRequestBody(callbackUrl, caseId, responsibleParty, singletonList(paymentItem));
+
             var serviceReferenceResponse = paymentClient.createServiceRequest(
                 httpServletRequest.getHeader(AUTHORIZATION),
                 authTokenGenerator.generate(),
-                buildServiceRequestBody(callbackUrl, caseId, responsibleParty, singletonList(paymentItem))
+                serviceReqBody
             );
 
             String serviceReference = Optional.ofNullable(serviceReferenceResponse)
