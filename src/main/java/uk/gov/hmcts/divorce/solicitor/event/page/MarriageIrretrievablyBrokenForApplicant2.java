@@ -17,10 +17,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 public class MarriageIrretrievablyBrokenForApplicant2 implements CcdPageConfiguration {
 
     private static final String ALWAYS_HIDE = "applicant2ScreenHasMarriageBroken=\"ALWAYS_HIDE\"";
-    private static final String APPLICANT_2_APPROVE_SOL_GUIDE = "<a href=\"https://www.gov.uk/government/publications/myhmcts-"
-            + "how-to-apply-online-for-a-divorce-or-dissolution"
-            + " target=\"_blank\" rel=\"noopener noreferrer\">MyHMCTS: How to apply online for a divorce or dissolution - GOV.UK</a>";
-
+    private static final String APPLICANT_2_APPROVE_SOL_GUIDE = "Refer to the <a href=\"https://www.gov.uk/government/publications/myhmcts"
+            + "-how-to-apply-online-for-a-divorce-or-dissolution target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>:";
 
     @Autowired
     private MarriageIrretrievablyBroken marriageIrretrievablyBroken;

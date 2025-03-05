@@ -19,9 +19,9 @@ import static uk.gov.hmcts.divorce.common.event.Applicant2ApplyForFinalOrder.APP
 public class Applicant2SolApplyForFinalOrderDetails implements CcdPageConfiguration {
 
     private static final String ALWAYS_HIDE = "doesApplicant2WantToApplyForFinalOrder=\"ALWAYS_HIDE\"";
-    private static final String APPLY_FOR_FINAL_ORDER_RESPONDENT_SOL_GUIDE = "<a href=\"https://www.gov.uk/government/publications/myhmcts-"
-            + "how-to-make-follow-up-applications-for-a-divorce-or-dissolution/25890a91-44e6-4264-b868-100afb2e8544"
-            + " target=\"_blank\" rel=\"noopener noreferrer\">Apply for a final order – respondent solicitor - GOV.UK</a>";
+    private static final String APPLY_FOR_FINAL_ORDER_RESPONDENT_SOL_GUIDE = "Refer to the <a href=\"https://www.gov"
+            + ".uk/government/publications/myhmcts-how-to-make-follow-up-applications-for-a-divorce-or-dissolution/"
+            + "25890a91-44e6-4264-b868-100afb2e8544 target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>:";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {

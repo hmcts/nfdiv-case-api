@@ -17,9 +17,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 @Slf4j
 public class SolHowDoYouWantToApplyForDivorce implements CcdPageConfiguration {
 
-    private static final String APPLY_FOR_DIVORCE_SOL_GUIDE = "<a href=\"https://www.gov.uk/government/publications/myhmcts-how-to-apply-online-for"
-            + "-a-divorce-or-dissolution\" target=\"_blank\" rel=\"noopener noreferrer\">"
-            + "MyHMCTS: How to apply online for a divorce or dissolution - GOV.UK</a>";
+    private static final String APPLY_FOR_DIVORCE_SOL_GUIDE = "Refer to the <a href=\"https://www.gov.uk/government/publications/myhmcts-"
+            + "how-to-apply-online-for-a-divorce-or-dissolution\" target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>:";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {

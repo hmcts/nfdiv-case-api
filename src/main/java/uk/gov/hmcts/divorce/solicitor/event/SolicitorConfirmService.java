@@ -34,10 +34,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserRole> {
 
-    private static final String CONFIRM_SERVICE_SOL_GUIDE = "<a href=\"https://www.gov.uk/government/publications/myhmcts-how-to-make-"
-            + "follow-up-applications-for-a-divorce-or-dissolution/change-how-the-application-was-served-or-confirm-it-has-been-served"
-            + " target=\"_blank\" rel=\"noopener noreferrer\">Change how the application was served or "
-            + "confirm it has been served - GOV.UK</a>";
+    private static final String CONFIRM_SERVICE_SOL_GUIDE = "Refer to the <a href=\"https://www.gov.uk/government/publications/myhmcts-how-"
+            + "to-make-follow-up-applications-for-a-divorce-or-dissolution/change-how-the-application-was-served-or-confirm-it-has-been-"
+            + "served target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>:";
 
     public static final String SOLICITOR_CONFIRM_SERVICE = "solicitor-confirm-service";
 
@@ -88,7 +87,6 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             .mandatory(SolicitorService::getServiceSotFirm)
             .done()
             .label("confirmServiceSolGuide", CONFIRM_SERVICE_SOL_GUIDE);
-
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {

@@ -21,11 +21,9 @@ public class Applicant2SolConfirmContactDetails implements CcdPageConfiguration 
     private static final String INVALID_EMAIL_ERROR = "You have entered an invalid solicitor email address. "
         + "Please check the email and enter it again, before submitting the application.";
 
-    private static final String DRAFT_AOS_SOL_GUIDE = "<a href=\"https://www.gov.uk/government/publications/myhmcts-file-an-"
+    private static final String DRAFT_AOS_SOL_GUIDE = "Refer to the <a href=\"https://www.gov.uk/government/publications/myhmcts-file-an-"
             + "acknowledgement-of-service-for-a-divorce-or-dissolution-application/file-an-acknowledgement-of-service-online-"
-            + "or-offline-for-a-divorce-or-dissolution-application"
-            + " target=\"_blank\" rel=\"noopener noreferrer\">File an acknowledgement of service online or offline "
-            + "for a divorce or dissolution application - GOV.UK</a>";
+            + "or-offline-for-a-divorce-or-dissolution-application target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>:";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {

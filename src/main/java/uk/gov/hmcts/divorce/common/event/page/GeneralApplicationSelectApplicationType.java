@@ -7,10 +7,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 
 public class GeneralApplicationSelectApplicationType implements CcdPageConfiguration {
 
-    private static final String GENERAL_APPLICATION_SOL_GUIDE = "<a href=\"https://www.gov.uk/government/publications/myhmcts-how-to"
-            + "-make-follow-up-applications-for-a-divorce-or-dissolution/general-applications-alternative-service-and-deemed-and-dispensed"
-            + " target=\"_blank\" rel=\"noopener noreferrer\">General applications, "
-            + "alternative service and deemed and dispensed - GOV.UK</a>";
+    private static final String GENERAL_APPLICATION_SOL_GUIDE = "Refer to the <a href=\"https://www.gov.uk/government/publications/myhmcts" +
+            "-how-to-make-follow-up-applications-for-a-divorce-or-dissolution/general-applications-alternative-service-and-deemed-" +
+            "and-dispensed target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>:";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
