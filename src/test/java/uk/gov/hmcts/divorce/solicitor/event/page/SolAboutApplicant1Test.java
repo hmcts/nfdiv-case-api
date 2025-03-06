@@ -2,11 +2,17 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,7 +57,7 @@ public class SolAboutApplicant1Test {
     }
 
     @Test
-    public void shouldReturnErrorIfApplicant1NameHasInvalidCharacters() {
+    public void shouldCallValidationUtilMethodToValidateApplicant1Names() {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setFirstName("F!rstName");
         caseData.getApplicant1().setMiddleName("M1ddleName");
@@ -61,13 +67,18 @@ public class SolAboutApplicant1Test {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
+        List<String> errors = new ArrayList<>();
+        errors.add("Error");
+
+        MockedStatic<ValidationUtil> validationUtilMockedStatic = Mockito.mockStatic(ValidationUtil.class);
+        validationUtilMockedStatic.when(() -> ValidationUtil.validateApplicant1NameForAllowedCharacters(caseData)).thenReturn(errors);
+
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
-        assertEquals(response.getErrors().size(), 3);
-        assertThat(response.getErrors())
-            .containsExactlyInAnyOrder(
-                "Applicant or Applicant 1 first name has invalid characters",
-                "Applicant or Applicant 1 middle name has invalid characters",
-                "Applicant or Applicant 1 last name has invalid characters"
-            );
+
+        assertThat(response.getErrors()).isNotNull();
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors().get(0)).isEqualTo("Error");
+
+        validationUtilMockedStatic.close();
     }
 }
