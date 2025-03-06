@@ -13,10 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.EnumSet;
-
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -29,7 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 @Component
 public class CitizenWithdrawn implements CCDConfig<CaseData, State, UserRole> {
-    public static final String CASEWORKER_WITHDRAWN = "citizen-withdrawn";
+    public static final String CITIZEN_WITHDRAWN = "citizen-withdrawn";
 
     @Autowired
     private WithdrawCaseService withdrawCaseService;
@@ -37,8 +33,8 @@ public class CitizenWithdrawn implements CCDConfig<CaseData, State, UserRole> {
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_WITHDRAWN)
-            .forStateTransition(EnumSet.of(Draft, AwaitingApplicant2Response, Applicant2Approved), Withdrawn)
+            .event(CITIZEN_WITHDRAWN)
+            .forStateTransition(Draft, Withdrawn)
             .name("Withdraw")
             .description("Withdrawn")
             .showEventNotes()
@@ -54,7 +50,7 @@ public class CitizenWithdrawn implements CCDConfig<CaseData, State, UserRole> {
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Caseworker withdrawn about to submit callback invoked for Case Id: {}", details.getId());
+        log.info("Citizen withdrawn about to submit callback invoked for Case Id: {}", details.getId());
 
         withdrawCaseService.withdraw(details);
 
