@@ -156,8 +156,10 @@ public class CommonContent {
         templateVars.put(APPLICATION_REFERENCE, id != null ? formatId(id) : null);
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
-        templateVars.put(FIRST_NAME, applicant.getFirstName());
-        templateVars.put(LAST_NAME, applicant.getLastName());
+        templateVars.put(FIRST_NAME, StringUtils.isNotEmpty(applicant.getFirstName())
+            ? applicant.getFirstName()
+            : getUserNameForSelectedLanguage(languagePreference));
+        templateVars.put(LAST_NAME, StringUtils.isNotEmpty(applicant.getLastName()) ? applicant.getLastName() : "");
         templateVars.put(PARTNER, getPartner(caseData, partner, languagePreference));
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
@@ -441,5 +443,9 @@ public class CommonContent {
         } else {
             templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
         }
+    }
+
+    private String getUserNameForSelectedLanguage(LanguagePreference languagePreference) {
+        return languagePreference == WELSH ? "Defnyddiwr" : "User";
     }
 }
