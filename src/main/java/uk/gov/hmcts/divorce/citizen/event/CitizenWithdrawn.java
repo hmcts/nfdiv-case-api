@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -24,11 +24,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CitizenWithdrawn implements CCDConfig<CaseData, State, UserRole> {
     public static final String CITIZEN_WITHDRAWN = "citizen-withdrawn";
 
-    @Autowired
-    private WithdrawCaseService withdrawCaseService;
+    private final WithdrawCaseService withdrawCaseService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
