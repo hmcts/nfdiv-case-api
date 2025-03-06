@@ -594,6 +594,15 @@ public class CaseData {
                     clock,
                     scannedDocumentListValue.getValue())
         );
+
+        if (REQUEST_FOR_INFORMATION_RESPONSE_DOC.equals(documentType) && scannedDocumentOptional.isPresent()) {
+            scannedDocumentOptional.ifPresent(
+                scannedDocumentListValue ->
+                    documents.getScannedDocuments().remove(
+                        documents.getScannedDocuments().indexOf(scannedDocumentOptional.get())
+                    )
+            );
+        }
     }
 
     @JsonIgnore
