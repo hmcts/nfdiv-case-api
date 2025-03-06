@@ -2,12 +2,17 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,9 +29,7 @@ public class SolAboutApplicant1Test {
     @Test
     public void shouldReturnErrorIfEmailValidationFails() {
         final CaseData caseData = caseData();
-        caseData.setApplicant1(Applicant.builder()
-                .email("invalidEmail")
-            .build());
+        caseData.getApplicant1().setEmail("invalidEmail");
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -42,9 +45,7 @@ public class SolAboutApplicant1Test {
     @Test
     public void shouldNotReturnErrorIfEmailValidationPasses() {
         final CaseData caseData = caseData();
-        caseData.setApplicant1(Applicant.builder()
-            .email(TEST_USER_EMAIL)
-            .build());
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -53,5 +54,31 @@ public class SolAboutApplicant1Test {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertNull(response.getErrors());
+    }
+
+    @Test
+    public void shouldCallValidationUtilMethodToValidateApplicant1Names() {
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setFirstName("F!rstName");
+        caseData.getApplicant1().setMiddleName("M1ddleName");
+        caseData.getApplicant1().setLastName("La$tName");
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        List<String> errors = new ArrayList<>();
+        errors.add("Error");
+
+        MockedStatic<ValidationUtil> validationUtilMockedStatic = Mockito.mockStatic(ValidationUtil.class);
+        validationUtilMockedStatic.when(() -> ValidationUtil.validateApplicant1NameForAllowedCharacters(caseData)).thenReturn(errors);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNotNull();
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors().get(0)).isEqualTo("Error");
+
+        validationUtilMockedStatic.close();
     }
 }
