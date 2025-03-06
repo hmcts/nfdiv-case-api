@@ -22,6 +22,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CO_SUBMISSION_DATE_PLUS_DAYS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NAME;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -75,7 +76,7 @@ class AppliedForCoTemplateContentTest {
             entry(ADDRESS, applicant1.getCorrespondenceAddressWithoutConfidentialCheck()),
             entry(DATE, LocalDate.now().format(DATE_TIME_FORMATTER)),
             entry(DATE_D84_RECEIVED, "8 November 2021"),
-            entry(GRANTED_DATE, LocalDate.now().plusWeeks(4).format(DATE_TIME_FORMATTER))
+            entry(GRANTED_DATE, LocalDate.now().plusDays(CO_SUBMISSION_DATE_PLUS_DAYS).format(DATE_TIME_FORMATTER))
         );
     }
 }

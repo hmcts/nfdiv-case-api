@@ -159,6 +159,8 @@ public final class DocumentConstants {
     public static final String AOS_OVERDUE_LETTER_DOCUMENT_NAME = "aosOverdueLetter";
     public static final String AOS_OVERDUE_TEMPLATE_ID = "NFD_RESP_NOT_RESPONDED";
     public static final String AOS_OVERDUE_JS_TEMPLATE_ID = "NFD_RESP_NOT_RESPONDED_JS";
+    public static final String RESPONDENT_DRAFT_AOS_STARTED_APPLICATION_TEMPLATE_ID = "RESPONDENT_DRAFT_AOS_STARTED_APPLICATION";
+    public static final String RESPONDENT_DRAFT_AOS_STARTED_DOCUMENT_NAME = "respondentDraftAosStarted";
 
     public static final String COVERSHEET_APPLICANT = "COVERSHEET_APPLICANT";
     public static final String COVERSHEET_APPLICANT2_SOLICITOR = "COVERSHEET_SOLICITOR";
@@ -194,6 +196,8 @@ public final class DocumentConstants {
 
     public static final String NOC_CITIZEN_LETTER_TEMPLATE_ID = "NOC_TO_SOLS_CITIZEN_LETTER";
     public static final String NOC_CITIZEN_LETTER_DOCUMENT_NAME = "Noc";
+
+    public static final String PAPER_APPLICATION_RECEIVED_TEMPLATE_ID = "NFD_APPLICANT_PAPERCASE_RECEIVED";
 
     public static final String APPLICANT1 = "applicant1";
     public static final String APPLICANT2 = "applicant2";

@@ -3,8 +3,6 @@ package uk.gov.hmcts.divorce.notification;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.Organisation;
-import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -18,7 +16,6 @@ import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.lang.String.join;
 import static java.util.Objects.isNull;
@@ -360,21 +357,17 @@ public class CommonContent {
         templateVars.put(APPLICATION_REFERENCE, caseId != null ? formatId(caseId) : null);
         templateVars.put(FIRST_NAME, applicant.getFirstName());
         templateVars.put(LAST_NAME, applicant.getLastName());
-        String organisationName = Optional.ofNullable(applicant.getSolicitor())
-            .map(Solicitor::getOrganisationPolicy)
-            .map(OrganisationPolicy::getOrganisation)
-            .map(Organisation::getOrganisationName)
-            .orElse(null);
 
-        if (StringUtils.isNotEmpty(applicant.getSolicitor().getFirmName())) {
-            templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
-        } else if (organisationName != null) {
-            templateVars.put(SOLICITOR_FIRM, organisationName);
+        if (StringUtils.isNotEmpty(applicant.getSolicitor().getPreferredFirmName())) {
+            templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getPreferredFirmName());
         } else {
             templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getName());
         }
         templateVars.put(SMART_SURVEY, getSmartSurvey());
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
+
+        getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
+
         return templateVars;
     }
 
@@ -389,6 +382,8 @@ public class CommonContent {
                 : NOT_PROVIDED);
         templateVars.put(SMART_SURVEY, getSmartSurvey());
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
+
+        getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
         return templateVars;
     }
 
@@ -411,6 +406,9 @@ public class CommonContent {
         templateVars.put(SMART_SURVEY, getSmartSurvey());
         templateVars.put(DATE_OF_ISSUE, issueDate);
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(beforeApplicant.getLanguagePreference()));
+
+        getPhoneAndOpeningTimes(beforeApplicant.getLanguagePreference(), templateVars);
+
         return templateVars;
     }
 

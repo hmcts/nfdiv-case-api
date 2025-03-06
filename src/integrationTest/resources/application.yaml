@@ -100,7 +100,7 @@ docmosis:
       CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx
       CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx
       CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor.docx
-      CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor.docx
+      CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor_V1.docx
       CERTIFICATE_OF_ENTITLEMENT_OFFLINE_RESPONDENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: FL-NFD-GOR-ENG-Sole-Applicant-1-Answers_V4.docx
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-1-Answers.docx
@@ -174,7 +174,7 @@ docmosis:
       CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor.docx #TODO: update content
-      CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor.docx #TODO: update content
+      CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor_V1.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT_OFFLINE_RESPONDENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx #TODO: update content
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: FL-NFD-GOR-ENG-Sole-Applicant-1-Answers_V4.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-1-Answers.docx #TODO: update content

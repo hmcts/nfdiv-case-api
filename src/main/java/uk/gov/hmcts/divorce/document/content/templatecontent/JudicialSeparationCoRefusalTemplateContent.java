@@ -81,7 +81,7 @@ public class JudicialSeparationCoRefusalTemplateContent implements TemplateConte
         if (applicant.isRepresented()) {
             templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
             templateContent.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
-            templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
+            templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getFirmAndAddress());
             templateContent.put(SOLICITOR_REFERENCE, getSolicitorReference(applicant));
             templateContent.put(APPLICANT_1_SOLICITOR_NAME, getSolicitorName(caseData.getApplicant1()));
             templateContent.put(APPLICANT_2_SOLICITOR_NAME, getSolicitorName(caseData.getApplicant2()));
