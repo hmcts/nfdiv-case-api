@@ -1704,10 +1704,13 @@ public class TestDataHelper {
                     .build()
             )
             .build();
+        final List<ListValue<ScannedDocument>> scannedDocs = new ArrayList<>();
+        scannedDocs.add(scannedRfirDocument);
+
         caseData.setDocuments(
             CaseDocuments.builder()
                 .typeOfDocumentAttached(RFI_RESPONSE)
-                .scannedDocuments(List.of(scannedRfirDocument))
+                .scannedDocuments(scannedDocs)
                 .scannedDocumentNames(
                     DynamicList
                         .builder()
