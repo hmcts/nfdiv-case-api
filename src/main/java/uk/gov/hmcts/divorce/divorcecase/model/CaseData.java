@@ -588,21 +588,17 @@ public class CaseData {
                 .findFirst();
 
         scannedDocumentOptional.ifPresent(
-            scannedDocumentListValue ->
+            scannedDocumentListValue -> {
                 reclassifyScannedDocumentToChosenDocumentType(
                     documentType,
                     clock,
-                    scannedDocumentListValue.getValue())
-        );
+                    scannedDocumentListValue.getValue());
 
-        if (REQUEST_FOR_INFORMATION_RESPONSE_DOC.equals(documentType) && scannedDocumentOptional.isPresent()) {
-            scannedDocumentOptional.ifPresent(
-                scannedDocumentListValue ->
-                    documents.getScannedDocuments().remove(
-                        documents.getScannedDocuments().indexOf(scannedDocumentOptional.get())
-                    )
-            );
-        }
+                if (REQUEST_FOR_INFORMATION_RESPONSE_DOC.equals(documentType)) {
+                    documents.getScannedDocuments().remove(scannedDocumentOptional.get());
+                }
+            }
+        );
     }
 
     @JsonIgnore
