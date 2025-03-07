@@ -148,7 +148,7 @@ public class RequestForInformationList {
 
     @JsonIgnore
     public RequestForInformation getLatestRequest() {
-        return this.getRequestsForInformation().get(0).getValue();
+        return this.getRequestForInformationByIndex(0);
     }
 
     @JsonIgnore

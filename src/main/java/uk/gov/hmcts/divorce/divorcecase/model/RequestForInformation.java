@@ -154,7 +154,7 @@ public class RequestForInformation {
 
     @JsonIgnore
     public RequestForInformationResponse getLatestResponse() {
-        return this.getRequestForInformationResponses().get(0).getValue();
+        return this.getResponseByIndex(0);
     }
 
     @JsonIgnore
