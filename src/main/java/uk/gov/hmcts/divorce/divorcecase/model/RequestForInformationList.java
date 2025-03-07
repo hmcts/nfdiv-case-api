@@ -131,16 +131,38 @@ public class RequestForInformationList {
         DivorceDocument rfiResponseDoc,
         List<ListValue<RfiResponseDocWithRfiIndex>> targetCollection
     ) {
-        RfiResponseDocWithRfiIndex doc = new RfiResponseDocWithRfiIndex();
-        doc.setRfiId(rfiId);
-        doc.setRfiResponseId(rfiResponseId);
-        doc.setRfiResponseDocId(rfiDocId);
-        doc.setRfiResponseDoc(rfiResponseDoc);
+        RfiResponseDocWithRfiIndex indexedDoc = new RfiResponseDocWithRfiIndex();
+        indexedDoc.setRfiId(rfiId);
+        indexedDoc.setRfiResponseId(rfiResponseId);
+        indexedDoc.setRfiResponseDocId(rfiDocId);
+        indexedDoc.setRfiResponseDoc(rfiResponseDoc);
 
-        ListValue<RfiResponseDocWithRfiIndex> docListValue = new ListValue<>();
-        docListValue.setValue(doc);
+        ListValue<RfiResponseDocWithRfiIndex> indexedDocListValue = new ListValue<>();
+        indexedDocListValue.setValue(indexedDoc);
 
-        targetCollection.add(docListValue);
+        targetCollection.add(indexedDocListValue);
+    }
+
+    @JsonIgnore
+    private List<ListValue<RfiResponseDocWithRfiIndex>> getTempCollection(boolean offlineDocs) {
+        return offlineDocs ? this.getOfflineResponseDocsWithIndexes() : this.getResponseDocsWithIndexes();
+    }
+
+    @JsonIgnore
+    private void iterateDocs(List<ListValue<DivorceDocument>> docs, boolean offlineDocs, int rfiIdx, int resIdx) {
+        if (!isNullOrEmpty(docs)) {
+            if (isNullOrEmpty(getTempCollection(offlineDocs))) {
+                if (offlineDocs) {
+                    this.setOfflineResponseDocsWithIndexes(new ArrayList<>());
+                } else {
+                    this.setResponseDocsWithIndexes(new ArrayList<>());
+                }
+            }
+            for (int docIdx = 0; docIdx < docs.size(); docIdx += 1) {
+                final DivorceDocument rfiResponseDoc = docs.get(docIdx).getValue();
+                addResponseDocToCollection(rfiIdx, resIdx, docIdx, rfiResponseDoc, getTempCollection(offlineDocs));
+            }
+        }
     }
 
     @JsonIgnore
@@ -185,37 +207,12 @@ public class RequestForInformationList {
         if (!isNullOrEmpty(this.getRequestsForInformation())) {
             clearTempDocLists();
             for (int rfiIdx = 0; rfiIdx < this.getRequestsForInformation().size(); rfiIdx += 1) {
-                final RequestForInformation rfi = this.getRequestsForInformation().get(rfiIdx).getValue();
+                final RequestForInformation rfi = this.getRequestForInformationByIndex(rfiIdx);
                 if (!isNullOrEmpty(rfi.getRequestForInformationResponses())) {
                     for (int resIdx = 0; resIdx < rfi.getRequestForInformationResponses().size(); resIdx += 1) {
-                        final RequestForInformationResponse rfiResponse = rfi.getRequestForInformationResponses().get(resIdx).getValue();
-                        if (!isNullOrEmpty(rfiResponse.getRequestForInformationResponseDocs())) {
-                            if (isNullOrEmpty(this.getResponseDocsWithIndexes())) {
-                                this.setResponseDocsWithIndexes(new ArrayList<>());
-                            }
-                            for (int docIdx = 0; docIdx < rfiResponse.getRequestForInformationResponseDocs().size(); docIdx += 1) {
-                                final DivorceDocument rfiResponseDoc =
-                                    rfiResponse.getRequestForInformationResponseDocs().get(docIdx).getValue();
-                                addResponseDocToCollection(rfiIdx, resIdx, docIdx, rfiResponseDoc, this.getResponseDocsWithIndexes());
-                            }
-                        }
-
-                        if (!isNullOrEmpty(rfiResponse.getRfiOfflineResponseDocs())) {
-                            if (isNullOrEmpty(this.getOfflineResponseDocsWithIndexes())) {
-                                this.setOfflineResponseDocsWithIndexes(new ArrayList<>());
-                            }
-                            for (int docIdx = 0; docIdx < rfiResponse.getRfiOfflineResponseDocs().size(); docIdx += 1) {
-                                final DivorceDocument rfiOfflineResponseDoc =
-                                    rfiResponse.getRfiOfflineResponseDocs().get(docIdx).getValue();
-                                addResponseDocToCollection(
-                                    rfiIdx,
-                                    resIdx,
-                                    docIdx,
-                                    rfiOfflineResponseDoc,
-                                    this.getOfflineResponseDocsWithIndexes()
-                                );
-                            }
-                        }
+                        final RequestForInformationResponse rfiResponse = rfi.getResponseByIndex(resIdx);
+                        iterateDocs(rfiResponse.getRequestForInformationResponseDocs(), false, rfiIdx, resIdx);
+                        iterateDocs(rfiResponse.getRfiOfflineResponseDocs(), true, rfiIdx, resIdx);
                     }
                 }
             }
