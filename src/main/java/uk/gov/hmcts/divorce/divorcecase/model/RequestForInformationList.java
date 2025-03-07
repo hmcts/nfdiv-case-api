@@ -137,9 +137,6 @@ public class RequestForInformationList {
         doc.setRfiResponseDocId(rfiDocId);
         doc.setRfiResponseDoc(rfiResponseDoc);
 
-        ListValue<DivorceDocument> documentListValue = new ListValue<>();
-        documentListValue.setValue(rfiResponseDoc);
-
         ListValue<RfiResponseDocWithRfiIndex> docListValue = new ListValue<>();
         docListValue.setValue(doc);
 
