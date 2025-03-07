@@ -259,17 +259,17 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
     private void handleDeletionOfRfiResponseDocument(List<ListValue<DivorceDocument>> rfiDocumentsToRemove, CaseData currentCaseData) {
         documentRemovalService.deleteDocument(rfiDocumentsToRemove);
 
-        RequestForInformationList rfiList = currentCaseData.getRequestForInformationList();
+        final RequestForInformationList rfiList = currentCaseData.getRequestForInformationList();
         rfiList.buildTempDocLists();
 
-        List<ListValue<RfiResponseDocWithRfiIndex>> onlineResponseDocs = rfiList.getResponseDocsWithIndexes();
+        final List<ListValue<RfiResponseDocWithRfiIndex>> onlineResponseDocs = rfiList.getResponseDocsWithIndexes();
         if (onlineResponseDocs != null && !onlineResponseDocs.isEmpty()) {
-            cleanupRfiResponses(rfiDocumentsToRemove, onlineResponseDocs, rfiList);
+            cleanupRfiResponses(rfiDocumentsToRemove, false, rfiList);
         }
 
-        List<ListValue<RfiResponseDocWithRfiIndex>> offlineResponseDocs = rfiList.getOfflineResponseDocsWithIndexes();
+        final List<ListValue<RfiResponseDocWithRfiIndex>> offlineResponseDocs = rfiList.getOfflineResponseDocsWithIndexes();
         if (offlineResponseDocs != null && !offlineResponseDocs.isEmpty()) {
-            cleanupRfiResponses(rfiDocumentsToRemove, offlineResponseDocs, rfiList);
+            cleanupRfiResponses(rfiDocumentsToRemove, true, rfiList);
         }
 
         rfiList.setRfiOnlineResponseDocuments(null);
@@ -279,10 +279,14 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
     @JsonIgnore
     private void cleanupRfiResponses(
         List<ListValue<DivorceDocument>> rfiDocumentsToRemove,
-        List<ListValue<RfiResponseDocWithRfiIndex>> rfiResponseDocs,
+        boolean useOfflineList,
         RequestForInformationList rfiList
     ) {
         rfiDocumentsToRemove.forEach(rfiDocToRemove -> {
+            List<ListValue<RfiResponseDocWithRfiIndex>> rfiResponseDocs = useOfflineList
+                ? rfiList.getOfflineResponseDocsWithIndexes()
+                : rfiList.getResponseDocsWithIndexes();
+
             Optional<ListValue<RfiResponseDocWithRfiIndex>> rfiResponseDocWithRfiIndexOptional =
                 emptyIfNull(rfiResponseDocs)
                     .stream()
