@@ -548,6 +548,12 @@ public class Application {
     )
     private YesOrNo switchedToSoleCo;
 
+    @CCD(
+        label = "Application being issued without respondent address?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo beingIssuedWithoutAddress;
+
     @JsonIgnore
     public boolean hasBeenPaidFor() {
         return null != applicationFeeOrderSummary
