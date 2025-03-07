@@ -348,6 +348,15 @@ public class Application {
     private LocalDate reissueDate;
 
     @CCD(
+        label = "Reason for issuing without the Respondent's address",
+        hint  = "e.g. The address for the Respondent is not required because the court has "
+            + "granted a D11 application to dispense with service.",
+        access = {CaseworkerAccess.class},
+        typeOverride = TextArea
+    )
+    private String reasonIssuedWithoutAddress;
+
+    @CCD(
         label = "Date when the application was created",
         access = {DefaultAccess.class}
     )
@@ -538,6 +547,12 @@ public class Application {
         access = {DefaultAccess.class, Applicant2Access.class}
     )
     private YesOrNo switchedToSoleCo;
+
+    @CCD(
+        label = "Application being issued without respondent address?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo beingIssuedWithoutAddress;
 
     @JsonIgnore
     public boolean hasBeenPaidFor() {
