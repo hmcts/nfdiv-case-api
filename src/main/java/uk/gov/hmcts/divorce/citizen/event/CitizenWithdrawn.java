@@ -13,9 +13,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.EnumSet;
+
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -34,11 +40,15 @@ public class CitizenWithdrawn implements CCDConfig<CaseData, State, UserRole> {
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CITIZEN_WITHDRAWN)
-            .forStateTransition(Draft, Withdrawn)
+            .forStateTransition(
+                EnumSet.of(Draft, Applicant2Approved, AwaitingPayment, AwaitingResponseToHWFDecision),
+                Withdrawn
+            )
             .name("Withdraw")
             .description("Withdrawn")
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, CITIZEN)
+            .showCondition(NEVER_SHOW)
+            .grant(CREATE_READ_UPDATE, CREATOR)
             .grantHistoryOnly(
                 SOLICITOR,
                 SUPER_USER,
