@@ -28,7 +28,7 @@ public class CitizenWithdrawnNotification implements ApplicantNotification {
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             CITIZEN_WITHDRAWN,
-        commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
+            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference(),
             id
         );
