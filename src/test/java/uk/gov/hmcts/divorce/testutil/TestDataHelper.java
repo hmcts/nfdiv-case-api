@@ -158,6 +158,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.REQUEST_FOR_INFORMATION_RESPONSE_DOC;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CIVIL_PARTNER_JOINT;
@@ -1525,9 +1526,17 @@ public class TestDataHelper {
         draft.addDocument(uploadedDocument);
     }
 
+    public static void addDocumentToRequestForInformationResponseDraft(RequestForInformationResponseDraft draft, DivorceDocument doc) {
+        draft.addDocument(doc);
+    }
+
     public static void addDocumentToRequestForInformationOfflineResponseDraft(RequestForInformationOfflineResponseDraft draft) {
-        final DivorceDocument uploadedDocument = documentWithType(null).getValue();
+        final DivorceDocument uploadedDocument = documentWithType(REQUEST_FOR_INFORMATION_RESPONSE_DOC).getValue();
         draft.addDocument(uploadedDocument);
+    }
+
+    public static void addDocumentToRequestForInformationOfflineResponseDraft(RequestForInformationOfflineResponseDraft draft, DivorceDocument doc) {
+        draft.addDocument(doc);
     }
 
     private static void clearDraft(RequestForInformationList requestForInformationList, boolean isApplicant2, boolean isRepresented) {
@@ -1560,12 +1569,26 @@ public class TestDataHelper {
         buildOfflineDraft(caseData, addDetails, addDocument, setAllDocsUploaded, sendNotifications);
     }
 
+    public static void buildOfflineDraft(CaseData caseData, RequestForInformationOfflineResponseSoleParties soleParty,
+                                         boolean addDetails, DivorceDocument doc, boolean setAllDocsUploaded, boolean sendNotifications) {
+        caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().setRfiOfflineSoleResponseParties(soleParty);
+        buildOfflineDraft(caseData, addDetails, doc, setAllDocsUploaded, sendNotifications);
+    }
+
     public static void buildOfflineDraft(CaseData caseData, RequestForInformationOfflineResponseJointParties jointParty,
                                          boolean addDetails, boolean addDocument, boolean setAllDocsUploaded, boolean sendNotifications) {
         caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().setRfiOfflineJointResponseParties(
             jointParty
         );
         buildOfflineDraft(caseData, addDetails, addDocument, setAllDocsUploaded, sendNotifications);
+    }
+
+    public static void buildOfflineDraft(CaseData caseData, RequestForInformationOfflineResponseJointParties jointParty,
+                                         boolean addDetails, DivorceDocument doc, boolean setAllDocsUploaded, boolean sendNotifications) {
+        caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft().setRfiOfflineJointResponseParties(
+            jointParty
+        );
+        buildOfflineDraft(caseData, addDetails, doc, setAllDocsUploaded, sendNotifications);
     }
 
     public static void buildOfflineDraft(CaseData caseData,
@@ -1594,6 +1617,30 @@ public class TestDataHelper {
         }
     }
 
+    public static void buildOfflineDraft(CaseData caseData,
+                                         boolean addDetails,
+                                         DivorceDocument document,
+                                         boolean setAllDocsUploaded,
+                                         boolean sendNotifications
+    ) {
+        RequestForInformationOfflineResponseDraft draft =
+            caseData.getRequestForInformationList().getRequestForInformationOfflineResponseDraft();
+        if (addDetails) {
+            draft.setRfiOfflineDraftResponseDetails(TEST_TEXT);
+        }
+        if (setAllDocsUploaded) {
+            draft.setRfiOfflineAllDocumentsUploaded(YES);
+        } else {
+            draft.setRfiOfflineAllDocumentsUploaded(NO);
+        }
+        if (sendNotifications) {
+            draft.setRfiOfflineResponseSendNotifications(YES);
+        } else {
+            draft.setRfiOfflineResponseSendNotifications(NO);
+        }
+        addDocumentToRequestForInformationOfflineResponseDraft(draft, document);
+    }
+
     public static void buildDraft(CaseData caseData,
                                   Applicant applicant,
                                   boolean addDetails,
@@ -1612,11 +1659,40 @@ public class TestDataHelper {
         }
     }
 
+    public static void buildDraft(CaseData caseData,
+                                  Applicant applicant,
+                                  boolean addDetails,
+                                  DivorceDocument doc,
+                                  boolean setCannotUpload
+    ) {
+        RequestForInformationResponseDraft draft = getRequestForInformationResponseDraft(caseData, applicant);
+        if (addDetails) {
+            draft.setRfiDraftResponseDetails(TEST_TEXT);
+        }
+        if (setCannotUpload) {
+            draft.setRfiDraftResponseCannotUploadDocs(YES);
+        }
+        addDocumentToRequestForInformationResponseDraft(draft, doc);
+    }
+
     public static void addResponseToLatestRequestForInformation(CaseData caseData, Applicant applicant) {
         final boolean isApplicant2 = isApplicant2(caseData, applicant);
         final RequestForInformationList requestForInformationList = caseData.getRequestForInformationList();
         final RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
         buildDraft(caseData, applicant, true, true, false);
+
+        requestForInformationResponse.setValues(caseData, getResponseParty(isApplicant2, applicant.isRepresented()));
+
+        requestForInformationList.getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        clearDraft(requestForInformationList, isApplicant2, applicant.isRepresented());
+    }
+
+    public static void addResponseToLatestRequestForInformation(CaseData caseData, Applicant applicant, DivorceDocument doc) {
+        final boolean isApplicant2 = isApplicant2(caseData, applicant);
+        final RequestForInformationList requestForInformationList = caseData.getRequestForInformationList();
+        final RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        buildDraft(caseData, applicant, true, doc, false);
 
         requestForInformationResponse.setValues(caseData, getResponseParty(isApplicant2, applicant.isRepresented()));
 
@@ -1659,6 +1735,20 @@ public class TestDataHelper {
     public static void addOfflineResponseToLatestRequestForInformation(CaseData caseData,
                                                                        RequestForInformationOfflineResponseJointParties jointParty) {
         buildOfflineDraft(caseData, jointParty, true, true, true, false);
+        addOfflineResponseToLatestRequestForInformation(caseData);
+    }
+
+    public static void addOfflineResponseToLatestRequestForInformation(CaseData caseData,
+                                                                       RequestForInformationOfflineResponseSoleParties soleParty,
+                                                                       DivorceDocument doc) {
+        buildOfflineDraft(caseData, soleParty, true, doc, true, false);
+        addOfflineResponseToLatestRequestForInformation(caseData);
+    }
+
+    public static void addOfflineResponseToLatestRequestForInformation(CaseData caseData,
+                                                                       RequestForInformationOfflineResponseJointParties jointParty,
+                                                                       DivorceDocument doc) {
+        buildOfflineDraft(caseData, jointParty, true, doc, true, false);
         addOfflineResponseToLatestRequestForInformation(caseData);
     }
 
