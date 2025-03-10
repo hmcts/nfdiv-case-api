@@ -1535,7 +1535,10 @@ public class TestDataHelper {
         draft.addDocument(uploadedDocument);
     }
 
-    public static void addDocumentToRequestForInformationOfflineResponseDraft(RequestForInformationOfflineResponseDraft draft, DivorceDocument doc) {
+    public static void addDocumentToRequestForInformationOfflineResponseDraft(
+        RequestForInformationOfflineResponseDraft draft,
+        DivorceDocument doc
+    ) {
         draft.addDocument(doc);
     }
 
