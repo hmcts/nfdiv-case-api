@@ -45,6 +45,8 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
 
     public static final String CASEWORKER_REMOVE_DOCUMENT = "caseworker-remove-document";
 
+    public static final String RFI_DOCUMENT_REMOVED_NOTICE = "** Document Removed **\n\n";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -125,9 +127,14 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
             currentCaseData.getRequestForInformationList().getRfiOnlineResponseDocuments()
         ));
 
+        List<ListValue<DivorceDocument>> rfiOfflineDocumentsToRemove = new ArrayList<>();
+        findOfflineRfiDocumentsForRemoval(divorceDocsToRemove, rfiOfflineDocumentsToRemove);
+        if (!rfiOfflineDocumentsToRemove.isEmpty()) {
+            rfiDocumentsToRemove.addAll(rfiOfflineDocumentsToRemove);
+        }
+
         if (!divorceDocsToRemove.isEmpty()) {
             documentRemovalService.deleteDocument(divorceDocsToRemove);
-            rfiDocumentsToRemove.addAll(findOfflineRfiDocumentsForRemoval(divorceDocsToRemove));
         }
 
         if (!rfiDocumentsToRemove.isEmpty()) {
@@ -158,18 +165,17 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         return documentsToRemove;
     }
 
-    private List<ListValue<DivorceDocument>> findOfflineRfiDocumentsForRemoval(List<ListValue<DivorceDocument>> divorceDocsToRemove) {
-        List<ListValue<DivorceDocument>> rfiResponseDocumentsToRemove = new ArrayList<>();
-
-        if (divorceDocsToRemove != null) {
-            divorceDocsToRemove.forEach(document -> {
+    private void findOfflineRfiDocumentsForRemoval(List<ListValue<DivorceDocument>> divorceDocsToRemove,
+                                                   List<ListValue<DivorceDocument>> rfiResponseDocumentsToRemove) {
+        if (!divorceDocsToRemove.isEmpty()) {
+            List<ListValue<DivorceDocument>> docsToRemove = new ArrayList<>(divorceDocsToRemove);
+            docsToRemove.forEach(document -> {
                 if (REQUEST_FOR_INFORMATION_RESPONSE_DOC.equals(document.getValue().getDocumentType())) {
                     rfiResponseDocumentsToRemove.add(document);
+                    divorceDocsToRemove.remove(document);
                 }
             });
         }
-
-        return rfiResponseDocumentsToRemove;
     }
 
     private List<ListValue<DivorceDocument>> findDocumentsForRemoval(final List<ListValue<DivorceDocument>> beforeDocs,
@@ -317,10 +323,9 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         }
 
         String responseDetails = rfiResponse.getRequestForInformationResponseDetails();
-        String docRemovedNotice = "** Document Removed **\n\n";
         responseDetails = isNullOrEmpty(responseDetails)
-            ? docRemovedNotice
-            : docRemovedNotice + responseDetails;
+            ? RFI_DOCUMENT_REMOVED_NOTICE
+            : RFI_DOCUMENT_REMOVED_NOTICE + responseDetails;
         rfiResponse.setRequestForInformationResponseDetails(responseDetails);
 
         // rebuild temp lists to update index positions after removal
