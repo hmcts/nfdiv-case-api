@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_WITHDRAWN;
 
 @Component
@@ -40,16 +39,14 @@ public class CitizenWithdrawnNotification implements ApplicantNotification {
             return;
         }
 
-        if (caseData.getApplication().getApplicant2ScreenHasMarriageBroken() != NO) {
-            log.info("Sending citizen withdrawn notification to applicant 2 for case : {}", id);
+        log.info("Sending citizen withdrawn notification to applicant 2 for case : {}", id);
 
-            notificationService.sendEmail(
-                caseData.getApplicant2EmailAddress(),
-                CITIZEN_WITHDRAWN,
-                commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
-                caseData.getApplicant2().getLanguagePreference(),
-                id
-            );
-        }
+        notificationService.sendEmail(
+            caseData.getApplicant2EmailAddress(),
+            CITIZEN_WITHDRAWN,
+            commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1()),
+            caseData.getApplicant2().getLanguagePreference(),
+            id
+        );
     }
 }
