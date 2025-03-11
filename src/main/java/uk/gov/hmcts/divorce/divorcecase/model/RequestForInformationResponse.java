@@ -204,14 +204,4 @@ public class RequestForInformationResponse {
     public boolean isOffline() {
         return YES.equals(this.getRequestForInformationResponseOffline());
     }
-
-    @JsonIgnore
-    public DivorceDocument getResponseDocByIndex(int index) {
-        return this.getRequestForInformationResponseDocs().get(index).getValue();
-    }
-
-    @JsonIgnore
-    public DivorceDocument getOfflineResponseDocByIndex(int index) {
-        return this.getRfiOfflineResponseDocs().get(index).getValue();
-    }
 }
