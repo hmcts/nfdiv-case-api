@@ -13,14 +13,17 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static java.lang.String.join;
 import static java.util.Objects.nonNull;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.BEFORE_DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURT_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_PRONOUNCED_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_FO_ELIGIBLE_FROM;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE_OF_HEARING;
@@ -32,9 +35,11 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_URL;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 public class GenerateCertificateOfEntitlementHelper {
@@ -93,11 +98,17 @@ public class GenerateCertificateOfEntitlementHelper {
 
         templateContent.put(BEFORE_DATE_OF_HEARING, beforeDateOfHearing);
 
-        if (caseData.isJudicialSeparationCase()) {
-            templateContent.put(IS_DIVORCE, caseData.isDivorce());
-            templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
-            templateContent.put(PARTNER, commonContent.getPartner(caseData, partner, applicant.getLanguagePreference()));
-        }
+        DateTimeFormatter dateFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
+
+        templateContent.put(CO_PRONOUNCED_DATE, dateAndTimeOfHearing != null
+                ? conditionalOrder.getDateAndTimeOfHearing().format(dateFormatter) : null);
+        templateContent.put(PARTNER, commonContent.getPartner(caseData, partner, applicant.getLanguagePreference()));
+        templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
+        templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
+        templateContent.put(WEBFORM_URL,
+                WELSH.equals(applicant.getLanguagePreference())
+                        ? "https://contact-us-about-a-divorce-application-cy.form.service.justice.gov.uk/"
+                        : "https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/");
 
         return templateContent;
     }
