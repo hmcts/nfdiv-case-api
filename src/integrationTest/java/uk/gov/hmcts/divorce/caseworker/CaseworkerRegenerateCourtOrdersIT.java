@@ -26,6 +26,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -219,7 +220,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
                     .builder()
                     .documentsGenerated(documentsGenerated)
                     .build()
-            )
+            ).finalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build())
             .build();
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -294,7 +295,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
                         divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
                     )
                     .build()
-            )
+            ).finalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build())
             .documents(
                 CaseDocuments
                     .builder()
@@ -368,7 +369,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
                         divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
                     )
                     .build()
-            )
+            ).finalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build())
             .documents(
                 CaseDocuments
                     .builder()
@@ -457,7 +458,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
                         divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
                     )
                     .build()
-            )
+            ).finalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build())
             .documents(
                 CaseDocuments
                     .builder()
@@ -554,7 +555,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
                         divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
                     )
                     .build()
-            )
+            ).finalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build())
             .documents(
                 CaseDocuments
                     .builder()
