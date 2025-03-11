@@ -134,7 +134,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 applicant1SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH,
+                applicant.getLanguagePreference(),
                 caseId);
         }
     }
@@ -193,7 +193,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 applicant2SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH,
+                caseData.getApplicant2().getLanguagePreference(),
                 caseId);
         }
     }

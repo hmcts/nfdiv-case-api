@@ -555,7 +555,7 @@ public class ApplicationIssuedNotificationTest {
     }
 
     @Test
-    void shouldSendNotificationToApplicant2SolicitorIfJointApplicationAndNotSolicitorService() {
+    void shouldSendNotificationInEnglishToApplicant2SolicitorIfJointApplicationAndNotSolicitorService() {
 
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DIVORCE)
@@ -580,6 +580,39 @@ public class ApplicationIssuedNotificationTest {
             JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
             nopSolicitorTemplateVars(caseData.getApplicant2()),
             ENGLISH,
+            TEST_CASE_ID
+        );
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendNotificationInWelshToApplicant2SolicitorIfJointApplicationAndNotSolicitorService() {
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicantRepresentedBySolicitor())
+            .applicant2(applicantRepresentedBySolicitor())
+            .applicationType(JOINT_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .dueDate(LOCAL_DATE.plusDays(7))
+            .application(Application.builder().serviceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
+            .build();
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
+
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2().getLanguagePreference()))
+            .thenReturn(commonTemplateVars());
+
+        notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            TEST_SOLICITOR_EMAIL,
+            JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+            nopSolicitorTemplateVars(caseData.getApplicant2()),
+            WELSH,
             TEST_CASE_ID
         );
 
