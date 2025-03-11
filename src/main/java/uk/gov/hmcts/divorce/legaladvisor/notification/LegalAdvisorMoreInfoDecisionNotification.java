@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_REFUSED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CO_REFUSED_SOLE_JOINT;
@@ -58,7 +57,7 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
             applicant.getSolicitor().getEmail(),
             SOLICITOR_CO_REFUSED_SOLE_JOINT,
             commonContent.getCoRefusedSolicitorTemplateVars(caseData, caseId, applicant, MORE_INFO),
-            ENGLISH,
+            applicant.getLanguagePreference(),
             caseId
         );
 
@@ -109,7 +108,7 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
             applicant.getSolicitor().getEmail(),
             SOLICITOR_CO_REFUSED_SOLE_JOINT,
             commonContent.getCoRefusedSolicitorTemplateVars(caseData, caseId, applicant, MORE_INFO),
-            ENGLISH,
+            applicant.getLanguagePreference(),
             caseId
         );
 
