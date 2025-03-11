@@ -144,7 +144,6 @@ uk:
             BAILIFF_SERVICE_UNSUCCESSFUL: 'fc274f76-2df7-42b4-aeac-d6867dd2f85d'
             BAILIFF_SERVICE_SUCCESSFUL: '62f0669b-9fc4-4898-a763-e3e6cbd8c632'
             APPLICANT_SWITCH_TO_SOLE: '44c2cd90-6543-4265-a33c-602af3a14830'
-            CITIZEN_WITHDRAWN: '3f3eebaf-7fe8-47ad-bebd-230e5fccb7b5'
             JOINT_APPLICATION_ENDED: 'b402deba-a7f3-4330-800a-dbfed8f2b3ba'
             PARTNER_SWITCHED_TO_SOLE_CO: '3bdca528-32b0-4d74-bf6a-360c344de4b0'
             APPLICANT_APPLY_FOR_FINAL_ORDER: '7d11db75-f985-4f16-b3e5-753a6ceba32b'
@@ -290,7 +289,6 @@ uk:
             SOLICITOR_APPLICANT1_DISPUTE_ANSWER_RECEIVED: '2cef1a0c-a42e-4e67-b0cf-08c043ffce31'
             DISPUTE_FORM_OVERDUE: '39591502-d276-44e2-8799-f0ac0a343cdc'
             APPLICANT_SWITCH_TO_SOLE: '04177ebd-ad6d-41ac-9cfc-a3f49ddba18c'
-            CITIZEN_WITHDRAWN: '3f3eebaf-7fe8-47ad-bebd-230e5fccb7b5' # TODO: Welsh translation
             JOINT_APPLICATION_ENDED: '8da821e8-2acf-4454-9bfc-c42625b3cec0'
             APPLICANT_APPLY_FOR_FINAL_ORDER: '3a943efc-a7cc-4c57-ae64-f5d61809ac9d'
             PARTNER_SWITCHED_TO_SOLE_CO: 'c7043294-5c73-4d06-b9e0-f76aa042f5b5'

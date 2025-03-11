@@ -7,23 +7,22 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.citizen.notification.CitizenWithdrawnNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.WithdrawCaseService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.EnumSet;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -39,16 +38,12 @@ public class CitizenWithdrawn implements CCDConfig<CaseData, State, UserRole> {
 
     private final WithdrawCaseService withdrawCaseService;
 
-    private final NotificationDispatcher notificationDispatcher;
-
-    private final CitizenWithdrawnNotification citizenWithdrawnNotification;
-
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CITIZEN_WITHDRAWN)
             .forStateTransition(
-                EnumSet.of(Draft, Applicant2Approved, AwaitingPayment, AwaitingResponseToHWFDecision),
+                EnumSet.of(Draft, AwaitingApplicant2Response, Applicant2Approved, AwaitingPayment, AwaitingResponseToHWFDecision),
                 Withdrawn
             )
             .name("Citizen Withdraw")
@@ -57,12 +52,12 @@ public class CitizenWithdrawn implements CCDConfig<CaseData, State, UserRole> {
             .showCondition(NEVER_SHOW)
             .grant(CREATE_READ_UPDATE, CREATOR)
             .grantHistoryOnly(
+                CASE_WORKER,
                 SOLICITOR,
                 SUPER_USER,
                 LEGAL_ADVISOR,
                 JUDGE)
-            .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted));
+            .aboutToSubmitCallback(this::aboutToSubmit));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -76,16 +71,5 @@ public class CitizenWithdrawn implements CCDConfig<CaseData, State, UserRole> {
             .data(details.getData())
             .state(details.getState())
             .build();
-    }
-
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
-                                               CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} submitted callback invoked for Case Id: {}", CITIZEN_WITHDRAWN, details.getId());
-
-        notificationDispatcher.send(
-            citizenWithdrawnNotification, details.getData(), details.getId()
-        );
-
-        return SubmittedCallbackResponse.builder().build();
     }
 }
