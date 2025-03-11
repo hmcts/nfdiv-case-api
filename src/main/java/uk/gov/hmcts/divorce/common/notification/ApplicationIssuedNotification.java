@@ -247,7 +247,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         templateVars.put(SUBMISSION_RESPONSE_DATE,
             holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate())
-                    .format(DATE_TIME_FORMATTER));
+                    .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
 
         return templateVars;
     }
@@ -287,7 +287,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         templateVars.put(SUBMISSION_RESPONSE_DATE,
             holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate())
-                    .format(DATE_TIME_FORMATTER));
+                    .format(getDateTimeFormatterForPreferredLanguage(applicant2.getLanguagePreference())));
 
         return templateVars;
     }
@@ -301,9 +301,9 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
         templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate()
-                .format(DATE_TIME_FORMATTER));
+                .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         templateVars.put(DUE_DATE, caseData.getDueDate()
-                .format(DATE_TIME_FORMATTER));
+                .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
 
         return templateVars;
     }
