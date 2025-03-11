@@ -72,7 +72,7 @@ class AosPackPrinterTest {
                 Applicant.builder()
                     .email("testresp@test.com")
                     .solicitorRepresented(YES)
-                    .solicitor(Solicitor.builder().build())
+                    .solicitor(Solicitor.builder().addressOverseas(YES).build())
                     .build())
             .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
             .build();
@@ -112,6 +112,7 @@ class AosPackPrinterTest {
                     .email("")
                     .solicitorRepresented(NO)
                     .solicitor(Solicitor.builder().build())
+                    .addressOverseas(YES)
                     .build())
             .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
             .build();
