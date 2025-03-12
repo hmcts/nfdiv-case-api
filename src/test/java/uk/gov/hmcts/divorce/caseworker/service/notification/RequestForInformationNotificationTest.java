@@ -7,7 +7,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.documentpack.RequestForInformationDocumentPack;
@@ -24,13 +23,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT1;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
-import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.OTHER;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_DOCUMENT_NAME;
@@ -68,10 +65,10 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_TEXT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationCaseDetails;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationOtherCaseDetails;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationTemplateVars;
 
 @ExtendWith(MockitoExtension.class)
@@ -96,10 +93,7 @@ class RequestForInformationNotificationTest {
 
     @Test
     void shouldSendRequestForInformationEmailToApplicantWhenNotRepresentedOnSoleCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT, false, false).getData();
 
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getRequestForInformationTemplateVars());
@@ -139,13 +133,9 @@ class RequestForInformationNotificationTest {
 
     @Test
     void shouldSendRequestForInformationEmailToApplicantSolicitorWhenRepresentedOnSoleCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.setApplicant1(applicantRepresentedBySolicitor());
+        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT, true, false).getData();
         caseData.getApplicant1().getSolicitor().setReference(TEST_REFERENCE);
         caseData.getApplication().setIssueDate(LocalDate.now());
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
@@ -173,7 +163,7 @@ class RequestForInformationNotificationTest {
     @Test
     void shouldSendRequestForInformationLetterToOfflineApplicantSolicitor() {
         CaseData caseData = caseData();
-        
+
         when(requestForInformationDocumentPack.getDocumentPack(any(), any())).thenReturn(getSolicitorDocumentPack());
         when(requestForInformationDocumentPack.getLetterId()).thenReturn(LETTER_TYPE_REQUEST_FOR_INFORMATION);
 
@@ -190,10 +180,7 @@ class RequestForInformationNotificationTest {
 
     @Test
     void shouldSendRequestForInformationEmailToApplicant1WhenNotRepresentedOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT1, false, false).getData();
 
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getRequestForInformationTemplateVars());
@@ -215,11 +202,7 @@ class RequestForInformationNotificationTest {
 
     @Test
     void shouldSendRequestForInformationEmailWithoutSuppressedJointDataTemplateTextWhenNotRepresentedOnJointCaseAndSentToBothApplicants() {
-        CaseData caseData = caseData();
-        caseData.setApplicant2(getApplicant(MALE));
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, false).getData();
 
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getRequestForInformationTemplateVars(
@@ -246,11 +229,7 @@ class RequestForInformationNotificationTest {
 
     @Test
     void shouldSendRequestForInformationEmailToApplicant1SolicitorWhenRepresentedOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplicant1(applicantRepresentedBySolicitor());
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT1, true, false).getData();
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
@@ -273,11 +252,7 @@ class RequestForInformationNotificationTest {
 
     @Test
     void shouldSendRequestForInformationEmailToApplicant2WhenNotRepresentedOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplicant2(getApplicant());
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT2, false, false).getData();
 
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getRequestForInformationTemplateVars());
@@ -317,11 +292,7 @@ class RequestForInformationNotificationTest {
 
     @Test
     void shouldSendRequestForInformationEmailToApplicant2SolicitorWhenRepresentedOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplicant2(applicantRepresentedBySolicitor());
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT2, false, true).getData();
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
@@ -362,12 +333,7 @@ class RequestForInformationNotificationTest {
 
     @Test
     void shouldSendRequestForInformationEmailToOtherRecipientOnSoleCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(OTHER);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationName(TEST_OTHER_NAME);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_OTHER_EMAIL);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        CaseData caseData = getRequestForInformationOtherCaseDetails(SOLE_APPLICATION, false, false).getData();
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
@@ -389,14 +355,8 @@ class RequestForInformationNotificationTest {
 
     @Test
     void shouldSendRequestForInformationEmailToOtherRecipientOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation()
-            .setRequestForInformationJointParties(RequestForInformationJointParties.OTHER);
+        CaseData caseData = getRequestForInformationOtherCaseDetails(JOINT_APPLICATION, false, false).getData();
         caseData.getApplication().setIssueDate(LocalDate.now());
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationName(TEST_OTHER_NAME);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_OTHER_EMAIL);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
