@@ -127,6 +127,7 @@ uk:
             CITIZEN_CONDITIONAL_ORDER_REFUSED: '2247b12e-e560-42a8-af40-dd192ab17f74'
             CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT: '556b79db-acb8-4cb6-b25b-bd0fd6d60927'
             CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED: 'affe507c-7c08-4129-9d15-fa7e9a0783c9'
+            ENTITLEMENT_GRANTED_DO_NOT_ATTEND_COURT: '10f16a2b-7f40-4d23-b98d-9025e208a242'
             SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED: 'd2f8fdd2-31fb-492a-88fc-2169eb871410'
             SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED: '1ea760cb-9a1e-4c20-beb6-74df3cf510e2'
             SOLE_APPLICANT_AOS_SUBMITTED: '5d062dc1-165f-4c07-806a-3eca90f15642'
@@ -203,6 +204,7 @@ uk:
             REINVITE_CITIZEN_TO_CASE: '4b746cbd-e65d-4686-bc57-d5771c857c67'
             NOC_INVITE_CITIZEN: '7ff9c8b3-000e-4574-87e8-b493c7d00226'
             SOLICITOR_STOP_REPRESENTATION_SELF_NOTIFY_CITIZEN: 'a892b125-2dad-4769-ad77-55ba648fe677'
+            RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: '8977e26f-15f7-494c-b3de-036d8fe76cfa'
           welsh:
             REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT: '6fed53fd-8558-4f9a-8804-8b1004221083'
             SAVE_SIGN_OUT: '01202704-dfb7-48a3-91bd-1bbbbd4ee511'
@@ -237,12 +239,12 @@ uk:
             SOLE_APPLICANT_PARTNER_HAS_NOT_RESPONDED: '17da4bc0-66c5-4617-a8a9-069421e526ab'
             SOLE_RESPONDENT_APPLICATION_ACCEPTED: '067e2e14-fb8b-4274-a5d4-1db91b73cab2'
             OVERSEAS_RESPONDENT_HAS_EMAIL_APPLICATION_ISSUED: '58b5aa2f-e0b0-4c70-b7be-452f00cf522e'
-            OVERSEAS_RESPONDENT_APPLICATION_ISSUED: '68f87276-f170-46cd-aa2a-847605068eae' #TODO: Update Welsh translation
+            OVERSEAS_RESPONDENT_APPLICATION_ISSUED: 'ce248bd2-ea3a-4d21-8b18-3427fc3985c1'
             SOLE_APPLICANT_APPLICATION_SUBMITTED: '3ecccc69-81e7-4bcd-8316-0547fd30795f'
             SOLE_APPLICANT_AMENDED_APPLICATION_SUBMITTED: 'd87e0405-15bb-405b-b277-27cec5444106'
-            SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED: '203ac27e-c8de-4cee-b948-8ed763f3566c'  #TODO: Update Welsh translation
+            SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED: '4500c618-c62b-4cc4-a255-b402bb03188b'
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS: '369c9dee-7727-445f-82f1-87e41f7768eb'
-            SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE: 'c8c7932f-87f9-4aae-a0bf-3f856469e1cd'
+            SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE: 'f27eb618-5436-42c7-be17-f4b6bcb76d4c'
             JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS: '70f02c39-1665-46de-89a0-336739bf5fdc'
             RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS: 'df301cf2-dd08-43b1-903c-1b9a0449b3e8'
             APPLICANT_NOTICE_OF_PROCEEDINGS: '2d79f93a-aabc-470a-b5f5-333059787a8a'
@@ -252,7 +254,7 @@ uk:
             GENERAL_EMAIL_RESPONDENT: '5c721a7c-a5b1-4eb9-84b3-e788834c0a90'
             GENERAL_EMAIL_RESPONDENT_SOLICITOR: 'ba73096f-800a-4030-8a9c-ba726dca54bc'
             GENERAL_EMAIL_OTHER_PARTY: '7f47e47e-8ad2-4b7f-a22c-46130c55a49f'
-            APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER: '8c6d4196-0e77-4b76-a660-5d1ae0a4fa54'
+            APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER: '6d159093-27b3-4bbf-9410-2949004a0f34'
             SOLICITOR_AWAITING_CONDITIONAL_ORDER: '89de4d8a-c94f-4699-8fc7-663dc7a994be'
             JOINT_SOLICITOR_BOTH_APPLIED_CO_FO: '74dd410e-7cf8-4d1c-b2c9-27a29f6ed090'
             SOLICITOR_CLARIFICATION_SUBMITTED: 'bd003622-b92b-4552-9489-34823d948c3b'
@@ -273,6 +275,7 @@ uk:
             CITIZEN_CONDITIONAL_ORDER_REFUSED: '3241af91-b9fd-457f-8124-bce924a1b1f0'
             CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT: '9673c9c0-8ade-4cec-82a2-a54cb8afdbc3'
             CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED: '4c8118ab-9a71-4e73-ab5a-740dd9fe678c'
+            ENTITLEMENT_GRANTED_DO_NOT_ATTEND_COURT: '7ff2d0af-41e2-4748-9f9b-4e5ae58c0cb7'
             SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED: 'b747c46a-9359-468e-9815-fbc962cdfa75'
             SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED: '1ea760cb-9a1e-4c20-beb6-74df3cf510e2'
             SOLE_APPLICANT_AOS_SUBMITTED: 'd06bbd55-32eb-4a7b-98c3-d7d9ff01d29c'
@@ -322,7 +325,7 @@ uk:
             PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER: '24d6bb85-82de-49a5-ae97-aec15ecc0ee8'
             INTEND_TO_SWITCH_TO_SOLE_FO: '0eb5deb5-851d-4ced-b793-0d836e8f9101'
             PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO: 'af46da5d-57bf-4e77-891f-2929d3fef037'
-            SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER: 'dc1a3d51-3e93-4f22-b268-ab0f86676f1f' #TODO - Welsh translation needed
+            SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER: 'a926a5e3-cab1-42cd-82fd-2e7a383f862e'
             OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR: '10a45ed1-9b42-4a09-9ebc-ff8005d82a13' #TODO - Welsh translation needed
             OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_CITIZEN: '7e5e6d89-62a6-4e9b-b044-ab7b27186a35' #TODO - Welsh translation needed
             APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '2486536c-481d-4dd3-8934-91faa5aa37f5' #TODO - Welsh translation needed
@@ -347,6 +350,7 @@ uk:
             REINVITE_CITIZEN_TO_CASE: '1c682066-7088-4a98-be05-d1ea6cf26f84'
             NOC_INVITE_CITIZEN: '60c26fab-8cf1-4350-a2ac-4e740a0b0722'
             SOLICITOR_STOP_REPRESENTATION_SELF_NOTIFY_CITIZEN: 'a892b125-2dad-4769-ad77-55ba648fe677' #TODO - Welsh translation needed
+            RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: '6b3000f3-deb6-49a8-8021-93f6f96e5f25'
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
 
@@ -405,6 +409,7 @@ docmosis:
       SERVICE_ORDER: FL-NFD-GOR-ENG-Service-Order-V5.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: FL-NFD-GOR-ENG-Pronouncement-List-V3.docx
       CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx
+      CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT: FL-NFD-GOR-ENG-Do-Not-Attend-Court-CO-Granted-Letter.docx
       CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V3.docx
       CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx
       CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx
@@ -437,7 +442,7 @@ docmosis:
       NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R1-V10.docx
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V11.docx
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_ReIssue_Offline_V2.docx
-      NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V4.docx
+      NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V5.docx
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V4.docx
       NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V4.docx
       NFD_NOP_JA1_JOINT_APP1APP2_CIT: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Joint-V3.docx
@@ -476,6 +481,7 @@ docmosis:
       NFD_APPLICANT_PAPERCASE_RECEIVED: FL-NFD-GOR-ENG-PaperCase-Received-Applicant.docx
       NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_citizen_letter_V1.docx
       NFD_SOL_STOPPED_REP_NOTIFY_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_notify_citizen_V1.docx
+      RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-ENG-Respondent-Started-Drafting-AoS-Application.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V1.docx
@@ -490,6 +496,7 @@ docmosis:
       NOTICE_OF_PROCEEDINGS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-V3.docx      #TODO: update content
       NOTICE_OF_PROCEEDINGS_RESP: NFD_Notice_Of_Proceedings_Sole_Respondent.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-WEL-Certificate-Of-Entitlement_V1.docx
+      CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT: FL-NFD-GOR-WEL-Do-Not-Attend-Court-CO-Granted-Letter-Cy.docx
       CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor.docx #TODO: update content
@@ -529,7 +536,7 @@ docmosis:
       NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V4.docx #TODO: add Welsh translation
       NFD_NOP_R1_SOLE_APP2_CIT_ONLINE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Online_Respondent_Sole_V7.docx
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Paper_Respondent_V8.docx
-      NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V4.docx  #TODO: add translated content
+      NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V5.docx  #TODO: add translated content
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V4.docx #TODO: add translated content
       NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V4.docx #TODO: add translated content
       NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_ReIssue_Offline_V2.docx
@@ -563,6 +570,7 @@ docmosis:
       NFD_APPLICANT_PAPERCASE_RECEIVED: FL-NFD-GOR-WEL-PaperCase-Received-Applicant.docx
       NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-WEL-Solicitor_stopped_representation_citizen_letter_V1.docx
       NFD_SOL_STOPPED_REP_NOTIFY_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_notify_citizen_V1.docx #TODO: update Welsh content
+      RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-WEL-Respondent-Started-Drafting-AoS-Application-Cy.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}
