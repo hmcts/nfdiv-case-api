@@ -153,6 +153,9 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
 
         caseData.getRequestForInformationList().addRequestToList(requestForInformation);
 
+        //Prevent pre-populating fields for new request
+        caseData.getRequestForInformationList().setRequestForInformation(new RequestForInformation());
+
         try {
             notificationDispatcher.sendRequestForInformationNotification(
                 requestForInformationNotification,
@@ -165,9 +168,6 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
                 .errors(Collections.singletonList(REQUEST_FOR_INFORMATION_NOTIFICATION_FAILED_ERROR + details.getId()))
                 .build();
         }
-
-        //Prevent pre-populating fields for new request
-        caseData.getRequestForInformationList().setRequestForInformation(new RequestForInformation());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

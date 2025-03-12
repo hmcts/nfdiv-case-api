@@ -64,7 +64,7 @@ public class RequestForInformationResponseTemplateContent implements TemplateCon
         templateContent.put(RECIPIENT_ADDRESS, applicant.getCorrespondenceAddressWithoutConfidentialCheck());
         templateContent.put(DATE, LocalDate.now());
         templateContent.put(CASE_REFERENCE, caseId);
-        if (BOTH.equals(caseData.getRequestForInformationList().getRequestForInformation().getRequestForInformationJointParties())) {
+        if (BOTH.equals(caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationJointParties())) {
             templateContent.put(SENT_TO_BOTH_APPLICANTS, YES);
             templateContent.put(PARTNER, commonContent.getPartner(caseData, partner, applicant.getLanguagePreference()));
         } else {
