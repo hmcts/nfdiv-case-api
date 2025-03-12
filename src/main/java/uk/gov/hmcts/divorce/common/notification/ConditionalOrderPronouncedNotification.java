@@ -169,7 +169,8 @@ public class ConditionalOrderPronouncedNotification implements ApplicantNotifica
         templateVars.put(APPLICANT2_LABEL, caseData.getApplicationType().isSole() ? RESPONDENT : APPLICANT_2);
         templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData));
         templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43,
-            caseData.getConditionalOrder().getGrantedDate().plusDays(finalOrderOffsetDays).format(DATE_TIME_FORMATTER));
+            caseData.getConditionalOrder().getGrantedDate().plusDays(finalOrderOffsetDays).
+                format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         return templateVars;
     }
 }
