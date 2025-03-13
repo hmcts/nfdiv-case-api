@@ -119,7 +119,7 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
 
         if (caseData.getApplicant1().isRepresented()) {
             templateVars.put(SOLICITOR_FIRM,
-                caseData.getApplicant1().getSolicitor().getOrganisationPolicy().getOrganisation().getOrganisationName());
+                caseData.getApplicant1().getSolicitor().getPreferredFirmName());
         }
 
         return templateVars;

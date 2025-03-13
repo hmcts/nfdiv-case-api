@@ -134,7 +134,9 @@ public class DocmosisCommonContent {
         templateContent.put(APPLICANT_1_SOLICITOR_NAME, solicitorName(applicant1, applicant1Solicitor, languagePreference));
         templateContent.put(APPLICANT_2_SOLICITOR_NAME, solicitorName(applicant2, applicant2Solicitor, languagePreference));
         templateContent.put(SOLICITOR_NAME, isApplicantSolicitor ? applicant1Solicitor.getName() : applicant2Solicitor.getName());
-        templateContent.put(SOLICITOR_ADDRESS, isApplicantSolicitor ? applicant1Solicitor.getAddress() : applicant2Solicitor.getAddress());
+        templateContent.put(SOLICITOR_ADDRESS, isApplicantSolicitor
+            ? applicant1Solicitor.getFirmAndAddress()
+            : applicant2Solicitor.getFirmAndAddress());
         templateContent.put(
             SOLICITOR_REFERENCE,
             isApplicantSolicitor

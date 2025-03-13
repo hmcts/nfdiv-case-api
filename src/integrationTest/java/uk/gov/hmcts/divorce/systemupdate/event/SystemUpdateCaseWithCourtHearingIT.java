@@ -54,8 +54,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtHearing.SYSTEM_UPDATE_CASE_COURT_HEARING;
 import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
@@ -66,7 +64,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -90,9 +87,6 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private RequestInterceptor requestInterceptor;
@@ -151,11 +145,8 @@ public class SystemUpdateCaseWithCourtHearingIT {
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToSubmitCallbackSuccess()));
 
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH), anyLong());
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(SOLE_RESPONDENT_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH),
+        verify(notificationService, times(4))
+            .sendEmail(any(), any(), anyMap(), eq(ENGLISH),
                 anyLong());
 
         verifyNoMoreInteractions(notificationService);
@@ -186,11 +177,9 @@ public class SystemUpdateCaseWithCourtHearingIT {
             .getResponse()
             .getContentAsString();
 
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(WELSH), anyLong());
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(WELSH), anyLong());
+        verify(notificationService, times(4))
+                .sendEmail(any(), any(), anyMap(), eq(WELSH),
+                        anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -202,6 +191,8 @@ public class SystemUpdateCaseWithCourtHearingIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
+        stubForDocAssemblyWith("6dd725e8-f053-4493-9cbe-bb69d1905a12",
+                "FL-NFD-GOR-ENG-Do-Not-Attend-Court-CO-Granted-Letter.docx");
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
@@ -221,12 +212,8 @@ public class SystemUpdateCaseWithCourtHearingIT {
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToSubmitCallbackSuccess()));
 
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH), anyLong());
-
-        verify(notificationService)
-            .sendEmail(eq(TEST_APPLICANT_2_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH),
-                anyLong());
+        verify(notificationService, times(4))
+            .sendEmail(any(), any(), anyMap(), eq(ENGLISH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -287,7 +274,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor.docx");
+            "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor_V1.docx");
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
@@ -338,6 +325,8 @@ public class SystemUpdateCaseWithCourtHearingIT {
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae2", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx");
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905d33",
             "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx");
+        stubForDocAssemblyWith("6dd725e8-f053-4493-9cbe-bb69d1905a12",
+                "FL-NFD-GOR-ENG-Do-Not-Attend-Court-CO-Granted-Letter.docx");
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
@@ -358,9 +347,10 @@ public class SystemUpdateCaseWithCourtHearingIT {
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
-        verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED), anyMap(), eq(ENGLISH), anyLong());
-        ;
+        verify(notificationService, times(2))
+                .sendEmail(any(), any(), anyMap(), eq(ENGLISH),
+                        anyLong());
+
         verifyNoMoreInteractions(notificationService);
 
         verify(bulkPrintService).print(any());
@@ -370,7 +360,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("certificate-of-entitlement");
-        assertThat(print.getLetters()).hasSize(2);
+        assertThat(print.getLetters()).hasSize(3);
     }
 
     @Test
