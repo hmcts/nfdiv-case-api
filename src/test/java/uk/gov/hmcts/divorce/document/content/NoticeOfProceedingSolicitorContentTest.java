@@ -50,6 +50,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
@@ -61,6 +62,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigital
 public class NoticeOfProceedingSolicitorContentTest {
 
     private static final String ADDRESS = "line 1\ntown\npostcode";
+    private static final String ADDRESS_2 = "first line\ntown\npostcode";
     private static final LocalDate APPLICATION_ISSUE_DATE = LocalDate.of(2022, 3, 30);
     private static final LocalDate APPLICATION_REISSUE_DATE = LocalDate.of(2022, 4, 30);
 
@@ -112,7 +114,7 @@ public class NoticeOfProceedingSolicitorContentTest {
                 entry(APPLICANT_2_FIRST_NAME, "applicant_2_first_name"),
                 entry(APPLICANT_2_LAST_NAME, "test_last_name"),
                 entry(SOLICITOR_NAME, "The Solicitor"),
-                entry(SOLICITOR_ADDRESS, ADDRESS),
+                entry(SOLICITOR_ADDRESS, TEST_ORG_NAME + '\n' + ADDRESS),
                 entry(SOLICITOR_REFERENCE, "12345"),
                 entry(APPLICANT_SOLICITOR_LABEL, "Applicant's solicitor"),
                 entry(APPLICANT_SOLICITOR_REGISTERED, true),
@@ -160,7 +162,7 @@ public class NoticeOfProceedingSolicitorContentTest {
             entry(APPLICANT_2_FIRST_NAME, "applicant_2_first_name"),
             entry(APPLICANT_2_LAST_NAME, "test_last_name"),
             entry(SOLICITOR_NAME, "The Solicitor"),
-            entry(SOLICITOR_ADDRESS, ADDRESS),
+            entry(SOLICITOR_ADDRESS, TEST_ORG_NAME + '\n' + ADDRESS),
             entry(SOLICITOR_REFERENCE, "12345"),
             entry(APPLICANT_SOLICITOR_LABEL, "Applicant's solicitor"),
             entry(APPLICANT_SOLICITOR_REGISTERED, true),
@@ -215,7 +217,7 @@ public class NoticeOfProceedingSolicitorContentTest {
                 entry(APPLICANT_SOLICITOR_LABEL, "Applicants solicitor"),
                 entry(APPLICANT_SOLICITOR_REGISTERED, true),
                 entry(SOLICITOR_NAME, "The Solicitor"),
-                entry(SOLICITOR_ADDRESS, ADDRESS),
+                entry(SOLICITOR_ADDRESS, TEST_ORG_NAME + '\n' + ADDRESS),
                 entry(SOLICITOR_REFERENCE, "Not provided"),
                 entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
                 entry(APPLICANT_1_SOLICITOR_NAME, "The Solicitor"),
@@ -263,7 +265,7 @@ public class NoticeOfProceedingSolicitorContentTest {
                 entry(APPLICANT_2_FIRST_NAME, "applicant_2_first_name"),
                 entry(APPLICANT_2_LAST_NAME, "test_last_name"),
                 entry(SOLICITOR_NAME, "The Solicitor"),
-                entry(SOLICITOR_ADDRESS, ADDRESS),
+                entry(SOLICITOR_ADDRESS, TEST_ORG_NAME + '\n' + ADDRESS),
                 entry(SOLICITOR_REFERENCE, "98765"),
                 entry(APPLICANT_SOLICITOR_LABEL, "Applicant's solicitor"),
                 entry(APPLICANT_SOLICITOR_REGISTERED, true),
@@ -276,12 +278,13 @@ public class NoticeOfProceedingSolicitorContentTest {
     public void shouldMapTemplateContentForJudicialSeparation() {
         Applicant applicant1 = applicantRepresentedBySolicitor();
         applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
+        applicant1.getSolicitor().setAddress(ADDRESS);
         applicant1.setAddress(AddressGlobalUK.builder()
                 .country("UK")
                 .build());
 
         Applicant applicant2 = respondentWithDigitalSolicitor();
-        applicant2.getSolicitor().setAddress(ADDRESS);
+        applicant2.getSolicitor().setAddress(ADDRESS_2);
 
         applicant2.setAddress(AddressGlobalUK.builder()
                 .country("UK")
@@ -321,7 +324,7 @@ public class NoticeOfProceedingSolicitorContentTest {
                         entry(APPLICANT_SOLICITOR_LABEL, "Applicant's solicitor"),
                         entry(APPLICANT_SOLICITOR_REGISTERED, true),
                         entry(SOLICITOR_NAME, "The Solicitor"),
-                        entry(APPLICANT_2_SOLICITOR_ADDRESS, ADDRESS),
+                        entry(APPLICANT_2_SOLICITOR_ADDRESS, TEST_ORG_NAME + '\n' + ADDRESS_2),
                         entry(SOLICITOR_REFERENCE, "Not provided"),
                         entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
                         entry(APPLICANT_1_SOLICITOR_NAME, "The Solicitor"),
@@ -373,7 +376,7 @@ public class NoticeOfProceedingSolicitorContentTest {
                 entry(APPLICANT_SOLICITOR_LABEL, "Applicants solicitor"),
                 entry(APPLICANT_SOLICITOR_REGISTERED, true),
                 entry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
-                entry(SOLICITOR_ADDRESS, ADDRESS),
+                entry(SOLICITOR_ADDRESS, TEST_ORG_NAME + '\n' + ADDRESS),
                 entry(SOLICITOR_REFERENCE, "Not provided"),
                 entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, TEST_SOLICITOR_NAME),
                 entry(APPLICANT_1_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
@@ -423,14 +426,14 @@ public class NoticeOfProceedingSolicitorContentTest {
                         entry(APPLICANT_2_FIRST_NAME, "applicant_2_first_name"),
                         entry(APPLICANT_2_LAST_NAME, "test_last_name"),
                         entry(SOLICITOR_NAME, "The Solicitor"),
-                        entry(SOLICITOR_ADDRESS, ADDRESS),
+                        entry(SOLICITOR_ADDRESS, TEST_ORG_NAME + '\n' + ADDRESS),
                         entry(SOLICITOR_REFERENCE, "98765"),
                         entry(APPLICANT_SOLICITOR_LABEL, "Applicant's solicitor"),
                         entry(APPLICANT_SOLICITOR_REGISTERED, true),
                         entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
                         entry(IS_JOINT, true),
                         entry(IS_DIVORCE, true),
-                        entry(APPLICANT_2_SOLICITOR_ADDRESS, ADDRESS),
+                        entry(APPLICANT_2_SOLICITOR_ADDRESS, TEST_ORG_NAME + '\n' + ADDRESS),
                         entry(IS_APP1_REPRESENTED, true),
                         entry(ADDRESS_BASED_OVERSEAS, false));
     }

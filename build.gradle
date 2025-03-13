@@ -20,12 +20,12 @@ plugins {
   id 'idea'
   id 'pmd'
   id 'jacoco'
-  id 'org.owasp.dependencycheck' version '12.0.2'
+  id 'org.owasp.dependencycheck' version '12.1.0'
   id 'org.sonarqube' version '6.0.1.5171'
   id 'org.springframework.boot' version '3.3.5'
   id 'com.github.ben-manes.versions' version '0.52.0'
   id 'hmcts.ccd.sdk' version '5.5.16'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1573'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1612'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -59,7 +59,7 @@ sourceSets {
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(17)
+    languageVersion = JavaLanguageVersion.of(21)
   }
 }
 
@@ -189,7 +189,8 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/divorce/notification/GetAllTemplatesFromNotify.java',
   '**/uk/gov/hmcts/divorce/common/config/**',
   '**/uk/gov/hmcts/divorce/divorcecase/model/**',
-  '**/uk/gov/hmcts/divorce/divorcecase/tab/**'
+  '**/uk/gov/hmcts/divorce/divorcecase/tab/**',
+  '**/uk/gov/hmcts/divorce/systemupdate/event/SystemCorrectTtl.java'
 ]
 
 sonarqube {
@@ -218,8 +219,6 @@ dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
     //CVE-2020-23064
-    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.34'
-    //CVE-2023-5072
     dependency group: 'org.json', name: 'json', version: '20250107'
   }
 }
@@ -231,7 +230,7 @@ repositories {
 }
 
 def versions = [
-  jackson      : '2.18.2',
+  jackson      : '2.18.3',
   junit        : '5.11.4',
   junitPlatform: '1.11.4',
   lombok       : '1.18.36',
@@ -285,7 +284,7 @@ dependencies {
   implementation group: 'org.springframework.retry', name: 'spring-retry'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '4.1.5'
 
-  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.27'
+  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.28'
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '5.2.1-RELEASE'
   implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.9.0'
@@ -431,6 +430,7 @@ bootWithCCD {
     environment 'ROLE_ASSIGNMENT_URL', 'http://localhost:4096'
     environment 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
     environment 'XUI_MO_PORT', '3009'
+    environment 'CREATE_PAPER_CASE_MOCK_NOTIFICATION', 'true'
   }
 }
 
@@ -499,4 +499,3 @@ task fortifyScan(type: JavaExec) {
     classpath += sourceSets.test.runtimeClasspath
     jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
-

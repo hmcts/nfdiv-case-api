@@ -169,7 +169,10 @@ public enum ConfidentialDocumentsReceived implements HasLabel {
     SEPARATION_ORDER_REFUSAL_COVER_LETTER("Separation order refusal cover letter"),
 
     @JsonProperty("conditionalOrderRefusalCoverLetter")
-    CONDITIONAL_ORDER_REFUSAL_COVER_LETTER("Conditional order refusal cover letter");
+    CONDITIONAL_ORDER_REFUSAL_COVER_LETTER("Conditional order refusal cover letter"),
+
+    @JsonProperty("paperApplicationReceivedLetter")
+    PAPER_APPLICATION_RECEIVED_CONFIDENTIAL_LETTER("Paper Application received letter");
 
     private final String label;
 }

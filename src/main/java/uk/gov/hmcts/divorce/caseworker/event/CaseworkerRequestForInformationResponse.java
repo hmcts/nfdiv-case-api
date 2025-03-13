@@ -38,7 +38,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPaymen
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHWFDecision;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -70,8 +69,7 @@ public class CaseworkerRequestForInformationResponse implements CCDConfig<CaseDa
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_REQUEST_FOR_INFORMATION_RESPONSE)
-            .forStates(Draft,
-                AwaitingHWFDecision,
+            .forStates(AwaitingHWFDecision,
                 AwaitingResponseToHWFDecision,
                 AwaitingHWFEvidence,
                 AwaitingHWFPartPayment,

@@ -71,6 +71,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_FIRM_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 
 @ExtendWith(MockitoExtension.class)
@@ -147,7 +148,6 @@ class DocmosisCommonContentTest {
             TEST_CASE_ID,
             true,
             ENGLISH);
-
         assertThat(templateContent).isNotEmpty().hasSize(EXPECTED_SOLICITOR_ENTRY_SIZE)
             .contains(
                 entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT),
@@ -167,7 +167,7 @@ class DocmosisCommonContentTest {
                 entry(APPLICANT_1_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 entry(APPLICANT_2_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 entry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
-                entry(SOLICITOR_ADDRESS, TEST_SOLICITOR_ADDRESS),
+                entry(SOLICITOR_ADDRESS, TEST_SOLICITOR_FIRM_NAME + "\n" + TEST_SOLICITOR_ADDRESS),
                 entry(SOLICITOR_REFERENCE, TEST_REFERENCE));
     }
 
@@ -203,7 +203,7 @@ class DocmosisCommonContentTest {
                 entry(APPLICANT_1_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 entry(APPLICANT_2_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 entry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
-                entry(SOLICITOR_ADDRESS, TEST_SOLICITOR_ADDRESS),
+                entry(SOLICITOR_ADDRESS, TEST_SOLICITOR_FIRM_NAME + "\n" + TEST_SOLICITOR_ADDRESS),
                 entry(SOLICITOR_REFERENCE, TEST_REFERENCE));
     }
 
@@ -239,7 +239,7 @@ class DocmosisCommonContentTest {
                 entry(APPLICANT_1_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 entry(APPLICANT_2_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 entry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
-                entry(SOLICITOR_ADDRESS, TEST_SOLICITOR_ADDRESS),
+                entry(SOLICITOR_ADDRESS, TEST_SOLICITOR_FIRM_NAME + "\n" + TEST_SOLICITOR_ADDRESS),
                 entry(SOLICITOR_REFERENCE, TEST_REFERENCE));
     }
 
@@ -275,7 +275,7 @@ class DocmosisCommonContentTest {
                 entry(APPLICANT_1_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 entry(APPLICANT_2_SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 entry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
-                entry(SOLICITOR_ADDRESS, TEST_SOLICITOR_ADDRESS),
+                entry(SOLICITOR_ADDRESS, TEST_SOLICITOR_FIRM_NAME + "\n" + TEST_SOLICITOR_ADDRESS),
                 entry(SOLICITOR_REFERENCE, TEST_REFERENCE));
     }
 
@@ -321,6 +321,7 @@ class DocmosisCommonContentTest {
         Solicitor solicitor = Solicitor.builder()
             .name(TEST_SOLICITOR_NAME)
             .email(TEST_SOLICITOR_EMAIL)
+            .firmName(TEST_SOLICITOR_FIRM_NAME)
             .address(TEST_SOLICITOR_ADDRESS)
             .reference(TEST_REFERENCE)
             .build();
