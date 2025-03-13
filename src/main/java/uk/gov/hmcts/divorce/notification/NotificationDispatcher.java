@@ -150,7 +150,7 @@ public class NotificationDispatcher {
     public void sendRequestForInformationNotification(ApplicantNotification applicantNotification, CaseData caseData, Long caseId)
         throws NotificationTemplateException {
 
-        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getLatestRequest();
         if (APPLICANT.equals(requestForInformation.getRequestForInformationSoleParties())
             || APPLICANT1.equals(requestForInformation.getRequestForInformationJointParties())) {
             requestForInformationSendToApplicant1(applicantNotification, caseData, caseId);

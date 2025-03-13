@@ -46,7 +46,7 @@ public class RequestForInformationTemplateContent implements TemplateContent {
 
         final boolean isApplicant1 = applicant.equals(caseData.getApplicant1());
         final Applicant partner = isApplicant1 ? caseData.getApplicant2() : caseData.getApplicant1();
-        final RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
+        final RequestForInformation requestForInformation = caseData.getRequestForInformationList().getLatestRequest();
 
         Map<String, Object> templateContent;
         if (applicant.isRepresented()) {
@@ -68,7 +68,7 @@ public class RequestForInformationTemplateContent implements TemplateContent {
         templateContent.put(CASE_REFERENCE, caseId);
         templateContent.put(WEBFORM_URL, commonContent.getWebFormUrl(applicant.getLanguagePreference()));
         templateContent.put(REQUEST_FOR_INFORMATION_DETAILS, requestForInformation.getRequestForInformationDetails());
-        if (BOTH.equals(caseData.getRequestForInformationList().getRequestForInformation().getRequestForInformationJointParties())) {
+        if (BOTH.equals(caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationJointParties())) {
             templateContent.put(SENT_TO_BOTH_APPLICANTS, YES);
             templateContent.put(PARTNER, commonContent.getPartner(caseData, partner, applicant.getLanguagePreference()));
         } else {
