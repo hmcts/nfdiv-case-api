@@ -65,7 +65,7 @@ public class RequestForInformationNotification implements ApplicantNotification 
         log.info(REQUEST_FOR_INFORMATION_NOTIFICATION_TO_FOR_CASE_ID,
             caseData.getApplicationType().isSole() ? "applicant solicitor" : "applicant 1 solicitor", caseId);
 
-        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getLatestRequest();
 
         notificationService.sendEmail(
             caseData.getApplicant1().getSolicitor().getEmail(),
@@ -97,7 +97,7 @@ public class RequestForInformationNotification implements ApplicantNotification 
         log.info(REQUEST_FOR_INFORMATION_NOTIFICATION_TO_FOR_CASE_ID,
             caseData.getApplicationType().isSole() ? "applicant" : "applicant 1", caseId);
 
-        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getLatestRequest();
 
         EmailTemplateName emailTemplate = caseData.getApplicationType().isSole()
             ? REQUEST_FOR_INFORMATION_SOLE
@@ -132,7 +132,7 @@ public class RequestForInformationNotification implements ApplicantNotification 
     public void sendToApplicant2(CaseData caseData, Long caseId) {
         log.info(REQUEST_FOR_INFORMATION_NOTIFICATION_TO_FOR_CASE_ID, "applicant 2", caseId);
 
-        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getLatestRequest();
 
         notificationService.sendEmail(
             caseData.getApplicant2().getEmail(),
@@ -162,7 +162,7 @@ public class RequestForInformationNotification implements ApplicantNotification 
     public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
         log.info(REQUEST_FOR_INFORMATION_NOTIFICATION_TO_FOR_CASE_ID, "applicant 2 solicitor", caseId);
 
-        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getLatestRequest();
 
         notificationService.sendEmail(
             caseData.getApplicant2().getSolicitor().getEmail(),
@@ -192,7 +192,7 @@ public class RequestForInformationNotification implements ApplicantNotification 
     public void sendToOtherRecipient(final CaseData caseData, final Long caseId) {
         log.info(REQUEST_FOR_INFORMATION_NOTIFICATION_TO_FOR_CASE_ID, "other recipient", caseId);
 
-        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getLatestRequest();
 
         notificationService.sendEmail(
             requestForInformation.getRequestForInformationEmailAddress(),
@@ -249,7 +249,7 @@ public class RequestForInformationNotification implements ApplicantNotification 
         templateVars.put(REQUEST_FOR_INFORMATION_DETAILS, requestForInformationDetails);
         templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
 
-        if (BOTH.equals(caseData.getRequestForInformationList().getRequestForInformation().getRequestForInformationJointParties())) {
+        if (BOTH.equals(caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationJointParties())) {
             templateVars.put(SENT_TO_BOTH_APPLICANTS, YES);
         } else {
             suppressJointTemplateText(templateVars);

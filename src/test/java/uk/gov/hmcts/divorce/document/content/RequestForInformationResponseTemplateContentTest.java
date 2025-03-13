@@ -6,9 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
-import uk.gov.hmcts.divorce.document.content.templatecontent.RequestForInformationTemplateContent;
+import uk.gov.hmcts.divorce.document.content.templatecontent.RequestForInformationResponseTemplateContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
@@ -21,9 +20,11 @@ import static org.powermock.api.mockito.PowerMockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT1;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_LETTER_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_RESPONSE_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_CY;
@@ -57,7 +58,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PH
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.REQUEST_FOR_INFORMATION_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_OR_APPLICANT2;
@@ -69,20 +69,16 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SENT_TO_BOTH_APPLICANTS;
-import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_CY;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_REFERENCE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_TEXT;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.WEBFORM_TEST_URL;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.WEBFORM_TEST_URL_CY;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicSolicitorTemplateContent;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getOfflineRequestForInformationCaseDetails;
 
 @ExtendWith(MockitoExtension.class)
-public class RequestForInformationTemplateContentTest {
+public class RequestForInformationResponseTemplateContentTest {
 
     @Mock
     private DocmosisCommonContent docmosisCommonContent;
@@ -91,16 +87,15 @@ public class RequestForInformationTemplateContentTest {
     private CommonContent commonContent;
 
     @InjectMocks
-    private RequestForInformationTemplateContent requestForInformationTemplateContent;
+    private RequestForInformationResponseTemplateContent requestForInformationResponseTemplateContent;
 
     @Test
     public void shouldMapTemplateContentForApplicant1() {
-        CaseData caseData = getOfflineRequestForInformationCaseDetails(RequestForInformationSoleParties.APPLICANT, false, false).getData();
+        CaseData caseData = getOfflineRequestForInformationCaseDetails(APPLICANT1, false, false).getData();
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
-        when(commonContent.getWebFormUrl(ENGLISH)).thenReturn(WEBFORM_TEST_URL);
 
-        final Map<String, Object> templateContent = requestForInformationTemplateContent.getTemplateContent(caseData,
+        final Map<String, Object> templateContent = requestForInformationResponseTemplateContent.getTemplateContent(caseData,
             TEST_CASE_ID,
             caseData.getApplicant1());
 
@@ -113,8 +108,6 @@ public class RequestForInformationTemplateContentTest {
             entry(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck()),
             entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
-            entry(WEBFORM_URL, WEBFORM_TEST_URL),
-            entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
             entry(SENT_TO_BOTH_APPLICANTS, NO),
             entry(PARTNER, "")
         );
@@ -122,13 +115,11 @@ public class RequestForInformationTemplateContentTest {
 
     @Test
     public void shouldMapTemplateContentForApplicant2() {
-        CaseData caseData =
-            getOfflineRequestForInformationCaseDetails(RequestForInformationJointParties.APPLICANT2, false, false).getData();
+        CaseData caseData = getOfflineRequestForInformationCaseDetails(APPLICANT2, false, false).getData();
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
-        when(commonContent.getWebFormUrl(ENGLISH)).thenReturn(WEBFORM_TEST_URL);
 
-        final Map<String, Object> templateContent = requestForInformationTemplateContent.getTemplateContent(caseData,
+        final Map<String, Object> templateContent = requestForInformationResponseTemplateContent.getTemplateContent(caseData,
             TEST_CASE_ID,
             caseData.getApplicant2());
 
@@ -141,8 +132,6 @@ public class RequestForInformationTemplateContentTest {
             entry(RECIPIENT_ADDRESS, caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck()),
             entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
-            entry(WEBFORM_URL, WEBFORM_TEST_URL),
-            entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
             entry(SENT_TO_BOTH_APPLICANTS, NO),
             entry(PARTNER, "")
         );
@@ -154,9 +143,8 @@ public class RequestForInformationTemplateContentTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(WELSH)).thenReturn(getBasicDocmosisTemplateContent(WELSH));
-        when(commonContent.getWebFormUrl(WELSH)).thenReturn(WEBFORM_TEST_URL_CY);
 
-        final Map<String, Object> templateContent = requestForInformationTemplateContent.getTemplateContent(caseData,
+        final Map<String, Object> templateContent = requestForInformationResponseTemplateContent.getTemplateContent(caseData,
             TEST_CASE_ID,
             caseData.getApplicant1());
 
@@ -169,8 +157,6 @@ public class RequestForInformationTemplateContentTest {
             entry(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck()),
             entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
-            entry(WEBFORM_URL, WEBFORM_TEST_URL_CY),
-            entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
             entry(SENT_TO_BOTH_APPLICANTS, NO),
             entry(PARTNER, "")
         );
@@ -181,10 +167,9 @@ public class RequestForInformationTemplateContentTest {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(BOTH, false, false).getData();
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
-        when(commonContent.getWebFormUrl(ENGLISH)).thenReturn(WEBFORM_TEST_URL);
         when(commonContent.getPartner(any(), any(), any())).thenReturn(WIFE);
 
-        final Map<String, Object> templateContent = requestForInformationTemplateContent.getTemplateContent(caseData,
+        final Map<String, Object> templateContent = requestForInformationResponseTemplateContent.getTemplateContent(caseData,
             TEST_CASE_ID,
             caseData.getApplicant1());
 
@@ -197,8 +182,6 @@ public class RequestForInformationTemplateContentTest {
             entry(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck()),
             entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
-            entry(WEBFORM_URL, WEBFORM_TEST_URL),
-            entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
             entry(SENT_TO_BOTH_APPLICANTS, CommonContent.YES),
             entry(PARTNER, WIFE)
         );
@@ -210,10 +193,9 @@ public class RequestForInformationTemplateContentTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(WELSH)).thenReturn(getBasicDocmosisTemplateContent(WELSH));
-        when(commonContent.getWebFormUrl(WELSH)).thenReturn(WEBFORM_TEST_URL_CY);
         when(commonContent.getPartner(any(), any(), any())).thenReturn(WIFE_CY);
 
-        final Map<String, Object> templateContent = requestForInformationTemplateContent.getTemplateContent(caseData,
+        final Map<String, Object> templateContent = requestForInformationResponseTemplateContent.getTemplateContent(caseData,
             TEST_CASE_ID,
             caseData.getApplicant1());
 
@@ -226,8 +208,6 @@ public class RequestForInformationTemplateContentTest {
             entry(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck()),
             entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
-            entry(WEBFORM_URL, WEBFORM_TEST_URL_CY),
-            entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
             entry(SENT_TO_BOTH_APPLICANTS, CommonContent.YES),
             entry(PARTNER, WIFE_CY)
         );
@@ -238,10 +218,9 @@ public class RequestForInformationTemplateContentTest {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(BOTH, false, false).getData();
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
-        when(commonContent.getWebFormUrl(ENGLISH)).thenReturn(WEBFORM_TEST_URL);
         when(commonContent.getPartner(any(), any(), any())).thenReturn(HUSBAND);
 
-        final Map<String, Object> templateContent = requestForInformationTemplateContent.getTemplateContent(caseData,
+        final Map<String, Object> templateContent = requestForInformationResponseTemplateContent.getTemplateContent(caseData,
             TEST_CASE_ID,
             caseData.getApplicant2());
 
@@ -254,8 +233,6 @@ public class RequestForInformationTemplateContentTest {
             entry(RECIPIENT_ADDRESS, caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck()),
             entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
-            entry(WEBFORM_URL, WEBFORM_TEST_URL),
-            entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
             entry(SENT_TO_BOTH_APPLICANTS, CommonContent.YES),
             entry(PARTNER, HUSBAND)
         );
@@ -267,10 +244,9 @@ public class RequestForInformationTemplateContentTest {
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(WELSH)).thenReturn(getBasicDocmosisTemplateContent(WELSH));
-        when(commonContent.getWebFormUrl(WELSH)).thenReturn(WEBFORM_TEST_URL_CY);
         when(commonContent.getPartner(any(), any(), any())).thenReturn(HUSBAND_CY);
 
-        final Map<String, Object> templateContent = requestForInformationTemplateContent.getTemplateContent(caseData,
+        final Map<String, Object> templateContent = requestForInformationResponseTemplateContent.getTemplateContent(caseData,
             TEST_CASE_ID,
             caseData.getApplicant2());
 
@@ -283,8 +259,6 @@ public class RequestForInformationTemplateContentTest {
             entry(RECIPIENT_ADDRESS, caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck()),
             entry(DATE, LocalDate.now()),
             entry(CASE_REFERENCE, TEST_CASE_ID),
-            entry(WEBFORM_URL, WEBFORM_TEST_URL_CY),
-            entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
             entry(SENT_TO_BOTH_APPLICANTS, CommonContent.YES),
             entry(PARTNER, HUSBAND_CY)
         );
@@ -297,9 +271,8 @@ public class RequestForInformationTemplateContentTest {
 
         when(docmosisCommonContent.getBasicSolicitorTemplateContent(caseData, TEST_CASE_ID, true, ENGLISH))
             .thenReturn(getBasicSolicitorTemplateContent(caseData, true, ENGLISH));
-        when(commonContent.getWebFormUrl(ENGLISH)).thenReturn(WEBFORM_TEST_URL);
 
-        final Map<String, Object> templateContent = requestForInformationTemplateContent.getTemplateContent(caseData,
+        final Map<String, Object> templateContent = requestForInformationResponseTemplateContent.getTemplateContent(caseData,
             TEST_CASE_ID,
             caseData.getApplicant1());
 
@@ -324,8 +297,6 @@ public class RequestForInformationTemplateContentTest {
             entry(APPLICANT_2_SOLICITOR_NAME, NOT_REPRESENTED),
             entry(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName()),
             entry(SOLICITOR_REFERENCE, TEST_REFERENCE),
-            entry(WEBFORM_URL, WEBFORM_TEST_URL),
-            entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
             entry(SENT_TO_BOTH_APPLICANTS, NO),
             entry(PARTNER, "")
         );
@@ -339,9 +310,8 @@ public class RequestForInformationTemplateContentTest {
 
         when(docmosisCommonContent.getBasicSolicitorTemplateContent(caseData, TEST_CASE_ID, true, WELSH))
             .thenReturn(getBasicSolicitorTemplateContent(caseData, true, WELSH));
-        when(commonContent.getWebFormUrl(WELSH)).thenReturn(WEBFORM_TEST_URL_CY);
 
-        final Map<String, Object> templateContent = requestForInformationTemplateContent.getTemplateContent(caseData,
+        final Map<String, Object> templateContent = requestForInformationResponseTemplateContent.getTemplateContent(caseData,
             TEST_CASE_ID,
             caseData.getApplicant1());
 
@@ -366,8 +336,6 @@ public class RequestForInformationTemplateContentTest {
             entry(APPLICANT_2_SOLICITOR_NAME, NOT_REPRESENTED_CY),
             entry(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName()),
             entry(SOLICITOR_REFERENCE, TEST_REFERENCE),
-            entry(WEBFORM_URL, WEBFORM_TEST_URL_CY),
-            entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
             entry(SENT_TO_BOTH_APPLICANTS, NO),
             entry(PARTNER, "")
         );
@@ -375,13 +343,12 @@ public class RequestForInformationTemplateContentTest {
 
     @Test
     public void shouldMapTemplateContentForApplicant2Solicitor() {
-        CaseData caseData = getOfflineRequestForInformationCaseDetails(RequestForInformationJointParties.APPLICANT2, false, true).getData();
+        CaseData caseData = getOfflineRequestForInformationCaseDetails(APPLICANT2, false, true).getData();
 
         when(docmosisCommonContent.getBasicSolicitorTemplateContent(caseData, TEST_CASE_ID, false, ENGLISH))
             .thenReturn(getBasicSolicitorTemplateContent(caseData, false, ENGLISH));
-        when(commonContent.getWebFormUrl(ENGLISH)).thenReturn(WEBFORM_TEST_URL);
 
-        final Map<String, Object> templateContent = requestForInformationTemplateContent.getTemplateContent(caseData,
+        final Map<String, Object> templateContent = requestForInformationResponseTemplateContent.getTemplateContent(caseData,
             TEST_CASE_ID,
             caseData.getApplicant2());
 
@@ -406,8 +373,6 @@ public class RequestForInformationTemplateContentTest {
             entry(APPLICANT_2_SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName()),
             entry(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName()),
             entry(SOLICITOR_REFERENCE, NOT_PROVIDED),
-            entry(WEBFORM_URL, WEBFORM_TEST_URL),
-            entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
             entry(SENT_TO_BOTH_APPLICANTS, NO),
             entry(PARTNER, "")
         );
@@ -415,14 +380,13 @@ public class RequestForInformationTemplateContentTest {
 
     @Test
     public void shouldMapTemplateContentForApplicant2SolicitorWelsh() {
-        CaseData caseData = getOfflineRequestForInformationCaseDetails(RequestForInformationJointParties.APPLICANT2, false, true).getData();
+        CaseData caseData = getOfflineRequestForInformationCaseDetails(APPLICANT2, false, true).getData();
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
 
         when(docmosisCommonContent.getBasicSolicitorTemplateContent(caseData, TEST_CASE_ID, false, WELSH))
             .thenReturn(getBasicSolicitorTemplateContent(caseData, false, WELSH));
-        when(commonContent.getWebFormUrl(WELSH)).thenReturn(WEBFORM_TEST_URL_CY);
 
-        final Map<String, Object> templateContent = requestForInformationTemplateContent.getTemplateContent(caseData,
+        final Map<String, Object> templateContent = requestForInformationResponseTemplateContent.getTemplateContent(caseData,
             TEST_CASE_ID,
             caseData.getApplicant2());
 
@@ -447,8 +411,6 @@ public class RequestForInformationTemplateContentTest {
             entry(APPLICANT_2_SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName()),
             entry(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName()),
             entry(SOLICITOR_REFERENCE, NOT_PROVIDED_CY),
-            entry(WEBFORM_URL, WEBFORM_TEST_URL_CY),
-            entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
             entry(SENT_TO_BOTH_APPLICANTS, NO),
             entry(PARTNER, "")
         );
@@ -461,11 +423,10 @@ public class RequestForInformationTemplateContentTest {
 
         when(docmosisCommonContent.getBasicSolicitorTemplateContent(caseData, TEST_CASE_ID, true, ENGLISH))
             .thenReturn(getBasicSolicitorTemplateContent(caseData, true, ENGLISH));
-        when(commonContent.getWebFormUrl(ENGLISH)).thenReturn(WEBFORM_TEST_URL);
         when(commonContent.getPartner(any(), any(), any())).thenReturn(HUSBAND);
 
 
-        final Map<String, Object> templateContent = requestForInformationTemplateContent.getTemplateContent(caseData,
+        final Map<String, Object> templateContent = requestForInformationResponseTemplateContent.getTemplateContent(caseData,
             TEST_CASE_ID,
             caseData.getApplicant1());
 
@@ -490,8 +451,6 @@ public class RequestForInformationTemplateContentTest {
             entry(APPLICANT_2_SOLICITOR_NAME, NOT_REPRESENTED),
             entry(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName()),
             entry(SOLICITOR_REFERENCE, TEST_REFERENCE),
-            entry(WEBFORM_URL, WEBFORM_TEST_URL),
-            entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
             entry(SENT_TO_BOTH_APPLICANTS, CommonContent.YES),
             entry(PARTNER, HUSBAND)
         );
@@ -505,10 +464,9 @@ public class RequestForInformationTemplateContentTest {
 
         when(docmosisCommonContent.getBasicSolicitorTemplateContent(caseData, TEST_CASE_ID, true, WELSH))
             .thenReturn(getBasicSolicitorTemplateContent(caseData, true, WELSH));
-        when(commonContent.getWebFormUrl(WELSH)).thenReturn(WEBFORM_TEST_URL_CY);
         when(commonContent.getPartner(any(), any(), any())).thenReturn(HUSBAND_CY);
 
-        final Map<String, Object> templateContent = requestForInformationTemplateContent.getTemplateContent(caseData,
+        final Map<String, Object> templateContent = requestForInformationResponseTemplateContent.getTemplateContent(caseData,
             TEST_CASE_ID,
             caseData.getApplicant1());
 
@@ -533,8 +491,6 @@ public class RequestForInformationTemplateContentTest {
             entry(APPLICANT_2_SOLICITOR_NAME, NOT_REPRESENTED_CY),
             entry(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName()),
             entry(SOLICITOR_REFERENCE, TEST_REFERENCE),
-            entry(WEBFORM_URL, WEBFORM_TEST_URL_CY),
-            entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
             entry(SENT_TO_BOTH_APPLICANTS, CommonContent.YES),
             entry(PARTNER, HUSBAND_CY)
         );
@@ -546,10 +502,9 @@ public class RequestForInformationTemplateContentTest {
 
         when(docmosisCommonContent.getBasicSolicitorTemplateContent(caseData, TEST_CASE_ID, false, ENGLISH))
             .thenReturn(getBasicSolicitorTemplateContent(caseData, false, ENGLISH));
-        when(commonContent.getWebFormUrl(ENGLISH)).thenReturn(WEBFORM_TEST_URL);
         when(commonContent.getPartner(any(), any(), any())).thenReturn(WIFE);
 
-        final Map<String, Object> templateContent = requestForInformationTemplateContent.getTemplateContent(caseData,
+        final Map<String, Object> templateContent = requestForInformationResponseTemplateContent.getTemplateContent(caseData,
             TEST_CASE_ID,
             caseData.getApplicant2());
 
@@ -574,8 +529,6 @@ public class RequestForInformationTemplateContentTest {
             entry(APPLICANT_2_SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName()),
             entry(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName()),
             entry(SOLICITOR_REFERENCE, NOT_PROVIDED),
-            entry(WEBFORM_URL, WEBFORM_TEST_URL),
-            entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
             entry(SENT_TO_BOTH_APPLICANTS, CommonContent.YES),
             entry(PARTNER, WIFE)
         );
@@ -588,10 +541,9 @@ public class RequestForInformationTemplateContentTest {
 
         when(docmosisCommonContent.getBasicSolicitorTemplateContent(caseData, TEST_CASE_ID, false, WELSH))
             .thenReturn(getBasicSolicitorTemplateContent(caseData, false, WELSH));
-        when(commonContent.getWebFormUrl(WELSH)).thenReturn(WEBFORM_TEST_URL_CY);
         when(commonContent.getPartner(any(), any(), any())).thenReturn(WIFE_CY);
 
-        final Map<String, Object> templateContent = requestForInformationTemplateContent.getTemplateContent(caseData,
+        final Map<String, Object> templateContent = requestForInformationResponseTemplateContent.getTemplateContent(caseData,
             TEST_CASE_ID,
             caseData.getApplicant2());
 
@@ -616,8 +568,6 @@ public class RequestForInformationTemplateContentTest {
             entry(APPLICANT_2_SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName()),
             entry(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName()),
             entry(SOLICITOR_REFERENCE, NOT_PROVIDED_CY),
-            entry(WEBFORM_URL, WEBFORM_TEST_URL_CY),
-            entry(REQUEST_FOR_INFORMATION_DETAILS, TEST_TEXT),
             entry(SENT_TO_BOTH_APPLICANTS, CommonContent.YES),
             entry(PARTNER, WIFE_CY)
         );
@@ -625,9 +575,9 @@ public class RequestForInformationTemplateContentTest {
 
     @Test
     public void shouldGetSupportedTemplates() {
-        assertThat(requestForInformationTemplateContent.getSupportedTemplates()).contains(
-            REQUEST_FOR_INFORMATION_LETTER_TEMPLATE_ID,
-            REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_TEMPLATE_ID
+        assertThat(requestForInformationResponseTemplateContent.getSupportedTemplates()).contains(
+            REQUEST_FOR_INFORMATION_RESPONSE_LETTER_TEMPLATE_ID,
+            REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER_TEMPLATE_ID
         );
     }
 }

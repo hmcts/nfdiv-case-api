@@ -204,4 +204,11 @@ public class RequestForInformationResponse {
     public boolean isOffline() {
         return YES.equals(this.getRequestForInformationResponseOffline());
     }
+
+    @JsonIgnore
+    public boolean areAllDocsUploaded() {
+        return this.isOffline()
+            ? YES.equals(this.getRfiOfflineResponseAllDocumentsUploaded())
+            : !YES.equals(this.getRequestForInformationResponseCannotUploadDocs());
+    }
 }
