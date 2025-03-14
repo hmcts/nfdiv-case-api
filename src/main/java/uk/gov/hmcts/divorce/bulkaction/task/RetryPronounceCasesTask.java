@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceiv
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class RetryPronounceCasesTask implements BulkCaseTask {
 
     final EnumSet<State> awaitingPronouncement = EnumSet.of(
@@ -29,14 +31,11 @@ public class RetryPronounceCasesTask implements BulkCaseTask {
 
     final EnumSet<State> postStates = EnumSet.noneOf(State.class);
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private BulkCaseTaskUtil bulkCaseTaskUtil;
+    private final BulkCaseTaskUtil bulkCaseTaskUtil;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
     @Override
     public CaseDetails<BulkActionCaseData, BulkActionState> apply(final CaseDetails<BulkActionCaseData, BulkActionState> details) {

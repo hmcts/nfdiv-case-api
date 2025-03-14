@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,13 +23,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerRetryPronounceList implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
     public static final String CASEWORKER_RETRY_PRONOUNCE_LIST = "caseworker-retry-pronounce-list";
     private static final String RETRY_PRONOUNCE_LIST = "Retry Pronounce list";
 
-    @Autowired
-    private CasePronouncementService casePronouncementService;
+    private final CasePronouncementService casePronouncementService;
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {

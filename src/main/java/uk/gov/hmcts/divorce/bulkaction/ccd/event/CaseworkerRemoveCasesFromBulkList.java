@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,15 +32,14 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validat
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
     public static final String CASEWORKER_REMOVE_CASES_BULK_LIST = "caseworker-remove-cases-bulk-list";
 
-    @Autowired
-    private CaseRemovalService caseRemovalService;
+    private final CaseRemovalService caseRemovalService;
 
-    @Autowired
-    private PronouncementListDocService pronouncementListDocService;
+    private final PronouncementListDocService pronouncementListDocService;
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {

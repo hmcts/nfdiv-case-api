@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.task;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,25 +19,20 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTE
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ProcessFailedToUnlinkBulkCaseTask implements BulkCaseTask {
 
-    @Autowired
-    private BulkTriggerService bulkTriggerService;
+    private final BulkTriggerService bulkTriggerService;
 
-    @Autowired
-    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+    private final BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
-    @Autowired
-    private BulkCaseTaskUtil bulkCaseTaskUtil;
+    private final BulkCaseTaskUtil bulkCaseTaskUtil;
 
     @Override
     public CaseDetails<BulkActionCaseData, BulkActionState> apply(final CaseDetails<BulkActionCaseData, BulkActionState> details) {

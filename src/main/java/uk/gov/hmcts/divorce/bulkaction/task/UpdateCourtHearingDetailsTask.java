@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,16 +15,14 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtH
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class UpdateCourtHearingDetailsTask implements BulkCaseTask {
 
-    @Autowired
-    private BulkCaseTaskUtil bulkCaseTaskUtil;
+    private final BulkCaseTaskUtil bulkCaseTaskUtil;
 
-    @Autowired
-    protected AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    protected IdamService idamService;
+    private final IdamService idamService;
 
     @Override
     public CaseDetails<BulkActionCaseData, BulkActionState> apply(final CaseDetails<BulkActionCaseData, BulkActionState> details) {
