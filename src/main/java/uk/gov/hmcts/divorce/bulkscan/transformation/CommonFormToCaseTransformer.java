@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.bulkscan.transformation;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLIC
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CommonFormToCaseTransformer {
 
     public static final String OCR_FIELD_VALUE_BOTH = "both";
@@ -32,8 +34,7 @@ public class CommonFormToCaseTransformer {
     public static final String OCR_FIELD_VALUE_YES = "yes";
     public static final String OCR_FIELD_VALUE_NO = "no";
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     public List<String> verifyFields(TransformationDetails transformationDetails, List<String> transformationWarnings) {
 

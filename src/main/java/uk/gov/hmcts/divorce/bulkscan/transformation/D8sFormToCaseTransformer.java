@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.bulkscan.transformation;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.OcrDataField;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
@@ -18,29 +18,23 @@ import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDIC
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 @SuppressWarnings({"PMD.PreserveStackTrace"})
 public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
 
-    @Autowired
-    private Applicant1Transformer applicant1Transformer;
+    private final Applicant1Transformer applicant1Transformer;
 
-    @Autowired
-    private Applicant2Transformer applicant2Transformer;
+    private final Applicant2Transformer applicant2Transformer;
 
-    @Autowired
-    private ApplicationTransformer applicationTransformer;
+    private final ApplicationTransformer applicationTransformer;
 
-    @Autowired
-    private D8SPrayerTransformer d8SPrayerTransformer;
+    private final D8SPrayerTransformer d8SPrayerTransformer;
 
-    @Autowired
-    private CommonFormToCaseTransformer commonFormToCaseTransformer;
+    private final CommonFormToCaseTransformer commonFormToCaseTransformer;
 
-    @Autowired
-    private MarriageDetailsTransformer marriageDetailsTransformer;
+    private final MarriageDetailsTransformer marriageDetailsTransformer;
 
-    @Autowired
-    private PaperFormDetailsTransformer paperFormDetailsTransformer;
+    private final PaperFormDetailsTransformer paperFormDetailsTransformer;
 
     @Override
     protected Map<String, Object> runFormSpecificTransformation(
