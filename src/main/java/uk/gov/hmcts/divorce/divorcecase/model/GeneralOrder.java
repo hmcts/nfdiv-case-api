@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 
 import java.time.LocalDate;
@@ -78,4 +79,16 @@ public class GeneralOrder {
         access = {CaseworkerAccessOnlyAccess.class}
     )
     private Document generalOrderDraft;
+
+    @CCD(
+        label = "General Order Scanned Draft",
+        access = {CaseworkerAccessOnlyAccess.class}
+    )
+    private ScannedDocument generalOrderScannedDraft;
+
+    @CCD(
+        label = "Select a scanned order or generate a document?",
+        access = {CaseworkerAccessOnlyAccess.class}
+    )
+    private ScannedGeneralOrderOrGeneratedGeneralOrder scannedGeneralOrderOrGeneratedGeneralOrder;
 }
