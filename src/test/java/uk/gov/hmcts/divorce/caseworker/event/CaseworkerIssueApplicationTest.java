@@ -4,11 +4,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
@@ -19,6 +22,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
+import uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -27,9 +32,11 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -37,6 +44,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
@@ -81,6 +90,94 @@ class CaseworkerIssueApplicationTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(CASEWORKER_ISSUE_APPLICATION);
+    }
+
+    @Test
+    void shouldSetCaseBeingIssuedWithoutAddressWhenRespondentAddressIsNull() {
+        final var caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant2(Applicant.builder().address(null).build())
+            .build();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        AddressGlobalUK address = caseData.getApplicant2().getAddress();
+
+        MockedStatic<AddressUtil> classMock = mockStatic(AddressUtil.class);
+        classMock.when(() -> AddressUtil.getPostalAddress(address)).thenReturn(null);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToStart(details);
+
+        assertThat(response.getData().getApplication().getBeingIssuedWithoutAddress()).isEqualTo(YES);
+
+        classMock.close();
+    }
+
+    @Test
+    void shouldSetCaseBeingIssuedWithoutAddressWhenRespondentAddressIsBlank() {
+        final var caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant2(Applicant.builder().address(AddressGlobalUK.builder().addressLine1("").build()).build())
+            .build();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        AddressGlobalUK address = caseData.getApplicant2().getAddress();
+
+        MockedStatic<AddressUtil> classMock = mockStatic(AddressUtil.class);
+        classMock.when(() -> AddressUtil.getPostalAddress(address)).thenReturn("");
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToStart(details);
+
+        assertThat(response.getData().getApplication().getBeingIssuedWithoutAddress()).isEqualTo(YES);
+
+        classMock.close();
+    }
+
+    @Test
+    void shouldNotSetCaseBeingIssuedWithoutAddressWhenRespondentAddressIsNotBlank() {
+        final var caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant2(Applicant.builder().address(AddressGlobalUK.builder().addressLine1("Test").build()).build())
+            .build();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        AddressGlobalUK address = caseData.getApplicant2().getAddress();
+
+        MockedStatic<AddressUtil> classMock = mockStatic(AddressUtil.class);
+        classMock.when(() -> AddressUtil.getPostalAddress(address)).thenReturn("Test Address");
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToStart(details);
+
+        assertThat(response.getData().getApplication().getBeingIssuedWithoutAddress()).isNull();
+
+        classMock.close();
+    }
+
+    @Test
+    void shouldNotSetCaseBeingIssuedWithoutAddressForJointApplication() {
+        final var caseData = CaseData.builder()
+            .applicationType(JOINT_APPLICATION)
+            .applicant2(Applicant.builder().address(null).build())
+            .build();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        AddressGlobalUK address = caseData.getApplicant2().getAddress();
+
+        MockedStatic<AddressUtil> classMock = mockStatic(AddressUtil.class);
+        classMock.when(() -> AddressUtil.getPostalAddress(address)).thenReturn(null);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToStart(details);
+
+        assertThat(response.getData().getApplication().getBeingIssuedWithoutAddress()).isNull();
+
+        classMock.close();
     }
 
     @Test
@@ -284,6 +381,30 @@ class CaseworkerIssueApplicationTest {
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
+    }
+
+    void shouldSetBeingIssuedWithoutAddressFlagToNullInAboutToSubmit() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.getApplication().setBeingIssuedWithoutAddress(YES);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(Submitted);
+
+        final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
+        expectedDetails.setData(caseData);
+        expectedDetails.setState(Submitted);
+
+        MockedStatic<ApplicationValidation> classMock = Mockito.mockStatic(ApplicationValidation.class);
+        classMock.when(() -> ApplicationValidation.validateIssue(caseData)).thenReturn(Collections.emptyList());
+
+        when(issueApplicationService.issueApplication(caseDetails)).thenReturn(expectedDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(
+            expectedDetails, caseDetails);
+
+        assertThat(response.getData().getApplication().getBeingIssuedWithoutAddress()).isNull();
+
+        classMock.close();
     }
 
     private CaseData caseDataWithAllMandatoryFields() {
