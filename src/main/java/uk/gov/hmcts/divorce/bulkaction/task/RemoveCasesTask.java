@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.task;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -17,19 +17,16 @@ import java.util.List;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 
 @Component
+@RequiredArgsConstructor
 public class RemoveCasesTask implements BulkCaseTask {
 
-    @Autowired
-    private BulkTriggerService bulkTriggerService;
+    private final BulkTriggerService bulkTriggerService;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+    private final BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @Override
     public CaseDetails<BulkActionCaseData, BulkActionState> apply(final CaseDetails<BulkActionCaseData, BulkActionState> details) {

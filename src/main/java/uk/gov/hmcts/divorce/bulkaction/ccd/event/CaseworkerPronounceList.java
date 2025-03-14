@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -33,15 +33,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
     public static final String CASEWORKER_PRONOUNCE_LIST = "caseworker-pronounce-list";
 
-    @Autowired
-    private CasePronouncementService casePronouncementService;
+    private final CasePronouncementService casePronouncementService;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {

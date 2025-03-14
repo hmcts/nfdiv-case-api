@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.bulkscan.transformation;
 
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.exception.UnsupportedFormTypeException;
 
@@ -12,13 +12,12 @@ import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType.D8;
 import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType.D8S;
 
 @Component
+@RequiredArgsConstructor
 public class BulkScanFormTransformerFactory {
 
-    @Autowired
-    private D8FormToCaseTransformer d8FormToCaseTransformer;
+    private final D8FormToCaseTransformer d8FormToCaseTransformer;
 
-    @Autowired
-    private D8sFormToCaseTransformer d8SFormToCaseTransformer;
+    private final D8sFormToCaseTransformer d8SFormToCaseTransformer;
 
     private static final Map<String, BulkScanFormTransformer> bulkScanFormTransformerMap = new HashMap<>();
 
