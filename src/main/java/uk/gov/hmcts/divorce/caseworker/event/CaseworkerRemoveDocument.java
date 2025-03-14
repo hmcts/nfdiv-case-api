@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -13,10 +12,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
-import uk.gov.hmcts.divorce.divorcecase.model.RfiResponseDocWithRfiIndex;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentRemovalService;
@@ -28,13 +24,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.REQUEST_FOR_INFORMATION_RESPONSE_DOC;
 
 @RequiredArgsConstructor
 @Component
@@ -44,8 +38,6 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
     private final DocumentRemovalService documentRemovalService;
 
     public static final String CASEWORKER_REMOVE_DOCUMENT = "caseworker-remove-document";
-
-    public static final String RFI_DOCUMENT_REMOVED_NOTICE = "** Document Removed **\n\n";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -122,27 +114,20 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
             currentCaseData.getDocuments().getDocumentsUploaded()
         ));
 
-        List<ListValue<DivorceDocument>> rfiDocumentsToRemove = new ArrayList<>(findOnlineRfiDocumentsForRemoval(
+        divorceDocsToRemove.addAll(findDocumentsForRemoval(
             beforeCaseData.getRequestForInformationList().getRfiOnlineResponseDocuments(),
             currentCaseData.getRequestForInformationList().getRfiOnlineResponseDocuments()
         ));
 
-        List<ListValue<DivorceDocument>> rfiOfflineDocumentsToRemove = new ArrayList<>();
-        findOfflineRfiDocumentsForRemoval(divorceDocsToRemove, rfiOfflineDocumentsToRemove);
-        if (!rfiOfflineDocumentsToRemove.isEmpty()) {
-            rfiDocumentsToRemove.addAll(rfiOfflineDocumentsToRemove);
-        }
-
         if (!divorceDocsToRemove.isEmpty()) {
             documentRemovalService.deleteDocument(divorceDocsToRemove);
+            currentCaseData.getRequestForInformationList().deleteRfiResponseDocuments(divorceDocsToRemove);
         }
 
-        if (!rfiDocumentsToRemove.isEmpty()) {
-            handleDeletionOfRfiResponseDocument(rfiDocumentsToRemove, currentCaseData);
-        }
+        currentCaseData.getRequestForInformationList().clearResponseDocList();
     }
 
-    private List<ListValue<DivorceDocument>> findOnlineRfiDocumentsForRemoval(final List<ListValue<DivorceDocument>> beforeDocs,
+    private List<ListValue<DivorceDocument>> findDocumentsForRemoval(final List<ListValue<DivorceDocument>> beforeDocs,
                                                                               final List<ListValue<DivorceDocument>> currentDocs) {
 
         List<ListValue<DivorceDocument>> documentsToRemove = new ArrayList<>();
@@ -157,35 +142,6 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
                         .findFirst();
 
                 if (rfiResponseDoc.isEmpty()) {
-                    documentsToRemove.add(document);
-                }
-            });
-        }
-
-        return documentsToRemove;
-    }
-
-    private void findOfflineRfiDocumentsForRemoval(List<ListValue<DivorceDocument>> divorceDocsToRemove,
-                                                   List<ListValue<DivorceDocument>> rfiResponseDocumentsToRemove) {
-        if (!divorceDocsToRemove.isEmpty()) {
-            List<ListValue<DivorceDocument>> docsToRemove = new ArrayList<>(divorceDocsToRemove);
-            docsToRemove.forEach(document -> {
-                if (REQUEST_FOR_INFORMATION_RESPONSE_DOC.equals(document.getValue().getDocumentType())) {
-                    rfiResponseDocumentsToRemove.add(document);
-                    divorceDocsToRemove.remove(document);
-                }
-            });
-        }
-    }
-
-    private List<ListValue<DivorceDocument>> findDocumentsForRemoval(final List<ListValue<DivorceDocument>> beforeDocs,
-                                                                     final List<ListValue<DivorceDocument>> currentDocs) {
-
-        List<ListValue<DivorceDocument>> documentsToRemove = new ArrayList<>();
-
-        if (beforeDocs != null && currentDocs != null) {
-            beforeDocs.forEach(document -> {
-                if (!currentDocs.contains(document)) {
                     documentsToRemove.add(document);
                 }
             });
@@ -260,75 +216,5 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
                 );
             }
         }
-    }
-
-    private void handleDeletionOfRfiResponseDocument(List<ListValue<DivorceDocument>> rfiDocumentsToRemove, CaseData currentCaseData) {
-        documentRemovalService.deleteDocument(rfiDocumentsToRemove);
-
-        final RequestForInformationList rfiList = currentCaseData.getRequestForInformationList();
-        rfiList.buildTempDocLists();
-
-        final List<ListValue<RfiResponseDocWithRfiIndex>> onlineResponseDocs = rfiList.getResponseDocsWithIndexes();
-        if (onlineResponseDocs != null && !onlineResponseDocs.isEmpty()) {
-            cleanupRfiResponses(rfiDocumentsToRemove, false, rfiList);
-        }
-
-        final List<ListValue<RfiResponseDocWithRfiIndex>> offlineResponseDocs = rfiList.getOfflineResponseDocsWithIndexes();
-        if (offlineResponseDocs != null && !offlineResponseDocs.isEmpty()) {
-            cleanupRfiResponses(rfiDocumentsToRemove, true, rfiList);
-        }
-
-        rfiList.setRfiOnlineResponseDocuments(null);
-        rfiList.clearTempDocLists();
-    }
-
-    @JsonIgnore
-    private void cleanupRfiResponses(
-        List<ListValue<DivorceDocument>> rfiDocumentsToRemove,
-        boolean useOfflineList,
-        RequestForInformationList rfiList
-    ) {
-        rfiDocumentsToRemove.forEach(rfiDocToRemove -> {
-            List<ListValue<RfiResponseDocWithRfiIndex>> rfiResponseDocs = useOfflineList
-                ? rfiList.getOfflineResponseDocsWithIndexes()
-                : rfiList.getResponseDocsWithIndexes();
-
-            Optional<ListValue<RfiResponseDocWithRfiIndex>> rfiResponseDocWithRfiIndexOptional =
-                emptyIfNull(rfiResponseDocs)
-                    .stream()
-                    .filter(rfiDocWithIndex -> rfiDocWithIndex.getValue().getRfiResponseDoc().equals(rfiDocToRemove.getValue()))
-                    .findFirst();
-
-            rfiResponseDocWithRfiIndexOptional.ifPresent(
-                rfiDocumentListValue -> removeResponseDoc(rfiDocumentListValue.getValue(), rfiList)
-            );
-        });
-    }
-
-    @JsonIgnore
-    private void removeResponseDoc(RfiResponseDocWithRfiIndex rfiResponseDoc, RequestForInformationList rfiList) {
-        RequestForInformation rfi = rfiList.getRequestForInformationByIndex(rfiResponseDoc.getRfiId());
-        RequestForInformationResponse rfiResponse = rfi.getResponseByIndex(rfiResponseDoc.getRfiResponseId());
-        log.info("Removing {} ({}) from RFI Response dated: {} for RFI dated: {}",
-            rfiResponseDoc.getRfiResponseDoc().getDocumentFileName(),
-            rfiResponseDoc.getRfiResponseDoc().getDocumentLink(),
-            rfiResponse.getRequestForInformationResponseDateTime(),
-            rfi.getRequestForInformationDateTime()
-        );
-
-        if (rfiResponse.isOffline()) {
-            rfiResponse.getRfiOfflineResponseDocs().remove(rfiResponseDoc.getRfiResponseDocId());
-        } else {
-            rfiResponse.getRequestForInformationResponseDocs().remove(rfiResponseDoc.getRfiResponseDocId());
-        }
-
-        String responseDetails = rfiResponse.getRequestForInformationResponseDetails();
-        responseDetails = isNullOrEmpty(responseDetails)
-            ? RFI_DOCUMENT_REMOVED_NOTICE
-            : RFI_DOCUMENT_REMOVED_NOTICE + responseDetails;
-        rfiResponse.setRequestForInformationResponseDetails(responseDetails);
-
-        // rebuild temp lists to update index positions after removal
-        rfiList.buildTempDocLists();
     }
 }

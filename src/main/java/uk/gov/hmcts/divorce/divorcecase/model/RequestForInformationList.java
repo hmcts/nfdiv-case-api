@@ -15,7 +15,10 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 
@@ -24,6 +27,8 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestForInformationList {
+
+    public static final String RFI_DOCUMENT_REMOVED_NOTICE = "** Document Removed **";
 
     @CCD(
         label = "Requests for information",
@@ -95,22 +100,6 @@ public class RequestForInformationList {
     private RequestForInformationAuthParty requestForInformationAuthParty;
 
     @CCD(
-        label = "Temp Response Document Collection with Indexes",
-        typeOverride = Collection,
-        typeParameterOverride = "RfiResponseDocWithRfiIndex",
-        access = {DefaultAccess.class}
-    )
-    private List<ListValue<RfiResponseDocWithRfiIndex>> responseDocsWithIndexes;
-
-    @CCD(
-        label = "Temp Offline Response Document Collection with Indexes",
-        typeOverride = Collection,
-        typeParameterOverride = "RfiResponseDocWithRfiIndex",
-        access = {DefaultAccess.class}
-    )
-    private List<ListValue<RfiResponseDocWithRfiIndex>> offlineResponseDocsWithIndexes;
-
-    @CCD(
         label = "Request For Information Online Response Documents",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
@@ -119,55 +108,8 @@ public class RequestForInformationList {
     private List<ListValue<DivorceDocument>> rfiOnlineResponseDocuments;
 
     @JsonIgnore
-    private boolean isNullOrEmpty(List list) {
-        return list == null || list.isEmpty();
-    }
-
-    @JsonIgnore
-    private void addResponseDocToCollection(
-        int rfiId,
-        int rfiResponseId,
-        int rfiDocId,
-        DivorceDocument rfiResponseDoc,
-        List<ListValue<RfiResponseDocWithRfiIndex>> targetCollection
-    ) {
-        RfiResponseDocWithRfiIndex indexedDoc = new RfiResponseDocWithRfiIndex();
-        indexedDoc.setRfiId(rfiId);
-        indexedDoc.setRfiResponseId(rfiResponseId);
-        indexedDoc.setRfiResponseDocId(rfiDocId);
-        indexedDoc.setRfiResponseDoc(rfiResponseDoc);
-
-        ListValue<RfiResponseDocWithRfiIndex> indexedDocListValue = new ListValue<>();
-        indexedDocListValue.setValue(indexedDoc);
-
-        targetCollection.add(indexedDocListValue);
-    }
-
-    @JsonIgnore
-    private List<ListValue<RfiResponseDocWithRfiIndex>> getTempCollection(boolean offlineDocs) {
-        return offlineDocs ? this.getOfflineResponseDocsWithIndexes() : this.getResponseDocsWithIndexes();
-    }
-
-    @JsonIgnore
-    private void iterateDocs(List<ListValue<DivorceDocument>> docs, boolean offlineDocs, int rfiIdx, int resIdx) {
-        if (!isNullOrEmpty(docs)) {
-            if (isNullOrEmpty(getTempCollection(offlineDocs))) {
-                if (offlineDocs) {
-                    this.setOfflineResponseDocsWithIndexes(new ArrayList<>());
-                } else {
-                    this.setResponseDocsWithIndexes(new ArrayList<>());
-                }
-            }
-            for (int docIdx = 0; docIdx < docs.size(); docIdx += 1) {
-                final DivorceDocument rfiResponseDoc = docs.get(docIdx).getValue();
-                addResponseDocToCollection(rfiIdx, resIdx, docIdx, rfiResponseDoc, getTempCollection(offlineDocs));
-            }
-        }
-    }
-
-    @JsonIgnore
     public RequestForInformation getLatestRequest() {
-        return this.getRequestForInformationByIndex(0);
+        return this.getRequestsForInformation().get(0).getValue();
     }
 
     @JsonIgnore
@@ -189,44 +131,73 @@ public class RequestForInformationList {
 
     @JsonIgnore
     public void buildResponseDocList() {
-        buildTempDocLists();
         this.setRfiOnlineResponseDocuments(null);
-        if (!isNullOrEmpty(this.getResponseDocsWithIndexes())) {
+        if (this.getRequestsForInformation() != null && !this.getRequestsForInformation().isEmpty()) {
             List<ListValue<DivorceDocument>> responseDocs = new ArrayList<>();
-            this.getResponseDocsWithIndexes().forEach(doc -> {
-                ListValue<DivorceDocument> responseDoc = new ListValue<>();
-                responseDoc.setValue(doc.getValue().getRfiResponseDoc());
-                responseDocs.add(responseDoc);
-            });
-            this.setRfiOnlineResponseDocuments(responseDocs);
-        }
-    }
-
-    @JsonIgnore
-    public void buildTempDocLists() {
-        if (!isNullOrEmpty(this.getRequestsForInformation())) {
-            clearTempDocLists();
-            for (int rfiIdx = 0; rfiIdx < this.getRequestsForInformation().size(); rfiIdx += 1) {
-                final RequestForInformation rfi = this.getRequestForInformationByIndex(rfiIdx);
-                if (!isNullOrEmpty(rfi.getRequestForInformationResponses())) {
-                    for (int resIdx = 0; resIdx < rfi.getRequestForInformationResponses().size(); resIdx += 1) {
-                        final RequestForInformationResponse rfiResponse = rfi.getResponseByIndex(resIdx);
-                        iterateDocs(rfiResponse.getRequestForInformationResponseDocs(), false, rfiIdx, resIdx);
-                        iterateDocs(rfiResponse.getRfiOfflineResponseDocs(), true, rfiIdx, resIdx);
-                    }
+            this.getRequestsForInformation().forEach(rfi -> {
+                if (rfi.getValue().getRequestForInformationResponses() != null
+                    && !rfi.getValue().getRequestForInformationResponses().isEmpty()
+                ) {
+                    rfi.getValue().getRequestForInformationResponses().forEach(rfiResponse -> {
+                        if (!rfiResponse.getValue().isOffline()) {
+                            responseDocs.addAll(rfiResponse.getValue().getRequestForInformationResponseDocs());
+                        }
+                    });
                 }
+            });
+            if (!responseDocs.isEmpty()) {
+                this.setRfiOnlineResponseDocuments(responseDocs);
             }
         }
     }
 
     @JsonIgnore
-    public void clearTempDocLists() {
-        this.setResponseDocsWithIndexes(null);
-        this.setOfflineResponseDocsWithIndexes(null);
+    public void clearResponseDocList() {
+        this.setRfiOnlineResponseDocuments(null);
     }
 
     @JsonIgnore
-    public RequestForInformation getRequestForInformationByIndex(int index) {
-        return this.getRequestsForInformation().get(index).getValue();
+    public void deleteRfiResponseDocuments(List<ListValue<DivorceDocument>> documentsToRemove) {
+        if (this.getRequestsForInformation() != null && !this.getRequestsForInformation().isEmpty()) {
+            this.getRequestsForInformation().forEach(rfi -> {
+                if (rfi.getValue().getRequestForInformationResponses() != null
+                    && !rfi.getValue().getRequestForInformationResponses().isEmpty()
+                ) {
+                    rfi.getValue().getRequestForInformationResponses().forEach(rfiResponse -> {
+                        List<ListValue<DivorceDocument>> rfiDocsToRemove = new ArrayList<>();
+                        List<ListValue<DivorceDocument>> responseDocs;
+                        if (rfiResponse.getValue().isOffline()) {
+                            responseDocs = rfiResponse.getValue().getRfiOfflineResponseDocs();
+                        } else {
+                            responseDocs = rfiResponse.getValue().getRequestForInformationResponseDocs();
+                        }
+
+                        if (responseDocs != null && !responseDocs.isEmpty()) {
+                            responseDocs.forEach(responseDoc -> {
+                                Optional<ListValue<DivorceDocument>> responseDocOptional =
+                                    emptyIfNull(documentsToRemove)
+                                        .stream()
+                                        .filter(docToRemove -> docToRemove.getValue().equals(responseDoc.getValue()))
+                                        .findFirst();
+
+                                if (responseDocOptional.isPresent()) {
+                                    String responseDetails = rfiResponse.getValue().getRequestForInformationResponseDetails();
+                                    responseDetails = isNullOrEmpty(responseDetails)
+                                        ? RFI_DOCUMENT_REMOVED_NOTICE
+                                        : RFI_DOCUMENT_REMOVED_NOTICE + "\n\n" + responseDetails;
+                                    rfiResponse.getValue().setRequestForInformationResponseDetails(responseDetails);
+
+                                    rfiDocsToRemove.add(responseDoc);
+                                }
+                            });
+
+                            if (!rfiDocsToRemove.isEmpty()) {
+                                rfiDocsToRemove.forEach(responseDocs::remove);
+                            }
+                        }
+                    });
+                }
+            });
+        }
     }
 }
