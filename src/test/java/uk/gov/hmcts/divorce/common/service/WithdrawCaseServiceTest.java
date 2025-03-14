@@ -60,7 +60,7 @@ public class WithdrawCaseServiceTest {
                 APPLICANT_2.getRole()
             )
         ));
-        verify(notificationDispatcher).send(applicationWithdrawnNotification, caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(applicationWithdrawnNotification, caseDetails);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
@@ -84,7 +84,7 @@ public class WithdrawCaseServiceTest {
                 APPLICANT_2.getRole()
             )
         ));
-        verify(notificationDispatcher).send(applicationWithdrawnNotification, caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(applicationWithdrawnNotification, caseDetails);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 }
