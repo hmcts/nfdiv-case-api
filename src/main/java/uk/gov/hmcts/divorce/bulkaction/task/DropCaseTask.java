@@ -23,9 +23,9 @@ public class DropCaseTask implements BulkCaseTask {
 
     private final HttpServletRequest request;
 
-    private final AuthTokenGenerator authTokenGenerator;
+    protected final AuthTokenGenerator authTokenGenerator;
 
-    private final IdamService idamService;
+    protected final IdamService idamService;
 
     @Override
     public CaseDetails<BulkActionCaseData, BulkActionState> apply(final CaseDetails<BulkActionCaseData, BulkActionState> details) {
