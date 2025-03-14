@@ -309,7 +309,7 @@ public class NoticeOfProceedingContent {
         final Solicitor applicant2Solicitor = caseData.getApplicant2().getSolicitor();
 
         templateContent.put(SOLICITOR_NAME, applicant2Solicitor.getName());
-        templateContent.put(SOLICITOR_ADDRESS, applicant2Solicitor.getAddress());
+        templateContent.put(SOLICITOR_ADDRESS, applicant2Solicitor.getFirmAndAddress());
 
         templateContent.put(
             SOLICITOR_REFERENCE,

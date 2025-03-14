@@ -18,6 +18,7 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReturnToPreviousSt
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.NewPaperCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -73,6 +74,22 @@ class CaseworkerReturnToPreviousStateTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerReturnToPreviousState.aboutToSubmit(details, null);
 
         assertThat(response.getState()).isEqualTo(AosDrafted);
+    }
+
+    @Test
+    void shouldNotReturnValidationErrorWhenNewPaperCaseSelectedAsOutputStateForPreIssueCase() {
+        CaseData caseData = CaseData.builder()
+            .application(Application.builder()
+                .stateToTransitionApplicationTo(NewPaperCase)
+                .build()
+            ).build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerReturnToPreviousState.midEvent(details, null);
+
+        assertThat(response.getErrors()).isNullOrEmpty();
     }
 
     @Test

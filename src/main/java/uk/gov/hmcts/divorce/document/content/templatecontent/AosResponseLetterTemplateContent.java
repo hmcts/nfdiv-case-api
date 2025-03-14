@@ -129,9 +129,7 @@ public class AosResponseLetterTemplateContent implements TemplateContent {
             templateContent.put(DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
             templateContent.put(RECIPIENT_NAME, caseData.getApplicant1().isRepresented()
                 ? caseData.getApplicant1().getSolicitor().getName() : caseData.getApplicant1().getFullName());
-            templateContent.put(RECIPIENT_ADDRESS, caseData.getApplicant1().isRepresented()
-                ? caseData.getApplicant1().getSolicitor().getAddress()
-                : caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck());
+            templateContent.put(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck());
             templateContent.put(SOLICITOR_NAME, caseData.getApplicant1().isRepresented()
                 ? caseData.getApplicant1().getSolicitor().getName() : NOT_REPRESENTED);
             templateContent.put(APPLICANT_2_SOLICITOR_NAME, caseData.getApplicant2().isRepresented()

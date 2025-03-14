@@ -62,11 +62,13 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.CIVIL_PARTNER_JOIN
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DISSOLUTION_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_COURT_EMAIL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.HUSBAND_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_PROFESSIONAL_USERS_URL;
@@ -75,6 +77,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_CY_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_URL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.WEB_FORM_TEXT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IN_TIME;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
@@ -830,13 +833,15 @@ class CommonContentTest {
                 .applicant1(beforeApplicant)
                 .build();
 
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SMART_SURVEY, "https://testsurveylink"));
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(WEBFORM_URL, "webformUrl", SMART_SURVEY, "https://testsurveylink"));
 
         Map<String, String> templateVars = commonContent.nocOldSolsTemplateVars(caseRef, caseData, true);
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
         assertEquals("Old Solicitor Name", templateVars.get(CommonContent.NAME));
         assertEquals("First Last", templateVars.get(CommonContent.APPLICANT_NAME));
         assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
+        assertEquals(PHONE_AND_OPENING_TIMES_TEXT, templateVars.get(PHONE_AND_OPENING_TIMES));
+        assertEquals("[Contact us using our online form](webformUrl)", templateVars.get(WEB_FORM_TEXT));
     }
 
     @Test
@@ -867,6 +872,60 @@ class CommonContentTest {
         Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, applicant);
 
         assertThat(templateVars.get(CommonContent.WEB_FORM_TEXT)).contains("https://welshUrl");
+    }
+
+    @Test
+    void shouldReturnWelshUserNameIfApplicant1PrefersWelshAndFirstNameIsNotPresent() {
+
+        final Applicant applicant1 = Applicant.builder()
+            .gender(MALE)
+            .languagePreferenceWelsh(YES)
+            .build();
+
+        final Applicant applicant2 = Applicant.builder()
+            .gender(FEMALE)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .build();
+
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, TEST_CASE_ID, applicant1, applicant2);
+
+        assertThat(result)
+            .isNotEmpty()
+            .contains(
+                entry(FIRST_NAME, "Defnyddiwr"),
+                entry(LAST_NAME, ""));
+    }
+
+    @Test
+    void shouldReturnWelshUserNameIfApplicant1PrefersEnglishAndFirstNameIsNotPresent() {
+
+        final Applicant applicant1 = Applicant.builder()
+            .gender(MALE)
+            .languagePreferenceWelsh(NO)
+            .build();
+
+        final Applicant applicant2 = Applicant.builder()
+            .gender(FEMALE)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .build();
+
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, TEST_CASE_ID, applicant1, applicant2);
+
+        assertThat(result)
+            .isNotEmpty()
+            .contains(
+                entry(FIRST_NAME, "User"),
+                entry(LAST_NAME, ""));
     }
 }
 

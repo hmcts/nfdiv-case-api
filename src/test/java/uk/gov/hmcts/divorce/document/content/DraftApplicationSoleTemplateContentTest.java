@@ -145,7 +145,7 @@ public class DraftApplicationSoleTemplateContentTest {
             entry(RESPONDENT_SOLICITOR_NAME, "Mr Sol"),
             entry(RESPONDENT_SOLICITOR_EMAIL, "sol@solbros.com"),
             entry(RESPONDENT_SOLICITOR_FIRM_NAME, "Sol Bros"),
-            entry(RESPONDENT_SOLICITOR_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
+            entry(RESPONDENT_SOLICITOR_ADDRESS, "Sol Bros\n" + LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
             entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
         );
