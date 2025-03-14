@@ -22,19 +22,19 @@ import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDIC
 @SuppressWarnings({"PMD.PreserveStackTrace"})
 public class D8sFormToCaseTransformer extends BulkScanFormTransformer {
 
+    private final D8SPrayerTransformer d8SPrayerTransformer;
+
+    private final MarriageDetailsTransformer marriageDetailsTransformer;
+
+    private final CommonFormToCaseTransformer commonFormToCaseTransformer;
+    
+    private final PaperFormDetailsTransformer paperFormDetailsTransformer;
+
     private final Applicant1Transformer applicant1Transformer;
 
     private final Applicant2Transformer applicant2Transformer;
 
     private final ApplicationTransformer applicationTransformer;
-
-    private final D8SPrayerTransformer d8SPrayerTransformer;
-
-    private final CommonFormToCaseTransformer commonFormToCaseTransformer;
-
-    private final MarriageDetailsTransformer marriageDetailsTransformer;
-
-    private final PaperFormDetailsTransformer paperFormDetailsTransformer;
 
     @Override
     protected Map<String, Object> runFormSpecificTransformation(
