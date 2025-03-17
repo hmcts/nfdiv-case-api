@@ -4,6 +4,7 @@ import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
@@ -33,15 +34,12 @@ public class ServiceRequestSearchService {
     private final AuthTokenGenerator authTokenGenerator;
 
     public Optional<ServiceRequestDto> findUnpaidServiceRequest(Long caseId, Fee fee, String responsibleParty) {
-        List<ServiceRequestDto> serviceRequests;
-        final User user = idamService.retrieveSystemUpdateUserDetails();
-
         try {
-            serviceRequests = paymentClient.getServiceRequests(
-                user.getAuthToken(),
-                authTokenGenerator.generate(),
-                String.valueOf(caseId)
-            ).getServiceRequests();
+            List<ServiceRequestDto> serviceRequests = getServiceRequestsForCase(caseId);
+
+            if (CollectionUtils.isEmpty(serviceRequests)) {
+                return Optional.empty();
+            }
 
             return serviceRequests.stream()
                 .filter(sr -> serviceRequestIsUnpaidAndMatchesFee(sr, fee, responsibleParty))
@@ -53,8 +51,20 @@ public class ServiceRequestSearchService {
         return Optional.empty();
     }
 
+    private List<ServiceRequestDto> getServiceRequestsForCase(long caseId) {
+        final User user = idamService.retrieveSystemUpdateUserDetails();
+
+        return paymentClient.getServiceRequests(
+            user.getAuthToken(),
+            authTokenGenerator.generate(),
+            String.valueOf(caseId)
+        ).getServiceRequests();
+    }
+
     private boolean serviceRequestIsUnpaidAndMatchesFee(ServiceRequestDto sr, Fee fee, String responsibleParty) {
-        if (sr == null || isEmpty(sr.getFees()) || !NOT_PAID.equals(sr.getServiceRequestStatus())) {
+        boolean feeIsBlank = fee == null || fee.getCode() == null || fee.getAmount() == null;
+        boolean serviceReqestIsBlankOrPaid = sr == null || isEmpty(sr.getFees()) || !NOT_PAID.equals(sr.getServiceRequestStatus());
+        if (feeIsBlank || serviceReqestIsBlankOrPaid) {
             return false;
         }
 

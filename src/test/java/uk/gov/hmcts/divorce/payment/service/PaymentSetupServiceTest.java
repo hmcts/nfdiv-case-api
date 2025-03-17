@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.payment;
+package uk.gov.hmcts.divorce.payment.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,8 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
-import uk.gov.hmcts.divorce.payment.service.PaymentService;
-import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.never;

@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.payment;
+package uk.gov.hmcts.divorce.payment.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
