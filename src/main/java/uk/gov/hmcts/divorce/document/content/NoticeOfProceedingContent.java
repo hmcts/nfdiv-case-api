@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.common.exception.InvalidCcdCaseDataException;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
@@ -18,6 +19,7 @@ import java.util.Map;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
@@ -112,6 +114,8 @@ public class NoticeOfProceedingContent {
     public static final String REISSUE_DATE = "reissueDate";
     public static final String IS_COURT_SERVICE = "isCourtService";
     public static final String IS_PERSONAL_SERVICE = "isPersonalService";
+    public static final String IS_REISSUED = "isReissued";
+    public static final String IS_RESPONDENT_OFFLINE = "isRespondentOffline";
     public static final String ACCESS_CODE = "accessCode";
     public static final String URL_TO_LINK_CASE = "linkCaseUrl";
     public static final String RELATIONS_SOLICITOR = "relationsSolicitor";
@@ -150,13 +154,15 @@ public class NoticeOfProceedingContent {
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
+        Applicant applicant2 = caseData.getApplicant2();
+
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName());
         templateContent.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
-        templateContent.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
-        templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
+        templateContent.put(APPLICANT_2_FIRST_NAME, applicant2.getFirstName());
+        templateContent.put(APPLICANT_2_LAST_NAME, applicant2.getLastName());
         templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
-        templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
+        templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
 
         if (caseData.getApplication().getIssueDate() == null) {
             throw new InvalidCcdCaseDataException("Cannot generate notice of proceeding without issue date. Case ID: " + ccdCaseReference);
@@ -180,7 +186,7 @@ public class NoticeOfProceedingContent {
         );
 
         templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck());
-        templateContent.put(APPLICANT_2_ADDRESS, caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck());
+        templateContent.put(APPLICANT_2_ADDRESS, applicant2.getCorrespondenceAddressWithoutConfidentialCheck());
 
         templateContent.put(
             APPLICANT_1_SOLICITOR_NAME,
@@ -194,10 +200,10 @@ public class NoticeOfProceedingContent {
         templateContent.put(DISPLAY_EMAIL_CONFIRMATION, displayEmailConfirmation);
 
         final boolean personalServiceMethod = PERSONAL_SERVICE.equals(caseData.getApplication().getServiceMethod());
-        final boolean isApplicant2Represented = caseData.getApplicant2().isRepresented();
+        final boolean isApplicant2Represented = applicant2.isRepresented();
         templateContent.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, personalServiceMethod && isApplicant2Represented);
 
-        if (caseData.getApplicant2().isRepresented()) {
+        if (applicant2.isRepresented()) {
             generateSoleRespondentRepresentedContent(templateContent, caseData, personalServiceMethod, languagePreference);
         }
 
@@ -215,15 +221,19 @@ public class NoticeOfProceedingContent {
             );
         }
 
-        templateContent.put(IS_RESPONDENT_BASED_IN_UK, !caseData.getApplicant2().isBasedOverseas());
+        templateContent.put(IS_RESPONDENT_BASED_IN_UK, !applicant2.isBasedOverseas()
+                || applicant2.getCorrespondenceAddressIsOverseas() != YesOrNo.YES);
         templateContent.put(CAN_SERVE_BY_EMAIL,
-            !caseData.getApplicant1().isApplicantOffline() && !caseData.getApplicant2().isBasedOverseas());
+            !caseData.getApplicant1().isApplicantOffline() && !applicant2.isBasedOverseas());
 
         templateContent.put(IS_COURT_SERVICE, COURT_SERVICE.equals(caseData.getApplication().getServiceMethod()));
         templateContent.put(IS_PERSONAL_SERVICE, caseData.getApplication().isPersonalServiceMethod());
         templateContent.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         templateContent.put(URL_TO_LINK_CASE,
             config.getTemplateVars().get(caseData.isDivorce() ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL));
+
+        templateContent.put(IS_REISSUED, OFFLINE_AOS.equals(caseData.getApplication().getReissueOption()));
+        templateContent.put(IS_RESPONDENT_OFFLINE, !applicant2.isApplicantOffline() && ObjectUtils.isNotEmpty(applicant2.getEmail()));
 
         generateDivorceOrDissolutionContent(templateContent, caseData, partner, languagePreference);
 
@@ -306,7 +316,7 @@ public class NoticeOfProceedingContent {
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
         final Solicitor applicant1Solicitor = applicant1.getSolicitor();
-        final Solicitor applicant2Solicitor = caseData.getApplicant2().getSolicitor();
+        final Solicitor applicant2Solicitor = applicant2.getSolicitor();
 
         templateContent.put(SOLICITOR_NAME, applicant2Solicitor.getName());
         templateContent.put(SOLICITOR_ADDRESS, applicant2Solicitor.getFirmAndAddress());
@@ -326,7 +336,7 @@ public class NoticeOfProceedingContent {
         templateContent.put(WHO_APPLIED, applicant1.isRepresented() ? "applicant's solicitor" : "applicant");
 
         templateContent.put(RESPONDENT_SOLICITOR_REGISTERED, applicant2Solicitor.hasOrgId() ? "Yes" : "No");
-        templateContent.put(APPLICANT_2_IS_REPRESENTED, caseData.getApplicant2().isRepresented());
+        templateContent.put(APPLICANT_2_IS_REPRESENTED, applicant2.isRepresented());
 
         if (personalServiceMethod) {
             if (WELSH.equals(languagePreference)) {

@@ -34,10 +34,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JS_SUBMITTED_RESPONDENT_SOLICITOR_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
@@ -166,11 +163,33 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
         } else {
             log.info("Generating notice of proceedings for respondent for sole case id {} ", caseId);
 
-            final LanguagePreference applicant2LanguagePreference = applicant2.getLanguagePreference();
-            final Applicant applicant1 = caseData.getApplicant1();
-
+            LanguagePreference applicant2LanguagePreference = applicant2.getLanguagePreference();
+            Applicant applicant1 = caseData.getApplicant1();
             boolean reissuedAsOfflineAOS = OFFLINE_AOS.equals(caseData.getApplication().getReissueOption());
+            boolean isCourtService = caseData.getApplication().isCourtServiceMethod();
+            boolean app2BasedOverseas = applicant2.isBasedOverseas() || applicant2.getCorrespondenceAddressIsOverseas() == YesOrNo.YES;
+            boolean isCoversheetRequired = !isCourtService || reissuedAsOfflineAOS || app2BasedOverseas;
 
+            if (app2BasedOverseas) {
+                log.info("Generating NOP and cover sheet for overseas respondent for sole case id {} ", caseId);
+            } else if (reissuedAsOfflineAOS) {
+                log.info("Generating reissue offline AoS NOP and cover sheet for sole case id {} ", caseId);
+            }
+
+            generateNoticeOfProceedings(
+                    caseData,
+                    caseId,
+                    NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS,
+                    noticeOfProceedingContent.apply(caseData, caseId, applicant1, applicant2LanguagePreference));
+            if (isCoversheetRequired) {
+                generateCoversheet.generateCoversheet(
+                        caseData,
+                        caseId,
+                        COVERSHEET_APPLICANT,
+                        coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
+                        caseData.getApplicant2().getLanguagePreference());
+            }
+            /*
             var app2CorrespondenceAddressIsOverseas = applicant2.getCorrespondenceAddressIsOverseas() == YesOrNo.YES;
             var app2BasedOverseas = applicant2.isBasedOverseas();
 
@@ -219,7 +238,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                         coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
                         caseData.getApplicant2().getLanguagePreference());
                 }
-            }
+            }*/
         }
     }
 

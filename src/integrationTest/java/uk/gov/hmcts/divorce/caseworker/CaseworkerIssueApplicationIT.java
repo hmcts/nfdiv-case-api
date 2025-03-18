@@ -163,7 +163,8 @@ public class CaseworkerIssueApplicationIT {
     private static final String AOS_COVER_LETTER_TEMPLATE_ID = "c35b1868-e397-457a-aa67-ac1422bb8100";
     private static final String SOLICITOR_COVERSHEET_ID = "b66b90e4-156c-4090-b788-365219f0118b";
     private static final String NOTICE_OF_PROCEEDING_TEMPLATE_ID = "c56b053e-4184-11ec-81d3-0242ac130003";
-    private static final String NOP_ONLINE_SOLE_RESP_TEMPLATE_ID = "2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa";
+    private static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID =
+            "2ecb05c1-6e3d-4508-9a7b-79a84e3d63aa";
     private static final String APPLICANT_COVERSHEET_TEMPLATE_ID = "af678800-4c5c-491c-9b7f-22056412ff94";
     private static final String NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID = "eb780eb7-8982-40a7-b30f-902b582ded26";
     private static final String D84_DOCUMENT_ID = "67db1868-e917-457a-b9a7-209d1905810a";
@@ -268,7 +269,8 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-A1-V3.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R1-V10.docx");
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID,
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -368,7 +370,8 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-A1-V3.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "FL-NFD-GOR-WEL-Notice_Of_Proceedings_Online_Respondent_Sole_V7.docx");
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID,
+                "FL-NFD-GOR-WEL-Notice_Of_Proceedings_Online_Respondent_Sole_V7.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -475,7 +478,8 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Sole_V2_CY.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "FL-NFD-GOR-WEL-Notice_Of_Proceedings_Online_Respondent_Sole_V7.docx");
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID,
+                "FL-NFD-GOR-WEL-Notice_Of_Proceedings_Online_Respondent_Sole_V7.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, "NFD_CP_Application_Sole_Cy.docx");
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -529,7 +533,8 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1-V3.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R1-V10.docx");
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID,
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -681,14 +686,16 @@ public class CaseworkerIssueApplicationIT {
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V3.docx");
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V4.docx");
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID,
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-Outside-England-Wales-R2-V4.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NOP_ONLINE_SOLE_RESP_TEMPLATE_ID);
+        stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID,
+                NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID);
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -723,7 +730,8 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
 
-        stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NOP_ONLINE_SOLE_RESP_TEMPLATE_ID);
+        stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID,
+                NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID);
 
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
@@ -764,7 +772,8 @@ public class CaseworkerIssueApplicationIT {
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
 
-        stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NOP_ONLINE_SOLE_RESP_TEMPLATE_ID);
+        stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID,
+                NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID);
 
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
@@ -810,7 +819,8 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V4.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R1-V10.docx");
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID,
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
 
@@ -818,7 +828,8 @@ public class CaseworkerIssueApplicationIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NOP_ONLINE_SOLE_RESP_TEMPLATE_ID);
+        stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID,
+                NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID);
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -853,7 +864,8 @@ public class CaseworkerIssueApplicationIT {
         caseData.setCaseInvite(null);
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
 
-        stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NOP_ONLINE_SOLE_RESP_TEMPLATE_ID);
+        stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID,
+                NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID);
 
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
@@ -901,8 +913,9 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Coversheet")
             .thenReturn("Divorce application");
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V3.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "FL-NFD-GOR-WEL-Notice_Of_Proceedings_Paper_Respondent_V8.docx");
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V4.docx");
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID,
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
 
@@ -910,7 +923,8 @@ public class CaseworkerIssueApplicationIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NOP_ONLINE_SOLE_RESP_TEMPLATE_ID);
+        stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID,
+                NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -1715,7 +1729,8 @@ public class CaseworkerIssueApplicationIT {
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1-V3.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R1-V10.docx");
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID,
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R1-V10.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubAosPackSendLetterToApplicant1CourtService(AOS_COVER_LETTER_TEMPLATE_ID);
         stubAosPackSendLetterToApplicant2();
@@ -1805,7 +1820,8 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V4.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V11.docx");
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID,
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
 
@@ -1899,7 +1915,8 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Divorce application");
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_Notice_Of_Proceedings_Overseas_Sole_V3.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Paper_Respondent_V6.docx");
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID,
+                "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Paper_Respondent_V6.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
 
@@ -1978,7 +1995,8 @@ public class CaseworkerIssueApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_CP_Dummy_Template.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R1-V10.docx");
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID,
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx");
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
@@ -1986,7 +2004,8 @@ public class CaseworkerIssueApplicationIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NOP_ONLINE_SOLE_RESP_TEMPLATE_ID);
+        stubAosPackSendLetterToApplicant1NotCourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID,
+                NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID);
 
         mockMvc.perform(post(SUBMITTED_URL)
                 .contentType(APPLICATION_JSON)
@@ -2019,7 +2038,8 @@ public class CaseworkerIssueApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1-V3.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V11.docx");
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID,
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx");
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
@@ -2062,7 +2082,8 @@ public class CaseworkerIssueApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1-V3.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-Joint-V3.docx");
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID,
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-Joint-V3.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_JOINT_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -2103,7 +2124,8 @@ public class CaseworkerIssueApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1-V3.docx");
-        stubForDocAssemblyWith(NOP_ONLINE_SOLE_RESP_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R1-V10.docx");
+        stubForDocAssemblyWith(NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID,
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx");
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
@@ -2504,7 +2526,7 @@ public class CaseworkerIssueApplicationIT {
 
         final var documentListValue2 = documentWithType(
             NOTICE_OF_PROCEEDINGS_APP_2,
-            NOP_ONLINE_SOLE_RESP_TEMPLATE_ID);
+            NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS_TEMPLATE_ID);
 
         final var documentListValue3 = documentWithType(
             APPLICATION,
