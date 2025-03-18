@@ -42,10 +42,10 @@ public class ServiceRequestSearchService {
             }
 
             return serviceRequests.stream()
-                .filter(sr -> serviceRequestIsUnpaidAndMatchesFee(sr, fee, responsibleParty))
+                .filter(sr -> isServiceRequestUnpaidWithMatchingFee(sr, fee, responsibleParty))
                 .findAny();
         } catch (FeignException e) {
-            log.info("No service requests found for: {}, Exception: {}", caseId, e.getMessage());
+            log.info("Error finding service requests for {}: {}", caseId, e.getMessage());
         }
 
         return Optional.empty();
@@ -61,22 +61,40 @@ public class ServiceRequestSearchService {
         ).getServiceRequests();
     }
 
-    private boolean serviceRequestIsUnpaidAndMatchesFee(ServiceRequestDto sr, Fee fee, String responsibleParty) {
-        boolean feeIsBlank = fee == null || fee.getCode() == null || fee.getAmount() == null;
-        boolean serviceReqestIsBlankOrPaid = sr == null || isEmpty(sr.getFees()) || !NOT_PAID.equals(sr.getServiceRequestStatus());
-        if (feeIsBlank || serviceReqestIsBlankOrPaid) {
+    private boolean isServiceRequestUnpaidWithMatchingFee(ServiceRequestDto serviceRequest, Fee fee, String responsibleParty) {
+         if (isInvalidFee(fee) || isPaidOrInvalidServiceRequest(serviceRequest)) {
             return false;
         }
 
-        String expectedFee = fee.getCode();
-        BigDecimal expectedAmountDue = new BigDecimal(penceToPounds(fee.getAmount()));
+        return isFeePresent(serviceRequest, fee) && isResponsiblePartyPresent(serviceRequest, responsibleParty, fee);
+    }
 
-        boolean feeCodeMatches = sr.getFees().stream()
-            .anyMatch(f -> expectedFee.equals(f.getCode()) && expectedAmountDue.compareTo(f.getAmountDue()) == 0);
-        boolean feeExpectedOncePerCase = SINGLE_USE_FEE_CODES.contains(fee.getCode());
-        boolean srCreatedByTheSameParty = isNotEmpty(sr.getPayments()) && sr.getPayments().stream()
+    private boolean isFeePresent(ServiceRequestDto sr, Fee expectedFee) {
+        String expectedFeeCode = expectedFee.getCode();
+        BigDecimal expectedAmountDue = new BigDecimal(penceToPounds(expectedFee.getAmount()));
+
+        return sr.getFees().stream()
+            .anyMatch(f -> expectedFeeCode.equals(f.getCode()) && expectedAmountDue.compareTo(f.getAmountDue()) == 0);
+    }
+
+    private boolean isResponsiblePartyPresent(ServiceRequestDto sr, String responsibleParty, Fee fee) {
+        if (isSingleUseFee(fee)) {
+            return true;
+        }
+
+        return isNotEmpty(sr.getPayments()) && sr.getPayments().stream()
             .anyMatch(p -> isNotBlank(responsibleParty) && responsibleParty.equals(p.getOrganisationName()));
+    }
 
-        return feeCodeMatches && (feeExpectedOncePerCase || srCreatedByTheSameParty);
+    private boolean isSingleUseFee(Fee fee) {
+        return SINGLE_USE_FEE_CODES.contains(fee.getCode());
+    }
+
+    private boolean isInvalidFee(Fee fee) {
+        return fee == null || fee.getCode() == null || fee.getAmount() == null;
+    }
+
+    private boolean isPaidOrInvalidServiceRequest(ServiceRequestDto sr) {
+        return sr == null || isEmpty(sr.getFees()) || !NOT_PAID.equals(sr.getServiceRequestStatus());
     }
 }
