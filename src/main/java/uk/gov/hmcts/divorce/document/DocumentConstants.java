@@ -104,6 +104,8 @@ public final class DocumentConstants {
     public static final String CERTIFICATE_OF_SERVICE_TEMPLATE_ID = "CERTIFICATE_OF_SERVICE";
 
     public static final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID = "CERTIFICATE_OF_ENTITLEMENT";
+    public static final String CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT_TEMPLATE_ID =
+            "CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT";
     public static final String CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID =
         "CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION";
     public static final String CERTIFICATE_OF_ENTITLEMENT_NAME = "certificateOfEntitlement";
@@ -117,6 +119,7 @@ public final class DocumentConstants {
     public static final String CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER_TEMPLATE_ID
         = "CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER";
     public static final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME = "certificateOfEntitlementCoverLetter";
+    public static final String CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_LETTER_NAME = "certificateOfEntitlementDoNotAttendCourt";
 
     public static final String USER_ROLES = "user-roles";
     public static final String USER_ID = "user-id";
