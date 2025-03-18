@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event.page;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
@@ -23,18 +23,16 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_ORDER;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CreateGeneralOrder implements CcdPageConfiguration {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final CaseDataDocumentService caseDataDocumentService;
 
-    @Autowired
-    private GeneralOrderTemplateContent generalOrderTemplateContent;
+    private final GeneralOrderTemplateContent generalOrderTemplateContent;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
