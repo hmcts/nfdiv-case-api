@@ -62,7 +62,7 @@ public class ServiceRequestSearchService {
     }
 
     private boolean isServiceRequestUnpaidWithMatchingFee(ServiceRequestDto serviceRequest, Fee fee, String responsibleParty) {
-         if (isInvalidFee(fee) || isPaidOrInvalidServiceRequest(serviceRequest)) {
+        if (isInvalidFee(fee) || isPaidOrInvalidServiceRequest(serviceRequest)) {
             return false;
         }
 
