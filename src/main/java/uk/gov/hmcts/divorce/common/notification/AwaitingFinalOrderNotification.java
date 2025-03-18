@@ -154,10 +154,11 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
     private Map<String, String> commonSolicitorTemplateVars(CaseData caseData, final Long id, Applicant applicant) {
 
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id, applicant.getLanguagePreference());
+        var dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
 
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData));
-        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(dateTimeFormatter));
         templateVars.put(SOLICITOR_REFERENCE, nonNull(applicant.getSolicitor().getReference())
             ? applicant.getSolicitor().getReference()
             : "not provided");
@@ -167,7 +168,7 @@ public class AwaitingFinalOrderNotification implements ApplicantNotification {
         templateVars.put(IS_SOLE, caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(FINAL_ORDER_OVERDUE_DATE, caseData.getConditionalOrder().getGrantedDate().plusMonths(12)
-            .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
+            .format(dateTimeFormatter));
 
         return templateVars;
     }
