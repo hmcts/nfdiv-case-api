@@ -2,6 +2,8 @@ package uk.gov.hmcts.divorce.bulkaction.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -104,6 +106,9 @@ public class CasePronouncementServiceIT {
             .from(0)
             .size(50);
 
+        Map<String, Object> caseData = new HashMap<>();
+        caseData.put("finalOrder", FinalOrder.builder().build());
+
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             TEST_SERVICE_AUTH_TOKEN,
@@ -114,6 +119,7 @@ public class CasePronouncementServiceIT {
                     .total(1)
                     .cases(List.of(uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                         .id(TEST_CASE_ID)
+                        .data(caseData)
                         .state(AwaitingPronouncement.name())
                         .build()))
                     .build()
