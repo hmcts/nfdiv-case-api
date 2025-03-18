@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker.service.notification;
 
 import com.google.common.collect.ImmutableList;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
@@ -23,13 +23,13 @@ import static uk.gov.service.notify.NotificationClient.prepareUpload;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class StateReportNotification {
 
     @Value("${report-email}")
     String recipientEmailAddressesCsv;
 
-    private final NotificationService notificationService;
+    @Autowired
+    private NotificationService notificationService;
 
     private final RetentionPeriodDuration retentionPeriodDuration = new RetentionPeriodDuration(26, ChronoUnit.WEEKS);
 
