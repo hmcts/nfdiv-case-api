@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
@@ -24,7 +25,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
+import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentConfirmation;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentSummary;
@@ -94,6 +97,8 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
     private final HttpServletRequest request;
 
     private final AuthTokenGenerator authTokenGenerator;
+
+    private final ServiceRequestSearchService serviceRequestSearchService;
 
     @Value("${idam.client.redirect_uri}")
     private String redirectUrl;
@@ -201,10 +206,24 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
     }
 
     private void prepareServiceRequest(long caseId, FeeDetails feeDetails, String responsibleParty) {
-        final String serviceRequest = paymentService.createServiceRequestReference(
-            redirectUrl, caseId, responsibleParty, feeDetails.getOrderSummary()
+        Fee generalApplicationFee = feeDetails.getOrderSummary().getFees().get(0).getValue();
+
+        Optional<ServiceRequestDto> unpaidServiceRequest = serviceRequestSearchService.findUnpaidServiceRequest(
+            caseId, generalApplicationFee, responsibleParty
         );
-        feeDetails.setServiceRequestReference(serviceRequest);
+
+        if (unpaidServiceRequest.isPresent()) {
+            String serviceRequestReference = unpaidServiceRequest.get().getPaymentGroupReference();
+            log.info("Found unpaid service request: {}, for case: {}", serviceRequestReference, caseId);
+
+            feeDetails.setServiceRequestReference(serviceRequestReference);
+        } else {
+            final String serviceRequest = paymentService.createServiceRequestReference(
+                redirectUrl, caseId, responsibleParty, feeDetails.getOrderSummary()
+            );
+
+            feeDetails.setServiceRequestReference(serviceRequest);
+        }
     }
 
     private Solicitor getInvokingSolicitor(final CaseData caseData, final String userAuth) {

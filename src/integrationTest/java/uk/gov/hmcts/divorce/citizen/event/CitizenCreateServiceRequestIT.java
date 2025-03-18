@@ -20,7 +20,6 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -69,9 +68,6 @@ public class CitizenCreateServiceRequestIT {
 
     @MockBean
     private AuthTokenGenerator authTokenGenerator;
-
-    @MockBean
-    private ServiceRequestSearchService serviceRequestSearchService;
 
     @BeforeAll
     static void setUp() {

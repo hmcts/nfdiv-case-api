@@ -19,7 +19,6 @@ import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
@@ -93,9 +92,6 @@ public class CitizenSubmitApplicationIT {
 
     @MockBean
     private AuthTokenGenerator authTokenGenerator;
-
-    @MockBean
-    private ServiceRequestSearchService serviceRequestSearchService;
 
     @BeforeAll
     static void setUp() {

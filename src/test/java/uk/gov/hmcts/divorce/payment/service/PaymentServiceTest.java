@@ -111,9 +111,6 @@ public class PaymentServiceTest {
     @Mock
     private ResponseEntity<CreditAccountPaymentResponse> responseEntity;
 
-    @Mock
-    private ServiceRequestSearchService serviceRequestSearchService;
-
     @InjectMocks
     private PaymentService paymentService;
 

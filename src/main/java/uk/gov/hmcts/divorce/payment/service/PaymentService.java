@@ -25,7 +25,6 @@ import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 import uk.gov.hmcts.divorce.payment.model.PaymentItem;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.payment.model.ServiceReferenceResponse;
-import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto;
 import uk.gov.hmcts.divorce.payment.model.StatusHistoriesItem;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -96,8 +95,6 @@ public class PaymentService {
 
     private final ObjectMapper objectMapper;
 
-    private final ServiceRequestSearchService serviceRequestSearchService;
-
     @Value("${idam.client.redirect_uri}")
     private String redirectUrl;
 
@@ -124,15 +121,6 @@ public class PaymentService {
                 .code(fee.getCode())
                 .version(fee.getVersion())
                 .build();
-
-            Optional<ServiceRequestDto> unpaidServiceRequest = serviceRequestSearchService.findUnpaidServiceRequest(
-                caseId, fee, responsibleParty
-            );
-            if (unpaidServiceRequest.isPresent()) {
-                String serviceRequestReference = unpaidServiceRequest.get().getPaymentGroupReference();
-                log.info("Found unpaid service request: {}, for case: {}", serviceRequestReference, caseId);
-                return serviceRequestReference;
-            }
 
             var serviceReqBody = buildServiceRequestBody(callbackUrl, caseId, responsibleParty, singletonList(paymentItem));
 

@@ -23,7 +23,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.payment.model.PaymentItem;
-import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
@@ -114,9 +113,6 @@ public class Applicant2SolicitorApplyForFinalOrderIT {
 
     @MockBean
     private NotificationService notificationService;
-
-    @MockBean
-    private ServiceRequestSearchService serviceRequestSearchService;
 
     @BeforeAll
     static void setUp() {

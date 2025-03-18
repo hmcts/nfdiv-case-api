@@ -31,6 +31,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectFee;
@@ -83,6 +84,9 @@ public class SolicitorGeneralApplicationTest {
 
     @Mock
     private HttpServletRequest request;
+
+    @Mock
+    private ServiceRequestSearchService serviceRequestSearchService;
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;

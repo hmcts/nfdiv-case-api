@@ -25,7 +25,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
@@ -92,9 +91,6 @@ public class RespondentApplyForFinalOrderIT {
 
     @MockBean
     private AuthTokenGenerator authTokenGenerator;
-
-    @MockBean
-    private ServiceRequestSearchService serviceRequestSearchService;
 
     @BeforeAll
     static void setUp() {
