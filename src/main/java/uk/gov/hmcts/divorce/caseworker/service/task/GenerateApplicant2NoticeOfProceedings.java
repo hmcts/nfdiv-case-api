@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JS_SUBMITTED_RESPONDENT_SOLICITOR_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
@@ -170,16 +170,10 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             boolean app2BasedOverseas = applicant2.isBasedOverseas() || applicant2.getCorrespondenceAddressIsOverseas() == YesOrNo.YES;
             boolean isCoversheetRequired = !isCourtService || reissuedAsOfflineAOS || app2BasedOverseas;
 
-            if (app2BasedOverseas) {
-                log.info("Generating NOP and cover sheet for overseas respondent for sole case id {} ", caseId);
-            } else if (reissuedAsOfflineAOS) {
-                log.info("Generating reissue offline AoS NOP and cover sheet for sole case id {} ", caseId);
-            }
-
             generateNoticeOfProceedings(
                     caseData,
                     caseId,
-                    NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS,
+                    NFD_NOP_SOLE_RESPONDENT_CITIZEN,
                     noticeOfProceedingContent.apply(caseData, caseId, applicant1, applicant2LanguagePreference));
             if (isCoversheetRequired) {
                 generateCoversheet.generateCoversheet(
@@ -189,56 +183,6 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
                         coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
                         caseData.getApplicant2().getLanguagePreference());
             }
-            /*
-            var app2CorrespondenceAddressIsOverseas = applicant2.getCorrespondenceAddressIsOverseas() == YesOrNo.YES;
-            var app2BasedOverseas = applicant2.isBasedOverseas();
-
-            if (app2BasedOverseas || app2CorrespondenceAddressIsOverseas) {
-                log.info("Generating NOP for overseas respondent for sole case id {} ", caseId);
-                generateNoticeOfProceedings(
-                    caseData,
-                    caseId,
-                    app2CorrespondenceAddressIsOverseas ? NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE : NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES,
-                    noticeOfProceedingContent.apply(caseData, caseId, applicant1, applicant2LanguagePreference)
-                );
-
-                if (app2BasedOverseas) {
-                    log.info("Generating coversheet for overseas respondent for sole case id {} ", caseId);
-                    generateCoversheet.generateCoversheet(
-                            caseData,
-                            caseId,
-                            COVERSHEET_APPLICANT,
-                            coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
-                            caseData.getApplicant2().getLanguagePreference()
-                    );
-                }
-            } else if (reissuedAsOfflineAOS) {
-                generateNoticeOfProceedings(
-                    caseData,
-                    caseId,
-                    NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE,
-                    noticeOfProceedingContent.apply(caseData, caseId, applicant1, applicant2LanguagePreference));
-                generateCoversheet.generateCoversheet(
-                    caseData,
-                    caseId,
-                    COVERSHEET_APPLICANT,
-                    coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
-                    caseData.getApplicant2().getLanguagePreference());
-            } else {
-                generateNoticeOfProceedings(
-                    caseData,
-                    caseId,
-                    NFD_NOP_R1_SOLE_APP2_CIT_ONLINE,
-                    noticeOfProceedingContent.apply(caseData, caseId, applicant1, applicant2LanguagePreference));
-                if (!caseData.getApplication().isCourtServiceMethod()) {
-                    generateCoversheet.generateCoversheet(
-                        caseData,
-                        caseId,
-                        COVERSHEET_APPLICANT,
-                        coversheetApplicantTemplateContent.apply(caseData, caseId, caseData.getApplicant2()),
-                        caseData.getApplicant2().getLanguagePreference());
-                }
-            }*/
         }
     }
 

@@ -55,9 +55,9 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JS_SUBMITTED_RESPONDENT_SOLICITOR_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -221,7 +221,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContent, NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS);
+        verifyInteractions(caseData, templateContent, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
         verify(generateCoversheet)
             .generateCoversheet(
                 caseData,

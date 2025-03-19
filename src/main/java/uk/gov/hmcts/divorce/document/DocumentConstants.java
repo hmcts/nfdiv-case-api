@@ -40,8 +40,8 @@ public final class DocumentConstants {
     public static final String JOINT_DIVORCE_APPLICANT_1_ANSWERS_DOCUMENT_NAME = "joint-divorce-application-applicant-1-answers-";
     public static final String JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME = "draft-joint-application-";
 
-    public static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS =
-            "NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_ONLINE_REISSUE_OVERSEAS";
+    public static final String NFD_NOP_SOLE_RESPONDENT_CITIZEN =
+            "NFD_NOP_SOLE_RESPONDENT_CITIZEN";
     public static final String AMENDED_APPLICATION_COVERSHEET_DOCUMENT_NAME = "amendedApplicationCoversheet";
     public static final String CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "conditionalOrderGrantedCoversheet";
     public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";

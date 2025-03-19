@@ -114,7 +114,7 @@ public class NoticeOfProceedingContent {
     public static final String REISSUE_DATE = "reissueDate";
     public static final String IS_COURT_SERVICE = "isCourtService";
     public static final String IS_PERSONAL_SERVICE = "isPersonalService";
-    public static final String IS_REISSUED = "isReissued";
+    public static final String IS_REISSUED_OFFLINE_AS_AOS = "isReissuedOfflineAsAos";
     public static final String IS_RESPONDENT_OFFLINE = "isRespondentOffline";
     public static final String ACCESS_CODE = "accessCode";
     public static final String URL_TO_LINK_CASE = "linkCaseUrl";
@@ -232,8 +232,8 @@ public class NoticeOfProceedingContent {
         templateContent.put(URL_TO_LINK_CASE,
             config.getTemplateVars().get(caseData.isDivorce() ? RESPONDENT_SIGN_IN_DIVORCE_URL : RESPONDENT_SIGN_IN_DISSOLUTION_URL));
 
-        templateContent.put(IS_REISSUED, OFFLINE_AOS.equals(caseData.getApplication().getReissueOption()));
-        templateContent.put(IS_RESPONDENT_OFFLINE, !applicant2.isApplicantOffline() && ObjectUtils.isNotEmpty(applicant2.getEmail()));
+        templateContent.put(IS_REISSUED_OFFLINE_AS_AOS, OFFLINE_AOS.equals(caseData.getApplication().getReissueOption()));
+        templateContent.put(IS_RESPONDENT_OFFLINE, applicant2.isApplicantOffline() && ObjectUtils.isEmpty(applicant2.getEmail()));
 
         generateDivorceOrDissolutionContent(templateContent, caseData, partner, languagePreference);
 
