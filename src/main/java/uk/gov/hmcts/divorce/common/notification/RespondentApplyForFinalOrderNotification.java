@@ -26,6 +26,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENC
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_APPLY_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_APPLY_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
 import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
@@ -94,9 +95,12 @@ public class RespondentApplyForFinalOrderNotification implements ApplicantNotifi
     }
 
     private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Applicant applicant) {
-        var templateVars = commonContent.basicTemplateVars(caseData, id, applicant.getLanguagePreference());
+        var languagePreference = applicant.getLanguagePreference();
+        var templateVars = commonContent.basicTemplateVars(caseData, id, languagePreference);
 
-        templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(
+            getDateTimeFormatterForPreferredLanguage(languagePreference)
+        ));
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
         Solicitor applicantSolicitor = applicant.getSolicitor();
