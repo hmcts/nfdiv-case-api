@@ -166,6 +166,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
             "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx");
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
             "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
+        stubForDocAssemblyWith("6dd725e8-f053-4493-9cbe-bb69d1905a12",
+                "FL-NFD-GOR-ENG-Do-Not-Attend-Court-CO-Granted-Letter.docx");
         stubForDocAssemblyWith("ea114af6-ed73-476b-8cc6-41ec8eb4f0b3",
             "FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter_V2.docx");
         stubForDocAssemblyWith("b3d8d9de-8706-4b6e-881c-d8b400d6c533",
