@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -35,15 +35,14 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_SE
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerIssueBailiffPack implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_ISSUE_BAILIFF_PACK = "caseworker-issue-bailiff-pack";
     private static final int FIRST = 0;
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final CaseDataDocumentService caseDataDocumentService;
 
-    @Autowired
-    private CertificateOfServiceContent certificateOfServiceContent;
+    private final CertificateOfServiceContent certificateOfServiceContent;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

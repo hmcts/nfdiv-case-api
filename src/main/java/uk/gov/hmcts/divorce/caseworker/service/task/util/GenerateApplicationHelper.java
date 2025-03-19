@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.service.task.util;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -31,19 +31,16 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class GenerateApplicationHelper {
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final CaseDataDocumentService caseDataDocumentService;
 
-    @Autowired
-    private ApplicationSoleTemplateContent applicationSoleTemplateContent;
+    private final ApplicationSoleTemplateContent applicationSoleTemplateContent;
 
-    @Autowired
-    private ApplicationJointTemplateContent applicationJointTemplateContent;
+    private final ApplicationJointTemplateContent applicationJointTemplateContent;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     public CaseDetails<CaseData, State> generateApplicationDocument(final CaseDetails<CaseData, State> caseDetails,
                                             final boolean isRegeneration) {

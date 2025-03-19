@@ -48,6 +48,7 @@ public class CaseworkerCreateGeneralOrder implements CCDConfig<CaseData, State, 
     public static final String CASEWORKER_CREATE_GENERAL_ORDER = "caseworker-create-general-order";
 
     private final CreateGeneralOrder createGeneralOrder;
+
     private final DocumentIdProvider documentIdProvider;
 
     @Override

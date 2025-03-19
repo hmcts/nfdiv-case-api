@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -44,6 +44,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServic
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_ISSUE_APPLICATION = "caseworker-issue-application";
@@ -53,17 +54,13 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
     private static final String WARNING_LABEL = "### There is no address for the Respondent, "
         + "you need to provide a reason for issuing the application without the address for the respondent";
 
-    @Autowired
-    private IssueApplicationService issueApplicationService;
+    private final IssueApplicationService issueApplicationService;
 
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
+    private final CcdUpdateService ccdUpdateService;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker.service.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -42,26 +42,22 @@ import static uk.gov.service.notify.NotificationClient.prepareUpload;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class GeneralEmailNotification {
 
     public static final String GENERAL_EMAIL_DETAILS = "general email details";
     public static final String GENERAL_OTHER_RECIPIENT_NAME = "general other recipient name";
     private static final String DOCUMENTS_AVAILABLE = "areDocuments";
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    private CaseDocumentAccessManagement documentManagementClient;
+    private final CaseDocumentAccessManagement documentManagementClient;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
     public void send(final CaseData caseData, final Long caseId) throws NotificationClientException, IOException {
         log.info("Sending General Email Notification for case id: {}", caseId);

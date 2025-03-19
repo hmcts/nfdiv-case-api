@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -33,19 +33,17 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICA
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerIssueAmendedApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_ISSUE_AMENDED_APPLICATION = "caseworker-issue-amended-application";
     private static final long ISSUE_AMENDED_APPLICATION_OFFSET_DAYS = 16;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
-    @Autowired
-    private GenerateCoversheet generateCoversheet;
+    private final GenerateCoversheet generateCoversheet;
 
-    @Autowired
-    private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
+    private final CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -30,20 +30,17 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.BAILIFF_SERVICE_R
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CaseworkerConfirmBailiffRefusal implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_CONFIRM_BAILIFF_REFUSAL = "caseworker-confirm-bailiff-refusal";
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final CaseDataDocumentService caseDataDocumentService;
 
-    @Autowired
-    private BailiffNotApprovedOrderContent templateContentNotApproved;
+    private final BailiffNotApprovedOrderContent templateContentNotApproved;
 
-    @Autowired
-    private ServiceApplicationNotification serviceApplicationNotification;
+    private final ServiceApplicationNotification serviceApplicationNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -42,21 +42,18 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_ADD_BAILIFF_RETURN = "caseworker-add-bailiff-return";
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private BailiffServiceUnsuccessfulNotification unsuccessfulNotification;
+    private final BailiffServiceUnsuccessfulNotification unsuccessfulNotification;
 
-    @Autowired
-    private BailiffServiceSuccessfulNotification successfulNotification;
+    private final BailiffServiceSuccessfulNotification successfulNotification;
 
-    @Autowired
-    private SetHoldingDueDate setHoldingDueDate;
+    private final SetHoldingDueDate setHoldingDueDate;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

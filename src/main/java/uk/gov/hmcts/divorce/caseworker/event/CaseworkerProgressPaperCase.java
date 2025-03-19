@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -39,15 +39,14 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_PROGRESS_PAPER_CASE = "caseworker-progress-paper-case";
 
-    @Autowired
-    private CaseFlagsService caseFlagsService;
+    private final CaseFlagsService caseFlagsService;
 
-    @Autowired
-    private SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
+    private final SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

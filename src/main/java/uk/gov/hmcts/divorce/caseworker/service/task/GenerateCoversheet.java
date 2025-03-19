@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
@@ -17,13 +17,12 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class GenerateCoversheet {
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final CaseDataDocumentService caseDataDocumentService;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     public void generateCoversheet(final CaseData caseData,
                                    final Long caseId,

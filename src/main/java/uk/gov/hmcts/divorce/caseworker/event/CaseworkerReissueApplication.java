@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -44,6 +44,7 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_REISSUE_APPLICATION = "caseworker-reissue-application";
     public static final String BLANK_LABEL = " ";
@@ -52,8 +53,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
     public static final String REISSUE_ISSUE_ERROR_MESSAGE =
         "Case has not been issued therefore it cannot be reissued";
 
-    @Autowired
-    private ReIssueApplicationService reIssueApplicationService;
+    private final ReIssueApplicationService reIssueApplicationService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

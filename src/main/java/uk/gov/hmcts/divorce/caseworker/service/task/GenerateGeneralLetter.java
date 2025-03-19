@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.Document;
@@ -36,19 +36,16 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class GenerateGeneralLetter implements CaseTask {
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final CaseDataDocumentService caseDataDocumentService;
 
-    @Autowired
-    private GeneralLetterTemplateContent templateContent;
+    private final GeneralLetterTemplateContent templateContent;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
-    @Autowired
-    private DocumentIdProvider documentIdProvider;
+    private final DocumentIdProvider documentIdProvider;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {

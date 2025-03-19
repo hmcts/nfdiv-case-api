@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -57,6 +57,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.EMAIL;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRole> {
 
     public static final int MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS = 10;
@@ -69,20 +70,15 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
     private static final String WARNING_ATTACHMENTS
         = "\n ### WARNING: Please check that you have uploaded/selected the correct documents and recipient. \n";
 
-    @Autowired
-    private DocumentIdProvider documentIdProvider;
+    private final DocumentIdProvider documentIdProvider;
 
-    @Autowired
-    private GeneralEmailNotification generalEmailNotification;
+    private final GeneralEmailNotification generalEmailNotification;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     private static final String NEVER_SHOW = "generalEmailParties=\"NEVER\"";
 
