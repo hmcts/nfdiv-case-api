@@ -6,9 +6,13 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -27,6 +31,9 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_ORDER;
 public class CreateGeneralOrder implements CcdPageConfiguration {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final String SCANNED_GENERAL_ORDER = "scannedGeneralOrderOrGeneratedGeneralOrder=\"scanned\"";
+    private static final String GENERATED_GENERAL_ORDER = "scannedGeneralOrderOrGeneratedGeneralOrder=\"generated\"";
+    private static final String EITHER_GENERAL_ORDER = SCANNED_GENERAL_ORDER + " OR " + GENERATED_GENERAL_ORDER;
 
     private final CaseDataDocumentService caseDataDocumentService;
 
@@ -38,13 +45,19 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder.page("CreateGeneralOrder", this::midEvent)
             .complex(CaseData::getGeneralOrder)
-                .mandatory(GeneralOrder::getGeneralOrderDate)
-                .mandatory(GeneralOrder::getGeneralOrderDivorceParties)
-                .optional(GeneralOrder::getGeneralOrderRecitals)
-                .optional(GeneralOrder::getGeneralOrderJudgeOrLegalAdvisorType)
-                .optional(GeneralOrder::getGeneralOrderJudgeOrLegalAdvisorName)
-                .optional(GeneralOrder::getGeneralOrderJudgeOrLegalAdvisorVenue)
-                .mandatory(GeneralOrder::getGeneralOrderDetails)
+                .mandatory(GeneralOrder::getScannedGeneralOrderOrGeneratedGeneralOrder)
+            .done()
+            .complex(CaseData::getDocuments)
+                .mandatory(CaseDocuments::getScannedDocumentNames, SCANNED_GENERAL_ORDER)
+            .done()
+            .complex(CaseData::getGeneralOrder)
+                .mandatory(GeneralOrder::getGeneralOrderDate, GENERATED_GENERAL_ORDER)
+                .mandatory(GeneralOrder::getGeneralOrderDivorceParties, EITHER_GENERAL_ORDER)
+                .optional(GeneralOrder::getGeneralOrderRecitals, GENERATED_GENERAL_ORDER)
+                .optional(GeneralOrder::getGeneralOrderJudgeOrLegalAdvisorType, GENERATED_GENERAL_ORDER)
+                .optional(GeneralOrder::getGeneralOrderJudgeOrLegalAdvisorName, GENERATED_GENERAL_ORDER)
+                .optional(GeneralOrder::getGeneralOrderJudgeOrLegalAdvisorVenue, GENERATED_GENERAL_ORDER)
+                .mandatory(GeneralOrder::getGeneralOrderDetails, GENERATED_GENERAL_ORDER)
             .done();
     }
 
@@ -54,29 +67,37 @@ public class CreateGeneralOrder implements CcdPageConfiguration {
     ) {
         log.info("Mid-event callback triggered for CreateGeneralOrder");
 
-        var caseDataCopy = details.getData().toBuilder().build();
-        var generalOrder = caseDataCopy.getGeneralOrder();
+        final CaseData caseData = details.getData();
+        final GeneralOrder generalOrder = caseData.getGeneralOrder();
+        final DynamicList scannedDocNames = caseData.getDocuments().getScannedDocumentNames();
+        final String selectedScannedDoc = scannedDocNames == null ? null : scannedDocNames.getValue().getLabel();
 
         final Long caseId = details.getId();
-
-        final String filename = GENERAL_ORDER + LocalDateTime.now(clock).format(formatter);
 
         log.info("Generating general order document for templateId : {} case caseId: {}",
             DIVORCE_GENERAL_ORDER, caseId);
 
-        Document generalOrderDocument = caseDataDocumentService.renderDocument(
-            generalOrderTemplateContent.apply(caseDataCopy, caseId),
-            caseId,
-            DIVORCE_GENERAL_ORDER,
-            caseDataCopy.getApplicant1().getLanguagePreference(),
-            filename
-        );
+        if (generalOrder.getScannedGeneralOrderOrGeneratedGeneralOrder().isScannedGeneralOrder()) {
+            ListValue<ScannedDocument> scannedDoc = caseData.getDocuments().getScannedDocuments().stream()
+                .filter(g -> g.getValue().getFileName().equals(selectedScannedDoc))
+                .findFirst()
+                .orElseThrow();
+            generalOrder.setGeneralOrderScannedDraft(scannedDoc.getValue());
+        } else {
+            Document generalOrderDocument = caseDataDocumentService.renderDocument(
+                generalOrderTemplateContent.apply(caseData, caseId),
+                caseId,
+                DIVORCE_GENERAL_ORDER,
+                caseData.getApplicant1().getLanguagePreference(),
+                GENERAL_ORDER + LocalDateTime.now(clock).format(formatter)
+            );
+            generalOrder.setGeneralOrderDraft(generalOrderDocument);
+        }
 
-        generalOrder.setGeneralOrderDraft(generalOrderDocument);
-        caseDataCopy.setGeneralOrder(generalOrder);
+        caseData.setGeneralOrder(generalOrder);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseDataCopy)
+            .data(caseData)
             .build();
     }
 }
