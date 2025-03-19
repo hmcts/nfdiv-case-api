@@ -38,7 +38,7 @@ public final class ValidationUtil {
     public static final String CONNECTION = "Connection ";
     public static final String CANNOT_EXIST = " cannot exist";
     public static final String SOT_REQUIRED = "Statement of truth must be accepted by the person making the application";
-    public static final String NAME_REGEX = "^[\\p{Script=Latin}''_\\-\\s]*$";
+    public static final String NAME_REGEX = "^[\\p{Script=Latin}'’_\\-\\s]*$";
 
     private ValidationUtil() {
     }
