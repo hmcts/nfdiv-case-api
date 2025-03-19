@@ -755,6 +755,7 @@ public class CaseValidationTest {
             Arguments.of("test_first_name test_last_name", true),
             Arguments.of("Test_User", true),
             Arguments.of("Test'User", true),
+            Arguments.of("Test’User", true),
             Arguments.of("Test-User", true),
             Arguments.of("Tést User", true),
             Arguments.of("Test1 User", false),
