@@ -17,6 +17,7 @@ import java.util.EnumSet;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHWFDecision;
@@ -43,7 +44,14 @@ public class CitizenWithdrawn implements CCDConfig<CaseData, State, UserRole> {
         new PageBuilder(configBuilder
             .event(CITIZEN_WITHDRAWN)
             .forStateTransition(
-                EnumSet.of(Draft, AwaitingApplicant2Response, Applicant2Approved, AwaitingPayment, AwaitingResponseToHWFDecision),
+                EnumSet.of(
+                    Draft,
+                    AwaitingApplicant1Response,
+                    AwaitingApplicant2Response,
+                    Applicant2Approved,
+                    AwaitingPayment,
+                    AwaitingResponseToHWFDecision
+                ),
                 Withdrawn
             )
             .name("Citizen Withdraw")
