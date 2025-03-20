@@ -443,7 +443,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContent, NFD_NOP_R1_SOLE_APP2_CIT_ONLINE);
+        verifyInteractions(caseData, templateContent, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo("ABCD2234");
