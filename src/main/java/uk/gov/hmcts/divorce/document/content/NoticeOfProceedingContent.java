@@ -34,6 +34,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_SOLICITOR_REGISTERED;
@@ -261,16 +262,16 @@ public class NoticeOfProceedingContent {
                 WELSH.equals(languagePreference) ? DIVORCE_PROCESS_CY : DIVORCE_PROCESS);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION,
                 WELSH.equals(languagePreference) ? YOUR_DIVORCE_CY : YOUR_DIVORCE);
-            templateContent.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, DIVORCE);
+            templateContent.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, WELSH.equals(languagePreference) ? DIVORCE_CY : DIVORCE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP,
                 WELSH.equals(languagePreference) ? DIVORCE_CY : DIVORCE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_URL, DIVORCE_URL);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE, DIVORCE_SERVICE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, THE_DIVORCE_SERVICE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PAPERS, DIVORCE_PAPERS);
-            templateContent.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
+            templateContent.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, WELSH.equals(languagePreference) ? DIVORCE_CY : DIVORCE);
             templateContent.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
-            templateContent.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
+            templateContent.put(MARRIAGE_OR_CIVIL_PARTNER, WELSH.equals(languagePreference) ? MARRIAGE_CY : MARRIAGE);
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         } else {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL);

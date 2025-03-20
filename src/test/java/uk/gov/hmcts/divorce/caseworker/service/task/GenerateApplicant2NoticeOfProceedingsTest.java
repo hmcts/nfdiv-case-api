@@ -208,13 +208,13 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
     }
 
     @Test
-    void shouldGenerateNoPWhenSoleWithAppNotRepresentedAndAddressOverseas() {
+    void shouldGenerateNoPWhenSoleWithAppNotRepresentedAndAddressSelectedAsOverseas() {
         setMockClock(clock);
         MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
-        caseData.getApplicant2().setEmail(null);
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
         caseData.getApplicant2().setAddressOverseas(YES);
 
         final Map<String, Object> templateContent = new HashMap<>();
@@ -442,6 +442,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
                         .build()
         );
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -524,6 +525,30 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
                         templateContent,
                         ENGLISH
             );
+
+        assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
+        classMock.close();
+    }
+
+    @Test
+    void shouldGenerateNoPWithoutCoversheetWhenSoleWithAppNotRepresented() {
+        setMockClock(clock);
+        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
+        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
+
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplicant2().setOffline(YES);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
+
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
+        verifyNoInteractions(generateCoversheet);
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
