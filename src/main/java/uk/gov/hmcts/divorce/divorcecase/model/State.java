@@ -550,6 +550,7 @@ public enum State {
         AwaitingHWFPartPayment,
         AwaitingDocuments,
         AwaitingRequestedInformation,
+        NewPaperCase,
         RequestedInformationSubmitted,
         Submitted,
         Withdrawn,
