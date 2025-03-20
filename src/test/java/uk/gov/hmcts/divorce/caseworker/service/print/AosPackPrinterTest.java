@@ -91,7 +91,7 @@ class AosPackPrinterTest {
     }
 
     @Test
-    void shouldPrintAosPackWithD10ForRespondentIfEmailIsBlank() {
+    void shouldPrintAosPackWithD10ForRespondentIfRespondentRepresentedAndSolicitorOverseas() {
 
         final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -131,7 +131,7 @@ class AosPackPrinterTest {
     }
 
     @Test
-    void shouldPrintAosPackWithoutD10ForRespondentIfEmailIsPresent() {
+    void shouldPrintAosPackWithD10ForRespondentWhenNotRepresented() {
 
         final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -152,6 +152,7 @@ class AosPackPrinterTest {
                     .email("testresp@test.com")
                     .solicitorRepresented(NO)
                     .solicitor(Solicitor.builder().build())
+                    .addressOverseas(YES)
                     .build())
             .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
             .build();

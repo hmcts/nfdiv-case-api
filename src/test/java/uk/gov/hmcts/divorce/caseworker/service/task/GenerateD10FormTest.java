@@ -29,6 +29,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
@@ -78,6 +79,7 @@ public class GenerateD10FormTest {
                 .organisation(Organisation.builder()
                     .build())
                 .build())
+            .addressOverseas(YES)
             .build();
         caseData.getApplicant2().setSolicitor(solicitor);
         caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
@@ -96,6 +98,27 @@ public class GenerateD10FormTest {
     }
 
     @Test
+    void shouldGenerateD10DocumentAndAddToListOfDocumentsGeneratedForApp2AddressOverseasNotRepresented() throws IOException {
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplicant2().setAddressOverseas(YES);
+        caseData.setSupplementaryCaseType(NA);
+        caseData.getDocuments().setDocumentsGenerated(new ArrayList<>());
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        generateD10Form.apply(caseDetails);
+        verify(generateFormHelper).addFormToGeneratedDocuments(
+                caseData,
+                D10,
+                "D10",
+                "D10.pdf",
+                "/D10.pdf");
+    }
+
+    @Test
     void shouldNotGenerateD10DocumentIfSolicitorServiceMethodHasNotBeenSelected() {
         final CaseData caseData = validApplicant1CaseData();
         caseData.setApplicationType(SOLE_APPLICATION);
@@ -108,6 +131,27 @@ public class GenerateD10FormTest {
         final var result = generateD10Form.apply(caseDetails);
 
         verifyNoInteractions(generateFormHelper);
+        assertThat(result.getData()).isEqualTo(caseData);
+    }
+
+    @Test
+    void shouldNotGenerateD10DocumentIfNotCourtService() throws IOException {
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final var result = generateD10Form.apply(caseDetails);
+
+        verify(generateFormHelper).addFormToGeneratedDocuments(
+                caseData,
+                D10,
+                "D10",
+                "D10.pdf",
+                "/D10.pdf");
         assertThat(result.getData()).isEqualTo(caseData);
     }
 
