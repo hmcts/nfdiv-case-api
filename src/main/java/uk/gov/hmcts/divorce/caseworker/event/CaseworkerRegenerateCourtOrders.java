@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.removeExistingDocuments
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
@@ -124,7 +125,7 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
         // so clean up generated documents for certificate of entitlement here and not before
         removeExistingDocuments(
             caseData,
-            List.of(CERTIFICATE_OF_ENTITLEMENT));
+            List.of(CERTIFICATE_OF_ENTITLEMENT, CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

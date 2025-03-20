@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -16,9 +16,11 @@ import uk.gov.hmcts.divorce.common.event.page.Applicant2SolAosJurisdiction;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolAosOtherProceedings;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolConfirmContactDetails;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolReviewApplicant1Application;
+import uk.gov.hmcts.divorce.common.notification.RespondentDraftAosStartedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
 import java.util.ArrayList;
@@ -45,6 +47,7 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String DRAFT_AOS = "draft-aos";
@@ -58,8 +61,10 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
         new Applicant2SolAosAskCourtToDelay(),
         new Applicant2SolAosOtherProceedings()
     );
-    @Autowired
-    private AddMiniApplicationLink addMiniApplicationLink;
+
+    private final AddMiniApplicationLink addMiniApplicationLink;
+    private final NotificationDispatcher notificationDispatcher;
+    private final RespondentDraftAosStartedNotification respondentDraftAosStartedNotification;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -116,6 +121,8 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
         var state = details.getState() == AwaitingAos || details.getState() == AosOverdue ? AosDrafted : details.getState();
 
         details.getData().getAcknowledgementOfService().setAosIsDrafted(YES);
+
+        notificationDispatcher.send(respondentDraftAosStartedNotification, details.getData(), details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

@@ -116,7 +116,7 @@ class AwaitingConditionalOrderNotificationTest {
         when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
                 .thenReturn(getBasicTemplateVars());
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(SIGN_IN_PROFESSIONAL_USERS_URL);
-        when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
+        when(commonContent.getUnionType(data, data.getApplicant1().getLanguagePreference())).thenReturn(DIVORCE);
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
@@ -152,7 +152,7 @@ class AwaitingConditionalOrderNotificationTest {
 
         when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
                 .thenReturn(getBasicTemplateVars());
-        when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
+        when(commonContent.getUnionType(data, data.getApplicant1().getLanguagePreference())).thenReturn(DIVORCE);
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
@@ -189,7 +189,7 @@ class AwaitingConditionalOrderNotificationTest {
 
         when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
                 .thenReturn(getBasicTemplateVars());
-        when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
+        when(commonContent.getUnionType(data, data.getApplicant2().getLanguagePreference())).thenReturn(DIVORCE);
 
         notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
@@ -232,7 +232,7 @@ class AwaitingConditionalOrderNotificationTest {
 
         when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
                 .thenReturn(getBasicTemplateVars());
-        when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
+        when(commonContent.getUnionType(data, data.getApplicant1().getLanguagePreference())).thenReturn(DIVORCE);
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
