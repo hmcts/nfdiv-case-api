@@ -113,7 +113,8 @@ public class AlternativeService {
     @CCD(
         label = "Supporting Documents",
         typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument"
+        typeParameterOverride = "DivorceDocument",
+        searchable=false
     )
     private List<ListValue<DivorceDocument>> serviceApplicationDocuments;
 

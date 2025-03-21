@@ -256,7 +256,8 @@ public class CaseData {
         label = "Notes",
         typeOverride = Collection,
         typeParameterOverride = "CaseNote",
-        access = {CaseworkerAndSuperUserAccess.class}
+        access = {CaseworkerAndSuperUserAccess.class},
+        searchable=false
     )
     private List<ListValue<CaseNote>> notes;
 
@@ -287,7 +288,8 @@ public class CaseData {
 
     @CCD(
             access = {DefaultAccess.class, AcaSystemUserAccess.class, CaseworkerAccess.class},
-            label = "Change of representatives"
+            label = "Change of representatives",
+            searchable=false
     )
     @Builder.Default
     private List<ListValue<ChangeOfRepresentative>> changeOfRepresentatives = new ArrayList<>();
