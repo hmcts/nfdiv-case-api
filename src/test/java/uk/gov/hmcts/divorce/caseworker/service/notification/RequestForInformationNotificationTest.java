@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.service.notification;
 
+import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -7,13 +8,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
+import uk.gov.hmcts.divorce.document.print.documentpack.RequestForInformationDocumentPack;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.lang.String.join;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -25,9 +31,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointP
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.OTHER;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_LETTER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE_POPULATED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_YET_ISSUED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_NAME;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.REQUEST_FOR_INFORMATION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.HUSBAND_JOINT;
@@ -66,11 +77,19 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformat
 @ExtendWith(MockitoExtension.class)
 class RequestForInformationNotificationTest {
 
+    private static final String LETTER_TYPE_REQUEST_FOR_INFORMATION = "request-for-information-letter";
+
     @Mock
     private CommonContent commonContent;
 
     @Mock
     private NotificationService notificationService;
+
+    @Mock
+    private RequestForInformationDocumentPack requestForInformationDocumentPack;
+
+    @Mock
+    private LetterPrinter letterPrinter;
 
     @InjectMocks
     private RequestForInformationNotification requestForInformationNotification;
@@ -97,6 +116,24 @@ class RequestForInformationNotificationTest {
             templateContent,
             ENGLISH,
             TEST_CASE_ID
+        );
+    }
+
+    @Test
+    void shouldSendRequestForInformationLetterToOfflineApplicant() {
+        CaseData caseData = caseData();
+
+        when(requestForInformationDocumentPack.getDocumentPack(any(), any())).thenReturn(getApplicantDocumentPack());
+        when(requestForInformationDocumentPack.getLetterId()).thenReturn(LETTER_TYPE_REQUEST_FOR_INFORMATION);
+
+        requestForInformationNotification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
+
+        verify(letterPrinter).sendLetters(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant1(),
+            getApplicantDocumentPack(),
+            LETTER_TYPE_REQUEST_FOR_INFORMATION
         );
     }
 
@@ -130,6 +167,24 @@ class RequestForInformationNotificationTest {
             templateContent,
             ENGLISH,
             TEST_CASE_ID
+        );
+    }
+
+    @Test
+    void shouldSendRequestForInformationLetterToOfflineApplicantSolicitor() {
+        CaseData caseData = caseData();
+        
+        when(requestForInformationDocumentPack.getDocumentPack(any(), any())).thenReturn(getSolicitorDocumentPack());
+        when(requestForInformationDocumentPack.getLetterId()).thenReturn(LETTER_TYPE_REQUEST_FOR_INFORMATION);
+
+        requestForInformationNotification.sendToApplicant1SolicitorOffline(caseData, TEST_CASE_ID);
+
+        verify(letterPrinter).sendLetters(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant1(),
+            getSolicitorDocumentPack(),
+            LETTER_TYPE_REQUEST_FOR_INFORMATION
         );
     }
 
@@ -243,6 +298,24 @@ class RequestForInformationNotificationTest {
     }
 
     @Test
+    void shouldSendRequestForInformationLetterToOfflineApplicant2() {
+        CaseData caseData = caseData();
+
+        when(requestForInformationDocumentPack.getDocumentPack(any(), any())).thenReturn(getApplicantDocumentPack());
+        when(requestForInformationDocumentPack.getLetterId()).thenReturn(LETTER_TYPE_REQUEST_FOR_INFORMATION);
+
+        requestForInformationNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+
+        verify(letterPrinter).sendLetters(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            getApplicantDocumentPack(),
+            LETTER_TYPE_REQUEST_FOR_INFORMATION
+        );
+    }
+
+    @Test
     void shouldSendRequestForInformationEmailToApplicant2SolicitorWhenRepresentedOnJointCase() {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
@@ -266,6 +339,24 @@ class RequestForInformationNotificationTest {
             templateContent,
             ENGLISH,
             TEST_CASE_ID
+        );
+    }
+
+    @Test
+    void shouldSendRequestForInformationLetterToOfflineApplicant2Solicitor() {
+        CaseData caseData = caseData();
+
+        when(requestForInformationDocumentPack.getDocumentPack(any(), any())).thenReturn(getSolicitorDocumentPack());
+        when(requestForInformationDocumentPack.getLetterId()).thenReturn(LETTER_TYPE_REQUEST_FOR_INFORMATION);
+
+        requestForInformationNotification.sendToApplicant2SolicitorOffline(caseData, TEST_CASE_ID);
+
+        verify(letterPrinter).sendLetters(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            getSolicitorDocumentPack(),
+            LETTER_TYPE_REQUEST_FOR_INFORMATION
         );
     }
 
@@ -367,5 +458,27 @@ class RequestForInformationNotificationTest {
         templateVars.put(SMART_SURVEY, SMART_SURVEY_TEST_URL);
 
         return templateVars;
+    }
+
+    private DocumentPackInfo getApplicantDocumentPack() {
+        return new DocumentPackInfo(
+            ImmutableMap.of(
+                REQUEST_FOR_INFORMATION, Optional.of(REQUEST_FOR_INFORMATION_LETTER_TEMPLATE_ID)
+            ),
+            ImmutableMap.of(
+                REQUEST_FOR_INFORMATION_LETTER_TEMPLATE_ID, REQUEST_FOR_INFORMATION_LETTER_DOCUMENT_NAME
+            )
+        );
+    }
+
+    private DocumentPackInfo getSolicitorDocumentPack() {
+        return new DocumentPackInfo(
+            ImmutableMap.of(
+                REQUEST_FOR_INFORMATION, Optional.of(REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_TEMPLATE_ID)
+            ),
+            ImmutableMap.of(
+                REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_TEMPLATE_ID, REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_DOCUMENT_NAME
+            )
+        );
     }
 }

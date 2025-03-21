@@ -21,6 +21,8 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_2_FULL_NAME = "applicant2FullName";
     public static final String FIRST_NAME = "firstName";
     public static final String LAST_NAME = "lastName";
+    public static final String APPLICANT_OR_APPLICANT1 = "applicantOrApplicant1";
+    public static final String RESPONDENT_OR_APPLICANT2 = "respondentOrApplicant2";
     public static final String APPLICANT_1_MARRIAGE_NAME = "applicant1MarriageName";
     public static final String APPLICANT_2_MARRIAGE_NAME = "applicant2MarriageName";
     public static final String MARRIAGE_DATE = "marriageDate";
@@ -115,7 +117,9 @@ public final class DocmosisTemplateConstants {
     public static final String RESPOND_BY_DATE = "respondByDate";
     public static final String RESPONDENT_SOLICITOR_REGISTERED = "respSolicitorRegistered";
     public static final String NOT_PROVIDED = "Not provided";
+    public static final String NOT_PROVIDED_CY = "Heb ei ddarparu";
     public static final String NOT_REPRESENTED = "Not represented";
+    public static final String NOT_REPRESENTED_CY = "Heb ei gynrychioli";
 
     public static final String PRONOUNCEMENT_JUDGE = "pronouncementJudge";
     public static final String COURT_NAME = "courtName";
@@ -214,6 +218,16 @@ public final class DocmosisTemplateConstants {
     public static final String RESPONSE_DUE_DATE = "responseDueDate";
     public static final String CO_OR_FO = "coOrFo";
     public static final String ADDRESS_BASED_OVERSEAS = "isBasedOverseas";
+    public static final String APPLICANT = "Applicant:";
+    public static final String APPLICANT_CY = "Ceisydd:";
+    public static final String APPLICANT_1 = "Applicant 1:";
+    public static final String APPLICANT_1_CY = "Ceisydd 1:";
+    public static final String RESPONDENT = "Respondent:";
+    public static final String RESPONDENT_CY = "Atebydd:";
+    public static final String APPLICANT_2 = "Applicant 2:";
+    public static final String APPLICANT_2_CY = "Ceisydd 2:";
+
+    public static final String REQUEST_FOR_INFORMATION_DETAILS = "requestForInformationDetails";
 
     private DocmosisTemplateConstants() {
     }

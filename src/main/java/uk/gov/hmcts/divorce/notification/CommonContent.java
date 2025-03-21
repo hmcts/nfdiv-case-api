@@ -130,7 +130,12 @@ public class CommonContent {
 
     public static final String SPOUSE = "spouse";
     public static final String SPOUSE_WELSH = "priod";
-
+    public static final String HUSBAND = "husband";
+    public static final String HUSBAND_CY = "gŵr";
+    public static final String WIFE = "wife";
+    public static final String WIFE_CY = "gwraig";
+    public static final String CIVIL_PARTNER = "civil partner";
+    public static final String CIVIL_PARTNER_CY = "partner sifil";
     public static final String SMART_SURVEY = "smartSurvey";
     public static final String REQUEST_FOR_INFORMATION_DETAILS = "request information details";
     public static final String SENT_TO_BOTH_APPLICANTS = "sentToBothApplicants";
@@ -145,6 +150,12 @@ public class CommonContent {
 
     @Autowired
     private EmailTemplatesConfig config;
+
+    public String getWebFormUrl(LanguagePreference languagePreference) {
+        return WELSH.equals(languagePreference)
+            ? config.getTemplateVars().get(WEBFORM_CY_URL)
+            : config.getTemplateVars().get(WEBFORM_URL);
+    }
 
     public Map<String, String> mainTemplateVars(final CaseData caseData,
                                                 final Long id,
@@ -164,10 +175,7 @@ public class CommonContent {
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
-        templateVars.put(WEBFORM_URL,
-            WELSH.equals(applicant.getLanguagePreference())
-                ? config.getTemplateVars().get(WEBFORM_CY_URL)
-                : config.getTemplateVars().get(WEBFORM_URL));
+        templateVars.put(WEBFORM_URL, getWebFormUrl(applicant.getLanguagePreference()));
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
         templateVars.put(SMART_SURVEY, getSmartSurvey());
 
@@ -254,10 +262,10 @@ public class CommonContent {
             if (isNull(partner.getGender())) {
                 return SPOUSE;
             } else {
-                return partner.getGender() == MALE ? "husband" : "wife";
+                return partner.getGender() == MALE ? HUSBAND : WIFE;
             }
         } else {
-            return "civil partner";
+            return CIVIL_PARTNER;
         }
     }
 
@@ -266,10 +274,10 @@ public class CommonContent {
             if (isNull(partner.getGender())) {
                 return SPOUSE_WELSH;
             } else {
-                return partner.getGender() == MALE ? "gŵr" : "gwraig";
+                return partner.getGender() == MALE ? HUSBAND_CY : WIFE_CY;
             }
         } else {
-            return "partner sifil";
+            return CIVIL_PARTNER_CY;
         }
     }
 
