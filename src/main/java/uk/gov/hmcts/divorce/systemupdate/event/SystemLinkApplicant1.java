@@ -15,6 +15,8 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -38,6 +40,7 @@ public class SystemLinkApplicant1 implements CCDConfig<CaseData, State, UserRole
             .name("Link Applicant 1 to case")
             .description("Link Applicant 1 to case so they are online")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
     }

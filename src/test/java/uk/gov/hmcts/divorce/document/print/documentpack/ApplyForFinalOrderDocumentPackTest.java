@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD11Form;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD36Form;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,6 +24,9 @@ class ApplyForFinalOrderDocumentPackTest {
 
     @Mock
     GenerateD36Form generateD36Form;
+
+    @Mock
+    GenerateD11Form generateD11Form;
 
     @InjectMocks
     ApplyForFinalOrderDocumentPack applyForFinalOrderDocumentPack;
@@ -51,6 +55,7 @@ class ApplyForFinalOrderDocumentPackTest {
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         assertEquals(RESPONDENT_OFFLINE_DOCUMENTPACK, applyForFinalOrderDocumentPack.getDocumentPack(caseData, applicant));
         verify(generateD36Form).generateD36Document(caseData);
+        verify(generateD11Form).generateD11Document(caseData);
     }
 
     @Test

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.service.task;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -84,7 +85,13 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
         final boolean isSoleApplication = caseData.getApplicationType().isSole();
 
         if (isSoleApplication) {
-            caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
+            boolean userAlreadyHasCaseInvite = caseData.getCaseInvite() != null
+                && StringUtils.isNotEmpty(caseData.getCaseInvite().accessCode());
+
+            if (!userAlreadyHasCaseInvite) {
+                caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
+            }
+
             if (caseData.isJudicialSeparationCase()) {
                 generateSoleJSNoticeOfProceedings(caseData, caseId);
             } else {
