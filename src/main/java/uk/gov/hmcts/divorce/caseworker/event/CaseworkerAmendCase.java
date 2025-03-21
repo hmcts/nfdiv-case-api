@@ -23,6 +23,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageCertificateNames;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
 
 @Slf4j
@@ -61,7 +63,9 @@ public class CaseworkerAmendCase implements CCDConfig<CaseData, State, UserRole>
         CaseData caseData = details.getData();
 
         log.info("Validating Marriage Date for Case Id: {}", details.getId());
-        final List<String> caseValidationErrors = validateMarriageDate(caseData, "MarriageDate", true);
+        final List<String> caseValidationErrors = flattenLists(
+            validateMarriageDate(caseData, "MarriageDate", true),
+            validateMarriageCertificateNames(caseData));
 
         if (!isEmpty(caseValidationErrors)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
