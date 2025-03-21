@@ -257,7 +257,7 @@ public class CaseData {
         typeOverride = Collection,
         typeParameterOverride = "CaseNote",
         access = {CaseworkerAndSuperUserAccess.class},
-        searchable=false
+        searchable = false
     )
     private List<ListValue<CaseNote>> notes;
 
