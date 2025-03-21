@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.bulkaction.task;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
@@ -16,19 +16,16 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTE
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class DropCaseTask implements BulkCaseTask {
 
-    @Autowired
-    private BulkCaseTaskUtil bulkCaseTaskUtil;
+    private final BulkCaseTaskUtil bulkCaseTaskUtil;
 
-    @Autowired
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
-    @Autowired
-    protected AuthTokenGenerator authTokenGenerator;
+    protected final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    protected IdamService idamService;
+    protected final IdamService idamService;
 
     @Override
     public CaseDetails<BulkActionCaseData, BulkActionState> apply(final CaseDetails<BulkActionCaseData, BulkActionState> details) {

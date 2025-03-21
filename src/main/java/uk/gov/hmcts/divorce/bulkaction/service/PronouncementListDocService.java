@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
@@ -19,13 +19,12 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.PRONOUNCEMENT_LIS
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class PronouncementListDocService {
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final CaseDataDocumentService caseDataDocumentService;
 
-    @Autowired
-    private PronouncementListTemplateContent pronouncementListTemplateContent;
+    private final PronouncementListTemplateContent pronouncementListTemplateContent;
 
     public void generateDocument(CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails) {
 

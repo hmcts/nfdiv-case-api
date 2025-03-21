@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.bulkaction.service;
 
 import feign.FeignException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -18,19 +18,16 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CaseRemovalService {
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
+    private final CcdUpdateService ccdUpdateService;
 
-    @Autowired
-    private RemoveCasesTask removeCasesTask;
+    private final RemoveCasesTask removeCasesTask;
 
     @Async
     public void removeCases(final CaseDetails<BulkActionCaseData, BulkActionState> details) {

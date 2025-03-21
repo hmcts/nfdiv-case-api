@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.util;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -25,16 +25,14 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemPronounceCase.SYSTEM
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class BulkCaseTaskUtil {
 
-    @Autowired
-    protected BulkTriggerService bulkTriggerService;
+    protected final BulkTriggerService bulkTriggerService;
 
-    @Autowired
-    protected BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+    protected final BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
-    @Autowired
-    protected CaseProcessingStateFilter caseProcessingStateFilter;
+    protected final CaseProcessingStateFilter caseProcessingStateFilter;
 
     public CaseDetails<BulkActionCaseData, BulkActionState> processCases(final CaseDetails<BulkActionCaseData, BulkActionState> details,
                                                                          List<ListValue<BulkListCaseDetails>> bulkListCaseDetails,
