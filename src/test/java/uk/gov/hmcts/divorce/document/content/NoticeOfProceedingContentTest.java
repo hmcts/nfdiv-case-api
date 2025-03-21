@@ -45,6 +45,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPOND_BY_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.APPLICANT_1_SOLICITOR_NAME;
@@ -160,12 +161,23 @@ public class NoticeOfProceedingContentTest {
                 .country("UK")
                 .build()
         );
+
+        caseData.getApplicant2().setAddress(
+                AddressGlobalUK
+                        .builder()
+                        .addressLine1("line1")
+                        .addressLine2("line2")
+                        .country("UK")
+                        .build()
+        );
         caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
+        caseData.getApplicant2().setAddressOverseas(YES);
         caseData.getApplicant2().setSolicitorRepresented(YES);
         caseData.getApplicant2().setSolicitor(
             Solicitor.builder()
                 .name("App2 Sol")
                 .address("10 the street the town UK")
+                .addressOverseas(NO)
                 .build()
         );
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
@@ -230,6 +242,7 @@ public class NoticeOfProceedingContentTest {
                 entry(IS_RESPONDENT_BASED_IN_UK, true),
                 entry(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, true),
                 entry(IS_DIVORCE, true),
+                entry(SOLICITOR_REFERENCE, "Not provided"),
                 entry(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS),
                 entry(IS_OFFLINE, false),
                 entry(APPLICANT_2_IS_REPRESENTED, true),
@@ -252,14 +265,13 @@ public class NoticeOfProceedingContentTest {
                         .builder()
                         .addressLine1("line1")
                         .addressLine2("line2")
-                        .country("UK")
+                        .country("Germany")
                         .build()
         );
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
         caseData.getApplicant2().setAddressOverseas(YES);
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
-        caseData.setDueDate(LocalDate.of(2021, 6, 19));
         caseData.setCaseInvite(
                 new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
         );
@@ -283,7 +295,6 @@ public class NoticeOfProceedingContentTest {
                         entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
                         entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
                         entry(ISSUE_DATE, "18 June 2021"),
-                        entry(DUE_DATE, "19 June 2021"),
                         entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL),
                         entry(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS_CY),
                         entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE_CY),
@@ -302,7 +313,7 @@ public class NoticeOfProceedingContentTest {
                         entry(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO),
                         entry(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE_CY),
                         entry("ctscContactDetails", getCtscContactDetails()),
-                        entry(APPLICANT_2_ADDRESS, "line1\nline2\nUK"),
+                        entry(APPLICANT_2_ADDRESS, "line1\nline2\nGermany"),
                         entry(APPLICANT_1_SOLICITOR_NAME, "Not represented"),
                         entry(DISPLAY_EMAIL_CONFIRMATION, true),
                         entry("applicant2FirstName", APPLICANT_2_FIRST_NAME),
@@ -312,8 +323,8 @@ public class NoticeOfProceedingContentTest {
                         entry(IS_COURT_SERVICE, false),
                         entry(IS_PERSONAL_SERVICE, true),
                         entry(ACCESS_CODE, "ACCESS_CODE"),
-                        entry(CAN_SERVE_BY_EMAIL, true),
-                        entry(IS_RESPONDENT_BASED_IN_UK, true),
+                        entry(CAN_SERVE_BY_EMAIL, false),
+                        entry(IS_RESPONDENT_BASED_IN_UK, false),
                         entry(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false),
                         entry(IS_DIVORCE, true),
                         entry(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS),
@@ -359,6 +370,7 @@ public class NoticeOfProceedingContentTest {
         caseData.getApplication().setReissueDate(LocalDate.of(2021, 6,1));
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
         caseData.getApplicant2().setSolicitorRepresented(NO);
+        caseData.getApplicant2().setAddressOverseas(NO);
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 19));
@@ -454,6 +466,7 @@ public class NoticeOfProceedingContentTest {
         caseData.getApplicant2().setGender(FEMALE);
         caseData.getApplicant2().setFirstName(APPLICANT_2_FIRST_NAME);
         caseData.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
+        caseData.getApplicant2().setAddressOverseas(NO);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         caseData.setDueDate(LocalDate.of(2021, 6, 19));
         caseData.setCaseInvite(

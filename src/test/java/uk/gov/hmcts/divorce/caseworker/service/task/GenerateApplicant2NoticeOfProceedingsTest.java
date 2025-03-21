@@ -574,6 +574,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         verifyInteractions(caseData, templateContent, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
         verifyNoInteractions(generateCoversheet);
+        verifyNoInteractions(coversheetApplicantTemplateContent);
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
