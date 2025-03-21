@@ -399,7 +399,8 @@ public class Application {
         label = "Payments",
         typeOverride = Collection,
         typeParameterOverride = "Payment",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private List<ListValue<Payment>> applicationPayments;
 
