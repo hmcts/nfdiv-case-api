@@ -157,7 +157,7 @@ class AosPackPrinterTest {
             .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
             .build();
 
-        when(bulkPrintService.printAosRespondentPack(printCaptor.capture(), eq(false))).thenReturn(randomUUID());
+        when(bulkPrintService.printAosRespondentPack(printCaptor.capture(), eq(true))).thenReturn(randomUUID());
 
         aosPackPrinter.sendAosLetterToRespondent(caseData, TEST_CASE_ID);
 
