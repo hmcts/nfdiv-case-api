@@ -52,6 +52,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
@@ -299,12 +300,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE, DIVORCE_SERVICE);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, THE_DIVORCE_SERVICE);
         expectedEntries.put(SUBMISSION_RESPONSE_DATE, "6 November 2021");
-        expectedEntries.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, DIVORCE);
+        expectedEntries.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, DIVORCE_CY);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PAPERS, DIVORCE_PAPERS);
         expectedEntries.put(SERVE_PAPERS_BEFORE_DATE, "16 July 2021");
-        expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
+        expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE_CY);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
-        expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
+        expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE_CY);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2\nUK");
         expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town\nUK");
