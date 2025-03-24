@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.notification;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,6 +40,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
+@RequiredArgsConstructor
 public class CommonContent {
 
     public static final String PARTNER = "partner";
@@ -140,11 +142,9 @@ public class CommonContent {
     public static final String CONTACT_TEXT = "[Contact us using our online form]";
     public static final String CONTACT_TEXT_WELSH = "[Cysylltwch â ni drwy ddefnyddio ein ffurflen ar-lein]";
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
-    @Autowired
-    private EmailTemplatesConfig config;
+    private final EmailTemplatesConfig config;
 
     public Map<String, String> mainTemplateVars(final CaseData caseData,
                                                 final Long id,
