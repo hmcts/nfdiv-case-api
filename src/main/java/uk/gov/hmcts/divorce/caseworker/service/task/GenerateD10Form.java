@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -15,14 +15,14 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class GenerateD10Form implements CaseTask {
 
     private static final String D10_FILE_LOCATION = "/D10.pdf";
     private static final String D10_FILENAME = "D10.pdf";
     private static final String D10_DISPLAY_NAME = "D10";
 
-    @Autowired
-    private GenerateFormHelper generateFormHelper;
+    private final GenerateFormHelper generateFormHelper;
 
     public void apply(final CaseData caseData) {
         apply(caseData, null);
