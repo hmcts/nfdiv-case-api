@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
@@ -15,10 +15,10 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class BulkTriggerService {
 
-    @Autowired
-    private CaseTriggerService caseTriggerService;
+    private final CaseTriggerService caseTriggerService;
 
     public List<ListValue<BulkListCaseDetails>> bulkTrigger(final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails,
                                                             final String eventId,
