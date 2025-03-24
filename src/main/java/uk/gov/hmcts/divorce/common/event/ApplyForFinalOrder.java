@@ -47,8 +47,8 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
 
     private static final String ALWAYS_HIDE = "applicant1FinalOrderLateExplanation=\"ALWAYS_HIDE\"";
     private static final String APPLY_FOR_FINAL_ORDER_SOL_GUIDE = "Refer to the <a href=\"https://www.gov.uk/government/publications"
-            + "/myhmcts-how-to-make-follow-up-applications-for-a-divorce-or-dissolution/29fa640d-ebf3-49c8-9872-2ff68039ad8d"
-            + " target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>:";
+            + "/myhmcts-how-to-make-follow-up-applications-for-a-divorce-or-dissolution/29fa640d-ebf3-49c8-9872-2ff68039ad8d\""
+            + " target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>";
 
     @Autowired
     private Applicant1AppliedForFinalOrderNotification applicant1AppliedForFinalOrderNotification;

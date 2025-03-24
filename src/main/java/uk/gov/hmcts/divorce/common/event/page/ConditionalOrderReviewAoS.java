@@ -22,7 +22,7 @@ public class ConditionalOrderReviewAoS implements CcdPageConfiguration {
 
     private static final String NEVER_SHOW = "coApplicant1ConfirmInformationStillCorrect=\"NEVER_SHOW\"";
     private static final String DRAFT_CO_SOL_GUIDE = "Refer to the <a href=\"https://www.gov.uk/government/publications/myhmcts-how-to-make-"
-            + "follow-up-applications-for-a-divorce-or-dissolution/3e3c9dbf-2d30-4f76-9142-cea2cd1548dd"
+            + "follow-up-applications-for-a-divorce-or-dissolution/3e3c9dbf-2d30-4f76-9142-cea2cd1548dd\""
             + " target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>";
 
     @Override

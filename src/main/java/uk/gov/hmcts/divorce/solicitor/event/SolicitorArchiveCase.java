@@ -26,7 +26,7 @@ public class SolicitorArchiveCase implements CCDConfig<CaseData, State, UserRole
     private static final String ARCHIVE_CASE = "Archive Case";
     private static final String ARCHIVE_DRAFT_CASE_SOL_GUIDE = "Refer to the <a href=\"https://www.gov.uk/government/publications/myhmcts"
             + "-how-to-apply-online-for-a-divorce-or-dissolution/archive-a-draft-divorce-case\""
-            + " target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>:";
+            + " target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

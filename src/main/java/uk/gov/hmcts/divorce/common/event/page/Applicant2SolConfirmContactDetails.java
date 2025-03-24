@@ -23,7 +23,7 @@ public class Applicant2SolConfirmContactDetails implements CcdPageConfiguration 
 
     private static final String DRAFT_AOS_SOL_GUIDE = "Refer to the <a href=\"https://www.gov.uk/government/publications/myhmcts-file-an-"
             + "acknowledgement-of-service-for-a-divorce-or-dissolution-application/file-an-acknowledgement-of-service-online-"
-            + "or-offline-for-a-divorce-or-dissolution-application target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>:";
+            + "or-offline-for-a-divorce-or-dissolution-application\" target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {

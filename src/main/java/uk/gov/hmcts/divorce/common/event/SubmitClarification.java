@@ -42,7 +42,7 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
     private static final String NEVER_SHOW = "coRefusalDecision=\"NEVER_SHOW\"";
     private static final String SUBMIT_CLARIFICATION_CO_SOL_GUIDE = "Refer to the <a href=\"https://www.gov"
             + ".uk/government/publications/myhmcts-how-to-make-follow-up-applications-for-a-divorce-or-dissolution/respond-"
-            + "to-a-conditional-order-refusal target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>:";
+            + "to-a-conditional-order-refusal\" target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>";
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;

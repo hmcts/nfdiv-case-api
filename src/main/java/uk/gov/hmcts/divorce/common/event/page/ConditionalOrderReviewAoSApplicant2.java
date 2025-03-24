@@ -21,8 +21,8 @@ public class ConditionalOrderReviewAoSApplicant2 implements CcdPageConfiguration
 
     private static final String NEVER_SHOW = "coApplicant2ConfirmInformationStillCorrect=\"NEVER_SHOW\"";
     private static final String DRAFT_JOINT_CO_SOL_GUIDE = "Refer to the <a href=\"https://www.gov.uk/government/publications/myhmcts"
-            + "-how-to-make-follow-up-applications-for-a-divorce-or-dissolution/67f96fd8-f9fd-410b-affb-405ed3e9ec86"
-            + " target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>:";
+            + "-how-to-make-follow-up-applications-for-a-divorce-or-dissolution/67f96fd8-f9fd-410b-affb-405ed3e9ec86\""
+            + " target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
