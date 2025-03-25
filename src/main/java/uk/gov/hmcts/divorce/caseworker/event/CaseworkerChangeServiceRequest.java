@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -38,18 +38,16 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_CHANGE_SERVICE_REQUEST = "caseworker-change-service-request";
 
-    @Autowired
-    private GenerateApplicant1NoticeOfProceeding generateApplicant1NoticeOfProceeding;
+    private final GenerateApplicant1NoticeOfProceeding generateApplicant1NoticeOfProceeding;
 
-    @Autowired
-    private GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
+    private final GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
 
-    @Autowired
-    private GenerateD10Form generateD10Form;
+    private final GenerateD10Form generateD10Form;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

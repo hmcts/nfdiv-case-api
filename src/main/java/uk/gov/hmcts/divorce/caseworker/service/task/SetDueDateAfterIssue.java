@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -15,16 +15,15 @@ import java.time.LocalDate;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SetDueDateAfterIssue implements CaseTask {
 
     @Value("${aos_pack.due_date_offset_days}")
     private long dueDateOffsetDays;
 
-    @Autowired
-    private HoldingPeriodService holdingPeriodService;
+    private final HoldingPeriodService holdingPeriodService;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     /**
      *  Joint applications skip AoS and go straight to 20 week holding.
