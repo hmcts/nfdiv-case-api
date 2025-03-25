@@ -91,7 +91,7 @@ public class FinalOrderGrantedTemplateContent implements TemplateContent {
 
         ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
         templateContent.put(CO_PRONOUNCED_DATE, isNotEmpty(conditionalOrder.getGrantedDate())
-            ? conditionalOrder.getGrantedDate().format(DATE_TIME_FORMATTER) : EMPTY);
+            ? conditionalOrder.getGrantedDate().format(getDateTimeFormatterForPreferredLanguage(languagePreference)) : EMPTY);
 
         templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
@@ -117,7 +117,7 @@ public class FinalOrderGrantedTemplateContent implements TemplateContent {
         templateContent.put(COUNTRY_OF_MARRIAGE, marriageDetails.getCountryOfMarriage());
         templateContent.put(MARRIAGE_DATE,
             ofNullable(marriageDetails.getDate())
-                .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
+                .map(marriageDate -> marriageDate.format(getDateTimeFormatterForPreferredLanguage(languagePreference)))
                 .orElse(EMPTY));
 
         return templateContent;
