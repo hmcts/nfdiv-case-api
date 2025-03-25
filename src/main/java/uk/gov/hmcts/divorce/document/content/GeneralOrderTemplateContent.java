@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class GeneralOrderTemplateContent {
 
     private static final String APPLICANT = "Applicant";
@@ -46,11 +48,9 @@ public class GeneralOrderTemplateContent {
 
     private static final String RECORDER_NAME = "%s %s";
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference) {

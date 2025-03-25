@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class NoticeOfProceedingJointContent {
 
     public static final String DUE_DATE = "dueDate";
@@ -72,14 +74,11 @@ public class NoticeOfProceedingJointContent {
     public static final String LAST_NAME = "lastName";
     public static final String ADDRESS = "address";
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
-    @Autowired
-    private HoldingPeriodService holdingPeriodService;
+    private final HoldingPeriodService holdingPeriodService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference,

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.document;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,19 +19,16 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class DocAssemblyService {
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private DocAssemblyClient docAssemblyClient;
+    private final DocAssemblyClient docAssemblyClient;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    private DocmosisTemplateProvider docmosisTemplateProvider;
+    private final DocmosisTemplateProvider docmosisTemplateProvider;
 
 
     public DocumentInfo renderDocument(final Map<String, Object> templateContent,

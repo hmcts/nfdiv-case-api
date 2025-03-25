@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,6 +47,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ServiceOrderTemplateContent {
 
     @Value("${court.locations.serviceCentre.email}")
@@ -54,8 +56,7 @@ public class ServiceOrderTemplateContent {
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference) {

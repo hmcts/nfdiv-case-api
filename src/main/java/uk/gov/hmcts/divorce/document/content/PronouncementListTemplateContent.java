@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,19 +43,16 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TI
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class PronouncementListTemplateContent {
 
-    @Autowired
-    private CcdSearchService ccdSearchService;
+    private final CcdSearchService ccdSearchService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Map<String, Object> apply(final BulkActionCaseData caseData,

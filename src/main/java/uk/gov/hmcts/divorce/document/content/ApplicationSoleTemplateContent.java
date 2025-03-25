@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -65,13 +66,12 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ApplicationSoleTemplateContent {
 
-    @Autowired
-    private ApplicantTemplateDataProvider applicantTemplateDataProvider;
+    private final ApplicantTemplateDataProvider applicantTemplateDataProvider;
 
-    @Autowired
-    private ApplicationTemplateDataProvider applicationTemplateDataProvider;
+    private final ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
     public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
 

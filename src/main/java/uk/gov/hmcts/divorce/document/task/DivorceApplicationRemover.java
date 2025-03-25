@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,10 +12,10 @@ import uk.gov.hmcts.divorce.document.DraftApplicationRemovalService;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class DivorceApplicationRemover implements CaseTask {
 
-    @Autowired
-    private DraftApplicationRemovalService draftApplicationRemovalService;
+    private final DraftApplicationRemovalService draftApplicationRemovalService;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {

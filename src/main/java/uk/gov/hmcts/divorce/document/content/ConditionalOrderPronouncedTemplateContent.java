@@ -69,11 +69,9 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 @RequiredArgsConstructor
 public class ConditionalOrderPronouncedTemplateContent implements TemplateContent {
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     @Value("${final_order.eligible_from_offset_days}")
     private long finalOrderOffsetDays;

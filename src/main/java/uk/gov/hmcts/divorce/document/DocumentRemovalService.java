@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,16 +17,14 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class DocumentRemovalService {
 
-    @Autowired
-    private CaseDocumentAccessManagement documentManagementClient;
+    private final CaseDocumentAccessManagement documentManagementClient;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
     public void deleteDocument(final Document document) {
         final var systemUser = idamService.retrieveSystemUpdateUserDetails();
