@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -33,15 +33,14 @@ import static uk.gov.hmcts.divorce.solicitor.event.SolicitorConfirmService.NOT_I
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CaseworkerConfirmService implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_CONFIRM_SERVICE = "caseworker-confirm-service";
 
-    @Autowired
-    private SubmitConfirmService submitConfirmService;
+    private final SubmitConfirmService submitConfirmService;
 
-    @Autowired
-    private ConfirmService confirmService;
+    private final ConfirmService confirmService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.LocalDate;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -28,7 +29,7 @@ public class CaseworkerUpdateDateSubmitted implements CCDConfig<CaseData, State,
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_UPDATE_DATE_SUBMITTED)
-            .forAllStates()
+            .forStates(STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED)
             .name("Update Date Submitted")
             .description("Update Date Submitted")
             .showSummary()

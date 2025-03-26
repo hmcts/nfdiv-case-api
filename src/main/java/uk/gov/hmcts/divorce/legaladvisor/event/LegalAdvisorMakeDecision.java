@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.legaladvisor.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -52,30 +52,24 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String LEGAL_ADVISOR_MAKE_DECISION = "legal-advisor-make-decision";
 
-    @Autowired
-    private LegalAdvisorRejectedDecisionNotification rejectedNotification;
+    private final LegalAdvisorRejectedDecisionNotification rejectedNotification;
 
-    @Autowired
-    private LegalAdvisorMoreInfoDecisionNotification moreInfoDecisionNotification;
+    private final LegalAdvisorMoreInfoDecisionNotification moreInfoDecisionNotification;
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final CaseDataDocumentService caseDataDocumentService;
 
-    @Autowired
-    private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
+    private final ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
 
-    @Autowired
-    private ConditionalOrderRefusedForClarificationContent conditionalOrderRefusedForClarificationContent;
+    private final ConditionalOrderRefusedForClarificationContent conditionalOrderRefusedForClarificationContent;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

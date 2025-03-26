@@ -215,7 +215,7 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
         Applicant applicant2 = caseData.getApplicant2();
         templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateContent.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
-        templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
+        templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getFirmAndAddress());
         templateContent.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, caseId != null ? formatId(caseId) : null);
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
