@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
@@ -35,6 +36,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_
 import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.SAME_SEX_COUPLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateAllNamesForAllowedCharacters;
 
 @Component
 @Slf4j
@@ -64,7 +66,6 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     private static final String MARRIAGE_CERT_NAME_HINT_LABEL =
         "Enter the ${%s} name exactly as it appears on the certificate. Include any extra text such as 'formally known as'.";
     private static final String APPLICANTS_OR_APPLICANT1S = "labelContentApplicantsOrApplicant1s";
-    private static final String THE_APPLICANT_OR_APPLICANT1 = "labelContentTheApplicantOrApplicant1";
     private static final String RESPONDENTS_OR_APPLICANT2S = "labelContentRespondentsOrApplicant2s";
     private static final String THE_RESPONDENT_OR_APPLICANT2 = "labelContentTheApplicant2";
     public static final String SOLICITOR_FIRM_LABEL = "${%s} solicitor's firm";
@@ -77,6 +78,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     public static final String SOLICITOR_DETAILS_REMOVED_ERROR = """
         You cannot remove the solicitor %s with this event. Please use Notice of Change if you would like to remove representation.
         """;
+    public static final String APPLICANT_REFUGE_LABEL = "Is ${%s} currently resident in a refuge";
+    public static final String THE_APPLICANT_OR_APPLICANT1 = "labelContentTheApplicantOrApplicant1";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -157,6 +160,8 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                     getLabel(GENDER_HINT_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getContactDetailsType,
                     getLabel(CONTACT_TYPE_LABEL, APPLICANTS_OR_APPLICANT1S, THE_RESPONDENT_OR_APPLICANT2))
+                .optionalWithoutDefaultValue(Applicant::getInRefuge, "applicant1ContactDetailsType=\"private\"",
+                    getLabel(APPLICANT_REFUGE_LABEL, THE_APPLICANT_OR_APPLICANT1))
             .done()
             .complex(CaseData::getApplication)
                 .complex(Application::getMarriageDetails)
@@ -167,7 +172,6 @@ public class UpdateContactDetails implements CcdPageConfiguration {
             .complex(CaseData::getApplicant1)
                 .optionalWithLabel(Applicant::getAddressOverseas, getLabel(ADDRESS_OVERSEAS_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getAddress, getLabel(ADDRESS_LABEL, APPLICANTS_OR_APPLICANT1S))
-                .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .optionalWithLabel(Applicant::getPhoneNumber, getLabel(PHONE_LABEL, APPLICANTS_OR_APPLICANT1S))
                 .label("LabelHorizontalLine1", HORIZONTAL_RULE)
             .done();
@@ -186,9 +190,10 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                 getLabel(GENDER_HINT_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getContactDetailsType,
                     getLabel(CONTACT_TYPE_LABEL, RESPONDENTS_OR_APPLICANT2S, THE_APPLICANT_OR_APPLICANT1))
+                .optionalWithoutDefaultValue(Applicant::getInRefuge, "applicant2ContactDetailsType=\"private\"",
+                    getLabel(APPLICANT_REFUGE_LABEL, THE_RESPONDENT_OR_APPLICANT2))
                 .optionalWithLabel(Applicant::getAddressOverseas, getLabel(ADDRESS_OVERSEAS_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getAddress, getLabel(ADDRESS_LABEL, RESPONDENTS_OR_APPLICANT2S))
-                .optionalWithLabel(Applicant::getEmail, getLabel(EMAIL_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .optionalWithLabel(Applicant::getPhoneNumber, getLabel(PHONE_LABEL, RESPONDENTS_OR_APPLICANT2S))
                 .label("LabelHorizontalLine2", HORIZONTAL_RULE)
             .done();
@@ -220,17 +225,19 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         CaseData caseData = details.getData();
         CaseData caseDataBefore = detailsBefore.getData();
 
+        if (hasTransitionedFromPrivateToPublic(caseDataBefore.getApplicant1().getContactDetailsType(),
+            caseData.getApplicant1().getContactDetailsType())) {
+            caseData.getApplicant1().setInRefuge(null);
+        }
+        if (hasTransitionedFromPrivateToPublic(caseDataBefore.getApplicant2().getContactDetailsType(),
+            caseData.getApplicant2().getContactDetailsType())) {
+            caseData.getApplicant2().setInRefuge(null);
+        }
+
         List<String> solicitorValidationErrors = validateSolicitorDetails(caseDataBefore, caseData);
         if (!solicitorValidationErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(solicitorValidationErrors)
-                .build();
-        }
-
-        if (!validApplicantContactDetails(caseDataBefore, caseData)) {
-
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList("Please use the 'Update offline status' event before removing the email address."))
                 .build();
         }
 
@@ -246,6 +253,13 @@ public class UpdateContactDetails implements CcdPageConfiguration {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(singletonList(errorMessage))
+                .build();
+        }
+
+        List<String> nameValidationErrors = validateAllNamesForAllowedCharacters(caseData);
+        if (!nameValidationErrors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(nameValidationErrors)
                 .build();
         }
 
@@ -300,27 +314,6 @@ public class UpdateContactDetails implements CcdPageConfiguration {
         return solicitorDetailRemovedErrors;
     }
 
-    private boolean validApplicantContactDetails(CaseData caseDataBefore, CaseData caseData) {
-
-        if (caseDataBefore.getApplicant1().getEmail() != null && !caseDataBefore.getApplicant1().getEmail().isBlank()) {
-            if (!caseDataBefore.getApplicant1().isRepresented()
-                && !caseData.getApplicant1().isApplicantOffline()
-                && (caseData.getApplicant1().getEmail() == null || caseData.getApplicant1().getEmail().isBlank())) {
-                return false;
-            }
-        }
-
-        if (caseDataBefore.getApplicant2().getEmail() != null && !caseDataBefore.getApplicant2().getEmail().isBlank()) {
-            if (!caseDataBefore.getApplicant2().isRepresented()
-                && !caseData.getApplicant2().isApplicantOffline()
-                && (caseData.getApplicant2().getEmail() == null || caseData.getApplicant2().getEmail().isBlank())) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     private boolean isValidCombination(final CaseData caseData) {
 
         final Gender applicant1Gender = caseData.getApplicant1().getGender();
@@ -354,5 +347,9 @@ public class UpdateContactDetails implements CcdPageConfiguration {
                 && HUSBAND.equals(divorceWho)
                 && SAME_SEX_COUPLE.equals(formationType);
         }
+    }
+
+    private boolean hasTransitionedFromPrivateToPublic(ContactDetailsType previousType, ContactDetailsType currentType) {
+        return ContactDetailsType.PRIVATE.equals(previousType) && ContactDetailsType.PUBLIC.equals(currentType);
     }
 }

@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -21,6 +21,9 @@ import java.util.List;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.sortByNewest;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -32,18 +35,18 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_UPLOAD_DOCUMENTS_AND_SUBMIT = "caseworker-upload-documents-and-submit";
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_UPLOAD_DOCUMENTS_AND_SUBMIT)
-            .forState(AwaitingDocuments)
+            .forStates(AwaitingDocuments, AwaitingRequestedInformation, InformationRequested, RequestedInformationSubmitted)
             .name("Upload documents and submit")
             .description("Upload documents from the applicant and submit")
             .showEventNotes()

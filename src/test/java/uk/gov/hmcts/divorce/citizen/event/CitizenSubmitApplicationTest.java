@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -20,7 +21,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitJointApplicationService;
+import uk.gov.hmcts.divorce.testutil.TestConstants;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -37,13 +40,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDiv
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,7 +57,13 @@ class CitizenSubmitApplicationTest {
     private PaymentService paymentService;
 
     @Mock
+    private PaymentSetupService paymentSetupService;
+
+    @Mock
     private SubmissionService submissionService;
+
+    @Mock
+    private CaseFlagsService caseFlagsService;
 
     @InjectMocks
     private CitizenSubmitApplication citizenSubmitApplication;
@@ -118,14 +125,11 @@ class CitizenSubmitApplicationTest {
         caseDetails.setId(caseId);
         var orderSummary = orderSummary();
 
-        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE))
+        when(paymentSetupService.createApplicationFeeOrderSummary(caseData, TEST_CASE_ID))
             .thenReturn(orderSummary());
 
-        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE))
-            .thenReturn(orderSummary());
-
-        when(paymentService.createServiceRequestReference(
-            null, caseId, caseData.getApplicant1().getFullName(), orderSummary
+        when(paymentSetupService.createApplicationFeeServiceRequest(
+            caseData, caseId, caseData.getCitizenPaymentCallbackUrl()
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
@@ -134,7 +138,7 @@ class CitizenSubmitApplicationTest {
         assertThat(response.getData().getApplication().getApplicationFeeOrderSummary()).isEqualTo(orderSummary);
         assertThat(response.getData().getApplication().getApplicationFeeServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
 
-        verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
+        verify(paymentSetupService).createApplicationFeeOrderSummary(caseData, caseId);
     }
 
     @Test
@@ -156,11 +160,11 @@ class CitizenSubmitApplicationTest {
 
         var orderSummary = orderSummary();
 
-        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE))
+        when(paymentSetupService.createApplicationFeeOrderSummary(caseData, TEST_CASE_ID))
             .thenReturn(orderSummary());
 
-        when(paymentService.createServiceRequestReference(
-            null, caseId, caseData.getApplicant1().getFullName(), orderSummary
+        when(paymentSetupService.createApplicationFeeServiceRequest(
+            caseData, caseId, caseData.getCitizenPaymentCallbackUrl()
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
@@ -169,7 +173,7 @@ class CitizenSubmitApplicationTest {
         assertThat(response.getData().getApplication().getApplicationFeeOrderSummary()).isEqualTo(orderSummary);
         assertThat(response.getData().getApplication().getApplicationFeeServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
 
-        verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
+        verify(paymentSetupService).createApplicationFeeOrderSummary(caseData, caseId);
     }
 
     @Test
@@ -228,6 +232,18 @@ class CitizenSubmitApplicationTest {
 
         assertThat(response.getState()).isEqualTo(State.AwaitingHWFDecision);
         assertThat(response.getData().getApplication().getApplicationPayments()).isNull();
+    }
+
+    @Test
+    void shouldCallCaseFlagsServiceToSetHmctsServiceId() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TestConstants.TEST_CASE_ID);
+
+        citizenSubmitApplication.submitted(caseDetails, null);
+
+        verify(caseFlagsService).setSupplementaryDataForCaseFlags(TestConstants.TEST_CASE_ID);
     }
 
     private OrderSummary orderSummary() {

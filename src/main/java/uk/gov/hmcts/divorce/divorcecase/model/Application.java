@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant1DeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
@@ -241,13 +242,13 @@ public class Application {
 
     @CCD(
         label = "Here are your order details",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant1DeleteAccess.class}
     )
     private OrderSummary applicationFeeOrderSummary;
 
     @CCD(
         label = "Application Fee Service Request Reference",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant1DeleteAccess.class}
     )
     private String applicationFeeServiceRequestReference;
 
@@ -345,6 +346,15 @@ public class Application {
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate reissueDate;
+
+    @CCD(
+        label = "Reason for issuing without the Respondent's address",
+        hint  = "e.g. The address for the Respondent is not required because the court has "
+            + "granted a D11 application to dispense with service.",
+        access = {CaseworkerAccess.class},
+        typeOverride = TextArea
+    )
+    private String reasonIssuedWithoutAddress;
 
     @CCD(
         label = "Date when the application was created",
@@ -537,6 +547,12 @@ public class Application {
         access = {DefaultAccess.class, Applicant2Access.class}
     )
     private YesOrNo switchedToSoleCo;
+
+    @CCD(
+        label = "Application being issued without respondent address?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo beingIssuedWithoutAddress;
 
     @JsonIgnore
     public boolean hasBeenPaidFor() {

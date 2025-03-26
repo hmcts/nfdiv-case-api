@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -25,9 +25,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -39,23 +42,31 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_SERVICE_RECEIVED = "caseworker-service-received";
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
-    @Autowired
-    private GeneralApplicationReceivedNotification generalApplicationReceivedNotification;
+    private final GeneralApplicationReceivedNotification generalApplicationReceivedNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_SERVICE_RECEIVED)
-            .forStates(AosOverdue, AwaitingAos, AosDrafted, Submitted, AwaitingDocuments, GeneralApplicationReceived)
+            .forStates(
+                AosOverdue,
+                AwaitingAos,
+                AosDrafted,
+                Submitted,
+                AwaitingDocuments,
+                AwaitingRequestedInformation,
+                InformationRequested,
+                RequestedInformationSubmitted,
+                GeneralApplicationReceived
+            )
             .name("Service application received")
             .description("Service application received")
             .showSummary()

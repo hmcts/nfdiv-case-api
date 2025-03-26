@@ -1,14 +1,13 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -30,10 +29,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, UserRole> {
 
-    @Autowired
-    private DocumentRemovalService documentRemovalService;
+    private final DocumentRemovalService documentRemovalService;
 
     public static final String CASEWORKER_REMOVE_DOCUMENT = "caseworker-remove-document";
 
@@ -66,7 +65,6 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         final var currentCaseData = details.getData();
 
         handleDeletionOfGeneralApplicationDocuments(beforeCaseData, currentCaseData);
-
         handleDeletionOfDivorceDocuments(beforeCaseData, currentCaseData);
         handleDeletionOfScannedDocuments(beforeCaseData, currentCaseData);
 
@@ -120,32 +118,7 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
     }
 
     private void handleDeletionOfScannedDocuments(CaseData beforeCaseData, CaseData currentCaseData) {
-
-        List<ListValue<ScannedDocument>> scannedDocsToRemove = new ArrayList<>(
-            findScannedDocumentsForRemoval(
-                beforeCaseData.getDocuments().getScannedDocuments(),
-                currentCaseData.getDocuments().getScannedDocuments()
-        ));
-
-        if (!scannedDocsToRemove.isEmpty()) {
-            documentRemovalService.deleteScannedDocuments(scannedDocsToRemove);
-        }
-    }
-
-    private List<ListValue<ScannedDocument>> findScannedDocumentsForRemoval(final List<ListValue<ScannedDocument>> beforeDocs,
-                                                                            final List<ListValue<ScannedDocument>> currentDocs) {
-
-        List<ListValue<ScannedDocument>> scannedDocsToRemove = new ArrayList<>();
-
-        if (beforeDocs != null && currentDocs != null) {
-            beforeDocs.forEach(document -> {
-                if (!currentDocs.contains(document)) {
-                    scannedDocsToRemove.add(document);
-                }
-            });
-        }
-
-        return scannedDocsToRemove;
+        documentRemovalService.handleDeletionOfScannedDocuments(beforeCaseData, currentCaseData);
     }
 
     private void handleDeletionOfGeneralApplicationDocuments(CaseData beforeCaseData, CaseData currentCaseData) {

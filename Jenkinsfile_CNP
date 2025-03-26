@@ -47,7 +47,9 @@ def secrets = [
                 secret('idam-solicitor-password', 'IDAM_SOLICITOR_PASSWORD'),
                 secret('idam-systemupdate-username', 'IDAM_SYSTEM_UPDATE_USERNAME'),
                 secret('idam-systemupdate-password', 'IDAM_SYSTEM_UPDATE_PASSWORD'),
-                secret('report-email', 'REPORT_EMAIL')
+                secret('report-email', 'REPORT_EMAIL'),
+                secret('idam-old-divorce-user', 'IDAM_OLD_DIVORCE_USERNAME'),
+                secret('idam-old-divorce-password', 'IDAM_OLD_DIVORCE_PASSWORD')
         ]
 ]
 
@@ -170,6 +172,7 @@ withPipeline(type, product, component) {
     env.CITIZEN_UPDATE_CASE_STATE_ENABLED=true
     env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
     env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+    env.CREATE_PAPER_CASE_MOCK_NOTIFICATION=true
 
     setCommonEnvVariables()
   }
@@ -183,6 +186,7 @@ withPipeline(type, product, component) {
     env.ADMIN_UNLINK_APPLICANT_2_ENABLED=true
     env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
     env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+    env.CREATE_PAPER_CASE_MOCK_NOTIFICATION=true
     setCommonEnvVariables()
   }
 
@@ -197,6 +201,7 @@ withPipeline(type, product, component) {
     env.IDAM_API_URL_BASE = "https://idam-api.platform.hmcts.net"
     env.S2S_URL_BASE = "http://rpe-service-auth-provider-prod.service.core-compute-prod.internal"
     env.BEFTA_S2S_CLIENT_ID = "ccd_data"
+    env.CREATE_PAPER_CASE_MOCK_NOTIFICATION=false
 
     // re-run to generate prod definition
     builder.gradle('generateCCDConfig --rerun-tasks')
@@ -209,6 +214,7 @@ withPipeline(type, product, component) {
     env.CCD_DEF_NAME = "demo"
     env.IDAM_API_URL_BASE = "https://idam-api.demo.platform.hmcts.net"
     env.S2S_URL_BASE = "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
+    env.CREATE_PAPER_CASE_MOCK_NOTIFICATION=true
   }
 
   onPerftest {

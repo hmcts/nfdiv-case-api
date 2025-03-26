@@ -162,7 +162,7 @@ public class ApplicationSoleTemplateContent {
         String solicitorName = applicant.getSolicitor().getName();
         String solicitorEmail = applicant.getSolicitor().getEmail();
         String solicitorFirmName = applicant.getSolicitor().getFirmName();
-        String solicitorAddress = applicant.getSolicitor().getAddress();
+        String solicitorAddress = applicant.getSolicitor().getFirmAndAddress();
         boolean hasEnteredSolicitorDetails =
             !isNullOrEmpty(solicitorName)
             || !isNullOrEmpty(solicitorEmail)
@@ -182,7 +182,7 @@ public class ApplicationSoleTemplateContent {
         if (!isNullOrEmpty(solicitorAddress)) {
             String addressCleanUp =
                 join("\n",
-                    Arrays.stream(applicant.getSolicitor().getAddress().split("\n"))
+                    Arrays.stream(solicitorAddress.split("\n"))
                     .filter(value -> !Objects.equals(value, ""))
                     .toArray(String[]::new));
             templateContent.put(APPLICANT_2_SOLICITOR_ADDRESS, addressCleanUp);

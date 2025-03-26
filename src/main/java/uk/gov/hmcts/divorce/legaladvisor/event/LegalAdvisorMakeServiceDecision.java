@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.legaladvisor.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -54,26 +54,21 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.DISPENSE_WITH_SER
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, State, UserRole> {
     public static final String LEGAL_ADVISOR_SERVICE_DECISION = "legal-advisor-service-decision";
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final CaseDataDocumentService caseDataDocumentService;
 
-    @Autowired
-    private ServiceOrderTemplateContent serviceOrderTemplateContent;
+    private final ServiceOrderTemplateContent serviceOrderTemplateContent;
 
-    @Autowired
-    private ServiceApplicationNotification serviceApplicationNotification;
+    private final ServiceApplicationNotification serviceApplicationNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private HoldingPeriodService holdingPeriodService;
+    private final HoldingPeriodService holdingPeriodService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

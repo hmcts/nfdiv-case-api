@@ -11,15 +11,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
-import uk.gov.hmcts.ccd.sdk.type.Organisation;
-import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CitizenAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -121,8 +120,18 @@ public class Applicant {
     )
     private String nameChangedHowOtherDetails;
 
-    @CCD(label = "Address")
+    @CCD(
+        label = "Address",
+        access = {DefaultAccessExcludingSolicitor.class, CitizenAccess.class},
+        inheritAccessFromParent = false
+    )
     private AddressGlobalUK address;
+
+    /* Second address field to allow solicitors to enter applicant addresses when creating applications
+     * and view non-confidential addresses for solicitor service. We do not give solicitors read access to the
+     * primary "address" field as it can contain a confidential address. */
+    @CCD(label = "Non-Confidential Address")
+    private AddressGlobalUK nonConfidentialAddress;
 
     @CCD(label = "Is this an international address?")
     private YesOrNo addressOverseas;
@@ -147,6 +156,11 @@ public class Applicant {
         typeParameterOverride = "ContactDetailsType"
     )
     private ContactDetailsType contactDetailsType;
+
+    @CCD(
+        label = "Is the Applicant currently resident in a refuge?"
+    )
+    private YesOrNo inRefuge;
 
     @CCD(
         label = "Is represented by a solicitor?",
@@ -290,12 +304,7 @@ public class Applicant {
     @JsonIgnore
     public String getCorrespondenceAddress() {
         if (isRepresented()) {
-            return Stream.of(
-                    Optional.ofNullable(solicitor.getOrganisationPolicy())
-                        .map(OrganisationPolicy::getOrganisation).map(Organisation::getOrganisationName).orElse(null),
-                    solicitor.getAddress()
-                ).filter(value -> value != null && !value.isEmpty())
-                .collect(joining("\n"));
+            return this.solicitor.getFirmAndAddress();
         } else if (!isConfidentialContactDetails() && null != address) {
             return getApplicantAddress();
         }
@@ -305,12 +314,7 @@ public class Applicant {
     @JsonIgnore
     public String getCorrespondenceAddressWithoutConfidentialCheck() {
         if (isRepresented()) {
-            return Stream.of(
-                    Optional.ofNullable(solicitor.getOrganisationPolicy())
-                        .map(OrganisationPolicy::getOrganisation).map(Organisation::getOrganisationName).orElse(null),
-                    solicitor.getAddress()
-                ).filter(value -> value != null && !value.isEmpty())
-                .collect(joining("\n"));
+            return this.solicitor.getFirmAndAddress();
         } else if (null != address) {
             return getApplicantAddress();
         }

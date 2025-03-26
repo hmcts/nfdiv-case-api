@@ -225,11 +225,26 @@ public enum State {
     AwaitingLegalAdvisorReferral,
 
     @CCD(
+        label = "Awaiting requested information",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    AwaitingRequestedInformation,
+
+    @CCD(
         label = "Awaiting respondent final order payment",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
     AwaitingFinalOrderPayment,
+
+
+    @CCD(
+        label = "Awaiting response to HWF Decision",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    AwaitingResponseToHWFDecision,
 
     @CCD(
         label = "Awaiting service",
@@ -358,6 +373,13 @@ public enum State {
     GeneralConsiderationComplete,
 
     @CCD(
+        label = "Information Requested",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    InformationRequested,
+
+    @CCD(
         label = "Issued to bailiff",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -421,6 +443,13 @@ public enum State {
     BulkCaseReject,
 
     @CCD(
+        label = "Requested Information Submitted",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    RequestedInformationSubmitted,
+
+    @CCD(
         label = "Respondent Final order requested",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -472,13 +501,14 @@ public enum State {
     ));
 
     public static final EnumSet<State> PRE_SUBMISSION_STATES = EnumSet.of(
-        Draft,
         AwaitingApplicant1Response,
         AwaitingApplicant2Response,
         Applicant2Approved,
         AwaitingPayment,
         AwaitingHWFDecision,
-        AwaitingDocuments
+        AwaitingDocuments,
+        AwaitingRequestedInformation,
+        RequestedInformationSubmitted
     );
 
     public static final EnumSet<State> POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED = EnumSet.complementOf(EnumSet.of(
@@ -489,6 +519,12 @@ public enum State {
     ));
 
     public static final EnumSet<State> STATES_NOT_WITHDRAWN_OR_REJECTED = EnumSet.complementOf(EnumSet.of(
+        Withdrawn,
+        Rejected
+    ));
+
+    public static final EnumSet<State> STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED = EnumSet.complementOf(EnumSet.of(
+        Draft,
         Withdrawn,
         Rejected
     ));
@@ -513,6 +549,9 @@ public enum State {
         AwaitingHWFEvidence,
         AwaitingHWFPartPayment,
         AwaitingDocuments,
+        AwaitingRequestedInformation,
+        NewPaperCase,
+        RequestedInformationSubmitted,
         Submitted,
         Withdrawn,
         Rejected,
@@ -539,5 +578,12 @@ public enum State {
         AwaitingBailiffService,
         IssuedToBailiff
     };
+
+    public static final EnumSet<State> STATES_FOR_LINKING_APP2 = EnumSet.complementOf(EnumSet.of(
+        Draft,
+        Withdrawn,
+        Rejected,
+        Archived
+    ));
 }
 

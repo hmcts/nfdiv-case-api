@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
@@ -22,7 +24,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PA
 public class FeeDetails {
 
     @CCD(
-        label = "Here are your order details"
+        label = "Here are your order details",
+            access = {CaseworkerAndSuperUserAccess.class, CaseworkerDeleteAccess.class}
     )
     private OrderSummary orderSummary;
 
@@ -54,6 +57,9 @@ public class FeeDetails {
         label = "Help with Fees reference"
     )
     private String helpWithFeesReferenceNumber;
+
+    @CCD(label = "Service request reference")
+    private String serviceRequestReference;
 
     @JsonIgnore
     public boolean isPaymentMethodPba() {

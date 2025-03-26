@@ -17,18 +17,38 @@ public class ResetConditionalOrderFlags implements CaseTask {
         log.info("Resetting conditional order flags for case id {} ", caseDetails.getId());
 
         final CaseData data = caseDetails.getData();
+        final boolean conditionalOrderInProgress = State.ConditionalOrderDrafted.equals(caseDetails.getState());
 
-        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
-        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(NO);
-        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(null);
-        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setStatementOfTruth(null);
-        if (data.getApplicationType() != null && !data.getApplicationType().isSole()) {
-            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(NO);
-            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(NO);
-            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setSubmittedDate(null);
-            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setStatementOfTruth(null);
+
+        resetConditionalOrderSubmittedFlags(data);
+        if (!conditionalOrderInProgress) {
+            resetConditionalOrderDraftedFlags(data);
         }
 
         return caseDetails;
+    }
+
+    private void resetConditionalOrderDraftedFlags(CaseData data) {
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsDrafted(NO);
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setStatementOfTruth(null);
+
+        if (isJointApplication(data)) {
+            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsDrafted(NO);
+            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setStatementOfTruth(null);
+        }
+    }
+
+    private void resetConditionalOrderSubmittedFlags(CaseData data) {
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(NO);
+        data.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(null);
+
+        if (isJointApplication(data)) {
+            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(NO);
+            data.getConditionalOrder().getConditionalOrderApplicant2Questions().setSubmittedDate(null);
+        }
+    }
+
+    private boolean isJointApplication(CaseData data) {
+        return data.getApplicationType() != null && !data.getApplicationType().isSole();
     }
 }

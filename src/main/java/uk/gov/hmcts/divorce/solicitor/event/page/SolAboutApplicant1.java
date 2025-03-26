@@ -13,6 +13,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails.APPLICANT_REFUGE_LABEL;
+import static uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails.THE_APPLICANT_OR_APPLICANT1;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1NameForAllowedCharacters;
+
 public class SolAboutApplicant1 implements CcdPageConfiguration {
 
     private static final String INVALID_EMAIL_ERROR = "You have entered an invalid email address. "
@@ -60,11 +64,13 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                 .optionalWithLabel(Applicant::getPhoneNumber,
                     "${labelContentApplicantsOrApplicant1s} phone number")
                 .optionalWithLabel(Applicant::getAddressOverseas, "Is ${labelContentApplicantsOrApplicant1s} address international?")
-                .mandatoryWithLabel(Applicant::getAddress,
+                .mandatoryWithLabel(Applicant::getNonConfidentialAddress,
                     "${labelContentApplicantsOrApplicant1s} home address")
                 .label("LabelHorizontalLine1-SolAboutApplicant1", DARK_HORIZONTAL_RULE)
                 .mandatory(Applicant::getContactDetailsType)
-                .done();
+                .mandatoryWithoutDefaultValue(Applicant::getInRefuge, "applicant1ContactDetailsType=\"private\"",
+                    String.format(APPLICANT_REFUGE_LABEL, THE_APPLICANT_OR_APPLICANT1))
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
@@ -76,6 +82,13 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
         if (!validEmail) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(List.of(INVALID_EMAIL_ERROR))
+                .build();
+        }
+
+        List<String> validationErrors = validateApplicant1NameForAllowedCharacters(caseData);
+        if (!validationErrors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(validationErrors)
                 .build();
         }
 

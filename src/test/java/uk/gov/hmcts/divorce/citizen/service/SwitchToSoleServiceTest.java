@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -29,6 +30,7 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -62,6 +64,9 @@ public class SwitchToSoleServiceTest {
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
+
+    @Mock
+    private CaseFlagsService caseFlagsService;
 
     @InjectMocks
     private SwitchToSoleService switchToSoleService;
@@ -147,6 +152,17 @@ public class SwitchToSoleServiceTest {
         OrganisationPolicy<UserRole> newApp2OrgPolicy = caseData.getApplicant2().getSolicitor().getOrganisationPolicy();
         assertThat(newApp1OrgPolicy.getOrgPolicyCaseAssignedRole()).isEqualTo(APPLICANT_1_SOLICITOR);
         assertThat(newApp2OrgPolicy.getOrgPolicyCaseAssignedRole()).isEqualTo(APPLICANT_2_SOLICITOR);
+    }
+
+    @Test
+    void shouldAllCaseFlagsServiceWhenApplicantDataIsSwitched() {
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.setConditionalOrder(ConditionalOrder.builder().d84WhoApplying(APPLICANT_2).build());
+        caseData.setFinalOrder(FinalOrder.builder().build());
+
+        switchToSoleService.switchApplicantData(caseData);
+
+        verify(caseFlagsService).switchCaseFlags(caseData);
     }
 
     @Test
@@ -264,6 +280,70 @@ public class SwitchToSoleServiceTest {
                 getCaseAssignmentRequest("1", APPLICANT_2_SOLICITOR)
             );
         verify(caseAssignmentApi)
+            .addCaseUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                getCaseAssignmentRequest("1", APPLICANT_1_SOLICITOR)
+            );
+        verify(caseAssignmentApi)
+            .addCaseUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                getCaseAssignmentRequest("2", APPLICANT_2_SOLICITOR)
+            );
+        verifyNoMoreInteractions(caseAssignmentApi);
+    }
+
+    @Test
+    void shouldGracefullyHandleMissingUserIDToProcessOfflineCases() {
+        final long caseId = TEST_CASE_ID;
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder().solicitorRepresented(YES).build())
+            .applicant2(Applicant.builder().solicitorRepresented(YES).build())
+            .build();
+
+        final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(List.of(
+                CaseAssignmentUserRole.builder().userId(null).caseRole("[APPTWOSOLICITOR]").build(),
+                CaseAssignmentUserRole.builder().userId("2").caseRole("[APPONESOLICITOR]").build()
+            ))
+            .build();
+
+        final var userDetails = UserInfo.builder().uid(CASEWORKER_USER_ID).build();
+        final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
+
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(caseAssignmentApi.getUserRoles(CASEWORKER_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN, List.of(String.valueOf(caseId))))
+            .thenReturn(caseRolesResponse);
+        when(ccdAccessService.getCaseAssignmentRequest(caseId, "2", APPLICANT_1_SOLICITOR))
+            .thenReturn(getCaseAssignmentRequest("2", APPLICANT_1_SOLICITOR));
+        when(ccdAccessService.getCaseAssignmentRequest(caseId, "2", APPLICANT_2_SOLICITOR))
+            .thenReturn(getCaseAssignmentRequest("2", APPLICANT_2_SOLICITOR));
+
+        switchToSoleService.switchUserRoles(caseData, caseId);
+
+        verify(ccdAccessService, never()).getCaseAssignmentRequest(caseId, "1", APPLICANT_1_SOLICITOR);
+        verify(ccdAccessService, never()).getCaseAssignmentRequest(caseId, "1", APPLICANT_2_SOLICITOR);
+        verify(caseAssignmentApi)
+            .getUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                List.of(String.valueOf(caseId))
+            );
+        verify(caseAssignmentApi)
+            .removeCaseUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                getCaseAssignmentRequest("2", APPLICANT_1_SOLICITOR)
+            );
+        verify(caseAssignmentApi, never())
+            .removeCaseUserRoles(
+                CASEWORKER_AUTH_TOKEN,
+                TEST_SERVICE_AUTH_TOKEN,
+                getCaseAssignmentRequest("1", APPLICANT_2_SOLICITOR)
+            );
+        verify(caseAssignmentApi, never())
             .addCaseUserRoles(
                 CASEWORKER_AUTH_TOKEN,
                 TEST_SERVICE_AUTH_TOKEN,

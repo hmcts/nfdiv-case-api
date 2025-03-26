@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLY_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -144,12 +144,15 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
     }
 
     private Map<String, String> commonSolicitorTemplateVars(CaseData caseData, final Long id, Applicant applicant) {
+        var languagePreference = applicant.getLanguagePreference();
 
-        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id, applicant.getLanguagePreference());
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id, languagePreference);
 
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
-        templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData));
-        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData, languagePreference));
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(
+            getDateTimeFormatterForPreferredLanguage(languagePreference)
+        ));
         templateVars.put(SOLICITOR_REFERENCE, nonNull(applicant.getSolicitor().getReference())
             ? applicant.getSolicitor().getReference()
             : "not provided");

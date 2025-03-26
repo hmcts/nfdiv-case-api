@@ -13,6 +13,9 @@ import uk.gov.hmcts.rse.ccd.lib.api.CFTLibConfigurer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +28,9 @@ public class CftLibConfig implements CFTLibConfigurer {
     @Override
     public void configure(CFTLib lib) throws Exception {
         var users = Map.of(
-            "DivCaseWorkerUser@AAT.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-courtadmin_beta"),
+            "DivCaseWorkerUser@AAT.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-courtadmin_beta", "TTL_profile"),
+            "DivCaseSuperUser@AAT.com", List.of(
+                "caseworker", "caseworker-divorce", "caseworker-divorce-superuser", "caseworker-divorce-courtadmin_beta"),
             "TEST_CASE_WORKER_USER@mailinator.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-courtadmin_beta"),
             "TEST_SOLICITOR@mailinator.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-solicitor"),
             "TEST_JUDGE@mailinator.com", List.of("caseworker", "caseworker-divorce", "caseworker-divorce-judge"),
@@ -55,11 +60,13 @@ public class CftLibConfig implements CFTLibConfigurer {
             "citizen",
             "caseworker-divorce",
             "caseworker",
+            "caseworker-divorce-rparobot",
             "payments",
             "pui-case-manager",
             "pui-finance-manager",
             "pui-organisation-manager",
-            "pui-user-manager"
+            "pui-user-manager",
+            "TTL_profile"
         );
 
         ResourceLoader resourceLoader = new DefaultResourceLoader();
@@ -81,5 +88,9 @@ public class CftLibConfig implements CFTLibConfigurer {
         // Import CCD definitions
         lib.importJsonDefinition(new File("build/definitions/NFD"));
         lib.importJsonDefinition(new File("build/definitions/NO_FAULT_DIVORCE_BulkAction"));
+
+        Path filePath = Paths.get("resources/ccd-OLD-DIVORCE.xlsx");
+        byte[] defDivorce = Files.readAllBytes(filePath);
+        lib.importDefinition(defDivorce);
     }
 }
