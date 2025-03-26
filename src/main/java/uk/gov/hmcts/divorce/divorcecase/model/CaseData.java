@@ -362,7 +362,8 @@ public class CaseData {
         label = "Case matches",
         typeOverride = Collection,
         typeParameterOverride = "CaseMatch",
-        access = {CaseworkerAccess.class}
+        access = {CaseworkerAccess.class},
+        searchable=false
     )
     @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
     @Builder.Default
