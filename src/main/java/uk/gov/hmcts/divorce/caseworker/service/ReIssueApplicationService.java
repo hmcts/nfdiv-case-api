@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
@@ -33,43 +33,32 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ReIssueApplicationService {
 
-    @Autowired
-    private SetPostIssueState setPostIssueState;
+    private final SetPostIssueState setPostIssueState;
 
-    @Autowired
-    private GenerateApplication generateApplication;
+    private final GenerateApplication generateApplication;
 
-    @Autowired
-    private GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
+    private final GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
 
-    @Autowired
-    private GenerateApplicant1NoticeOfProceeding generateApplicant1NoticeOfProceeding;
+    private final GenerateApplicant1NoticeOfProceeding generateApplicant1NoticeOfProceeding;
 
-    @Autowired
-    private SendAosPackToRespondent sendAosPackToRespondent;
+    private final SendAosPackToRespondent sendAosPackToRespondent;
 
-    @Autowired
-    private SetNoticeOfProceedingDetailsForRespondent setNoticeOfProceedingDetailsForRespondent;
+    private final SetNoticeOfProceedingDetailsForRespondent setNoticeOfProceedingDetailsForRespondent;
 
-    @Autowired
-    private SendApplicationIssueNotifications sendApplicationIssueNotifications;
+    private final SendApplicationIssueNotifications sendApplicationIssueNotifications;
 
-    @Autowired
-    private SetReIssueAndDueDate setReIssueAndDueDate;
+    private final SetReIssueAndDueDate setReIssueAndDueDate;
 
-    @Autowired
-    private SendAosPackToApplicant sendAosPackToApplicant;
+    private final SendAosPackToApplicant sendAosPackToApplicant;
 
-    @Autowired
-    private ResetAosFields resetAosFields;
+    private final ResetAosFields resetAosFields;
 
-    @Autowired
-    private GenerateD10Form generateD10Form;
+    private final GenerateD10Form generateD10Form;
 
-    @Autowired
-    private GenerateD84Form generateD84Form;
+    private final GenerateD84Form generateD84Form;
 
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
         if (caseDetails.getData().isJudicialSeparationCase()) {
