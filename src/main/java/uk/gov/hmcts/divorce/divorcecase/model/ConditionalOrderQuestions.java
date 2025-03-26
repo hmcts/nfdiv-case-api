@@ -103,7 +103,7 @@ public class ConditionalOrderQuestions {
     @CCD(
         label = "Do you need to change your application or add anything?",
         hint = "If you change or add anything which means your application has to be sent to your "
-            + "husband/wife again you may have to pay a £95 fee"
+            + "husband/wife again you may have to pay a £59 fee"
     )
     private YesOrNo changeOrAddToApplication;
 
