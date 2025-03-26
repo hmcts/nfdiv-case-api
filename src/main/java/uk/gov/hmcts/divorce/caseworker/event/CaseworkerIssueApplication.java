@@ -40,8 +40,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateIssue;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageCertificateNames;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 
 @Component
@@ -130,9 +128,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
         log.info("Caseworker issue application about to submit callback invoked for case id: {}", details.getId());
 
         log.info("Validating Issue for Case Id: {}", details.getId());
-        final List<String> caseValidationErrors = flattenLists(
-            validateIssue(details.getData()),
-            validateMarriageCertificateNames(caseData));
+        final List<String> caseValidationErrors = validateIssue(details.getData());
 
         if (!isEmpty(caseValidationErrors)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()

@@ -24,7 +24,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 import uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation;
-import uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -33,13 +32,10 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -243,30 +239,6 @@ class CaseworkerIssueApplicationTest {
     }
 
     @Test
-    void shouldCallValidationUtilMethodToValidateMarriageCertificateNames() {
-
-        final var caseData = caseDataWithAllMandatoryFields();
-        caseData.getApplication().setSolSignStatementOfTruth(YES);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setId(TEST_CASE_ID);
-        details.setCreatedDate(LOCAL_DATE_TIME);
-
-        List<String> errors = new ArrayList<>();
-        errors.add("Error");
-
-        MockedStatic<ValidationUtil> validationUtilMockedStatic = Mockito.mockStatic(ValidationUtil.class);
-        validationUtilMockedStatic.when(() -> ValidationUtil.validateMarriageCertificateNames(caseData)).thenReturn(errors);
-        validationUtilMockedStatic.when(() -> ValidationUtil.flattenLists(anyList(), anyList())).thenReturn(errors);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
-        assertThat(response.getErrors()).isNotNull();
-
-        validationUtilMockedStatic.close();
-    }
-
-    @Test
     void shouldSubmitCcdSystemIssueSolicitorServicePackEventOnSubmittedCallbackIfSolicitorService() {
         final User user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
@@ -462,9 +434,9 @@ class CaseworkerIssueApplicationTest {
         caseData.getApplication().getJurisdiction().setConnections(Set.of(JurisdictionConnections.APP_1_APP_2_RESIDENT));
         caseData.getApplication().getJurisdiction().setApplicant1Residence(YES);
         caseData.getApplication().getJurisdiction().setApplicant2Residence(YES);
-        caseData.getApplication().getMarriageDetails().setApplicant1Name("appOneName");
+        caseData.getApplication().getMarriageDetails().setApplicant1Name("app1Name");
         caseData.getApplication().getMarriageDetails().setDate(LocalDate.of(2009, 1, 1));
-        caseData.getApplication().getMarriageDetails().setApplicant2Name("appTwoName");
+        caseData.getApplication().getMarriageDetails().setApplicant2Name("app2Name");
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
         return caseData;
     }
