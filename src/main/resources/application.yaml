@@ -469,7 +469,7 @@ docmosis:
       JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Solicitor-Cover-Letter-JS.docx
       CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order-V1.docx
       FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order_V3.docx
-      FINAL_ORDER_CAN_APPLY_RESPONDENT: FL-NFD-GOR-ENG-Respondent-Can-Apply-Final-Order_V1.docx
+      FINAL_ORDER_CAN_APPLY_RESPONDENT: FL-NFD-GOR-ENG-Respondent-Can-Apply-Final-Order_V2.docx
       FINAL_ORDER_GRANTED: FL-NFD-GOR-ENG-Final-Order-Granted_V2.docx
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx
       NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed.docx
@@ -564,7 +564,7 @@ docmosis:
       CO_GRANTED_COVER_LETTER_JS: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter-JS.docx #TODO: update welsh content
       CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order-V1.docx #TODO: update welsh content
       FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order_V3.docx #TODO: update welsh content
-      FINAL_ORDER_CAN_APPLY_RESPONDENT: FL-NFD-GOR-WEL-Respondent-Can-Apply-Final-Order_V1.docx
+      FINAL_ORDER_CAN_APPLY_RESPONDENT: FL-NFD-GOR-WEL-Respondent-Can-Apply-Final-Order_V2.docx
       FINAL_ORDER_GRANTED: FL-NFD-GOR-WEL-Final-Order-Granted.docx
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx
       NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed.docx

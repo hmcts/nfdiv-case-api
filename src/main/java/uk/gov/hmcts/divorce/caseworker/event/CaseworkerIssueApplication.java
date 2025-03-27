@@ -1,20 +1,24 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -36,27 +40,29 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateIssue;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageCertificateNames;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_ISSUE_APPLICATION = "caseworker-issue-application";
 
     private static final String ALWAYS_HIDE = "marriageApplicant1Name=\"ALWAYS_HIDE\"";
 
-    @Autowired
-    private IssueApplicationService issueApplicationService;
+    private static final String WARNING_LABEL = "### There is no address for the Respondent, "
+        + "you need to provide a reason for issuing the application without the address for the respondent";
 
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
+    private final IssueApplicationService issueApplicationService;
 
-    @Autowired
-    private IdamService idamService;
+    private final CcdUpdateService ccdUpdateService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final IdamService idamService;
+
+    private final AuthTokenGenerator authTokenGenerator;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -67,6 +73,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             .description("Application issued")
             .showSummary()
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE,
@@ -81,15 +88,39 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             .complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getMarriageOrCivilPartnership, ALWAYS_HIDE)
             .done()
+            .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
             .complex(CaseData::getApplication)
+                .readonlyNoSummary(Application::getBeingIssuedWithoutAddress, ALWAYS_HIDE)
+            .done()
+            .label("eventWarning", WARNING_LABEL, "beingIssuedWithoutAddress=\"Yes\"")
+            .complex(CaseData::getApplication)
+                .mandatory(Application::getReasonIssuedWithoutAddress, "beingIssuedWithoutAddress=\"Yes\"")
                 .complex(Application::getMarriageDetails)
                     .optional(MarriageDetails::getDate)
                     .optional(MarriageDetails::getApplicant1Name)
                     .optional(MarriageDetails::getApplicant2Name)
                     .mandatory(MarriageDetails:: getCountryOfMarriage)
                     .mandatory(MarriageDetails::getPlaceOfMarriage)
-                    .done()
-                .done();
+                .done()
+            .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        CaseData caseData = details.getData();
+
+        String app2Address = AddressUtil.getPostalAddress(caseData.getApplicant2().getAddress());
+
+        boolean soleApplicationBeingIssuedWithoutApp2Address =
+            caseData.getApplicationType() == ApplicationType.SOLE_APPLICATION
+            && StringUtils.isEmpty(app2Address);
+
+        if (soleApplicationBeingIssuedWithoutApp2Address) {
+            caseData.getApplication().setBeingIssuedWithoutAddress(YesOrNo.YES);
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -99,7 +130,9 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
         log.info("Caseworker issue application about to submit callback invoked for case id: {}", details.getId());
 
         log.info("Validating Issue for Case Id: {}", details.getId());
-        final List<String> caseValidationErrors = validateIssue(details.getData());
+        final List<String> caseValidationErrors = flattenLists(
+            validateIssue(details.getData()),
+            validateMarriageCertificateNames(caseData));
 
         if (!isEmpty(caseValidationErrors)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -107,6 +140,8 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
                 .errors(caseValidationErrors)
                 .build();
         }
+
+        caseData.getApplication().setBeingIssuedWithoutAddress(null);
 
         final CaseDetails<CaseData, State> result = issueApplicationService.issueApplication(details);
 
