@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.time.LocalDateTime;
@@ -57,6 +58,18 @@ public class RequestForInformation {
     private String requestForInformationEmailAddress;
 
     @CCD(
+        label = "Offline?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo requestForInformationPartyOffline;
+
+    @CCD(
+        label = "Correspondence address",
+        access = {DefaultAccess.class}
+    )
+    private String requestForInformationAddress;
+
+    @CCD(
         label = "Secondary name",
         access = {DefaultAccess.class}
     )
@@ -68,6 +81,18 @@ public class RequestForInformation {
         access = {DefaultAccess.class}
     )
     private String requestForInformationSecondaryEmailAddress;
+
+    @CCD(
+        label = "Secondary offline?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo requestForInformationSecondaryPartyOffline;
+
+    @CCD(
+        label = "Secondary correspondence address",
+        access = {DefaultAccess.class}
+    )
+    private String requestForInformationSecondaryAddress;
 
     @CCD(
         label = "Date/time of request",
@@ -99,12 +124,12 @@ public class RequestForInformation {
         final RequestForInformationJointParties jointParties = this.getRequestForInformationJointParties();
         if (RequestForInformationSoleParties.APPLICANT.equals(soleParties)
             || RequestForInformationJointParties.APPLICANT1.equals(jointParties)) {
-            this.setNameAndEmail(caseData.getApplicant1(), false);
+            this.setCorrespondenceDetails(caseData.getApplicant1(), false);
         } else if (RequestForInformationJointParties.APPLICANT2.equals(jointParties)) {
-            this.setNameAndEmail(caseData.getApplicant2(), false);
+            this.setCorrespondenceDetails(caseData.getApplicant2(), false);
         } else if (RequestForInformationJointParties.BOTH.equals(jointParties)) {
-            this.setNameAndEmail(caseData.getApplicant1(), false);
-            this.setNameAndEmail(caseData.getApplicant2(), true);
+            this.setCorrespondenceDetails(caseData.getApplicant1(), false);
+            this.setCorrespondenceDetails(caseData.getApplicant2(), true);
         }
     }
 
@@ -125,16 +150,28 @@ public class RequestForInformation {
     }
 
     @JsonIgnore
-    private void setNameAndEmail(Applicant applicant, Boolean setSecondary) {
+    private void setCorrespondenceDetails(Applicant applicant, Boolean setSecondary) {
+        final boolean isOffline = applicant.isApplicantOffline();
         final boolean isRepresented = applicant.isRepresented();
         final String emailAddress = isRepresented ? applicant.getSolicitor().getEmail() : applicant.getEmail();
         final String name = isRepresented ? applicant.getSolicitor().getName() : applicant.getFullName();
+        final String address = applicant.getCorrespondenceAddressWithoutConfidentialCheck();
         if (TRUE.equals(setSecondary)) {
-            this.setRequestForInformationSecondaryEmailAddress(emailAddress);
             this.setRequestForInformationSecondaryName(name);
+            if (isOffline) {
+                this.setRequestForInformationSecondaryPartyOffline(YesOrNo.from(isOffline));
+                this.setRequestForInformationSecondaryAddress(address);
+            } else {
+                this.setRequestForInformationSecondaryEmailAddress(emailAddress);
+            }
         } else {
-            this.setRequestForInformationEmailAddress(emailAddress);
             this.setRequestForInformationName(name);
+            if (isOffline) {
+                this.setRequestForInformationPartyOffline(YesOrNo.from(isOffline));
+                this.setRequestForInformationAddress(address);
+            } else {
+                this.setRequestForInformationEmailAddress(emailAddress);
+            }
         }
     }
 
