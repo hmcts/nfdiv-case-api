@@ -223,6 +223,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_OTHER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_OTHER_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_FIRM_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
@@ -263,13 +265,13 @@ public class TestDataHelper {
             .build();
     }
 
-    public static Applicant getApplicantWithAddress() {
+    public static Applicant getApplicantWithAddress(Gender gender) {
         return Applicant.builder()
             .firstName(TEST_FIRST_NAME)
             .middleName(TEST_MIDDLE_NAME)
             .lastName(TEST_LAST_NAME)
             .email(TEST_USER_EMAIL)
-            .gender(MALE)
+            .gender(gender)
             .languagePreferenceWelsh(NO)
             .address(AddressGlobalUK.builder()
                 .addressLine1("line 1")
@@ -278,6 +280,10 @@ public class TestDataHelper {
                 .country("UK")
                 .build())
             .build();
+    }
+
+    public static Applicant getApplicantWithAddress() {
+        return getApplicantWithAddress(MALE);
     }
 
     public static Applicant getApplicantWithNonConfidentialAddress() {
@@ -297,13 +303,13 @@ public class TestDataHelper {
             .build();
     }
 
-    public static Applicant getApplicant2WithAddress() {
+    public static Applicant getApplicant2WithAddress(Gender gender) {
         return Applicant.builder()
             .firstName(TEST_APP2_FIRST_NAME)
             .middleName(TEST_APP2_MIDDLE_NAME)
             .lastName(TEST_APP2_LAST_NAME)
             .email(TEST_APPLICANT_2_USER_EMAIL)
-            .gender(FEMALE)
+            .gender(gender)
             .languagePreferenceWelsh(NO)
             .address(AddressGlobalUK.builder()
                 .addressLine1("line 1")
@@ -312,6 +318,10 @@ public class TestDataHelper {
                 .country("UK")
                 .build())
             .build();
+    }
+
+    public static Applicant getApplicant2WithAddress() {
+        return getApplicant2WithAddress(FEMALE);
     }
 
     public static Applicant getApplicant2(Gender gender) {
@@ -1553,18 +1563,20 @@ public class TestDataHelper {
     public static uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> getRequestForInformationCaseDetails() {
         CaseData caseData = getRequestForInformationBaseData(SOLE_APPLICATION, true, false);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
         setRequestForInformationBaseRequestValues(caseData);
 
         return getRequestForInformationBaseDetails(caseData);
     }
 
     public static uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> getRequestForInformationCaseDetails(
-                                                                            RequestForInformationSoleParties soleParties,
-                                                                            Boolean applicantRepresented,
-                                                                            Boolean applicant2Represented
+        RequestForInformationSoleParties soleParties,
+        Boolean applicantRepresented,
+        Boolean applicant2Represented
     ) {
         CaseData caseData = getRequestForInformationBaseData(SOLE_APPLICATION, applicantRepresented, applicant2Represented);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(soleParties);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
         setRequestForInformationBaseRequestValues(caseData);
 
         return getRequestForInformationBaseDetails(caseData);
@@ -1577,6 +1589,56 @@ public class TestDataHelper {
     ) {
         CaseData caseData = getRequestForInformationBaseData(JOINT_APPLICATION, applicantRepresented, applicant2Represented);
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(jointParties);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        setRequestForInformationBaseRequestValues(caseData);
+
+        return getRequestForInformationBaseDetails(caseData);
+    }
+
+    public static uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> getRequestForInformationOtherCaseDetails(
+        ApplicationType applicationType,
+        Boolean applicantRepresented,
+        Boolean applicant2Represented
+    ) {
+        CaseData caseData = getRequestForInformationBaseData(applicationType, applicantRepresented, applicant2Represented);
+        if (SOLE_APPLICATION.equals(applicationType)) {
+            caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(
+                RequestForInformationSoleParties.OTHER
+            );
+        } else {
+            caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(
+                RequestForInformationJointParties.OTHER
+            );
+        }
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationName(TEST_OTHER_NAME);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationEmailAddress(TEST_OTHER_EMAIL);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        setRequestForInformationBaseRequestValues(caseData);
+
+        return getRequestForInformationBaseDetails(caseData);
+    }
+
+    public static uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> getOfflineRequestForInformationCaseDetails(
+        RequestForInformationSoleParties soleParties,
+        Boolean applicantRepresented,
+        Boolean applicant2Represented
+    ) {
+        CaseData caseData = getOfflineRequestForInformationBaseData(SOLE_APPLICATION, applicantRepresented, applicant2Represented);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(soleParties);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
+        setRequestForInformationBaseRequestValues(caseData);
+
+        return getRequestForInformationBaseDetails(caseData);
+    }
+
+    public static uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> getOfflineRequestForInformationCaseDetails(
+        RequestForInformationJointParties jointParties,
+        Boolean applicantRepresented,
+        Boolean applicant2Represented
+    ) {
+        CaseData caseData = getOfflineRequestForInformationBaseData(JOINT_APPLICATION, applicantRepresented, applicant2Represented);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(jointParties);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationDetails(TEST_TEXT);
         setRequestForInformationBaseRequestValues(caseData);
 
         return getRequestForInformationBaseDetails(caseData);
@@ -1595,6 +1657,27 @@ public class TestDataHelper {
             caseData.getApplicant2().setGender(MALE);
         } else {
             caseData.setApplicant2(getApplicant(MALE));
+        }
+
+        return caseData;
+    }
+
+    public static CaseData getOfflineRequestForInformationBaseData(ApplicationType applicationType,
+                                                            Boolean applicantRepresented,
+                                                            Boolean applicant2Represented) {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(applicationType);
+        caseData.setApplicant1(getApplicantWithAddress(FEMALE));
+        caseData.getApplicant1().setOffline(YES);
+        caseData.setApplicant2(getApplicant2WithAddress(MALE));
+        caseData.getApplicant2().setOffline(YES);
+        if (applicantRepresented) {
+            caseData.getApplicant1().setSolicitorRepresented(YES);
+            caseData.getApplicant1().setSolicitor(getOfflineSolicitor());
+        }
+        if (applicant2Represented) {
+            caseData.getApplicant2().setSolicitorRepresented(YES);
+            caseData.getApplicant2().setSolicitor(getOfflineSolicitor());
         }
 
         return caseData;

@@ -261,6 +261,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("requestForInformation")
     REQUEST_FOR_INFORMATION("Request for information", true),
 
+    @JsonProperty("requestForInformationResponse")
+    REQUEST_FOR_INFORMATION_RESPONSE("Request for information response", true),
+
     @JsonProperty("requestForInformationResponseDoc")
     REQUEST_FOR_INFORMATION_RESPONSE_DOC("RFI response document", true),
 
