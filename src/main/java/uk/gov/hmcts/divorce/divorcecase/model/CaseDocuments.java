@@ -167,8 +167,7 @@ public class CaseDocuments {
 
     @CCD(
         label = "What type of document was attached?",
-        access = {SystemUpdateAndSuperUserAccess.class},
-        searchable = false
+        access = {SystemUpdateAndSuperUserAccess.class}
     )
     private OfflineDocumentReceived typeOfDocumentAttached;
 
