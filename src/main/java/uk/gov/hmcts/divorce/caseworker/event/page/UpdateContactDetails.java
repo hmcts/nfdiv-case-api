@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.OPPOSITE_
 import static uk.gov.hmcts.divorce.divorcecase.model.MarriageFormation.SAME_SEX_COUPLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.HUSBAND;
 import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateAllNamesForAllowedCharacters;
 
 @Component
 @Slf4j
@@ -252,6 +253,13 @@ public class UpdateContactDetails implements CcdPageConfiguration {
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(singletonList(errorMessage))
+                .build();
+        }
+
+        List<String> nameValidationErrors = validateAllNamesForAllowedCharacters(caseData);
+        if (!nameValidationErrors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(nameValidationErrors)
                 .build();
         }
 
