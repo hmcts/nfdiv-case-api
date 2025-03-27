@@ -46,6 +46,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_OR_APPLICANT1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
@@ -53,6 +54,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_OR_APPLICANT2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -289,8 +291,14 @@ class CommonContentTest {
                 .build())
             .build();
 
+        Applicant applicant = getApplicant();
+        applicant.setSolicitorRepresented(YES);
+
+        when(docmosisCommonContent.getApplicantOrApplicant1(caseData, applicant.getLanguagePreference())).thenReturn("Applicant1");
+        when(docmosisCommonContent.getRespondentOrApplicant2(caseData, applicant.getLanguagePreference())).thenReturn("Applicant2");
+
         final Map<String, String> templateVars = commonContent
-            .requestForInformationTemplateVars(caseData, TEST_CASE_ID, getApplicant(FEMALE), getApplicant(MALE));
+            .requestForInformationTemplateVars(caseData, TEST_CASE_ID, applicant, getApplicant(MALE));
 
         assertThat(templateVars)
             .isNotEmpty()
@@ -298,8 +306,44 @@ class CommonContentTest {
                 entry(IS_JOINT, "yes"),
                 entry(HUSBAND_JOINT, "yes"),
                 entry(WIFE_JOINT, "no"),
-                entry(CIVIL_PARTNER_JOINT, "no")
+                entry(CIVIL_PARTNER_JOINT, "no"),
+                entry(APPLICANT_NAME, "test_first_name test_middle_name test_last_name"),
+                entry(RESPONDENT_NAME, "test_first_name test_middle_name test_last_name"),
+                entry(APPLICANT_OR_APPLICANT1, "Applicant1"),
+                entry(RESPONDENT_OR_APPLICANT2, "Applicant2")
             );
+    }
+
+    @Test
+    void shouldNotSetSolicitorRelatedTemplateVarsForRequestForInformationJointDivorceWhenApplicantNotRepresented() {
+        final CaseData caseData = CaseData.builder()
+                .applicationType(JOINT_APPLICATION)
+                .divorceOrDissolution(DIVORCE)
+                .requestForInformationList(RequestForInformationList.builder()
+                        .requestForInformation(RequestForInformation.builder()
+                                .requestForInformationJointParties(APPLICANT1)
+                                .build())
+                        .build())
+                .build();
+
+        Applicant applicant = getApplicant();
+
+        final Map<String, String> templateVars = commonContent
+                .requestForInformationTemplateVars(caseData, TEST_CASE_ID, applicant, getApplicant(MALE));
+
+        assertThat(templateVars)
+                .isNotEmpty()
+                .contains(
+                        entry(IS_JOINT, "yes"),
+                        entry(HUSBAND_JOINT, "yes"),
+                        entry(WIFE_JOINT, "no"),
+                        entry(CIVIL_PARTNER_JOINT, "no")
+                )
+                .doesNotContain(
+                        entry(APPLICANT_NAME, "test_first_name test_middle_name test_last_name"),
+                        entry(RESPONDENT_NAME, "test_first_name test_middle_name test_last_name"),
+                        entry(APPLICANT_OR_APPLICANT1, "Applicant1"),
+                        entry(RESPONDENT_OR_APPLICANT2, "Applicant2"));
     }
 
     @Test

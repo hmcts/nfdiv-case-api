@@ -26,11 +26,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_OR_APPLICANT1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_OR_APPLICANT2;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IN_TIME;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
@@ -320,7 +322,19 @@ public class CommonContent {
                                                             final Applicant partner) {
         final Map<String, String> templateVars = jointTemplateVars(caseData, id, applicant, partner);
 
+        LanguagePreference languagePreference = applicant.getLanguagePreference();
+
         templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
+        if (applicant.isRepresented()) {
+            templateVars.put(APPLICANT_NAME, applicant.getFullName());
+            templateVars.put(RESPONDENT_NAME, partner.getFullName());
+            templateVars.put(APPLICANT_OR_APPLICANT1, docmosisCommonContent.getApplicantOrApplicant1(caseData, languagePreference));
+            templateVars.put(RESPONDENT_OR_APPLICANT2, docmosisCommonContent.getRespondentOrApplicant2(caseData, languagePreference));
+            templateVars.put(SOLICITOR_NAME,
+                    docmosisCommonContent.getSolicitorName(applicant, applicant.getSolicitor(), languagePreference));
+            templateVars.put(SOLICITOR_REFERENCE,
+                    docmosisCommonContent.getSolicitorReference(applicant.getSolicitor(), languagePreference));
+        }
 
         return templateVars;
     }
