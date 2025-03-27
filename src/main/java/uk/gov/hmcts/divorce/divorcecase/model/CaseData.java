@@ -380,6 +380,13 @@ public class CaseData {
     @Builder.Default
     private PartyFlags partyFlags = new PartyFlags();
 
+    @JsonUnwrapped
+    @CCD(
+        label = "No Response Journey Options",
+        access = {DefaultAccess.class}
+    )
+    private NoResponseJourneyOptions noResponseJourneyOptions;
+
     @JsonIgnore
     public String formatCaseRef(long caseId) {
         String temp = String.format("%016d", caseId);
