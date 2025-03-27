@@ -35,8 +35,7 @@ public class RequestForInformationOfflineResponseDraft {
     @CCD(
         label = "Documents",
         typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument",
-        searchable=false
+        typeParameterOverride = "DivorceDocument"
     )
     private List<ListValue<DivorceDocument>> rfiOfflineDraftResponseDocs;
 

@@ -289,7 +289,7 @@ public class CaseData {
     @CCD(
             access = {DefaultAccess.class, AcaSystemUserAccess.class, CaseworkerAccess.class},
             label = "Change of representatives",
-            searchable=false
+            searchable = false
     )
     @Builder.Default
     private List<ListValue<ChangeOfRepresentative>> changeOfRepresentatives = new ArrayList<>();
@@ -363,7 +363,7 @@ public class CaseData {
         typeOverride = Collection,
         typeParameterOverride = "CaseMatch",
         access = {CaseworkerAccess.class},
-        searchable=false
+        searchable = false
     )
     @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
     @Builder.Default

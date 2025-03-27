@@ -28,7 +28,8 @@ public class RequestForInformationList {
         label = "Requests for information",
         typeOverride = Collection,
         typeParameterOverride = "RequestForInformation",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private List<ListValue<RequestForInformation>> requestsForInformation;
 

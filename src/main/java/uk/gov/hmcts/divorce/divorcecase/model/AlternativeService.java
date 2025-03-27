@@ -114,7 +114,7 @@ public class AlternativeService {
         label = "Supporting Documents",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        searchable=false
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> serviceApplicationDocuments;
 
