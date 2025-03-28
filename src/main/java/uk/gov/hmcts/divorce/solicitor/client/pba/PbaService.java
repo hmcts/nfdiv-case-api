@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor.client.pba;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
@@ -19,19 +19,16 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class PbaService {
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private PbaRefDataClient pbaRefDataClient;
+    private final PbaRefDataClient pbaRefDataClient;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
     public DynamicList populatePbaDynamicList() {
         List<DynamicListElement> pbaAccountNumbers = retrievePbaNumbers()

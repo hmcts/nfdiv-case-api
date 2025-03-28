@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -34,6 +34,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class Applicant1SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APPLICANT_1_INTENDS_TO_SWITCH_TO_SOLE_FO = "applicant1-intends-switch-to-sole-fo";
@@ -42,14 +43,11 @@ public class Applicant1SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseD
     private static final String NEVER_SHOW = "applicant1IntendsToSwitchToSole=\"NEVER_SHOW\"";
     private static final String BLANK_LABEL = " ";
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private SolicitorIntendsToSwitchToSoleFoNotification solicitorIntendsToSwitchToSoleFoNotification;
+    private final SolicitorIntendsToSwitchToSoleFoNotification solicitorIntendsToSwitchToSoleFoNotification;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

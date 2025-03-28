@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -37,15 +37,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_UPDATE = "solicitor-update-application";
 
-    @Autowired
-    private SolAboutTheSolicitor solAboutTheSolicitor;
+    private final SolAboutTheSolicitor solAboutTheSolicitor;
 
-    @Autowired
-    private SolicitorUpdateApplicationService solicitorUpdateApplicationService;
+    private final SolicitorUpdateApplicationService solicitorUpdateApplicationService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

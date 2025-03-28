@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -43,27 +43,22 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_SUBMIT_JOINT_APPLICATION = "solicitor-submit-joint-application";
 
-    @Autowired
-    private MarriageIrretrievablyBrokenForApplicant2 marriageIrretrievablyBrokenForApplicant2;
+    private final MarriageIrretrievablyBrokenForApplicant2 marriageIrretrievablyBrokenForApplicant2;
 
-    @Autowired
-    private HelpWithFeesPageForApplicant2 helpWithFeesPageForApplicant2;
+    private final HelpWithFeesPageForApplicant2 helpWithFeesPageForApplicant2;
 
-    @Autowired
-    private SolicitorSubmitJointApplicationService solicitorSubmitJointApplicationService;
+    private final SolicitorSubmitJointApplicationService solicitorSubmitJointApplicationService;
 
-    @Autowired
-    private OrganisationClient organisationClient;
+    private final OrganisationClient organisationClient;
 
-    @Autowired
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

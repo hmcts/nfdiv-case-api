@@ -1,9 +1,9 @@
 package uk.gov.hmcts.divorce.solicitor.service;
 
 import feign.FeignException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -29,16 +29,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CcdAccessService {
 
-    @Autowired
-    private CaseAssignmentApi caseAssignmentApi;
+    private final CaseAssignmentApi caseAssignmentApi;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
     public void addApplicant1SolicitorRole(String solicitorIdamToken, Long caseId, String orgId) {

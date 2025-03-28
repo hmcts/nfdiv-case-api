@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
@@ -14,12 +14,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class MarriageIrretrievablyBrokenForApplicant2 implements CcdPageConfiguration {
 
     private static final String ALWAYS_HIDE = "applicant2ScreenHasMarriageBroken=\"ALWAYS_HIDE\"";
 
-    @Autowired
-    private MarriageIrretrievablyBroken marriageIrretrievablyBroken;
+    private final MarriageIrretrievablyBroken marriageIrretrievablyBroken;
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
