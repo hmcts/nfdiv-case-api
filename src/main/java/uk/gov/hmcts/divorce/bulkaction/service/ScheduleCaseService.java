@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -15,22 +15,18 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ScheduleCaseService {
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private BulkCaseProcessingService bulkCaseProcessingService;
+    private final BulkCaseProcessingService bulkCaseProcessingService;
 
-    @Autowired
-    private UpdateCourtHearingDetailsTask updateCourtHearingDetailsTask;
+    private final UpdateCourtHearingDetailsTask updateCourtHearingDetailsTask;
 
-    @Autowired
-    private UpdatePronouncementJudgeDetailsTask updatePronouncementJudgeDetailsTask;
+    private final UpdatePronouncementJudgeDetailsTask updatePronouncementJudgeDetailsTask;
 
     @Async
     public void updateCourtHearingDetailsForCasesInBulk(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails

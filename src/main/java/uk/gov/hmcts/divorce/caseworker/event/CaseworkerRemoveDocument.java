@@ -33,6 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @RequiredArgsConstructor
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, UserRole> {
 
     private final DocumentRemovalService documentRemovalService;

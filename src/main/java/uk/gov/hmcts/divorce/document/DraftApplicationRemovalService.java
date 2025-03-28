@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.document;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -15,10 +15,10 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class DraftApplicationRemovalService {
 
-    @Autowired
-    private DocumentRemovalService documentRemovalService;
+    private final DocumentRemovalService documentRemovalService;
 
     public List<ListValue<DivorceDocument>> removeDraftApplicationDocument(final List<ListValue<DivorceDocument>> generatedDocuments,
                                                                            final Long caseId) {
