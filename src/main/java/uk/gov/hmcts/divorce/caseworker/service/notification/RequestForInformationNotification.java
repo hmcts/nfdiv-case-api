@@ -7,6 +7,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.RequestForInformationDocumentPack;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
@@ -48,18 +50,22 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 @Slf4j
 public class RequestForInformationNotification implements ApplicantNotification {
 
-    public static final String REQUEST_FOR_INFORMATION_SOLE_NOTIFICATION_TO_FOR_CASE_ID =
-        "Sending Request For Information Sole Notification to {} for case id: {}";
+    public static final String REQUEST_FOR_INFORMATION_NOTIFICATION_TO_FOR_CASE_ID =
+        "Sending Request For Information Notification to {} for case id: {}";
+    public static final String REQUEST_FOR_INFORMATION_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID =
+        "Sending Request For Information Offline Notification to {} for case id: {}";
 
     private final NotificationService notificationService;
     private final CommonContent commonContent;
+    private final RequestForInformationDocumentPack requestForInformationDocumentPack;
+    private final LetterPrinter letterPrinter;
 
     @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {
-        log.info(REQUEST_FOR_INFORMATION_SOLE_NOTIFICATION_TO_FOR_CASE_ID,
+        log.info(REQUEST_FOR_INFORMATION_NOTIFICATION_TO_FOR_CASE_ID,
             caseData.getApplicationType().isSole() ? "applicant solicitor" : "applicant 1 solicitor", caseId);
 
-        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getLatestRequest();
 
         notificationService.sendEmail(
             caseData.getApplicant1().getSolicitor().getEmail(),
@@ -77,11 +83,21 @@ public class RequestForInformationNotification implements ApplicantNotification 
     }
 
     @Override
+    public void sendToApplicant1SolicitorOffline(final CaseData caseData, final Long caseId) {
+        log.info(REQUEST_FOR_INFORMATION_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID,
+            caseData.getApplicationType().isSole() ? "applicant solicitor" : "applicant 1 solicitor", caseId);
+
+        Applicant applicant1 = caseData.getApplicant1();
+        var documentPackInfo = requestForInformationDocumentPack.getDocumentPack(caseData, applicant1);
+        letterPrinter.sendLetters(caseData, caseId, applicant1, documentPackInfo, requestForInformationDocumentPack.getLetterId());
+    }
+
+    @Override
     public void sendToApplicant1(CaseData caseData, Long caseId) {
-        log.info(REQUEST_FOR_INFORMATION_SOLE_NOTIFICATION_TO_FOR_CASE_ID,
+        log.info(REQUEST_FOR_INFORMATION_NOTIFICATION_TO_FOR_CASE_ID,
             caseData.getApplicationType().isSole() ? "applicant" : "applicant 1", caseId);
 
-        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getLatestRequest();
 
         EmailTemplateName emailTemplate = caseData.getApplicationType().isSole()
             ? REQUEST_FOR_INFORMATION_SOLE
@@ -103,10 +119,20 @@ public class RequestForInformationNotification implements ApplicantNotification 
     }
 
     @Override
-    public void sendToApplicant2(CaseData caseData, Long caseId) {
-        log.info(REQUEST_FOR_INFORMATION_SOLE_NOTIFICATION_TO_FOR_CASE_ID, "applicant 2", caseId);
+    public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
+        log.info(REQUEST_FOR_INFORMATION_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID,
+            caseData.getApplicationType().isSole() ? "applicant" : "applicant 1", caseId);
 
-        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
+        Applicant applicant1 = caseData.getApplicant1();
+        var documentPackInfo = requestForInformationDocumentPack.getDocumentPack(caseData, applicant1);
+        letterPrinter.sendLetters(caseData, caseId, applicant1, documentPackInfo, requestForInformationDocumentPack.getLetterId());
+    }
+
+    @Override
+    public void sendToApplicant2(CaseData caseData, Long caseId) {
+        log.info(REQUEST_FOR_INFORMATION_NOTIFICATION_TO_FOR_CASE_ID, "applicant 2", caseId);
+
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getLatestRequest();
 
         notificationService.sendEmail(
             caseData.getApplicant2().getEmail(),
@@ -124,10 +150,19 @@ public class RequestForInformationNotification implements ApplicantNotification 
     }
 
     @Override
-    public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
-        log.info(REQUEST_FOR_INFORMATION_SOLE_NOTIFICATION_TO_FOR_CASE_ID, "applicant 2 solicitor", caseId);
+    public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
+        log.info(REQUEST_FOR_INFORMATION_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID, "applicant 2", caseId);
 
-        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
+        Applicant applicant2 = caseData.getApplicant2();
+        var documentPackInfo = requestForInformationDocumentPack.getDocumentPack(caseData, applicant2);
+        letterPrinter.sendLetters(caseData, caseId, applicant2, documentPackInfo, requestForInformationDocumentPack.getLetterId());
+    }
+
+    @Override
+    public void sendToApplicant2Solicitor(final CaseData caseData, final Long caseId) {
+        log.info(REQUEST_FOR_INFORMATION_NOTIFICATION_TO_FOR_CASE_ID, "applicant 2 solicitor", caseId);
+
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getLatestRequest();
 
         notificationService.sendEmail(
             caseData.getApplicant2().getSolicitor().getEmail(),
@@ -145,10 +180,19 @@ public class RequestForInformationNotification implements ApplicantNotification 
     }
 
     @Override
-    public void sendToOtherRecipient(final CaseData caseData, final Long caseId) {
-        log.info(REQUEST_FOR_INFORMATION_SOLE_NOTIFICATION_TO_FOR_CASE_ID, "other recipient", caseId);
+    public void sendToApplicant2SolicitorOffline(final CaseData caseData, final Long caseId) {
+        log.info(REQUEST_FOR_INFORMATION_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID, "applicant 2 solicitor", caseId);
 
-        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
+        Applicant applicant2 = caseData.getApplicant2();
+        var documentPackInfo = requestForInformationDocumentPack.getDocumentPack(caseData, applicant2);
+        letterPrinter.sendLetters(caseData, caseId, applicant2, documentPackInfo, requestForInformationDocumentPack.getLetterId());
+    }
+
+    @Override
+    public void sendToOtherRecipient(final CaseData caseData, final Long caseId) {
+        log.info(REQUEST_FOR_INFORMATION_NOTIFICATION_TO_FOR_CASE_ID, "other recipient", caseId);
+
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getLatestRequest();
 
         notificationService.sendEmail(
             requestForInformation.getRequestForInformationEmailAddress(),
@@ -205,7 +249,7 @@ public class RequestForInformationNotification implements ApplicantNotification 
         templateVars.put(REQUEST_FOR_INFORMATION_DETAILS, requestForInformationDetails);
         templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
 
-        if (BOTH.equals(caseData.getRequestForInformationList().getRequestForInformation().getRequestForInformationJointParties())) {
+        if (BOTH.equals(caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationJointParties())) {
             templateVars.put(SENT_TO_BOTH_APPLICANTS, YES);
         } else {
             suppressJointTemplateText(templateVars);

@@ -1,16 +1,16 @@
 package uk.gov.hmcts.divorce.bulkscan.transformation;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.TransformationInput;
 
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class BulkScanService {
 
-    @Autowired
-    private BulkScanFormTransformerFactory bulkScanFormTransformerFactory;
+    private final BulkScanFormTransformerFactory bulkScanFormTransformerFactory;
 
     public Map<String, Object> transformBulkScanForm(TransformationInput transformationInput) {
         BulkScanFormTransformer bulkScanFormTransformer = bulkScanFormTransformerFactory.getTransformer(transformationInput.getFormType());
