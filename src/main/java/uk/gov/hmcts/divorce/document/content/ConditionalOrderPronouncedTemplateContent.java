@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.document.content;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -69,11 +68,9 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 @RequiredArgsConstructor
 public class ConditionalOrderPronouncedTemplateContent implements TemplateContent {
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     @Value("${final_order.eligible_from_offset_days}")
     private long finalOrderOffsetDays;
