@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -29,15 +29,14 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validat
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class Applicant1Resubmit implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APPLICANT_1_RESUBMIT = "applicant1-resubmit";
 
-    @Autowired
-    private Applicant1ResubmitNotification applicant1ResubmitNotification;
+    private final Applicant1ResubmitNotification applicant1ResubmitNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

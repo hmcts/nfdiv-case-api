@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.service.task.SetServiceConfirmed;
@@ -14,15 +14,13 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SubmitConfirmService {
-    @Autowired
-    private SetConfirmServiceDueDate setConfirmServiceDueDate;
+    private final SetConfirmServiceDueDate setConfirmServiceDueDate;
 
-    @Autowired
-    private SetServiceConfirmed setServiceConfirmed;
+    private final SetServiceConfirmed setServiceConfirmed;
 
-    @Autowired
-    private SetConfirmServiceState setConfirmServiceState;
+    private final SetConfirmServiceState setConfirmServiceState;
 
     public CaseDetails<CaseData, State> submitConfirmService(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(

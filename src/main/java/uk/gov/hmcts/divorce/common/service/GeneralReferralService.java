@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -19,19 +19,16 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderR
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class GeneralReferralService {
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
+    private final CcdUpdateService ccdUpdateService;
 
-    @Autowired
-    private SetGeneralReferralDetails setGeneralReferralDetails;
+    private final SetGeneralReferralDetails setGeneralReferralDetails;
 
     public void caseWorkerGeneralReferral(final CaseDetails<CaseData, State> details) {
         if (finalOrderRequestedAndOverdue(details)) {

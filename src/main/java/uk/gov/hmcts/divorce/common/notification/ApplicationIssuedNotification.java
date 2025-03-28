@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
@@ -46,6 +46,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ApplicationIssuedNotification implements ApplicantNotification {
 
     private static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
@@ -53,17 +54,13 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     private static final String CASE_ID = "case id";
     private static final String UNION_TYPE = "union type";
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private EmailTemplatesConfig config;
+    private final EmailTemplatesConfig config;
 
-    @Autowired
-    private HoldingPeriodService holdingPeriodService;
+    private final HoldingPeriodService holdingPeriodService;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {

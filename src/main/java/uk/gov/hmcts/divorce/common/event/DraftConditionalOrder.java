@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.common.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -48,6 +48,7 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String DRAFT_CONDITIONAL_ORDER = "draft-conditional-order";
@@ -59,26 +60,19 @@ public class DraftConditionalOrder implements CCDConfig<CaseData, State, UserRol
         new ConditionalOrderReviewApplicant1()
     );
 
-    @Autowired
-    private AddMiniApplicationLink addMiniApplicationLink;
+    private final AddMiniApplicationLink addMiniApplicationLink;
 
-    @Autowired
-    private ProgressDraftConditionalOrderState progressDraftConditionalOrderState;
+    private final ProgressDraftConditionalOrderState progressDraftConditionalOrderState;
 
-    @Autowired
-    private SetLatestBailiffApplicationStatus setLatestBailiffApplicationStatus;
+    private final SetLatestBailiffApplicationStatus setLatestBailiffApplicationStatus;
 
-    @Autowired
-    private AddLastAlternativeServiceDocumentLink addLastAlternativeServiceDocumentLink;
+    private final AddLastAlternativeServiceDocumentLink addLastAlternativeServiceDocumentLink;
 
-    @Autowired
-    private AddOfflineRespondentAnswersLink addOfflineRespondentAnswersLink;
+    private final AddOfflineRespondentAnswersLink addOfflineRespondentAnswersLink;
 
-    @Autowired
-    private CcdAccessService ccdAccessService;
+    private final CcdAccessService ccdAccessService;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

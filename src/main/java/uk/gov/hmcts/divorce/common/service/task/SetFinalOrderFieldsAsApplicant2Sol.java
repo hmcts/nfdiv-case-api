@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -16,10 +16,10 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SetFinalOrderFieldsAsApplicant2Sol implements CaseTask {
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> details) {

@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
@@ -18,15 +18,14 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIC
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ApplicationWithdrawnNotification implements ApplicantNotification {
     private static final String IS_RESPONDENT = "isRespondent";
     private static final String RESPONDENT_PARTNER = "respondentPartner";
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {

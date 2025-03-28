@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.notification.ResendConditionalOrderPronouncedNotification;
@@ -16,13 +16,12 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SendRegeneratedCOPronouncedCoverLetters implements CaseTask {
 
-    @Autowired
-    private ResendConditionalOrderPronouncedNotification resendCoverLetterNotification;
+    private final ResendConditionalOrderPronouncedNotification resendCoverLetterNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> details) {

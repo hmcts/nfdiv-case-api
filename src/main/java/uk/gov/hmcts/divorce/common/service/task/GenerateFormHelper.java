@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -22,18 +22,16 @@ import static com.google.common.collect.Lists.newArrayList;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class GenerateFormHelper {
 
     private static final int FIRST = 0;
 
-    @Autowired
-    private CaseDocumentAccessManagement documentUploadClientApi;
+    private final CaseDocumentAccessManagement documentUploadClientApi;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
     public void addFormToGeneratedDocuments(CaseData caseData,
                                             DocumentType formType,

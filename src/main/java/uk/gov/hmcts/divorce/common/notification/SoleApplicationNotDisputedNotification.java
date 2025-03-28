@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -39,17 +39,16 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SoleApplicationNotDisputedNotification implements ApplicantNotification {
 
     private static final String APPLY_FOR_CO_DATE = "apply for CO date";
     private static final String ISSUE_DATE_PLUS_37_DAYS = "issue date plus 37 days";
     private static final String ISSUE_DATE_PLUS_141_DAYS = "issue date plus 141 days";
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
     @Value("${case_progression.holding_offset_days}")
     private int holdingOffsetDays;

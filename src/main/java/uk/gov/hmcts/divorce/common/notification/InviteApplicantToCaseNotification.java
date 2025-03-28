@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -17,16 +17,14 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REINVITE_CITIZ
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class InviteApplicantToCaseNotification {
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private EmailTemplatesConfig config;
+    private final EmailTemplatesConfig config;
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
     private static final String APPLICANT_2_SIGN_IN_DIVORCE_URL = "applicant2SignInDivorceUrl";
     private static final String APPLICANT_2_SIGN_IN_DISSOLUTION_URL = "applicant2SignInDissolutionUrl";
