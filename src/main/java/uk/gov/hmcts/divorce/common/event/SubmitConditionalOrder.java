@@ -103,6 +103,17 @@ public class SubmitConditionalOrder implements CCDConfig<CaseData, State, UserRo
         ConditionalOrderQuestions app2Questions = data.getConditionalOrder().getConditionalOrderApplicant2Questions();
         ConditionalOrderQuestions appQuestions = isApplicant1 ? app1Questions : app2Questions;
 
+        if (appQuestions.getConfirmInformationStillCorrect() != YES && isEmpty(appQuestions.getReasonInformationNotCorrect())) {
+            log.info(
+                    "Submit conditional order about to submit callback invoked wihtout providing mandatory fields for Case Id: {}", caseId);
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .data(details.getData())
+                    .state(details.getState())
+                    .errors(List.of("Conditional order information not correct but no reason provided"))
+                    .build();
+        }
+
         final List<String> validationErrors = validate(appQuestions);
 
         if (!validationErrors.isEmpty()) {
