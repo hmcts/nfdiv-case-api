@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.notification;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -17,13 +17,12 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENC
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
+@RequiredArgsConstructor
 public class SwitchToSoleSolicitorTemplateContent {
 
-    @Autowired
-    Clock clock;
+    private final Clock clock;
 
-    @Autowired
-    CommonContent commonContent;
+    private final CommonContent commonContent;
 
     public static final String APPLICANT_1_NAME = "applicant 1 name";
     public static final String APPLICANT_2_NAME = "applicant 2 name";

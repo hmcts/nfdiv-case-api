@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.notification;
 
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
@@ -20,13 +20,12 @@ import static java.lang.String.format;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class NotificationService {
 
-    @Autowired
-    private NotificationClient notificationClient;
+    private final NotificationClient notificationClient;
 
-    @Autowired
-    private EmailTemplatesConfig emailTemplatesConfig;
+    private final EmailTemplatesConfig emailTemplatesConfig;
 
     @Value("${uk.gov.notify.email.replyToId}")
     private String replyToId;
