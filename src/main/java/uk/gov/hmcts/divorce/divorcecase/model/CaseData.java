@@ -181,7 +181,8 @@ public class CaseData {
         label = "General Applications",
         typeOverride = Collection,
         typeParameterOverride = "GeneralApplication",
-        access = {SolicitorAndSystemUpdateAccess.class}
+        access = {SolicitorAndSystemUpdateAccess.class},
+        searchable = false
     )
     private List<ListValue<GeneralApplication>> generalApplications;
 
@@ -189,7 +190,8 @@ public class CaseData {
         label = "General Referrals",
         typeOverride = Collection,
         typeParameterOverride = "GeneralReferral",
-        access = {SystemUpdateAndSuperUserAccess.class}
+        access = {SystemUpdateAndSuperUserAccess.class},
+        searchable = false
     )
     private List<ListValue<GeneralReferral>> generalReferrals;
 
@@ -212,7 +214,8 @@ public class CaseData {
         label = "Previous Service Applications",
         typeOverride = Collection,
         typeParameterOverride = "AlternativeServiceOutcome",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes;
 
@@ -234,7 +237,8 @@ public class CaseData {
 
     @CCD(
         label = "General Orders",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceGeneralOrder>> generalOrders;
 
@@ -256,7 +260,8 @@ public class CaseData {
         label = "Notes",
         typeOverride = Collection,
         typeParameterOverride = "CaseNote",
-        access = {CaseworkerAndSuperUserAccess.class}
+        access = {CaseworkerAndSuperUserAccess.class},
+        searchable = false
     )
     private List<ListValue<CaseNote>> notes;
 
@@ -286,8 +291,9 @@ public class CaseData {
     private ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequestField;
 
     @CCD(
-            access = {DefaultAccess.class, AcaSystemUserAccess.class, CaseworkerAccess.class},
-            label = "Change of representatives"
+        access = {DefaultAccess.class, AcaSystemUserAccess.class, CaseworkerAccess.class},
+        label = "Change of representatives",
+        searchable = false
     )
     @Builder.Default
     private List<ListValue<ChangeOfRepresentative>> changeOfRepresentatives = new ArrayList<>();
@@ -307,7 +313,8 @@ public class CaseData {
         label = "General emails",
         typeOverride = Collection,
         typeParameterOverride = "GeneralEmailDetails",
-        access = {SystemUpdateAndSuperUserAccess.class}
+        access = {SystemUpdateAndSuperUserAccess.class},
+        searchable = false
     )
     private List<ListValue<GeneralEmailDetails>> generalEmails;
 
@@ -315,7 +322,8 @@ public class CaseData {
         label = "Confidential general emails",
         typeOverride = Collection,
         typeParameterOverride = "GeneralEmailDetails",
-        access = {SystemUpdateAndSuperUserAccess.class}
+        access = {SystemUpdateAndSuperUserAccess.class},
+        searchable = false
     )
     private List<ListValue<GeneralEmailDetails>> confidentialGeneralEmails;
 
@@ -333,7 +341,8 @@ public class CaseData {
         label = "General letters",
         typeOverride = Collection,
         typeParameterOverride = "GeneralLetterDetails",
-        access = {SystemUpdateAndSuperUserAccess.class}
+        access = {SystemUpdateAndSuperUserAccess.class},
+        searchable = false
     )
     private List<ListValue<GeneralLetterDetails>> generalLetters;
 
@@ -360,7 +369,8 @@ public class CaseData {
         label = "Case matches",
         typeOverride = Collection,
         typeParameterOverride = "CaseMatch",
-        access = {CaseworkerAccess.class}
+        access = {CaseworkerAccess.class},
+        searchable = false
     )
     @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
     @Builder.Default
