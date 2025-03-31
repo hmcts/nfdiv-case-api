@@ -598,11 +598,16 @@ public class CaseData {
                 .findFirst();
 
         scannedDocumentOptional.ifPresent(
-            scannedDocumentListValue ->
+            scannedDocumentListValue -> {
                 reclassifyScannedDocumentToChosenDocumentType(
                     documentType,
                     clock,
-                    scannedDocumentListValue.getValue())
+                    scannedDocumentListValue.getValue());
+
+                if (REQUEST_FOR_INFORMATION_RESPONSE_DOC.equals(documentType)) {
+                    documents.getScannedDocuments().remove(scannedDocumentOptional.get());
+                }
+            }
         );
     }
 

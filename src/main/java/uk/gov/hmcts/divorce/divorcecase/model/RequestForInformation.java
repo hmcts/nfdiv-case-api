@@ -117,6 +117,20 @@ public class RequestForInformation {
     private List<ListValue<RequestForInformationResponse>> requestForInformationResponses;
 
     @JsonIgnore
+    private void setNameAndEmail(Applicant applicant, Boolean setSecondary) {
+        final boolean isRepresented = applicant.isRepresented();
+        final String emailAddress = isRepresented ? applicant.getSolicitor().getEmail() : applicant.getEmail();
+        final String name = isRepresented ? applicant.getSolicitor().getName() : applicant.getFullName();
+        if (TRUE.equals(setSecondary)) {
+            this.setRequestForInformationSecondaryEmailAddress(emailAddress);
+            this.setRequestForInformationSecondaryName(name);
+        } else {
+            this.setRequestForInformationEmailAddress(emailAddress);
+            this.setRequestForInformationName(name);
+        }
+    }
+
+    @JsonIgnore
     public void setValues(CaseData caseData) {
         this.setRequestForInformationDateTime(LocalDateTime.now());
 
@@ -191,6 +205,11 @@ public class RequestForInformation {
 
     @JsonIgnore
     public RequestForInformationResponse getLatestResponse() {
-        return this.getRequestForInformationResponses().get(0).getValue();
+        return this.getResponseByIndex(0);
+    }
+
+    @JsonIgnore
+    public RequestForInformationResponse getResponseByIndex(int index) {
+        return this.getRequestForInformationResponses().get(index).getValue();
     }
 }
