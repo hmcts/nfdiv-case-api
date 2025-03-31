@@ -350,7 +350,7 @@ uk:
             NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: 'cfeb62ee-7f2c-4612-bf87-35205ccb26b5'
             REINVITE_CITIZEN_TO_CASE: '1c682066-7088-4a98-be05-d1ea6cf26f84'
             NOC_INVITE_CITIZEN: '60c26fab-8cf1-4350-a2ac-4e740a0b0722'
-            SOLICITOR_STOP_REPRESENTATION_SELF_NOTIFY_CITIZEN: 'a892b125-2dad-4769-ad77-55ba648fe677' #TODO - Welsh translation needed
+            SOLICITOR_STOP_REPRESENTATION_SELF_NOTIFY_CITIZEN: 'ea316d01-d6c2-41c1-baa5-636a3675dcbf'
             REQUEST_FOR_INFORMATION_SOLS_RESPONSE: '41f247c7-8692-45b7-8ffd-28cf6aff55de'
             RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: '6b3000f3-deb6-49a8-8021-93f6f96e5f25'
 
@@ -578,7 +578,7 @@ docmosis:
       NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: FL-NFD-GOR-WEL-SOLICITOR-APPLIED-FOR-FINAL-ORDER.docx
       NFD_APPLICANT_PAPERCASE_RECEIVED: FL-NFD-GOR-WEL-PaperCase-Received-Applicant.docx
       NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-WEL-Solicitor_stopped_representation_citizen_letter_V1.docx
-      NFD_SOL_STOPPED_REP_NOTIFY_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_notify_citizen_V1.docx #TODO: update Welsh content
+      NFD_SOL_STOPPED_REP_NOTIFY_APP: FL-NFD-GOR-WEL-Solicitor_stopped_representation_notify_citizen_V1.docx
       REQUEST_FOR_INFORMATION_LETTER: FL-NFD-GOR-WEL-Request-For-Information.docx
       REQUEST_FOR_INFORMATION_SOLICITOR_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Solicitor.docx
       REQUEST_FOR_INFORMATION_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Response.docx
