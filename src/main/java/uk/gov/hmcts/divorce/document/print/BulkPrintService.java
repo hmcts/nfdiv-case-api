@@ -1,9 +1,9 @@
 package uk.gov.hmcts.divorce.document.print;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
@@ -27,6 +27,7 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class BulkPrintService {
     private static final String XEROX_TYPE_PARAMETER = "NFDIV001";
     private static final String LETTER_TYPE_KEY = "letterType";
@@ -35,17 +36,13 @@ public class BulkPrintService {
     private static final String RECIPIENTS = "recipients";
     private static final String IS_INTERNATIONAL = "isInternational";
 
-    @Autowired
-    private SendLetterApi sendLetterApi;
+    private final SendLetterApi sendLetterApi;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private CaseDocumentAccessManagement documentManagementClient;
+    private final CaseDocumentAccessManagement documentManagementClient;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
     public UUID print(final Print print) {
         final String authToken = authTokenGenerator.generate();

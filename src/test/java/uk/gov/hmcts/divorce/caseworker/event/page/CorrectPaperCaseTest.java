@@ -2,11 +2,17 @@ package uk.gov.hmcts.divorce.caseworker.event.page;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -126,5 +132,32 @@ public class CorrectPaperCaseTest {
         assertThat(response.getErrors()).isNotEmpty();
         assertThat(response.getErrors())
             .contains("To continue, applicant 2 must believe and declare that their marriage has irrevocably broken");
+    }
+
+    @Test
+    public void shouldCallValidationUtilMethodToValidateAllNames() {
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
+        caseData.getApplication().setApplicant1StatementOfTruth(YES);
+        caseData.getApplication().setApplicant2StatementOfTruth(YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        List<String> errors = new ArrayList<>();
+        errors.add("Error");
+
+        MockedStatic<ValidationUtil> validationUtilMockedStatic = Mockito.mockStatic(ValidationUtil.class);
+        validationUtilMockedStatic.when(() -> ValidationUtil.validateAllNamesForAllowedCharacters(caseData)).thenReturn(errors);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNotNull();
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors().get(0)).isEqualTo("Error");
+
+        validationUtilMockedStatic.close();
     }
 }

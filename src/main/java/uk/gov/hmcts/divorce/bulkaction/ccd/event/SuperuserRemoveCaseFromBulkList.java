@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -24,12 +24,12 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validat
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SuperuserRemoveCaseFromBulkList implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
     public static final String SUPERUSER_REMOVE_CASE_BULK_LIST = "superuser-remove-cases-bulk-list";
 
-    @Autowired
-    private PronouncementListDocService pronouncementListDocService;
+    private final PronouncementListDocService pronouncementListDocService;
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {

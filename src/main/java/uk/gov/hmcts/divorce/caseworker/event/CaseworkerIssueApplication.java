@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -40,10 +40,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateIssue;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageCertificateNames;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_ISSUE_APPLICATION = "caseworker-issue-application";
@@ -53,17 +56,13 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
     private static final String WARNING_LABEL = "### There is no address for the Respondent, "
         + "you need to provide a reason for issuing the application without the address for the respondent";
 
-    @Autowired
-    private IssueApplicationService issueApplicationService;
+    private final IssueApplicationService issueApplicationService;
 
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
+    private final CcdUpdateService ccdUpdateService;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -131,7 +130,9 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
         log.info("Caseworker issue application about to submit callback invoked for case id: {}", details.getId());
 
         log.info("Validating Issue for Case Id: {}", details.getId());
-        final List<String> caseValidationErrors = validateIssue(details.getData());
+        final List<String> caseValidationErrors = flattenLists(
+            validateIssue(details.getData()),
+            validateMarriageCertificateNames(caseData));
 
         if (!isEmpty(caseValidationErrors)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()

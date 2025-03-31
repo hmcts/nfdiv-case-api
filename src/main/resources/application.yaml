@@ -204,6 +204,7 @@ uk:
             REINVITE_CITIZEN_TO_CASE: '4b746cbd-e65d-4686-bc57-d5771c857c67'
             NOC_INVITE_CITIZEN: '7ff9c8b3-000e-4574-87e8-b493c7d00226'
             SOLICITOR_STOP_REPRESENTATION_SELF_NOTIFY_CITIZEN: 'a892b125-2dad-4769-ad77-55ba648fe677'
+            REQUEST_FOR_INFORMATION_SOLS_RESPONSE: 'fb3773b0-84df-4ba8-bdf3-7a4296ba0233'
             RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: '8977e26f-15f7-494c-b3de-036d8fe76cfa'
             RESPONDENT_DRAFT_AOS_STARTED_APPLICATION_OVERDUE: '7035d412-8192-45bb-b920-c511dd98f731'
           welsh:
@@ -296,7 +297,7 @@ uk:
             APPLICANT_APPLY_FOR_FINAL_ORDER: '3a943efc-a7cc-4c57-ae64-f5d61809ac9d'
             PARTNER_SWITCHED_TO_SOLE_CO: 'c7043294-5c73-4d06-b9e0-f76aa042f5b5'
             RESPONDENT_APPLY_FOR_FINAL_ORDER: 'b43171d2-9f81-40a4-9662-46e3e750cd45'
-            RESPONDENT_SOLICITOR_APPLY_FOR_FINAL_ORDER: '023ad723-3152-4f8e-bafe-6f64f33d6510' # TODO: Welsh translation
+            RESPONDENT_SOLICITOR_APPLY_FOR_FINAL_ORDER: 'acddf863-fd68-4965-af5d-9cb891048ee7'
             POST_INFORMATION_TO_COURT: 'c6152a5f-c62c-460c-ac4a-6456910cd6a8'
             GENERAL_APPLICATION_RECEIVED: '4040e4b4-3354-4002-8831-78e0b1fd24aa'
             GENERAL_APPLICATION_SUCCESSFUL: '67af4496-44f5-41fa-a6ea-408017516cb8' # TODO: Welsh translation
@@ -304,10 +305,10 @@ uk:
             SERVICE_APPLICATION_GRANTED: '92eb5bda-7921-4d06-a852-ba33bbbc3df5'
             SERVICE_APPLICATION_REJECTED_SOLICITOR: 'c8675e71-ff1e-4dff-9780-4db3c3d12bcf'
             SERVICE_APPLICATION_GRANTED_SOLICITOR: '860accd8-e153-4df2-a076-f5322b65448e'
-            RESPONDENT_SOLICITOR_HAS_NOT_RESPONDED: '074fe108-7ed8-4f03-93c2-4e53d35281ea' # TODO: Welsh translation
+            RESPONDENT_SOLICITOR_HAS_NOT_RESPONDED: '064bcd1e-3073-40d4-bc8b-5e629528be36'
             BAILIFF_SERVICE_UNSUCCESSFUL: '246fa327-b75d-412f-8f13-e8467715f61f'
             BAILIFF_SERVICE_SUCCESSFUL: 'b51433ea-244e-44b5-b9bf-e09676b1fc3f'
-            APPLY_FOR_FINAL_ORDER_SOLICITOR: '51ab0a9d-2718-4487-95fb-eef393ebc51d' # TODO: Welsh translation
+            APPLY_FOR_FINAL_ORDER_SOLICITOR: '1e5e8a96-5950-4ed5-91ea-f73728398d35'
             JOINT_APPLY_FOR_CONDITIONAL_FINAL_ORDER_SOLICITOR: 'a8df6647-72d3-4e0a-8f6d-16188346caa4'  #TODO: Welsh translation needed
             JOINT_APPLICANT_CAN_SWITCH_TO_SOLE: 'e4f584a8-c0e3-4d5d-bd6d-d5b9c085b7bb'
             JOINT_APPLICANT_SOLICITOR_CAN_SWITCH_TO_SOLE: '50b6f04c-73ba-49a6-9bf5-340d636c098e'       #TODO: Welsh translation needed
@@ -351,8 +352,10 @@ uk:
             REINVITE_CITIZEN_TO_CASE: '1c682066-7088-4a98-be05-d1ea6cf26f84'
             NOC_INVITE_CITIZEN: '60c26fab-8cf1-4350-a2ac-4e740a0b0722'
             SOLICITOR_STOP_REPRESENTATION_SELF_NOTIFY_CITIZEN: 'a892b125-2dad-4769-ad77-55ba648fe677' #TODO - Welsh translation needed
+            REQUEST_FOR_INFORMATION_SOLS_RESPONSE: '41f247c7-8692-45b7-8ffd-28cf6aff55de'
             RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: '6b3000f3-deb6-49a8-8021-93f6f96e5f25'
             RESPONDENT_DRAFT_AOS_STARTED_APPLICATION_OVERDUE: '7035d412-8192-45bb-b920-c511dd98f731' #TODO - Welsh translation needed
+
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
 
@@ -483,6 +486,12 @@ docmosis:
       NFD_APPLICANT_PAPERCASE_RECEIVED: FL-NFD-GOR-ENG-PaperCase-Received-Applicant.docx
       NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_citizen_letter_V1.docx
       NFD_SOL_STOPPED_REP_NOTIFY_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_notify_citizen_V1.docx
+      REQUEST_FOR_INFORMATION_LETTER: FL-NFD-GOR-ENG-Request-For-Information.docx
+      REQUEST_FOR_INFORMATION_SOLICITOR_LETTER: FL-NFD-GOR-ENG-Request-For-Information-Solicitor.docx
+      REQUEST_FOR_INFORMATION_RESPONSE_LETTER: FL-NFD-GOR-ENG-Request-For-Information-Response.docx
+      REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER: FL-NFD-GOR-ENG-Request-For-Information-Solicitor-Response.docx
+      REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER: FL-NFD-GOR-ENG-Request-For-Information-Partner-Response.docx
+      REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER: FL-NFD-GOR-ENG-Request-For-Information-Partner-Solicitor-Response.docx
       RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-ENG-Respondent-Started-Drafting-AoS-Application.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx #TODO: Set correct template when available
@@ -572,6 +581,12 @@ docmosis:
       NFD_APPLICANT_PAPERCASE_RECEIVED: FL-NFD-GOR-WEL-PaperCase-Received-Applicant.docx
       NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-WEL-Solicitor_stopped_representation_citizen_letter_V1.docx
       NFD_SOL_STOPPED_REP_NOTIFY_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_notify_citizen_V1.docx #TODO: update Welsh content
+      REQUEST_FOR_INFORMATION_LETTER: FL-NFD-GOR-WEL-Request-For-Information.docx
+      REQUEST_FOR_INFORMATION_SOLICITOR_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Solicitor.docx
+      REQUEST_FOR_INFORMATION_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Response.docx
+      REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Solicitor-Response.docx
+      REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Partner-Response.docx
+      REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Partner-Solicitor-Response.docx
       RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-WEL-Respondent-Started-Drafting-AoS-Application-Cy.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
