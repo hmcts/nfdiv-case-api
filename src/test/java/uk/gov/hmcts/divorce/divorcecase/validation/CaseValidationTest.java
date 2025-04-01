@@ -690,12 +690,12 @@ public class CaseValidationTest {
     @Test
     public void shouldValidateNamesWithInvalidCharacters() {
         final CaseData caseData = caseDataWithStatementOfTruth();
-        caseData.getApplication().getMarriageDetails().setApplicant1Name("Inva{id App1Name");
-        caseData.getApplication().getMarriageDetails().setApplicant2Name("Inva{id App2Name");
-        caseData.getApplicant1().setFirstName("Inva{id");
+        caseData.getApplication().getMarriageDetails().setApplicant1Name("Inva(id App1Name");
+        caseData.getApplication().getMarriageDetails().setApplicant2Name("Inva(id App2Name");
+        caseData.getApplicant1().setFirstName("Inva(id");
         caseData.getApplicant1().setMiddleName("Inva1id");
         caseData.getApplicant1().setLastName("Inva$id");
-        caseData.getApplicant2().setFirstName("Inva{id");
+        caseData.getApplicant2().setFirstName("Inva(id");
         caseData.getApplicant2().setMiddleName("Inva1id");
         caseData.getApplicant2().setLastName("Inva$id");
 
