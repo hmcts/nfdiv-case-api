@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicantTemplateDataProvider;
@@ -57,13 +57,12 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class DraftApplicationTemplateContent {
 
-    @Autowired
-    private ApplicantTemplateDataProvider applicantTemplateDataProvider;
+    private final ApplicantTemplateDataProvider applicantTemplateDataProvider;
 
-    @Autowired
-    private ApplicationTemplateDataProvider applicationTemplateDataProvider;
+    private final ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
