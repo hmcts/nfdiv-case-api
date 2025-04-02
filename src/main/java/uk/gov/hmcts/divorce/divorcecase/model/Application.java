@@ -118,7 +118,8 @@ public class Application {
     @CCD(
         label = "Any supporting information or instructions?",
         typeOverride = TextArea,
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private String solUrgentCaseSupportingInformation;
 
@@ -200,7 +201,8 @@ public class Application {
         label = "Additional comments",
         hint = "For the attention of court staff. These comments will not form part of the application",
         typeOverride = TextArea,
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private String statementOfReconciliationComments;
 
@@ -208,7 +210,8 @@ public class Application {
         label = "Additional comments",
         hint = "For the attention of court staff. These comments will not form part of the application",
         typeOverride = TextArea,
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private String applicant2StatementOfReconciliationComments;
 
@@ -229,7 +232,8 @@ public class Application {
 
     @CCD(
         label = "Account number",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private DynamicList pbaNumbers;
 
@@ -309,7 +313,8 @@ public class Application {
 
     @CCD(
         label = "Link to online application",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private Document miniApplicationLink;
 
@@ -352,7 +357,8 @@ public class Application {
         hint  = "e.g. The address for the Respondent is not required because the court has "
             + "granted a D11 application to dispense with service.",
         access = {CaseworkerAccess.class},
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String reasonIssuedWithoutAddress;
 
@@ -511,13 +517,15 @@ public class Application {
 
     @CCD(
         label = "Link to applicant 1 solicitors answers",
-        access = {CaseworkerAccess.class}
+        access = {CaseworkerAccess.class},
+        searchable = false
     )
     private Document applicant1SolicitorAnswersLink;
 
     @CCD(
         label = "Link to applicant 2 solicitors answers",
-        access = {CaseworkerAccess.class}
+        access = {CaseworkerAccess.class},
+        searchable = false
     )
     private Document applicant2SolicitorAnswersLink;
 

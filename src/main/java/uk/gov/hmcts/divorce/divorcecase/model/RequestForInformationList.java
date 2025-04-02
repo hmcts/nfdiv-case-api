@@ -28,6 +28,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 @NoArgsConstructor
 public class RequestForInformationList {
 
+    @CCD(searchable = false)
     public static final String RFI_DOCUMENT_REMOVED_NOTICE = "** Document Removed **";
 
     @CCD(
@@ -41,7 +42,8 @@ public class RequestForInformationList {
 
     @CCD(
         label = "The court has made the following comments:",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private String latestRequestForInformationDetails;
 
@@ -96,7 +98,8 @@ public class RequestForInformationList {
 
     @CCD(
         label = "Authorised Request For Information Response Party",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private RequestForInformationAuthParty requestForInformationAuthParty;
 
@@ -104,7 +107,8 @@ public class RequestForInformationList {
         label = "Request For Information Online Response Documents",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> rfiOnlineResponseDocuments;
 

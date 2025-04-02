@@ -66,7 +66,8 @@ public class AlternativeService {
 
     @CCD(
         label = "Reason for refusal",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String serviceApplicationRefusalReason;
 
@@ -91,7 +92,8 @@ public class AlternativeService {
 
     @CCD(
         label = "Further details for Judge or Legal Advisor",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String alternativeServiceJudgeOrLegalAdvisorDetails;
 

@@ -113,7 +113,10 @@ public class CaseData {
 
     @JsonUnwrapped(prefix = "labelContent")
     @Builder.Default
-    @CCD(access = {DefaultAccess.class})
+    @CCD(
+        access = {DefaultAccess.class},
+        searchable = false
+    )
     private LabelContent labelContent = new LabelContent();
 
     @JsonUnwrapped(prefix = "applicant1")
@@ -147,7 +150,10 @@ public class CaseData {
     @CCD(access = {DefaultAccess.class})
     private ConditionalOrder conditionalOrder = new ConditionalOrder();
 
-    @CCD(access = {DefaultAccess.class, Applicant2Access.class})
+    @CCD(
+        access = {DefaultAccess.class, Applicant2Access.class},
+        searchable = false
+    )
     private String citizenPaymentCallbackUrl;
 
     @JsonUnwrapped()
@@ -206,7 +212,8 @@ public class CaseData {
     private YesOrNo isJudicialSeparation;
 
     @CCD(
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private YesOrNo caseFlagsSetupComplete;
 
@@ -270,6 +277,7 @@ public class CaseData {
         hint = "Enter note",
         typeOverride = TextArea,
         access = {CaseworkerAndSuperUserAccess.class}
+        searchable = false
     )
     private String note;
 
@@ -280,7 +288,10 @@ public class CaseData {
     )
     private CaseLink bulkListCaseReferenceLink;
 
-    @CCD(access = {DefaultAccess.class})
+    @CCD(
+        access = {DefaultAccess.class},
+        searchable = false
+    )
     @JsonUnwrapped
     private RetiredFields retiredFields;
 
@@ -355,9 +366,9 @@ public class CaseData {
 
     @JsonProperty("TTL")
     @CCD(
-            label = "Set up TTL",
-            typeOverride = FieldType.TTL,
-            access = {TtlProfileAccess.class, SystemUpdateAndSuperUserAccess.class}
+        label = "Set up TTL",
+        typeOverride = FieldType.TTL,
+        access = {TtlProfileAccess.class, SystemUpdateAndSuperUserAccess.class}
     )
     private TTL retainAndDisposeTimeToLive;
 
@@ -378,16 +389,21 @@ public class CaseData {
 
     @CCD(
         label = "Launch the Flags screen",
-        access = {InternalCaseFlagsAccess.class}
+        access = {InternalCaseFlagsAccess.class},
+        searchable = false
     )
     private FlagLauncher internalFlagLauncher;
 
-    @CCD(access = {InternalCaseFlagsAccess.class},
-        label = "Case Flags")
+    @CCD(
+        access = {InternalCaseFlagsAccess.class},
+        label = "Case Flags",
+        searchable = false
+    )
     private Flags caseFlags;
 
     @JsonUnwrapped
     @Builder.Default
+    @CCD(searchable = false)
     private PartyFlags partyFlags = new PartyFlags();
 
     @JsonIgnore

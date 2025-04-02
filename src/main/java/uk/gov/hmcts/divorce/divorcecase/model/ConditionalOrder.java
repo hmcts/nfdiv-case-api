@@ -58,17 +58,20 @@ public class ConditionalOrder {
     private ConditionalOrderQuestions conditionalOrderApplicant2Questions = new ConditionalOrderQuestions();
 
     @CCD(
-        label = "Link to respondent answers"
+        label = "Link to respondent answers",
+        searchable = false
     )
     private Document respondentAnswersLink;
 
     @CCD(
-        label = "Link to online petition"
+        label = "Link to online petition",
+        searchable = false
     )
     private Document onlinePetitionLink;
 
     @CCD(
-        label = "Link to scanned D84 form"
+        label = "Link to scanned D84 form",
+        searchable = false
     )
     private Document scannedD84Form;
 
@@ -98,7 +101,8 @@ public class ConditionalOrder {
     private YesOrNo switchedToSole;
 
     @CCD(
-        label = "Link to alternative service document"
+        label = "Link to alternative service document",
+        searchable = false
     )
     private Document lastAlternativeServiceDocumentLink;
 
@@ -114,7 +118,8 @@ public class ConditionalOrder {
 
     @CCD(
         label = "Make costs order information",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String claimsCostsOrderInformation;
 
@@ -139,13 +144,15 @@ public class ConditionalOrder {
 
     @CCD(
         label = "Additional info",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String refusalAdminErrorInfo;
 
     @CCD(
         label = "Make a free text order",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String refusalRejectionAdditionalInfo;
 
@@ -158,40 +165,46 @@ public class ConditionalOrder {
         label = "Provide a refusal reason",
         hint = "Choose at least one of the following",
         typeOverride = MultiSelectList,
-        typeParameterOverride = "ClarificationReason"
+        typeParameterOverride = "ClarificationReason",
+        searchable = false
     )
     private Set<ClarificationReason> refusalClarificationReason;
 
     @CCD(
         label = "Clarification additional information",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String refusalClarificationAdditionalInfo;
 
     @CCD(
         label = "Clarification additional information (Translated)",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String refusalClarificationAdditionalInfoTranslated;
 
     @CCD(
         label = "Translated To?",
         typeOverride = FixedRadioList,
-        typeParameterOverride = "TranslatedToLanguage"
+        typeParameterOverride = "TranslatedToLanguage",
+        searchable = false
     )
     private TranslatedToLanguage refusalClarificationAdditionalInfoTranslatedTo;
 
     @CCD(
         label = "List of responses for Conditional Order clarification",
         typeOverride = Collection,
-        typeParameterOverride = "TextArea"
+        typeParameterOverride = "TextArea",
+        searchable = false
     )
     private List<ListValue<String>> clarificationResponses;
 
     @CCD(
         label = "Documents uploaded for the Conditional Order Clarification",
         typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument"
+        typeParameterOverride = "DivorceDocument",
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> clarificationUploadDocuments;
 
@@ -231,13 +244,15 @@ public class ConditionalOrder {
 
     @CCD(
         label = "Additional info",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String judgeCostsOrderAdditionalInfo;
 
     @CCD(
         label = "Link to certificate of entitlement",
-        access = {CaseworkerAccess.class}
+        access = {CaseworkerAccess.class},
+        searchable = false
     )
     private DivorceDocument certificateOfEntitlementDocument;
 
@@ -253,26 +268,30 @@ public class ConditionalOrder {
 
     @CCD(
         label = "Refusal Rejection reasons",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private Document refusalOrderDocument;
 
     @CCD(
-        label = "Conditional Order Granted"
+        label = "Conditional Order Granted",
+        searchable = false
     )
     private DivorceDocument conditionalOrderGrantedDocument;
 
     @CCD(
         label = "Legal Advisor Decisions Submitted",
         typeOverride = Collection,
-        typeParameterOverride = "LegalAdvisorDecision"
+        typeParameterOverride = "LegalAdvisorDecision",
+        searchable = false
     )
     private List<ListValue<LegalAdvisorDecision>> legalAdvisorDecisions;
 
     @CCD(
         label = "Clarification Responses Submitted",
         typeOverride = Collection,
-        typeParameterOverride = "ClarificationResponse"
+        typeParameterOverride = "ClarificationResponse",
+        searchable = false
     )
     private List<ListValue<ClarificationResponse>> clarificationResponsesSubmitted;
 
@@ -290,7 +309,8 @@ public class ConditionalOrder {
     @CCD(
         label = "Documents uploaded for Proof of Service",
         typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument"
+        typeParameterOverride = "DivorceDocument",
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> proofOfServiceUploadDocuments;
 
