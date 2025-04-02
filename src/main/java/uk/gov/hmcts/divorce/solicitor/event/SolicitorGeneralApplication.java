@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -57,6 +57,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_GENERAL_APPLICATION = "solicitor-general-application";
@@ -79,20 +80,15 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
         Archived
     ));
 
-    @Autowired
-    private GeneralApplicationSelectFee generalApplicationSelectFee;
+    private final GeneralApplicationSelectFee generalApplicationSelectFee;
 
-    @Autowired
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
 
-    @Autowired
-    private OrganisationClient organisationClient;
+    private final OrganisationClient organisationClient;
 
-    @Autowired
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

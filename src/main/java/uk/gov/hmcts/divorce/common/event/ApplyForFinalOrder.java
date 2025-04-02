@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -39,26 +39,22 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String FINAL_ORDER_REQUESTED = "final-order-requested";
 
     public static final String APPLY_FOR_FINAL_ORDER = "Apply for final order";
 
-    @Autowired
-    private Applicant1AppliedForFinalOrderNotification applicant1AppliedForFinalOrderNotification;
+    private final Applicant1AppliedForFinalOrderNotification applicant1AppliedForFinalOrderNotification;
 
-    @Autowired
-    private FinalOrderRequestedNotification finalOrderRequestedNotification;
+    private final FinalOrderRequestedNotification finalOrderRequestedNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private ApplyForFinalOrderService applyForFinalOrderService;
+    private final ApplyForFinalOrderService applyForFinalOrderService;
 
-    @Autowired
-    private GeneralReferralService generalReferralService;
+    private final GeneralReferralService generalReferralService;
 
     private static final List<CcdPageConfiguration> pages = List.of(
         new ApplyForFinalOrderDetails(),

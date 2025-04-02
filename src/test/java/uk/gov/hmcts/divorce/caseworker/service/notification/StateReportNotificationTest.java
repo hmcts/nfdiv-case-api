@@ -7,10 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.service.notify.NotificationClient;
@@ -38,10 +40,16 @@ import static uk.gov.service.notify.NotificationClient.prepareUpload;
 @ExtendWith(MockitoExtension.class)
 class StateReportNotificationTest {
 
+    @Mock
+    private NotificationClient notificationClient;
+
+    @Mock
+    private EmailTemplatesConfig emailTemplatesConfig;
+
     @Spy
+    @InjectMocks
     private NotificationService notificationService;
 
-    @InjectMocks
     private StateReportNotification stateReportNotification;
 
     private byte[] fileContents;
@@ -52,6 +60,7 @@ class StateReportNotificationTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        stateReportNotification = new StateReportNotification(notificationService);
         stateReportNotification.recipientEmailAddressesCsv = "test@example.com";
         fileContents = "test file contents".getBytes();
         fileName = "testFile.csv";
