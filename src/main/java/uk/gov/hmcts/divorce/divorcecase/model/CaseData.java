@@ -276,7 +276,7 @@ public class CaseData {
         label = "Add a case note",
         hint = "Enter note",
         typeOverride = TextArea,
-        access = {CaseworkerAndSuperUserAccess.class}
+        access = {CaseworkerAndSuperUserAccess.class},
         searchable = false
     )
     private String note;
