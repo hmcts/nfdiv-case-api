@@ -90,7 +90,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             .complex(CaseData::getApplication)
                 .readonlyNoSummary(Application::getBeingIssuedWithoutAddress, ALWAYS_HIDE)
             .done()
-            .label("eventWarning", WARNING_LABEL, "beingIssuedWithoutAddress=\"Yes\"")
+            .label("warningIssueWithoutAddress", WARNING_LABEL, "beingIssuedWithoutAddress=\"Yes\"")
             .complex(CaseData::getApplication)
                 .mandatory(Application::getReasonIssuedWithoutAddress, "beingIssuedWithoutAddress=\"Yes\"")
                 .complex(Application::getMarriageDetails)
