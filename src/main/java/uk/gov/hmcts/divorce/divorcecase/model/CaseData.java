@@ -382,10 +382,10 @@ public class CaseData {
 
     @JsonUnwrapped
     @CCD(
-        label = "No Response Journey Options",
+        label = "General Application Options",
         access = {DefaultAccess.class}
     )
-    private NoResponseJourneyOptions noResponseJourneyOptions;
+    private GeneralApplicationOptions generalApplicationOptions;
 
     @JsonIgnore
     public String formatCaseRef(long caseId) {
