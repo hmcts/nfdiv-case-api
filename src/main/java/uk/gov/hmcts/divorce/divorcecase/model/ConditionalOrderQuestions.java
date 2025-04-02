@@ -122,8 +122,7 @@ public class ConditionalOrderQuestions {
     private YesOrNo statementOfTruth;
 
     @CCD(
-        label = "Has SolicitorSwitchToSoleCO been enabled for Applicant Solicitor?",
-        searchable = false
+        label = "Has SolicitorSwitchToSoleCO been enabled for Applicant Solicitor?"
     )
     private YesOrNo enableSolicitorSwitchToSoleCo;
 

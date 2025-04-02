@@ -140,7 +140,10 @@ public class Applicant {
     /* Second address field to allow solicitors to enter applicant addresses when creating applications
      * and view non-confidential addresses for solicitor service. We do not give solicitors read access to the
      * primary "address" field as it can contain a confidential address. */
-    @CCD(label = "Non-Confidential Address")
+    @CCD(
+        label = "Non-Confidential Address",
+        searchable = "false"
+    )
     private AddressGlobalUK nonConfidentialAddress;
 
     @CCD(label = "Is this an international address?")
