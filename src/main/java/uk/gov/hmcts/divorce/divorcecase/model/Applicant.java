@@ -142,7 +142,7 @@ public class Applicant {
      * primary "address" field as it can contain a confidential address. */
     @CCD(
         label = "Non-Confidential Address",
-        searchable = "false"
+        searchable = false
     )
     private AddressGlobalUK nonConfidentialAddress;
 
