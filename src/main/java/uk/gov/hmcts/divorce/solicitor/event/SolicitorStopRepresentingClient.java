@@ -103,7 +103,7 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
             .submittedCallback(this::submitted))
             .page("solicitorStopRepresentation")
             .pageLabel("# Stop representing client")
-            .label("eventWarning", WARNING_LABEL)
+            .label("warningStopRepresentation", WARNING_LABEL)
             .complex(CaseData::getNoticeOfChange)
                 .optional(NoticeOfChange::getWhichApplicant, "nocAreTheyDigital=\"NEVER_SHOW\"")
                 .optional(NoticeOfChange::getAreTheyDigital, "nocWhichApplicant=\"NEVER_SHOW\"")

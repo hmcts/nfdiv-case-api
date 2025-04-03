@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.document.content;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
@@ -28,20 +28,18 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
+@RequiredArgsConstructor
 public class ConditionalOrderRefusedForAmendmentContent implements ConditionalOrderRefusedTemplateContent {
 
     public static final String LEGAL_ADVISOR_COMMENTS = "legalAdvisorComments";
     private static final String IS_SOLE = "isSole";
     private static final String IS_JOINT = "isJoint";
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
-    @Autowired
-    private ConditionalOrderCommonContent conditionalOrderCommonContent;
+    private final ConditionalOrderCommonContent conditionalOrderCommonContent;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     @Override
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
