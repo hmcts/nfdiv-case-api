@@ -119,7 +119,7 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
         return SubmittedCallbackResponse.builder().build();
     }
 
-    public void prepareCaseDataForApplicationPayment(CaseData data, long caseId, String redirectUrl) {
+    public void prepareCaseDataForApplicationPayment(CaseData data, long caseId) {
         Application application = data.getApplication();
 
         OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(data, caseId);
