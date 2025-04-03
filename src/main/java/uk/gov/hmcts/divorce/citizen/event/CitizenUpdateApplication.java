@@ -45,8 +45,8 @@ public class CitizenUpdateApplication implements CCDConfig<CaseData, State, User
         configBuilder
             .event(CITIZEN_UPDATE)
             .forStates(Draft, AwaitingApplicant1Response, AwaitingApplicant2Response, Applicant2Approved, AwaitingPayment,
-                AwaitingHWFDecision, AwaitingHWFEvidence, AwaitingHWFPartPayment, AwaitingDocuments, AwaitingRequestedInformation,
-                AwaitingClarification, AwaitingFinalOrder, AwaitingFinalOrderPayment, AwaitingJointFinalOrder, AwaitingRequestedInformation,
+                AwaitingHWFDecision, AwaitingHWFEvidence, AwaitingHWFPartPayment, AwaitingDocuments, AwaitingClarification,
+                AwaitingFinalOrder, AwaitingFinalOrderPayment, AwaitingJointFinalOrder, AwaitingRequestedInformation,
                 ConditionalOrderDrafted, ConditionalOrderPending, InformationRequested, NewPaperCase, RequestedInformationSubmitted,
                 Submitted, Withdrawn, Rejected, Archived)
             .showCondition(NEVER_SHOW)
