@@ -380,13 +380,6 @@ public class CaseData {
     @Builder.Default
     private PartyFlags partyFlags = new PartyFlags();
 
-    @JsonUnwrapped
-    @CCD(
-        label = "General Application Options",
-        access = {DefaultAccess.class}
-    )
-    private GeneralApplicationOptions generalApplicationOptions;
-
     @JsonIgnore
     public String formatCaseRef(long caseId) {
         String temp = String.format("%016d", caseId);
