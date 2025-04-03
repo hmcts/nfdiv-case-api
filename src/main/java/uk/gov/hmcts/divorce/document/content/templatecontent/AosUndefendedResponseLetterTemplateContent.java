@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_AWAITING_CO_UNDEFENDED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
@@ -53,7 +54,8 @@ public class AosUndefendedResponseLetterTemplateContent implements TemplateConte
     public List<String> getSupportedTemplates() {
         return List.of(
             NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED,
-            RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID
+            RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID,
+            RESPONDENT_RESPONDED_AWAITING_CO_UNDEFENDED_TEMPLATE_ID
         );
     }
 
@@ -91,9 +93,7 @@ public class AosUndefendedResponseLetterTemplateContent implements TemplateConte
         if (caseData.isJudicialSeparationCase()) {
             templateContent.put(RECIPIENT_NAME, caseData.getApplicant1().isRepresented()
                 ? caseData.getApplicant1().getSolicitor().getName() : caseData.getApplicant1().getFullName());
-            templateContent.put(RECIPIENT_ADDRESS, caseData.getApplicant1().isRepresented()
-                ? caseData.getApplicant1().getSolicitor().getAddress()
-                : caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck());
+            templateContent.put(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck());
             templateContent.put(APPLICANT_2_FIRST_NAME, caseData.getApplicant2().getFirstName());
             templateContent.put(APPLICANT_2_LAST_NAME, caseData.getApplicant2().getLastName());
             templateContent.put(SOLICITOR_NAME, caseData.getApplicant1().isRepresented()

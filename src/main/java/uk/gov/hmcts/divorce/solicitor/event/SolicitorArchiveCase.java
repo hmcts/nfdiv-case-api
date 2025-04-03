@@ -9,7 +9,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.EnumSet;
+
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -24,10 +27,12 @@ public class SolicitorArchiveCase implements CCDConfig<CaseData, State, UserRole
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        EnumSet<State> eventStates = EnumSet.copyOf(PRE_SUBMISSION_STATES);
+        eventStates.add(Draft);
 
         new PageBuilder(configBuilder
             .event(SOLICITOR_ARCHIVE_CASE)
-            .forStateTransition(PRE_SUBMISSION_STATES, Archived)
+            .forStateTransition(eventStates, Archived)
             .name(ARCHIVE_CASE)
             .description(ARCHIVE_CASE)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)

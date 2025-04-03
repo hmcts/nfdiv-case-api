@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.notification.SoleApplicationDisputedNotification;
@@ -11,25 +11,23 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 @Component
+@RequiredArgsConstructor
 public class SendAosNotifications implements CaseTask {
 
-    @Autowired
-    private SoleApplicationNotDisputedNotification soleApplicationNotDisputedNotification;
+    private final SoleApplicationNotDisputedNotification soleApplicationNotDisputedNotification;
 
-    @Autowired
-    private SoleApplicationDisputedNotification soleApplicationDisputedNotification;
+    private final SoleApplicationDisputedNotification soleApplicationDisputedNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> details) {
         final var data = details.getData();
 
         if (data.getAcknowledgementOfService().isDisputed()) {
-            notificationDispatcher.send(soleApplicationDisputedNotification, data, details.getId());
+            notificationDispatcher.send(soleApplicationDisputedNotification, details);
         } else {
-            notificationDispatcher.send(soleApplicationNotDisputedNotification, data, details.getId());
+            notificationDispatcher.send(soleApplicationNotDisputedNotification, details);
         }
 
         return details;

@@ -13,11 +13,19 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_OR_APPLICANT1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
@@ -29,10 +37,15 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_OR_APPLICANT2;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
@@ -114,26 +127,51 @@ public class DocmosisCommonContent {
         templateContent.put(APPLICANT_1_LAST_NAME, applicant1.getLastName());
         templateContent.put(APPLICANT_2_FIRST_NAME, applicant2.getFirstName());
         templateContent.put(APPLICANT_2_LAST_NAME, applicant2.getLastName());
+        templateContent.put(APPLICANT_OR_APPLICANT1, getApplicantOrApplicant1(caseData, languagePreference));
+        templateContent.put(RESPONDENT_OR_APPLICANT2, getRespondentOrApplicant2(caseData, languagePreference));
         templateContent.put(IS_JOINT, isJoint);
         templateContent.put(IS_DIVORCE, caseData.isDivorce());
-        templateContent.put(APPLICANT_1_SOLICITOR_NAME, solicitorName(applicant1, applicant1Solicitor));
-        templateContent.put(APPLICANT_2_SOLICITOR_NAME, solicitorName(applicant2, applicant2Solicitor));
+        templateContent.put(APPLICANT_1_SOLICITOR_NAME, getSolicitorName(applicant1, applicant1Solicitor, languagePreference));
+        templateContent.put(APPLICANT_2_SOLICITOR_NAME, getSolicitorName(applicant2, applicant2Solicitor, languagePreference));
         templateContent.put(SOLICITOR_NAME, isApplicantSolicitor ? applicant1Solicitor.getName() : applicant2Solicitor.getName());
-        templateContent.put(SOLICITOR_ADDRESS, isApplicantSolicitor ? applicant1Solicitor.getAddress() : applicant2Solicitor.getAddress());
-
+        templateContent.put(SOLICITOR_ADDRESS, isApplicantSolicitor
+            ? applicant1Solicitor.getFirmAndAddress()
+            : applicant2Solicitor.getFirmAndAddress());
         templateContent.put(
             SOLICITOR_REFERENCE,
-            isApplicantSolicitor ? solicitorReference(applicant1Solicitor) : solicitorReference(applicant2Solicitor)
+            isApplicantSolicitor
+                ? getSolicitorReference(applicant1Solicitor, languagePreference)
+                : getSolicitorReference(applicant2Solicitor, languagePreference)
         );
 
         return templateContent;
     }
 
-    private String solicitorName(Applicant applicant, Solicitor solicitor) {
-        return applicant.isRepresented() ? solicitor.getName() : NOT_REPRESENTED;
+    public String getSolicitorName(Applicant applicant, Solicitor solicitor, LanguagePreference languagePreference) {
+        String notRepresented = WELSH.equals(languagePreference) ? NOT_REPRESENTED_CY : NOT_REPRESENTED;
+        return applicant.isRepresented() ? solicitor.getName() : notRepresented;
     }
 
-    private String solicitorReference(Solicitor solicitor) {
-        return isNotEmpty(solicitor.getReference()) ? solicitor.getReference() : NOT_PROVIDED;
+    public String getSolicitorReference(Solicitor solicitor, LanguagePreference languagePreference) {
+        String notProvided = WELSH.equals(languagePreference) ? NOT_PROVIDED_CY : NOT_PROVIDED;
+        return isNotEmpty(solicitor.getReference()) ? solicitor.getReference() : notProvided;
+    }
+
+    public String getApplicantOrApplicant1(CaseData caseData, LanguagePreference languagePreference) {
+        final boolean isSole = caseData.getApplicationType().isSole();
+        if (WELSH.equals(languagePreference)) {
+            return isSole ? APPLICANT_CY : APPLICANT_1_CY;
+        } else {
+            return isSole ? APPLICANT : APPLICANT_1;
+        }
+    }
+
+    public String getRespondentOrApplicant2(CaseData caseData, LanguagePreference languagePreference) {
+        final boolean isSole = caseData.getApplicationType().isSole();
+        if (WELSH.equals(languagePreference)) {
+            return isSole ? RESPONDENT_CY : APPLICANT_2_CY;
+        } else {
+            return isSole ? RESPONDENT : APPLICANT_2;
+        }
     }
 }

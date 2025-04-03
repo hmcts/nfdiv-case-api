@@ -46,12 +46,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_OR_APPLICANT1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_OR_APPLICANT2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
@@ -59,11 +62,13 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.CIVIL_PARTNER_JOIN
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DISSOLUTION_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_COURT_EMAIL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.HUSBAND_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_PROFESSIONAL_USERS_URL;
@@ -72,6 +77,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_CY_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_URL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.WEB_FORM_TEXT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WIFE_JOINT;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IN_TIME;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
@@ -285,8 +291,14 @@ class CommonContentTest {
                 .build())
             .build();
 
+        Applicant applicant = getApplicant();
+        applicant.setSolicitorRepresented(YES);
+
+        when(docmosisCommonContent.getApplicantOrApplicant1(caseData, applicant.getLanguagePreference())).thenReturn("Applicant1");
+        when(docmosisCommonContent.getRespondentOrApplicant2(caseData, applicant.getLanguagePreference())).thenReturn("Applicant2");
+
         final Map<String, String> templateVars = commonContent
-            .requestForInformationTemplateVars(caseData, TEST_CASE_ID, getApplicant(FEMALE), getApplicant(MALE));
+            .requestForInformationTemplateVars(caseData, TEST_CASE_ID, applicant, getApplicant(MALE));
 
         assertThat(templateVars)
             .isNotEmpty()
@@ -294,8 +306,44 @@ class CommonContentTest {
                 entry(IS_JOINT, "yes"),
                 entry(HUSBAND_JOINT, "yes"),
                 entry(WIFE_JOINT, "no"),
-                entry(CIVIL_PARTNER_JOINT, "no")
+                entry(CIVIL_PARTNER_JOINT, "no"),
+                entry(APPLICANT_NAME, "test_first_name test_middle_name test_last_name"),
+                entry(RESPONDENT_NAME, "test_first_name test_middle_name test_last_name"),
+                entry(APPLICANT_OR_APPLICANT1, "Applicant1"),
+                entry(RESPONDENT_OR_APPLICANT2, "Applicant2")
             );
+    }
+
+    @Test
+    void shouldNotSetSolicitorRelatedTemplateVarsForRequestForInformationJointDivorceWhenApplicantNotRepresented() {
+        final CaseData caseData = CaseData.builder()
+                .applicationType(JOINT_APPLICATION)
+                .divorceOrDissolution(DIVORCE)
+                .requestForInformationList(RequestForInformationList.builder()
+                        .requestForInformation(RequestForInformation.builder()
+                                .requestForInformationJointParties(APPLICANT1)
+                                .build())
+                        .build())
+                .build();
+
+        Applicant applicant = getApplicant();
+
+        final Map<String, String> templateVars = commonContent
+                .requestForInformationTemplateVars(caseData, TEST_CASE_ID, applicant, getApplicant(MALE));
+
+        assertThat(templateVars)
+                .isNotEmpty()
+                .contains(
+                        entry(IS_JOINT, "yes"),
+                        entry(HUSBAND_JOINT, "yes"),
+                        entry(WIFE_JOINT, "no"),
+                        entry(CIVIL_PARTNER_JOINT, "no")
+                )
+                .doesNotContain(
+                        entry(APPLICANT_NAME, "test_first_name test_middle_name test_last_name"),
+                        entry(RESPONDENT_NAME, "test_first_name test_middle_name test_last_name"),
+                        entry(APPLICANT_OR_APPLICANT1, "Applicant1"),
+                        entry(RESPONDENT_OR_APPLICANT2, "Applicant2"));
     }
 
     @Test
@@ -534,6 +582,8 @@ class CommonContentTest {
             .applicant2(respondent())
             .build();
 
+        when(docmosisCommonContent.getSolicitorReference(any(), any())).thenReturn(NOT_PROVIDED);
+
         final Map<String, String> result = commonContent.getCoRefusedSolicitorTemplateVars(caseData, TEST_CASE_ID,
             caseData.getApplicant1(), MORE_INFO);
 
@@ -544,7 +594,7 @@ class CommonContentTest {
                 entry("moreInfo", CommonContent.YES),
                 entry("amendApplication", CommonContent.NO),
                 entry(SOLICITOR_NAME, "The Solicitor"),
-                entry(SOLICITOR_REFERENCE, "Not provided"),
+                entry(SOLICITOR_REFERENCE, NOT_PROVIDED),
                 entry("applicant1Label", "Applicant"),
                 entry("applicant2Label", "Respondent"),
                 entry(ISSUE_DATE, "22 June 2022"),
@@ -566,6 +616,8 @@ class CommonContentTest {
             .build();
 
         caseData.getApplicant2().getSolicitor().setReference("sol2");
+
+        when(docmosisCommonContent.getSolicitorReference(any(), any())).thenReturn(caseData.getApplicant2().getSolicitor().getReference());
 
         final Map<String, String> result = commonContent.getCoRefusedSolicitorTemplateVars(caseData, TEST_CASE_ID,
             caseData.getApplicant2(), REJECT);
@@ -737,6 +789,8 @@ class CommonContentTest {
             .solicitor(solicitor)
             .build();
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SMART_SURVEY, "https://testsurveylink"));
+        when(docmosisCommonContent.getSolicitorReference(any(), any())).thenReturn(solicitor.getReference());
+
         Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, applicant);
 
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
@@ -754,11 +808,13 @@ class CommonContentTest {
             .solicitor(solicitor)
             .build();
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SMART_SURVEY, "https://testsurveylink"));
+        when(docmosisCommonContent.getSolicitorReference(any(), any())).thenReturn(NOT_PROVIDED);
+
         Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, applicant);
 
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
         assertEquals("Solicitor Name", templateVars.get(CommonContent.NAME));
-        assertEquals("Not provided", templateVars.get(SOLICITOR_REFERENCE));
+        assertEquals(NOT_PROVIDED, templateVars.get(SOLICITOR_REFERENCE));
         assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
     }
 
@@ -773,13 +829,19 @@ class CommonContentTest {
             .lastName("Last")
             .build();
 
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SMART_SURVEY, "https://testsurveylink"));
+        CaseData caseData = CaseData.builder()
+                .applicant1(beforeApplicant)
+                .build();
 
-        Map<String, String> templateVars = commonContent.nocOldSolsTemplateVars(caseRef, beforeApplicant);
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(WEBFORM_URL, "webformUrl", SMART_SURVEY, "https://testsurveylink"));
+
+        Map<String, String> templateVars = commonContent.nocOldSolsTemplateVars(caseRef, caseData, true);
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
         assertEquals("Old Solicitor Name", templateVars.get(CommonContent.NAME));
         assertEquals("First Last", templateVars.get(CommonContent.APPLICANT_NAME));
         assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
+        assertEquals(PHONE_AND_OPENING_TIMES_TEXT, templateVars.get(PHONE_AND_OPENING_TIMES));
+        assertEquals("[Contact us using our online form](webformUrl)", templateVars.get(WEB_FORM_TEXT));
     }
 
     @Test
@@ -810,6 +872,60 @@ class CommonContentTest {
         Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, applicant);
 
         assertThat(templateVars.get(CommonContent.WEB_FORM_TEXT)).contains("https://welshUrl");
+    }
+
+    @Test
+    void shouldReturnWelshUserNameIfApplicant1PrefersWelshAndFirstNameIsNotPresent() {
+
+        final Applicant applicant1 = Applicant.builder()
+            .gender(MALE)
+            .languagePreferenceWelsh(YES)
+            .build();
+
+        final Applicant applicant2 = Applicant.builder()
+            .gender(FEMALE)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .build();
+
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, TEST_CASE_ID, applicant1, applicant2);
+
+        assertThat(result)
+            .isNotEmpty()
+            .contains(
+                entry(FIRST_NAME, "Defnyddiwr"),
+                entry(LAST_NAME, ""));
+    }
+
+    @Test
+    void shouldReturnWelshUserNameIfApplicant1PrefersEnglishAndFirstNameIsNotPresent() {
+
+        final Applicant applicant1 = Applicant.builder()
+            .gender(MALE)
+            .languagePreferenceWelsh(NO)
+            .build();
+
+        final Applicant applicant2 = Applicant.builder()
+            .gender(FEMALE)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .build();
+
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, TEST_CASE_ID, applicant1, applicant2);
+
+        assertThat(result)
+            .isNotEmpty()
+            .contains(
+                entry(FIRST_NAME, "User"),
+                entry(LAST_NAME, ""));
     }
 }
 

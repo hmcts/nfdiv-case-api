@@ -1,8 +1,9 @@
 package uk.gov.hmcts.divorce.solicitor.service;
 
 import feign.FeignException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -28,16 +29,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CcdAccessService {
 
-    @Autowired
-    private CaseAssignmentApi caseAssignmentApi;
+    private final CaseAssignmentApi caseAssignmentApi;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
     public void addApplicant1SolicitorRole(String solicitorIdamToken, Long caseId, String orgId) {
@@ -90,6 +89,8 @@ public class CcdAccessService {
     public void linkRespondentToApplication(String caseworkerUserToken, Long caseId, String applicant2UserId) {
         User caseworkerUser = idamService.retrieveUser(caseworkerUserToken);
 
+        removeUsersWithRole(caseId, List.of(APPLICANT_2.getRole()));
+
         caseAssignmentApi.addCaseUserRoles(
             caseworkerUser.getAuthToken(),
             authTokenGenerator.generate(),
@@ -97,6 +98,21 @@ public class CcdAccessService {
         );
 
         log.info("Successfully linked applicant 2 to case Id {} ", caseId);
+    }
+
+    @Retryable(value = {FeignException.class, RuntimeException.class})
+    public void linkApplicant1(String caseworkerUserToken, Long caseId, String applicant1UserId) {
+        User systemUpdateUser = idamService.retrieveUser(caseworkerUserToken);
+
+        removeUsersWithRole(caseId, List.of(CREATOR.getRole()));
+
+        caseAssignmentApi.addCaseUserRoles(
+            systemUpdateUser.getAuthToken(),
+            authTokenGenerator.generate(),
+            getCaseAssignmentRequest(caseId, applicant1UserId, null, CREATOR)
+        );
+
+        log.info("Successfully linked applicant 1 to case Id {} ", caseId);
     }
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
@@ -135,38 +151,42 @@ public class CcdAccessService {
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
     public boolean isApplicant1(String userToken, Long caseId) {
-        log.info("Retrieving roles for user on case {}", caseId);
-        User user = idamService.retrieveUser(userToken);
-        List<String> userRoles =
-            caseAssignmentApi.getUserRoles(
-                userToken,
-                authTokenGenerator.generate(),
-                List.of(String.valueOf(caseId)),
-                List.of(user.getUserDetails().getUid())
-            )
-                .getCaseAssignmentUserRoles()
-                .stream()
-                .map(CaseAssignmentUserRole::getCaseRole)
-                .collect(Collectors.toList());
-        return userRoles.contains(CREATOR.getRole()) || userRoles.contains(APPLICANT_1_SOLICITOR.getRole());
+        return hasUserRole(userToken, caseId, List.of(CREATOR, APPLICANT_1_SOLICITOR));
     }
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
     public boolean isApplicant2(String userToken, Long caseId) {
+        return hasUserRole(userToken, caseId, List.of(APPLICANT_2, APPLICANT_2_SOLICITOR));
+    }
+
+    @Retryable(value = {FeignException.class, RuntimeException.class})
+    public boolean hasCreatorRole(String userToken, Long caseId) {
+        return hasUserRole(userToken, caseId, (List.of(CREATOR)));
+    }
+
+    boolean hasUserRole(String userToken, Long caseId, List<UserRole> roleMatches) {
+        List<String> userRoles = fetchUserRoles(caseId, userToken);
+        List<String> roleMatchStrings = roleMatches.stream()
+            .map(UserRole::getRole)
+            .collect(Collectors.toList());
+        return CollectionUtils.isNotEmpty(userRoles)
+            && userRoles.stream().anyMatch(roleMatchStrings::contains);
+    }
+
+    private List<String> fetchUserRoles(Long caseId, String userToken) {
         log.info("Retrieving roles for user on case {}", caseId);
         User user = idamService.retrieveUser(userToken);
-        List<String> userRoles =
-            caseAssignmentApi.getUserRoles(
+        List<String> userRoles = caseAssignmentApi.getUserRoles(
                 userToken,
                 authTokenGenerator.generate(),
                 List.of(String.valueOf(caseId)),
                 List.of(user.getUserDetails().getUid())
             )
-                .getCaseAssignmentUserRoles()
-                .stream()
-                .map(CaseAssignmentUserRole::getCaseRole)
-                .collect(Collectors.toList());
-        return userRoles.contains(APPLICANT_2.getRole()) || userRoles.contains(APPLICANT_2_SOLICITOR.getRole());
+            .getCaseAssignmentUserRoles()
+            .stream()
+            .map(CaseAssignmentUserRole::getCaseRole)
+            .collect(Collectors.toList());
+        return userRoles;
     }
 
     public void removeUsersWithRole(Long caseId, List<String> roles) {

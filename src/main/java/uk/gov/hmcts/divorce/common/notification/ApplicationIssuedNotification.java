@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
@@ -46,6 +46,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ApplicationIssuedNotification implements ApplicantNotification {
 
     private static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
@@ -53,17 +54,13 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     private static final String CASE_ID = "case id";
     private static final String UNION_TYPE = "union type";
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private EmailTemplatesConfig config;
+    private final EmailTemplatesConfig config;
 
-    @Autowired
-    private HoldingPeriodService holdingPeriodService;
+    private final HoldingPeriodService holdingPeriodService;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
@@ -134,7 +131,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 applicant1SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH,
+                applicant.getLanguagePreference(),
                 caseId);
         }
     }
@@ -193,7 +190,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 applicant2SolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH,
+                caseData.getApplicant2().getLanguagePreference(),
                 caseId);
         }
     }
@@ -247,7 +244,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         templateVars.put(SUBMISSION_RESPONSE_DATE,
             holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate())
-                    .format(DATE_TIME_FORMATTER));
+                    .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
 
         return templateVars;
     }
@@ -287,7 +284,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         templateVars.put(SUBMISSION_RESPONSE_DATE,
             holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate())
-                    .format(DATE_TIME_FORMATTER));
+                    .format(getDateTimeFormatterForPreferredLanguage(applicant2.getLanguagePreference())));
 
         return templateVars;
     }
@@ -301,9 +298,9 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
         templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate()
-                .format(DATE_TIME_FORMATTER));
+                .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         templateVars.put(DUE_DATE, caseData.getDueDate()
-                .format(DATE_TIME_FORMATTER));
+                .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
 
         return templateVars;
     }

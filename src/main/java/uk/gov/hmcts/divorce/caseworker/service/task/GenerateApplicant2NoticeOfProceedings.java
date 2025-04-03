@@ -1,7 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -45,37 +46,28 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEED
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final CaseDataDocumentService caseDataDocumentService;
 
-    @Autowired
-    private CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
+    private final CoversheetApplicantTemplateContent coversheetApplicantTemplateContent;
 
-    @Autowired
-    private NoticeOfProceedingContent noticeOfProceedingContent;
+    private final NoticeOfProceedingContent noticeOfProceedingContent;
 
-    @Autowired
-    private NoticeOfProceedingsWithAddressContent noticeOfProceedingsWithAddressContent;
+    private final NoticeOfProceedingsWithAddressContent noticeOfProceedingsWithAddressContent;
 
-    @Autowired
-    private NoticeOfProceedingJointContent jointTemplateContent;
+    private final NoticeOfProceedingJointContent jointTemplateContent;
 
-    @Autowired
-    private NoticeOfProceedingSolicitorContent solicitorTemplateContent;
+    private final NoticeOfProceedingSolicitorContent solicitorTemplateContent;
 
-    @Autowired
-    private NoticeOfProceedingJointJudicialSeparationContent jointContentJudicialSeparationContent;
+    private final NoticeOfProceedingJointJudicialSeparationContent jointContentJudicialSeparationContent;
 
-    @Autowired
-    private CoversheetSolicitorTemplateContent coversheetSolicitorTemplateContent;
+    private final CoversheetSolicitorTemplateContent coversheetSolicitorTemplateContent;
 
-    @Autowired
-    private GenerateCoversheet generateCoversheet;
+    private final GenerateCoversheet generateCoversheet;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
@@ -84,7 +76,13 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
         final boolean isSoleApplication = caseData.getApplicationType().isSole();
 
         if (isSoleApplication) {
-            caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
+            boolean userAlreadyHasCaseInvite = caseData.getCaseInvite() != null
+                && StringUtils.isNotEmpty(caseData.getCaseInvite().accessCode());
+
+            if (!userAlreadyHasCaseInvite) {
+                caseData.setCaseInvite(caseData.getCaseInvite().generateAccessCode());
+            }
+
             if (caseData.isJudicialSeparationCase()) {
                 generateSoleJSNoticeOfProceedings(caseData, caseId);
             } else {

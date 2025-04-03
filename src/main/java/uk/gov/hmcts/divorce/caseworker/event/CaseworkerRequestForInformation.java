@@ -24,7 +24,8 @@ import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
@@ -32,9 +33,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -53,17 +53,16 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     public static final String REQUEST_FOR_INFORMATION_NOTIFICATION_FAILED_ERROR
         = "Unable to send Request for Information Notification for Case Id: ";
     public static final String NO_VALID_EMAIL_ERROR = "You cannot send an email because no email address has been provided for: ";
-    public static final String NOT_ONLINE_ERROR = "You cannot send an email because the following party is offline: ";
+    public static final String NO_VALID_ADDRESS_ERROR = "You cannot send a letter because no address has been provided for: ";
+    public static final String CANNOT_USE_BOTH_ERROR = "You cannot select Both parties unless both parties have the same offline state";
     public static final String THE_APPLICANT = "the Applicant";
     public static final String APPLICANT_1 = "Applicant 1";
     public static final String APPLICANT_2 = "Applicant 2";
     public static final String SOLICITOR = "'s Solicitor";
     public static final String NO_VALID_EMAIL_PROVIDED_ERROR = "You must provide a valid email address.";
-    public static final String USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR =
-        "Please use create general letter event to request information from offline parties.";
+    public static final String MARK_OFFLINE_PARTIES_AS_OFFLINE = "Please ensure parties are correctly flagged as offline.";
     public static final String USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR =
         "Please use create general letter event to request information from the respondent";
-
     public static final String USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR =
         "Please use create general email event to request information from the respondent";
     public static final String USE_CORRECT_PARTY_ERROR = "Please use the correct option to contact online parties.";
@@ -76,11 +75,10 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_REQUEST_FOR_INFORMATION)
-            .forStates(Draft,
-                AwaitingHWFDecision,
+            .forStates(AwaitingHWFDecision,
+                AwaitingResponseToHWFDecision,
                 AwaitingHWFEvidence,
                 AwaitingHWFPartPayment,
-                AwaitingPayment,
                 AwaitingDocuments,
                 AwaitingApplicant1Response,
                 AwaitingApplicant2Response,
@@ -118,9 +116,20 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
 
         log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_REQUEST_FOR_INFORMATION, details.getId());
 
+        CaseData data = details.getData();
+
+        if (!data.getApplicationType().isSole()
+            && BOTH.equals(data.getRequestForInformationList().getRequestForInformation().getRequestForInformationJointParties())
+            && !validateOfflineStateForBothParties(data)
+        ) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(CANNOT_USE_BOTH_ERROR))
+                .build();
+        }
+
         List<String> errors = new ArrayList<>();
-        areApplicantsOnline(details.getData(), errors);
-        areEmailsValid(details.getData(), errors);
+        areAddressesValid(data, errors);
+        areEmailsValid(data, errors);
         if (!errors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(errors)
@@ -128,7 +137,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
+            .data(data)
             .build();
     }
 
@@ -144,6 +153,9 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
 
         caseData.getRequestForInformationList().addRequestToList(requestForInformation);
 
+        //Prevent pre-populating fields for new request
+        caseData.getRequestForInformationList().setRequestForInformation(new RequestForInformation());
+
         try {
             notificationDispatcher.sendRequestForInformationNotification(
                 requestForInformationNotification,
@@ -156,9 +168,6 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
                 .errors(Collections.singletonList(REQUEST_FOR_INFORMATION_NOTIFICATION_FAILED_ERROR + details.getId()))
                 .build();
         }
-
-        //Prevent pre-populating fields for new request
-        caseData.getRequestForInformationList().setRequestForInformation(new RequestForInformation());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -180,15 +189,16 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
     }
 
     private boolean isApplicantEmailInvalid(Applicant applicant) {
-        return applicant.isRepresented()
+        final boolean emailIsEmpty = applicant.isRepresented()
             ? isEmpty(applicant.getSolicitor().getEmail())
             : isEmpty(applicant.getEmail());
+        return !applicant.isApplicantOffline() && emailIsEmpty;
     }
 
     private void isEmailValid(CaseData caseData, Applicant applicant, List<String> errors) {
         if (isApplicantEmailInvalid(applicant)) {
             errors.add(getErrorString(NO_VALID_EMAIL_ERROR, caseData, applicant));
-            errors.add(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
+            errors.add(MARK_OFFLINE_PARTIES_AS_OFFLINE);
         }
     }
 
@@ -202,7 +212,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
             errors.add(getErrorString(NO_VALID_EMAIL_ERROR, caseData, caseData.getApplicant2()));
         }
         if (applicant1EmailInvalid || applicant2EmailInvalid) {
-            errors.add(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
+            errors.add(MARK_OFFLINE_PARTIES_AS_OFFLINE);
         }
     }
 
@@ -218,11 +228,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
                         : USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR + "."
                 );
             } else {
-                errors.add(
-                    applicant.isApplicantOffline()
-                        ? USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
-                        : USE_CORRECT_PARTY_ERROR
-                );
+                errors.add(USE_CORRECT_PARTY_ERROR);
             }
         } else if (applicant.isRepresented()
             && null != applicant.getSolicitor().getEmail()
@@ -235,11 +241,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
                         : USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR + SOLICITOR + "."
                 );
             } else {
-                errors.add(
-                    applicant.isApplicantOffline()
-                        ? USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR
-                        : USE_CORRECT_PARTY_ERROR
-                );
+                errors.add(USE_CORRECT_PARTY_ERROR);
             }
         }
     }
@@ -285,41 +287,52 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         }
     }
 
-    private void isApplicantOnline(CaseData caseData, Applicant applicant, List<String> errors) {
-        if (applicant.isApplicantOffline()) {
-            errors.add(getErrorString(NOT_ONLINE_ERROR, caseData, applicant));
-            errors.add(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
+    private boolean isApplicantAddressInvalid(Applicant applicant) {
+        return applicant.isApplicantOffline() && isEmpty(applicant.getCorrespondenceAddressWithoutConfidentialCheck());
+    }
+
+    private void isAddressValid(CaseData caseData, Applicant applicant, List<String> errors) {
+        if (isApplicantAddressInvalid(applicant)) {
+            errors.add(getErrorString(NO_VALID_ADDRESS_ERROR, caseData, applicant));
+            errors.add(MARK_OFFLINE_PARTIES_AS_OFFLINE);
         }
     }
 
-    private void areBothApplicantsOnline(CaseData caseData, List<String> errors) {
-        boolean applicant1Offline = caseData.getApplicant1().isApplicantOffline();
-        boolean applicant2Offline = caseData.getApplicant2().isApplicantOffline();
-        if (applicant1Offline) {
-            errors.add(getErrorString(NOT_ONLINE_ERROR, caseData, caseData.getApplicant1()));
+    private void areBothAddressesValid(CaseData caseData, List<String> errors) {
+        boolean applicant1AddressInvalid = isApplicantAddressInvalid(caseData.getApplicant1());
+        boolean applicant2AddressInvalid = isApplicantAddressInvalid(caseData.getApplicant2());
+        if (applicant1AddressInvalid) {
+            errors.add(getErrorString(NO_VALID_ADDRESS_ERROR, caseData, caseData.getApplicant1()));
         }
-        if (applicant2Offline) {
-            errors.add(getErrorString(NOT_ONLINE_ERROR, caseData, caseData.getApplicant2()));
+        if (applicant2AddressInvalid) {
+            errors.add(getErrorString(NO_VALID_ADDRESS_ERROR, caseData, caseData.getApplicant2()));
         }
-        if (applicant1Offline || applicant2Offline) {
-            errors.add(USE_CREATE_GENERAL_LETTER_FOR_OFFLINE_PARTIES_ERROR);
+        if (applicant1AddressInvalid || applicant2AddressInvalid) {
+            errors.add(MARK_OFFLINE_PARTIES_AS_OFFLINE);
         }
     }
 
-    private void areApplicantsOnline(CaseData caseData, List<String> errors) {
+    private void areAddressesValid(CaseData caseData, List<String> errors) {
         RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
 
         if (caseData.getApplicationType().isSole()) {
-            if (APPLICANT.equals(requestForInformation.getRequestForInformationSoleParties())) {
-                isApplicantOnline(caseData, caseData.getApplicant1(), errors);
+            if (!OTHER.equals(requestForInformation.getRequestForInformationSoleParties())) {
+                isAddressValid(caseData, caseData.getApplicant1(), errors);
             }
         } else {
             switch (requestForInformation.getRequestForInformationJointParties()) {
-                case APPLICANT1 -> isApplicantOnline(caseData, caseData.getApplicant1(), errors);
-                case APPLICANT2 -> isApplicantOnline(caseData, caseData.getApplicant2(), errors);
-                case BOTH -> areBothApplicantsOnline(caseData, errors);
+                case APPLICANT1 -> isAddressValid(caseData, caseData.getApplicant1(), errors);
+                case APPLICANT2 -> isAddressValid(caseData, caseData.getApplicant2(), errors);
+                case BOTH -> areBothAddressesValid(caseData, errors);
                 default -> { }
             }
         }
+    }
+
+    private boolean validateOfflineStateForBothParties(CaseData caseData) {
+        boolean applicant1IsOffline = caseData.getApplicant1().isApplicantOffline();
+        boolean applicant2IsOffline = caseData.getApplicant2().isApplicantOffline();
+
+        return applicant1IsOffline == applicant2IsOffline;
     }
 }

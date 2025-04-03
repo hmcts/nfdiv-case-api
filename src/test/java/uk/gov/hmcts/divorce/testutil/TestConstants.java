@@ -1,6 +1,14 @@
 package uk.gov.hmcts.divorce.testutil;
 
+import com.google.common.collect.ImmutableMap;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
+
+import java.util.Optional;
+
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_RESPONSE_LETTER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_RESPONSE_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.REQUEST_FOR_INFORMATION_RESPONSE;
 
 public final class TestConstants {
     public static final String TEST_APPLICANT_2_USER_EMAIL = "applicant2@test.com";
@@ -94,8 +102,10 @@ public final class TestConstants {
 
     public static final String SIGN_IN_DIVORCE_TEST_URL = "divorceTestUrl";
     public static final String APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL = "applicant2DivorceTestUrl";
+    public static final String RESPONDENT_SIGN_IN_DIVORCE_TEST_URL = "respondentDivorceTestUrl";
     public static final String SIGN_IN_DISSOLUTION_TEST_URL = "dissolutionTestUrl";
     public static final String APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL = "applicant2DissolutionTestUrl";
+    public static final String RESPONDENT_SIGN_IN_DISSOLUTION_TEST_URL = "respondentDissolutionTestUrl";
 
     public static final String EMPTY_STRING = "";
 
@@ -109,6 +119,19 @@ public final class TestConstants {
     public static final String TEST_TEXT = "Test";
 
     public static final String SMART_SURVEY_TEST_URL = "smartSurveyTestUrl";
+    public static final String WEBFORM_TEST_URL = "englishWebformUrl";
+    public static final String WEBFORM_TEST_URL_CY = "welshWebformUrl";
+
+    public static final DocumentPackInfo TEST_DOCUMENT_PACK = new DocumentPackInfo(
+        ImmutableMap.of(
+            REQUEST_FOR_INFORMATION_RESPONSE, Optional.of(REQUEST_FOR_INFORMATION_RESPONSE_LETTER_TEMPLATE_ID)
+        ),
+        ImmutableMap.of(
+            REQUEST_FOR_INFORMATION_RESPONSE_LETTER_TEMPLATE_ID, REQUEST_FOR_INFORMATION_RESPONSE_LETTER_DOCUMENT_NAME
+        )
+    );
+
+    public static final String TEST_LETTER_ID = "TestLetterId";
 
     private TestConstants() {
     }

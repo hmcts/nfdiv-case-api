@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -18,16 +18,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SetSubmissionAndDueDate implements CaseTask {
 
     @Value("${aos_pack.due_date_offset_days_disputed}")
     private long dueDateOffsetDaysDisputed;
 
-    @Autowired
-    private HoldingPeriodService holdingPeriodService;
+    private final HoldingPeriodService holdingPeriodService;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {

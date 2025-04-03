@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -27,6 +27,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentSummar
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectFee;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,9 +37,16 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -49,6 +57,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_GENERAL_APPLICATION = "solicitor-general-application";
@@ -60,20 +69,26 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
     private static final String GENERAL_APPLICATION_URGENT_CASE_REASON_ERROR =
         "General Application marked as urgent need an accompanying reason why it is urgent";
 
-    @Autowired
-    private GeneralApplicationSelectFee generalApplicationSelectFee;
+    private static final EnumSet<State> GENERAL_APPLICATION_STATES = EnumSet.complementOf(EnumSet.of(
+        Draft,
+        AwaitingApplicant1Response,
+        AwaitingApplicant2Response,
+        Applicant2Approved,
+        AwaitingPayment,
+        Withdrawn,
+        Rejected,
+        Archived
+    ));
 
-    @Autowired
-    private PaymentService paymentService;
+    private final GeneralApplicationSelectFee generalApplicationSelectFee;
 
-    @Autowired
-    private OrganisationClient organisationClient;
+    private final PaymentService paymentService;
 
-    @Autowired
-    private HttpServletRequest request;
+    private final OrganisationClient organisationClient;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final HttpServletRequest request;
+
+    private final AuthTokenGenerator authTokenGenerator;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -213,7 +228,7 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_GENERAL_APPLICATION)
-            .forStates(POST_ISSUE_STATES)
+            .forStates(GENERAL_APPLICATION_STATES)
             .name(GENERAL_APPLICATION)
             .description(GENERAL_APPLICATION)
             .showSummary()

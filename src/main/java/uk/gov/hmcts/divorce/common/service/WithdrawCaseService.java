@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.notification.ApplicationWithdrawnNotification;
@@ -20,15 +20,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class WithdrawCaseService {
-    @Autowired
-    private ApplicationWithdrawnNotification applicationWithdrawnNotification;
+    private final ApplicationWithdrawnNotification applicationWithdrawnNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private CcdAccessService ccdAccessService;
+    private final CcdAccessService ccdAccessService;
 
     public void withdraw(final CaseDetails<CaseData, State> details) {
         final CaseData caseData = details.getData();

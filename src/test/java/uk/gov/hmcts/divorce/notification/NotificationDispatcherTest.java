@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
-import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponseParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -30,11 +29,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointP
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
-import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.OTHER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getOfflineRequestForInformationCaseDetails;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationCaseDetails;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationOtherCaseDetails;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -157,6 +158,133 @@ class NotificationDispatcherTest {
         notificationDispatcher.send(applicantNotification, caseData, caseId);
 
         verify(applicantNotification).sendToApplicant2(caseData, caseId);
+    }
+
+    @Test
+    void shouldNotifyApplicant2IfNotRepresentedWithCaseInviteUsingCaseDetails() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .solicitorRepresented(NO)
+                .build())
+            .caseInvite(CaseInvite.builder()
+                .applicant2InviteEmailAddress("app2@email.com")
+                .build())
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        notificationDispatcher.send(applicantNotification, caseDetails);
+
+        verify(applicantNotification).sendToApplicant2(caseDetails);
+    }
+
+    @Test
+    void shouldNotifyApplicant1SolicitorIfRepresentedUsingCaseDetails() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .solicitorRepresented(YES)
+                .build())
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        notificationDispatcher.send(applicantNotification, caseDetails);
+
+        verify(applicantNotification).sendToApplicant1Solicitor(caseDetails);
+    }
+
+    @Test
+    void shouldNotifyApplicant1OfflineIfIsApplicant1OffLineTrueUsingCaseDetails() {
+
+        final CaseData caseData = mock(CaseData.class);
+        final Applicant applicant1 = mock(Applicant.class);
+        final Applicant applicant2 = mock(Applicant.class);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        when(caseData.getApplicant1()).thenReturn(applicant1);
+        when(applicant1.isRepresented()).thenReturn(false);
+        when(caseData.getApplicant2()).thenReturn(applicant2);
+        when(applicant2.isRepresented()).thenReturn(true);
+        when(applicant1.isApplicantOffline()).thenReturn(true);
+
+        notificationDispatcher.send(applicantNotification, caseDetails);
+
+        verify(applicantNotification).sendToApplicant1Offline(caseDetails);
+    }
+
+    @Test
+    void shouldNotifyApplicant1IfNotRepresentedUsingCaseDetails() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(Applicant.builder()
+                .solicitorRepresented(NO)
+                .build())
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        notificationDispatcher.send(applicantNotification, caseDetails);
+
+        verify(applicantNotification).sendToApplicant1(caseDetails);
+    }
+
+    @Test
+    void shouldNotifyApplicant2SolicitorIfRepresentedUsingCaseDetails() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .solicitorRepresented(YES)
+                .build())
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        notificationDispatcher.send(applicantNotification, caseDetails);
+
+        verify(applicantNotification).sendToApplicant2Solicitor(caseDetails);
+    }
+
+    @Test
+    void shouldNotifyApplicant2OfflineIsApplicant1OffLineTrueUsingCaseDetails() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .offline(YES)
+                .build())
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        notificationDispatcher.send(applicantNotification, caseDetails);
+
+        verify(applicantNotification).sendToApplicant2Offline(caseDetails);
+    }
+
+    @Test
+    void shouldNotifyApplicant2IfNotRepresentedUsingCaseDetails() {
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .email("app2@email.com")
+                .solicitorRepresented(NO)
+                .build())
+            .build();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        notificationDispatcher.send(applicantNotification, caseDetails);
+
+        verify(applicantNotification).sendToApplicant2(caseDetails);
     }
 
     @Test
@@ -301,17 +429,98 @@ class NotificationDispatcherTest {
         verify(applicantNotification, never()).sendToApplicant2OldSolicitor(previousCaseData, caseId);
     }
 
+    @Test
+    void shouldNotSendOnlineNoCInviteToApp1WhenEmailIsNull() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        caseData.setApplicant1(new Applicant());
+        caseData.getApplicant1().setEmail(null);
+
+        final boolean isApplicant1 = true;
+
+        notificationDispatcher.sendNOCCaseInvite(applicantNotification, caseData, caseId, isApplicant1);
+
+        verify(applicantNotification, never()).sendToApplicant1(caseData, caseId);
+    }
+
+    @Test
+    void shouldNotSendOnlineNoCInviteToApp1WhenEmailIsBlank() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        caseData.setApplicant1(new Applicant());
+        caseData.getApplicant1().setEmail("");
+
+        final boolean isApplicant1 = true;
+
+        notificationDispatcher.sendNOCCaseInvite(applicantNotification, caseData, caseId, isApplicant1);
+
+        verify(applicantNotification, never()).sendToApplicant1(caseData, caseId);
+    }
+
+    @Test
+    void shouldSendOnlineAndOfflineNoCInviteToApp1WhenEmailPresent() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        caseData.setApplicant1(new Applicant());
+        caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
+
+        final boolean isApplicant1 = true;
+
+        notificationDispatcher.sendNOCCaseInvite(applicantNotification, caseData, caseId, isApplicant1);
+
+        verify(applicantNotification).sendToApplicant1(caseData, caseId);
+        verify(applicantNotification).sendToApplicant1Offline(caseData, caseId);
+    }
+
+    @Test
+    void shouldNotSendOnlineNoCInviteToApp2WhenEmailIsNull() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        caseData.setApplicant2(new Applicant());
+        caseData.getApplicant2().setEmail(null);
+
+        final boolean isApplicant1 = false;
+
+        notificationDispatcher.sendNOCCaseInvite(applicantNotification, caseData, caseId, isApplicant1);
+
+        verify(applicantNotification, never()).sendToApplicant2(caseData, caseId);
+    }
+
+    @Test
+    void shouldNotSendOnlineNoCInviteToApp2WhenEmailIsBlank() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        caseData.setApplicant2(new Applicant());
+        caseData.getApplicant2().setEmail("");
+
+        final boolean isApplicant1 = false;
+
+        notificationDispatcher.sendNOCCaseInvite(applicantNotification, caseData, caseId, isApplicant1);
+
+        verify(applicantNotification, never()).sendToApplicant2(caseData, caseId);
+    }
+
+    @Test
+    void shouldSendOnlineAndOfflineNoCInviteTooApp2WhenEmailPresent() {
+        final long caseId = 12345L;
+        final CaseData caseData = new CaseData();
+        caseData.setApplicant2(new Applicant());
+        caseData.getApplicant2().setEmail(TEST_USER_EMAIL);
+
+        final boolean isApplicant1 = false;
+
+        notificationDispatcher.sendNOCCaseInvite(applicantNotification, caseData, caseId, isApplicant1);
+
+        verify(applicantNotification).sendToApplicant2(caseData, caseId);
+        verify(applicantNotification).sendToApplicant2Offline(caseData, caseId);
+    }
+
     public static class TestNotification implements ApplicantNotification {
     }
 
     @Test
     void shouldSendRequestForInformationToApplicantIfNotRepresentedOnSoleCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
+        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT, false, false).getData();
 
         notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
 
@@ -320,13 +529,7 @@ class NotificationDispatcherTest {
 
     @Test
     void shouldSendRequestForInformationToApplicantSolicitorIfRepresentedOnSoleCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.setApplicant1(applicantRepresentedBySolicitor());
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(APPLICANT);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
+        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT, true, false).getData();
 
         notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
 
@@ -334,13 +537,26 @@ class NotificationDispatcherTest {
     }
 
     @Test
+    void shouldSendRequestForInformationToOfflineApplicantIfNotRepresentedOnSoleCase() {
+        CaseData caseData = getOfflineRequestForInformationCaseDetails(APPLICANT, false, false).getData();
+
+        notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant1Offline(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationToOfflineApplicantSolicitorIfRepresentedOnSoleCase() {
+        CaseData caseData = getOfflineRequestForInformationCaseDetails(APPLICANT, true, false).getData();
+
+        notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant1SolicitorOffline(caseData, TEST_CASE_ID);
+    }
+
+    @Test
     void shouldSendRequestForInformationToApplicant1IfNotRepresentedOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
+        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT1, false, false).getData();
 
         notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
 
@@ -349,13 +565,7 @@ class NotificationDispatcherTest {
 
     @Test
     void shouldSendRequestForInformationToApplicant1SolicitorIfRepresentedOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplicant1(applicantRepresentedBySolicitor());
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
+        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT1, true, false).getData();
 
         notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
 
@@ -363,14 +573,26 @@ class NotificationDispatcherTest {
     }
 
     @Test
+    void shouldSendRequestForInformationToOfflineApplicant1IfNotRepresentedOnJointCase() {
+        CaseData caseData = getOfflineRequestForInformationCaseDetails(APPLICANT1, false, false).getData();
+
+        notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant1Offline(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationToOfflineApplicant1SolicitorIfRepresentedOnJointCase() {
+        CaseData caseData = getOfflineRequestForInformationCaseDetails(APPLICANT1, true, false).getData();
+
+        notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant1SolicitorOffline(caseData, TEST_CASE_ID);
+    }
+
+    @Test
     void shouldSendRequestForInformationToApplicant2IfNotRepresentedOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplicant2(getApplicant());
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
+        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT2, false, false).getData();
 
         notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
 
@@ -379,13 +601,7 @@ class NotificationDispatcherTest {
 
     @Test
     void shouldSendRequestForInformationToApplicant2SolicitorIfRepresentedOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplicant2(applicantRepresentedBySolicitor());
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
+        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT2, false, true).getData();
 
         notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
 
@@ -393,14 +609,26 @@ class NotificationDispatcherTest {
     }
 
     @Test
+    void shouldSendRequestForInformationToOfflineApplicant2IfNotRepresentedOnJointCase() {
+        CaseData caseData = getOfflineRequestForInformationCaseDetails(APPLICANT2, false, false).getData();
+
+        notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant2Offline(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationToOfflineApplicant2SolicitorIfRepresentedOnJointCase() {
+        CaseData caseData = getOfflineRequestForInformationCaseDetails(APPLICANT2, false, true).getData();
+
+        notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant2SolicitorOffline(caseData, TEST_CASE_ID);
+    }
+
+    @Test
     void shouldSendRequestForInformationToBothApplicantsIfNotRepresentedOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplicant2(getApplicant());
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, false).getData();
 
         notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
 
@@ -409,15 +637,18 @@ class NotificationDispatcherTest {
     }
 
     @Test
+    void shouldSendRequestForInformationToBothOfflineApplicantsIfNotRepresentedOnJointCase() {
+        CaseData caseData = getOfflineRequestForInformationCaseDetails(BOTH, false, false).getData();
+
+        notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant1Offline(caseData, TEST_CASE_ID);
+        verify(applicantNotification).sendToApplicant2Offline(caseData, TEST_CASE_ID);
+    }
+
+    @Test
     void shouldSendRequestForInformationToBothApplicantsSolicitorsIfRepresentedOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplicant1(applicantRepresentedBySolicitor());
-        caseData.setApplicant2(applicantRepresentedBySolicitor());
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, true, true).getData();
 
         notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
 
@@ -426,15 +657,18 @@ class NotificationDispatcherTest {
     }
 
     @Test
+    void shouldSendRequestForInformationToBothOfflineApplicantsSolicitorsIfRepresentedOnJointCase() {
+        CaseData caseData = getOfflineRequestForInformationCaseDetails(BOTH, true, true).getData();
+
+        notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant1SolicitorOffline(caseData, TEST_CASE_ID);
+        verify(applicantNotification).sendToApplicant2SolicitorOffline(caseData, TEST_CASE_ID);
+    }
+
+    @Test
     void shouldSendRequestForInformationToApplicant1SolicitorIfRepresentedAndApplicant2IfNotRepresentedOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplicant1(applicantRepresentedBySolicitor());
-        caseData.setApplicant2(getApplicant());
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, true, false).getData();
 
         notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
 
@@ -444,13 +678,7 @@ class NotificationDispatcherTest {
 
     @Test
     void shouldSendRequestForInformationToApplicant1IfNotRepresentedAndApplicant2SolicitorIfRepresentedOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.setApplicant2(applicantRepresentedBySolicitor());
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(BOTH);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, true).getData();
 
         notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
 
@@ -460,12 +688,7 @@ class NotificationDispatcherTest {
 
     @Test
     void shouldSendRequestForInformationToOtherRecipientOnSoleCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationSoleParties(OTHER);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
+        CaseData caseData = getRequestForInformationOtherCaseDetails(SOLE_APPLICATION, false, false).getData();
 
         notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
 
@@ -474,13 +697,7 @@ class NotificationDispatcherTest {
 
     @Test
     void shouldSendRequestForInformationToOtherRecipientOnJointCase() {
-        CaseData caseData = caseData();
-        caseData.setApplicationType(JOINT_APPLICATION);
-        caseData.getRequestForInformationList().getRequestForInformation()
-            .setRequestForInformationJointParties(RequestForInformationJointParties.OTHER);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
+        CaseData caseData = getRequestForInformationOtherCaseDetails(JOINT_APPLICATION, false, false).getData();
 
         notificationDispatcher.sendRequestForInformationNotification(applicantNotification, caseData, TEST_CASE_ID);
 
@@ -490,6 +707,7 @@ class NotificationDispatcherTest {
     @Test
     void sendRequestForInformationNotificationShouldThrowExceptionWhenPartiesNotSet() {
         CaseData caseData = caseData();
+        caseData.getRequestForInformationList().addRequestToList(new RequestForInformation());
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
@@ -514,6 +732,52 @@ class NotificationDispatcherTest {
     }
 
     @Test
+    void shouldSendRequestForInformationResponseLetterToOfflineApplicant1() {
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT1);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant1Offline(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationResponseEmailToApplicant1Solicitor() {
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT1);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationResponseLetterToOfflineApplicant1Solicitor() {
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT1);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT1);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant1SolicitorOffline(caseData, TEST_CASE_ID);
+    }
+
+    @Test
     void shouldSendRequestForInformationResponseEmailToApplicant2() {
         CaseData caseData = caseData();
         caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
@@ -525,6 +789,52 @@ class NotificationDispatcherTest {
         notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
 
         verify(applicantNotification).sendToApplicant2(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationResponseLetterToOfflineApplicant2() {
+        CaseData caseData = caseData();
+        caseData.getApplicant2().setOffline(YES);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT2);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant2Offline(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationResponseEmailToApplicant2Solicitor() {
+        CaseData caseData = caseData();
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT2);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldSendRequestForInformationResponseLetterToOfflineApplicant2Solicitor() {
+        CaseData caseData = caseData();
+        caseData.getApplicant2().setOffline(YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getRequestForInformationList().getRequestForInformation().setRequestForInformationJointParties(APPLICANT2);
+        caseData.getRequestForInformationList().addRequestToList(caseData.getRequestForInformationList().getRequestForInformation());
+        RequestForInformationResponse requestForInformationResponse = new RequestForInformationResponse();
+        requestForInformationResponse.setValues(caseData, RequestForInformationResponseParties.APPLICANT2);
+        caseData.getRequestForInformationList().getLatestRequest().addResponseToList(requestForInformationResponse);
+
+        notificationDispatcher.sendRequestForInformationResponseNotification(applicantNotification, caseData, TEST_CASE_ID);
+
+        verify(applicantNotification).sendToApplicant2SolicitorOffline(caseData, TEST_CASE_ID);
     }
 
     @Test

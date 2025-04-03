@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -50,16 +50,14 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class NoticeOfProceedingSolicitorContent {
 
-    @Autowired
-    private HoldingPeriodService holdingPeriodService;
+    private final HoldingPeriodService holdingPeriodService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference, boolean isApplicantSolicitor) {
 
@@ -100,7 +98,9 @@ public class NoticeOfProceedingSolicitorContent {
         templateContent.put(APPLICANT_SOLICITOR_REGISTERED,
             isApplicantSolicitor ? applicant1Solicitor.hasOrgId() : applicant2Solicitor.hasOrgId());
         templateContent.put(SOLICITOR_NAME, isApplicantSolicitor ? applicant1Solicitor.getName() : applicant2Solicitor.getName());
-        templateContent.put(SOLICITOR_ADDRESS, isApplicantSolicitor ? applicant1Solicitor.getAddress() : applicant2Solicitor.getAddress());
+        templateContent.put(SOLICITOR_ADDRESS, isApplicantSolicitor
+            ? applicant1Solicitor.getFirmAndAddress()
+            : applicant2Solicitor.getFirmAndAddress());
 
         templateContent.put(
             SOLICITOR_REFERENCE,
@@ -139,8 +139,8 @@ public class NoticeOfProceedingSolicitorContent {
         }
 
         if (caseData.isJudicialSeparationCase()) {
-            templateContent.put(APPLICANT_2_SOLICITOR_ADDRESS, applicant2Solicitor.getAddress());
-            templateContent.put(APPLICANT_1_SOLICITOR_ADDRESS, applicant1Solicitor.getAddress());
+            templateContent.put(APPLICANT_2_SOLICITOR_ADDRESS, applicant2.getSolicitor().getFirmAndAddress());
+            templateContent.put(APPLICANT_1_SOLICITOR_ADDRESS, applicant1.getSolicitor().getFirmAndAddress());
             templateContent.put(IS_APP1_REPRESENTED, applicant1.isRepresented());
             templateContent.put(ADDRESS_BASED_OVERSEAS, !AddressUtil.isEnglandOrWales(applicant2.getAddress()));
         }

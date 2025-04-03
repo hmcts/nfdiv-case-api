@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor.notification;
 
 import com.microsoft.applicationinsights.web.dependencies.apachecommons.lang3.StringUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -31,13 +31,12 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SolicitorAppliedForConditionalOrderNotification implements ApplicantNotification {
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
     @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long caseId) {

@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
@@ -13,10 +13,10 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ResendConditionalOrderPronouncedNotification implements ApplicantNotification {
 
-    @Autowired
-    private ConditionalOrderPronouncedPrinter conditionalOrderPronouncedPrinter;
+    private final ConditionalOrderPronouncedPrinter conditionalOrderPronouncedPrinter;
 
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {

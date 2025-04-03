@@ -12,14 +12,20 @@ public final class DocumentConstants {
     public static final String RESPONDENT_ANSWERS_DOCUMENT_NAME = "respondentAnswers";
     public static final String RESPONDENT_ANSWERS_TEMPLATE_ID = "RESPONDENT_ANSWERS";
     public static final String RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID = "NFD_RESP_RESPONDED_DISPUTED";
+    public static final String RESPONDENT_RESPONDED_AWAITING_CO_DISPUTED_TEMPLATE_ID = "NFD_RESP_RESPONDED_AWAITING_CO_DISPUTED";
     public static final String RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID = "NFD_RESP_RESPONDED_UNDEFENDED";
+    public static final String RESPONDENT_RESPONDED_AWAITING_CO_UNDEFENDED_TEMPLATE_ID = "NFD_RESP_RESPONDED_AWAITING_CO_UNDEFENDED";
     public static final String NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED = "NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED";
     public static final String NFD_NOP_APP1_JS_SOLE_DISPUTED = "NFD_NOP_APP1_JS_SOLE_DISPUTED";
     public static final String NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED = "NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED";
     public static final String NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1_APP2_TEMPLATE_ID = "NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2";
+    public static final String NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP_INVITE_TEMPLATE_ID = "NFD_NOTICE_OF_CHANGE_INVITE_APP";
+    public static final String NFD_SOL_STOPPED_REP_NOTIFY_APP_TEMPLATE_ID = "NFD_SOL_STOPPED_REP_NOTIFY_APP";
+    public static final String NFD_SOL_STOPPED_REP_NOTIFY_APP_DOCUMENT_NAME = "Citizen Letter - Solicitor Stopped Representation";
     public static final String NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER_TEMPLATE_ID = "NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER";
     public static final String SOLICITOR_APPLIED_FOR_FINAL_ORDER_DOCUMENT_NAME = "Solicitor applied for final order";
     public static final String NFD_NOTICE_OF_CHANGE_CONFIRMATION_DOCUMENT_NAME = "Grant of representation";
+    public static final String NFD_NOTICE_OF_CHANGE_APP_INVITE_DOCUMENT_NAME = "Case invitation to Citizen";
     public static final String NFD_NOP_APP1_JS_SOLE_UNDISPUTED = "NFD_NOP_APP1_JS_SOLE_UNDISPUTED";
 
     public static final String PRONOUNCEMENT_LIST_TEMPLATE_ID = "BULK_CASE_PRONOUNCEMENT";
@@ -98,6 +104,8 @@ public final class DocumentConstants {
     public static final String CERTIFICATE_OF_SERVICE_TEMPLATE_ID = "CERTIFICATE_OF_SERVICE";
 
     public static final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID = "CERTIFICATE_OF_ENTITLEMENT";
+    public static final String CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT_TEMPLATE_ID =
+            "CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT";
     public static final String CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID =
         "CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION";
     public static final String CERTIFICATE_OF_ENTITLEMENT_NAME = "certificateOfEntitlement";
@@ -111,6 +119,7 @@ public final class DocumentConstants {
     public static final String CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER_TEMPLATE_ID
         = "CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER";
     public static final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME = "certificateOfEntitlementCoverLetter";
+    public static final String CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_LETTER_NAME = "certificateOfEntitlementDoNotAttendCourt";
 
     public static final String USER_ROLES = "user-roles";
     public static final String USER_ID = "user-id";
@@ -153,6 +162,8 @@ public final class DocumentConstants {
     public static final String AOS_OVERDUE_LETTER_DOCUMENT_NAME = "aosOverdueLetter";
     public static final String AOS_OVERDUE_TEMPLATE_ID = "NFD_RESP_NOT_RESPONDED";
     public static final String AOS_OVERDUE_JS_TEMPLATE_ID = "NFD_RESP_NOT_RESPONDED_JS";
+    public static final String RESPONDENT_DRAFT_AOS_STARTED_APPLICATION_TEMPLATE_ID = "RESPONDENT_DRAFT_AOS_STARTED_APPLICATION";
+    public static final String RESPONDENT_DRAFT_AOS_STARTED_DOCUMENT_NAME = "respondentDraftAosStarted";
 
     public static final String COVERSHEET_APPLICANT = "COVERSHEET_APPLICANT";
     public static final String COVERSHEET_APPLICANT2_SOLICITOR = "COVERSHEET_SOLICITOR";
@@ -189,8 +200,28 @@ public final class DocumentConstants {
     public static final String NOC_CITIZEN_LETTER_TEMPLATE_ID = "NOC_TO_SOLS_CITIZEN_LETTER";
     public static final String NOC_CITIZEN_LETTER_DOCUMENT_NAME = "Noc";
 
+    public static final String PAPER_APPLICATION_RECEIVED_TEMPLATE_ID = "NFD_APPLICANT_PAPERCASE_RECEIVED";
+
     public static final String APPLICANT1 = "applicant1";
     public static final String APPLICANT2 = "applicant2";
+
+    public static final String REQUEST_FOR_INFORMATION_LETTER_DOCUMENT_NAME = "RequestForInformationLetter";
+    public static final String REQUEST_FOR_INFORMATION_LETTER_TEMPLATE_ID = "REQUEST_FOR_INFORMATION_LETTER";
+    public static final String REQUEST_FOR_INFORMATION_RESPONSE_LETTER_DOCUMENT_NAME = "RequestForInformationResponseLetter";
+    public static final String REQUEST_FOR_INFORMATION_RESPONSE_LETTER_TEMPLATE_ID = "REQUEST_FOR_INFORMATION_RESPONSE_LETTER";
+    public static final String REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER_DOCUMENT_NAME = "RequestForInformationPartnerResponseLetter";
+    public static final String REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER_TEMPLATE_ID
+        = "REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER";
+    public static final String REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_DOCUMENT_NAME = "RequestForInformationSolicitorLetter";
+    public static final String REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_TEMPLATE_ID = "REQUEST_FOR_INFORMATION_SOLICITOR_LETTER";
+    public static final String REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER_DOCUMENT_NAME
+        = "RequestForInformationSolicitorResponseLetter";
+    public static final String REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER_TEMPLATE_ID
+        = "REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER";
+    public static final String REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER_DOCUMENT_NAME
+        = "RequestForInformationPartnerSolicitorResponseLetter";
+    public static final String REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER_TEMPLATE_ID
+        = "REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER";
 
     private DocumentConstants() {
     }
