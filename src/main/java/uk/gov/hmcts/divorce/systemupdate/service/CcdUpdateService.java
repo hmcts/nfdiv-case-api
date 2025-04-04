@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.systemupdate.service;
 
 import feign.FeignException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -33,6 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CcdUpdateService {
 
     private static final String DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY = "No Fault Divorce case submission event";
@@ -41,20 +42,15 @@ public class CcdUpdateService {
     private static final String SERVICE_ID_FIELD = "HMCTSServiceId";
     private static final String SET_OPERATION = "$set";
 
-    @Autowired
-    private CoreCaseDataApi coreCaseDataApi;
+    private final CoreCaseDataApi coreCaseDataApi;
 
-    @Autowired
-    private CcdCaseDataContentProvider ccdCaseDataContentProvider;
+    private final CcdCaseDataContentProvider ccdCaseDataContentProvider;
 
-    @Autowired
-    private CaseDetailsConverter caseDetailsConverter;
+    private final CaseDetailsConverter caseDetailsConverter;
 
-    @Autowired
-    private CaseDetailsUpdater caseDetailsUpdater;
+    private final CaseDetailsUpdater caseDetailsUpdater;
 
-    @Autowired
-    private BulkCaseDetailsUpdater bulkCaseDetailsUpdater;
+    private final BulkCaseDetailsUpdater bulkCaseDetailsUpdater;
 
     public void submitEvent(final Long caseId,
                             final String eventId,

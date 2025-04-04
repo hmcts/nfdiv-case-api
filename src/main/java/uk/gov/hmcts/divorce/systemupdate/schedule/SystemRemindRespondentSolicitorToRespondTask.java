@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -57,14 +56,12 @@ public class SystemRemindRespondentSolicitorToRespondTask implements Runnable {
 
     private final AuthTokenGenerator authTokenGenerator;
 
+    private final Clock clock;
+
+    private final ObjectMapper objectMapper;
+
     @Value("${respondent_solicitor.response_offset_days}")
     private int responseReminderOffsetDays;
-
-    @Autowired
-    private Clock clock;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Override
     public void run() {
