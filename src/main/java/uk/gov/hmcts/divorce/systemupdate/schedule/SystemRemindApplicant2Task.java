@@ -43,9 +43,9 @@ public class SystemRemindApplicant2Task implements Runnable {
 
     private final CcdUpdateService ccdUpdateService;
 
-    private final ObjectMapper objectMapper;
-
     private final IdamService idamService;
+
+    private final ObjectMapper objectMapper;
 
     private final AuthTokenGenerator authTokenGenerator;
 

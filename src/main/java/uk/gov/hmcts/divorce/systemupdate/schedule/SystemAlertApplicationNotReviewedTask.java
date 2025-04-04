@@ -36,11 +36,11 @@ public class SystemAlertApplicationNotReviewedTask implements Runnable {
 
     private static final String NOTIFICATION_FLAG = "overdueNotificationSent";
 
-    private final CcdSearchService ccdSearchService;
-
     private final CcdUpdateService ccdUpdateService;
 
     private final ObjectMapper objectMapper;
+
+    private final CcdSearchService ccdSearchService;
 
     private final IdamService idamService;
 
