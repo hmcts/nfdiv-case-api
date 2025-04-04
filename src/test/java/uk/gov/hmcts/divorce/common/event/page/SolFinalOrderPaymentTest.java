@@ -48,7 +48,7 @@ class SolFinalOrderPaymentTest {
         details.setId(TEST_CASE_ID);
 
         when(paymentSetupService.createFinalOrderFeeServiceRequest(
-            caseData, TEST_CASE_ID, null, orderSummary
+            caseData, TEST_CASE_ID,  orderSummary
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, beforeDetails);

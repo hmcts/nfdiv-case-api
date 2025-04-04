@@ -107,7 +107,7 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
         );
 
         String serviceRequest = paymentSetupService.createFinalOrderFeeServiceRequest(
-            data, caseId, data.getCitizenPaymentCallbackUrl(), orderSummary
+            data, caseId, orderSummary
         );
         finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequest);
 
