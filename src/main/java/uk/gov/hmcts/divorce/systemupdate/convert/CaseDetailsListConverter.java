@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.convert;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -14,10 +14,10 @@ import static java.util.stream.Collectors.toList;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseDetailsListConverter {
 
-    @Autowired
-    private CaseDetailsConverter caseDetailsConverter;
+    private final CaseDetailsConverter caseDetailsConverter;
 
     public List<CaseDetails<CaseData, State>> convertToListOfValidCaseDetails(
         final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseDetailsList) {
