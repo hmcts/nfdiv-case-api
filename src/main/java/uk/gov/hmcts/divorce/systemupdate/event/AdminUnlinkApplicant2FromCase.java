@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -21,10 +21,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class AdminUnlinkApplicant2FromCase implements CCDConfig<CaseData, State, UserRole> {
 
-    private final CcdAccessService ccdAccessService;
+    @Autowired
+    private CcdAccessService ccdAccessService;
 
     public static final String ADMIN_UNLINK_APPLICANT_2 = "admin-unlink-applicant2";
 

@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -44,18 +43,21 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class SystemRemindRespondentSolicitorToRespondTask implements Runnable {
 
     private static final String NOTIFICATION_SENT_FLAG = "respondentSolicitorReminderSent";
 
-    private final CcdSearchService ccdSearchService;
+    @Autowired
+    private CcdSearchService ccdSearchService;
 
-    private final CcdUpdateService ccdUpdateService;
+    @Autowired
+    private CcdUpdateService ccdUpdateService;
 
-    private final IdamService idamService;
+    @Autowired
+    private IdamService idamService;
 
-    private final AuthTokenGenerator authTokenGenerator;
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
 
     @Value("${respondent_solicitor.response_offset_days}")
     private int responseReminderOffsetDays;

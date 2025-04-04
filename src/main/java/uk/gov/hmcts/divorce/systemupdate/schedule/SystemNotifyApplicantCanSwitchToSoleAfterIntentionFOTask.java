@@ -1,9 +1,9 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -29,7 +29,6 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask implements Runnable {
 
     public static final String APP_1_NOTIFICATION_SENT_FLAG = "finalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention";
@@ -38,15 +37,20 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFOTask implements
     public static final String APP_1_INTENDED_TO_SWITCH_TO_SOLE = "doesApplicant1IntendToSwitchToSole";
     public static final String APP_2_INTENDED_TO_SWITCH_TO_SOLE = "doesApplicant2IntendToSwitchToSole";
 
-    private final ObjectMapper objectMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-    private final CcdUpdateService ccdUpdateService;
+    @Autowired
+    private CcdUpdateService ccdUpdateService;
 
-    private final IdamService idamService;
+    @Autowired
+    private IdamService idamService;
 
-    private final CcdSearchService ccdSearchService;
+    @Autowired
+    private CcdSearchService ccdSearchService;
 
-    private final AuthTokenGenerator authTokenGenerator;
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
 
 
     @Override

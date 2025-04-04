@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -20,17 +20,19 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
-@RequiredArgsConstructor
 public class SystemNotifyJointApplicantCanSwitchToSole implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE
         = "system-notify-joint-applicant-switch-to-sole";
 
-    private final Applicant1CanSwitchToSoleNotification applicant1CanSwitchToSoleNotification;
+    @Autowired
+    private Applicant1CanSwitchToSoleNotification applicant1CanSwitchToSoleNotification;
 
-    private final Applicant2CanSwitchToSoleNotification applicant2CanSwitchToSoleNotification;
+    @Autowired
+    private Applicant2CanSwitchToSoleNotification applicant2CanSwitchToSoleNotification;
 
-    private final NotificationDispatcher notificationDispatcher;
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

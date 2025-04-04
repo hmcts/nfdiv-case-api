@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
@@ -14,14 +14,16 @@ import static java.util.Comparator.comparing;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class SystemMigrateCasesTask implements Runnable {
 
-    private final IdamService idamService;
+    @Autowired
+    private IdamService idamService;
 
-    private final AuthTokenGenerator authTokenGenerator;
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
 
-    private final List<Migration> migrations;
+    @Autowired
+    private List<Migration> migrations;
 
     @Override
     public void run() {

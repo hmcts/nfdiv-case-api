@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
@@ -27,20 +27,23 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 /**
  * Any cases which are in Conditional Order Pronounced state and whose
  * final order eligible from date <= current date will be moved to AwaitingFinalOrder by this task.
  */
 public class SystemProgressCasesToAwaitingFinalOrderTask implements Runnable {
 
-    private final CcdUpdateService ccdUpdateService;
+    @Autowired
+    private CcdUpdateService ccdUpdateService;
 
-    private final CcdSearchService ccdSearchService;
+    @Autowired
+    private CcdSearchService ccdSearchService;
 
-    private final IdamService idamService;
+    @Autowired
+    private IdamService idamService;
 
-    private final AuthTokenGenerator authTokenGenerator;
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
 
     public static final String DATA_DATE_FINAL_ORDER_ELIGIBLE_FROM = "data.dateFinalOrderEligibleFrom";
     public static final String DATE_FINAL_ORDER_ELIGIBLE_FROM = "dateFinalOrderEligibleFrom";

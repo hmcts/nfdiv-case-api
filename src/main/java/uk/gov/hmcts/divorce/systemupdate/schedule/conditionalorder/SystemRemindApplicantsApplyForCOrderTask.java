@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -11,7 +12,6 @@ import uk.gov.hmcts.divorce.systemupdate.schedule.AbstractTaskEventSubmit;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.LocalDate;
@@ -36,24 +36,14 @@ public class SystemRemindApplicantsApplyForCOrderTask extends AbstractTaskEventS
         "SystemRemindApplicantsApplyForCOrderTask scheduled task stopped after search error";
     public static final String CCD_CONFLICT_ERROR =
         "SystemRemindApplicantsApplyForCOrderTask scheduled task stopping due to conflict with another running task";
+    @Autowired
+    private CcdSearchService ccdSearchService;
 
-    private final CcdSearchService ccdSearchService;
+    @Autowired
+    private IdamService idamService;
 
-    private final IdamService idamService;
-
-    private final AuthTokenGenerator authTokenGenerator;
-
-    public SystemRemindApplicantsApplyForCOrderTask(
-        CcdSearchService ccdSearchService,
-        IdamService idamService,
-        AuthTokenGenerator authTokenGenerator,
-        CcdUpdateService ccdUpdateService
-    ) {
-        super(ccdUpdateService);
-        this.ccdSearchService = ccdSearchService;
-        this.idamService = idamService;
-        this.authTokenGenerator = authTokenGenerator;
-    }
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
 
     @Value("${submit_co.reminder_offset_days}")
     private int submitCOrderReminderOffsetDays;

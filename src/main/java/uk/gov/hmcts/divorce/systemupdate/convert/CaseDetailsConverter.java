@@ -2,7 +2,7 @@ package uk.gov.hmcts.divorce.systemupdate.convert;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
@@ -11,10 +11,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 @Component
-@RequiredArgsConstructor
 public class CaseDetailsConverter {
 
-    private final ObjectMapper objectMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public CaseDetails convertToReformModelFromCaseDetails(final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails) {
         return objectMapper.convertValue(caseDetails, CaseDetails.class);

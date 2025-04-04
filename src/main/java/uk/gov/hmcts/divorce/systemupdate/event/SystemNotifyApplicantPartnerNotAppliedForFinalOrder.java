@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -20,14 +20,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
-@RequiredArgsConstructor
 public class SystemNotifyApplicantPartnerNotAppliedForFinalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_PARTNER_NOT_APPLIED_FOR_FINAL_ORDER = "system-notify-applicant-partner-not-applied-final-order";
 
-    private final NotificationDispatcher notificationDispatcher;
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
-    private final PartnerNotAppliedForFinalOrderNotification partnerNotAppliedForFinalOrderNotification;
+    @Autowired
+    private PartnerNotAppliedForFinalOrderNotification partnerNotAppliedForFinalOrderNotification;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

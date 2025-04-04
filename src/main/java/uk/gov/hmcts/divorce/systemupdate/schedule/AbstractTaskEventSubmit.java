@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
@@ -9,13 +9,13 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public abstract class AbstractTaskEventSubmit implements Runnable {
 
     private static final String SUBMIT_EVENT_ERROR = "Submit event failed for case(id={}), continuing to next case";
     private static final String DESERIALIZATION_ERROR = "Deserialization failed for case(id={}), continuing to next case";
 
-    private final CcdUpdateService ccdUpdateService;
+    @Autowired
+    private CcdUpdateService ccdUpdateService;
 
     public abstract void run();
 

@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -25,21 +25,25 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 /**
  * Any cases that were issued >= 20 weeks ago AND are in the Holding state will be moved to AwaitingConditionalOrder by this task.
  */
 public class SystemProgressHeldCasesTask implements Runnable {
 
-    private final HoldingPeriodService holdingPeriodService;
+    @Autowired
+    private HoldingPeriodService holdingPeriodService;
 
-    private final CcdUpdateService ccdUpdateService;
+    @Autowired
+    private CcdUpdateService ccdUpdateService;
 
-    private final CcdSearchService ccdSearchService;
+    @Autowired
+    private CcdSearchService ccdSearchService;
 
-    private final IdamService idamService;
+    @Autowired
+    private IdamService idamService;
 
-    private final AuthTokenGenerator authTokenGenerator;
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
 
     @Override
     public void run() {

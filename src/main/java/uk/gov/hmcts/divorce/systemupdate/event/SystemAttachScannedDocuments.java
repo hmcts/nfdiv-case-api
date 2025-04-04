@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -42,10 +42,10 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWER
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, UserRole> {
 
-    private final Clock clock;
+    @Autowired
+    private Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

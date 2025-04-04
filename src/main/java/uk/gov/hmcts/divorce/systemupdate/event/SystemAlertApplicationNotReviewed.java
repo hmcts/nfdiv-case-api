@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -18,14 +18,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
-@RequiredArgsConstructor
 public class SystemAlertApplicationNotReviewed implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_APPLICATION_NOT_REVIEWED = "system-application-not-reviewed";
 
-    private final JointApplicationNotReviewedNotification jointApplicationNotReviewedNotification;
+    @Autowired
+    private JointApplicationNotReviewedNotification jointApplicationNotReviewedNotification;
 
-    private final NotificationDispatcher notificationDispatcher;
+    @Autowired
+    private NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

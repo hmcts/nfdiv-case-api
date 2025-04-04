@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -29,20 +29,23 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 /*
   As a system, I want to notify the respondent that they can apply for the Final Order IF the applicant hasn't
   applied after 3 months so that the case can be progressed
 */
 public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
 
-    private final CcdUpdateService ccdUpdateService;
+    @Autowired
+    private CcdUpdateService ccdUpdateService;
 
-    private final CcdSearchService ccdSearchService;
+    @Autowired
+    private CcdSearchService ccdSearchService;
 
-    private final IdamService idamService;
+    @Autowired
+    private IdamService idamService;
 
-    private final AuthTokenGenerator authTokenGenerator;
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
 
     public static final String APPLICATION_TYPE = "applicationType";
     public static final String SOLE_APPLICATION = "soleApplication";

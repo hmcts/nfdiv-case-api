@@ -2,8 +2,8 @@ package uk.gov.hmcts.divorce.systemupdate.schedule.migration.task;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -14,10 +14,10 @@ import java.util.Map;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class SetFailedMigrationVersionToZero implements CaseTask {
 
-    private final ObjectMapper objectMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public static final int HIGHEST_PRIORITY = 0;
 

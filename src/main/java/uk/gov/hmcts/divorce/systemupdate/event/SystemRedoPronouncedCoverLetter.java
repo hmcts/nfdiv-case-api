@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -27,14 +27,15 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class SystemRedoPronouncedCoverLetter implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_REDO_PRONOUNCED_COVER_LETTER = "system-redo-pronounced-letter";
 
-    private final RegenerateConditionalOrderPronouncedCoverLetterOffline regenerateCoverLettersOffline;
+    @Autowired
+    private RegenerateConditionalOrderPronouncedCoverLetterOffline regenerateCoverLettersOffline;
 
-    private final SendRegeneratedCOPronouncedCoverLetters sendRegeneratedCoverLetters;
+    @Autowired
+    private SendRegeneratedCOPronouncedCoverLetters sendRegeneratedCoverLetters;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.bulkaction.service.CasePronouncementService;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -14,16 +14,19 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class SystemProcessFailedPronouncedCasesTask implements Runnable {
 
-    private final CcdSearchService ccdSearchService;
+    @Autowired
+    private CcdSearchService ccdSearchService;
 
-    private final IdamService idamService;
+    @Autowired
+    private IdamService idamService;
 
-    private final AuthTokenGenerator authTokenGenerator;
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
 
-    private final CasePronouncementService casePronouncementService;
+    @Autowired
+    private CasePronouncementService casePronouncementService;
 
     @Override
     public void run() {

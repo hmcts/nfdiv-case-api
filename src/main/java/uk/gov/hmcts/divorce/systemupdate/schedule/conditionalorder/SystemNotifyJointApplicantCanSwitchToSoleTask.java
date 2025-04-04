@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -13,7 +14,6 @@ import uk.gov.hmcts.divorce.systemupdate.schedule.AbstractTaskEventSubmit;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
@@ -38,27 +38,17 @@ public class SystemNotifyJointApplicantCanSwitchToSoleTask extends AbstractTaskE
     public static final String CCD_CONFLICT_ERROR =
         "SystemNotifyJointApplicantCanSwitchToSoleTask scheduled task stopping due to conflict with another running task";
 
-    private final CcdSearchService ccdSearchService;
+    @Autowired
+    private CcdSearchService ccdSearchService;
 
-    private final IdamService idamService;
+    @Autowired
+    private IdamService idamService;
 
-    private final AuthTokenGenerator authTokenGenerator;
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
 
-    private final ObjectMapper objectMapper;
-
-    public SystemNotifyJointApplicantCanSwitchToSoleTask(
-        CcdSearchService ccdSearchService,
-        IdamService idamService,
-        AuthTokenGenerator authTokenGenerator,
-        ObjectMapper objectMapper,
-        CcdUpdateService ccdUpdateService
-    ) {
-        super(ccdUpdateService);
-        this.ccdSearchService = ccdSearchService;
-        this.idamService = idamService;
-        this.authTokenGenerator = authTokenGenerator;
-        this.objectMapper = objectMapper;
-    }
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Value("${submit_co.reminder_offset_days}")
     private int submitCOrderReminderOffsetDays;
