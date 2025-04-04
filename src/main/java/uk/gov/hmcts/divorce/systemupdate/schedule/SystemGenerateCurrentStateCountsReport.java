@@ -1,9 +1,9 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import com.google.common.collect.ImmutableList;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.caseworker.service.notification.StateReportNotification;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -32,19 +32,16 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SystemGenerateCurrentStateCountsReport implements Runnable {
     public static final String REPORT_CSV = "Report.csv";
-    @Autowired
-    private CcdSearchService ccdSearchService;
+    private final CcdSearchService ccdSearchService;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private StateReportNotification reportNotificationService;
+    private final StateReportNotification reportNotificationService;
 
     private static final String ROW_HEADER = "State,Last State Modified Date,Count";
     private static final String ROW_DELIMITER = "\n";
