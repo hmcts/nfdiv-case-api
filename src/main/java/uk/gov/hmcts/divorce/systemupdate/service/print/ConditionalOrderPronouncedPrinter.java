@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.service.print;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -21,12 +21,12 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ConditionalOrderPronouncedPrinter {
 
     public static final String LETTER_TYPE_CO_PRONOUNCED = "conditional-order-pronounced";
 
-    @Autowired
-    private BulkPrintService bulkPrintService;
+    private final BulkPrintService bulkPrintService;
 
     public void sendLetter(final CaseData caseData,
                            final Long caseId,

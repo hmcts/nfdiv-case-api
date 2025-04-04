@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkCaseRetiredFields;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -21,25 +21,20 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateBulkCase.SYST
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SystemMigrateBulkCasesTask implements Runnable {
 
-    @Autowired
-    private CcdSearchService ccdSearchService;
+    private final CcdSearchService ccdSearchService;
 
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
+    private final CcdUpdateService ccdUpdateService;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private MigrateBulkCaseRetiredFields migrateBulkCaseRetiredFields;
+    private final MigrateBulkCaseRetiredFields migrateBulkCaseRetiredFields;
 
-    @Autowired
-    private SetFailedBulkCaseMigrationVersionToZero setFailedBulkCaseMigrationVersionToZero;
+    private final SetFailedBulkCaseMigrationVersionToZero setFailedBulkCaseMigrationVersionToZero;
 
     @Override
     public void run() {
