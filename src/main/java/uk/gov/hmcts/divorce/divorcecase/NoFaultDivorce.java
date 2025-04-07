@@ -42,7 +42,7 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.omitHistoryForRoles(APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR);
 
         // to shutter the service within xui uncomment this line
-        // configBuilder.shutterService();
+        configBuilder.shutterService();
         log.info("Building definition for " + getenv().getOrDefault("ENVIRONMENT", ""));
     }
 }
