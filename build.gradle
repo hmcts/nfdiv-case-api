@@ -250,7 +250,7 @@ ext.libraries = [
 dependencies {
 // uncomment for local version
 //  implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
-  implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '8.0'
+  implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '8.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.24.3'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.24.3'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.24.3'
