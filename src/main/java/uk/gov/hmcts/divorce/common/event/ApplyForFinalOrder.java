@@ -46,6 +46,11 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
 
     public static final String APPLY_FOR_FINAL_ORDER = "Apply for final order";
 
+    private static final String ALWAYS_HIDE = "applicant1FinalOrderLateExplanation=\"ALWAYS_HIDE\"";
+    private static final String APPLY_FOR_FINAL_ORDER_SOL_GUIDE = "Refer to the <a href=\"https://www.gov.uk/government/publications"
+            + "/myhmcts-how-to-make-follow-up-applications-for-a-divorce-or-dissolution/29fa640d-ebf3-49c8-9872-2ff68039ad8d\""
+            + " target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>";
+
     private final Applicant1AppliedForFinalOrderNotification applicant1AppliedForFinalOrderNotification;
 
     private final FinalOrderRequestedNotification finalOrderRequestedNotification;
@@ -64,6 +69,10 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
+        pageBuilder.page("applyForFinalOrder")
+                .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
+                .label("applyForFinalOrderSolGuide", APPLY_FOR_FINAL_ORDER_SOL_GUIDE);
+
         pages.forEach(page -> page.addTo(pageBuilder));
     }
 
