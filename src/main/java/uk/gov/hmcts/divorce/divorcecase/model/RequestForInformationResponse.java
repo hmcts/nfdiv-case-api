@@ -106,6 +106,37 @@ public class RequestForInformationResponse {
     )
     private YesOrNo rfiOfflineResponseNotificationsRequested;
 
+    private RequestForInformationResponseParties getOfflineResponseParty(CaseData caseData,
+                                                                         RequestForInformationOfflineResponseDraft offlineDraft
+    ) {
+        RequestForInformationResponseParties responseParty;
+        if (caseData.getApplicationType().isSole()) {
+            switch (offlineDraft.getRfiOfflineSoleResponseParties()) {
+                case APPLICANT -> responseParty = APPLICANT1;
+                case APPLICANTSOLICITOR -> responseParty = APPLICANT1SOLICITOR;
+                default -> responseParty = OTHER;
+            }
+        } else {
+            switch (offlineDraft.getRfiOfflineJointResponseParties()) {
+                case APPLICANT1 -> responseParty = APPLICANT1;
+                case APPLICANT1SOLICITOR -> responseParty = APPLICANT1SOLICITOR;
+                case APPLICANT2 -> responseParty = APPLICANT2;
+                case APPLICANT2SOLICITOR -> responseParty = APPLICANT2SOLICITOR;
+                default -> responseParty = OTHER;
+            }
+        }
+        return responseParty;
+    }
+
+    @JsonIgnore
+    private void setDraftValues(RequestForInformationResponseDraft draft) {
+        this.setRequestForInformationResponseDetails(draft.getRfiDraftResponseDetails());
+        this.setRequestForInformationResponseDocs(draft.getRfiDraftResponseDocs());
+        if (YES.equals(draft.getRfiDraftResponseCannotUploadDocs())) {
+            this.setRequestForInformationResponseCannotUploadDocs(YES);
+        }
+    }
+
     @JsonIgnore
     public void setValues(CaseData caseData, RequestForInformationResponseParties party) {
         final Applicant applicant = party.equals(APPLICANT1) || party.equals(APPLICANT1SOLICITOR)
@@ -170,38 +201,14 @@ public class RequestForInformationResponse {
     }
 
     @JsonIgnore
-    private void setDraftValues(RequestForInformationResponseDraft draft) {
-        this.setRequestForInformationResponseDetails(draft.getRfiDraftResponseDetails());
-        this.setRequestForInformationResponseDocs(draft.getRfiDraftResponseDocs());
-        if (YES.equals(draft.getRfiDraftResponseCannotUploadDocs())) {
-            this.setRequestForInformationResponseCannotUploadDocs(YES);
-        }
-    }
-
-    private RequestForInformationResponseParties getOfflineResponseParty(CaseData caseData,
-                                                                         RequestForInformationOfflineResponseDraft offlineDraft
-    ) {
-        RequestForInformationResponseParties responseParty;
-        if (caseData.getApplicationType().isSole()) {
-            switch (offlineDraft.getRfiOfflineSoleResponseParties()) {
-                case APPLICANT -> responseParty = APPLICANT1;
-                case APPLICANTSOLICITOR -> responseParty = APPLICANT1SOLICITOR;
-                default -> responseParty = OTHER;
-            }
-        } else {
-            switch (offlineDraft.getRfiOfflineJointResponseParties()) {
-                case APPLICANT1 -> responseParty = APPLICANT1;
-                case APPLICANT1SOLICITOR -> responseParty = APPLICANT1SOLICITOR;
-                case APPLICANT2 -> responseParty = APPLICANT2;
-                case APPLICANT2SOLICITOR -> responseParty = APPLICANT2SOLICITOR;
-                default -> responseParty = OTHER;
-            }
-        }
-        return responseParty;
+    public boolean isOffline() {
+        return YES.equals(this.getRequestForInformationResponseOffline());
     }
 
     @JsonIgnore
-    public boolean isOffline() {
-        return YES.equals(this.getRequestForInformationResponseOffline());
+    public boolean areAllDocsUploaded() {
+        return this.isOffline()
+            ? YES.equals(this.getRfiOfflineResponseAllDocumentsUploaded())
+            : !YES.equals(this.getRequestForInformationResponseCannotUploadDocs());
     }
 }

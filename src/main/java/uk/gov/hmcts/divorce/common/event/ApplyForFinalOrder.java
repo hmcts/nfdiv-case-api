@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -39,26 +39,27 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String FINAL_ORDER_REQUESTED = "final-order-requested";
 
     public static final String APPLY_FOR_FINAL_ORDER = "Apply for final order";
 
-    @Autowired
-    private Applicant1AppliedForFinalOrderNotification applicant1AppliedForFinalOrderNotification;
+    private static final String ALWAYS_HIDE = "applicant1FinalOrderLateExplanation=\"ALWAYS_HIDE\"";
+    private static final String APPLY_FOR_FINAL_ORDER_SOL_GUIDE = "Refer to the <a href=\"https://www.gov.uk/government/publications"
+            + "/myhmcts-how-to-make-follow-up-applications-for-a-divorce-or-dissolution/29fa640d-ebf3-49c8-9872-2ff68039ad8d\""
+            + " target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>";
 
-    @Autowired
-    private FinalOrderRequestedNotification finalOrderRequestedNotification;
+    private final Applicant1AppliedForFinalOrderNotification applicant1AppliedForFinalOrderNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final FinalOrderRequestedNotification finalOrderRequestedNotification;
 
-    @Autowired
-    private ApplyForFinalOrderService applyForFinalOrderService;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private GeneralReferralService generalReferralService;
+    private final ApplyForFinalOrderService applyForFinalOrderService;
+
+    private final GeneralReferralService generalReferralService;
 
     private static final List<CcdPageConfiguration> pages = List.of(
         new ApplyForFinalOrderDetails(),
@@ -68,6 +69,10 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
+        pageBuilder.page("applyForFinalOrder")
+                .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
+                .label("applyForFinalOrderSolGuide", APPLY_FOR_FINAL_ORDER_SOL_GUIDE);
+
         pages.forEach(page -> page.addTo(pageBuilder));
     }
 
