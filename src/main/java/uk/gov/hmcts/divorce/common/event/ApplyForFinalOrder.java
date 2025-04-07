@@ -51,7 +51,6 @@ public class ApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> 
             + "/myhmcts-how-to-make-follow-up-applications-for-a-divorce-or-dissolution/29fa640d-ebf3-49c8-9872-2ff68039ad8d\""
             + " target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>";
 
-    private Applicant1AppliedForFinalOrderNotification applicant1AppliedForFinalOrderNotification;
     private final Applicant1AppliedForFinalOrderNotification applicant1AppliedForFinalOrderNotification;
 
     private final FinalOrderRequestedNotification finalOrderRequestedNotification;
