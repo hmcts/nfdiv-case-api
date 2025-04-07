@@ -19,7 +19,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_APPLICANT1_DISPUTE_ANSWER_RECEIVED;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -39,10 +39,12 @@ public class DisputedApplicationAnswerReceivedNotification implements ApplicantN
             log.info("Notifying Applicant1's Solicitor that an Answer has been received from the respondent");
 
             Applicant applicant = caseData.getApplicant1();
+            var dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
+
             var templateVars = commonContent.basicTemplateVars(caseData, id, applicant.getLanguagePreference());
             templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
             templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
-            templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+            templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(dateTimeFormatter));
             templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
             var solicitor = caseData.getApplicant1().getSolicitor();

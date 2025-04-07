@@ -34,7 +34,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED_AWAITING_CO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED_AWAITING_CO;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
@@ -129,6 +128,7 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
     }
 
     private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Applicant applicant) {
+        var dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
         var templateVars = commonContent.basicTemplateVars(caseData, id, applicant.getLanguagePreference());
 
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
@@ -137,8 +137,8 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
 
         templateVars.put(ISSUE_DATE_PLUS_37_DAYS, "");
         templateVars.put(ISSUE_DATE_PLUS_141_DAYS,
-            caseData.getApplication().getIssueDate().plusDays(holdingOffsetDays).format(DATE_TIME_FORMATTER));
-        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+            caseData.getApplication().getIssueDate().plusDays(holdingOffsetDays).format(dateTimeFormatter));
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(dateTimeFormatter));
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(
             SOLICITOR_REFERENCE,
