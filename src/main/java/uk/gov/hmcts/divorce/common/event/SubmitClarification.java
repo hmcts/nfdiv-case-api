@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SubmitClarification implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SUBMIT_CLARIFICATION = "submit-clarification";
@@ -44,17 +45,13 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
             + ".uk/government/publications/myhmcts-how-to-make-follow-up-applications-for-a-divorce-or-dissolution/respond-"
             + "to-a-conditional-order-refusal\" target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>";
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private PostInformationToCourtNotification postInformationToCourtNotification;
+    private final PostInformationToCourtNotification postInformationToCourtNotification;
 
-    @Autowired
-    private ClarificationSubmittedNotification clarificationSubmittedNotification;
+    private final ClarificationSubmittedNotification clarificationSubmittedNotification;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

@@ -61,6 +61,7 @@ public class PaymentService {
     public static final String KEYWORD_DEEMED = "GeneralAppWithoutNotice";
     public static final String KEYWORD_DIVORCE = "DivorceCivPart";
     public static final String KEYWORD_DIVORCE_AMEND_PETITION = "DivorceAmendPetition";
+    public static final String KEYWORD_DIVORCE_ANSWERS = "DivAnswerReceived";
     public static final String KEYWORD_DEF = "DEF";
     public static final String KEYWORD_NOTICE = "GAOnNotice";
     public static final String KEYWORD_WITHOUT_NOTICE = "GeneralAppWithoutNotice";

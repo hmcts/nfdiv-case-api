@@ -67,6 +67,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("conditionalOrderGranted")
     CONDITIONAL_ORDER_GRANTED("Conditional Order Granted", false),
 
+    @JsonProperty("conditionalOrderGrantedDoNotAttendCourt")
+    CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT("Certificate of entitlement do not attend court", false),
+
     @JsonProperty("coGrantedCoversheet")
     CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1("Applicant/Applicant 1 Conditional order granted cover letter", true),
 
@@ -254,6 +257,12 @@ public enum DocumentType implements HasLabel {
 
     @JsonProperty("grantOfRepresentation")
     GRANT_OF_REPRESENTATION("NoC grant of representation letter", true),
+
+    @JsonProperty("requestForInformation")
+    REQUEST_FOR_INFORMATION("Request for information", true),
+
+    @JsonProperty("requestForInformationResponse")
+    REQUEST_FOR_INFORMATION_RESPONSE("Request for information response", true),
 
     @JsonProperty("requestForInformationResponseDoc")
     REQUEST_FOR_INFORMATION_RESPONSE_DOC("RFI response document", true),
