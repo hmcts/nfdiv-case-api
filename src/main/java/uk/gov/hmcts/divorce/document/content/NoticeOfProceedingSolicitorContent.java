@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -50,16 +50,14 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class NoticeOfProceedingSolicitorContent {
 
-    @Autowired
-    private HoldingPeriodService holdingPeriodService;
+    private final HoldingPeriodService holdingPeriodService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference, boolean isApplicantSolicitor) {
 

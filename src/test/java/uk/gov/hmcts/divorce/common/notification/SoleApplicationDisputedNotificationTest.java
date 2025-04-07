@@ -12,12 +12,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 
 import java.time.LocalDate;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -67,13 +69,14 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForAosSu
 class SoleApplicationDisputedNotificationTest {
 
     private static final int DISPUTE_DUE_DATE_OFFSET_DAYS = 37;
-    private static final String DISPUTE_FEE = "270";
+    private static final String DISPUTE_FEE = "£245.00";
     private static final String ISSUE_DATE_PLUS_37_DAYS = "issue date plus 37 days";
     private static final String ISSUE_DATE_PLUS_141_DAYS = "issue date plus 141 days";
 
     @Mock
     private NotificationService notificationService;
-
+    @Mock
+    private PaymentService paymentService;
     @Mock
     private CommonContent commonContent;
 
@@ -221,6 +224,7 @@ class SoleApplicationDisputedNotificationTest {
 
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
+        when(paymentService.getServiceCost(anyString(), anyString(), anyString())).thenReturn(245.00);
 
         soleApplicationDisputedNotification.sendToApplicant2(caseDetails);
 
@@ -233,7 +237,8 @@ class SoleApplicationDisputedNotificationTest {
                     data.getApplication().getIssueDate()
                         .plusDays(DISPUTE_DUE_DATE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
-                hasEntry(IS_DISSOLUTION, NO)
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(DISPUTED_AOS_FEE,DISPUTE_FEE)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -254,6 +259,7 @@ class SoleApplicationDisputedNotificationTest {
 
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
+        when(paymentService.getServiceCost(anyString(), anyString(), anyString())).thenReturn(245.00);
 
         soleApplicationDisputedNotification.sendToApplicant2(caseDetails);
 
@@ -266,7 +272,8 @@ class SoleApplicationDisputedNotificationTest {
                     data.getApplication().getIssueDate()
                         .plusDays(DISPUTE_DUE_DATE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
-                hasEntry(IS_DISSOLUTION, NO)
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(DISPUTED_AOS_FEE,DISPUTE_FEE)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -292,6 +299,7 @@ class SoleApplicationDisputedNotificationTest {
 
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(templateVars);
+        when(paymentService.getServiceCost(anyString(), anyString(), anyString())).thenReturn(245.00);
 
         soleApplicationDisputedNotification.sendToApplicant2(caseDetails);
 
@@ -305,7 +313,8 @@ class SoleApplicationDisputedNotificationTest {
                         .plusDays(DISPUTE_DUE_DATE_OFFSET_DAYS).format(WELSH_DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
-                hasEntry(PARTNER, "gŵr")
+                hasEntry(PARTNER, "gŵr"),
+                hasEntry(DISPUTED_AOS_FEE,DISPUTE_FEE)
             )),
             eq(WELSH),
             eq(TEST_CASE_ID)
@@ -331,6 +340,7 @@ class SoleApplicationDisputedNotificationTest {
 
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(templateVars);
+        when(paymentService.getServiceCost(anyString(), anyString(), anyString())).thenReturn(245.00);
 
         soleApplicationDisputedNotification.sendToApplicant2(caseDetails);
 
@@ -344,7 +354,8 @@ class SoleApplicationDisputedNotificationTest {
                         .plusDays(DISPUTE_DUE_DATE_OFFSET_DAYS).format(WELSH_DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
-                hasEntry(PARTNER, "gŵr")
+                hasEntry(PARTNER, "gŵr"),
+                hasEntry(DISPUTED_AOS_FEE,DISPUTE_FEE)
             )),
             eq(WELSH),
             eq(TEST_CASE_ID)
@@ -362,12 +373,12 @@ class SoleApplicationDisputedNotificationTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setState(Holding);
         ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
-        ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputedAOSFee", DISPUTE_FEE);
         data.getApplicant2().setEmail(null);
 
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(paymentService.getServiceCost(anyString(), anyString(), anyString())).thenReturn(245.00);
 
         soleApplicationDisputedNotification.sendToApplicant2(caseDetails);
 
@@ -399,12 +410,12 @@ class SoleApplicationDisputedNotificationTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setState(AwaitingConditionalOrder);
         ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
-        ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputedAOSFee", DISPUTE_FEE);
         data.getApplicant2().setEmail(null);
 
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1())).thenReturn(templateVars);
+        when(paymentService.getServiceCost(anyString(), anyString(), anyString())).thenReturn(245.00);
 
         soleApplicationDisputedNotification.sendToApplicant2(caseDetails);
 

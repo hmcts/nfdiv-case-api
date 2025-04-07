@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.document.content;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -29,6 +29,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
+@RequiredArgsConstructor
 public class BailiffNotApprovedOrderContent {
 
     @Value("${court.locations.serviceCentre.email}")
@@ -37,11 +38,9 @@ public class BailiffNotApprovedOrderContent {
     @Value("${court.locations.serviceCentre.phoneNumber}")
     private String phoneNumber;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 

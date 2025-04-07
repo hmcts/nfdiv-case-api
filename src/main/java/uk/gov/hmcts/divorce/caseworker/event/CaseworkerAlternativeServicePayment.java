@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -38,10 +38,10 @@ import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, State, UserRole> {
 
-    @Autowired
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
 
     public static final String CASEWORKER_SERVICE_PAYMENT = "caseworker-service-payment";
 

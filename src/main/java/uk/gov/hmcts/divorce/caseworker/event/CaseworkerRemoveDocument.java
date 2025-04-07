@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentRemovalService;
@@ -20,8 +21,10 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -29,10 +32,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, UserRole> {
 
-    @Autowired
-    private DocumentRemovalService documentRemovalService;
+    private final DocumentRemovalService documentRemovalService;
 
     public static final String CASEWORKER_REMOVE_DOCUMENT = "caseworker-remove-document";
 
@@ -44,6 +47,7 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
             .name("Remove documents")
             .description("Remove uploaded and generated documents")
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER))
@@ -55,7 +59,19 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
                 .optional(CaseDocuments::getDocumentsGenerated)
                 .optional(CaseDocuments::getDocumentsUploaded)
                 .optional(CaseDocuments::getScannedDocuments)
+            .done()
+            .complex(CaseData::getRequestForInformationList)
+                .optional(RequestForInformationList::getRfiOnlineResponseDocuments)
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        details.getData().getRequestForInformationList().buildResponseDocList();
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -63,6 +79,8 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
 
         final var beforeCaseData = beforeDetails.getData();
         final var currentCaseData = details.getData();
+
+        beforeCaseData.getRequestForInformationList().buildResponseDocList();
 
         handleDeletionOfGeneralApplicationDocuments(beforeCaseData, currentCaseData);
         handleDeletionOfDivorceDocuments(beforeCaseData, currentCaseData);
@@ -96,19 +114,34 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
             currentCaseData.getDocuments().getDocumentsUploaded()
         ));
 
+        divorceDocsToRemove.addAll(findDocumentsForRemoval(
+            beforeCaseData.getRequestForInformationList().getRfiOnlineResponseDocuments(),
+            currentCaseData.getRequestForInformationList().getRfiOnlineResponseDocuments()
+        ));
+
         if (!divorceDocsToRemove.isEmpty()) {
             documentRemovalService.deleteDocument(divorceDocsToRemove);
+            currentCaseData.getRequestForInformationList().deleteRfiResponseDocuments(divorceDocsToRemove);
         }
+
+        currentCaseData.getRequestForInformationList().clearResponseDocList();
     }
 
     private List<ListValue<DivorceDocument>> findDocumentsForRemoval(final List<ListValue<DivorceDocument>> beforeDocs,
-                                                                     final List<ListValue<DivorceDocument>> currentDocs) {
+                                                                              final List<ListValue<DivorceDocument>> currentDocs) {
 
         List<ListValue<DivorceDocument>> documentsToRemove = new ArrayList<>();
 
         if (beforeDocs != null && currentDocs != null) {
             beforeDocs.forEach(document -> {
-                if (!currentDocs.contains(document)) {
+                DivorceDocument doc = document.getValue();
+                Optional<ListValue<DivorceDocument>> rfiResponseDoc =
+                    emptyIfNull(currentDocs)
+                        .stream()
+                        .filter(rfiDoc -> rfiDoc.getValue().equals(doc))
+                        .findFirst();
+
+                if (rfiResponseDoc.isEmpty()) {
                     documentsToRemove.add(document);
                 }
             });
