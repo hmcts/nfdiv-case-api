@@ -14,7 +14,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NO
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_PLUS_14_DAYS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
