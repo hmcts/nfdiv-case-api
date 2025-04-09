@@ -88,6 +88,21 @@ class SolicitorUpdateApplicationTest {
     }
 
     @Test
+    void shouldHandleNullAddresses() {
+        final var caseData = caseData();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+        details.setCreatedDate(LOCAL_DATE_TIME);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorUpdateApplication.aboutToStart(details);
+
+        assertThat(response.getData().getApplicant1().getNonConfidentialAddress()).isNull();
+        assertThat(response.getData().getApplicant2().getNonConfidentialAddress()).isNull();
+    }
+
+    @Test
     void shouldCallSolicitorUpdateApplicationAndReturnExpectedCaseData() {
 
         final var caseData = caseData();
