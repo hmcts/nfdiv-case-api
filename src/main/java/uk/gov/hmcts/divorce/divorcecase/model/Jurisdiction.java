@@ -82,7 +82,8 @@ public class Jurisdiction {
     @CCD(
         label = "Legal connections",
         hint = "Tick all the reasons that apply:",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private Set<JurisdictionConnections> connections;
 

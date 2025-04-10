@@ -39,7 +39,8 @@ public class ConditionalOrderQuestions {
 
     @CCD(
         label = "Additional comments",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String solicitorAdditionalComments;
 
@@ -78,20 +79,23 @@ public class ConditionalOrderQuestions {
 
     @CCD(
         label = "Provide details of any other information that needs updating.",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String reasonInformationNotCorrect;
 
     @CCD(
         label = "Provide details of any other information that needs updating.(Translated)",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String reasonInformationNotCorrectTranslated;
 
     @CCD(
         label = "Translated To?",
         typeOverride = FixedRadioList,
-        typeParameterOverride = "TranslatedToLanguage"
+        typeParameterOverride = "TranslatedToLanguage",
+        searchable = false
     )
     private TranslatedToLanguage reasonInformationNotCorrectTranslatedTo;
 
@@ -123,7 +127,8 @@ public class ConditionalOrderQuestions {
     private YesOrNo enableSolicitorSwitchToSoleCo;
 
     @CCD(
-        label = " "
+        label = " ",
+        searchable = false
     )
     private Set<ConfirmSwitchToSole> confirmSwitchToSole;
 

@@ -113,7 +113,10 @@ public class CaseData {
 
     @JsonUnwrapped(prefix = "labelContent")
     @Builder.Default
-    @CCD(access = {DefaultAccess.class})
+    @CCD(
+        access = {DefaultAccess.class},
+        searchable = false
+    )
     private LabelContent labelContent = new LabelContent();
 
     @JsonUnwrapped(prefix = "applicant1")
@@ -147,7 +150,10 @@ public class CaseData {
     @CCD(access = {DefaultAccess.class})
     private ConditionalOrder conditionalOrder = new ConditionalOrder();
 
-    @CCD(access = {DefaultAccess.class, Applicant2Access.class})
+    @CCD(
+        access = {DefaultAccess.class, Applicant2Access.class},
+        searchable = false
+    )
     private String citizenPaymentCallbackUrl;
 
     @JsonUnwrapped()
@@ -181,7 +187,8 @@ public class CaseData {
         label = "General Applications",
         typeOverride = Collection,
         typeParameterOverride = "GeneralApplication",
-        access = {SolicitorAndSystemUpdateAccess.class}
+        access = {SolicitorAndSystemUpdateAccess.class},
+        searchable = false
     )
     private List<ListValue<GeneralApplication>> generalApplications;
 
@@ -189,7 +196,8 @@ public class CaseData {
         label = "General Referrals",
         typeOverride = Collection,
         typeParameterOverride = "GeneralReferral",
-        access = {SystemUpdateAndSuperUserAccess.class}
+        access = {SystemUpdateAndSuperUserAccess.class},
+        searchable = false
     )
     private List<ListValue<GeneralReferral>> generalReferrals;
 
@@ -204,7 +212,8 @@ public class CaseData {
     private YesOrNo isJudicialSeparation;
 
     @CCD(
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private YesOrNo caseFlagsSetupComplete;
 
@@ -212,7 +221,8 @@ public class CaseData {
         label = "Previous Service Applications",
         typeOverride = Collection,
         typeParameterOverride = "AlternativeServiceOutcome",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes;
 
@@ -234,7 +244,8 @@ public class CaseData {
 
     @CCD(
         label = "General Orders",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceGeneralOrder>> generalOrders;
 
@@ -256,7 +267,8 @@ public class CaseData {
         label = "Notes",
         typeOverride = Collection,
         typeParameterOverride = "CaseNote",
-        access = {CaseworkerAndSuperUserAccess.class}
+        access = {CaseworkerAndSuperUserAccess.class},
+        searchable = false
     )
     private List<ListValue<CaseNote>> notes;
 
@@ -264,7 +276,8 @@ public class CaseData {
         label = "Add a case note",
         hint = "Enter note",
         typeOverride = TextArea,
-        access = {CaseworkerAndSuperUserAccess.class}
+        access = {CaseworkerAndSuperUserAccess.class},
+        searchable = false
     )
     private String note;
 
@@ -275,7 +288,10 @@ public class CaseData {
     )
     private CaseLink bulkListCaseReferenceLink;
 
-    @CCD(access = {DefaultAccess.class})
+    @CCD(
+        access = {DefaultAccess.class},
+        searchable = false
+    )
     @JsonUnwrapped
     private RetiredFields retiredFields;
 
@@ -286,8 +302,9 @@ public class CaseData {
     private ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequestField;
 
     @CCD(
-            access = {DefaultAccess.class, AcaSystemUserAccess.class, CaseworkerAccess.class},
-            label = "Change of representatives"
+        access = {DefaultAccess.class, AcaSystemUserAccess.class, CaseworkerAccess.class},
+        label = "Change of representatives",
+        searchable = false
     )
     @Builder.Default
     private List<ListValue<ChangeOfRepresentative>> changeOfRepresentatives = new ArrayList<>();
@@ -307,7 +324,8 @@ public class CaseData {
         label = "General emails",
         typeOverride = Collection,
         typeParameterOverride = "GeneralEmailDetails",
-        access = {SystemUpdateAndSuperUserAccess.class}
+        access = {SystemUpdateAndSuperUserAccess.class},
+        searchable = false
     )
     private List<ListValue<GeneralEmailDetails>> generalEmails;
 
@@ -315,7 +333,8 @@ public class CaseData {
         label = "Confidential general emails",
         typeOverride = Collection,
         typeParameterOverride = "GeneralEmailDetails",
-        access = {SystemUpdateAndSuperUserAccess.class}
+        access = {SystemUpdateAndSuperUserAccess.class},
+        searchable = false
     )
     private List<ListValue<GeneralEmailDetails>> confidentialGeneralEmails;
 
@@ -333,7 +352,8 @@ public class CaseData {
         label = "General letters",
         typeOverride = Collection,
         typeParameterOverride = "GeneralLetterDetails",
-        access = {SystemUpdateAndSuperUserAccess.class}
+        access = {SystemUpdateAndSuperUserAccess.class},
+        searchable = false
     )
     private List<ListValue<GeneralLetterDetails>> generalLetters;
 
@@ -346,9 +366,9 @@ public class CaseData {
 
     @JsonProperty("TTL")
     @CCD(
-            label = "Set up TTL",
-            typeOverride = FieldType.TTL,
-            access = {TtlProfileAccess.class, SystemUpdateAndSuperUserAccess.class}
+        label = "Set up TTL",
+        typeOverride = FieldType.TTL,
+        access = {TtlProfileAccess.class, SystemUpdateAndSuperUserAccess.class}
     )
     private TTL retainAndDisposeTimeToLive;
 
@@ -360,7 +380,8 @@ public class CaseData {
         label = "Case matches",
         typeOverride = Collection,
         typeParameterOverride = "CaseMatch",
-        access = {CaseworkerAccess.class}
+        access = {CaseworkerAccess.class},
+        searchable = false
     )
     @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
     @Builder.Default
@@ -368,16 +389,21 @@ public class CaseData {
 
     @CCD(
         label = "Launch the Flags screen",
-        access = {InternalCaseFlagsAccess.class}
+        access = {InternalCaseFlagsAccess.class},
+        searchable = false
     )
     private FlagLauncher internalFlagLauncher;
 
-    @CCD(access = {InternalCaseFlagsAccess.class},
-        label = "Case Flags")
+    @CCD(
+        access = {InternalCaseFlagsAccess.class},
+        label = "Case Flags",
+        searchable = false
+    )
     private Flags caseFlags;
 
     @JsonUnwrapped
     @Builder.Default
+    @CCD(searchable = false)
     private PartyFlags partyFlags = new PartyFlags();
 
     @JsonIgnore
