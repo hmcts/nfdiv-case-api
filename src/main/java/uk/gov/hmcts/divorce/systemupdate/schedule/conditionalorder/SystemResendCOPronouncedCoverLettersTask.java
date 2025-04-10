@@ -1,9 +1,9 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.conditionalorder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -36,26 +36,22 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 /**
  * Any cases which are in 'ConditionalOrderPronounced' state and where the applicants are offline and have contact details private
  * 'Conditional order pronounced cover letters' should be regenerated with address on the top and sent to respective applicant.
  */
 public class SystemResendCOPronouncedCoverLettersTask implements Runnable {
 
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
+    private final CcdUpdateService ccdUpdateService;
 
-    @Autowired
-    private CcdSearchService ccdSearchService;
+    private final CcdSearchService ccdSearchService;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     public static final String NOTIFICATION_FLAG = "coPronouncedCoverLetterResent";
 

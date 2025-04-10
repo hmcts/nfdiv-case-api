@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
@@ -20,22 +20,18 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Dropped;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SystemProcessFailedToUnlinkBulkCaseTask implements Runnable {
 
-    @Autowired
-    private CcdSearchService ccdSearchService;
+    private final CcdSearchService ccdSearchService;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private BulkCaseProcessingService bulkCaseProcessingService;
+    private final BulkCaseProcessingService bulkCaseProcessingService;
 
-    @Autowired
-    private ProcessFailedToUnlinkBulkCaseTask processFailedToUnlinkBulkCaseTask;
+    private final ProcessFailedToUnlinkBulkCaseTask processFailedToUnlinkBulkCaseTask;
 
     @Override
     public void run() {

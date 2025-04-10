@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.systemupdate.service;
 
 import feign.FeignException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
@@ -19,19 +19,17 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CcdCreateService {
 
     private static final String DIVORCE_CASE_SUBMISSION_EVENT_SUMMARY = "No Fault Divorce case submission event";
     private static final String DIVORCE_CASE_SUBMISSION_EVENT_DESCRIPTION = "Submitting No Fault Divorce Case Event";
 
-    @Autowired
-    private CoreCaseDataApi coreCaseDataApi;
+    private final CoreCaseDataApi coreCaseDataApi;
 
-    @Autowired
-    private CcdCaseDataContentProvider ccdCaseDataContentProvider;
+    private final CcdCaseDataContentProvider ccdCaseDataContentProvider;
 
-    @Autowired
-    private CaseDetailsConverter caseDetailsConverter;
+    private final CaseDetailsConverter caseDetailsConverter;
 
     public uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> createBulkCase(
         final uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> caseDetails,

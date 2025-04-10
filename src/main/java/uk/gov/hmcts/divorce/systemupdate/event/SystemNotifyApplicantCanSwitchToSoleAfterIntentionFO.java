@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -23,16 +23,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
+@RequiredArgsConstructor
 public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFO implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION
         = "system-notify-applicant-can-switch-to-sole-after-intention-fo";
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private ApplicantSwitchToSoleAfterIntentionFONotification applicantSwitchToSoleAfterIntentionFONotification;
+    private final ApplicantSwitchToSoleAfterIntentionFONotification applicantSwitchToSoleAfterIntentionFONotification;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

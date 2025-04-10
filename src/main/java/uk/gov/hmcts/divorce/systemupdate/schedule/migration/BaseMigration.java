@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.migration;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.RetiredFields;
 import uk.gov.hmcts.divorce.idam.User;
@@ -19,19 +19,16 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemMigrateCase.SYSTEM_M
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class BaseMigration implements Migration {
 
-    @Autowired
-    private CcdSearchService ccdSearchService;
+    private final CcdSearchService ccdSearchService;
 
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
+    private final CcdUpdateService ccdUpdateService;
 
-    @Autowired
-    private MigrateRetiredFields migrateRetiredFields;
+    private final MigrateRetiredFields migrateRetiredFields;
 
-    @Autowired
-    private SetFailedMigrationVersionToZero setFailedMigrationVersionToZero;
+    private final SetFailedMigrationVersionToZero setFailedMigrationVersionToZero;
 
     @Override
     public void apply(final User user, final String serviceAuthorization) {

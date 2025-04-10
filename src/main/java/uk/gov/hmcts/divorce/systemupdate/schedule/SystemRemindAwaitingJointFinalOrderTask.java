@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -28,22 +28,19 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SystemRemindAwaitingJointFinalOrderTask implements Runnable {
 
     public static final String NOTIFICATION_SENT_FLAG = String.format(DATA, "applicantsRemindedAwaitingJointFinalOrder");
     public static final String DATE_FINAL_ORDER_SUBMITTED = String.format(DATA, "dateFinalOrderSubmitted");
 
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
+    private final CcdUpdateService ccdUpdateService;
 
-    @Autowired
-    private CcdSearchService ccdSearchService;
+    private final CcdSearchService ccdSearchService;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
     @Value("${final_order.awaiting_joint_final_order_reminder_offset_days}")
     private int awaitingJointFinalOrderReminderOffsetDays;
