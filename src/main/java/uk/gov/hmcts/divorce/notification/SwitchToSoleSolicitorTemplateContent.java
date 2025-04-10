@@ -14,7 +14,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NO
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_PLUS_14_DAYS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @RequiredArgsConstructor
@@ -37,7 +37,8 @@ public class SwitchToSoleSolicitorTemplateContent {
                 ? applicant.getSolicitor().getReference()
                 : NOT_PROVIDED);
         templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
-        templateContent.put(DATE_PLUS_14_DAYS, LocalDate.now(clock).plusDays(14).format(DATE_TIME_FORMATTER));
+        templateContent.put(DATE_PLUS_14_DAYS, LocalDate.now(clock).plusDays(14).format(
+            getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
 
         return templateContent;
     }
