@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.common.notification;
 
 import com.microsoft.applicationinsights.web.dependencies.apachecommons.lang3.StringUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -30,10 +30,11 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APP
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_BOTH_APPLIED_CO_FO;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IN_TIME;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class FinalOrderRequestedNotification implements ApplicantNotification {
     public static final String APPLICANT_1_OVERDUE_CONTENT = "applicant1OverdueContent";
     public static final String APPLICANT_2_OVERDUE_CONTENT = "applicant2OverdueContent";
@@ -41,11 +42,9 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
     public static final String DELAY_REASON = "%s applied more than 12 months after the conditional order "
         + "was made and gave the following reason:\n%s";
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
     @Override
     public void sendToApplicant1Solicitor(CaseData caseData, Long caseId) {
@@ -120,7 +119,8 @@ public class FinalOrderRequestedNotification implements ApplicantNotification {
         templateVars.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.getDivorceOrDissolution().isDivorce() ? YES : NO);
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
-        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(
+            getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
 
         applicantFinalOrderOverdueTemplateVars(templateVars, caseData);
 

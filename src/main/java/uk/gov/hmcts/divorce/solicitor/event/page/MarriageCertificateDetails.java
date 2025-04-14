@@ -12,8 +12,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageCertificateNames;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
 
 @Slf4j
@@ -49,11 +47,8 @@ public class MarriageCertificateDetails implements CcdPageConfiguration {
             data.getApplication().getMarriageDetails().setPlaceOfMarriage(UK);
         }
 
-        log.info("Validating Marriage Date and certificate names for Case Id: {}", details.getId());
-        final List<String> validationErrors = flattenLists(
-            validateMarriageDate(data, "MarriageDate"),
-            validateMarriageCertificateNames(data));
-
+        log.info("Validating Marriage Date for Case Id: {}", details.getId());
+        final List<String> validationErrors = validateMarriageDate(data, "MarriageDate");
         if (!validationErrors.isEmpty()) {
             State state = details.getState();
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
