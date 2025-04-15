@@ -1327,11 +1327,13 @@ public class TestDataHelper {
     }
 
     public static List<ListValue<ScannedDocument>> scannedDocuments(List<String> scannedDocumentSubtypes) {
-        return scannedDocumentSubtypes
-            .stream()
-            .map(TestDataHelper::scannedDocuments)
-            .flatMap(java.util.Collection::stream)
-            .toList();
+        return new ArrayList<>(
+            scannedDocumentSubtypes
+                .stream()
+                .map(TestDataHelper::scannedDocuments)
+                .flatMap(java.util.Collection::stream)
+                .toList()
+        );
     }
 
     private static List<ListValue<ScannedDocument>> scannedDocuments(String subtype) {
