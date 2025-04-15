@@ -20,7 +20,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
@@ -112,12 +111,12 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
         List<ListValue<BulkListCaseDetails>> casesToRemove =
             bulkActionCaseData.getBulkListCaseDetails().stream()
                 .filter(c -> !casesAcceptedToListForHearing.contains(c.getValue().getCaseReference().getCaseReference()))
-                .collect(toList());
+                .toList();
 
         bulkActionCaseData.setBulkListCaseDetails(
             bulkActionCaseData.getBulkListCaseDetails().stream()
                 .filter(lv -> !casesToRemove.contains(lv))
-                .collect(toList()));
+                .toList());
         bulkActionCaseData.setCasesToBeRemoved(casesToRemove);
 
         if (bulkActionCaseData.getPronouncementListDocument() != null) {
