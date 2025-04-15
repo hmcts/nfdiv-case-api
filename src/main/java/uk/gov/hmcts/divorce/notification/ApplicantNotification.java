@@ -30,6 +30,10 @@ public interface ApplicantNotification {
         //No operation
     }
 
+    default void sendToApplicant1SolicitorOffline(final CaseData caseData, final Long caseId) {
+        //No operation
+    }
+
     default void sendToApplicant2(final CaseData caseData, final Long caseId) {
         //No operation
     }
@@ -51,6 +55,10 @@ public interface ApplicantNotification {
     }
 
     default void sendToApplicant2Offline(final CaseDetails<CaseData, State> caseDetails) {
+        //No operation
+    }
+
+    default void sendToApplicant2SolicitorOffline(final CaseData caseData, final Long caseId) {
         //No operation
     }
 

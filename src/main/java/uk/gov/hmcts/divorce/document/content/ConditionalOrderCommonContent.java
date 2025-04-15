@@ -3,7 +3,7 @@ package uk.gov.hmcts.divorce.document.content;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
@@ -24,10 +24,10 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE_WELSH;
 
 @Component
+@RequiredArgsConstructor
 public class ConditionalOrderCommonContent {
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
     public List<RefusalReason> generateLegalAdvisorComments(ConditionalOrder conditionalOrder) {
 

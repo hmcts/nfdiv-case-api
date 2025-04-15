@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -32,7 +32,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserRole> {
+
+    private static final String CONFIRM_SERVICE_SOL_GUIDE = "Refer to the <a href=\"https://www.gov.uk/government/publications/myhmcts-how-"
+            + "to-make-follow-up-applications-for-a-divorce-or-dissolution/change-how-the-application-was-served-or-confirm-it-has-been-"
+            + "served\" target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>";
 
     public static final String SOLICITOR_CONFIRM_SERVICE = "solicitor-confirm-service";
 
@@ -42,11 +47,9 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
     public static final String NOT_ISSUED_ERROR =
         "The application must have been issued to use this event";
 
-    @Autowired
-    private SubmitConfirmService submitConfirmService;
+    private final SubmitConfirmService submitConfirmService;
 
-    @Autowired
-    private ConfirmService confirmService;
+    private final ConfirmService confirmService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -81,7 +84,8 @@ public class SolicitorConfirmService implements CCDConfig<CaseData, State, UserR
             .mandatory(SolicitorService::getServiceSotName)
             .readonly(SolicitorService::getTruthStatement)
             .mandatory(SolicitorService::getServiceSotFirm)
-            .done();
+            .done()
+            .label("confirmServiceSolGuide", CONFIRM_SERVICE_SOL_GUIDE);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {

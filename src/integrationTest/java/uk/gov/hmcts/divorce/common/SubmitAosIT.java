@@ -32,6 +32,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.testutil.CdamWireMock;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
@@ -155,6 +156,9 @@ public class SubmitAosIT {
 
     @MockBean
     private Clock clock;
+
+    @MockBean
+    private PaymentService paymentService;
 
     @BeforeAll
     static void setUp() {
