@@ -13,7 +13,6 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 

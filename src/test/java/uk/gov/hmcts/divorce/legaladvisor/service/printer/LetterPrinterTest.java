@@ -26,7 +26,6 @@ import uk.gov.hmcts.divorce.document.print.model.Print;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;

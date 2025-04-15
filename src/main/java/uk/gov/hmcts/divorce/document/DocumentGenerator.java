@@ -17,7 +17,6 @@ import java.time.Clock;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.time.LocalDateTime.now;
 import static org.springframework.util.CollectionUtils.firstElement;

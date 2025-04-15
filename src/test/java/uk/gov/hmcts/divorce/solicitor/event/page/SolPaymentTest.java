@@ -18,7 +18,6 @@ import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
