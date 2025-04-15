@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -68,10 +69,12 @@ public class DocumentGenerator {
                                           final DocumentPackInfo documentPackInfo) {
         log.info("About to start generating document pack for case {}", caseId);
 
-        return documentPackInfo.documentPack().entrySet().stream()
-            .map(entry -> toLetter(entry, caseData, caseId, applicant, documentPackInfo.templateInfo()))
-            .flatMap(Optional::stream)
-            .toList();
+        return new ArrayList<>(
+            documentPackInfo.documentPack().entrySet().stream()
+                .map(entry -> toLetter(entry, caseData, caseId, applicant, documentPackInfo.templateInfo()))
+                .flatMap(Optional::stream)
+                .toList()
+        );
     }
 
     private Optional<Letter> toLetter(final Map.Entry<DocumentType, Optional<String>> entry,
