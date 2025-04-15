@@ -42,7 +42,7 @@ public class ConditionalOrderCommonContent {
             List<RefusalReason> legalAdvisorComments = refusalClarificationReason.stream()
                 .filter(clarificationReason -> !clarificationReason.equals(ClarificationReason.OTHER))
                 .map(reason -> new RefusalReason(reason.getLabel()))
-                .collect(Collectors.toList());
+                .toList();
 
             String refusalClarificationAdditionalInfo = conditionalOrder.getRefusalClarificationAdditionalInfo();
             if (isNotEmpty(refusalClarificationAdditionalInfo)) {

@@ -34,7 +34,7 @@ public class PbaService {
         List<DynamicListElement> pbaAccountNumbers = retrievePbaNumbers()
             .stream()
             .map(pbaNumber -> DynamicListElement.builder().label(pbaNumber).code(UUID.randomUUID()).build())
-            .collect(Collectors.toList());
+            .toList();
 
         return DynamicList
             .builder()

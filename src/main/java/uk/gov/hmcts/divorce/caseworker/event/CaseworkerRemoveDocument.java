@@ -169,7 +169,7 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
                 .filter(divorceDocumentListValue ->
                     divorceDocumentListValue.getValue().getDocumentType() != null
                         && divorceDocumentListValue.getValue().getDocumentType().equals(DocumentType.GENERAL_APPLICATION))
-                .collect(Collectors.toList());
+                .toList();
         }
 
         if (!generalAppDocs.isEmpty()) {
@@ -193,7 +193,7 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
                 generalApplication.getGeneralApplicationDocuments()
                     .stream()
                     .filter(genAppDoc -> !genAppDoc.getValue().getDocumentLink().equals(document.getDocumentLink()))
-                    .collect(Collectors.toList())
+                    .toList()
             );
         }
     }
@@ -212,7 +212,7 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
                     generalApplication.getGeneralApplicationDocuments()
                         .stream()
                         .filter(genAppDoc -> !genAppDoc.getValue().getDocumentLink().equals(document.getDocumentLink()))
-                        .collect(Collectors.toList())
+                        .toList()
                 );
             }
         }

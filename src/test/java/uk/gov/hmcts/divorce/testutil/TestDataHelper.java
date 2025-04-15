@@ -1332,7 +1332,7 @@ public class TestDataHelper {
             .stream()
             .map(TestDataHelper::scannedDocuments)
             .flatMap(java.util.Collection::stream)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private static List<ListValue<ScannedDocument>> scannedDocuments(String subtype) {

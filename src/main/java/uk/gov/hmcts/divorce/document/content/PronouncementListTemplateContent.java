@@ -114,7 +114,7 @@ public class PronouncementListTemplateContent {
             .peek(caseDetails -> {
                 log.info("Found case in Bulk List {}", caseDetails.getId());
             })
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private boolean isCaseToBeRemoved(final BulkActionCaseData caseData, final CaseDetails caseDetails) {

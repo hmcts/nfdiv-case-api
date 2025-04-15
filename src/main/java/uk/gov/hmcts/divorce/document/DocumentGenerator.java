@@ -72,7 +72,7 @@ public class DocumentGenerator {
         return documentPackInfo.documentPack().entrySet().stream()
             .map(entry -> toLetter(entry, caseData, caseId, applicant, documentPackInfo.templateInfo()))
             .flatMap(Optional::stream)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private Optional<Letter> toLetter(final Map.Entry<DocumentType, Optional<String>> entry,

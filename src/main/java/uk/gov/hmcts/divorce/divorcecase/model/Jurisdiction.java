@@ -97,7 +97,7 @@ public class Jurisdiction {
                 validateJurisdictionConnectionI2(data),
                 validateJurisdictionConnectionJ(data)
 
-            ).filter(Objects::nonNull).collect(Collectors.toList());
+            ).filter(Objects::nonNull).toList();
         }
     }
 

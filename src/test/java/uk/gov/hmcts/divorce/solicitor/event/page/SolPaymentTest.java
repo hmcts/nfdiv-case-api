@@ -61,7 +61,7 @@ public class SolPaymentTest {
 
         List<DynamicListElement> pbaAccountNumbers = Stream.of("PBA0012345", "PBA0012346")
             .map(pbaNumber -> DynamicListElement.builder().label(pbaNumber).code(UUID.randomUUID()).build())
-            .collect(Collectors.toList());
+            .toList();
 
         DynamicList pbaNumbers = DynamicList
             .builder()

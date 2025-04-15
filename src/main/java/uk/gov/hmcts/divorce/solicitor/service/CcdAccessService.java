@@ -168,7 +168,7 @@ public class CcdAccessService {
         List<String> userRoles = fetchUserRoles(caseId, userToken);
         List<String> roleMatchStrings = roleMatches.stream()
             .map(UserRole::getRole)
-            .collect(Collectors.toList());
+            .toList();
         return CollectionUtils.isNotEmpty(userRoles)
             && userRoles.stream().anyMatch(roleMatchStrings::contains);
     }
@@ -185,7 +185,7 @@ public class CcdAccessService {
             .getCaseAssignmentUserRoles()
             .stream()
             .map(CaseAssignmentUserRole::getCaseRole)
-            .collect(Collectors.toList());
+            .toList();
         return userRoles;
     }
 
@@ -200,7 +200,7 @@ public class CcdAccessService {
             .stream()
             .filter(caseAssignment -> roles.contains(caseAssignment.getCaseRole()))
             .map(caseAssignment -> getCaseAssignmentUserRole(caseId, null, caseAssignment.getCaseRole(), caseAssignment.getUserId()))
-            .collect(Collectors.toList());
+            .toList();
 
         if (!assignmentUserRoles.isEmpty()) {
             log.info("removeUsersWithRole assignmentUserRoles.size: {}", assignmentUserRoles.size());

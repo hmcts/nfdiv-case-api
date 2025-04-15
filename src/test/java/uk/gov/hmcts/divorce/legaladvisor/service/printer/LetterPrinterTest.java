@@ -106,7 +106,7 @@ public class LetterPrinterTest {
         );
 
         List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
-                .collect(Collectors.toList());
+                .toList();
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
 
@@ -149,7 +149,7 @@ public class LetterPrinterTest {
         );
 
         List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
-            .collect(Collectors.toList());
+            .toList();
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
 
@@ -199,7 +199,7 @@ public class LetterPrinterTest {
         );
 
         List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
-                .collect(Collectors.toList());
+                .toList();
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
 
@@ -265,7 +265,7 @@ public class LetterPrinterTest {
         );
 
         List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
-            .collect(Collectors.toList());
+            .toList();
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
 
