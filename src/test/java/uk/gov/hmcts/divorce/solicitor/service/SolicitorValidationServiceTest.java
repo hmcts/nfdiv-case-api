@@ -107,7 +107,7 @@ class SolicitorValidationServiceTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenUserNotExists() {
+    void shouldReturnErrorWhenUserNotExists() {
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(new User(AUTH_TOKEN, null));
         when(authTokenGenerator.generate()).thenReturn(S2S_TOKEN);
         when(organisationClient.findUserByEmail(AUTH_TOKEN, S2S_TOKEN, SOL_EMAIL)).thenThrow(FeignException.NotFound.class);
@@ -119,7 +119,7 @@ class SolicitorValidationServiceTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenUserNotInOrg() {
+    void shouldReturnErrorWhenUserNotInOrg() {
         when(authTokenGenerator.generate()).thenReturn(S2S_TOKEN);
         when(organisationClient.findUserByEmail(AUTH_TOKEN, S2S_TOKEN, SOL_EMAIL)).thenReturn(new OrganisationUser(USER_ID));
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(new User(AUTH_TOKEN, null));
@@ -144,7 +144,7 @@ class SolicitorValidationServiceTest {
     }
 
     @Test
-    public void shouldNotReturnErrorWhenValidUser() {
+    void shouldNotReturnErrorWhenValidUser() {
         when(authTokenGenerator.generate()).thenReturn(S2S_TOKEN);
         when(organisationClient.findUserByEmail(AUTH_TOKEN, S2S_TOKEN, SOL_EMAIL)).thenReturn(new OrganisationUser(USER_ID));
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(new User(AUTH_TOKEN, null));

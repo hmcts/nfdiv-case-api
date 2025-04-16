@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 
 @ExtendWith(MockitoExtension.class)
-public class DraftApplicationRemovalServiceTest {
+class DraftApplicationRemovalServiceTest {
 
     @Mock
     private DocumentRemovalService documentRemovalService;
@@ -31,7 +31,7 @@ public class DraftApplicationRemovalServiceTest {
     private DraftApplicationRemovalService draftApplicationRemovalService;
 
     @Test
-    public void shouldRemoveDraftApplicationDocumentFromCaseDataAndDeleteApplicationDocumentFromDocManagement() {
+    void shouldRemoveDraftApplicationDocumentFromCaseDataAndDeleteApplicationDocumentFromDocManagement() {
 
         final ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(APPLICATION);
         final ListValue<DivorceDocument> coDocumentListValue = documentWithType(GENERAL_APPLICATION);
@@ -47,7 +47,7 @@ public class DraftApplicationRemovalServiceTest {
     }
 
     @Test
-    public void shouldNotInvokeDocManagementWhenApplicationDocumentDoesNotExistInGenerateDocuments() {
+    void shouldNotInvokeDocManagementWhenApplicationDocumentDoesNotExistInGenerateDocuments() {
         final ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(OTHER);
 
         final List<ListValue<DivorceDocument>> actualDocumentsList = draftApplicationRemovalService.removeDraftApplicationDocument(
@@ -61,7 +61,7 @@ public class DraftApplicationRemovalServiceTest {
     }
 
     @Test
-    public void shouldNotInvokeDocManagementWhenGeneratedDocumentsListIsEmpty() {
+    void shouldNotInvokeDocManagementWhenGeneratedDocumentsListIsEmpty() {
 
         final List<ListValue<DivorceDocument>> actualDocumentsList = draftApplicationRemovalService.removeDraftApplicationDocument(
             emptyList(),

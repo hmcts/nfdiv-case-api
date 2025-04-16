@@ -45,7 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerScheduleCaseTest {
+class CaseworkerScheduleCaseTest {
     @Mock
     private ScheduleCaseService scheduleCaseService;
 

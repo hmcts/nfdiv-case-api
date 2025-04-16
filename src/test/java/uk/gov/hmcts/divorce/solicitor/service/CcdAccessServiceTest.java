@@ -51,7 +51,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_UPDATE_USE
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
 
 @ExtendWith(MockitoExtension.class)
-public class CcdAccessServiceTest {
+class CcdAccessServiceTest {
 
     @Mock
     private CaseAssignmentApi caseAssignmentApi;
@@ -66,7 +66,7 @@ public class CcdAccessServiceTest {
     private CcdAccessService ccdAccessService;
 
     @Test
-    public void shouldNotThrowAnyExceptionWhenAddApplicant1RoleIsInvoked() {
+    void shouldNotThrowAnyExceptionWhenAddApplicant1RoleIsInvoked() {
         User solicitorUser = getIdamUser(APP_1_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
         User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, SYSTEM_USER_USER_ID, TEST_SYSTEM_UPDATE_USER_EMAIL);
 
@@ -115,7 +115,7 @@ public class CcdAccessServiceTest {
     }
 
     @Test
-    public void shouldThrowFeignUnauthorizedExceptionWhenRetrievalOfSolicitorUserFails() {
+    void shouldThrowFeignUnauthorizedExceptionWhenRetrievalOfSolicitorUserFails() {
         doThrow(feignException(401, "Failed to retrieve Idam user"))
             .when(idamService).retrieveUser(APP_1_SOL_AUTH_TOKEN);
 
@@ -125,7 +125,7 @@ public class CcdAccessServiceTest {
     }
 
     @Test
-    public void shouldThrowFeignUnauthorizedExceptionWhenRetrievalOfCaseworkerTokenFails() {
+    void shouldThrowFeignUnauthorizedExceptionWhenRetrievalOfCaseworkerTokenFails() {
         User solicitorUser = getIdamUser(APP_1_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
 
         when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN))
@@ -144,7 +144,7 @@ public class CcdAccessServiceTest {
     }
 
     @Test
-    public void shouldThrowInvalidTokenExceptionWhenServiceAuthTokenGenerationFails() {
+    void shouldThrowInvalidTokenExceptionWhenServiceAuthTokenGenerationFails() {
         User solicitorUser = getIdamUser(APP_1_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
         User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, SYSTEM_USER_USER_ID, TEST_SYSTEM_UPDATE_USER_EMAIL);
 
@@ -168,7 +168,7 @@ public class CcdAccessServiceTest {
     }
 
     @Test
-    public void shouldThrowFeignUnProcessableEntityExceptionWhenCcdClientThrowsException() {
+    void shouldThrowFeignUnProcessableEntityExceptionWhenCcdClientThrowsException() {
         User solicitorUser = getIdamUser(APP_1_SOL_AUTH_TOKEN, SOLICITOR_USER_ID, TEST_SOL_USER_EMAIL);
         User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, SYSTEM_USER_USER_ID, TEST_SYSTEM_UPDATE_USER_EMAIL);
 
@@ -199,7 +199,7 @@ public class CcdAccessServiceTest {
     }
 
     @Test
-    public void shouldNotThrowAnyExceptionWhenLinkApplicant2ToApplicationIsInvoked() {
+    void shouldNotThrowAnyExceptionWhenLinkApplicant2ToApplicationIsInvoked() {
         User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
 
         when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN))
@@ -248,7 +248,7 @@ public class CcdAccessServiceTest {
     }
 
     @Test
-    public void shouldNotThrowAnyExceptionWhenLinkApplicant1ToApplicationIsInvoked() {
+    void shouldNotThrowAnyExceptionWhenLinkApplicant1ToApplicationIsInvoked() {
         User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
 
         when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN))
@@ -297,7 +297,7 @@ public class CcdAccessServiceTest {
     }
 
     @Test
-    public void shouldNotThrowAnyExceptionWhenUnLinkApp2FromApplicationIsInvoked() {
+    void shouldNotThrowAnyExceptionWhenUnLinkApp2FromApplicationIsInvoked() {
         User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUpdateUser);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -318,7 +318,7 @@ public class CcdAccessServiceTest {
     }
 
     @Test
-    public void shouldNotThrowAnyExceptionWhenUnLinkUserFromApplicationIsInvoked() {
+    void shouldNotThrowAnyExceptionWhenUnLinkUserFromApplicationIsInvoked() {
         User systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUpdateUser);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -345,7 +345,7 @@ public class CcdAccessServiceTest {
     }
 
     @Test
-    public void shouldNotThrowAnyExceptionWhenRemoveRolesIsCalled() {
+    void shouldNotThrowAnyExceptionWhenRemoveRolesIsCalled() {
         var systemUpdateUser = getIdamUser(SYSTEM_UPDATE_AUTH_TOKEN, CASEWORKER_USER_ID, TEST_CASEWORKER_USER_EMAIL);
 
         when(idamService.retrieveSystemUpdateUserDetails())
@@ -407,7 +407,7 @@ public class CcdAccessServiceTest {
     }
 
     @Test
-    public void shouldReturnTrueWhenUserHasCreatorRole() {
+    void shouldReturnTrueWhenUserHasCreatorRole() {
         User user = new User(TEST_SERVICE_AUTH_TOKEN, UserInfo.builder().uid("user-id").build());
         when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN)).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -428,7 +428,7 @@ public class CcdAccessServiceTest {
     }
 
     @Test
-    public void shouldReturnTrueWhenUserHasApplicant2Role() {
+    void shouldReturnTrueWhenUserHasApplicant2Role() {
         User user = new User(TEST_SERVICE_AUTH_TOKEN, UserInfo.builder().uid("user-id").build());
         when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN)).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -449,7 +449,7 @@ public class CcdAccessServiceTest {
     }
 
     @Test
-    public void shouldReturnCaseAssignmentUserRoles() {
+    void shouldReturnCaseAssignmentUserRoles() {
         List<CaseAssignmentUserRole> expectedRoles = List.of(
             CaseAssignmentUserRole.builder().caseRole("[APPSOLICITORONE]")
                 .userId("2").build(),

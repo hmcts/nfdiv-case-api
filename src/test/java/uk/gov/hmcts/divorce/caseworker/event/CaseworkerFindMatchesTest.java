@@ -49,14 +49,14 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 class CaseworkerFindMatchesTest {
 
-    public static final String NAME_ONE = "John Doe";
-    public static final String NAME_TWO = "Jane Doe";
-    public static final String POSTCODE_1 = "AB1 2CD";
-    public static final String POSTCODE_2 = "EF3 4GH";
-    public static final String PETITIONER_TOWN = "PetitionerTown";
-    public static final String RESPONDENT_TOWN = "RespondentTown";
-    public static final String EXPECTED = "12345";
-    public static final String MARRIAGE_DATE = "2000-01-01";
+    static final String NAME_ONE = "John Doe";
+    static final String NAME_TWO = "Jane Doe";
+    static final String POSTCODE_1 = "AB1 2CD";
+    static final String POSTCODE_2 = "EF3 4GH";
+    static final String PETITIONER_TOWN = "PetitionerTown";
+    static final String RESPONDENT_TOWN = "RespondentTown";
+    static final String EXPECTED = "12345";
+    static final String MARRIAGE_DATE = "2000-01-01";
     @Mock
     private CcdSearchService ccdSearchService;
 

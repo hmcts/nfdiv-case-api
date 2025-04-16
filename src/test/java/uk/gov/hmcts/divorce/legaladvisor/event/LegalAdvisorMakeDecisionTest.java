@@ -486,7 +486,7 @@ class LegalAdvisorMakeDecisionTest {
     }
 
     @Test
-    public void midEventShouldGenerateTheRefusalOrderDoc() {
+    void midEventShouldGenerateTheRefusalOrderDoc() {
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(MORE_INFO).build())
             .build();

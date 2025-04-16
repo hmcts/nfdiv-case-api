@@ -30,7 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 
 @ExtendWith(MockitoExtension.class)
-public class CommonFormToCaseTransformerTest {
+class CommonFormToCaseTransformerTest {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 

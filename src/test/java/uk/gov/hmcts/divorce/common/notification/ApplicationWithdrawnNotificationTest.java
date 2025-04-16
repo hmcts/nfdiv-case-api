@@ -45,7 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDa
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 
 @ExtendWith(MockitoExtension.class)
-public class ApplicationWithdrawnNotificationTest {
+class ApplicationWithdrawnNotificationTest {
     private static final String IS_RESPONDENT = "isRespondent";
     private static final String RESPONDENT_PARTNER = "respondentPartner";
 

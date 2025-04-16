@@ -23,7 +23,7 @@ import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.WARNING_NOT_
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateD8OcrDataFields;
 
 @ExtendWith(MockitoExtension.class)
-public class OcrValidatorTest {
+class OcrValidatorTest {
 
     @InjectMocks
     private OcrValidator validator;

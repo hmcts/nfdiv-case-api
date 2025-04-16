@@ -38,7 +38,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 @ExtendWith(MockitoExtension.class)
 class SendAosResponseLetterPackToApplicantTest {
 
-    public static final String AOS_LETTER_ID = "aos-letter-id";
+    static final String AOS_LETTER_ID = "aos-letter-id";
 
     private static final DocumentPackInfo DISPUTED_AOS_RESPONSE_PACK = new DocumentPackInfo(
         ImmutableMap.of(

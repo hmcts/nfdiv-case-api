@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataCOPronounced;
 
 @ExtendWith(MockitoExtension.class)
-public class RegenerateConditionalOrderPronouncedCoverLetterTest {
+class RegenerateConditionalOrderPronouncedCoverLetterTest {
 
     @Mock
     private ConditionalOrderPronouncedCoverLetterHelper coverLetterHelper;
@@ -38,7 +38,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetterTest {
     private RegenerateConditionalOrderPronouncedCoverLetter underTest;
 
     @Test
-    public void shouldRegenerateCoverLettersSoleApplication() {
+    void shouldRegenerateCoverLettersSoleApplication() {
         CaseData data = buildCaseDataCOPronounced(YES, PRIVATE, PRIVATE);
         data.setApplicationType(SOLE_APPLICATION);
 
@@ -64,7 +64,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetterTest {
     }
 
     @Test
-    public void shouldRegenerateCoverLettersJointApplication() {
+    void shouldRegenerateCoverLettersJointApplication() {
         CaseData data = buildCaseDataCOPronounced(YES, PRIVATE, PRIVATE);
         data.setApplicationType(JOINT_APPLICATION);
 
@@ -90,7 +90,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetterTest {
     }
 
     @Test
-    public void shouldNotRegenerateCoverLettersForOnlineApplicantsWithContactTypePrivate() {
+    void shouldNotRegenerateCoverLettersForOnlineApplicantsWithContactTypePrivate() {
         CaseData data = buildCaseDataCOPronounced(NO, PRIVATE, PRIVATE);
         data.setApplicationType(JOINT_APPLICATION);
 
@@ -108,7 +108,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetterTest {
     }
 
     @Test
-    public void shouldNotRegenerateCoverLettersForOfflineApplicantsWithContactTypePublic() {
+    void shouldNotRegenerateCoverLettersForOfflineApplicantsWithContactTypePublic() {
         CaseData data = buildCaseDataCOPronounced(YES, PUBLIC, PUBLIC);
         data.setApplicationType(SOLE_APPLICATION);
 
@@ -126,7 +126,7 @@ public class RegenerateConditionalOrderPronouncedCoverLetterTest {
     }
 
     @Test
-    public void shouldNowRegenerateCoverLettersForIfCoverLettersAreAlreadyMovedToConfidentialList() {
+    void shouldNowRegenerateCoverLettersForIfCoverLettersAreAlreadyMovedToConfidentialList() {
         CaseData data = buildCaseDataCOPronounced(YES, PRIVATE, PRIVATE);
         data.setApplicationType(JOINT_APPLICATION);
 
