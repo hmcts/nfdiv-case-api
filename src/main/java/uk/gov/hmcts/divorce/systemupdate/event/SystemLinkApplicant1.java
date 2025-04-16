@@ -37,8 +37,8 @@ public class SystemLinkApplicant1 implements CCDConfig<CaseData, State, UserRole
         configBuilder
             .event(SYSTEM_LINK_APPLICANT_1)
             .forAllStates()
-            .name("Link Applicant 1 to case")
-            .description("Link Applicant 1 to case so they are online")
+            .name("Link App or App 1 to case")
+            .description("Link Applicant or Applicant1 to case so they are online")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER)
             .retries(120, 120)
