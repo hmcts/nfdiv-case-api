@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -18,15 +18,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
+@RequiredArgsConstructor
 public class SystemRemindApplicant1ApplicationReviewed implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_REMIND_APPLICANT_1_APPLICATION_REVIEWED = "system-remind-applicant1";
 
-    @Autowired
-    private JointApplicationApprovedReminder jointApplicationApprovedReminder;
+    private final JointApplicationApprovedReminder jointApplicationApprovedReminder;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -21,15 +21,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SystemRemindRespondentSolicitor implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_REMIND_RESPONDENT_SOLICITOR_TO_RESPOND = "system-remind-respondent-solicitor-to-respond";
 
-    @Autowired
-    private RespondentSolicitorReminderNotification respondentSolicitorReminderNotification;
+    private final RespondentSolicitorReminderNotification respondentSolicitorReminderNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

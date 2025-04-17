@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -33,31 +33,25 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYS
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SystemCreateBulkCaseListTask implements Runnable {
 
     @Value("${bulk-action.min-cases}")
     private int minimumCasesToProcess;
 
-    @Autowired
-    private CcdCreateService ccdCreateService;
+    private final CcdCreateService ccdCreateService;
 
-    @Autowired
-    private CcdSearchService ccdSearchService;
+    private final CcdSearchService ccdSearchService;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private FailedBulkCaseRemover failedBulkCaseRemover;
+    private final FailedBulkCaseRemover failedBulkCaseRemover;
 
-    @Autowired
-    private BulkTriggerService bulkTriggerService;
+    private final BulkTriggerService bulkTriggerService;
 
-    @Autowired
-    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+    private final BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @Override
     public void run() {

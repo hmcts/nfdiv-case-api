@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.service.task.GenerateFormHelper;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -11,14 +11,14 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.D11;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class GenerateD11Form {
 
     private static final String D11_FILE_LOCATION = "/D11.pdf";
     private static final String D11_FILENAME = "D11.pdf";
     private static final String D11_DISPLAY_NAME = "D11";
 
-    @Autowired
-    private GenerateFormHelper generateFormHelper;
+    private final GenerateFormHelper generateFormHelper;
 
     public void generateD11Document(final CaseData caseData) {
         final boolean d11DocumentAlreadyGenerated =
