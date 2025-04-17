@@ -56,7 +56,7 @@ class RespondentApplyForFinalOrderTest {
             .thenReturn(orderSummary);
 
         when(paymentSetupService.createFinalOrderFeeServiceRequest(
-            caseData, caseId, null, orderSummary
+            caseData, caseId, orderSummary
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
 

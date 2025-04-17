@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
@@ -25,9 +24,6 @@ public class SolPayment implements CcdPageConfiguration {
 
     private final PbaService pbaService;
     private final PaymentSetupService paymentSetupService;
-
-    @Value("${idam.client.redirect_uri}")
-    private String redirectUrl;
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -70,9 +66,7 @@ public class SolPayment implements CcdPageConfiguration {
             Application application = caseData.getApplication();
             application.setPbaNumbers(pbaNumbersDynamicList);
 
-            String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
-                caseData, caseId, redirectUrl
-            );
+            String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(caseData, caseId);
             application.setApplicationFeeServiceRequestReference(serviceRequest);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
