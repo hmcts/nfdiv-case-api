@@ -121,7 +121,7 @@ class Applicant2AppliedForFinalOrderNotificationTest {
     }
 
     @Test
-    public void verifyApplicant2TemplateVars() {
+    void verifyApplicant2TemplateVars() {
 
         CaseData data = validApplicant2CaseData();
         data.setApplicationType(SOLE_APPLICATION);

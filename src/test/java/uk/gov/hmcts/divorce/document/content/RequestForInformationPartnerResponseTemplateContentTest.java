@@ -11,13 +11,13 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORM
 import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER_TEMPLATE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class RequestForInformationPartnerResponseTemplateContentTest {
+class RequestForInformationPartnerResponseTemplateContentTest {
 
     @InjectMocks
     private RequestForInformationPartnerResponseTemplateContent requestForInformationPartnerResponseTemplateContent;
 
     @Test
-    public void shouldGetSupportedTemplates() {
+    void shouldGetSupportedTemplates() {
         assertThat(requestForInformationPartnerResponseTemplateContent.getSupportedTemplates()).contains(
             REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER_TEMPLATE_ID,
             REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER_TEMPLATE_ID

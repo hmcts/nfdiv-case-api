@@ -21,7 +21,7 @@ class MarriageIrretrievablyBrokenTest {
     private final MarriageIrretrievablyBroken page = new MarriageIrretrievablyBroken();
 
     @Test
-    public void shouldPreventProgressIfMarriageNotBroken() {
+    void shouldPreventProgressIfMarriageNotBroken() {
         final CaseData caseData = caseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(NO);
 
@@ -40,7 +40,7 @@ class MarriageIrretrievablyBrokenTest {
     }
 
     @Test
-    public void shouldPreventProgressIfMarriageNotBrokenForBothApplicants() {
+    void shouldPreventProgressIfMarriageNotBrokenForBothApplicants() {
         final CaseData caseData = caseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(NO);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
@@ -64,7 +64,7 @@ class MarriageIrretrievablyBrokenTest {
     }
 
     @Test
-    public void shouldAllowProgressIfMarriageIsBroken() {
+    void shouldAllowProgressIfMarriageIsBroken() {
         final CaseData caseData = caseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
 
@@ -79,7 +79,7 @@ class MarriageIrretrievablyBrokenTest {
     }
 
     @Test
-    public void shouldAllowProgressIfMarriageIsBrokenForBothApplicants() {
+    void shouldAllowProgressIfMarriageIsBrokenForBothApplicants() {
         final CaseData caseData = caseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);

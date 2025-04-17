@@ -81,7 +81,7 @@ class CitizenSubmitApplicationTest {
     }
 
     @Test
-    public void givenEventStartedWithEmptyCaseThenGiveValidationErrors() {
+    void givenEventStartedWithEmptyCaseThenGiveValidationErrors() {
         final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
@@ -97,7 +97,7 @@ class CitizenSubmitApplicationTest {
     }
 
     @Test
-    public void givenEventStartedWithInvalidCaseThenGiveValidationErrors() {
+    void givenEventStartedWithInvalidCaseThenGiveValidationErrors() {
         final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
@@ -115,7 +115,7 @@ class CitizenSubmitApplicationTest {
     }
 
     @Test
-    public void givenEventStartedWithValidCaseThenChangeStateAndSetOrderSummary() {
+    void givenEventStartedWithValidCaseThenChangeStateAndSetOrderSummary() {
         final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
@@ -142,7 +142,7 @@ class CitizenSubmitApplicationTest {
     }
 
     @Test
-    public void givenEventStartedWithValidJointCaseThenChangeStateAndSetOrderSummary() {
+    void givenEventStartedWithValidJointCaseThenChangeStateAndSetOrderSummary() {
         final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
@@ -177,7 +177,7 @@ class CitizenSubmitApplicationTest {
     }
 
     @Test
-    public void givenEventStartedWithValidCaseThenChangeStateAwaitingHwfDecision() {
+    void givenEventStartedWithValidCaseThenChangeStateAwaitingHwfDecision() {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
@@ -200,7 +200,7 @@ class CitizenSubmitApplicationTest {
     }
 
     @Test
-    public void givenEventStartedWithValidJointCaseThenChangeStateAwaitingHwfDecision() {
+    void givenEventStartedWithValidJointCaseThenChangeStateAwaitingHwfDecision() {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();

@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(SpringExtension.class)
-public class Applicant1ResubmitTest {
+class Applicant1ResubmitTest {
 
     @Mock
     private Applicant1ResubmitNotification applicant1ResubmitNotification;
