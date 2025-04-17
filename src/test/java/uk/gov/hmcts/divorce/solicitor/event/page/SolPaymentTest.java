@@ -18,7 +18,6 @@ import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,7 +60,7 @@ class SolPaymentTest {
 
         List<DynamicListElement> pbaAccountNumbers = Stream.of("PBA0012345", "PBA0012346")
             .map(pbaNumber -> DynamicListElement.builder().label(pbaNumber).code(UUID.randomUUID()).build())
-            .collect(Collectors.toList());
+            .toList();
 
         DynamicList pbaNumbers = DynamicList
             .builder()

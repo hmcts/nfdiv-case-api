@@ -19,7 +19,6 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -141,7 +140,7 @@ class ProcessConfidentialDocumentsServiceTest {
 
         assertThat(confidentialDocuments.stream()
             .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
-            .collect(Collectors.toList()),  contains(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1)
+            .toList(),  contains(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1)
         );
     }
 
@@ -164,7 +163,7 @@ class ProcessConfidentialDocumentsServiceTest {
 
         assertThat(nonConfidentialDocuments.stream()
             .map(doc -> doc.getValue().getDocumentType())
-            .collect(Collectors.toList()),  containsInAnyOrder(
+            .toList(),  containsInAnyOrder(
             DocumentType.BAILIFF_SERVICE_REFUSED)
         );
     }
@@ -191,7 +190,7 @@ class ProcessConfidentialDocumentsServiceTest {
         assertThat(
             confidentialDocuments.stream()
                 .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
-                .collect(Collectors.toList()),
+                .toList(),
             containsInAnyOrder(
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2)
@@ -223,7 +222,7 @@ class ProcessConfidentialDocumentsServiceTest {
         assertThat(
             confidentialDocuments.stream()
                 .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
-                .collect(Collectors.toList()),
+                .toList(),
             containsInAnyOrder(
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2)
@@ -256,13 +255,13 @@ class ProcessConfidentialDocumentsServiceTest {
 
         assertThat(nonConfidentialDocuments.stream()
             .map(doc -> doc.getValue().getDocumentType())
-            .collect(Collectors.toList()),
+            .toList(),
             containsInAnyOrder(BAILIFF_SERVICE_REFUSED, APPLICATION));
 
         assertThat(
             confidentialDocuments.stream()
                 .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
-                .collect(Collectors.toList()),
+                .toList(),
             containsInAnyOrder(
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2,
@@ -274,7 +273,7 @@ class ProcessConfidentialDocumentsServiceTest {
             confidentialDocuments.stream()
                 .filter(doc -> doc.getValue().getConfidentialDocumentsReceived().equals(ConfidentialDocumentsReceived.GENERAL_LETTER))
                 .map(doc -> doc.getValue().getDocumentLink().getUrl())
-                .collect(Collectors.toList()),
+                .toList(),
             containsInAnyOrder(
                 "generalLetter1Url",
                 "generalLetter2Url")
@@ -322,7 +321,7 @@ class ProcessConfidentialDocumentsServiceTest {
         assertThat(
             confidentialDocuments.stream()
                 .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
-                .collect(Collectors.toList()),
+                .toList(),
             containsInAnyOrder(
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2,
                 ConfidentialDocumentsReceived.GENERAL_LETTER)

@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
@@ -39,10 +38,12 @@ public class ConditionalOrderCommonContent {
                 return emptyList();
             }
 
-            List<RefusalReason> legalAdvisorComments = refusalClarificationReason.stream()
-                .filter(clarificationReason -> !clarificationReason.equals(ClarificationReason.OTHER))
-                .map(reason -> new RefusalReason(reason.getLabel()))
-                .collect(Collectors.toList());
+            List<RefusalReason> legalAdvisorComments = new ArrayList<>(
+                refusalClarificationReason.stream()
+                    .filter(clarificationReason -> !clarificationReason.equals(ClarificationReason.OTHER))
+                    .map(reason -> new RefusalReason(reason.getLabel()))
+                    .toList()
+            );
 
             String refusalClarificationAdditionalInfo = conditionalOrder.getRefusalClarificationAdditionalInfo();
             if (isNotEmpty(refusalClarificationAdditionalInfo)) {

@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemEmptyCase.SYSTEM_EMPTY_CASE;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
@@ -36,7 +35,7 @@ public class FailedBulkCaseRemover {
 
         final List<Long> failedCaseIds = unprocessedBulkCases.stream()
             .map(listValue -> Long.valueOf(listValue.getValue().getCaseReference().getCaseReference()))
-            .collect(toList());
+            .toList();
 
         if (!isEmpty(unprocessedBulkCases)) {
             log.info(

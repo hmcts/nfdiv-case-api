@@ -28,7 +28,6 @@ import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 
 @Component
@@ -129,7 +128,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
                             .value(c.getValue().getCaseReference())
                             .build()
                     )
-                    .collect(toList()))
+                    .toList())
             .build());
 
         return ccdCreateService.createBulkCase(bulkActionCaseDetails, user, serviceAuth);

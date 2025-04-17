@@ -162,7 +162,7 @@ public final class ValidationUtil {
         final List<ListValue<CaseLink>> casesAcceptedToListForHearing = caseData.getCasesAcceptedToListForHearing();
         final List<String> caseReferences = caseData.getBulkListCaseDetails().stream()
             .map(c -> c.getValue().getCaseReference().getCaseReference())
-            .collect(toList());
+            .toList();
 
         final boolean anyDuplicateCases = !casesAcceptedToListForHearing.stream().allMatch(new HashSet<>()::add);
         final boolean anyNewCasesAdded =

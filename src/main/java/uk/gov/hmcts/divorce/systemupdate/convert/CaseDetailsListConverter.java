@@ -10,8 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import java.util.List;
 import java.util.Objects;
 
-import static java.util.stream.Collectors.toList;
-
 @Component
 @Slf4j
 public class CaseDetailsListConverter {
@@ -34,6 +32,6 @@ public class CaseDetailsListConverter {
                 }
             })
             .filter(Objects::nonNull)
-            .collect(toList());
+            .toList();
     }
 }

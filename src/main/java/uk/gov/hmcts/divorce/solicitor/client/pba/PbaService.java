@@ -13,7 +13,6 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -34,7 +33,7 @@ public class PbaService {
         List<DynamicListElement> pbaAccountNumbers = retrievePbaNumbers()
             .stream()
             .map(pbaNumber -> DynamicListElement.builder().label(pbaNumber).code(UUID.randomUUID()).build())
-            .collect(Collectors.toList());
+            .toList();
 
         return DynamicList
             .builder()

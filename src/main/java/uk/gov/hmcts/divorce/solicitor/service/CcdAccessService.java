@@ -20,7 +20,6 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResponse;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -168,7 +167,7 @@ public class CcdAccessService {
         List<String> userRoles = fetchUserRoles(caseId, userToken);
         List<String> roleMatchStrings = roleMatches.stream()
             .map(UserRole::getRole)
-            .collect(Collectors.toList());
+            .toList();
         return CollectionUtils.isNotEmpty(userRoles)
             && userRoles.stream().anyMatch(roleMatchStrings::contains);
     }
@@ -185,7 +184,7 @@ public class CcdAccessService {
             .getCaseAssignmentUserRoles()
             .stream()
             .map(CaseAssignmentUserRole::getCaseRole)
-            .collect(Collectors.toList());
+            .toList();
         return userRoles;
     }
 
@@ -200,7 +199,7 @@ public class CcdAccessService {
             .stream()
             .filter(caseAssignment -> roles.contains(caseAssignment.getCaseRole()))
             .map(caseAssignment -> getCaseAssignmentUserRole(caseId, null, caseAssignment.getCaseRole(), caseAssignment.getUserId()))
-            .collect(Collectors.toList());
+            .toList();
 
         if (!assignmentUserRoles.isEmpty()) {
             log.info("removeUsersWithRole assignmentUserRoles.size: {}", assignmentUserRoles.size());
