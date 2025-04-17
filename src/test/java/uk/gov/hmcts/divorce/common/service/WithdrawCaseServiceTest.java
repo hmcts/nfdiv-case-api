@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedB
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class WithdrawCaseServiceTest {
+class WithdrawCaseServiceTest {
 
     @Mock
     private ApplicationWithdrawnNotification applicationWithdrawnNotification;
@@ -42,7 +42,7 @@ public class WithdrawCaseServiceTest {
     private WithdrawCaseService withdrawCaseService;
 
     @Test
-    public void shouldUnlinkApplicantsAndSendNotificationsToApplicant() {
+    void shouldUnlinkApplicantsAndSendNotificationsToApplicant() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         var caseData = validApplicant2CaseData();
         caseData.setCaseInvite(new CaseInvite(caseData.getCaseInvite().applicant2InviteEmailAddress(), "12345", "12"));
@@ -65,7 +65,7 @@ public class WithdrawCaseServiceTest {
     }
 
     @Test
-    public void shouldRemoveSolicitorOrganisationPolicyForRepresentedApplicants() {
+    void shouldRemoveSolicitorOrganisationPolicyForRepresentedApplicants() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         var caseData = validApplicant2CaseData();
         caseData.setApplicant1(applicantRepresentedBySolicitor());

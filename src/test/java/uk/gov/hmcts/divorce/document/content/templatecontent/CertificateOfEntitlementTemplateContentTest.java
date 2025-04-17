@@ -45,7 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDa
 class CertificateOfEntitlementTemplateContentTest {
 
     private static final String NAME = "name";
-    public static final String CASE_REFERENCE = "caseReference";
+    static final String CASE_REFERENCE = "caseReference";
 
     @Mock
     private DocmosisCommonContent docmosisCommonContent;

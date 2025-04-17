@@ -46,7 +46,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.scannedDocuments;
 
 @ExtendWith(MockitoExtension.class)
-public class DocumentRemovalServiceTest {
+class DocumentRemovalServiceTest {
 
     @Mock
     private CaseDocumentAccessManagement documentManagementClient;
@@ -61,7 +61,7 @@ public class DocumentRemovalServiceTest {
     private DocumentRemovalService documentRemovalService;
 
     @Test
-    public void shouldDeleteDivorceDocumentFromDocManagement() {
+    void shouldDeleteDivorceDocumentFromDocManagement() {
         final List<String> systemRoles = List.of("caseworker-divorce");
         final ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(APPLICATION);
         final String userId = UUID.randomUUID().toString();
@@ -92,7 +92,7 @@ public class DocumentRemovalServiceTest {
     }
 
     @Test
-    public void shouldDeleteScannedDocumentFromDocManagement() {
+    void shouldDeleteScannedDocumentFromDocManagement() {
         final List<String> systemRoles = List.of("caseworker-divorce");
         final String userId = UUID.randomUUID().toString();
         final User systemUser = systemUser(systemRoles, userId);
@@ -129,7 +129,7 @@ public class DocumentRemovalServiceTest {
     }
 
     @Test
-    public void shouldThrow403ForbiddenWhenServiceIsNotWhitelistedInDocManagement() {
+    void shouldThrow403ForbiddenWhenServiceIsNotWhitelistedInDocManagement() {
         final List<String> systemRoles = List.of("caseworker-divorce");
         final String userId = UUID.randomUUID().toString();
         final User systemUser = systemUser(systemRoles, userId);
@@ -171,7 +171,7 @@ public class DocumentRemovalServiceTest {
     }
 
     @Test
-    public void shouldThrow401UnAuthorizedWhenServiceAuthTokenGenerationFails() {
+    void shouldThrow401UnAuthorizedWhenServiceAuthTokenGenerationFails() {
         final List<String> systemRoles = List.of("caseworker-divorce");
         final String userId = UUID.randomUUID().toString();
         final User systemUser = systemUser(systemRoles, userId);

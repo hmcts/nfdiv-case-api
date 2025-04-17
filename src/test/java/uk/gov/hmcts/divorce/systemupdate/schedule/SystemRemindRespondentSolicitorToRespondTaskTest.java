@@ -63,7 +63,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOK
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class SystemRemindRespondentSolicitorToRespondTaskTest {
+class SystemRemindRespondentSolicitorToRespondTaskTest {
 
     private User user;
 
@@ -111,7 +111,7 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
     }
 
     @Test
-    public void shouldSendReminderEmailToRespondentSolicitor() {
+    void shouldSendReminderEmailToRespondentSolicitor() {
 
         CaseDetails details1 = CaseDetails.builder()
             .data(Map.of("applicant2SolicitorOrganisationPolicy", organisationPolicy(),
@@ -133,7 +133,7 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
     }
 
     @Test
-    public void shouldNotSendReminderEmailToRespondentSolicitorWhenNoCasesFound() {
+    void shouldNotSendReminderEmailToRespondentSolicitorWhenNoCasesFound() {
 
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingAos))
             .thenReturn(null);
@@ -144,7 +144,7 @@ public class SystemRemindRespondentSolicitorToRespondTaskTest {
     }
 
     @Test
-    public void shouldNotSendReminderEmailToRespondentSolicitorWhenCcdSearchCaseExceptionIsThrown() {
+    void shouldNotSendReminderEmailToRespondentSolicitorWhenCcdSearchCaseExceptionIsThrown() {
 
         doThrow(new CcdSearchCaseException("Failed elastic search", mock(FeignException.class)))
             .when(ccdSearchService).searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, AwaitingAos);

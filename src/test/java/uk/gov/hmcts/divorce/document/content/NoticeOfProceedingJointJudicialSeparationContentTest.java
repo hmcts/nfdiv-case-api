@@ -47,7 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
-public class NoticeOfProceedingJointJudicialSeparationContentTest {
+class NoticeOfProceedingJointJudicialSeparationContentTest {
 
     @Mock
     private CommonContent commonContent;
@@ -59,7 +59,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
     private NoticeOfProceedingJointJudicialSeparationContent nopJointJudicialSeparationContent;
 
     @Test
-    public void shouldSuccessfullyApplyJSDivorceContent() {
+    void shouldSuccessfullyApplyJSDivorceContent() {
         CaseData caseData = caseData();
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
@@ -112,7 +112,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyJSDissolutionContent() {
+    void shouldSuccessfullyApplyJSDissolutionContent() {
         CaseData caseData = caseData();
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
@@ -163,7 +163,7 @@ public class NoticeOfProceedingJointJudicialSeparationContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyJSDissolutionReissueContent() {
+    void shouldSuccessfullyApplyJSDissolutionReissueContent() {
         CaseData caseData = caseData();
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);

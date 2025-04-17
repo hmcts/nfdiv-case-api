@@ -26,7 +26,7 @@ class RemoveExistingConditionalOrderPronouncedDocumentTest {
     private RemoveExistingConditionalOrderPronouncedDocument removeExistingConditionalOrderPronouncedDocument;
 
     @Test
-    public void shouldRemoveConditionalOrderGrantedDoc() {
+    void shouldRemoveConditionalOrderGrantedDoc() {
 
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()

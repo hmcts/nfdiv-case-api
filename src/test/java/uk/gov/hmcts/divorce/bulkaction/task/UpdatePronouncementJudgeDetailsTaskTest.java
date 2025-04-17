@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetail
 
 @ExtendWith(MockitoExtension.class)
 
-public class UpdatePronouncementJudgeDetailsTaskTest {
+class UpdatePronouncementJudgeDetailsTaskTest {
 
     @Mock
     private BulkTriggerService bulkTriggerService;
