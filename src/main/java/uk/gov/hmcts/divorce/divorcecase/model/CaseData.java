@@ -31,6 +31,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.InternalCaseFlagsAccess;
@@ -271,7 +272,7 @@ public class CaseData {
     @CCD(
         label = "Bulk list case reference",
         typeOverride = FieldType.CaseLink,
-        access = {CaseworkerAccess.class}
+        access = {CaseworkerAccess.class, CaseworkerDeleteAccess.class}
     )
     private CaseLink bulkListCaseReferenceLink;
 
