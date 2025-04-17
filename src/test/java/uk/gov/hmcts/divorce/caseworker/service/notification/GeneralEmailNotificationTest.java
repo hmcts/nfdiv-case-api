@@ -60,7 +60,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
-public class GeneralEmailNotificationTest {
+class GeneralEmailNotificationTest {
 
     @Mock
     private CommonContent commonContent;
@@ -84,7 +84,7 @@ public class GeneralEmailNotificationTest {
     private GeneralEmailNotification generalEmailNotification;
 
     @Test
-    public void shouldSendEmailNotificationToApplicantWhenGeneralEmailPartyIsPetitionerAndIsNotSolicitorRepresented() throws Exception {
+    void shouldSendEmailNotificationToApplicantWhenGeneralEmailPartyIsPetitionerAndIsNotSolicitorRepresented() throws Exception {
         final var caseData = caseData();
 
         final var applicant1 = getApplicant();
@@ -321,7 +321,7 @@ public class GeneralEmailNotificationTest {
     }
 
     @Test
-    public void shouldSendWelshEmailNotificationToApplicant() throws Exception {
+    void shouldSendWelshEmailNotificationToApplicant() throws Exception {
         final var caseData = caseData();
 
         final var applicant1 = getApplicant();

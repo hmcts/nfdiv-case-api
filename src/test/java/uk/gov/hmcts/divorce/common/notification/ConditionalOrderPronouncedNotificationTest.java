@@ -99,7 +99,7 @@ class ConditionalOrderPronouncedNotificationTest {
         )
     );
 
-    public static final String LETTER_ID = "letterId";
+    static final String LETTER_ID = "letterId";
 
     @Mock
     private LetterPrinter letterPrinter;

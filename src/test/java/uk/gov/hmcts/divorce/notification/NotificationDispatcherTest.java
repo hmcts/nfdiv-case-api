@@ -515,7 +515,7 @@ class NotificationDispatcherTest {
         verify(applicantNotification).sendToApplicant2Offline(caseData, caseId);
     }
 
-    public static class TestNotification implements ApplicantNotification {
+    static class TestNotification implements ApplicantNotification {
     }
 
     @Test

@@ -35,7 +35,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicTemplateVars;
 
 @ExtendWith(MockitoExtension.class)
-public class RespondentSolicitorReminderNotificationTest {
+class RespondentSolicitorReminderNotificationTest {
 
     @Mock
     private NotificationService notificationService;
@@ -47,7 +47,7 @@ public class RespondentSolicitorReminderNotificationTest {
     private RespondentSolicitorReminderNotification reminderNotification;
 
     @Test
-    public void shouldSendNotificationToRespondentSolicitorForDivorce() {
+    void shouldSendNotificationToRespondentSolicitorForDivorce() {
         CaseData data = caseData();
         data.getApplication().setIssueDate(LocalDate.of(2021, 4, 5));
         data.setDueDate(LocalDate.of(2021, 4, 21));
@@ -82,7 +82,7 @@ public class RespondentSolicitorReminderNotificationTest {
     }
 
     @Test
-    public void shouldSendNotificationToRespondentSolicitorForDissolution() {
+    void shouldSendNotificationToRespondentSolicitorForDissolution() {
         CaseData data = caseData();
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.getApplication().setIssueDate(LocalDate.of(2021, 4, 5));

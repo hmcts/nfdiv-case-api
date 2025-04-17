@@ -17,7 +17,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.REQUEST_FOR_INFOR
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
-public class RequestForInformationDocumentPackTest {
+class RequestForInformationDocumentPackTest {
 
     private static final String LETTER_TYPE_REQUEST_FOR_INFORMATION = "request-for-information-letter";
 
@@ -42,7 +42,7 @@ public class RequestForInformationDocumentPackTest {
     private final RequestForInformationDocumentPack requestForInformationDocumentPack = new RequestForInformationDocumentPack();
 
     @Test
-    public void shouldReturnApplicantDocumentPackWhenPassedApplicant1() {
+    void shouldReturnApplicantDocumentPackWhenPassedApplicant1() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(NO);
         var documentPack = requestForInformationDocumentPack.getDocumentPack(data, data.getApplicant1());
@@ -51,7 +51,7 @@ public class RequestForInformationDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnSolicitorDocumentPackWhenPassedRepresentedApplicant1() {
+    void shouldReturnSolicitorDocumentPackWhenPassedRepresentedApplicant1() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YES);
         var documentPack = requestForInformationDocumentPack.getDocumentPack(data, data.getApplicant1());
@@ -60,7 +60,7 @@ public class RequestForInformationDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnApplicantDocumentPackWhenPassedApplicant2() {
+    void shouldReturnApplicantDocumentPackWhenPassedApplicant2() {
         CaseData data = validApplicant2CaseData();
         data.getApplicant1().setSolicitorRepresented(NO);
         var documentPack = requestForInformationDocumentPack.getDocumentPack(data, data.getApplicant2());
@@ -69,7 +69,7 @@ public class RequestForInformationDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnSolicitorDocumentPackWhenPassedRepresentedApplicant2() {
+    void shouldReturnSolicitorDocumentPackWhenPassedRepresentedApplicant2() {
         CaseData data = validApplicant2CaseData();
         data.getApplicant2().setSolicitorRepresented(YES);
         var documentPack = requestForInformationDocumentPack.getDocumentPack(data, data.getApplicant2());
@@ -78,7 +78,7 @@ public class RequestForInformationDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnCorrectLetterId() {
+    void shouldReturnCorrectLetterId() {
         assertThat(requestForInformationDocumentPack.getLetterId()).isEqualTo(LETTER_TYPE_REQUEST_FOR_INFORMATION);
     }
 }

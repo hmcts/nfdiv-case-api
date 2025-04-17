@@ -12,7 +12,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLIED_FOR_CONDIT
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLIED_FOR_CO_LETTER;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
-public class AppliedForConditionalOrderDocumentPackTest {
+class AppliedForConditionalOrderDocumentPackTest {
 
     private static final String LETTER_TYPE_APPLIED_FOR_CO = "applied-for-co-letter";
 
@@ -28,7 +28,7 @@ public class AppliedForConditionalOrderDocumentPackTest {
     private final AppliedForConditionalOrderDocumentPack appliedForCoDocumentPack = new AppliedForConditionalOrderDocumentPack();
 
     @Test
-    public void shouldReturnDocumentPack() {
+    void shouldReturnDocumentPack() {
         CaseData data = validApplicant1CaseData();
         var documentPack = appliedForCoDocumentPack.getDocumentPack(data, data.getApplicant1());
 
@@ -36,7 +36,7 @@ public class AppliedForConditionalOrderDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnCorrectLetterId() {
+    void shouldReturnCorrectLetterId() {
         assertThat(appliedForCoDocumentPack.getLetterId()).isEqualTo(LETTER_TYPE_APPLIED_FOR_CO);
     }
 

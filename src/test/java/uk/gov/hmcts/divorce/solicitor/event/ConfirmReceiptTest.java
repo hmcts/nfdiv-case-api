@@ -17,7 +17,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class ConfirmReceiptTest {
+class ConfirmReceiptTest {
 
     @InjectMocks
     private ConfirmReceipt confirmReceipt;

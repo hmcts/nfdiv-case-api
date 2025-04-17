@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant2SolicitorViewApplicant1ContactDetailsTest {
+class Applicant2SolicitorViewApplicant1ContactDetailsTest {
 
     @InjectMocks
     private Applicant2SolicitorViewApplicant1ContactDetails solicitorViewApplicant1ContactDetails;
@@ -39,7 +39,7 @@ public class Applicant2SolicitorViewApplicant1ContactDetailsTest {
     }
 
     @Test
-    public void aboutToStartShouldReturnValidationErrorIfApplicant1IsPrivate() {
+    void aboutToStartShouldReturnValidationErrorIfApplicant1IsPrivate() {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setState(Submitted);
         final CaseData caseData = CaseData.builder()
@@ -54,7 +54,7 @@ public class Applicant2SolicitorViewApplicant1ContactDetailsTest {
     }
 
     @Test
-    public void aboutToStartShouldNotReturnValidationErrorIfApplicant1IsPublic() {
+    void aboutToStartShouldNotReturnValidationErrorIfApplicant1IsPublic() {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setState(Submitted);
         final CaseData caseData = CaseData.builder()
