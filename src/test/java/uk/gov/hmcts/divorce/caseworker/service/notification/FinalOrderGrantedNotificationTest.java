@@ -68,13 +68,13 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 
 @ExtendWith(MockitoExtension.class)
-public class FinalOrderGrantedNotificationTest {
+class FinalOrderGrantedNotificationTest {
 
     private static final DocumentPackInfo TEST_DOCUMENT_PACK_INFO = new DocumentPackInfo(
         ImmutableMap.of(DocumentType.FINAL_ORDER_GRANTED, Optional.of(FINAL_ORDER_TEMPLATE_ID)),
         ImmutableMap.of(FINAL_ORDER_TEMPLATE_ID, FINAL_ORDER_DOCUMENT_NAME)
     );
-    public static final String THE_LETTER_ID = "the-letter-id";
+    static final String THE_LETTER_ID = "the-letter-id";
 
     @Mock
     private CommonContent commonContent;

@@ -17,7 +17,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.REQUEST_FOR_INFOR
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.addResponseToLatestRequestForInformation;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationCaseDetails;
 
-public class RequestForInformationResponseDocumentPackTest {
+class RequestForInformationResponseDocumentPackTest {
 
     private static final String LETTER_TYPE_REQUEST_FOR_INFORMATION_RESPONSE = "request-for-information-response-letter";
 
@@ -43,7 +43,7 @@ public class RequestForInformationResponseDocumentPackTest {
         new RequestForInformationResponseDocumentPack();
 
     @Test
-    public void shouldReturnApplicantDocumentPackWhenPassedApplicant1ForSoleCase() {
+    void shouldReturnApplicantDocumentPackWhenPassedApplicant1ForSoleCase() {
         CaseData data = getRequestForInformationCaseDetails(
             RequestForInformationSoleParties.APPLICANT,
             false,
@@ -56,7 +56,7 @@ public class RequestForInformationResponseDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnSolicitorDocumentPackWhenPassedRepresentedApplicant1ForSoleCase() {
+    void shouldReturnSolicitorDocumentPackWhenPassedRepresentedApplicant1ForSoleCase() {
         CaseData data = getRequestForInformationCaseDetails().getData();
         addResponseToLatestRequestForInformation(data, data.getApplicant1());
         var documentPack = requestForInformationResponseDocumentPack.getDocumentPack(data, data.getApplicant1());
@@ -65,7 +65,7 @@ public class RequestForInformationResponseDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnApplicantDocumentPackWhenPassedApplicant1ForJointCase() {
+    void shouldReturnApplicantDocumentPackWhenPassedApplicant1ForJointCase() {
         CaseData data = getRequestForInformationCaseDetails(
             RequestForInformationJointParties.APPLICANT1,
             false,
@@ -78,7 +78,7 @@ public class RequestForInformationResponseDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnSolicitorDocumentPackWhenPassedRepresentedApplicant1ForJointCase() {
+    void shouldReturnSolicitorDocumentPackWhenPassedRepresentedApplicant1ForJointCase() {
         CaseData data = getRequestForInformationCaseDetails(
             RequestForInformationJointParties.APPLICANT1,
             true,
@@ -91,7 +91,7 @@ public class RequestForInformationResponseDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnApplicantDocumentPackWhenPassedApplicant2() {
+    void shouldReturnApplicantDocumentPackWhenPassedApplicant2() {
         CaseData data = getRequestForInformationCaseDetails(
             RequestForInformationJointParties.APPLICANT2,
             false,
@@ -104,7 +104,7 @@ public class RequestForInformationResponseDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnSolicitorDocumentPackWhenPassedRepresentedApplicant2() {
+    void shouldReturnSolicitorDocumentPackWhenPassedRepresentedApplicant2() {
         CaseData data = getRequestForInformationCaseDetails(
             RequestForInformationJointParties.APPLICANT2,
             false,
@@ -117,7 +117,7 @@ public class RequestForInformationResponseDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnApplicantDocumentPackWhenPassedApplicant1ForBothPartiesRfi() {
+    void shouldReturnApplicantDocumentPackWhenPassedApplicant1ForBothPartiesRfi() {
         CaseData data = getRequestForInformationCaseDetails(
             RequestForInformationJointParties.BOTH,
             false,
@@ -130,7 +130,7 @@ public class RequestForInformationResponseDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnSolicitorDocumentPackWhenPassedRepresentedApplicant1ForBothPartiesRfi() {
+    void shouldReturnSolicitorDocumentPackWhenPassedRepresentedApplicant1ForBothPartiesRfi() {
         CaseData data = getRequestForInformationCaseDetails(
             RequestForInformationJointParties.BOTH,
             true,
@@ -143,7 +143,7 @@ public class RequestForInformationResponseDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnApplicantDocumentPackWhenPassedApplicant2ForBothPartiesRfi() {
+    void shouldReturnApplicantDocumentPackWhenPassedApplicant2ForBothPartiesRfi() {
         CaseData data = getRequestForInformationCaseDetails(
             RequestForInformationJointParties.BOTH,
             false,
@@ -156,7 +156,7 @@ public class RequestForInformationResponseDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnSolicitorDocumentPackWhenPassedRepresentedApplicant2ForBothPartiesRfi() {
+    void shouldReturnSolicitorDocumentPackWhenPassedRepresentedApplicant2ForBothPartiesRfi() {
         CaseData data = getRequestForInformationCaseDetails(
             RequestForInformationJointParties.BOTH,
             false,
@@ -169,7 +169,7 @@ public class RequestForInformationResponseDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnCorrectLetterId() {
+    void shouldReturnCorrectLetterId() {
         assertThat(requestForInformationResponseDocumentPack.getLetterId()).isEqualTo(LETTER_TYPE_REQUEST_FOR_INFORMATION_RESPONSE);
     }
 }
