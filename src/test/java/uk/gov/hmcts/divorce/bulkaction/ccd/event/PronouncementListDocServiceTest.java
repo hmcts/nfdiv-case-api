@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 
 
 @ExtendWith(MockitoExtension.class)
-public class PronouncementListDocServiceTest {
+class PronouncementListDocServiceTest {
 
     @InjectMocks
     PronouncementListDocService pronouncementListDocService;

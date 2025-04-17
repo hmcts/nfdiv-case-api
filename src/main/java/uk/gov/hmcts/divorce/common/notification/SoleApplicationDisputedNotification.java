@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.payment.PaymentService;
 
 import java.util.Map;
 
@@ -35,8 +36,11 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_DISPUTED_AOS_SUBMITTED_CO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED_CO;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
+import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
+import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
+import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE_ANSWERS;
+import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
 
 @Component
 @Slf4j
@@ -50,6 +54,8 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
     private final NotificationService notificationService;
 
     private final CommonContent commonContent;
+
+    private final PaymentService paymentService;
 
     @Value("${submit_aos.dispute_offset_days}")
     private int disputeDueDateOffsetDays;
@@ -81,7 +87,7 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
         log.info("Sending AOS disputed notification to Respondent for: {}", id);
 
         Map<String, String> templateVars = disputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-        templateVars.put(DISPUTED_AOS_FEE,disputedAOSFee);
+        templateVars.put(DISPUTED_AOS_FEE,formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_ISSUE,KEYWORD_DIVORCE_ANSWERS)));
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
             getState(caseDetails).equals(AwaitingConditionalOrder)
@@ -138,16 +144,18 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
     }
 
     private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Applicant applicant) {
-        var templateVars = commonContent.basicTemplateVars(caseData, id, applicant.getLanguagePreference());
+        var languagePreference = applicant.getLanguagePreference();
+        var templateVars = commonContent.basicTemplateVars(caseData, id, languagePreference);
+        var dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(languagePreference);
 
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
         templateVars.put(ISSUE_DATE_PLUS_37_DAYS,
-            caseData.getApplication().getIssueDate().plusDays(disputeDueDateOffsetDays).format(DATE_TIME_FORMATTER));
+            caseData.getApplication().getIssueDate().plusDays(disputeDueDateOffsetDays).format(dateTimeFormatter));
         templateVars.put(ISSUE_DATE_PLUS_141_DAYS, "");
-        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(dateTimeFormatter));
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(
             SOLICITOR_REFERENCE,

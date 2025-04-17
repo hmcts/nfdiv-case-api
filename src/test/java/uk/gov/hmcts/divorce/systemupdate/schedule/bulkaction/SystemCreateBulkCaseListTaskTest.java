@@ -49,7 +49,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
-public class SystemCreateBulkCaseListTaskTest {
+class SystemCreateBulkCaseListTaskTest {
 
     @Mock
     private CcdSearchService ccdSearchService;

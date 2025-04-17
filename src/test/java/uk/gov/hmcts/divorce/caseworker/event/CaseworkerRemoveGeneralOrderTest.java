@@ -36,7 +36,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceGeneralOrderListValue;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerRemoveGeneralOrderTest {
+class CaseworkerRemoveGeneralOrderTest {
 
     @Mock
     private DocumentRemovalService documentRemovalService;

@@ -25,7 +25,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 
 @ExtendWith(MockitoExtension.class)
-public class GenerateCoversheetTest {
+class GenerateCoversheetTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
