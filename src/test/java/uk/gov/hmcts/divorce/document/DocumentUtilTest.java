@@ -20,7 +20,6 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -156,10 +155,10 @@ class DocumentUtilTest {
 
         assertThat(letters.size()).isEqualTo(2);
         assertThat(
-            letters.stream().map(letter -> letter.getDivorceDocument().getDocumentFileName()).collect(Collectors.toList()))
+            letters.stream().map(letter -> letter.getDivorceDocument().getDocumentFileName()).toList())
             .containsExactlyInAnyOrder("doc1.pdf", "doc2.pdf");
         assertThat(
-            letters.stream().map(letter -> letter.getDivorceDocument().getDocumentType()).collect(Collectors.toList()))
+            letters.stream().map(letter -> letter.getDivorceDocument().getDocumentType()).toList())
             .containsExactlyInAnyOrder(NOTICE_OF_PROCEEDINGS_APP_1, NOTICE_OF_PROCEEDINGS_APP_1);
     }
 
@@ -343,7 +342,7 @@ class DocumentUtilTest {
         );
 
         assertThat(documentTypes.stream().map(DocumentUtil::getConfidentialDocumentType)
-                .collect(Collectors.toList()))
+                .toList())
             .containsExactly(
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2,

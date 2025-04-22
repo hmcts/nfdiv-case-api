@@ -14,10 +14,10 @@ import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.time.LocalDateTime.now;
 import static org.springframework.util.CollectionUtils.firstElement;
@@ -69,10 +69,12 @@ public class DocumentGenerator {
                                           final DocumentPackInfo documentPackInfo) {
         log.info("About to start generating document pack for case {}", caseId);
 
-        return documentPackInfo.documentPack().entrySet().stream()
-            .map(entry -> toLetter(entry, caseData, caseId, applicant, documentPackInfo.templateInfo()))
-            .flatMap(Optional::stream)
-            .collect(Collectors.toList());
+        return new ArrayList<>(
+            documentPackInfo.documentPack().entrySet().stream()
+                .map(entry -> toLetter(entry, caseData, caseId, applicant, documentPackInfo.templateInfo()))
+                .flatMap(Optional::stream)
+                .toList()
+        );
     }
 
     private Optional<Letter> toLetter(final Map.Entry<DocumentType, Optional<String>> entry,
