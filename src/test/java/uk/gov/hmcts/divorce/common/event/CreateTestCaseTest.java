@@ -19,7 +19,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class CreateTestCaseTest {
+class CreateTestCaseTest {
 
     @Mock
     private CcdAccessService ccdAccessService;

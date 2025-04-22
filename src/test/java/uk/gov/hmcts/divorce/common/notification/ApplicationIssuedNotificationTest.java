@@ -87,7 +87,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssue
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class ApplicationIssuedNotificationTest {
+class ApplicationIssuedNotificationTest {
 
     private static final String CASE_ID = "case id";
 

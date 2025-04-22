@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class SolicitorUpdateApplicant1ContactDetailsTest {
+class SolicitorUpdateApplicant1ContactDetailsTest {
 
     @Mock
     private ProcessConfidentialDocumentsService processConfidentialDocumentsService;
@@ -51,7 +51,7 @@ public class SolicitorUpdateApplicant1ContactDetailsTest {
     }
 
     @Test
-    public void aboutToSubmitShouldCallProcessConfidentialDocuments() {
+    void aboutToSubmitShouldCallProcessConfidentialDocuments() {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setState(Submitted);
         final CaseData caseData = CaseData.builder()

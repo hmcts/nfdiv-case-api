@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerUpdateApplicant1EmailTest {
+class CaseworkerUpdateApplicant1EmailTest {
 
     @Mock
     private EmailUpdateService emailUpdateService;

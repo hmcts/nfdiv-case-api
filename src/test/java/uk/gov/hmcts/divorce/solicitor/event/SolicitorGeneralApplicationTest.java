@@ -67,7 +67,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getListOfDivorceDocum
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class SolicitorGeneralApplicationTest {
+class SolicitorGeneralApplicationTest {
 
     private static final String PBA_NUMBER = "PBA0012345";
     private static final String FEE_ACCOUNT_REF = "REF01";
