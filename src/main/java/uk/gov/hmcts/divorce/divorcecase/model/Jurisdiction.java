@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -97,7 +96,7 @@ public class Jurisdiction {
                 validateJurisdictionConnectionI2(data),
                 validateJurisdictionConnectionJ(data)
 
-            ).filter(Objects::nonNull).collect(Collectors.toList());
+            ).filter(Objects::nonNull).toList();
         }
     }
 
