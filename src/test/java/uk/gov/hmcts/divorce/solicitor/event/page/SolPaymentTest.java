@@ -36,7 +36,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class SolPaymentTest {
+class SolPaymentTest {
 
     @Mock
     private PbaService pbaService;

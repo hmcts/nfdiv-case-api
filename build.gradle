@@ -25,7 +25,7 @@ plugins {
   id 'org.springframework.boot' version '3.3.5'
   id 'com.github.ben-manes.versions' version '0.52.0'
   id 'hmcts.ccd.sdk' version '5.5.19'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1618'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1666'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -267,7 +267,7 @@ dependencies {
     exclude group: 'org.apache.poi', module: 'poi'
     exclude group: 'com.launchdarkly', module: 'launchdarkly-java-server-sdk'
   }
-  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '5.0.3'
+  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '5.0.5'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.3'
   implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.1.7'
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '4.0.4'

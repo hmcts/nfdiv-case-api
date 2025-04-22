@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentSetupServiceTest {
+class PaymentSetupServiceTest {
     @Mock
     private PaymentService paymentService;
 
@@ -34,7 +34,7 @@ public class PaymentSetupServiceTest {
     private PaymentSetupService paymentSetupService;
 
     @Test
-    public void shouldNotCreateApplicationFeeOrderSummaryIfItAlreadyExists() {
+    void shouldNotCreateApplicationFeeOrderSummaryIfItAlreadyExists() {
         final CaseData caseData = new CaseData();
         final OrderSummary orderSummary = OrderSummary.builder().build();
         caseData.setApplication(
@@ -50,7 +50,7 @@ public class PaymentSetupServiceTest {
     }
 
     @Test
-    public void shouldCreateApplicationFeeOrderSummaryIfDoesNotAlreadyExist() {
+    void shouldCreateApplicationFeeOrderSummaryIfDoesNotAlreadyExist() {
         final CaseData caseData = new CaseData();
         final OrderSummary orderSummary = OrderSummary.builder().build();
         caseData.setApplication(Application.builder().build());
@@ -65,7 +65,7 @@ public class PaymentSetupServiceTest {
     }
 
     @Test
-    public void shouldNotCreateApplicationFeeServiceRequestIfItAlreadyExists() {
+    void shouldNotCreateApplicationFeeServiceRequestIfItAlreadyExists() {
         final CaseData caseData = new CaseData();
         caseData.setApplicant1(Applicant.builder().firstName(TEST_FIRST_NAME).build());
         final OrderSummary orderSummary = OrderSummary.builder().build();
@@ -83,7 +83,7 @@ public class PaymentSetupServiceTest {
     }
 
     @Test
-    public void shouldCreateApplicationFeeServiceRequestIfDoesNotAlreadyExist() {
+    void shouldCreateApplicationFeeServiceRequestIfDoesNotAlreadyExist() {
         final CaseData caseData = new CaseData();
         caseData.setApplicant1(Applicant.builder().firstName(TEST_FIRST_NAME).build());
         final OrderSummary orderSummary = OrderSummary.builder().build();
@@ -103,7 +103,7 @@ public class PaymentSetupServiceTest {
     }
 
     @Test
-    public void shouldNotCreateFinalOrderFeeOrderSummaryIfItAlreadyExists() {
+    void shouldNotCreateFinalOrderFeeOrderSummaryIfItAlreadyExists() {
         final CaseData caseData = new CaseData();
         final OrderSummary orderSummary = OrderSummary.builder().build();
         caseData.setFinalOrder(
@@ -119,7 +119,7 @@ public class PaymentSetupServiceTest {
     }
 
     @Test
-    public void shouldCreateFinalOrderFeeOrderSummaryIfDoesNotAlreadyExist() {
+    void shouldCreateFinalOrderFeeOrderSummaryIfDoesNotAlreadyExist() {
         final CaseData caseData = new CaseData();
         final OrderSummary orderSummary = OrderSummary.builder().build();
         caseData.setFinalOrder(FinalOrder.builder().build());
@@ -134,7 +134,7 @@ public class PaymentSetupServiceTest {
     }
 
     @Test
-    public void shouldNotCreateFinalOrderFeeServiceRequestIfItAlreadyExists() {
+    void shouldNotCreateFinalOrderFeeServiceRequestIfItAlreadyExists() {
         final CaseData caseData = new CaseData();
         caseData.setApplicant2(Applicant.builder().firstName(TEST_FIRST_NAME).build());
         final OrderSummary orderSummary = OrderSummary.builder().build();
@@ -152,7 +152,7 @@ public class PaymentSetupServiceTest {
     }
 
     @Test
-    public void shouldCreateFinalOrderFeeServiceRequestIfDoesNotAlreadyExist() {
+    void shouldCreateFinalOrderFeeServiceRequestIfDoesNotAlreadyExist() {
         final CaseData caseData = new CaseData();
         caseData.setApplicant2(Applicant.builder().firstName(TEST_FIRST_NAME).build());
         final OrderSummary orderSummary = OrderSummary.builder().build();

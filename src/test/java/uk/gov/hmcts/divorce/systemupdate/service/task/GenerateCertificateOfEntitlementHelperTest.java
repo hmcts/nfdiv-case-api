@@ -64,7 +64,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getOfflineSolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getSolicitorDocTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
-public class GenerateCertificateOfEntitlementHelperTest {
+class GenerateCertificateOfEntitlementHelperTest {
 
     @Mock
     private DocmosisCommonContent docmosisCommonContent;
@@ -79,7 +79,7 @@ public class GenerateCertificateOfEntitlementHelperTest {
     private GenerateCertificateOfEntitlementHelper generateCertificateOfEntitlementHelper;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         ReflectionTestUtils.setField(generateCertificateOfEntitlementHelper, "finalOrderOffsetDays", 43);
     }
 

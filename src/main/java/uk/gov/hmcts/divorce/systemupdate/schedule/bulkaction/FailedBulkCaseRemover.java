@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -21,10 +21,10 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class FailedBulkCaseRemover {
 
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
+    private final CcdUpdateService ccdUpdateService;
 
     public void removeFailedCasesFromBulkListCaseDetails(final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases,
                                                          final CaseDetails<BulkActionCaseData, BulkActionState> caseDetailsBulkCase,

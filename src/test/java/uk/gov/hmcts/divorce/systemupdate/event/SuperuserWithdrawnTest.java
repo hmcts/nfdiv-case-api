@@ -40,7 +40,7 @@ class SuperuserWithdrawnTest {
     }
 
     @Test
-    public void shouldWithdrawCaseByDelegatingToWithdrawCaseService() {
+    void shouldWithdrawCaseByDelegatingToWithdrawCaseService() {
         final var caseDetails = new CaseDetails<CaseData, State>();
 
         superuserWithdrawn.aboutToSubmit(caseDetails, caseDetails);

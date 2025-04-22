@@ -42,7 +42,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class LetterPrinterTest {
+class LetterPrinterTest {
 
     private static final String TEST_LETTER_NAME = "test-letter-name";
 
@@ -59,7 +59,7 @@ public class LetterPrinterTest {
     private ArgumentCaptor<Print> printArgumentCaptor;
 
     @Test
-    public void shouldPrintLettersWhenSizeOfListReturnedMatchesDocumentPackSize() {
+    void shouldPrintLettersWhenSizeOfListReturnedMatchesDocumentPackSize() {
         CaseData caseData = validApplicant1CaseData();
         long caseId = TEST_CASE_ID;
         Applicant applicant = caseData.getApplicant1();
@@ -80,7 +80,7 @@ public class LetterPrinterTest {
     }
 
     @Test
-    public void shouldPrintLettersWhenSizeOfListReturnedMatchesDocumentPackSizeForGeneralLetter() {
+    void shouldPrintLettersWhenSizeOfListReturnedMatchesDocumentPackSizeForGeneralLetter() {
         CaseData caseData = validApplicant1CaseData();
 
         Document generalLetter = Document.builder()
@@ -124,7 +124,7 @@ public class LetterPrinterTest {
     }
 
     @Test
-    public void shouldPrintLettersWithInternationalFlagSetWhenApplicantAddressOverseas() {
+    void shouldPrintLettersWithInternationalFlagSetWhenApplicantAddressOverseas() {
         CaseData caseData = validApplicant1CaseData();
         caseData.getApplicant1().setAddressOverseas(YES);
 
@@ -168,7 +168,7 @@ public class LetterPrinterTest {
     }
 
     @Test
-    public void shouldPrintAttachmentsWithGeneralLetter() {
+    void shouldPrintAttachmentsWithGeneralLetter() {
         CaseData caseData = validApplicant1CaseData();
 
         Document generalLetter = Document.builder()
@@ -218,7 +218,7 @@ public class LetterPrinterTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenSizeOfListReturnedIsNotEqualToDocumentPackSize() {
+    void shouldThrowExceptionWhenSizeOfListReturnedIsNotEqualToDocumentPackSize() {
         CaseData caseData = validApplicant1CaseData();
         long caseId = TEST_CASE_ID;
         Applicant applicant = caseData.getApplicant1();
@@ -237,7 +237,7 @@ public class LetterPrinterTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenListReturnedIsEmpty() {
+    void shouldThrowExceptionWhenListReturnedIsEmpty() {
         CaseData caseData = validApplicant1CaseData();
         long caseId = TEST_CASE_ID;
         Applicant applicant = caseData.getApplicant1();
@@ -255,7 +255,7 @@ public class LetterPrinterTest {
 
 
     @Test
-    public void shouldThrowExceptionWhenGeneralLetterIsNull() {
+    void shouldThrowExceptionWhenGeneralLetterIsNull() {
         CaseData caseData = validApplicant1CaseData();
 
         caseData.setGeneralLetters(null);

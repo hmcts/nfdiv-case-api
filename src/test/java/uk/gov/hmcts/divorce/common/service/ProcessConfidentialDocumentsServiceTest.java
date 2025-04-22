@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEED
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class ProcessConfidentialDocumentsServiceTest {
+class ProcessConfidentialDocumentsServiceTest {
 
     private final ListValue<DivorceDocument> applicant1Nop = ListValue.<DivorceDocument>builder()
         .id("1111")
@@ -121,7 +121,7 @@ public class ProcessConfidentialDocumentsServiceTest {
 
 
     @Test
-    public void processDocumentsShouldMoveNOPDocumentToConfidentialDocumentsGeneratedWhenContactIsPrivateForApplicant1() {
+    void processDocumentsShouldMoveNOPDocumentToConfidentialDocumentsGeneratedWhenContactIsPrivateForApplicant1() {
 
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
@@ -145,7 +145,7 @@ public class ProcessConfidentialDocumentsServiceTest {
     }
 
     @Test
-    public void processDocumentsShouldNotMoveGeneratedDocumentsToConfidentialIfTheyDoNotHaveAMapping() {
+    void processDocumentsShouldNotMoveGeneratedDocumentsToConfidentialIfTheyDoNotHaveAMapping() {
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
             .documents(CaseDocuments.builder()
@@ -169,7 +169,7 @@ public class ProcessConfidentialDocumentsServiceTest {
     }
 
     @Test
-    public void processDocumentsShouldNotMoveConfidentialDocumentsToDocumentsGeneratedWhenContactIsNotPrivateForApplicant1() {
+    void processDocumentsShouldNotMoveConfidentialDocumentsToDocumentsGeneratedWhenContactIsNotPrivateForApplicant1() {
 
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PUBLIC).build())
@@ -201,7 +201,7 @@ public class ProcessConfidentialDocumentsServiceTest {
     }
 
     @Test
-    public void processDocumentsShouldNotMoveConfidentialDocumentsToDocumentsGeneratedWhenContactIsNotPrivateForApplicant2() {
+    void processDocumentsShouldNotMoveConfidentialDocumentsToDocumentsGeneratedWhenContactIsNotPrivateForApplicant2() {
 
         CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder().contactDetailsType(ContactDetailsType.PUBLIC).build())
@@ -233,7 +233,7 @@ public class ProcessConfidentialDocumentsServiceTest {
     }
 
     @Test
-    public void processDocumentShouldMoveBothApplicantsGeneralLettersToConfidentialDocumentsWhenContactIsPrivateForBothApplicant() {
+    void processDocumentShouldMoveBothApplicantsGeneralLettersToConfidentialDocumentsWhenContactIsPrivateForBothApplicant() {
 
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
@@ -281,7 +281,7 @@ public class ProcessConfidentialDocumentsServiceTest {
     }
 
     @Test
-    public void processDocumentShouldMoveFOCanApplyToConfidentialDocumentsWhenContactIsPrivateForEitherApplicant() {
+    void processDocumentShouldMoveFOCanApplyToConfidentialDocumentsWhenContactIsPrivateForEitherApplicant() {
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
             .documents(CaseDocuments.builder()
@@ -302,7 +302,7 @@ public class ProcessConfidentialDocumentsServiceTest {
     }
 
     @Test
-    public void processDocumentsShouldMoveOfflineRespondentNopToConfidentialDocumentsTab() {
+    void processDocumentsShouldMoveOfflineRespondentNopToConfidentialDocumentsTab() {
         CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
             .documents(CaseDocuments.builder()

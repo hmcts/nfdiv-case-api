@@ -23,7 +23,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataCOPronounced;
 
 @ExtendWith(MockitoExtension.class)
-public class GenerateConditionalOrderPronouncedCoversheetTest {
+class GenerateConditionalOrderPronouncedCoversheetTest {
 
     @Mock
     private ConditionalOrderPronouncedCoverLetterHelper coverLetterHelper;
@@ -32,7 +32,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
     private GenerateConditionalOrderPronouncedCoversheet generateConditionalOrderPronouncedCoversheet;
 
     @Test
-    public void shouldGenerateCoverLettersSoleApplication() {
+    void shouldGenerateCoverLettersSoleApplication() {
         CaseData data = buildCaseDataCOPronounced(YES, PRIVATE, PRIVATE);
         data.setApplicationType(SOLE_APPLICATION);
 
@@ -51,7 +51,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
     }
 
     @Test
-    public void shouldGenerateCoverLettersJointApplication() {
+    void shouldGenerateCoverLettersJointApplication() {
         CaseData data = buildCaseDataCOPronounced(YES, PRIVATE, PRIVATE);
         data.setApplicationType(JOINT_APPLICATION);
 
@@ -70,7 +70,7 @@ public class GenerateConditionalOrderPronouncedCoversheetTest {
     }
 
     @Test
-    public void shouldNotGenerateCoverLettersForOnlineApplicantsWithContactTypePrivate() {
+    void shouldNotGenerateCoverLettersForOnlineApplicantsWithContactTypePrivate() {
         CaseData data = buildCaseDataCOPronounced(NO, PRIVATE, PRIVATE);
         data.setApplicationType(JOINT_APPLICATION);
 

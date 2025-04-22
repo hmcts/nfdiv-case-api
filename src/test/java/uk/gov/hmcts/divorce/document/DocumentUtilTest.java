@@ -163,7 +163,7 @@ class DocumentUtilTest {
     }
 
     @Test
-    public void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralLetterAndGeneralLetterPartyIsApplicant() {
+    void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralLetterAndGeneralLetterPartyIsApplicant() {
         var caseData = CaseData.builder().build();
         caseData.getGeneralLetter().setGeneralLetterParties(APPLICANT);
         caseData.getApplicant1().setContactDetailsType(PRIVATE);
@@ -172,7 +172,7 @@ class DocumentUtilTest {
     }
 
     @Test
-    public void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralLetterAndGeneralLetterPartyIsRespondent() {
+    void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralLetterAndGeneralLetterPartyIsRespondent() {
         var caseData = CaseData.builder().build();
         caseData.getGeneralLetter().setGeneralLetterParties(RESPONDENT);
         caseData.getApplicant2().setContactDetailsType(PRIVATE);
@@ -182,7 +182,7 @@ class DocumentUtilTest {
 
 
     @Test
-    public void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralLetterAndGeneralLetterPartyIsOther() {
+    void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralLetterAndGeneralLetterPartyIsOther() {
         var caseData = CaseData.builder().build();
         caseData.getGeneralLetter().setGeneralLetterParties(GeneralParties.OTHER);
         caseData.getApplicant2().setContactDetailsType(PRIVATE);
@@ -191,7 +191,7 @@ class DocumentUtilTest {
     }
 
     @Test
-    public void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsApplicant() {
+    void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsApplicant() {
         var caseData = CaseData.builder().build();
         caseData.getGeneralEmail().setGeneralEmailParties(APPLICANT);
         caseData.getApplicant1().setContactDetailsType(PRIVATE);
@@ -200,7 +200,7 @@ class DocumentUtilTest {
     }
 
     @Test
-    public void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsRespondent() {
+    void isConfidentialShouldReturnTrueWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsRespondent() {
         var caseData = CaseData.builder().build();
         caseData.getGeneralEmail().setGeneralEmailParties(RESPONDENT);
         caseData.getApplicant2().setContactDetailsType(PRIVATE);
@@ -209,14 +209,14 @@ class DocumentUtilTest {
     }
 
     @Test
-    public void isConfidentialShouldReturnFalseWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsOther() {
+    void isConfidentialShouldReturnFalseWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsOther() {
         var caseData = CaseData.builder().build();
         caseData.getGeneralEmail().setGeneralEmailParties(GeneralParties.OTHER);
         assertFalse(isConfidential(caseData, EMAIL));
     }
 
     @Test
-    public void isConfidentialShouldReturnFalseWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsOtherEvenIfApplicatsConfidential() {
+    void isConfidentialShouldReturnFalseWhenDocumentTypeIsGeneralEmailAndGeneralEmailPartyIsOtherEvenIfApplicatsConfidential() {
         var caseData = CaseData.builder().build();
         caseData.getApplicant1().setContactDetailsType(PRIVATE);
         caseData.getApplicant2().setContactDetailsType(PRIVATE);
@@ -225,7 +225,7 @@ class DocumentUtilTest {
     }
 
     @Test
-    public void isConfidentialShouldReturnFalseWhenDocumentTypeIsNOPAndApplicantsAreNotConfidential() {
+    void isConfidentialShouldReturnFalseWhenDocumentTypeIsNOPAndApplicantsAreNotConfidential() {
         var caseData = CaseData.builder().build();
         caseData.getApplicant1().setContactDetailsType(PUBLIC);
         assertFalse(isConfidential(caseData, NOTICE_OF_PROCEEDINGS_APP_1));
@@ -235,7 +235,7 @@ class DocumentUtilTest {
     }
 
     @Test
-    public void isConfidentialShouldReturnFalseWhenDocumentTypeIsCOCoversheetAndApplicantsAreNotConfidential() {
+    void isConfidentialShouldReturnFalseWhenDocumentTypeIsCOCoversheetAndApplicantsAreNotConfidential() {
         var caseData = CaseData.builder().build();
         caseData.getApplicant1().setContactDetailsType(PUBLIC);
         assertFalse(isConfidential(caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1));
@@ -245,21 +245,21 @@ class DocumentUtilTest {
     }
 
     @Test
-    public void isConfidentialShouldReturnTrueWhenDocumentTypeIsCOCoversheetAndApplicant1Confidential() {
+    void isConfidentialShouldReturnTrueWhenDocumentTypeIsCOCoversheetAndApplicant1Confidential() {
         var caseData = CaseData.builder().build();
         caseData.getApplicant1().setContactDetailsType(PRIVATE);
         assertTrue(isConfidential(caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1));
     }
 
     @Test
-    public void isConfidentialShouldReturnTrueWhenDocumentTypeIsCOCoversheetAndApplicant2Confidential() {
+    void isConfidentialShouldReturnTrueWhenDocumentTypeIsCOCoversheetAndApplicant2Confidential() {
         var caseData = CaseData.builder().build();
         caseData.getApplicant2().setContactDetailsType(PRIVATE);
         assertTrue(isConfidential(caseData, CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2));
     }
 
     @Test
-    public void isConfidentialShouldReturnFalseWhenDocumentTypeIsNOPAndApplicantsAreConfidential() {
+    void isConfidentialShouldReturnFalseWhenDocumentTypeIsNOPAndApplicantsAreConfidential() {
         var caseData = CaseData.builder().build();
         caseData.getApplicant1().setContactDetailsType(PRIVATE);
         assertTrue(isConfidential(caseData, NOTICE_OF_PROCEEDINGS_APP_1));
@@ -269,7 +269,7 @@ class DocumentUtilTest {
     }
 
     @Test
-    public void shouldReturnConfidentialLettersWhenDocumentIsApplicableForConfidentialityAndApplicantContactIsPrivate() {
+    void shouldReturnConfidentialLettersWhenDocumentIsApplicableForConfidentialityAndApplicantContactIsPrivate() {
 
         final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -332,7 +332,7 @@ class DocumentUtilTest {
     }
 
     @Test
-    public void shouldReturnConfidentialDocumentType() {
+    void shouldReturnConfidentialDocumentType() {
         List<DocumentType> documentTypes = Lists.newArrayList(
             NOTICE_OF_PROCEEDINGS_APP_1,
             NOTICE_OF_PROCEEDINGS_APP_2,
@@ -353,7 +353,7 @@ class DocumentUtilTest {
     }
 
     @Test
-    public void shouldRemoveDocumentsFromConfidentialDocsWhenContactIsPrivate() {
+    void shouldRemoveDocumentsFromConfidentialDocsWhenContactIsPrivate() {
         CaseData caseData = caseData();
         caseData.getApplicant2().setContactDetailsType(PRIVATE);
 
@@ -381,7 +381,7 @@ class DocumentUtilTest {
     }
 
     @Test
-    public void shouldRemoveDocumentsFromConfidentialDocs() {
+    void shouldRemoveDocumentsFromConfidentialDocs() {
         CaseData caseData = caseData();
         caseData.getApplicant2().setContactDetailsType(PRIVATE);
 
@@ -409,7 +409,7 @@ class DocumentUtilTest {
     }
 
     @Test
-    public void shouldRemoveDocumentsFromDocumentsGeneratedWhenContactIsPublic() {
+    void shouldRemoveDocumentsFromDocumentsGeneratedWhenContactIsPublic() {
         CaseData caseData = caseData();
         caseData.getApplicant1().setContactDetailsType(PUBLIC);
 
