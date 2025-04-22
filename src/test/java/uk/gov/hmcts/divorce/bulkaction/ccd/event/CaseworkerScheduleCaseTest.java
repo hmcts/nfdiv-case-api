@@ -153,7 +153,9 @@ class CaseworkerScheduleCaseTest {
                 systemUser,
                 TEST_SERVICE_AUTH_TOKEN);
 
-        verify(failedBulkCaseRemover).removeFailedCasesFromBulkListCaseDetails(any(), eq(details), eq(systemUser), eq(TEST_SERVICE_AUTH_TOKEN));
+        verify(failedBulkCaseRemover).removeFailedCasesFromBulkListCaseDetails(
+            any(), eq(details), eq(systemUser), eq(TEST_SERVICE_AUTH_TOKEN)
+        );
     }
 
     private User setUpUser(String userRole) {
