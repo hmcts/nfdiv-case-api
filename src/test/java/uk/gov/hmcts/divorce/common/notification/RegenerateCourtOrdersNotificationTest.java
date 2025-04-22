@@ -100,7 +100,7 @@ class RegenerateCourtOrdersNotificationTest {
         )
     );
 
-    public static final String LETTER_ID = "letterId";
+    static final String LETTER_ID = "letterId";
 
     @Test
     void testSendToApplicant1Offline() {

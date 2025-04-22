@@ -41,7 +41,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerConfirmServicePaymentTest {
+class CaseworkerConfirmServicePaymentTest {
 
     @Mock
     PaymentService paymentService;

@@ -172,7 +172,7 @@ class SolicitorSubmitJointApplicationTest {
     }
 
     @Test
-    public void shouldSetApplicant1SolicitorAnswersLinkWhenDraftApplicationDocumentIsInDocumentsGenerated() {
+    void shouldSetApplicant1SolicitorAnswersLinkWhenDraftApplicationDocumentIsInDocumentsGenerated() {
         final CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.setApplicationType(JOINT_APPLICATION);
@@ -191,7 +191,7 @@ class SolicitorSubmitJointApplicationTest {
     }
 
     @Test
-    public void shouldNotSetApplicant1SolicitorAnswersLinkWhenDraftApplicationDocumentIsInDocumentsGenerated() {
+    void shouldNotSetApplicant1SolicitorAnswersLinkWhenDraftApplicationDocumentIsInDocumentsGenerated() {
         final CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.setApplicationType(JOINT_APPLICATION);

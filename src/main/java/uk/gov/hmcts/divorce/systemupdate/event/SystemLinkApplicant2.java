@@ -38,8 +38,8 @@ public class SystemLinkApplicant2 implements CCDConfig<CaseData, State, UserRole
         configBuilder
             .event(SYSTEM_LINK_APPLICANT_2)
             .forStates(STATES_FOR_LINKING_APP2)
-            .name("Link Applicant 2 to case")
-            .description("Link Applicant 2 to case to enable completion of joint application")
+            .name("Link Resp or App 2 to case")
+            .description("Link Respondent or Applicant 2 to case so they are online")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER)
             .retries(120, 120)

@@ -24,7 +24,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 
 @ExtendWith(MockitoExtension.class)
-public class RespondentApplyForFinalOrderTest {
+class RespondentApplyForFinalOrderTest {
     @Mock
     private ApplyForFinalOrderService applyForFinalOrderService;
 
@@ -37,7 +37,7 @@ public class RespondentApplyForFinalOrderTest {
     private OrderSummary orderSummary;
 
     @Test
-    public void givenRespondentDoesNotNeedHwfThenChangeStateToAwaitingPaymentAndSetOrderSummary() {
+    void givenRespondentDoesNotNeedHwfThenChangeStateToAwaitingPaymentAndSetOrderSummary() {
         CaseData caseData = CaseData.builder()
             .finalOrder(
                 FinalOrder.builder()
@@ -70,7 +70,7 @@ public class RespondentApplyForFinalOrderTest {
     }
 
     @Test
-    public void givenRespondentDoesNeedHwfThenDelegateToApplyForFinalOrderService() {
+    void givenRespondentDoesNeedHwfThenDelegateToApplyForFinalOrderService() {
         CaseData caseData = CaseData.builder().finalOrder(
             FinalOrder.builder()
                 .applicant2FinalOrderHelpWithFees(HelpWithFees.builder().needHelp(YesOrNo.YES).build())

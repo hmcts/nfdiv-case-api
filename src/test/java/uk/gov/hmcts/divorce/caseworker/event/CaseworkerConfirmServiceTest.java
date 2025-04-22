@@ -47,7 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatement
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerConfirmServiceTest {
+class CaseworkerConfirmServiceTest {
 
     @Mock
     private SubmitConfirmService submitConfirmService;
@@ -160,7 +160,7 @@ public class CaseworkerConfirmServiceTest {
     }
 
     @Test
-    public void shouldAddAnyConfirmServiceAttachmentsToDocumentsUploadedList() {
+    void shouldAddAnyConfirmServiceAttachmentsToDocumentsUploadedList() {
         final CaseData caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
@@ -191,7 +191,7 @@ public class CaseworkerConfirmServiceTest {
     }
 
     @Test
-    public void shouldThrowValidationErrorWhenProcessedByProcessServerButDocumentsNotUploaded() {
+    void shouldThrowValidationErrorWhenProcessedByProcessServerButDocumentsNotUploaded() {
         final CaseData caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
@@ -218,7 +218,7 @@ public class CaseworkerConfirmServiceTest {
     }
 
     @Test
-    public void shouldNotThrowValidationErrorWhenProcessedByProcessServerButDocumentsUploaded() {
+    void shouldNotThrowValidationErrorWhenProcessedByProcessServerButDocumentsUploaded() {
         final CaseData caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);

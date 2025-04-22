@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
 @ExtendWith(MockitoExtension.class)
-public class UpdateCourtHearingDetailsTaskTest {
+class UpdateCourtHearingDetailsTaskTest {
 
     @Mock
     private BulkCaseTaskUtil bulkCaseTaskUtil;

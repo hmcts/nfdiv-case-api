@@ -15,7 +15,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 class AlternativeServiceUtilTest {
 
     @Test
-    public void shouldAddNewServiceApplicationToCollectionAndSetApplicationToNull() {
+    void shouldAddNewServiceApplicationToCollectionAndSetApplicationToNull() {
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
@@ -28,7 +28,7 @@ class AlternativeServiceUtilTest {
     }
 
     @Test
-    public void shouldAddSecondServiceApplicationToCollectionIfOneExists() {
+    void shouldAddSecondServiceApplicationToCollectionIfOneExists() {
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
@@ -53,7 +53,7 @@ class AlternativeServiceUtilTest {
     }
 
     @Test
-    public void shouldNotAddToServiceApplicationCollectionIfServiceApplicationIsNull() {
+    void shouldNotAddToServiceApplicationCollectionIfServiceApplicationIsNull() {
         final CaseData caseData = caseData();
         caseData.setAlternativeService(null);
         caseData.archiveAlternativeServiceApplicationOnCompletion();
@@ -61,7 +61,7 @@ class AlternativeServiceUtilTest {
     }
 
     @Test
-    public void assertIsApplicationGrantedYes() {
+    void assertIsApplicationGrantedYes() {
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setServiceApplicationGranted(YesOrNo.YES);
 
@@ -69,7 +69,7 @@ class AlternativeServiceUtilTest {
     }
 
     @Test
-    public void assertIsApplicationGrantedNo() {
+    void assertIsApplicationGrantedNo() {
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setServiceApplicationGranted(YesOrNo.NO);
 

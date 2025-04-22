@@ -45,7 +45,7 @@ class CitizenCreateServiceRequestTest {
     }
 
     @Test
-    public void shouldSetServiceRequestForApplicationPaymentIfCaseIsInAwaitingPayment() {
+    void shouldSetServiceRequestForApplicationPaymentIfCaseIsInAwaitingPayment() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = new CaseData();
         final OrderSummary orderSummary = new OrderSummary();
@@ -70,7 +70,7 @@ class CitizenCreateServiceRequestTest {
     }
 
     @Test
-    public void shouldSetServiceRequestForFinalOrderPaymentIfCaseIsInAwaitingFinalOrderPayment() {
+    void shouldSetServiceRequestForFinalOrderPaymentIfCaseIsInAwaitingFinalOrderPayment() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = new CaseData();
         final OrderSummary orderSummary = OrderSummary.builder().build();

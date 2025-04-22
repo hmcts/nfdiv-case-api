@@ -109,7 +109,7 @@ class CaseworkerExpediteFinalOrderTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenCOGrantedDateIsNotSet() {
+    void shouldReturnErrorWhenCOGrantedDateIsNotSet() {
         final CaseData caseData = caseData();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();

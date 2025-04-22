@@ -81,7 +81,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.orderSummaryWithFee;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentServiceTest {
+class PaymentServiceTest {
 
     private static final String DEFAULT_CHANNEL = "default";
     private static final String FAMILY = "family";
@@ -659,7 +659,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getServiceCostShouldReturnFeeAmountWhenFeeEventIsAvailable() {
+    void getServiceCostShouldReturnFeeAmountWhenFeeEventIsAvailable() {
         FeeResponse feeResponse = getFeeResponse();
 
         doReturn(feeResponse)
@@ -688,7 +688,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getServiceCostShouldThrowFeignExceptionWhenFeeEventIsNotAvailable() {
+    void getServiceCostShouldThrowFeignExceptionWhenFeeEventIsNotAvailable() {
         byte[] emptyBody = {};
         Request request = Request.create(GET, EMPTY, Map.of(), emptyBody, UTF_8, null);
 

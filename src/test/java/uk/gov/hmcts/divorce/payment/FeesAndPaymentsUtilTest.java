@@ -15,7 +15,7 @@ class FeesAndPaymentsUtilTest {
     }
 
     @Test
-    public void formatAmountShouldReturnValidCurrencyFormat() {
+    void formatAmountShouldReturnValidCurrencyFormat() {
         assertThat(
             FeesAndPaymentsUtil.formatAmount(100.10),
             is("£100.10"));

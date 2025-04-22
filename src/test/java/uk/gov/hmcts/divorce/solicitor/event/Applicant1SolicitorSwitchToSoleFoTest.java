@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant1SolicitorSwitchToSoleFoTest {
+class Applicant1SolicitorSwitchToSoleFoTest {
 
     @InjectMocks
     private Applicant1SolicitorSwitchToSoleFo applicant1SolicitorSwitchToSoleFo;
