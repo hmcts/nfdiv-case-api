@@ -115,15 +115,16 @@ public class SystemCreateBulkCaseListTask implements Runnable {
         bulkActionCaseDetails.setData(BulkActionCaseData.builder()
             .bulkListCaseDetails(bulkListCaseDetails)
             .casesAcceptedToListForHearing(
-                bulkListCaseDetails.stream()
-                    .map(c ->
-                        ListValue.<CaseLink>builder()
-                            .id(String.valueOf(counter.getAndIncrement()))
-                            .value(c.getValue().getCaseReference())
-                            .build()
-                    )
-                    .toList())
-            .build());
+                new ArrayList<>(
+                    bulkListCaseDetails.stream()
+                        .map(c ->
+                            ListValue.<CaseLink>builder()
+                                .id(String.valueOf(counter.getAndIncrement()))
+                                .value(c.getValue().getCaseReference())
+                                .build()
+                        )
+                        .toList())
+            ).build());
 
         return ccdCreateService.createBulkCase(bulkActionCaseDetails, user, serviceAuth);
     }
