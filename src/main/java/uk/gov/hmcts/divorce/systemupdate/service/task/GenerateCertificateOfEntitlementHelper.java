@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.service.task;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -42,6 +42,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
+@RequiredArgsConstructor
 public class GenerateCertificateOfEntitlementHelper {
 
     public static final String GET_A_DIVORCE = "get a divorce";
@@ -52,14 +53,11 @@ public class GenerateCertificateOfEntitlementHelper {
     @Value("${final_order.eligible_from_offset_days}")
     private long finalOrderOffsetDays;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     public Map<String, Object> getTemplateContent(final CaseData caseData,
                                                   final Long caseId,

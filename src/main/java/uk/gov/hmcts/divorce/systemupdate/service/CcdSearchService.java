@@ -1,11 +1,11 @@
 package uk.gov.hmcts.divorce.systemupdate.service;
 
 import feign.FeignException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -50,6 +50,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CcdSearchService {
 
     public static final String ACCESS_CODE = "data.accessCode";
@@ -92,17 +93,13 @@ public class CcdSearchService {
     @Value("${core_case_data.search.total_max_results}")
     private int totalMaxResults;
 
-    @Autowired
-    private CoreCaseDataApi coreCaseDataApi;
+    private final CoreCaseDataApi coreCaseDataApi;
 
-    @Autowired
-    private CoreCaseDataApiWithStateModifiedDate coreCaseDataApiWithStateModifiedDate;
+    private final CoreCaseDataApiWithStateModifiedDate coreCaseDataApiWithStateModifiedDate;
 
-    @Autowired
-    private CaseDetailsConverter caseDetailsConverter;
+    private final CaseDetailsConverter caseDetailsConverter;
 
-    @Autowired
-    private CaseDetailsListConverter caseDetailsListConverter;
+    private final CaseDetailsListConverter caseDetailsListConverter;
 
     public List<CaseDetails> searchForAllCasesWithQuery(final BoolQueryBuilder query,
                                                         final User user,
