@@ -40,6 +40,8 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYS
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -134,6 +136,10 @@ class CaseworkerScheduleCaseTest {
 
         User user =  setUpUser(CASE_WORKER.getRole());
 
+        var userDetails = UserInfo.builder().uid(SYSTEM_USER_USER_ID).build();
+        User systemUser = new User(SYSTEM_UPDATE_AUTH_TOKEN, userDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
+
         doNothing().when(scheduleCaseService).updateCourtHearingDetailsForCasesInBulk(details);
 
         SubmittedCallbackResponse submittedCallbackResponse = scheduleCase.submitted(details, details);
@@ -144,10 +150,10 @@ class CaseworkerScheduleCaseTest {
                 details.getData().getBulkListCaseDetails(),
                 SYSTEM_LINK_WITH_BULK_CASE,
                 bulkCaseCaseTaskFactory.getCaseTask(details, SYSTEM_LINK_WITH_BULK_CASE),
-                user,
+                systemUser,
                 TEST_SERVICE_AUTH_TOKEN);
 
-        verify(failedBulkCaseRemover).removeFailedCasesFromBulkListCaseDetails(any(), eq(details), eq(user), eq(TEST_SERVICE_AUTH_TOKEN));
+        verify(failedBulkCaseRemover).removeFailedCasesFromBulkListCaseDetails(any(), eq(details), eq(systemUser), eq(TEST_SERVICE_AUTH_TOKEN));
     }
 
     private User setUpUser(String userRole) {
