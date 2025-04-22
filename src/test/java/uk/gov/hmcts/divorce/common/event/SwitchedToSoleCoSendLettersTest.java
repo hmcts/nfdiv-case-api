@@ -45,7 +45,7 @@ class SwitchedToSoleCoSendLettersTest {
             SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID, SWITCH_TO_SOLE_CO_LETTER_DOCUMENT_NAME
         )
     );
-    public static final String THE_LETTER_ID = "the-letter-id";
+    static final String THE_LETTER_ID = "the-letter-id";
 
     @Mock
     private LetterPrinter printer;

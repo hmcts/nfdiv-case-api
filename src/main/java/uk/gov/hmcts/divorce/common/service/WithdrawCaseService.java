@@ -60,6 +60,6 @@ public class WithdrawCaseService {
     }
 
     private void notifyApplicantsOfCaseWithdrawal(final CaseData data, final CaseDetails<CaseData, State> details) {
-        notificationDispatcher.send(applicationWithdrawnNotification, data, details.getId());
+        notificationDispatcher.send(applicationWithdrawnNotification, details);
     }
 }

@@ -106,7 +106,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
         ImmutableMap.of(DocumentType.APPLIED_FOR_CO_LETTER, Optional.of(APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID)),
         ImmutableMap.of(APPLIED_FOR_CONDITIONAL_ORDER_LETTER_TEMPLATE_ID, APPLIED_FOR_CONDITIONAL_ORDER_LETTER_DOCUMENT_NAME)
     );
-    public static final String THE_LETTER_ID = "the-letter-id";
+    static final String THE_LETTER_ID = "the-letter-id";
 
     @Mock
     private NotificationService notificationService;

@@ -21,7 +21,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.D11;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
-public class GenerateD11FormTest {
+class GenerateD11FormTest {
 
     @Mock
     private GenerateFormHelper generateFormHelper;

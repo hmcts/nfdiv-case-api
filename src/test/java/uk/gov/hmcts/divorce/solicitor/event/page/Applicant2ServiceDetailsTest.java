@@ -19,12 +19,12 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant2ServiceDetailsTest {
+class Applicant2ServiceDetailsTest {
 
     private final Applicant2ServiceDetails page = new Applicant2ServiceDetails();
 
     @Test
-    public void shouldReturnErrorIfEmailValidationFailsForNonSolicitorCase() {
+    void shouldReturnErrorIfEmailValidationFailsForNonSolicitorCase() {
         final CaseData caseData = caseData();
         caseData.setApplicant2(Applicant.builder()
                 .email("invalidEmail")
@@ -41,7 +41,7 @@ public class Applicant2ServiceDetailsTest {
     }
 
     @Test
-    public void shouldReturnErrorIfEmailValidationFailsForSolicitorCase() {
+    void shouldReturnErrorIfEmailValidationFailsForSolicitorCase() {
         final CaseData caseData = caseData();
         caseData.setApplicant2(Applicant.builder()
             .solicitorRepresented(YES)
@@ -60,7 +60,7 @@ public class Applicant2ServiceDetailsTest {
     }
 
     @Test
-    public void shouldReturnNoErrorsIfEmailValidationPasses() {
+    void shouldReturnNoErrorsIfEmailValidationPasses() {
         final CaseData caseData = caseData();
         caseData.setApplicant2(Applicant.builder()
             .solicitorRepresented(YES)

@@ -25,7 +25,7 @@ import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transf
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.CHILDREN;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant2TransformerTest {
+class Applicant2TransformerTest {
     @InjectMocks
     private Applicant2Transformer applicant2Transformer;
 

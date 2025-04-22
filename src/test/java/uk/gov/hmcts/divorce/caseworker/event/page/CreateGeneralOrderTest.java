@@ -43,7 +43,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.setScannedDocumentNam
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.setSelectedScannedDocument;
 
 @ExtendWith(MockitoExtension.class)
-public class CreateGeneralOrderTest {
+class CreateGeneralOrderTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;

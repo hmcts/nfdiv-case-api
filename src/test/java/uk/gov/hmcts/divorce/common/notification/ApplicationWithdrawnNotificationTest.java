@@ -5,8 +5,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -35,6 +37,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLICATION_WITHDRAWN;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
@@ -42,7 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDa
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 
 @ExtendWith(MockitoExtension.class)
-public class ApplicationWithdrawnNotificationTest {
+class ApplicationWithdrawnNotificationTest {
     private static final String IS_RESPONDENT = "isRespondent";
     private static final String RESPONDENT_PARTNER = "respondentPartner";
 
@@ -57,13 +60,16 @@ public class ApplicationWithdrawnNotificationTest {
 
     @Test
     void shouldSendEmailToSoleApplicant1WithDivorceContent() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
         CaseData data = validCaseDataForIssueApplication();
+        caseDetails.setData(data);
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
-        applicationWithdrawnNotification.sendToApplicant1(data, TEST_CASE_ID);
+        applicationWithdrawnNotification.sendToApplicant1(caseDetails);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -83,15 +89,18 @@ public class ApplicationWithdrawnNotificationTest {
 
     @Test
     void shouldSendEmailToSoleApplicant1WithDissolutionContent() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
         CaseData data = validCaseDataForIssueApplication();
         data.setDivorceOrDissolution(DISSOLUTION);
+        caseDetails.setData(data);
 
         Map<String, String> dissolutionTemplateVars = new HashMap<>(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(dissolutionTemplateVars);
 
-        applicationWithdrawnNotification.sendToApplicant1(data, TEST_CASE_ID);
+        applicationWithdrawnNotification.sendToApplicant1(caseDetails);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -111,14 +120,17 @@ public class ApplicationWithdrawnNotificationTest {
 
     @Test
     void shouldSendWelshEmailToSoleApplicant1IfLanguagePreferenceIsWelsh() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
         CaseData data = validCaseDataForIssueApplication();
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        caseDetails.setData(data);
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(divorceTemplateVars);
 
-        applicationWithdrawnNotification.sendToApplicant1(data, TEST_CASE_ID);
+        applicationWithdrawnNotification.sendToApplicant1(caseDetails);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -138,9 +150,12 @@ public class ApplicationWithdrawnNotificationTest {
 
     @Test
     void shouldSendEmailToSoleRespondentWithDivorceContent() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        caseDetails.setData(data);
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
@@ -148,7 +163,7 @@ public class ApplicationWithdrawnNotificationTest {
         when(commonContent.getPartner(data, data.getApplicant1(), data.getApplicant2().getLanguagePreference()))
             .thenReturn("husband");
 
-        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
+        applicationWithdrawnNotification.sendToApplicant2(caseDetails);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -169,10 +184,13 @@ public class ApplicationWithdrawnNotificationTest {
 
     @Test
     void shouldSendEmailToSoleRespondentWithDissolutionContent() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(SOLE_APPLICATION);
         data.setDivorceOrDissolution(DISSOLUTION);
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        caseDetails.setData(data);
 
         Map<String, String> dissolutionTemplateVars = new HashMap<>(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
@@ -181,7 +199,7 @@ public class ApplicationWithdrawnNotificationTest {
         when(commonContent.getPartner(data, data.getApplicant1(), data.getApplicant2().getLanguagePreference()))
             .thenReturn("husband");
 
-        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
+        applicationWithdrawnNotification.sendToApplicant2(caseDetails);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -202,15 +220,18 @@ public class ApplicationWithdrawnNotificationTest {
 
     @Test
     void shouldSendEmailToJointApplicant2WithDivorceContent() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(JOINT_APPLICATION);
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        caseDetails.setData(data);
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
 
-        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
+        applicationWithdrawnNotification.sendToApplicant2(caseDetails);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -230,16 +251,19 @@ public class ApplicationWithdrawnNotificationTest {
 
     @Test
     void shouldSendEmailToJointApplicant2WithDissolutionContent() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(JOINT_APPLICATION);
         data.setDivorceOrDissolution(DISSOLUTION);
+        caseDetails.setData(data);
 
         Map<String, String> dissolutionTemplateVars = new HashMap<>(getMainTemplateVars());
         dissolutionTemplateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(dissolutionTemplateVars);
 
-        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
+        applicationWithdrawnNotification.sendToApplicant2(caseDetails);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -259,11 +283,14 @@ public class ApplicationWithdrawnNotificationTest {
 
     @Test
     void shouldSendWelshEmailToApplicant2IfLanguagePreferenceIsWelsh() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(SOLE_APPLICATION);
         data.setDivorceOrDissolution(DIVORCE);
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+        caseDetails.setData(data);
 
         Map<String, String> templateVars = new HashMap<>(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
@@ -271,7 +298,7 @@ public class ApplicationWithdrawnNotificationTest {
         when(commonContent.getPartner(data, data.getApplicant1(), data.getApplicant2().getLanguagePreference()))
             .thenReturn("gŵr");
 
-        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
+        applicationWithdrawnNotification.sendToApplicant2(caseDetails);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -292,29 +319,53 @@ public class ApplicationWithdrawnNotificationTest {
 
     @Test
     void shouldNotSendEmailApplicant2IfEmailIsNull() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
         CaseData data = validApplicant1CaseData();
         data.getApplicant2().setEmail(null);
+        caseDetails.setData(data);
 
-        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
+        applicationWithdrawnNotification.sendToApplicant2(caseDetails);
 
         verifyNoInteractions(notificationService);
     }
 
     @Test
     void shouldNotSendEmailApplicant2IfEmailIsEmptyString() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
         CaseData data = validApplicant1CaseData();
         data.getApplicant2().setEmail("");
+        caseDetails.setData(data);
 
-        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
+        applicationWithdrawnNotification.sendToApplicant2(caseDetails);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldNotSendEmailToApplicant2IfJointAndApp2HasNotBeenInvited() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        CaseData data = validApplicant1CaseData();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_EMAIL);
+        data.setApplicationType(JOINT_APPLICATION);
+        caseDetails.setData(data);
+        caseDetails.setState(State.Draft);
+
+        applicationWithdrawnNotification.sendToApplicant2(caseDetails);
 
         verifyNoInteractions(notificationService);
     }
 
     @Test
     void shouldNotSendEmailToSoleRespondentIfNotIssued() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setIssueDate(null);
+        caseDetails.setData(data);
 
         applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
 
@@ -323,15 +374,18 @@ public class ApplicationWithdrawnNotificationTest {
 
     @Test
     void shouldSendEmailToJointApplicant2IfNotIssued() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(JOINT_APPLICATION);
         data.getApplication().setIssueDate(null);
+        caseDetails.setData(data);
 
         Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(divorceTemplateVars);
 
-        applicationWithdrawnNotification.sendToApplicant2(data, TEST_CASE_ID);
+        applicationWithdrawnNotification.sendToApplicant2(caseDetails);
 
         verify(notificationService, times(1)).sendEmail(
             data.getApplicant2EmailAddress(),

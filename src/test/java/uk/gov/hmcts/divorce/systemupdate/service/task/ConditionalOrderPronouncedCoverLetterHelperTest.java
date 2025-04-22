@@ -77,7 +77,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTempl
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getOfflineSolicitor;
 
 @ExtendWith(MockitoExtension.class)
-public class ConditionalOrderPronouncedCoverLetterHelperTest {
+class ConditionalOrderPronouncedCoverLetterHelperTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;

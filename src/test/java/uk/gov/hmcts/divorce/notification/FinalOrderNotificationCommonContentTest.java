@@ -24,7 +24,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class FinalOrderNotificationCommonContentTest {
+class FinalOrderNotificationCommonContentTest {
 
     @Mock
     private CommonContent commonContent;
@@ -36,7 +36,7 @@ public class FinalOrderNotificationCommonContentTest {
     private FinalOrderNotificationCommonContent finalOrderNotificationCommonContent;
 
     @Test
-    public void shouldReturnJointApplicantVars() {
+    void shouldReturnJointApplicantVars() {
         CaseData data = validJointApplicant1CaseData();
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
@@ -55,7 +55,7 @@ public class FinalOrderNotificationCommonContentTest {
     }
 
     @Test
-    public void shouldReturnJointApplicantVarsForReminder() {
+    void shouldReturnJointApplicantVarsForReminder() {
         CaseData data = validJointApplicant1CaseData();
         data.getFinalOrder().setDateFinalOrderSubmitted(LocalDateTime.now());
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))

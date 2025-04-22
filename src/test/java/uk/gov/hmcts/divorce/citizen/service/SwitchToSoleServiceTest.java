@@ -51,7 +51,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentLis
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class SwitchToSoleServiceTest {
+class SwitchToSoleServiceTest {
 
     @Mock
     private CcdAccessService ccdAccessService;

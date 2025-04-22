@@ -67,6 +67,18 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
         pages.forEach(page -> page.addTo(pageBuilder));
     }
 
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("Solicitor update application about to start callback invoked for Case Id: {}", details.getId());
+
+        CaseData data = details.getData();
+        data.getApplicant1().setNonConfidentialAddress(data.getApplicant1().getAddress());
+        data.getApplicant2().setNonConfidentialAddress(data.getApplicant2().getAddress());
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
+    }
+
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
@@ -95,6 +107,7 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
             .showSummary()
             .showEventNotes()
             .ttlIncrement(180)
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR));
     }

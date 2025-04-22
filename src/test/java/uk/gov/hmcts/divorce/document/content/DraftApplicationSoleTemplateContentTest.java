@@ -80,7 +80,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class DraftApplicationSoleTemplateContentTest {
+class DraftApplicationSoleTemplateContentTest {
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
@@ -95,7 +95,7 @@ public class DraftApplicationSoleTemplateContentTest {
     private DraftApplicationTemplateContent draftApplicationTemplateContent;
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForSoleDivorceApplication() {
+    void shouldSuccessfullyApplyContentFromCaseDataForSoleDivorceApplication() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant1().setFinancialOrder(NO);
@@ -155,7 +155,7 @@ public class DraftApplicationSoleTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForJointDivorceApplication() {
+    void shouldSuccessfullyApplyContentFromCaseDataForJointDivorceApplication() {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplicant1().setFinancialOrder(NO);
@@ -206,7 +206,7 @@ public class DraftApplicationSoleTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationForDissolution() {
+    void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationForDissolution() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setDivorceOrDissolution(DISSOLUTION);
@@ -249,7 +249,7 @@ public class DraftApplicationSoleTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForJointApplicationForDissolution() {
+    void shouldSuccessfullyApplyContentFromCaseDataForJointApplicationForDissolution() {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setDivorceOrDissolution(DISSOLUTION);
@@ -289,7 +289,7 @@ public class DraftApplicationSoleTemplateContentTest {
     }
 
     @Test
-    public void shouldConvertMarriageDateToCorrectFormat() {
+    void shouldConvertMarriageDateToCorrectFormat() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         MarriageDetails marriageDetails = new MarriageDetails();
