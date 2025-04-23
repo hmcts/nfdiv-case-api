@@ -17,13 +17,13 @@ import uk.gov.hmcts.reform.sendletter.api.model.v3.Document;
 import uk.gov.hmcts.reform.sendletter.api.model.v3.LetterV3;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Base64.getEncoder;
-import static java.util.stream.Collectors.toList;
 
 @Service
 @Slf4j
@@ -79,20 +79,22 @@ public class BulkPrintService {
         final var systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
         final var userAuth = systemUpdateUser.getAuthToken();
 
-        return print.getLetters().stream()
-            .map(letter ->
-                new Document(
-                    getEncoder().encodeToString(
-                        getDocumentBytes(
-                            letter,
-                            serviceAuth,
-                            userAuth
-                        )
-                    ),
-                    letter.getNumCopiesToPrint()
+        return new ArrayList<>(
+            print.getLetters().stream()
+                .map(letter ->
+                    new Document(
+                        getEncoder().encodeToString(
+                            getDocumentBytes(
+                                letter,
+                                serviceAuth,
+                                userAuth
+                            )
+                        ),
+                        letter.getNumCopiesToPrint()
+                    )
                 )
-            )
-            .collect(toList());
+                .toList()
+        );
     }
 
     private UUID triggerPrintRequest(Print print, String authToken, List<Document> documents) {
