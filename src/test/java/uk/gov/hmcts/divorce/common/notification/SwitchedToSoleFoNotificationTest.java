@@ -25,7 +25,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
-public class SwitchedToSoleFoNotificationTest {
+class SwitchedToSoleFoNotificationTest {
 
     @Mock
     private NotificationService notificationService;

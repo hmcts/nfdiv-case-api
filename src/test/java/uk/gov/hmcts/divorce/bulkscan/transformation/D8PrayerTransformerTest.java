@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOL
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
 
 @ExtendWith(MockitoExtension.class)
-public class D8PrayerTransformerTest {
+class D8PrayerTransformerTest {
 
     @InjectMocks
     private D8PrayerTransformer d8PrayerTransformer;

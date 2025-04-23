@@ -639,6 +639,13 @@ public class CaseData {
     }
 
     @JsonIgnore
+    public <T> List<T> fromListValueToList(final List<ListValue<T>> targetList) {
+        return targetList.stream()
+            .map(ListValue::getValue)
+            .toList();
+    }
+
+    @JsonIgnore
     public void updateCaseWithGeneralApplication() {
         GeneralApplication generalApplication = this.getGeneralApplication();
         generalApplication.setGeneralApplicationDocument(null);

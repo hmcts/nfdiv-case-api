@@ -277,7 +277,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    public void givenSoleApplicationWithHWF_WhenAwaitingDocuments_ThenShouldSetAwaitingHWFDecisionState() {
+    void givenSoleApplicationWithHWF_WhenAwaitingDocuments_ThenShouldSetAwaitingHWFDecisionState() {
         final var application = Application.builder()
             .solPaymentHowToPay(FEES_HELP_WITH)
             .applicant1CannotUpload(YES)
@@ -299,7 +299,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    public void givenSoleApplicationWithHWF_WhenNoAwaitingDocuments_ThenShouldSetAwaitingHWFDecisionState() {
+    void givenSoleApplicationWithHWF_WhenNoAwaitingDocuments_ThenShouldSetAwaitingHWFDecisionState() {
         final var application = Application.builder()
             .solPaymentHowToPay(FEES_HELP_WITH)
             .applicant1CannotUpload(NO)
@@ -321,7 +321,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    public void givenJointApplicationWithHWF_WhenApplicant1AwaitingDocuments_ThenShouldSetAwaitingHWFDecisionState() {
+    void givenJointApplicationWithHWF_WhenApplicant1AwaitingDocuments_ThenShouldSetAwaitingHWFDecisionState() {
         final var application = Application.builder()
             .solPaymentHowToPay(FEES_HELP_WITH)
             .applicant1CannotUpload(YES)
@@ -343,7 +343,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    public void givenJointApplicationWithHWF_WhenApplicantsUploadedRequiredDocs_ThenShouldSetAwaitingHWFDecisionState() {
+    void givenJointApplicationWithHWF_WhenApplicantsUploadedRequiredDocs_ThenShouldSetAwaitingHWFDecisionState() {
         final var application = Application.builder()
             .solPaymentHowToPay(FEES_HELP_WITH)
             .applicant1CannotUpload(NO)
@@ -367,7 +367,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    public void givenJointApplicationWithoutHWF_WhenBothApplicantsAwaitingDocuments_ThenShouldSetAwaitingDocumentState() {
+    void givenJointApplicationWithoutHWF_WhenBothApplicantsAwaitingDocuments_ThenShouldSetAwaitingDocumentState() {
         final var payment = new ListValue<>(null, Payment
             .builder()
             .amount(55000)

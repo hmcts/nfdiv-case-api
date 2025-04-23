@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
 
 @ExtendWith(SpringExtension.class)
-public class SystemRemindRespondentSolicitorTest {
+class SystemRemindRespondentSolicitorTest {
 
     private static final LocalDate ISSUE_DATE = LocalDate.now().minusDays(10);
 

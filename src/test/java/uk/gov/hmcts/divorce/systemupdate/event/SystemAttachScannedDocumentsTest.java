@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.scannedDocuments;
 
 @ExtendWith(SpringExtension.class)
-public class SystemAttachScannedDocumentsTest {
+class SystemAttachScannedDocumentsTest {
 
     private static final List<ListValue<ScannedDocument>> BEFORE_SCANNED_DOCUMENTS =
         scannedDocuments(asList(D10.getLabel(), D84.getLabel()));

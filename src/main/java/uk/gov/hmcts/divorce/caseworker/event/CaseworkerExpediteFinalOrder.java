@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
@@ -118,7 +117,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
                         .label(generalOrderDocument.getDocumentFileName())
                         .code(UUID.randomUUID()).build()
                 )
-                .collect(toList());
+                .toList();
 
         DynamicList generalOrderDocumentNamesDynamicList = DynamicList
             .builder()
