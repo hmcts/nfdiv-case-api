@@ -29,8 +29,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
-import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectFee;
@@ -83,6 +84,9 @@ class SolicitorGeneralApplicationTest {
 
     @Mock
     private HttpServletRequest request;
+
+    @Mock
+    private ServiceRequestSearchService serviceRequestSearchService;
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
@@ -294,6 +298,9 @@ class SolicitorGeneralApplicationTest {
         when(organisationClient.getUserOrganisation(AUTH_HEADER_VALUE, TEST_AUTHORIZATION_TOKEN))
             .thenReturn(organisationsResponse);
         when(organisationsResponse.getOrganisationIdentifier()).thenReturn("App1OrgPolicy");
+        when(paymentService.createServiceRequestReference(
+            null, TEST_CASE_ID, "", generalApplicationOrderSummary)
+        ).thenReturn(TEST_SERVICE_REFERENCE);
 
         final var pbaResponse = new PbaResponse(CREATED, null, "1234");
         when(paymentService.processPbaPayment(
@@ -461,6 +468,9 @@ class SolicitorGeneralApplicationTest {
         when(organisationClient.getUserOrganisation(AUTH_HEADER_VALUE, TEST_AUTHORIZATION_TOKEN))
             .thenReturn(organisationsResponse);
         when(organisationsResponse.getOrganisationIdentifier()).thenReturn("App2OrgPolicy");
+        when(paymentService.createServiceRequestReference(
+            null, TEST_CASE_ID, "", generalApplicationOrderSummary)
+        ).thenReturn(TEST_SERVICE_REFERENCE);
 
         final var pbaResponse = new PbaResponse(FORBIDDEN, "Account balance insufficient", null);
         when(paymentService.processPbaPayment(
