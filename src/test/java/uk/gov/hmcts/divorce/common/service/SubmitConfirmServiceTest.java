@@ -20,7 +20,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getSolicitorService;
 
 @ExtendWith(MockitoExtension.class)
-public class SubmitConfirmServiceTest {
+class SubmitConfirmServiceTest {
 
     @Mock
     private SetConfirmServiceDueDate setConfirmServiceDueDate;

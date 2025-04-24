@@ -82,7 +82,10 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
                 data.setApplicationType(SOLE_APPLICATION);
             }
         }
-        notificationDispatcher.send(paperApplicationReceivedNotification, data, details.getId());
+
+        if (!data.isJudicialSeparationCase()) {
+            notificationDispatcher.send(paperApplicationReceivedNotification, data, details.getId());
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

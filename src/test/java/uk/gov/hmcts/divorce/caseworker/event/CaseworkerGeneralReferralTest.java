@@ -40,7 +40,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerGeneralReferralTest {
+class CaseworkerGeneralReferralTest {
     private final Instant instant = Instant.now();
     private final ZoneId zoneId = ZoneId.systemDefault();
 

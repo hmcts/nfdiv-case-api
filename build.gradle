@@ -25,7 +25,7 @@ plugins {
   id 'org.springframework.boot' version '3.3.5'
   id 'com.github.ben-manes.versions' version '0.52.0'
   id 'hmcts.ccd.sdk' version '5.5.19'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1618'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1668'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -254,7 +254,7 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.24.3'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.24.3'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.24.3'
-  implementation group: 'com.google.guava', name: 'guava', version: '33.4.6-jre'
+  implementation group: 'com.google.guava', name: 'guava', version: '33.4.8-jre'
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
@@ -267,7 +267,7 @@ dependencies {
     exclude group: 'org.apache.poi', module: 'poi'
     exclude group: 'com.launchdarkly', module: 'launchdarkly-java-server-sdk'
   }
-  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '5.0.3'
+  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '5.0.5'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.3'
   implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.1.7'
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '4.0.4'
@@ -286,7 +286,7 @@ dependencies {
 
   implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.28'
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '5.2.1-RELEASE'
-  implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
+  implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.5.0'
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.9.0'
   implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.2.0'
 

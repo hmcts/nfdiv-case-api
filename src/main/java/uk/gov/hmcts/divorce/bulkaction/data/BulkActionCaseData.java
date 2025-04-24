@@ -26,7 +26,6 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 
@@ -156,7 +155,7 @@ public class BulkActionCaseData {
         return bulkListCaseDetails
             .stream()
             .filter(lv -> !unprocessedCaseIds.contains(lv.getValue().getCaseReference().getCaseReference()))
-            .collect(toList());
+            .toList();
     }
 
     @JsonIgnore
@@ -174,13 +173,13 @@ public class BulkActionCaseData {
                     .value(c.getValue().getCaseReference())
                     .build()
             )
-            .collect(toList());
+            .toList();
     }
 
     @JsonIgnore
     public <T> List<T> fromListValueToList(final List<ListValue<T>> targetList) {
         return targetList.stream()
             .map(ListValue::getValue)
-            .collect(toList());
+            .toList();
     }
 }

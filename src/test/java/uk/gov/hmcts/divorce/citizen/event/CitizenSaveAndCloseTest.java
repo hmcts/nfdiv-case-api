@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
-public class CitizenSaveAndCloseTest {
+class CitizenSaveAndCloseTest {
     @Mock
     private SaveAndSignOutNotificationHandler saveAndSignOutNotificationHandler;
 
@@ -51,7 +51,7 @@ public class CitizenSaveAndCloseTest {
     }
 
     @Test
-    public void givenCallbackIsInvokedThenSendEmail() {
+    void givenCallbackIsInvokedThenSendEmail() {
         final var caseData = caseData();
         final var details = new CaseDetails<CaseData, State>();
         details.setData(caseData);

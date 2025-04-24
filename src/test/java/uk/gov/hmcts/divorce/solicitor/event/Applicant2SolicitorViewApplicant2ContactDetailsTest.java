@@ -16,7 +16,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant2SolicitorViewApplicant2ContactDetailsTest {
+class Applicant2SolicitorViewApplicant2ContactDetailsTest {
 
     @InjectMocks
     private Applicant2SolicitorViewApplicant2ContactDetails solicitorViewApplicant2ContactDetails;

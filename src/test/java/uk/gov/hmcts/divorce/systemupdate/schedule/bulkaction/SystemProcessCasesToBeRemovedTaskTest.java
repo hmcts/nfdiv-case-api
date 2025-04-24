@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
 @ExtendWith(MockitoExtension.class)
-public class SystemProcessCasesToBeRemovedTaskTest {
+class SystemProcessCasesToBeRemovedTaskTest {
 
     @Mock
     private CcdSearchService ccdSearchService;

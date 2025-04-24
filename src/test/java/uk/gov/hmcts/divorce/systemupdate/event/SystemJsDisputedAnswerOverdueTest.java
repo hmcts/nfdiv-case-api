@@ -22,7 +22,7 @@ class SystemJsDisputedAnswerOverdueTest {
     private SystemJsDisputedAnswerOverdue systemJsDisputedAnswerOverdue;
 
     @Test
-    public void shouldContainEventConfig() {
+    void shouldContainEventConfig() {
         final ConfigBuilder<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         systemJsDisputedAnswerOverdue.configure(configBuilder);

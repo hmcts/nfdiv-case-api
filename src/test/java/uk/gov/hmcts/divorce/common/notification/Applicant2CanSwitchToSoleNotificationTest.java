@@ -36,7 +36,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseDa
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant2CanSwitchToSoleNotificationTest {
+class Applicant2CanSwitchToSoleNotificationTest {
     @Mock
     private NotificationService notificationService;
 
@@ -47,7 +47,7 @@ public class Applicant2CanSwitchToSoleNotificationTest {
     private Applicant2CanSwitchToSoleNotification applicant2CanSwitchToSoleNotification;
 
     @Test
-    public void shouldSendEmailToApplicant1WhenJointApplication() {
+    void shouldSendEmailToApplicant1WhenJointApplication() {
 
         CaseData data = validJointApplicant1CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
@@ -70,7 +70,7 @@ public class Applicant2CanSwitchToSoleNotificationTest {
     }
 
     @Test
-    public void shouldSendEmailInWelshToApplicant1WhenJointApplication() {
+    void shouldSendEmailInWelshToApplicant1WhenJointApplication() {
 
         CaseData data = validJointApplicant1CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
@@ -94,7 +94,7 @@ public class Applicant2CanSwitchToSoleNotificationTest {
     }
 
     @Test
-    public void shouldNotSendEmailToApplicant1WhenSoleApplication() {
+    void shouldNotSendEmailToApplicant1WhenSoleApplication() {
 
         CaseData data = validApplicant1CaseData();
 
@@ -105,7 +105,7 @@ public class Applicant2CanSwitchToSoleNotificationTest {
     }
 
     @Test
-    public void shouldSendEmailToApplicant2SolicitorWhenJointApplication() {
+    void shouldSendEmailToApplicant2SolicitorWhenJointApplication() {
 
         CaseData data = validApplicant2CaseData();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
@@ -133,7 +133,7 @@ public class Applicant2CanSwitchToSoleNotificationTest {
     }
 
     @Test
-    public void shouldNotSendEmailToApplicant2SolicitorWhenSoleApplication() {
+    void shouldNotSendEmailToApplicant2SolicitorWhenSoleApplication() {
 
         CaseData data = validApplicant2CaseData();
         data.setApplicationType(SOLE_APPLICATION);

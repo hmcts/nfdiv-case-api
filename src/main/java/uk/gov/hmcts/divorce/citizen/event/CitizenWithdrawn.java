@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.systemupdate.event;
+package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +13,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_SUBMISSION_STATES;
+import java.util.EnumSet;
+
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHWFDecision;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -25,23 +34,35 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class SuperuserWithdrawn implements CCDConfig<CaseData, State, UserRole> {
-    public static final String SUPERUSER_WITHDRAWN = "superuser-withdrawn";
+public class CitizenWithdrawn implements CCDConfig<CaseData, State, UserRole> {
+    public static final String CITIZEN_WITHDRAWN = "citizen-withdrawn";
 
     private final WithdrawCaseService withdrawCaseService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(SUPERUSER_WITHDRAWN)
-            .forStateTransition(PRE_SUBMISSION_STATES, Withdrawn)
-            .name("Withdraw")
-            .description("Withdrawn")
+            .event(CITIZEN_WITHDRAWN)
+            .forStateTransition(
+                EnumSet.of(
+                    Draft,
+                    AwaitingApplicant1Response,
+                    AwaitingApplicant2Response,
+                    Applicant2Approved,
+                    AwaitingPayment,
+                    AwaitingResponseToHWFDecision
+                ),
+                Withdrawn
+            )
+            .name("Citizen Withdraw")
+            .description("Citizen Withdraw")
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, SUPER_USER)
+            .showCondition(NEVER_SHOW)
+            .grant(CREATE_READ_UPDATE, CREATOR)
             .grantHistoryOnly(
-                SOLICITOR,
                 CASE_WORKER,
+                SOLICITOR,
+                SUPER_USER,
                 LEGAL_ADVISOR,
                 JUDGE)
             .aboutToSubmitCallback(this::aboutToSubmit));
@@ -50,7 +71,7 @@ public class SuperuserWithdrawn implements CCDConfig<CaseData, State, UserRole> 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Superuser withdrawn about to submit callback invoked for Case Id: {}", details.getId());
+        log.info("{} about to submit callback invoked for Case Id: {}", CITIZEN_WITHDRAWN, details.getId());
 
         withdrawCaseService.withdraw(details);
 

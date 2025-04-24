@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 
 @ExtendWith(MockitoExtension.class)
-public class NoFaultDivorceTest {
+class NoFaultDivorceTest {
 
     @InjectMocks
     private NoFaultDivorce noFaultDivorce;

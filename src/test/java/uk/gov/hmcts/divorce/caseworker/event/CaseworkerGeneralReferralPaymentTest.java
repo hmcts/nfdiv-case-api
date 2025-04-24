@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerGeneralReferralPaymentTest {
+class CaseworkerGeneralReferralPaymentTest {
 
     @Mock
     private PaymentService paymentService;

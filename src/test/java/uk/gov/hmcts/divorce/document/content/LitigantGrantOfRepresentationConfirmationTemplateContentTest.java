@@ -68,7 +68,7 @@ class LitigantGrantOfRepresentationConfirmationTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentWhenRecipientIsApplicant1() {
+    void shouldMapTemplateContentWhenRecipientIsApplicant1() {
         setUp();
         var caseData = TestDataHelper.caseData();
         caseData.getApplicant1().setSolicitor(Solicitor.builder().organisationPolicy(OrganisationPolicy.<UserRole>builder()

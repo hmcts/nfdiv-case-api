@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 @ExtendWith(MockitoExtension.class)
 class CitizenResendInviteTest {
 
-    public static final int TO_LINK_TO_CASE_BY_OFFSET_DAYS = 14;
+    static final int TO_LINK_TO_CASE_BY_OFFSET_DAYS = 14;
 
     @Mock
     private ApplicationSentForReviewNotification applicationSentForReviewNotification;
@@ -56,7 +56,7 @@ class CitizenResendInviteTest {
     }
 
     @Test
-    public void dataUnchangedWhenApplicant2IsRepresented() {
+    void dataUnchangedWhenApplicant2IsRepresented() {
         final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
@@ -70,7 +70,7 @@ class CitizenResendInviteTest {
     }
 
     @Test
-    public void dataUnchangedWhenValidationFails() {
+    void dataUnchangedWhenValidationFails() {
         final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
@@ -83,7 +83,7 @@ class CitizenResendInviteTest {
     }
 
     @Test
-    public void errorReturnedWhenValidationFails() {
+    void errorReturnedWhenValidationFails() {
         final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().divorceOrDissolution(DIVORCE).build();
@@ -97,7 +97,7 @@ class CitizenResendInviteTest {
     }
 
     @Test
-    public void correctFieldsSetUponSuccess() {
+    void correctFieldsSetUponSuccess() {
         ReflectionTestUtils.setField(citizenResendInvite, "toLinkToCaseOffsetDays", TO_LINK_TO_CASE_BY_OFFSET_DAYS);
         setMockClock(clock);
 
