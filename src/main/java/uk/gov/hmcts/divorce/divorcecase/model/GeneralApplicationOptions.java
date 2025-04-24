@@ -20,4 +20,11 @@ public class GeneralApplicationOptions {
         access = {DefaultAccess.class}
     )
     private NoResponseJourneyOptions noResponseJourneyOptions;
+
+    @JsonUnwrapped
+    @CCD(
+        label = "Deemed Service Journey Options",
+        access = {DefaultAccess.class}
+    )
+    private DeemedServiceJourneyOptions deemedServiceJourneyOptions;
 }
