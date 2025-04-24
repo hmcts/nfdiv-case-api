@@ -117,7 +117,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_REISSUED_OFFLINE_AS_AOS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_BASED_IN_UK;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_OFFLINE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_EMAIL_PRESENT;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE_OR_CIVIL_PARTNER;
@@ -239,7 +239,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
-        expectedEntries.put(IS_RESPONDENT_OFFLINE, false);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
@@ -331,7 +331,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
         expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
-        expectedEntries.put(IS_RESPONDENT_OFFLINE, false);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
@@ -431,7 +431,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_2_IS_REPRESENTED, true);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
-        expectedEntries.put(IS_RESPONDENT_OFFLINE, false);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
@@ -536,7 +536,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
-        expectedEntries.put(IS_RESPONDENT_OFFLINE, false);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
@@ -629,7 +629,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
-        expectedEntries.put(IS_RESPONDENT_OFFLINE, false);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
@@ -722,7 +722,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
-        expectedEntries.put(IS_RESPONDENT_OFFLINE, false);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
@@ -833,7 +833,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_2_IS_REPRESENTED, true);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
-        expectedEntries.put(IS_RESPONDENT_OFFLINE, false);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
@@ -949,7 +949,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
-        expectedEntries.put(IS_RESPONDENT_OFFLINE, false);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
@@ -1054,7 +1054,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_2_IS_REPRESENTED, true);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
-        expectedEntries.put(IS_RESPONDENT_OFFLINE, false);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(

@@ -97,7 +97,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_REISSUED_OFFLINE_AS_AOS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_BASED_IN_UK;
-import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_OFFLINE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_EMAIL_PRESENT;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE_OR_CIVIL_PARTNER;
@@ -246,7 +246,7 @@ public class NoticeOfProceedingContentTest {
                 entry(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS),
                 entry(IS_OFFLINE, false),
                 entry(APPLICANT_2_IS_REPRESENTED, true),
-                entry(IS_RESPONDENT_OFFLINE, false),
+                entry(IS_RESPONDENT_EMAIL_PRESENT, false),
                 entry(IS_REISSUED_OFFLINE_AS_AOS, false)
             );
     }
@@ -329,7 +329,7 @@ public class NoticeOfProceedingContentTest {
                         entry(IS_DIVORCE, true),
                         entry(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS),
                         entry(IS_OFFLINE, false),
-                        entry(IS_RESPONDENT_OFFLINE, false),
+                        entry(IS_RESPONDENT_EMAIL_PRESENT, false),
                         entry(IS_REISSUED_OFFLINE_AS_AOS, false)
             );
     }
@@ -433,7 +433,7 @@ public class NoticeOfProceedingContentTest {
                         entry(IS_DIVORCE, false),
                         entry(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, CIVIL_PARTNERSHIP_DOCUMENTS),
                         entry(IS_OFFLINE, false),
-                        entry(IS_RESPONDENT_OFFLINE, false),
+                        entry(IS_RESPONDENT_EMAIL_PRESENT, false),
                         entry(IS_REISSUED_OFFLINE_AS_AOS, false),
                         entry(HAS_CASE_BEEN_REISSUED, true),
                         entry(REISSUE_DATE, "1 June 2021")
