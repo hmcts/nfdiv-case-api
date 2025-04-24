@@ -16,7 +16,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfi
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class SystemRemoveFailedCasesTest {
+class SystemRemoveFailedCasesTest {
 
     @InjectMocks
     private SystemRemoveFailedCases systemRemoveFailedCases;

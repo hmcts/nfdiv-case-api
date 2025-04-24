@@ -47,7 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDa
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class CitizenPaymentMadeTest {
+class CitizenPaymentMadeTest {
 
     private static final String STATEMENT_OF_TRUTH_ERROR_MESSAGE =
         "Statement of truth must be accepted by the person making the application";

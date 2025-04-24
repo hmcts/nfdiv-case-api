@@ -26,7 +26,6 @@ import uk.gov.hmcts.divorce.document.print.model.Print;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,7 +42,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class LetterPrinterTest {
+class LetterPrinterTest {
 
     private static final String TEST_LETTER_NAME = "test-letter-name";
 
@@ -60,13 +59,15 @@ public class LetterPrinterTest {
     private ArgumentCaptor<Print> printArgumentCaptor;
 
     @Test
-    public void shouldPrintLettersWhenSizeOfListReturnedMatchesDocumentPackSize() {
+    void shouldPrintLettersWhenSizeOfListReturnedMatchesDocumentPackSize() {
         CaseData caseData = validApplicant1CaseData();
         long caseId = TEST_CASE_ID;
         Applicant applicant = caseData.getApplicant1();
         DocumentPackInfo documentPackInfo = getDocumentPackInfo();
 
-        List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType).toList();
+        List<Letter> expectedLetters = new ArrayList<>(
+            documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType).toList()
+        );
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
 
         letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, TEST_LETTER_NAME);
@@ -79,7 +80,7 @@ public class LetterPrinterTest {
     }
 
     @Test
-    public void shouldPrintLettersWhenSizeOfListReturnedMatchesDocumentPackSizeForGeneralLetter() {
+    void shouldPrintLettersWhenSizeOfListReturnedMatchesDocumentPackSizeForGeneralLetter() {
         CaseData caseData = validApplicant1CaseData();
 
         Document generalLetter = Document.builder()
@@ -105,8 +106,10 @@ public class LetterPrinterTest {
             ImmutableMap.of()
         );
 
-        List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
-                .collect(Collectors.toList());
+        List<Letter> expectedLetters = new ArrayList<>(
+            documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
+                .toList()
+        );
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
 
@@ -121,7 +124,7 @@ public class LetterPrinterTest {
     }
 
     @Test
-    public void shouldPrintLettersWithInternationalFlagSetWhenApplicantAddressOverseas() {
+    void shouldPrintLettersWithInternationalFlagSetWhenApplicantAddressOverseas() {
         CaseData caseData = validApplicant1CaseData();
         caseData.getApplicant1().setAddressOverseas(YES);
 
@@ -148,8 +151,9 @@ public class LetterPrinterTest {
             ImmutableMap.of()
         );
 
-        List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
-            .collect(Collectors.toList());
+        List<Letter> expectedLetters = new ArrayList<>(
+            documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
+                .toList());
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
 
@@ -164,7 +168,7 @@ public class LetterPrinterTest {
     }
 
     @Test
-    public void shouldPrintAttachmentsWithGeneralLetter() {
+    void shouldPrintAttachmentsWithGeneralLetter() {
         CaseData caseData = validApplicant1CaseData();
 
         Document generalLetter = Document.builder()
@@ -198,8 +202,9 @@ public class LetterPrinterTest {
             ImmutableMap.of()
         );
 
-        List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
-                .collect(Collectors.toList());
+        List<Letter> expectedLetters = new ArrayList<>(
+            documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
+                .toList());
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
 
@@ -213,7 +218,7 @@ public class LetterPrinterTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenSizeOfListReturnedIsNotEqualToDocumentPackSize() {
+    void shouldThrowExceptionWhenSizeOfListReturnedIsNotEqualToDocumentPackSize() {
         CaseData caseData = validApplicant1CaseData();
         long caseId = TEST_CASE_ID;
         Applicant applicant = caseData.getApplicant1();
@@ -232,7 +237,7 @@ public class LetterPrinterTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenListReturnedIsEmpty() {
+    void shouldThrowExceptionWhenListReturnedIsEmpty() {
         CaseData caseData = validApplicant1CaseData();
         long caseId = TEST_CASE_ID;
         Applicant applicant = caseData.getApplicant1();
@@ -250,7 +255,7 @@ public class LetterPrinterTest {
 
 
     @Test
-    public void shouldThrowExceptionWhenGeneralLetterIsNull() {
+    void shouldThrowExceptionWhenGeneralLetterIsNull() {
         CaseData caseData = validApplicant1CaseData();
 
         caseData.setGeneralLetters(null);
@@ -264,8 +269,9 @@ public class LetterPrinterTest {
             ImmutableMap.of()
         );
 
-        List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
-            .collect(Collectors.toList());
+        List<Letter> expectedLetters = new ArrayList<>(
+            documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
+                .toList());
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
 

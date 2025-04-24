@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -34,6 +34,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class Applicant2AppliedForFinalOrderNotification implements ApplicantNotification {
 
     private static final String APP_2_OVERDUE_CONTENT = "They applied more than 12 months after the conditional order "
@@ -41,14 +42,11 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
 
     private static final String DELAY_REASON = "delayReason";
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private FinalOrderNotificationCommonContent finalOrderNotificationCommonContent;
+    private final FinalOrderNotificationCommonContent finalOrderNotificationCommonContent;
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long caseId) {

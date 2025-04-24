@@ -16,27 +16,38 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
+import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList.RFI_DOCUMENT_REMOVED_NOTICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.APPLICANT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.REQUEST_FOR_INFORMATION_RESPONSE_DOC;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_TEXT;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.addOfflineResponseToLatestRequestForInformation;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.addResponseToLatestRequestForInformation;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentListValue;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformationCaseDetails;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.scannedDocumentWithType;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerRemoveDocumentTest {
+class CaseworkerRemoveDocumentTest {
 
     @Mock
     private DocumentRemovalService documentRemovalService;
@@ -550,5 +561,131 @@ public class CaseworkerRemoveDocumentTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
         assertThat(response.getData().getGeneralApplication().getGeneralApplicationDocuments()).isNotEmpty();
+    }
+
+    @Test
+    void shouldPopulateRfiResponseDocList() {
+        final CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(APPLICANT, false, false);
+        addResponseToLatestRequestForInformation(caseDetails.getData(), caseDetails.getData().getApplicant1());
+        addOfflineResponseToLatestRequestForInformation(caseDetails.getData(), RequestForInformationOfflineResponseSoleParties.APPLICANT);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRemoveDocument.aboutToStart(caseDetails);
+
+        assertThat(response.getData().getRequestForInformationList().getRfiOnlineResponseDocuments().size()).isEqualTo(1);
+    }
+
+    @Test
+    void shouldRemoveRfiResponseUploadedDocument() {
+        final ListValue<DivorceDocument> doc1 = getDivorceDocumentListValue(
+            "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
+            "rfi_response_1.pdf",
+            REQUEST_FOR_INFORMATION_RESPONSE_DOC
+        );
+
+        final ListValue<DivorceDocument> doc2 = getDivorceDocumentListValue(
+            "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130004",
+            "rfi_response_2.pdf",
+            REQUEST_FOR_INFORMATION_RESPONSE_DOC
+        );
+
+        CaseDetails<CaseData, State> beforeDetails = getRequestForInformationCaseDetails(APPLICANT, false, false);
+        addOfflineResponseToLatestRequestForInformation(
+            beforeDetails.getData(),
+            RequestForInformationOfflineResponseSoleParties.APPLICANT,
+            doc1.getValue()
+        );
+        addOfflineResponseToLatestRequestForInformation(
+            beforeDetails.getData(),
+            RequestForInformationOfflineResponseSoleParties.APPLICANT,
+            doc2.getValue()
+        );
+        beforeDetails.getData().getDocuments().setDocumentsUploaded(List.of(doc1, doc2));
+
+        CaseDetails<CaseData, State> currentDetails = getRequestForInformationCaseDetails(APPLICANT, false, false);
+        addOfflineResponseToLatestRequestForInformation(
+            currentDetails.getData(),
+            RequestForInformationOfflineResponseSoleParties.APPLICANT,
+            doc1.getValue()
+        );
+        addOfflineResponseToLatestRequestForInformation(
+            currentDetails.getData(),
+            RequestForInformationOfflineResponseSoleParties.APPLICANT,
+            doc2.getValue()
+        );
+        currentDetails.getData().getDocuments().setDocumentsUploaded(List.of(doc1));
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
+        RequestForInformation responseRfi = response.getData().getRequestForInformationList().getLatestRequest();
+        List<ListValue<DivorceDocument>> responseDocsUploaded = response.getData().getDocuments().getDocumentsUploaded();
+
+        verify(documentRemovalService).deleteDocument(List.of(doc2));
+        assertThat(responseRfi.getLatestResponse().getRequestForInformationResponseDetails())
+            .isEqualTo(RFI_DOCUMENT_REMOVED_NOTICE + "\n\n" + TEST_TEXT);
+        assertThat(responseRfi.getLatestResponse().getRfiOfflineResponseDocs().size()).isEqualTo(0);
+        assertThat(responseRfi.getResponseByIndex(1).getRfiOfflineResponseDocs().size()).isEqualTo(1);
+        assertThat(responseDocsUploaded.size()).isEqualTo(1);
+        assertThat(responseDocsUploaded.get(0).getValue()).isEqualTo(doc1.getValue());
+    }
+
+    @Test
+    void shouldRemoveRfiResponseDocuments() {
+        final ListValue<DivorceDocument> doc1 = getDivorceDocumentListValue(
+            "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
+            "rfi_response_1.pdf",
+            REQUEST_FOR_INFORMATION_RESPONSE_DOC
+        );
+
+        final ListValue<DivorceDocument> doc2 = getDivorceDocumentListValue(
+            "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130004",
+            "rfi_response_2.pdf",
+            REQUEST_FOR_INFORMATION_RESPONSE_DOC
+        );
+
+        CaseDetails<CaseData, State> beforeDetails = getRequestForInformationCaseDetails(APPLICANT, false, false);
+        addResponseToLatestRequestForInformation(
+            beforeDetails.getData(),
+            beforeDetails.getData().getApplicant1(),
+            doc1.getValue()
+        );
+        beforeDetails.getData().getRequestForInformationList().getLatestRequest().getLatestResponse()
+            .getRequestForInformationResponseDocs().add(doc2);
+        beforeDetails.getData().getRequestForInformationList().getLatestRequest().getLatestResponse()
+            .setRequestForInformationResponseDetails(null);
+        beforeDetails.getData().getRequestForInformationList().buildResponseDocList();
+
+        CaseDetails<CaseData, State> currentDetails = getRequestForInformationCaseDetails(APPLICANT, false, false);
+        addResponseToLatestRequestForInformation(
+            currentDetails.getData(),
+            currentDetails.getData().getApplicant1(),
+            doc1.getValue()
+        );
+        currentDetails.getData().getRequestForInformationList().getLatestRequest().getLatestResponse()
+            .getRequestForInformationResponseDocs().add(doc2);
+        currentDetails.getData().getRequestForInformationList().getLatestRequest().getLatestResponse()
+                .setRequestForInformationResponseDetails(null);
+        currentDetails.getData().getRequestForInformationList().buildResponseDocList();
+
+        Optional<ListValue<DivorceDocument>> rfiResponseDoc =
+            emptyIfNull(currentDetails.getData().getRequestForInformationList().getRfiOnlineResponseDocuments())
+                .stream()
+                .filter(rfiDoc -> rfiDoc.getValue().equals(doc2.getValue()))
+                .findFirst();
+
+        rfiResponseDoc.ifPresent(
+            divorceDocumentListValue ->
+                currentDetails.getData().getRequestForInformationList().getRfiOnlineResponseDocuments().remove(divorceDocumentListValue));
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
+        RequestForInformation responseRfi = response.getData().getRequestForInformationList().getLatestRequest();
+        List<ListValue<DivorceDocument>> responseDocs = response.getData().getRequestForInformationList().getRfiOnlineResponseDocuments();
+
+        verify(documentRemovalService).deleteDocument(List.of(
+            beforeDetails.getData().getRequestForInformationList().getRfiOnlineResponseDocuments().get(1))
+        );
+        assertThat(responseRfi.getLatestResponse().getRequestForInformationResponseDetails())
+            .isEqualTo(RFI_DOCUMENT_REMOVED_NOTICE);
+        assertThat(responseRfi.getLatestResponse().getRequestForInformationResponseDocs().size()).isEqualTo(1);
+        assertThat(responseRfi.getLatestResponse().getRequestForInformationResponseDocs().get(0).getValue()).isEqualTo(doc1.getValue());
+        assertThat(responseDocs).isNull();
     }
 }

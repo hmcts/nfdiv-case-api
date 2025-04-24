@@ -69,7 +69,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class GenerateApplicant2NoticeOfProceedingsTest {
+class GenerateApplicant2NoticeOfProceedingsTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;

@@ -15,14 +15,14 @@ import static uk.gov.hmcts.divorce.document.print.documentpack.AosResponseAwaiti
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class AosResponseAwaitingConditionalOrderDocumentPackTest {
+class AosResponseAwaitingConditionalOrderDocumentPackTest {
 
     @InjectMocks
     private AosResponseAwaitingConditionalOrderDocumentPack aosResponseAwaitingConditionalOrderDocumentPack;
 
 
     @Test
-    public void shouldReturnCorrectPackWhenDisputedDivorce() {
+    void shouldReturnCorrectPackWhenDisputedDivorce() {
         CaseData data = validApplicant1CaseData();
         data.getAcknowledgementOfService().setHowToRespondApplication(HowToRespondApplication.DISPUTE_DIVORCE);
         data.setSupplementaryCaseType(SupplementaryCaseType.NA);
@@ -33,7 +33,7 @@ public class AosResponseAwaitingConditionalOrderDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnCorrectPackWhenUnDisputedDivorce() {
+    void shouldReturnCorrectPackWhenUnDisputedDivorce() {
         CaseData data = validApplicant1CaseData();
         data.getAcknowledgementOfService().setHowToRespondApplication(HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE);
         data.setSupplementaryCaseType(SupplementaryCaseType.NA);

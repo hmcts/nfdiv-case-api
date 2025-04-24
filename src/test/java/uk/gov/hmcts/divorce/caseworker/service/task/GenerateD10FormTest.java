@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class GenerateD10FormTest {
+class GenerateD10FormTest {
 
     @Mock
     private GenerateFormHelper generateFormHelper;

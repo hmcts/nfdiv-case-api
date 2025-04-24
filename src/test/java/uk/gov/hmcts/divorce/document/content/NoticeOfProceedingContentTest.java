@@ -127,7 +127,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContentWithCtscContactDetails;
 
 @ExtendWith(MockitoExtension.class)
-public class NoticeOfProceedingContentTest {
+class NoticeOfProceedingContentTest {
 
     @Mock
     private HoldingPeriodService holdingPeriodService;
@@ -145,7 +145,7 @@ public class NoticeOfProceedingContentTest {
     private NoticeOfProceedingContent noticeOfProceedingContent;
 
     @Test
-    public void shouldSuccessfullyApplyDivorceContentForNoticeOfProceedings() {
+    void shouldSuccessfullyApplyDivorceContentForNoticeOfProceedings() {
         CaseData caseData = caseData();
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant1().setLastName(TEST_LAST_NAME);
@@ -441,7 +441,7 @@ public class NoticeOfProceedingContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyCivilPartnershipContentForNoticeOfProceedings() {
+    void shouldSuccessfullyApplyCivilPartnershipContentForNoticeOfProceedings() {
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);

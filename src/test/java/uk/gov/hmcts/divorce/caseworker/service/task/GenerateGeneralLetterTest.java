@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataWithGeneralLetter;
 
 @ExtendWith(MockitoExtension.class)
-public class GenerateGeneralLetterTest {
+class GenerateGeneralLetterTest {
 
     private static final LocalDate DATE = LocalDate.of(2022, 3, 16);
     private static final String FILE_NAME = "GeneralLetter-2022-03-16:00:00";
@@ -50,12 +50,12 @@ public class GenerateGeneralLetterTest {
     private GenerateGeneralLetter generateLetter;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         setMockClock(clock, DATE);
     }
 
     @Test
-    public void shouldGenerateGeneralLetterAndUpdateCaseDataWithGeneralLettersWithAttachments() {
+    void shouldGenerateGeneralLetterAndUpdateCaseDataWithGeneralLettersWithAttachments() {
 
         CaseData caseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -83,7 +83,7 @@ public class GenerateGeneralLetterTest {
     }
 
     @Test
-    public void shouldGenerateGeneralLetterAndUpdateCaseDataWithGeneralLettersWithoutAttachments() {
+    void shouldGenerateGeneralLetterAndUpdateCaseDataWithGeneralLettersWithoutAttachments() {
 
         CaseData caseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
         caseData.getGeneralLetter().setGeneralLetterAttachments(null);
@@ -112,7 +112,7 @@ public class GenerateGeneralLetterTest {
     }
 
     @Test
-    public void testGenerateLetterToRespondent() {
+    void testGenerateLetterToRespondent() {
         CaseData caseData = buildCaseDataWithGeneralLetter(GeneralParties.RESPONDENT);
         caseData.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -140,7 +140,7 @@ public class GenerateGeneralLetterTest {
     }
 
     @Test
-    public void testGenerateLetterToConfidentialApplicant() {
+    void testGenerateLetterToConfidentialApplicant() {
         CaseData caseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
         caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();

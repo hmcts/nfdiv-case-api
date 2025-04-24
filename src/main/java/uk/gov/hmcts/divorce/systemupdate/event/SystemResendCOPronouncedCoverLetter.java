@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -26,15 +26,14 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SystemResendCOPronouncedCoverLetter implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_RESEND_CO_PRONOUNCED_COVER_LETTER = "system-resend-co-pronounced-letter";
 
-    @Autowired
-    private RegenerateConditionalOrderPronouncedCoverLetter regenerateCoverLetters;
+    private final RegenerateConditionalOrderPronouncedCoverLetter regenerateCoverLetters;
 
-    @Autowired
-    private SendRegeneratedCOPronouncedCoverLetters sendRegeneratedCoverLetters;
+    private final SendRegeneratedCOPronouncedCoverLetters sendRegeneratedCoverLetters;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

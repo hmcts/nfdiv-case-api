@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class UpdateContactDetailsTest {
+class UpdateContactDetailsTest {
 
     @InjectMocks
     private UpdateContactDetails updateContactDetails;

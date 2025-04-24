@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.payment;
+package uk.gov.hmcts.divorce.payment.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +18,9 @@ import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.payment.client.FeesAndPaymentsClient;
+import uk.gov.hmcts.divorce.payment.client.PaymentClient;
+import uk.gov.hmcts.divorce.payment.client.PaymentPbaClient;
 import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
@@ -55,15 +58,15 @@ import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0001;
-import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0003;
-import static uk.gov.hmcts.divorce.payment.PaymentService.CA_E0004;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ENFORCEMENT;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_BAILIFF;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.CA_E0001;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.CA_E0003;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.CA_E0004;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ENFORCEMENT;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_BAILIFF;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_DIVORCE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ISSUE_FEE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
@@ -78,7 +81,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.orderSummaryWithFee;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentServiceTest {
+class PaymentServiceTest {
 
     private static final String DEFAULT_CHANNEL = "default";
     private static final String FAMILY = "family";
@@ -112,7 +115,7 @@ public class PaymentServiceTest {
     private PaymentService paymentService;
 
     @Test
-    public void shouldReturnOrderSummaryWhenFeeEventIsAvailable() {
+    void shouldReturnOrderSummaryWhenFeeEventIsAvailable() {
         doReturn(getFeeResponse())
             .when(feesAndPaymentsClient)
             .getPaymentServiceFee(
@@ -147,7 +150,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturnOrderSummaryForServiceEventKeyword() {
+    void shouldReturnOrderSummaryForServiceEventKeyword() {
         doReturn(getFeeResponse())
             .when(feesAndPaymentsClient)
             .getPaymentServiceFee(
@@ -182,7 +185,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldThrowFeignExceptionWhenFeeEventIsNotAvailable() {
+    void shouldThrowFeignExceptionWhenFeeEventIsNotAvailable() {
         byte[] emptyBody = {};
         Request request = Request.create(GET, EMPTY, Map.of(), emptyBody, UTF_8, null);
 
@@ -213,7 +216,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldSuccessfullyCreateServiceRequests() {
+    void shouldSuccessfullyCreateServiceRequests() {
         var serviceRefResponse = ServiceReferenceResponse.builder().serviceRequestReference(TEST_SERVICE_REFERENCE).build();
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -233,7 +236,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldProcessPbaPaymentSuccessfullyWhenPbaAccountIsValid() {
+    void shouldProcessPbaPaymentSuccessfullyWhenPbaAccountIsValid() {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -266,7 +269,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturn403WithErrorCodeCae0004WhenAccountIsDeleted() throws Exception {
+    void shouldReturn403WithErrorCodeCae0004WhenAccountIsDeleted() throws Exception {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -302,7 +305,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturn403WithErrorCodeCae0003WhenAccountIsHold() throws Exception {
+    void shouldReturn403WithErrorCodeCae0003WhenAccountIsHold() throws Exception {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -338,7 +341,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturn4InternalServerErrorWhenResponseEntityIsNull() {
+    void shouldReturn4InternalServerErrorWhenResponseEntityIsNull() {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -363,7 +366,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturnGenericErrorWhenGatewayTimeout() throws Exception {
+    void shouldReturnGenericErrorWhenGatewayTimeout() throws Exception {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -395,7 +398,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturnGeneralErrorWhenOtherHttpError() throws Exception {
+    void shouldReturnGeneralErrorWhenOtherHttpError() throws Exception {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -433,7 +436,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturnGenericErrorWhenInternalServerError() throws Exception {
+    void shouldReturnGenericErrorWhenInternalServerError() throws Exception {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -465,7 +468,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturn403WithErrorCodeCae0001WhenAccountHasInsufficientBalance() throws Exception {
+    void shouldReturn403WithErrorCodeCae0001WhenAccountHasInsufficientBalance() throws Exception {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -502,7 +505,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturnGeneralErrorWhenErrorCodeIsUnknown() throws Exception {
+    void shouldReturnGeneralErrorWhenErrorCodeIsUnknown() throws Exception {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -539,7 +542,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturn404WhenPaymentAccountIsNotFound() {
+    void shouldReturn404WhenPaymentAccountIsNotFound() {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -572,7 +575,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void shouldReturnGeneralErrorWhenThereIsAnErrorParsingPaymentResponse() throws Exception {
+    void shouldReturnGeneralErrorWhenThereIsAnErrorParsingPaymentResponse() throws Exception {
         var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -656,7 +659,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getServiceCostShouldReturnFeeAmountWhenFeeEventIsAvailable() {
+    void getServiceCostShouldReturnFeeAmountWhenFeeEventIsAvailable() {
         FeeResponse feeResponse = getFeeResponse();
 
         doReturn(feeResponse)
@@ -685,7 +688,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getServiceCostShouldThrowFeignExceptionWhenFeeEventIsNotAvailable() {
+    void getServiceCostShouldThrowFeignExceptionWhenFeeEventIsNotAvailable() {
         byte[] emptyBody = {};
         Request request = Request.create(GET, EMPTY, Map.of(), emptyBody, UTF_8, null);
 

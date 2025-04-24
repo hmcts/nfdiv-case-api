@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -58,23 +58,20 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 @Component
 @Slf4j
 @Deprecated
+@RequiredArgsConstructor
 public class ConditionalOrderPronouncedCoverLetterHelper {
 
     public static final String NAME = "name";
     public static final String ADDRESS = "address";
     public static final String PRONOUNCEMENT_DATE_PLUS_43 = "pronouncementDatePlus43";
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final CaseDataDocumentService caseDataDocumentService;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     public void generateConditionalOrderPronouncedCoversheet(final CaseData caseData,
                                                               final Long caseId,

@@ -3,7 +3,7 @@ package uk.gov.hmcts.divorce.document.content;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
@@ -24,10 +23,10 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SPOUSE_WELSH;
 
 @Component
+@RequiredArgsConstructor
 public class ConditionalOrderCommonContent {
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
     public List<RefusalReason> generateLegalAdvisorComments(ConditionalOrder conditionalOrder) {
 
@@ -39,10 +38,12 @@ public class ConditionalOrderCommonContent {
                 return emptyList();
             }
 
-            List<RefusalReason> legalAdvisorComments = refusalClarificationReason.stream()
-                .filter(clarificationReason -> !clarificationReason.equals(ClarificationReason.OTHER))
-                .map(reason -> new RefusalReason(reason.getLabel()))
-                .collect(Collectors.toList());
+            List<RefusalReason> legalAdvisorComments = new ArrayList<>(
+                refusalClarificationReason.stream()
+                    .filter(clarificationReason -> !clarificationReason.equals(ClarificationReason.OTHER))
+                    .map(reason -> new RefusalReason(reason.getLabel()))
+                    .toList()
+            );
 
             String refusalClarificationAdditionalInfo = conditionalOrder.getRefusalClarificationAdditionalInfo();
             if (isNotEmpty(refusalClarificationAdditionalInfo)) {

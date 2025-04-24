@@ -7,6 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineResponseJointParties;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.RequestForInformationPartnerResponseDocumentPack;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -14,10 +16,11 @@ import java.util.Map;
 
 import static java.lang.String.join;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT1;
-import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.APPLICANT2;
+import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
@@ -32,8 +35,10 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_IN
 import static uk.gov.hmcts.divorce.testutil.TestConstants.PROFESSIONAL_USERS_SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SMART_SURVEY_TEST_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_DOCUMENT_PACK;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LETTER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -54,12 +59,18 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
     @Mock
     private NotificationService notificationService;
 
+    @Mock
+    private RequestForInformationPartnerResponseDocumentPack requestForInformationPartnerResponseDocumentPack;
+
+    @Mock
+    private LetterPrinter letterPrinter;
+
     @InjectMocks
     private CitizenRequestForInformationResponsePartnerNotification citizenRequestForInformationResponsePartnerNotification;
 
     @Test
     void shouldSendRequestForInformationResponsePartnerEmailToApplicant1() {
-        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT2, false, false).getData();
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, false).getData();
         addResponseToLatestRequestForInformation(caseData, caseData.getApplicant2());
 
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
@@ -81,8 +92,30 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
     }
 
     @Test
+    void shouldSendRequestForInformationResponsePartnerLetterToOfflineApplicant1() {
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, false).getData();
+        caseData.getApplicant1().setOffline(YES);
+        addOfflineResponseToLatestRequestForInformation(caseData, RequestForInformationOfflineResponseJointParties.APPLICANT2);
+
+        when(requestForInformationPartnerResponseDocumentPack.getDocumentPack(caseData, caseData.getApplicant1()))
+            .thenReturn(TEST_DOCUMENT_PACK);
+
+        when(requestForInformationPartnerResponseDocumentPack.getLetterId()).thenReturn(TEST_LETTER_ID);
+
+        citizenRequestForInformationResponsePartnerNotification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
+
+        verify(letterPrinter).sendLetters(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant1(),
+            TEST_DOCUMENT_PACK,
+            TEST_LETTER_ID
+        );
+    }
+
+    @Test
     void shouldSendRequestForInformationResponsePartnerEmailToApplicant1Solicitor() {
-        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT2, true, false).getData();
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, true, false).getData();
         addResponseToLatestRequestForInformation(caseData, caseData.getApplicant2());
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
@@ -106,8 +139,30 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
     }
 
     @Test
+    void shouldSendRequestForInformationResponsePartnerLetterToOfflineApplicant1Solicitor() {
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, true, false).getData();
+        caseData.getApplicant1().setOffline(YES);
+        addOfflineResponseToLatestRequestForInformation(caseData, RequestForInformationOfflineResponseJointParties.APPLICANT2);
+
+        when(requestForInformationPartnerResponseDocumentPack.getDocumentPack(caseData, caseData.getApplicant1()))
+            .thenReturn(TEST_DOCUMENT_PACK);
+
+        when(requestForInformationPartnerResponseDocumentPack.getLetterId()).thenReturn(TEST_LETTER_ID);
+
+        citizenRequestForInformationResponsePartnerNotification.sendToApplicant1SolicitorOffline(caseData, TEST_CASE_ID);
+
+        verify(letterPrinter).sendLetters(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant1(),
+            TEST_DOCUMENT_PACK,
+            TEST_LETTER_ID
+        );
+    }
+
+    @Test
     void shouldSendRequestForInformationResponseCannotUploadDocsEmailToApplicant1() {
-        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT2, false, false).getData();
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, false).getData();
         addCannotUploadResponseToLatestRequestForInformation(caseData, caseData.getApplicant2());
 
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
@@ -129,8 +184,23 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
     }
 
     @Test
+    void shouldNotSendRequestForInformationResponsePartnerLetterToOfflineApplicant1WhenCannotUploadDocsIsSet() {
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, false).getData();
+        caseData.getApplicant1().setOffline(YES);
+        addNotAllDocsUploadedOfflineResponseToLatestRequestForInformation(
+            caseData,
+            RequestForInformationOfflineResponseJointParties.APPLICANT2
+        );
+
+        citizenRequestForInformationResponsePartnerNotification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(requestForInformationPartnerResponseDocumentPack);
+        verifyNoInteractions(letterPrinter);
+    }
+
+    @Test
     void shouldSendRequestForInformationResponseCannotUploadDocsEmailToApplicant1Solicitor() {
-        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT2, true, false).getData();
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, true, false).getData();
         addCannotUploadResponseToLatestRequestForInformation(caseData, caseData.getApplicant2());
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
@@ -154,8 +224,23 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
     }
 
     @Test
+    void shouldNotSendRequestForInformationResponsePartnerLetterToOfflineApplicant1SolicitorWhenCannotUploadDocsIsSet() {
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, true, false).getData();
+        caseData.getApplicant1().setOffline(YES);
+        addNotAllDocsUploadedOfflineResponseToLatestRequestForInformation(
+            caseData,
+            RequestForInformationOfflineResponseJointParties.APPLICANT2
+        );
+
+        citizenRequestForInformationResponsePartnerNotification.sendToApplicant1SolicitorOffline(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(requestForInformationPartnerResponseDocumentPack);
+        verifyNoInteractions(letterPrinter);
+    }
+
+    @Test
     void shouldSendRequestForInformationResponsePartnerEmailToApplicant1AfterOfflineResponse() {
-        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT2, false, false).getData();
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, false).getData();
         addOfflineResponseToLatestRequestForInformation(caseData, RequestForInformationOfflineResponseJointParties.APPLICANT2);
 
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
@@ -178,7 +263,7 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
 
     @Test
     void shouldSendRequestForInformationResponsePartnerEmailToApplicant1SolicitorAfterOfflineResponse() {
-        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT2, true, false).getData();
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, true, false).getData();
         addOfflineResponseToLatestRequestForInformation(caseData, RequestForInformationOfflineResponseJointParties.APPLICANT2);
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
@@ -203,7 +288,7 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
 
     @Test
     void shouldSendRequestForInformationResponseCannotUploadDocsEmailToApplicant1AfterOfflineResponse() {
-        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT2, false, false).getData();
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, false).getData();
         addNotAllDocsUploadedOfflineResponseToLatestRequestForInformation(
             caseData,
             RequestForInformationOfflineResponseJointParties.APPLICANT2
@@ -229,7 +314,7 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
 
     @Test
     void shouldSendRequestForInformationResponseCannotUploadDocsEmailToApplicant1SolicitorAfterOfflineResponse() {
-        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT2, true, false).getData();
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, true, false).getData();
         addNotAllDocsUploadedOfflineResponseToLatestRequestForInformation(
             caseData,
             RequestForInformationOfflineResponseJointParties.APPLICANT2
@@ -257,7 +342,7 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
 
     @Test
     void shouldSendRequestForInformationResponseEmailToApplicant2() {
-        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT1, false, false).getData();
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, false).getData();
         addResponseToLatestRequestForInformation(caseData, caseData.getApplicant1());
 
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
@@ -279,8 +364,30 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
     }
 
     @Test
+    void shouldSendRequestForInformationResponsePartnerLetterToOfflineApplicant2() {
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, false).getData();
+        caseData.getApplicant2().setOffline(YES);
+        addOfflineResponseToLatestRequestForInformation(caseData, RequestForInformationOfflineResponseJointParties.APPLICANT1);
+
+        when(requestForInformationPartnerResponseDocumentPack.getDocumentPack(caseData, caseData.getApplicant2()))
+            .thenReturn(TEST_DOCUMENT_PACK);
+
+        when(requestForInformationPartnerResponseDocumentPack.getLetterId()).thenReturn(TEST_LETTER_ID);
+
+        citizenRequestForInformationResponsePartnerNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+
+        verify(letterPrinter).sendLetters(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            TEST_DOCUMENT_PACK,
+            TEST_LETTER_ID
+        );
+    }
+
+    @Test
     void shouldSendRequestForInformationResponsePartnerEmailToApplicant2Solicitor() {
-        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT1, false, true).getData();
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, true).getData();
         addResponseToLatestRequestForInformation(caseData, caseData.getApplicant1());
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
@@ -304,8 +411,30 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
     }
 
     @Test
+    void shouldSendRequestForInformationResponsePartnerLetterToOfflineApplicant2Solicitor() {
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, true).getData();
+        caseData.getApplicant2().setOffline(YES);
+        addOfflineResponseToLatestRequestForInformation(caseData, RequestForInformationOfflineResponseJointParties.APPLICANT1);
+
+        when(requestForInformationPartnerResponseDocumentPack.getDocumentPack(caseData, caseData.getApplicant2()))
+            .thenReturn(TEST_DOCUMENT_PACK);
+
+        when(requestForInformationPartnerResponseDocumentPack.getLetterId()).thenReturn(TEST_LETTER_ID);
+
+        citizenRequestForInformationResponsePartnerNotification.sendToApplicant2SolicitorOffline(caseData, TEST_CASE_ID);
+
+        verify(letterPrinter).sendLetters(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            TEST_DOCUMENT_PACK,
+            TEST_LETTER_ID
+        );
+    }
+
+    @Test
     void shouldSendRequestForInformationResponseCannotUploadDocsEmailToApplicant2() {
-        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT1, false, false).getData();
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, false).getData();
         addCannotUploadResponseToLatestRequestForInformation(caseData, caseData.getApplicant1());
 
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
@@ -327,8 +456,23 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
     }
 
     @Test
+    void shouldNotSendRequestForInformationResponsePartnerLetterToOfflineApplicant2WhenCannotUploadDocsIsSet() {
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, false).getData();
+        caseData.getApplicant2().setOffline(YES);
+        addNotAllDocsUploadedOfflineResponseToLatestRequestForInformation(
+            caseData,
+            RequestForInformationOfflineResponseJointParties.APPLICANT1
+        );
+
+        citizenRequestForInformationResponsePartnerNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(requestForInformationPartnerResponseDocumentPack);
+        verifyNoInteractions(letterPrinter);
+    }
+
+    @Test
     void shouldSendRequestForInformationResponseCannotUploadDocsEmailToApplicant2Solicitor() {
-        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT1, false, true).getData();
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, true).getData();
         addCannotUploadResponseToLatestRequestForInformation(caseData, caseData.getApplicant1());
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
@@ -352,8 +496,23 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
     }
 
     @Test
+    void shouldNotSendRequestForInformationResponsePartnerLetterToOfflineApplicant2SolicitorWhenCannotUploadDocsIsSet() {
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, true, false).getData();
+        caseData.getApplicant2().setOffline(YES);
+        addNotAllDocsUploadedOfflineResponseToLatestRequestForInformation(
+            caseData,
+            RequestForInformationOfflineResponseJointParties.APPLICANT1
+        );
+
+        citizenRequestForInformationResponsePartnerNotification.sendToApplicant2SolicitorOffline(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(requestForInformationPartnerResponseDocumentPack);
+        verifyNoInteractions(letterPrinter);
+    }
+
+    @Test
     void shouldSendRequestForInformationResponsePartnerEmailToApplicant2AfterOfflineResponse() {
-        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT1, false, false).getData();
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, false).getData();
         addOfflineResponseToLatestRequestForInformation(caseData, RequestForInformationOfflineResponseJointParties.APPLICANT1);
 
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
@@ -376,7 +535,7 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
 
     @Test
     void shouldSendRequestForInformationResponsePartnerEmailToApplicant2SolicitorAfterOfflineResponse() {
-        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT1, false, true).getData();
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, true).getData();
         addOfflineResponseToLatestRequestForInformation(caseData, RequestForInformationOfflineResponseJointParties.APPLICANT1);
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
@@ -401,7 +560,7 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
 
     @Test
     void shouldSendRequestForInformationResponseCannotUploadDocsEmailToApplicant2AfterOfflineResponse() {
-        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT1, false, false).getData();
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, false).getData();
         addNotAllDocsUploadedOfflineResponseToLatestRequestForInformation(
             caseData,
             RequestForInformationOfflineResponseJointParties.APPLICANT1
@@ -427,7 +586,7 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
 
     @Test
     void shouldSendRequestForInformationResponseCannotUploadDocsEmailToApplicant2SolicitorAfterOfflineResponse() {
-        CaseData caseData = getRequestForInformationCaseDetails(APPLICANT1, false, true).getData();
+        CaseData caseData = getRequestForInformationCaseDetails(BOTH, false, true).getData();
         addNotAllDocsUploadedOfflineResponseToLatestRequestForInformation(
             caseData,
             RequestForInformationOfflineResponseJointParties.APPLICANT1

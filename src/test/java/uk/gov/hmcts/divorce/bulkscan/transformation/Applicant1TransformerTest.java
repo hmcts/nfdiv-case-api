@@ -23,7 +23,7 @@ import static uk.gov.hmcts.divorce.bulkscan.util.FileUtil.loadJson;
 import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transformOcrMapToObject;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant1TransformerTest {
+class Applicant1TransformerTest {
     @InjectMocks
     private Applicant1Transformer applicant1Transformer;
 

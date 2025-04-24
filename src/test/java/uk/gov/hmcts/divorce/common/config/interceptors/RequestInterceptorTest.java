@@ -21,7 +21,7 @@ import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUT
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
-public class RequestInterceptorTest {
+class RequestInterceptorTest {
 
     private static final String AUTH_TOKEN_WITH_BEARER_PREFIX = "Bearer " + TEST_AUTHORIZATION_TOKEN;
 
@@ -32,12 +32,12 @@ public class RequestInterceptorTest {
     private RequestInterceptor requestInterceptor;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         setField(requestInterceptor, "authorisedServices", List.of("ccd_data", "bulk_scan_processor", "bulk_scan_orchestrator"));
     }
 
     @Test
-    public void shouldAppendBearerPrefixWhenServiceAuthDoesNotIncludeBearerPrefix() throws Exception {
+    void shouldAppendBearerPrefixWhenServiceAuthDoesNotIncludeBearerPrefix() throws Exception {
         when(validator.getServiceName(AUTH_TOKEN_WITH_BEARER_PREFIX))
             .thenReturn("ccd_data");
 
@@ -52,7 +52,7 @@ public class RequestInterceptorTest {
     }
 
     @Test
-    public void shouldNotAppendBearerPrefixWhenServiceAuthIncludesBearerPrefix() throws Exception {
+    void shouldNotAppendBearerPrefixWhenServiceAuthIncludesBearerPrefix() throws Exception {
         when(validator.getServiceName(AUTH_TOKEN_WITH_BEARER_PREFIX))
             .thenReturn("ccd_data");
 

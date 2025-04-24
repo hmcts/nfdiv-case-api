@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -87,6 +86,6 @@ public class BulkScanCaseTransformationController {
         return warnings
             .stream()
             .map(ListValue::getValue)
-            .collect(toList());
+            .toList();
     }
 }
