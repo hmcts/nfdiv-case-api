@@ -97,7 +97,7 @@ class DocmosisCommonContentTest {
     private DocmosisCommonContent docmosisCommonContent;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         ReflectionTestUtils.setField(docmosisCommonContent, "poBox", PO_BOX);
         ReflectionTestUtils.setField(docmosisCommonContent, "town", TOWN);
         ReflectionTestUtils.setField(docmosisCommonContent, "postcode", POSTCODE);

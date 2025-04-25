@@ -75,9 +75,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.feignException;
 @ExtendWith(MockitoExtension.class)
 class CcdSearchServiceTest {
 
-    public static final int PAGE_SIZE = 100;
-    public static final int BULK_LIST_MAX_PAGE_SIZE = 50;
-    public static final int TOTAL_MAX_RESULTS = 150;
+    static final int PAGE_SIZE = 100;
+    static final int BULK_LIST_MAX_PAGE_SIZE = 50;
+    static final int TOTAL_MAX_RESULTS = 150;
 
     @Mock
     private CoreCaseDataApi coreCaseDataApi;

@@ -59,7 +59,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigitalSolicitor;
 
 @ExtendWith(MockitoExtension.class)
-public class NoticeOfProceedingSolicitorContentTest {
+class NoticeOfProceedingSolicitorContentTest {
 
     private static final String ADDRESS = "line 1\ntown\npostcode";
     private static final String ADDRESS_2 = "first line\ntown\npostcode";
@@ -79,7 +79,7 @@ public class NoticeOfProceedingSolicitorContentTest {
     private NoticeOfProceedingSolicitorContent applicantSolicitorNopContent;
 
     @Test
-    public void shouldMapTemplateContentForSoleDivorceApplication() {
+    void shouldMapTemplateContentForSoleDivorceApplication() {
         Applicant applicant1 = applicantRepresentedBySolicitor();
         applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
         applicant1.getSolicitor().setAddress(ADDRESS);
@@ -127,7 +127,7 @@ public class NoticeOfProceedingSolicitorContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForReissueSoleDivorceApplication() {
+    void shouldMapTemplateContentForReissueSoleDivorceApplication() {
         Applicant applicant1 = applicantRepresentedBySolicitor();
         applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
         applicant1.getSolicitor().setAddress(ADDRESS);
@@ -176,7 +176,7 @@ public class NoticeOfProceedingSolicitorContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForJointDivorceApplicationWithOneSolicitorApplyingForBothParties() {
+    void shouldMapTemplateContentForJointDivorceApplicationWithOneSolicitorApplyingForBothParties() {
         Applicant applicant1 = applicantRepresentedBySolicitor();
         applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
         applicant1.getSolicitor().setAddress(ADDRESS);
@@ -227,7 +227,7 @@ public class NoticeOfProceedingSolicitorContentTest {
     }
 
     @Test
-    public void shouldMapRelationTemplateContentWhenPopulatingForRespondentSolicitor() {
+    void shouldMapRelationTemplateContentWhenPopulatingForRespondentSolicitor() {
         Applicant applicant1 = applicantRepresentedBySolicitor();
         applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
         applicant1.getSolicitor().setAddress(ADDRESS);
@@ -275,7 +275,7 @@ public class NoticeOfProceedingSolicitorContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForJudicialSeparation() {
+    void shouldMapTemplateContentForJudicialSeparation() {
         Applicant applicant1 = applicantRepresentedBySolicitor();
         applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
         applicant1.getSolicitor().setAddress(ADDRESS);
@@ -335,7 +335,7 @@ public class NoticeOfProceedingSolicitorContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForJointDivorceApplicationWithOneSolicitorApplyingForBothPartiesForJudicialSeparation() {
+    void shouldMapTemplateContentForJointDivorceApplicationWithOneSolicitorApplyingForBothPartiesForJudicialSeparation() {
         Applicant applicant1 = applicantRepresentedBySolicitor();
         applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
         applicant1.getSolicitor().setAddress(ADDRESS);
@@ -386,7 +386,7 @@ public class NoticeOfProceedingSolicitorContentTest {
     }
 
     @Test
-    public void shouldMapSolicitorTemplateContentWhenJudicialSeparation() {
+    void shouldMapSolicitorTemplateContentWhenJudicialSeparation() {
         Applicant applicant1 = applicantRepresentedBySolicitor();
         applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
         applicant1.getSolicitor().setAddress(ADDRESS);

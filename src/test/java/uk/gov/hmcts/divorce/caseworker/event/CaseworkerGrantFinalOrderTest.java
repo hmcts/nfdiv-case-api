@@ -82,7 +82,7 @@ class CaseworkerGrantFinalOrderTest {
     }
 
     @Test
-    public void shouldPopulateDynamicListWithGeneralOrderWhenFinalOrderIsOverdue() {
+    void shouldPopulateDynamicListWithGeneralOrderWhenFinalOrderIsOverdue() {
         final CaseData caseData = caseData();
         caseData.setConditionalOrder(ConditionalOrder.builder().grantedDate(LocalDate.now()).build());
         caseData.setFinalOrder(FinalOrder.builder()
@@ -124,7 +124,7 @@ class CaseworkerGrantFinalOrderTest {
     }
 
     @Test
-    public void shouldNotPopulateDynamicListWithGeneralOrderWhenFinalOrderIsNotOverdue() {
+    void shouldNotPopulateDynamicListWithGeneralOrderWhenFinalOrderIsNotOverdue() {
         final CaseData caseData = caseData();
         caseData.setConditionalOrder(ConditionalOrder.builder().grantedDate(LocalDate.now()).build());
         caseData.setFinalOrder(FinalOrder.builder()
@@ -164,7 +164,7 @@ class CaseworkerGrantFinalOrderTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenCOGrantedDateIsNotSet() {
+    void shouldReturnErrorWhenCOGrantedDateIsNotSet() {
         final CaseData caseData = caseData();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -261,7 +261,7 @@ class CaseworkerGrantFinalOrderTest {
     }
 
     @Test
-    public void shouldSetGeneralOrderGrantingFinalOrderWhenFinalOrderIsOverdue() {
+    void shouldSetGeneralOrderGrantingFinalOrderWhenFinalOrderIsOverdue() {
         final CaseData caseData = caseData();
         caseData.setFinalOrder(
             FinalOrder.builder()

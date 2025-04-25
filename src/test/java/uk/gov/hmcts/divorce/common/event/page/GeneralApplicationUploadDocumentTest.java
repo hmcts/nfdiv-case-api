@@ -19,12 +19,12 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getListOfDivorceDocumentListValue;
 
 @ExtendWith(MockitoExtension.class)
-public class GeneralApplicationUploadDocumentTest {
+class GeneralApplicationUploadDocumentTest {
 
     private final GeneralApplicationUploadDocument page = new GeneralApplicationUploadDocument();
 
     @Test
-    public void shouldReturnErrorIfNoDocumentsUploaded() {
+    void shouldReturnErrorIfNoDocumentsUploaded() {
         final CaseData caseData = caseData();
 
         caseData.setGeneralApplication(GeneralApplication.builder()
@@ -43,7 +43,7 @@ public class GeneralApplicationUploadDocumentTest {
     }
 
     @Test
-    public void shouldReturnErrorIfDocumentsUploadedExceedsMaxNumber() {
+    void shouldReturnErrorIfDocumentsUploadedExceedsMaxNumber() {
         final CaseData caseData = caseData();
 
         caseData.setGeneralApplication(GeneralApplication.builder()
@@ -62,7 +62,7 @@ public class GeneralApplicationUploadDocumentTest {
     }
 
     @Test
-    public void shouldNotReturnErrorIfDocumentIsUploadedAndWellFormed() {
+    void shouldNotReturnErrorIfDocumentIsUploadedAndWellFormed() {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
@@ -82,7 +82,7 @@ public class GeneralApplicationUploadDocumentTest {
     }
 
     @Test
-    public void shouldReturnErrorIfDocumentIsNull() {
+    void shouldReturnErrorIfDocumentIsNull() {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
@@ -106,7 +106,7 @@ public class GeneralApplicationUploadDocumentTest {
     }
 
     @Test
-    public void shouldReturnErrorIfDocumentNameIsNull() {
+    void shouldReturnErrorIfDocumentNameIsNull() {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
@@ -129,7 +129,7 @@ public class GeneralApplicationUploadDocumentTest {
     }
 
     @Test
-    public void shouldReturnErrorIfDocumentDateIsNull() {
+    void shouldReturnErrorIfDocumentDateIsNull() {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);

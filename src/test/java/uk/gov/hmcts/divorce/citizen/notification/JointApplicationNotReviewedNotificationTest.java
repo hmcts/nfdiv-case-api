@@ -40,7 +40,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 
 @ExtendWith(SpringExtension.class)
-public class JointApplicationNotReviewedNotificationTest {
+class JointApplicationNotReviewedNotificationTest {
 
     @Mock
     private NotificationService notificationService;

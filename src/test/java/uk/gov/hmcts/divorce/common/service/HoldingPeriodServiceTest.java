@@ -27,7 +27,7 @@ class HoldingPeriodServiceTest {
     private HoldingPeriodService holdingPeriodService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         setField(holdingPeriodService, "holdingPeriodInDays", HOLDING_PERIOD_DAYS);
     }
 

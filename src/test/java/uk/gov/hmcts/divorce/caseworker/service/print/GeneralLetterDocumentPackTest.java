@@ -26,7 +26,7 @@ class GeneralLetterDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnCorrectLetterId() {
+    void shouldReturnCorrectLetterId() {
         assertThat(generalLetterDocumentPack.getLetterId()).isEqualTo(LETTER_TYPE_GENERAL_LETTER);
     }
 }

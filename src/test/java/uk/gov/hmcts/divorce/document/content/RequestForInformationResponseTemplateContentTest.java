@@ -78,7 +78,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicSolicitorTemp
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getOfflineRequestForInformationCaseDetails;
 
 @ExtendWith(MockitoExtension.class)
-public class RequestForInformationResponseTemplateContentTest {
+class RequestForInformationResponseTemplateContentTest {
 
     @Mock
     private DocmosisCommonContent docmosisCommonContent;
@@ -90,7 +90,7 @@ public class RequestForInformationResponseTemplateContentTest {
     private RequestForInformationResponseTemplateContent requestForInformationResponseTemplateContent;
 
     @Test
-    public void shouldMapTemplateContentForApplicant1() {
+    void shouldMapTemplateContentForApplicant1() {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(APPLICANT1, false, false).getData();
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
@@ -114,7 +114,7 @@ public class RequestForInformationResponseTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForApplicant2() {
+    void shouldMapTemplateContentForApplicant2() {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(APPLICANT2, false, false).getData();
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
@@ -138,7 +138,7 @@ public class RequestForInformationResponseTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForWelshApplicant() {
+    void shouldMapTemplateContentForWelshApplicant() {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(RequestForInformationSoleParties.APPLICANT, false, false).getData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
@@ -163,7 +163,7 @@ public class RequestForInformationResponseTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForApplicant1WhenRFISentToBothParties() {
+    void shouldMapTemplateContentForApplicant1WhenRFISentToBothParties() {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(BOTH, false, false).getData();
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
@@ -188,7 +188,7 @@ public class RequestForInformationResponseTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForApplicant1WhenRFISentToBothPartiesWelsh() {
+    void shouldMapTemplateContentForApplicant1WhenRFISentToBothPartiesWelsh() {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(BOTH, false, false).getData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
@@ -214,7 +214,7 @@ public class RequestForInformationResponseTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForApplicant2WhenRFISentToBothParties() {
+    void shouldMapTemplateContentForApplicant2WhenRFISentToBothParties() {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(BOTH, false, false).getData();
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(ENGLISH)).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
@@ -239,7 +239,7 @@ public class RequestForInformationResponseTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForApplicant2WhenRFISentToBothPartiesWelsh() {
+    void shouldMapTemplateContentForApplicant2WhenRFISentToBothPartiesWelsh() {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(BOTH, false, false).getData();
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
 
@@ -265,7 +265,7 @@ public class RequestForInformationResponseTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForApplicant1Solicitor() {
+    void shouldMapTemplateContentForApplicant1Solicitor() {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(RequestForInformationSoleParties.APPLICANT, true, false).getData();
         caseData.getApplicant1().getSolicitor().setReference(TEST_REFERENCE);
 
@@ -303,7 +303,7 @@ public class RequestForInformationResponseTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForApplicant1SolicitorWelsh() {
+    void shouldMapTemplateContentForApplicant1SolicitorWelsh() {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(RequestForInformationSoleParties.APPLICANT, true, false).getData();
         caseData.getApplicant1().getSolicitor().setReference(TEST_REFERENCE);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
@@ -342,7 +342,7 @@ public class RequestForInformationResponseTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForApplicant2Solicitor() {
+    void shouldMapTemplateContentForApplicant2Solicitor() {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(APPLICANT2, false, true).getData();
 
         when(docmosisCommonContent.getBasicSolicitorTemplateContent(caseData, TEST_CASE_ID, false, ENGLISH))
@@ -379,7 +379,7 @@ public class RequestForInformationResponseTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForApplicant2SolicitorWelsh() {
+    void shouldMapTemplateContentForApplicant2SolicitorWelsh() {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(APPLICANT2, false, true).getData();
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
 
@@ -417,7 +417,7 @@ public class RequestForInformationResponseTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForApplicant1SolicitorWhenRFISentToBothParties() {
+    void shouldMapTemplateContentForApplicant1SolicitorWhenRFISentToBothParties() {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(BOTH, true, false).getData();
         caseData.getApplicant1().getSolicitor().setReference(TEST_REFERENCE);
 
@@ -457,7 +457,7 @@ public class RequestForInformationResponseTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForApplicant1SolicitorWhenRFISentToBothPartiesWelsh() {
+    void shouldMapTemplateContentForApplicant1SolicitorWhenRFISentToBothPartiesWelsh() {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(BOTH, true, false).getData();
         caseData.getApplicant1().getSolicitor().setReference(TEST_REFERENCE);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
@@ -497,7 +497,7 @@ public class RequestForInformationResponseTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForApplicant2SolicitorWhenRFISentToBothParties() {
+    void shouldMapTemplateContentForApplicant2SolicitorWhenRFISentToBothParties() {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(BOTH, false, true).getData();
 
         when(docmosisCommonContent.getBasicSolicitorTemplateContent(caseData, TEST_CASE_ID, false, ENGLISH))
@@ -535,7 +535,7 @@ public class RequestForInformationResponseTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentForApplicant2SolicitorWhenRFISentToBothPartiesWelsh() {
+    void shouldMapTemplateContentForApplicant2SolicitorWhenRFISentToBothPartiesWelsh() {
         CaseData caseData = getOfflineRequestForInformationCaseDetails(BOTH, false, true).getData();
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
 
@@ -574,7 +574,7 @@ public class RequestForInformationResponseTemplateContentTest {
     }
 
     @Test
-    public void shouldGetSupportedTemplates() {
+    void shouldGetSupportedTemplates() {
         assertThat(requestForInformationResponseTemplateContent.getSupportedTemplates()).contains(
             REQUEST_FOR_INFORMATION_RESPONSE_LETTER_TEMPLATE_ID,
             REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER_TEMPLATE_ID

@@ -16,7 +16,7 @@ import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.documentpack.FinalOrderGrantedDocumentPack;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -56,9 +56,9 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_GR
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_COPIES;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_COPIES;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_COPIES;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_COPIES;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -68,13 +68,13 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 
 @ExtendWith(MockitoExtension.class)
-public class FinalOrderGrantedNotificationTest {
+class FinalOrderGrantedNotificationTest {
 
     private static final DocumentPackInfo TEST_DOCUMENT_PACK_INFO = new DocumentPackInfo(
         ImmutableMap.of(DocumentType.FINAL_ORDER_GRANTED, Optional.of(FINAL_ORDER_TEMPLATE_ID)),
         ImmutableMap.of(FINAL_ORDER_TEMPLATE_ID, FINAL_ORDER_DOCUMENT_NAME)
     );
-    public static final String THE_LETTER_ID = "the-letter-id";
+    static final String THE_LETTER_ID = "the-letter-id";
 
     @Mock
     private CommonContent commonContent;

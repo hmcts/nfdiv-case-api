@@ -40,7 +40,7 @@ class CitizenWithdrawnTest {
     }
 
     @Test
-    public void shouldWithdrawCaseByDelegatingToWithdrawCaseService() {
+    void shouldWithdrawCaseByDelegatingToWithdrawCaseService() {
         final var caseDetails = new CaseDetails<CaseData, State>();
 
         citizenWithdrawn.aboutToSubmit(caseDetails, caseDetails);

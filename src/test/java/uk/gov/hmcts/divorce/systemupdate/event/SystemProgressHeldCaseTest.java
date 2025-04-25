@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedB
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class SystemProgressHeldCaseTest {
+class SystemProgressHeldCaseTest {
 
     @Mock
     private AwaitingConditionalOrderNotification awaitingConditionalOrderNotification;
