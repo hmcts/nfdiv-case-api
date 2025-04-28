@@ -6,11 +6,9 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -29,15 +27,14 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_PRONOUNCED_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FO_GRANTED_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SOLE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PLACE_OF_MARRIAGE;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @RequiredArgsConstructor
@@ -68,29 +65,24 @@ public class FinalOrderGrantedTemplateContent implements TemplateContent {
 
     @Override
     public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
-        return apply(caseData, caseId, applicant);
+        return apply(caseData, caseId);
     }
 
-    private Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference, Applicant applicant) {
+    private Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
         final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference());
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 
-        LanguagePreference languagePreference = caseData.getApplicant1().equals(applicant)
-                ? caseData.getApplicant1().getLanguagePreference() : caseData.getApplicant2().getLanguagePreference();
-
-        templateContent.put(DATE, LocalDateTime.now()
-                .format(getDateTimeFormatterForPreferredLanguage(languagePreference)));
-        templateContent.put(FO_GRANTED_DATE, caseData.getFinalOrder().getGrantedDate()
-                .format(getDateTimeFormatterForPreferredLanguage(languagePreference)));
+        templateContent.put(DATE, isNotEmpty(caseData.getFinalOrder().getGrantedDate())
+            ? caseData.getFinalOrder().getGrantedDate().format(DATE_TIME_FORMATTER) : EMPTY);
         templateContent.put(CCD_CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(IS_SOLE, caseData.getApplicationType().isSole());
 
         ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
         templateContent.put(CO_PRONOUNCED_DATE, isNotEmpty(conditionalOrder.getGrantedDate())
-            ? conditionalOrder.getGrantedDate().format(getDateTimeFormatterForPreferredLanguage(languagePreference)) : EMPTY);
+            ? conditionalOrder.getGrantedDate().format(DATE_TIME_FORMATTER) : EMPTY);
 
         templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
@@ -116,7 +108,7 @@ public class FinalOrderGrantedTemplateContent implements TemplateContent {
         templateContent.put(COUNTRY_OF_MARRIAGE, marriageDetails.getCountryOfMarriage());
         templateContent.put(MARRIAGE_DATE,
             ofNullable(marriageDetails.getDate())
-                .map(marriageDate -> marriageDate.format(getDateTimeFormatterForPreferredLanguage(languagePreference)))
+                .map(marriageDate -> marriageDate.format(DATE_TIME_FORMATTER))
                 .orElse(EMPTY));
 
         return templateContent;

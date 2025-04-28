@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static java.util.Collections.singletonList;
-import static org.springframework.util.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
@@ -95,7 +94,6 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             .pageLabel("Grant Final Order")
             .complex(CaseData::getFinalOrder)
                 .mandatory(FinalOrder::getGranted)
-                .optional(FinalOrder::getGrantedDate, "granted=\"Yes\"")
             .done();
     }
 
@@ -158,9 +156,8 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_GRANT_FINAL_ORDER, details.getId());
 
         CaseData caseData = details.getData();
-        FinalOrder finalOrder = caseData.getFinalOrder();
 
-        LocalDate dateFinalOrderEligibleFrom = finalOrder.getDateFinalOrderEligibleFrom();
+        LocalDate dateFinalOrderEligibleFrom = caseData.getFinalOrder().getDateFinalOrderEligibleFrom();
 
         LocalDateTime currentDateTime = LocalDateTime.now(clock);
 
@@ -172,11 +169,9 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
                 .build();
         }
 
-        if (isEmpty(finalOrder.getGrantedDate())) {
-            finalOrder.setGrantedDate(currentDateTime);
-        }
+        caseData.getFinalOrder().setGrantedDate(currentDateTime);
 
-        if (YesOrNo.YES.equals(finalOrder.getIsFinalOrderOverdue())) {
+        if (YesOrNo.YES.equals(caseData.getFinalOrder().getIsFinalOrderOverdue())) {
             final String foGrantingGeneralOrderName = caseData.getDocuments()
                 .getGeneralOrderDocumentNames().getValue().getLabel();
 
@@ -186,7 +181,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
                 .findFirst()
                 .orElseThrow();
 
-            finalOrder.getOverdueFinalOrderAuthorisation()
+            caseData.getFinalOrder().getOverdueFinalOrderAuthorisation()
                 .setFinalOrderGeneralOrder(generalOrderToGrantFinalOrder.getValue());
         }
 
