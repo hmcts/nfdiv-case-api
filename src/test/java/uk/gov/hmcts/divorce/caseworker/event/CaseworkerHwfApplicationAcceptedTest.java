@@ -95,7 +95,7 @@ class CaseworkerHwfApplicationAcceptedTest {
 
         when(caseworkerHwfApplicationAndPaymentHelper.setDateSubmittedAndDueDate(caseData)).thenReturn(caseData);
 
-        var response = caseworkerHwfApplicationAccepted.aboutToSubmit(caseDetails, caseDetails);
+        caseworkerHwfApplicationAccepted.aboutToSubmit(caseDetails, caseDetails);
 
         verify(caseFlagsService).initialiseCaseFlags(caseData);
     }

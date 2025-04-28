@@ -237,7 +237,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldProcessPbaPaymentSuccessfullyWhenPbaAccountIsValid() {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -270,7 +269,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturn403WithErrorCodeCae0004WhenAccountIsDeleted() throws Exception {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -306,7 +304,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturn403WithErrorCodeCae0003WhenAccountIsHold() throws Exception {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -342,7 +339,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturn4InternalServerErrorWhenResponseEntityIsNull() {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -367,7 +363,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturnGenericErrorWhenGatewayTimeout() throws Exception {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -399,7 +394,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturnGeneralErrorWhenOtherHttpError() throws Exception {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -437,7 +431,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturnGenericErrorWhenInternalServerError() throws Exception {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -469,7 +462,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturn403WithErrorCodeCae0001WhenAccountHasInsufficientBalance() throws Exception {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -506,7 +498,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturnGeneralErrorWhenErrorCodeIsUnknown() throws Exception {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -543,7 +534,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturn404WhenPaymentAccountIsNotFound() {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -576,7 +566,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturnGeneralErrorWhenThereIsAnErrorParsingPaymentResponse() throws Exception {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
