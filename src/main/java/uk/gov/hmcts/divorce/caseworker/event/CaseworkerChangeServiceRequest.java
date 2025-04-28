@@ -95,13 +95,13 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
 
         if (isIssued) {
             log.info("Regenerate NOP for App and Respondent, and D10 for case id: {}", details.getId());
-            caseTasks(generateApplicant1NoticeOfProceeding,
+            details = caseTasks(generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings, generateD10Form).run(details);
             state = application.isCourtServiceMethod() ? AwaitingAos : AwaitingService;
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(details.getData())
             .state(state)
             .build();
     }
