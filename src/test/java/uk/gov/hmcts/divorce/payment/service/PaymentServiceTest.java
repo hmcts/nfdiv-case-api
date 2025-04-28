@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.payment.client.FeesAndPaymentsClient;
 import uk.gov.hmcts.divorce.payment.client.PaymentClient;
@@ -74,9 +73,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getPbaNumbersForAccount;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.orderSummaryWithFee;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
@@ -596,19 +593,6 @@ class PaymentServiceTest {
                 + "Please try again after 2 minutes with a different Payment Account, or alternatively use a different payment method. "
                 + "For Payment Account support call 01633 652125 (Option 3) or email MiddleOffice.DDServices@liberata.com."
             );
-    }
-
-    private CaseData caseData() {
-        var caseData = caseDataWithOrderSummary();
-        caseData.getApplication().setPbaNumbers(getPbaNumbersForAccount("PBA0012345"));
-        caseData.getApplicant1().setSolicitor(
-            Solicitor
-                .builder()
-                .reference("1234")
-                .organisationPolicy(organisationPolicy())
-                .build()
-        );
-        return caseData;
     }
 
     private static CreditAccountPaymentResponse buildPaymentClientResponse(
