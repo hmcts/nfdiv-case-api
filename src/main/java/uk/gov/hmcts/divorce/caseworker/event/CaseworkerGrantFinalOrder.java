@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.util.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
@@ -139,7 +138,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
                         .label(generalOrderDocument.getDocumentFileName())
                         .code(UUID.randomUUID()).build()
                 )
-                .collect(toList());
+                .toList();
 
         DynamicList generalOrderDocumentNamesDynamicList = DynamicList
             .builder()

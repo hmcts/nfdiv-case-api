@@ -17,7 +17,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SER
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class SolStatementOfTruthTest {
+class SolStatementOfTruthTest {
 
     private final SolStatementOfTruth page = new SolStatementOfTruth();
 

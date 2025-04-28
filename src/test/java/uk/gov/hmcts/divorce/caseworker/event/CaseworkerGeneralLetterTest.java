@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerGeneralLetterTest {
+class CaseworkerGeneralLetterTest {
 
     @Mock
     private GenerateGeneralLetter generateGeneralLetter;

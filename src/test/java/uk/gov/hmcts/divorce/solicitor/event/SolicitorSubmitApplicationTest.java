@@ -25,9 +25,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.PaymentService;
-import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
 import uk.gov.hmcts.divorce.testutil.TestConstants;
 
@@ -61,7 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class SolicitorSubmitApplicationTest {
+class SolicitorSubmitApplicationTest {
 
     private static final String STATEMENT_OF_TRUTH_ERROR_MESSAGE =
         "Statement of truth must be accepted by the person making the application";

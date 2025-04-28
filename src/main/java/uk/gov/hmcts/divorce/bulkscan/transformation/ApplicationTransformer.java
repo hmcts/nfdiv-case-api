@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.bulkscan.transformation;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -34,6 +34,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RES
 import static uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections.RESIDUAL_JURISDICTION_D;
 
 @Component
+@RequiredArgsConstructor
 public class ApplicationTransformer implements Function<TransformationDetails, TransformationDetails> {
 
     private static final String APPLICANT_1 = "applicant1";
@@ -46,8 +47,7 @@ public class ApplicationTransformer implements Function<TransformationDetails, T
 
     private static final int HWF_NO_VALID_LENGTH = 9;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     @Override
     public TransformationDetails apply(TransformationDetails transformationDetails) {

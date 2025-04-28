@@ -53,7 +53,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataForGrantFinalOrder;
 
 @ExtendWith(MockitoExtension.class)
-public class FinalOrderGrantedTemplateContentTest {
+class FinalOrderGrantedTemplateContentTest {
 
     @Mock
     private DocmosisCommonContent docmosisCommonContent;
@@ -62,7 +62,7 @@ public class FinalOrderGrantedTemplateContentTest {
     private FinalOrderGrantedTemplateContent finalOrderGrantedTemplateContent;
 
     @Test
-    public void shouldMapTemplateContentWhenDivorceCase() {
+    void shouldMapTemplateContentWhenDivorceCase() {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.SOLE_APPLICATION, DivorceOrDissolution.DIVORCE);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
 
@@ -90,7 +90,7 @@ public class FinalOrderGrantedTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentWhenDissolutionCase() {
+    void shouldMapTemplateContentWhenDissolutionCase() {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.JOINT_APPLICATION, DivorceOrDissolution.DISSOLUTION);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
 
@@ -118,7 +118,7 @@ public class FinalOrderGrantedTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentInWelshWhenDivorceCase() {
+    void shouldMapTemplateContentInWelshWhenDivorceCase() {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.SOLE_APPLICATION, DivorceOrDissolution.DIVORCE);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
@@ -147,7 +147,7 @@ public class FinalOrderGrantedTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentInWelshWhenDissolutionCase() {
+    void shouldMapTemplateContentInWelshWhenDissolutionCase() {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.JOINT_APPLICATION, DivorceOrDissolution.DISSOLUTION);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
@@ -176,7 +176,7 @@ public class FinalOrderGrantedTemplateContentTest {
     }
 
     @Test
-    public void shouldGetSupportedTemplates() {
+    void shouldGetSupportedTemplates() {
         assertThat(finalOrderGrantedTemplateContent.getSupportedTemplates()).containsOnly(FINAL_ORDER_TEMPLATE_ID);
     }
 }

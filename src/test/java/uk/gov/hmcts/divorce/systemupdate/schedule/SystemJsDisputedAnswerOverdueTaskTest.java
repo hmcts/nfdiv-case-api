@@ -91,7 +91,7 @@ class SystemJsDisputedAnswerOverdueTaskTest {
     }
 
     @Test
-    public void shouldSubmitEventForMatchingCase() {
+    void shouldSubmitEventForMatchingCase() {
         final CaseDetails caseDetails = mock(CaseDetails.class);
         when(ccdSearchService.searchForAllCasesWithQuery(query, systemUser, SERVICE_AUTHORIZATION, AwaitingAnswer))
             .thenReturn(List.of(caseDetails));
@@ -105,7 +105,7 @@ class SystemJsDisputedAnswerOverdueTaskTest {
     }
 
     @Test
-    public void shouldNotSubmitEventWhenNoCasesFound() {
+    void shouldNotSubmitEventWhenNoCasesFound() {
         when(ccdSearchService.searchForAllCasesWithQuery(query, systemUser, SERVICE_AUTHORIZATION, AwaitingAnswer))
             .thenReturn(List.of());
 

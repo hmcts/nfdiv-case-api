@@ -53,7 +53,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
-public class AosResponseLetterTemplateContentTest {
+class AosResponseLetterTemplateContentTest {
 
     @Mock
     private Clock clock;
@@ -71,7 +71,7 @@ public class AosResponseLetterTemplateContentTest {
     private AosResponseLetterTemplateContent templateContent;
 
     @Test
-    public void shouldSuccessfullyApplyDivorceContent() {
+    void shouldSuccessfullyApplyDivorceContent() {
         setMockClock(clock);
 
         final CaseData caseData = getCaseData(DIVORCE);
@@ -111,7 +111,7 @@ public class AosResponseLetterTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDivorceContentAtAwaitingConditionalOrder() {
+    void shouldSuccessfullyApplyDivorceContentAtAwaitingConditionalOrder() {
         setMockClock(clock);
 
         final CaseData caseData = getAwaitingCoCaseData(DIVORCE);
@@ -151,7 +151,7 @@ public class AosResponseLetterTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDissolutionContent() {
+    void shouldSuccessfullyApplyDissolutionContent() {
         setMockClock(clock);
 
         final CaseData caseData = getCaseData(DISSOLUTION);
@@ -191,7 +191,7 @@ public class AosResponseLetterTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDissolutionContentAtAwaitingConditionalOrder() {
+    void shouldSuccessfullyApplyDissolutionContentAtAwaitingConditionalOrder() {
         setMockClock(clock);
 
         final CaseData caseData = getAwaitingCoCaseData(DISSOLUTION);
@@ -231,7 +231,7 @@ public class AosResponseLetterTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDivorceApp1SolicitorJSContent() {
+    void shouldSuccessfullyApplyDivorceApp1SolicitorJSContent() {
         setMockClock(clock);
 
         final CaseData caseData = getJsCaseData(DIVORCE, JUDICIAL_SEPARATION);
@@ -276,7 +276,7 @@ public class AosResponseLetterTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDivorceApp1SolicitorJSContentAtAwaitingConditionalOrder() {
+    void shouldSuccessfullyApplyDivorceApp1SolicitorJSContentAtAwaitingConditionalOrder() {
         setMockClock(clock);
 
         final CaseData caseData = getAwaitingCoJsCaseData(DIVORCE, JUDICIAL_SEPARATION);

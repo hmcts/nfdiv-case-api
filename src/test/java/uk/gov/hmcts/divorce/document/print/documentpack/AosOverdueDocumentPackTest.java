@@ -14,7 +14,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.AOS_OVERDUE_TEMPLA
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_OVERDUE_LETTER;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
-public class AosOverdueDocumentPackTest {
+class AosOverdueDocumentPackTest {
 
     private static final String LETTER_TYPE_AOS_OVERDUE = "aos-overdue";
 
@@ -37,7 +37,7 @@ public class AosOverdueDocumentPackTest {
     private final AosOverdueDocumentPack aosOverdueDocumentPack = new AosOverdueDocumentPack();
 
     @Test
-    public void shouldReturnApplicant1DocumentPackForDivorceCase() {
+    void shouldReturnApplicant1DocumentPackForDivorceCase() {
         CaseData data = validApplicant1CaseData();
         var documentPack = aosOverdueDocumentPack.getDocumentPack(data, data.getApplicant1());
 
@@ -45,7 +45,7 @@ public class AosOverdueDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnApplicant1JSDocumentPackWhenJudicialSeparation() {
+    void shouldReturnApplicant1JSDocumentPackWhenJudicialSeparation() {
         CaseData data = validApplicant1CaseData();
         data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         var documentPack = aosOverdueDocumentPack.getDocumentPack(data, data.getApplicant2());
@@ -54,7 +54,7 @@ public class AosOverdueDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnCorrectLetterId() {
+    void shouldReturnCorrectLetterId() {
         assertThat(aosOverdueDocumentPack.getLetterId()).isEqualTo(LETTER_TYPE_AOS_OVERDUE);
     }
 }

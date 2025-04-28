@@ -28,7 +28,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
-public class SystemRemindApplicant1ApplicationReviewedTest {
+class SystemRemindApplicant1ApplicationReviewedTest {
 
     @Mock
     private HttpServletRequest httpServletRequest;

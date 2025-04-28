@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -36,22 +36,22 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SubmitClarification implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SUBMIT_CLARIFICATION = "submit-clarification";
     private static final String NEVER_SHOW = "coRefusalDecision=\"NEVER_SHOW\"";
+    private static final String SUBMIT_CLARIFICATION_CO_SOL_GUIDE = "Refer to the <a href=\"https://www.gov"
+            + ".uk/government/publications/myhmcts-how-to-make-follow-up-applications-for-a-divorce-or-dissolution/respond-"
+            + "to-a-conditional-order-refusal\" target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>";
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private PostInformationToCourtNotification postInformationToCourtNotification;
+    private final PostInformationToCourtNotification postInformationToCourtNotification;
 
-    @Autowired
-    private ClarificationSubmittedNotification clarificationSubmittedNotification;
+    private final ClarificationSubmittedNotification clarificationSubmittedNotification;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -78,7 +78,8 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
                 .readonly(ConditionalOrder::getRefusalClarificationAdditionalInfo)
                 .mandatory(ConditionalOrder::getClarificationResponses)
                 .optional(ConditionalOrder::getClarificationUploadDocuments)
-            .done();
+            .done()
+            .label("submitClarificationSolGuide", SUBMIT_CLARIFICATION_CO_SOL_GUIDE);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,

@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -17,16 +17,15 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class BulkCaseProcessingService {
 
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
+    private final CcdUpdateService ccdUpdateService;
 
     public void updateBulkCase(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
                                 final BulkCaseTask bulkCaseTask,
@@ -57,12 +56,12 @@ public class BulkCaseProcessingService {
             log.info("Processed cases list is empty hence processing all cases in bulk case with id {} ", bulkCaseId);
             return bulkActionCaseData.getBulkListCaseDetails().stream()
                 .filter(erroredCase -> !casesToBeRemoved.contains(erroredCase))
-                .collect(toList());
+                .toList();
         }
 
         log.info("Processed cases with errors in bulk case with id {} ", bulkCaseId);
         return bulkActionCaseData.getErroredCaseDetails().stream()
             .filter(erroredCase -> !casesToBeRemoved.contains(erroredCase))
-            .collect(toList());
+            .toList();
     }
 }

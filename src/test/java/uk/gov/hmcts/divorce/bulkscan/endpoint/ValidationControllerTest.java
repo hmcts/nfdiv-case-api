@@ -21,7 +21,7 @@ import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.ValidationStatus.SUCCE
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.ocrDataValidationRequest;
 
 @ExtendWith(MockitoExtension.class)
-public class ValidationControllerTest {
+class ValidationControllerTest {
 
     @Mock
     private OcrValidator validator;

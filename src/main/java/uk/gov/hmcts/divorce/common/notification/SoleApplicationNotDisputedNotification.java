@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -34,22 +34,20 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED_AWAITING_CO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED_AWAITING_CO;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SoleApplicationNotDisputedNotification implements ApplicantNotification {
 
     private static final String APPLY_FOR_CO_DATE = "apply for CO date";
     private static final String ISSUE_DATE_PLUS_37_DAYS = "issue date plus 37 days";
     private static final String ISSUE_DATE_PLUS_141_DAYS = "issue date plus 141 days";
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
     @Value("${case_progression.holding_offset_days}")
     private int holdingOffsetDays;
@@ -130,6 +128,7 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
     }
 
     private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Applicant applicant) {
+        var dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
         var templateVars = commonContent.basicTemplateVars(caseData, id, applicant.getLanguagePreference());
 
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
@@ -138,8 +137,8 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
 
         templateVars.put(ISSUE_DATE_PLUS_37_DAYS, "");
         templateVars.put(ISSUE_DATE_PLUS_141_DAYS,
-            caseData.getApplication().getIssueDate().plusDays(holdingOffsetDays).format(DATE_TIME_FORMATTER));
-        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+            caseData.getApplication().getIssueDate().plusDays(holdingOffsetDays).format(dateTimeFormatter));
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(dateTimeFormatter));
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(
             SOLICITOR_REFERENCE,

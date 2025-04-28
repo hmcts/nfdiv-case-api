@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.notification;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
@@ -19,7 +19,6 @@ import java.util.Map;
 
 import static java.lang.String.join;
 import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
@@ -27,18 +26,20 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_OR_APPLICANT1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_OR_APPLICANT2;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IN_TIME;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
+@RequiredArgsConstructor
 public class CommonContent {
 
     public static final String PARTNER = "partner";
@@ -131,7 +132,12 @@ public class CommonContent {
 
     public static final String SPOUSE = "spouse";
     public static final String SPOUSE_WELSH = "priod";
-
+    public static final String HUSBAND = "husband";
+    public static final String HUSBAND_CY = "gŵr";
+    public static final String WIFE = "wife";
+    public static final String WIFE_CY = "gwraig";
+    public static final String CIVIL_PARTNER = "civil partner";
+    public static final String CIVIL_PARTNER_CY = "partner sifil";
     public static final String SMART_SURVEY = "smartSurvey";
     public static final String REQUEST_FOR_INFORMATION_DETAILS = "request information details";
     public static final String SENT_TO_BOTH_APPLICANTS = "sentToBothApplicants";
@@ -141,11 +147,15 @@ public class CommonContent {
     public static final String CONTACT_TEXT = "[Contact us using our online form]";
     public static final String CONTACT_TEXT_WELSH = "[Cysylltwch â ni drwy ddefnyddio ein ffurflen ar-lein]";
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
-    @Autowired
-    private EmailTemplatesConfig config;
+    private final EmailTemplatesConfig config;
+
+    public String getWebFormUrl(LanguagePreference languagePreference) {
+        return WELSH.equals(languagePreference)
+            ? config.getTemplateVars().get(WEBFORM_CY_URL)
+            : config.getTemplateVars().get(WEBFORM_URL);
+    }
 
     public Map<String, String> mainTemplateVars(final CaseData caseData,
                                                 final Long id,
@@ -165,10 +175,7 @@ public class CommonContent {
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
-        templateVars.put(WEBFORM_URL,
-            WELSH.equals(applicant.getLanguagePreference())
-                ? config.getTemplateVars().get(WEBFORM_CY_URL)
-                : config.getTemplateVars().get(WEBFORM_URL));
+        templateVars.put(WEBFORM_URL, getWebFormUrl(applicant.getLanguagePreference()));
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
         templateVars.put(SMART_SURVEY, getSmartSurvey());
 
@@ -198,10 +205,10 @@ public class CommonContent {
     public Map<String, String> solicitorTemplateVarsPreIssue(CaseData data, Long id, Applicant applicant) {
         Map<String, String> templateVars = basicTemplateVars(data, id, applicant.getLanguagePreference());
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
-        templateVars.put(SOLICITOR_REFERENCE,
-            isNotEmpty(applicant.getSolicitor().getReference())
-                ? applicant.getSolicitor().getReference()
-                : NOT_PROVIDED);
+        templateVars.put(SOLICITOR_REFERENCE, docmosisCommonContent.getSolicitorReference(
+            applicant.getSolicitor(),
+            applicant.getLanguagePreference())
+        );
         templateVars.put(APPLICANT_1_FULL_NAME, data.getApplicant1().getFullName());
         templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant2().getFullName());
         templateVars.put(SIGN_IN_URL, getProfessionalUsersSignInUrl(id));
@@ -255,10 +262,10 @@ public class CommonContent {
             if (isNull(partner.getGender())) {
                 return SPOUSE;
             } else {
-                return partner.getGender() == MALE ? "husband" : "wife";
+                return partner.getGender() == MALE ? HUSBAND : WIFE;
             }
         } else {
-            return "civil partner";
+            return CIVIL_PARTNER;
         }
     }
 
@@ -267,10 +274,10 @@ public class CommonContent {
             if (isNull(partner.getGender())) {
                 return SPOUSE_WELSH;
             } else {
-                return partner.getGender() == MALE ? "gŵr" : "gwraig";
+                return partner.getGender() == MALE ? HUSBAND_CY : WIFE_CY;
             }
         } else {
-            return "partner sifil";
+            return CIVIL_PARTNER_CY;
         }
     }
 
@@ -315,7 +322,19 @@ public class CommonContent {
                                                             final Applicant partner) {
         final Map<String, String> templateVars = jointTemplateVars(caseData, id, applicant, partner);
 
+        LanguagePreference languagePreference = applicant.getLanguagePreference();
+
         templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
+        if (applicant.isRepresented()) {
+            templateVars.put(APPLICANT_NAME, applicant.getFullName());
+            templateVars.put(RESPONDENT_NAME, partner.getFullName());
+            templateVars.put(APPLICANT_OR_APPLICANT1, docmosisCommonContent.getApplicantOrApplicant1(caseData, languagePreference));
+            templateVars.put(RESPONDENT_OR_APPLICANT2, docmosisCommonContent.getRespondentOrApplicant2(caseData, languagePreference));
+            templateVars.put(SOLICITOR_NAME,
+                    docmosisCommonContent.getSolicitorName(applicant, applicant.getSolicitor(), languagePreference));
+            templateVars.put(SOLICITOR_REFERENCE,
+                    docmosisCommonContent.getSolicitorReference(applicant.getSolicitor(), languagePreference));
+        }
 
         return templateVars;
     }
@@ -379,10 +398,10 @@ public class CommonContent {
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(APPLICATION_REFERENCE, caseId != null ? formatId(caseId) : null);
         templateVars.put(NAME, applicant.getSolicitor().getName());
-        templateVars.put(SOLICITOR_REFERENCE,
-            isNotEmpty(applicant.getSolicitor().getReference())
-                ? applicant.getSolicitor().getReference()
-                : NOT_PROVIDED);
+        templateVars.put(SOLICITOR_REFERENCE, docmosisCommonContent.getSolicitorReference(
+            applicant.getSolicitor(),
+            applicant.getLanguagePreference())
+        );
         templateVars.put(SMART_SURVEY, getSmartSurvey());
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
 
@@ -403,7 +422,10 @@ public class CommonContent {
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(APPLICATION_REFERENCE, caseId != null ? formatId(caseId) : null);
         templateVars.put(NAME, solicitor.getName());
-        templateVars.put(SOLICITOR_REFERENCE, isNotEmpty(solicitor.getReference()) ? solicitor.getReference() : NOT_PROVIDED);
+        templateVars.put(SOLICITOR_REFERENCE, docmosisCommonContent.getSolicitorReference(
+                solicitor,
+                beforeApplicant.getLanguagePreference())
+        );
         templateVars.put(APPLICANT_NAME, beforeApplicant.getFullName());
         templateVars.put(RESPONDENT_NAME, beforePartner.getFullName());
         templateVars.put(SMART_SURVEY, getSmartSurvey());
