@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.citizen.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -30,18 +30,14 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class NocSolRemovedCitizenNotification {
 
-    @Autowired
-    private CommonContent commonContent;
-    @Autowired
-    private NotificationService notificationService;
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
-    @Autowired
-    private BulkPrintService bulkPrintService;
+    private final CommonContent commonContent;
+    private final NotificationService notificationService;
+    private final DocmosisCommonContent docmosisCommonContent;
+    private final CaseDataDocumentService caseDataDocumentService;
+    private final BulkPrintService bulkPrintService;
 
     public static final String LETTER_TYPE_NOTIFY_CITIZEN_SOL_STOPPED_REP = "notify-citizen-sol-stopped-rep";
     private static final String RECIPIENT_ADDRESS = "address";
