@@ -101,7 +101,7 @@ class CaseworkerUpdateApplicant1EmailTest {
 
         when(emailUpdateService.processEmailUpdate(details, details, true)).thenReturn(details);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant1Email.aboutToSubmit(details, details);
+        caseworkerUpdateApplicant1Email.aboutToSubmit(details, details);
 
         verify(emailUpdateService).processEmailUpdate(details, details, true);
     }

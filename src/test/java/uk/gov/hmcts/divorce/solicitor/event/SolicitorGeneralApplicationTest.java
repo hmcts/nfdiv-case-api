@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
-import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
@@ -131,9 +130,7 @@ class SolicitorGeneralApplicationTest {
 
     @Test
     void shouldAddGeneralApplicationDocumentToListOfCaseDocumentsAndUpdateState() {
-        final DivorceDocument document = DivorceDocument.builder()
-                .documentLink(Document.builder().build())
-                .build();
+
         final CaseData caseData = caseData();
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
         docs.get(0).getValue().setDocumentFileName("Testfile");
@@ -156,9 +153,7 @@ class SolicitorGeneralApplicationTest {
 
     @Test
     void shouldAddGeneralApplicationDocumentsToListOfCaseDocumentsAndUpdateState() {
-        final DivorceDocument document = DivorceDocument.builder()
-            .documentLink(Document.builder().build())
-            .build();
+
         final CaseData caseData = caseData();
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(2);
         docs.get(0).getValue().setDocumentFileName("Testfile");
@@ -493,9 +488,7 @@ class SolicitorGeneralApplicationTest {
 
     @Test
     void shouldReturnErrorIfUrgentFlagIsSetButNoReasonProvided() {
-        final DivorceDocument document = DivorceDocument.builder()
-            .documentLink(Document.builder().build())
-            .build();
+
         final CaseData caseData = caseData();
         caseData.getGeneralApplication().setGeneralApplicationUrgentCase(YES);
 
