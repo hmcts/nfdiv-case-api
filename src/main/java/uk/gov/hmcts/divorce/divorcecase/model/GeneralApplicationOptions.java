@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -27,4 +29,11 @@ public class GeneralApplicationOptions {
         access = {DefaultAccess.class}
     )
     private DeemedServiceJourneyOptions deemedServiceJourneyOptions;
+
+    @CCD(
+        label = "Active General Application Type",
+        typeOverride = FixedList,
+        typeParameterOverride = "GeneralApplicationType"
+    )
+    private GeneralApplicationType generalApplicationType;
 }
