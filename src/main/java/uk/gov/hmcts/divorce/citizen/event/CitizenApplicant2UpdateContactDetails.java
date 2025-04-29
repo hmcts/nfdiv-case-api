@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -33,21 +33,18 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CITIZEN_APPLICANT2_UPDATE_CONTACT_DETAILS = "citizen-applicant2-update-contact-details";
 
-    @Autowired
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
-    @Autowired
-    private CcdAccessService ccdAccessService;
+    private final CcdAccessService ccdAccessService;
 
-    @Autowired
-    private DivorceApplicationRemover divorceApplicationRemover;
+    private final DivorceApplicationRemover divorceApplicationRemover;
 
-    @Autowired
-    private GenerateApplication generateApplication;
+    private final GenerateApplication generateApplication;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
