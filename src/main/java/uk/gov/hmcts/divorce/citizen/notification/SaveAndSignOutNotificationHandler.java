@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.notification;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -15,19 +15,16 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_IN
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SAVE_SIGN_OUT;
 
 @Component
+@RequiredArgsConstructor
 public class SaveAndSignOutNotificationHandler {
 
-    @Autowired
-    private CcdAccessService ccdAccessService;
+    private final CcdAccessService ccdAccessService;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
     public void notifyApplicant(State state, CaseData caseData, Long caseId, String userToken) {
         User user = idamService.retrieveUser(userToken);
