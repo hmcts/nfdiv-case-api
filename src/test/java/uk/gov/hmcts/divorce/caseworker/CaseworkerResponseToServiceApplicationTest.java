@@ -161,7 +161,7 @@ class CaseworkerResponseToServiceApplicationTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerResponseToServiceApplication.aboutToStart(updatedCaseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(ALTERNATIVE_SERVICE_TYPE_NULL_ERROR);
     }
 
@@ -181,7 +181,7 @@ class CaseworkerResponseToServiceApplicationTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerResponseToServiceApplication.aboutToStart(updatedCaseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(ALTERNATIVE_SERVICE_TYPE_NULL_ERROR);
     }
 
@@ -205,7 +205,7 @@ class CaseworkerResponseToServiceApplicationTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerResponseToServiceApplication.aboutToStart(updatedCaseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(ALTERNATIVE_SERVICE_TYPE_NULL_ERROR);
     }
 
@@ -273,7 +273,7 @@ class CaseworkerResponseToServiceApplicationTest {
             CaseDetails.<CaseData, State>builder().build()
         );
 
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(2);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(2);
     }
 
     private List<ListValue<DivorceDocument>> getListOfDivorceDocument(int size) {

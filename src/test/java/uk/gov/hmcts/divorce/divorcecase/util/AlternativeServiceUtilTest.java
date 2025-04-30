@@ -23,7 +23,7 @@ class AlternativeServiceUtilTest {
         caseData.archiveAlternativeServiceApplicationOnCompletion();
 
         assertThat(caseData.getAlternativeServiceOutcomes()).isNotNull();
-        assertThat(caseData.getAlternativeServiceOutcomes().size()).isEqualTo(1);
+        assertThat(caseData.getAlternativeServiceOutcomes()).hasSize(1);
         assertThat(caseData.getAlternativeService()).isNull();
     }
 
@@ -43,7 +43,7 @@ class AlternativeServiceUtilTest {
         caseData.getAlternativeService().getBailiff().setSuccessfulServedByBailiff(YesOrNo.YES);
         caseData.archiveAlternativeServiceApplicationOnCompletion();
 
-        assertThat(caseData.getAlternativeServiceOutcomes().size()).isEqualTo(3);
+        assertThat(caseData.getAlternativeServiceOutcomes()).hasSize(3);
         assertThat(caseData.getAlternativeServiceOutcomes().get(0).getValue().getAlternativeServiceType()).isEqualTo(BAILIFF);
         assertThat(caseData.getAlternativeServiceOutcomes().get(0).getValue().getSuccessfulServedByBailiff())
             .isEqualTo(YesOrNo.YES);
