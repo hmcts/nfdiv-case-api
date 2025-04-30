@@ -422,8 +422,6 @@ class GenerateApplicant2NoticeOfProceedingsTest {
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplication().setReissueOption(DIGITAL_AOS);
 
-        final Map<String, Object> templateContent = new HashMap<>();
-
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
         verifyNoInteractions(coversheetSolicitorTemplateContent, noticeOfProceedingSolicitorContent);

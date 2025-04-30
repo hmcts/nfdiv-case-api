@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
@@ -82,6 +83,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
                     .mandatory(ExpeditedFinalOrderAuthorisation::getExpeditedFinalOrderJudgeName)
                 .done()
                 .mandatory(FinalOrder::getGranted)
+                .optional(FinalOrder::getGrantedDate, "granted=\"Yes\"")
             .done();
     }
 
@@ -137,9 +139,13 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_EXPEDITE_FINAL_ORDER, details.getId());
 
         CaseData caseData = details.getData();
+        FinalOrder finalOrder = caseData.getFinalOrder();
 
-        caseData.getFinalOrder().setDateFinalOrderEligibleFrom(LocalDate.now(clock));
-        caseData.getFinalOrder().setGrantedDate(LocalDateTime.now(clock));
+        if (isEmpty(finalOrder.getGrantedDate())) {
+            finalOrder.setGrantedDate(LocalDateTime.now(clock));
+        }
+
+        finalOrder.setDateFinalOrderEligibleFrom(LocalDate.now(clock));
         final String expeditedFinalOrderGeneralOrderDocumentName = caseData.getDocuments()
             .getGeneralOrderDocumentNames().getValue().getLabel();
 
@@ -148,7 +154,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
             .filter(g -> g.getValue().getGeneralOrderDocument().getDocumentFileName().equals(expeditedFinalOrderGeneralOrderDocumentName))
             .findFirst();
 
-        caseData.getFinalOrder().getExpeditedFinalOrderAuthorisation()
+        finalOrder.getExpeditedFinalOrderAuthorisation()
             .setExpeditedFinalOrderGeneralOrder(generalOrderToExpediteFinancialOrder.get().getValue());
 
         documentGenerator.generateAndStoreCaseDocument(
