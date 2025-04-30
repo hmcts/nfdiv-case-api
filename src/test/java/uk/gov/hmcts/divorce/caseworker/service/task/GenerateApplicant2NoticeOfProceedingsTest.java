@@ -71,7 +71,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class GenerateApplicant2NoticeOfProceedingsTest {
+class GenerateApplicant2NoticeOfProceedingsTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -421,8 +421,6 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         caseData.getApplicant2().setEmail("notnull@something.com");
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplication().setReissueOption(DIGITAL_AOS);
-
-        final Map<String, Object> templateContent = new HashMap<>();
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 

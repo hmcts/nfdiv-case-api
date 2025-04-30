@@ -1,9 +1,9 @@
 package uk.gov.hmcts.divorce.solicitor.service;
 
 import feign.FeignException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -20,7 +20,6 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResponse;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -29,16 +28,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CcdAccessService {
 
-    @Autowired
-    private CaseAssignmentApi caseAssignmentApi;
+    private final CaseAssignmentApi caseAssignmentApi;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
     @Retryable(value = {FeignException.class, RuntimeException.class})
     public void addApplicant1SolicitorRole(String solicitorIdamToken, Long caseId, String orgId) {
@@ -170,7 +167,7 @@ public class CcdAccessService {
         List<String> userRoles = fetchUserRoles(caseId, userToken);
         List<String> roleMatchStrings = roleMatches.stream()
             .map(UserRole::getRole)
-            .collect(Collectors.toList());
+            .toList();
         return CollectionUtils.isNotEmpty(userRoles)
             && userRoles.stream().anyMatch(roleMatchStrings::contains);
     }
@@ -187,7 +184,7 @@ public class CcdAccessService {
             .getCaseAssignmentUserRoles()
             .stream()
             .map(CaseAssignmentUserRole::getCaseRole)
-            .collect(Collectors.toList());
+            .toList();
         return userRoles;
     }
 
@@ -202,7 +199,7 @@ public class CcdAccessService {
             .stream()
             .filter(caseAssignment -> roles.contains(caseAssignment.getCaseRole()))
             .map(caseAssignment -> getCaseAssignmentUserRole(caseId, null, caseAssignment.getCaseRole(), caseAssignment.getUserId()))
-            .collect(Collectors.toList());
+            .toList();
 
         if (!assignmentUserRoles.isEmpty()) {
             log.info("removeUsersWithRole assignmentUserRoles.size: {}", assignmentUserRoles.size());

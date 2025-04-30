@@ -93,7 +93,7 @@ class SystemApplyNoticeOfChangeTest {
     @InjectMocks
     private SystemApplyNoticeOfChange systemApplyNoticeOfChange;
 
-    public void setup() {
+    void setup() {
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);

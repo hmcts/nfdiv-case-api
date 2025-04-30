@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -28,36 +28,29 @@ import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SystemCreateBulkCaseListTask implements Runnable {
 
     @Value("${bulk-action.min-cases}")
     private int minimumCasesToProcess;
 
-    @Autowired
-    private CcdCreateService ccdCreateService;
+    private final CcdCreateService ccdCreateService;
 
-    @Autowired
-    private CcdSearchService ccdSearchService;
+    private final CcdSearchService ccdSearchService;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private FailedBulkCaseRemover failedBulkCaseRemover;
+    private final FailedBulkCaseRemover failedBulkCaseRemover;
 
-    @Autowired
-    private BulkTriggerService bulkTriggerService;
+    private final BulkTriggerService bulkTriggerService;
 
-    @Autowired
-    private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
+    private final BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @Override
     public void run() {
@@ -122,15 +115,16 @@ public class SystemCreateBulkCaseListTask implements Runnable {
         bulkActionCaseDetails.setData(BulkActionCaseData.builder()
             .bulkListCaseDetails(bulkListCaseDetails)
             .casesAcceptedToListForHearing(
-                bulkListCaseDetails.stream()
-                    .map(c ->
-                        ListValue.<CaseLink>builder()
-                            .id(String.valueOf(counter.getAndIncrement()))
-                            .value(c.getValue().getCaseReference())
-                            .build()
-                    )
-                    .collect(toList()))
-            .build());
+                new ArrayList<>(
+                    bulkListCaseDetails.stream()
+                        .map(c ->
+                            ListValue.<CaseLink>builder()
+                                .id(String.valueOf(counter.getAndIncrement()))
+                                .value(c.getValue().getCaseReference())
+                                .build()
+                        )
+                        .toList())
+            ).build());
 
         return ccdCreateService.createBulkCase(bulkActionCaseDetails, user, serviceAuth);
     }

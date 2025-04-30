@@ -22,7 +22,6 @@ import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -38,7 +37,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getScannedGeneralOrde
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.setScannedDocumentNames;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerCreateGeneralOrderTest {
+class CaseworkerCreateGeneralOrderTest {
     private static final String LIST_VALUE_ID_1 = "1234";
     private static final String LIST_VALUE_ID_2 = "4567";
 
@@ -53,7 +52,6 @@ public class CaseworkerCreateGeneralOrderTest {
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-        final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = ConfigTestUtil.createCaseDataConfigBuilder();
 
         caseworkerCreateGeneralOrder.configure(configBuilder);
@@ -64,7 +62,7 @@ public class CaseworkerCreateGeneralOrderTest {
     }
 
     @Test
-    public void shouldReturnListOfScannedDocumentNames() throws Exception {
+    void shouldReturnListOfScannedDocumentNames() throws Exception {
         final CaseData caseData = caseData();
 
         ScannedDocument scannedDocument = getScannedGeneralOrderDocument();
@@ -85,7 +83,7 @@ public class CaseworkerCreateGeneralOrderTest {
     }
 
     @Test
-    public void shouldSetGeneralOrderDocumentsWhenThereIsNoExistingGeneralOrder() throws Exception {
+    void shouldSetGeneralOrderDocumentsWhenThereIsNoExistingGeneralOrder() throws Exception {
         final CaseData caseData = caseData();
 
         final Document generalOrderDocument = getGeneralOrderDocument();
@@ -106,7 +104,7 @@ public class CaseworkerCreateGeneralOrderTest {
     }
 
     @Test
-    public void shouldAddLatestGeneralOrderDocumentToTopWhenThereIsExistingGeneralOrder() throws Exception {
+    void shouldAddLatestGeneralOrderDocumentToTopWhenThereIsExistingGeneralOrder() throws Exception {
         final CaseData caseData = caseData();
 
         Document generalOrderDocument1 = getGeneralOrderDocument();
@@ -135,7 +133,7 @@ public class CaseworkerCreateGeneralOrderTest {
     }
 
     @Test
-    public void shouldSetGeneralOrderScannedDocument() throws Exception {
+    void shouldSetGeneralOrderScannedDocument() throws Exception {
         final CaseData caseData = caseData();
 
         final Document generalOrder = getGeneralOrderDocument();

@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
@@ -22,31 +22,25 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ApplyForFinalOrderService {
 
     private static final String APP1_ALREADY_APPLIED_FOR_FO_ERR_MESSAGE = "Applicant / Applicant 1 has already applied for final order.";
     private static final String APP2_ALREADY_APPLIED_FOR_FO_ERR_MESSAGE = "Applicant 2 has already applied for final order.";
 
-    @Autowired
-    private SetFinalOrderFieldsAsApplicant1 setFinalOrderFieldsAsApplicant1;
+    private final SetFinalOrderFieldsAsApplicant1 setFinalOrderFieldsAsApplicant1;
 
-    @Autowired
-    private SetFinalOrderFieldsAsApplicant2 setFinalOrderFieldsAsApplicant2;
+    private final SetFinalOrderFieldsAsApplicant2 setFinalOrderFieldsAsApplicant2;
 
-    @Autowired
-    private SetFinalOrderFieldsAsApplicant2Sol setFinalOrderFieldsAsApplicant2Sol;
+    private final SetFinalOrderFieldsAsApplicant2Sol setFinalOrderFieldsAsApplicant2Sol;
 
-    @Autowired
-    private ProgressApplicant1FinalOrderState progressApplicant1FinalOrderState;
+    private final ProgressApplicant1FinalOrderState progressApplicant1FinalOrderState;
 
-    @Autowired
-    private ProgressApplicant2FinalOrderState progressApplicant2FinalOrderState;
+    private final ProgressApplicant2FinalOrderState progressApplicant2FinalOrderState;
 
-    @Autowired
-    private Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
+    private final Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
     public CaseDetails<CaseData, State> applyForFinalOrderAsApplicant1(final CaseDetails<CaseData, State> caseDetails) {
 

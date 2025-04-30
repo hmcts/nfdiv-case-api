@@ -153,7 +153,7 @@ class CaseDataDocumentServiceTest {
     }
 
     @Test
-    public void shouldGenerateConfidentialDocumentsWhenDocumentTypeIsNOPAndApplicant1ContactIsPrivate() {
+    void shouldGenerateConfidentialDocumentsWhenDocumentTypeIsNOPAndApplicant1ContactIsPrivate() {
         final var documentId = "123456";
         final CaseData caseData = caseData();
         caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
@@ -208,7 +208,7 @@ class CaseDataDocumentServiceTest {
     }
 
     @Test
-    public void shouldGenerateConfidentialDocumentsWhenDocumentTypeIsNOPAndApplicant2ContactIsPrivate() {
+    void shouldGenerateConfidentialDocumentsWhenDocumentTypeIsNOPAndApplicant2ContactIsPrivate() {
         final var documentId = "123456";
         final CaseData caseData = caseData();
         caseData.getApplicant2().setContactDetailsType(ContactDetailsType.PRIVATE);
@@ -263,7 +263,7 @@ class CaseDataDocumentServiceTest {
     }
 
     @Test
-    public void shouldGenerateConfidentialDocumentsWhenDocumentTypeIsGeneralLetterAndApplicant1ContactIsPrivate() {
+    void shouldGenerateConfidentialDocumentsWhenDocumentTypeIsGeneralLetterAndApplicant1ContactIsPrivate() {
         final var documentId = "123456";
         final CaseData caseData = caseData();
         caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
@@ -319,7 +319,7 @@ class CaseDataDocumentServiceTest {
     }
 
     @Test
-    public void shouldGenerateConfidentialDocumentsWhenDocumentTypeIsOther() {
+    void shouldGenerateConfidentialDocumentsWhenDocumentTypeIsOther() {
         final var documentId = "123456";
         final CaseData caseData = caseData();
         caseData.getGeneralLetter().setGeneralLetterParties(GeneralParties.OTHER);

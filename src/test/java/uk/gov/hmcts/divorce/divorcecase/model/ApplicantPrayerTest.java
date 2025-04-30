@@ -13,7 +13,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.CHILDREN;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 
-public class ApplicantPrayerTest {
+class ApplicantPrayerTest {
 
     @Test
     void shouldReturnWarningsWhenDivorceApplicant1DetailsAreValidatedAndPrayerForChildrenAndApplicantAreNotConfirmed() {

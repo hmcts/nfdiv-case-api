@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
 @ExtendWith(MockitoExtension.class)
-public class DropCaseTaskTest {
+class DropCaseTaskTest {
 
     @Mock
     private BulkCaseTaskUtil bulkCaseTaskUtil;
@@ -84,8 +84,7 @@ public class DropCaseTaskTest {
         when(bulkCaseTaskUtil.processCases(bulkActionCaseDetails, bulkListCaseDetails,
                 SYSTEM_REMOVE_BULK_CASE, user, SERVICE_AUTHORIZATION)).thenReturn(bulkActionCaseDetails);
 
-        final CaseDetails<BulkActionCaseData, BulkActionState> result =
-            dropCaseTask.apply(bulkActionCaseDetails);
+        dropCaseTask.apply(bulkActionCaseDetails);
 
         verify(bulkCaseTaskUtil).processCases(bulkActionCaseDetails, bulkListCaseDetails,
                 SYSTEM_REMOVE_BULK_CASE, user, SERVICE_AUTHORIZATION);

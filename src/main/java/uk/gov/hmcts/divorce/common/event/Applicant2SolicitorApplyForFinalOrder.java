@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -19,9 +19,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.payment.PaymentService;
-import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPageForApplicant2SolFinalOrder;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolFinalOrderPayAccount;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolFinalOrderPayment;
@@ -47,29 +47,24 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String FINAL_ORDER_REQUESTED_APP2_SOL = "final-order-requested-app2-sol";
 
     public static final String APPLY_FOR_FINAL_ORDER = "Apply for final order";
 
-    @Autowired
-    private Applicant2SolicitorAppliedForFinalOrderNotification applicant2SolicitorAppliedForFinalOrderNotification;
+    private final Applicant2SolicitorAppliedForFinalOrderNotification applicant2SolicitorAppliedForFinalOrderNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private ApplyForFinalOrderService applyForFinalOrderService;
+    private final ApplyForFinalOrderService applyForFinalOrderService;
 
-    @Autowired
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
 
-    @Autowired
-    private PaymentSetupService paymentSetupService;
+    private final PaymentSetupService paymentSetupService;
 
-    @Autowired
-    private SolFinalOrderPayment solFinalOrderPayment;
+    private final SolFinalOrderPayment solFinalOrderPayment;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {

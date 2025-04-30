@@ -47,7 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getRequestForInformat
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.scannedDocumentWithType;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerRemoveDocumentTest {
+class CaseworkerRemoveDocumentTest {
 
     @Mock
     private DocumentRemovalService documentRemovalService;

@@ -419,7 +419,7 @@ class ReIssueApplicationServiceTest {
     }
 
     @Test
-    public void shouldNotSendBulkPrintNotificationsWhenReissueOptionIsDigitalAos() {
+    void shouldNotSendBulkPrintNotificationsWhenReissueOptionIsDigitalAos() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData());
         caseDetails.setId(TEST_CASE_ID);
@@ -433,7 +433,7 @@ class ReIssueApplicationServiceTest {
     }
 
     @Test
-    public void shouldSendEmailAndBulkPrintNotificationsWhenReissueOptionIsOfflineAos() {
+    void shouldSendEmailAndBulkPrintNotificationsWhenReissueOptionIsOfflineAos() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData());
         caseDetails.setId(TEST_CASE_ID);
@@ -451,7 +451,7 @@ class ReIssueApplicationServiceTest {
     }
 
     @Test
-    public void shouldSendEmailAndBulkPrintNotificationsWhenReissueOptionIsReissueCaseAndNotPersonalService() {
+    void shouldSendEmailAndBulkPrintNotificationsWhenReissueOptionIsReissueCaseAndNotPersonalService() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = caseData();
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
@@ -471,7 +471,7 @@ class ReIssueApplicationServiceTest {
     }
 
     @Test
-    public void shouldNotSendEmailAndBulkPrintNotificationsWhenReissueOptionIsReissueCaseAndPersonalService() {
+    void shouldNotSendEmailAndBulkPrintNotificationsWhenReissueOptionIsReissueCaseAndPersonalService() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = caseData();
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);

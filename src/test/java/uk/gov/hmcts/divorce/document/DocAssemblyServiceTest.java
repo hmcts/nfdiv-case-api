@@ -45,7 +45,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKE
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
-public class DocAssemblyServiceTest {
+class DocAssemblyServiceTest {
 
     private static final String DOC_STORE_BASE_URL_PATH = "http://localhost:4200/assets/";
     private static final String BINARY = "/binary";
@@ -67,7 +67,7 @@ public class DocAssemblyServiceTest {
     private DocAssemblyService docAssemblyService;
 
     @Test
-    public void shouldGenerateAndStoreDraftApplicationAndReturnDocumentUrl() {
+    void shouldGenerateAndStoreDraftApplicationAndReturnDocumentUrl() {
 
         final Map<String, Object> templateContent = new HashMap<>();
         Map<String, Object> caseDataMap = expectedCaseData();
@@ -123,7 +123,7 @@ public class DocAssemblyServiceTest {
 
 
     @Test
-    public void shouldReturn401UnauthorizedExceptionWhenServiceIsNotWhitelistedInDocAssemblyService() {
+    void shouldReturn401UnauthorizedExceptionWhenServiceIsNotWhitelistedInDocAssemblyService() {
 
         final Map<String, Object> templateContent = new HashMap<>();
         Map<String, Object> caseDataMap = expectedCaseData();
@@ -177,7 +177,7 @@ public class DocAssemblyServiceTest {
             .hasMessageContaining("s2s service not whitelisted");
     }
 
-    public static Map<String, Object> expectedCaseData() {
+    static Map<String, Object> expectedCaseData() {
         Map<String, Object> caseDataMap = new HashMap<>();
         caseDataMap.put("petitionerFirstName", TEST_FIRST_NAME);
         caseDataMap.put("petitionerMiddleName", TEST_MIDDLE_NAME);

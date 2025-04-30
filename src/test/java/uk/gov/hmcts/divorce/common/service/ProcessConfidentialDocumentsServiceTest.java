@@ -19,7 +19,6 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -33,7 +32,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEED
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class ProcessConfidentialDocumentsServiceTest {
+class ProcessConfidentialDocumentsServiceTest {
 
     private final ListValue<DivorceDocument> applicant1Nop = ListValue.<DivorceDocument>builder()
         .id("1111")
@@ -122,7 +121,7 @@ public class ProcessConfidentialDocumentsServiceTest {
 
 
     @Test
-    public void processDocumentsShouldMoveNOPDocumentToConfidentialDocumentsGeneratedWhenContactIsPrivateForApplicant1() {
+    void processDocumentsShouldMoveNOPDocumentToConfidentialDocumentsGeneratedWhenContactIsPrivateForApplicant1() {
 
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
@@ -141,12 +140,12 @@ public class ProcessConfidentialDocumentsServiceTest {
 
         assertThat(confidentialDocuments.stream()
             .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
-            .collect(Collectors.toList()),  contains(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1)
+            .toList(),  contains(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1)
         );
     }
 
     @Test
-    public void processDocumentsShouldNotMoveGeneratedDocumentsToConfidentialIfTheyDoNotHaveAMapping() {
+    void processDocumentsShouldNotMoveGeneratedDocumentsToConfidentialIfTheyDoNotHaveAMapping() {
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
             .documents(CaseDocuments.builder()
@@ -164,13 +163,13 @@ public class ProcessConfidentialDocumentsServiceTest {
 
         assertThat(nonConfidentialDocuments.stream()
             .map(doc -> doc.getValue().getDocumentType())
-            .collect(Collectors.toList()),  containsInAnyOrder(
+            .toList(),  containsInAnyOrder(
             DocumentType.BAILIFF_SERVICE_REFUSED)
         );
     }
 
     @Test
-    public void processDocumentsShouldNotMoveConfidentialDocumentsToDocumentsGeneratedWhenContactIsNotPrivateForApplicant1() {
+    void processDocumentsShouldNotMoveConfidentialDocumentsToDocumentsGeneratedWhenContactIsNotPrivateForApplicant1() {
 
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PUBLIC).build())
@@ -191,7 +190,7 @@ public class ProcessConfidentialDocumentsServiceTest {
         assertThat(
             confidentialDocuments.stream()
                 .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
-                .collect(Collectors.toList()),
+                .toList(),
             containsInAnyOrder(
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2)
@@ -202,7 +201,7 @@ public class ProcessConfidentialDocumentsServiceTest {
     }
 
     @Test
-    public void processDocumentsShouldNotMoveConfidentialDocumentsToDocumentsGeneratedWhenContactIsNotPrivateForApplicant2() {
+    void processDocumentsShouldNotMoveConfidentialDocumentsToDocumentsGeneratedWhenContactIsNotPrivateForApplicant2() {
 
         CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder().contactDetailsType(ContactDetailsType.PUBLIC).build())
@@ -223,7 +222,7 @@ public class ProcessConfidentialDocumentsServiceTest {
         assertThat(
             confidentialDocuments.stream()
                 .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
-                .collect(Collectors.toList()),
+                .toList(),
             containsInAnyOrder(
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2)
@@ -234,7 +233,7 @@ public class ProcessConfidentialDocumentsServiceTest {
     }
 
     @Test
-    public void processDocumentShouldMoveBothApplicantsGeneralLettersToConfidentialDocumentsWhenContactIsPrivateForBothApplicant() {
+    void processDocumentShouldMoveBothApplicantsGeneralLettersToConfidentialDocumentsWhenContactIsPrivateForBothApplicant() {
 
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
@@ -256,13 +255,13 @@ public class ProcessConfidentialDocumentsServiceTest {
 
         assertThat(nonConfidentialDocuments.stream()
             .map(doc -> doc.getValue().getDocumentType())
-            .collect(Collectors.toList()),
+            .toList(),
             containsInAnyOrder(BAILIFF_SERVICE_REFUSED, APPLICATION));
 
         assertThat(
             confidentialDocuments.stream()
                 .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
-                .collect(Collectors.toList()),
+                .toList(),
             containsInAnyOrder(
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1,
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2,
@@ -274,7 +273,7 @@ public class ProcessConfidentialDocumentsServiceTest {
             confidentialDocuments.stream()
                 .filter(doc -> doc.getValue().getConfidentialDocumentsReceived().equals(ConfidentialDocumentsReceived.GENERAL_LETTER))
                 .map(doc -> doc.getValue().getDocumentLink().getUrl())
-                .collect(Collectors.toList()),
+                .toList(),
             containsInAnyOrder(
                 "generalLetter1Url",
                 "generalLetter2Url")
@@ -282,7 +281,7 @@ public class ProcessConfidentialDocumentsServiceTest {
     }
 
     @Test
-    public void processDocumentShouldMoveFOCanApplyToConfidentialDocumentsWhenContactIsPrivateForEitherApplicant() {
+    void processDocumentShouldMoveFOCanApplyToConfidentialDocumentsWhenContactIsPrivateForEitherApplicant() {
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
             .documents(CaseDocuments.builder()
@@ -303,7 +302,7 @@ public class ProcessConfidentialDocumentsServiceTest {
     }
 
     @Test
-    public void processDocumentsShouldMoveOfflineRespondentNopToConfidentialDocumentsTab() {
+    void processDocumentsShouldMoveOfflineRespondentNopToConfidentialDocumentsTab() {
         CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
             .documents(CaseDocuments.builder()
@@ -322,7 +321,7 @@ public class ProcessConfidentialDocumentsServiceTest {
         assertThat(
             confidentialDocuments.stream()
                 .map(doc -> doc.getValue().getConfidentialDocumentsReceived())
-                .collect(Collectors.toList()),
+                .toList(),
             containsInAnyOrder(
                 ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2,
                 ConfidentialDocumentsReceived.GENERAL_LETTER)
