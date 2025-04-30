@@ -126,8 +126,7 @@ class CaseworkerRemoveScannedDocumentTest {
         caseData.getDocuments().setScannedDocuments(Collections.emptyList());
         updatedCaseDetails.setData(caseData);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRemoveScannedDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
+        caseworkerRemoveScannedDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
         verify(documentRemovalService).handleDeletionOfScannedDocuments(previousCaseData, caseData);
     }

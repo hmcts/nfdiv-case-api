@@ -46,7 +46,6 @@ class GeneralApplicationSelectFeeTest {
         caseData.setGeneralApplication(GeneralApplication.builder()
             .generalApplicationFeeType(FEE0227)
             .build());
-        String applicantName = caseData.getApplicant1().getFullName();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
@@ -71,7 +70,6 @@ class GeneralApplicationSelectFeeTest {
         caseData.setGeneralApplication(GeneralApplication.builder()
             .generalApplicationFeeType(FEE0228)
             .build());
-        String applicantName = caseData.getApplicant1().getFullName();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);

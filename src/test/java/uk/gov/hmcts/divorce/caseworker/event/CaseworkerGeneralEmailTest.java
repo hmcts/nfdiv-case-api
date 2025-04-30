@@ -38,7 +38,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -89,7 +88,6 @@ class CaseworkerGeneralEmailTest {
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-        final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = ConfigTestUtil.createCaseDataConfigBuilder();
 
         generalEmail.configure(configBuilder);
@@ -1080,7 +1078,7 @@ class CaseworkerGeneralEmailTest {
 
         var caseDataCopy = caseData.toBuilder().build();
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
+        generalEmail.aboutToSubmit(details, details);
 
         verify(generalEmailNotification).send(caseDataCopy,TEST_CASE_ID);
     }

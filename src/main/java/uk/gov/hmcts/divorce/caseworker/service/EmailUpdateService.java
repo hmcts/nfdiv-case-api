@@ -35,7 +35,6 @@ public class EmailUpdateService {
                                                       boolean isApplicant1) {
 
         final CaseData data = caseDetails.getData();
-        final CaseData beforeData = beforeCaseDetails.getData();
 
         final Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
         final Applicant partner = isApplicant1 ? data.getApplicant2() : data.getApplicant1();
