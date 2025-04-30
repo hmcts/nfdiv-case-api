@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
@@ -40,12 +39,9 @@ public class DraftApplicationRemovalService {
             log.info("No draft application document found for case id {} ", caseId);
         }
 
-        final List<ListValue<DivorceDocument>> generatedDocumentsExcludingApplication = generatedDocuments
-            .stream()
+        return generatedDocuments.stream()
             .filter(document -> !isApplicationDocument(document))
-            .collect(toList());
-
-        return generatedDocumentsExcludingApplication;
+            .toList();
     }
 
     private boolean isApplicationDocument(ListValue<DivorceDocument> document) {

@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerUpdateApplicant2EmailTest {
+class CaseworkerUpdateApplicant2EmailTest {
 
     @Mock
     private EmailUpdateService emailUpdateService;
@@ -101,7 +101,7 @@ public class CaseworkerUpdateApplicant2EmailTest {
 
         when(emailUpdateService.processEmailUpdate(details, details, false)).thenReturn(details);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
+        caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
 
         verify(emailUpdateService).processEmailUpdate(details, details, false);
     }

@@ -23,7 +23,7 @@ class SolHowDoYouWantToApplyForDivorceTest {
     private final SolHowDoYouWantToApplyForDivorce page = new SolHowDoYouWantToApplyForDivorce();
 
     @Test
-    public void shouldSetContentForSoleDivorces() {
+    void shouldSetContentForSoleDivorces() {
         final CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.setApplicationType(SOLE_APPLICATION);
@@ -44,7 +44,7 @@ class SolHowDoYouWantToApplyForDivorceTest {
     }
 
     @Test
-    public void shouldSetContentForJointDissolutions() {
+    void shouldSetContentForJointDissolutions() {
         final CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setApplicationType(JOINT_APPLICATION);
@@ -65,7 +65,7 @@ class SolHowDoYouWantToApplyForDivorceTest {
     }
 
     @Test
-    public void shouldSetCoIsSubmittedForSole() {
+    void shouldSetCoIsSubmittedForSole() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder().build());
@@ -82,7 +82,7 @@ class SolHowDoYouWantToApplyForDivorceTest {
     }
 
     @Test
-    public void shouldSetCoIsSubmittedForJoint() {
+    void shouldSetCoIsSubmittedForJoint() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
 
@@ -102,7 +102,7 @@ class SolHowDoYouWantToApplyForDivorceTest {
     }
 
     @Test
-    public void shouldSetCoIsDraftedForSole() {
+    void shouldSetCoIsDraftedForSole() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder().build());
@@ -119,7 +119,7 @@ class SolHowDoYouWantToApplyForDivorceTest {
     }
 
     @Test
-    public void shouldSetCoIsDraftedForJoint() {
+    void shouldSetCoIsDraftedForJoint() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
 

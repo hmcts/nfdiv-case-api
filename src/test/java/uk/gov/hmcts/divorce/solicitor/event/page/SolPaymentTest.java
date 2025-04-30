@@ -13,12 +13,11 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.payment.PaymentSetupService;
+import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +36,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class SolPaymentTest {
+class SolPaymentTest {
 
     @Mock
     private PbaService pbaService;
@@ -61,7 +60,7 @@ public class SolPaymentTest {
 
         List<DynamicListElement> pbaAccountNumbers = Stream.of("PBA0012345", "PBA0012346")
             .map(pbaNumber -> DynamicListElement.builder().label(pbaNumber).code(UUID.randomUUID()).build())
-            .collect(Collectors.toList());
+            .toList();
 
         DynamicList pbaNumbers = DynamicList
             .builder()

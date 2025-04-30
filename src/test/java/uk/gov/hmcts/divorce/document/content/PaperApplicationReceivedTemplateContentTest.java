@@ -56,7 +56,7 @@ class PaperApplicationReceivedTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentWhenRecipientIsApplicant1() {
+    void shouldMapTemplateContentWhenRecipientIsApplicant1() {
         setUp();
         var caseData = TestDataHelper.caseData();
         caseData.getApplicant1().setAddress(AddressGlobalUK.builder().addressLine1("line 1\ntown\npostcode").build());

@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
-import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
@@ -29,8 +28,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
-import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectFee;
@@ -67,7 +67,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getListOfDivorceDocum
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class SolicitorGeneralApplicationTest {
+class SolicitorGeneralApplicationTest {
 
     private static final String PBA_NUMBER = "PBA0012345";
     private static final String FEE_ACCOUNT_REF = "REF01";
@@ -83,6 +83,9 @@ public class SolicitorGeneralApplicationTest {
 
     @Mock
     private HttpServletRequest request;
+
+    @Mock
+    private ServiceRequestSearchService serviceRequestSearchService;
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
@@ -127,9 +130,7 @@ public class SolicitorGeneralApplicationTest {
 
     @Test
     void shouldAddGeneralApplicationDocumentToListOfCaseDocumentsAndUpdateState() {
-        final DivorceDocument document = DivorceDocument.builder()
-                .documentLink(Document.builder().build())
-                .build();
+
         final CaseData caseData = caseData();
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
         docs.get(0).getValue().setDocumentFileName("Testfile");
@@ -152,9 +153,7 @@ public class SolicitorGeneralApplicationTest {
 
     @Test
     void shouldAddGeneralApplicationDocumentsToListOfCaseDocumentsAndUpdateState() {
-        final DivorceDocument document = DivorceDocument.builder()
-            .documentLink(Document.builder().build())
-            .build();
+
         final CaseData caseData = caseData();
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(2);
         docs.get(0).getValue().setDocumentFileName("Testfile");
@@ -294,6 +293,9 @@ public class SolicitorGeneralApplicationTest {
         when(organisationClient.getUserOrganisation(AUTH_HEADER_VALUE, TEST_AUTHORIZATION_TOKEN))
             .thenReturn(organisationsResponse);
         when(organisationsResponse.getOrganisationIdentifier()).thenReturn("App1OrgPolicy");
+        when(paymentService.createServiceRequestReference(
+            null, TEST_CASE_ID, "", generalApplicationOrderSummary)
+        ).thenReturn(TEST_SERVICE_REFERENCE);
 
         final var pbaResponse = new PbaResponse(CREATED, null, "1234");
         when(paymentService.processPbaPayment(
@@ -461,6 +463,9 @@ public class SolicitorGeneralApplicationTest {
         when(organisationClient.getUserOrganisation(AUTH_HEADER_VALUE, TEST_AUTHORIZATION_TOKEN))
             .thenReturn(organisationsResponse);
         when(organisationsResponse.getOrganisationIdentifier()).thenReturn("App2OrgPolicy");
+        when(paymentService.createServiceRequestReference(
+            null, TEST_CASE_ID, "", generalApplicationOrderSummary)
+        ).thenReturn(TEST_SERVICE_REFERENCE);
 
         final var pbaResponse = new PbaResponse(FORBIDDEN, "Account balance insufficient", null);
         when(paymentService.processPbaPayment(
@@ -483,9 +488,7 @@ public class SolicitorGeneralApplicationTest {
 
     @Test
     void shouldReturnErrorIfUrgentFlagIsSetButNoReasonProvided() {
-        final DivorceDocument document = DivorceDocument.builder()
-            .documentLink(Document.builder().build())
-            .build();
+
         final CaseData caseData = caseData();
         caseData.getGeneralApplication().setGeneralApplicationUrgentCase(YES);
 

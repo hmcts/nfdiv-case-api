@@ -20,9 +20,9 @@
       {
         "id": "${json-unit.any-string}",
         "value": {
-          "feeCode": "FEE002",
+          "feeCode": "FEECODE1",
           "serviceRequestReference":"test-service-reference",
-          "amount": 55000,
+          "amount": 1000,
           "status": "success",
           "channel": "online"
         }
@@ -48,12 +48,13 @@
         {
           "id": "1",
           "value": {
-            "FeeCode": "FEE002",
-            "FeeDescription": "fees for divorce"
+            "FeeCode": "FEECODE1",
+            "FeeDescription": "fees for divorce",
+            "FeeVersion": "1"
           }
         }
       ],
-      "PaymentTotal": "55000"
+      "PaymentTotal": "1000"
     },
     "generalApplicationFeePaymentMethod": "feePayByAccount",
     "generalApplicationFeeServiceRequestReference": "test-service-reference",
@@ -88,12 +89,13 @@
               {
                 "id": "1",
                 "value": {
-                  "FeeCode": "FEE002",
-                  "FeeDescription": "fees for divorce"
+                  "FeeCode": "FEECODE1",
+                  "FeeDescription": "fees for divorce",
+                  "FeeVersion": "1"
                 }
               }
             ],
-            "PaymentTotal": "55000"
+            "PaymentTotal": "1000"
           },
           "generalApplicationFeePaymentMethod": "feePayByAccount",
           "generalApplicationFeePbaNumbers": {

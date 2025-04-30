@@ -19,14 +19,14 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class ConditionalOrderReviewAoSApplicant2IfNoTest {
+class ConditionalOrderReviewAoSApplicant2IfNoTest {
 
     private final ConditionalOrderReviewAoSApplicant2IfNo page = new ConditionalOrderReviewAoSApplicant2IfNo();
 
     private static final String APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP2 = "Applicant must select yes to apply for a conditional order";
 
     @Test
-    public void shouldPreventProgressIfNoIsSelectedForJointApplicationOnApplyForConditionalOrderQuestion() {
+    void shouldPreventProgressIfNoIsSelectedForJointApplicationOnApplyForConditionalOrderQuestion() {
 
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
@@ -52,7 +52,7 @@ public class ConditionalOrderReviewAoSApplicant2IfNoTest {
     }
 
     @Test
-    public void shouldAllowProgressIfYesIsSelectedOnApplyForConditionalOrderQuestion() {
+    void shouldAllowProgressIfYesIsSelectedOnApplyForConditionalOrderQuestion() {
 
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);

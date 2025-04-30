@@ -25,7 +25,6 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import static java.util.Collections.singletonList;
@@ -40,13 +39,12 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceGeneralOrderListValue;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerPrepareGeneralEmailAttachmentsTest {
+class CaseworkerPrepareGeneralEmailAttachmentsTest {
     @InjectMocks
     private CaseworkerPrepareGeneralEmailAttachments generalEmail;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-        final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = ConfigTestUtil.createCaseDataConfigBuilder();
 
         generalEmail.configure(configBuilder);

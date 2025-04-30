@@ -185,7 +185,7 @@ class CcdUpdateServiceTest {
     }
 
     @Test
-    public void shouldResetOrgsAssignedUsersToZeroSupplementaryDataOnCase() {
+    void shouldResetOrgsAssignedUsersToZeroSupplementaryDataOnCase() {
         ccdUpdateService.resetOrgAssignedUsersSupplementaryData(TEST_CASE_ID.toString(),
             CASEWORKER_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
@@ -204,7 +204,7 @@ class CcdUpdateServiceTest {
     }
 
     @Test
-    public void shouldSetOrgsAssignedUsersSupplementaryDataOnCaseToNewValue() {
+    void shouldSetOrgsAssignedUsersSupplementaryDataOnCaseToNewValue() {
         ccdUpdateService.setOrgAssignedUsersSupplementaryData(TEST_CASE_ID.toString(),
             CASEWORKER_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
@@ -223,7 +223,7 @@ class CcdUpdateServiceTest {
     }
 
     @Test
-    public void shouldIncrementOrgsAssignedUsersSupplementaryDataOnCaseToNewValue() {
+    void shouldIncrementOrgsAssignedUsersSupplementaryDataOnCaseToNewValue() {
         ccdUpdateService.incrementOrgAssignedUsersSupplementaryData(TEST_CASE_ID.toString(),
             CASEWORKER_AUTH_TOKEN,
             SERVICE_AUTHORIZATION,
@@ -238,7 +238,7 @@ class CcdUpdateServiceTest {
     }
 
     @Test
-    public void shouldSetSupplementaryDataForServiceIDInCCD() {
+    void shouldSetSupplementaryDataForServiceIDInCCD() {
         ccdUpdateService.submitSupplementaryDataToCcdForServiceID(TEST_CASE_ID.toString(),
             CASEWORKER_AUTH_TOKEN,
             SERVICE_AUTHORIZATION);

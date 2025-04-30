@@ -41,7 +41,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 
 @ExtendWith(MockitoExtension.class)
-public class BailiffApprovedOrderContentTest {
+class BailiffApprovedOrderContentTest {
 
     @Mock
     private Clock clock;
@@ -50,7 +50,7 @@ public class BailiffApprovedOrderContentTest {
     private BailiffApprovedOrderContent templateContent;
 
     @Test
-    public void shouldSuccessfullyApplyDivorceContent() {
+    void shouldSuccessfullyApplyDivorceContent() {
         setMockClock(clock);
 
         final Applicant applicant1 = Applicant.builder()
@@ -84,7 +84,7 @@ public class BailiffApprovedOrderContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDissolutionContent() {
+    void shouldSuccessfullyApplyDissolutionContent() {
         setMockClock(clock);
 
         final Applicant applicant1 = Applicant.builder()
@@ -118,7 +118,7 @@ public class BailiffApprovedOrderContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDivorceWelshContent() {
+    void shouldSuccessfullyApplyDivorceWelshContent() {
         setMockClock(clock);
 
         final Applicant applicant1 = Applicant.builder()
@@ -147,7 +147,7 @@ public class BailiffApprovedOrderContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDissolutionWelshContent() {
+    void shouldSuccessfullyApplyDissolutionWelshContent() {
         setMockClock(clock);
 
         final Applicant applicant1 = Applicant.builder()

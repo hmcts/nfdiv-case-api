@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant2SolicitorSwitchToSoleFoTest {
+class Applicant2SolicitorSwitchToSoleFoTest {
 
     @Mock
     private SwitchToSoleService switchToSoleService;

@@ -30,7 +30,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant1JointFinalOrderOverdueNotificationTest {
+class Applicant1JointFinalOrderOverdueNotificationTest {
 
     private static final String APPLICANT_2_DELAY_CONTENT = "They applied more than 12 months after the conditional order "
         + "was made and gave the following reason:\nForgot";

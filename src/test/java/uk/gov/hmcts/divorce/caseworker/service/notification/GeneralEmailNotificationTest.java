@@ -25,7 +25,6 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.UUID;
 
 import static java.util.stream.Stream.ofNullable;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -60,7 +59,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
-public class GeneralEmailNotificationTest {
+class GeneralEmailNotificationTest {
 
     @Mock
     private CommonContent commonContent;
@@ -84,7 +83,7 @@ public class GeneralEmailNotificationTest {
     private GeneralEmailNotification generalEmailNotification;
 
     @Test
-    public void shouldSendEmailNotificationToApplicantWhenGeneralEmailPartyIsPetitionerAndIsNotSolicitorRepresented() throws Exception {
+    void shouldSendEmailNotificationToApplicantWhenGeneralEmailPartyIsPetitionerAndIsNotSolicitorRepresented() throws Exception {
         final var caseData = caseData();
 
         final var applicant1 = getApplicant();
@@ -272,7 +271,6 @@ public class GeneralEmailNotificationTest {
         marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         marriageDetails.setApplicant2Name(APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
 
-        final String userId = UUID.randomUUID().toString();
         final User systemUpdateUser = caseWorkerUser();
 
         given(idamService.retrieveSystemUpdateUserDetails()).willReturn(systemUpdateUser);
@@ -321,7 +319,7 @@ public class GeneralEmailNotificationTest {
     }
 
     @Test
-    public void shouldSendWelshEmailNotificationToApplicant() throws Exception {
+    void shouldSendWelshEmailNotificationToApplicant() throws Exception {
         final var caseData = caseData();
 
         final var applicant1 = getApplicant();

@@ -60,7 +60,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForAosSubmitted;
 
 @ExtendWith(SpringExtension.class)
-public class SoleApplicationNotDisputedNotificationTest {
+class SoleApplicationNotDisputedNotificationTest {
 
     private static final String ISSUE_DATE_PLUS_37_DAYS = "issue date plus 37 days";
     private static final String ISSUE_DATE_PLUS_141_DAYS = "issue date plus 141 days";

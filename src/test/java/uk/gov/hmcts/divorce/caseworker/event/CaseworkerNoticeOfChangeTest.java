@@ -375,7 +375,7 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldSetSolicitorFirmName() {
+    void shouldSetSolicitorFirmName() {
         var details = getCaseDetails();
         var beforeDetails = getCaseDetails();
         details.getData().getApplicant1().getSolicitor().getOrganisationPolicy().setOrganisation(Organisation.builder()
@@ -406,7 +406,7 @@ class CaseworkerNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldHandleNullRepresentationGracefully() {
+    void shouldHandleNullRepresentationGracefully() {
         var details = getCaseDetails();
         details.getData().setNoticeOfChange(NoticeOfChange.builder()
             .whichApplicant(APPLICANT_1)

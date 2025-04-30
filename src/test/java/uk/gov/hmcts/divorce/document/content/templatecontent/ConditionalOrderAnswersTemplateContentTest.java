@@ -83,7 +83,7 @@ class ConditionalOrderAnswersTemplateContentTest {
     }
 
     @Test
-    public void shouldSetConfirmInformationCorrectToFalseWithTheReasonWhenSoleApplicationAndInfoIsNotCorrect() {
+    void shouldSetConfirmInformationCorrectToFalseWithTheReasonWhenSoleApplicationAndInfoIsNotCorrect() {
         setMockClock(clock);
 
         final Applicant applicant1 = Applicant.builder()
@@ -117,7 +117,7 @@ class ConditionalOrderAnswersTemplateContentTest {
     }
 
     @Test
-    public void shouldSetConfirmInformationCorrectToTrueWithTheNoReasonWhenSoleApplicationAndInfoIsCorrect() {
+    void shouldSetConfirmInformationCorrectToTrueWithTheNoReasonWhenSoleApplicationAndInfoIsCorrect() {
         setMockClock(clock);
 
         final Applicant applicant1 = Applicant.builder()
@@ -148,7 +148,7 @@ class ConditionalOrderAnswersTemplateContentTest {
     }
 
     @Test
-    public void shouldSetConfirmInformationCorrectToFalseWithTheReasonWhenJointApplicationAndInfoIsNotCorrect() {
+    void shouldSetConfirmInformationCorrectToFalseWithTheReasonWhenJointApplicationAndInfoIsNotCorrect() {
         setMockClock(clock);
 
         final Applicant applicant1 = Applicant.builder()
@@ -186,7 +186,7 @@ class ConditionalOrderAnswersTemplateContentTest {
     }
 
     @Test
-    public void shouldSetConfirmInformationCorrectToFalseWithTheReasonWhenJointApplicationAndOneOfTheApplicantInfoIsNotCorrect() {
+    void shouldSetConfirmInformationCorrectToFalseWithTheReasonWhenJointApplicationAndOneOfTheApplicantInfoIsNotCorrect() {
         setMockClock(clock);
 
         final Applicant applicant1 = Applicant.builder()
@@ -223,7 +223,7 @@ class ConditionalOrderAnswersTemplateContentTest {
     }
 
     @Test
-    public void shouldSetConfirmInformationCorrectToTrueWithTheNoReasonWhenJointApplicationAndInfoIsCorrect() {
+    void shouldSetConfirmInformationCorrectToTrueWithTheNoReasonWhenJointApplicationAndInfoIsCorrect() {
         setMockClock(clock);
 
         final Applicant applicant1 = Applicant.builder()

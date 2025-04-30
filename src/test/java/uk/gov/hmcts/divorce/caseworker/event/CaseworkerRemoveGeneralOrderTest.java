@@ -36,7 +36,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceGeneralOrderListValue;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerRemoveGeneralOrderTest {
+class CaseworkerRemoveGeneralOrderTest {
 
     @Mock
     private DocumentRemovalService documentRemovalService;
@@ -99,11 +99,10 @@ public class CaseworkerRemoveGeneralOrderTest {
         beforedetails.setData(caseData2);
         beforedetails.setId(TEST_CASE_ID);
 
-        List<ListValue<DivorceDocument>> documentsToDelete = new ArrayList<>();
         DivorceDocument doc = getDivorceGeneralOrderListValue(generalOrderDoc2, LIST_VALUE_ID_2)
             .getValue().getGeneralOrderDocument();
 
-        documentsToDelete = List.of(ListValue.<DivorceDocument>builder()
+        List<ListValue<DivorceDocument>> documentsToDelete = List.of(ListValue.<DivorceDocument>builder()
             .id(LIST_VALUE_ID_2)
             .value(doc).build());
 

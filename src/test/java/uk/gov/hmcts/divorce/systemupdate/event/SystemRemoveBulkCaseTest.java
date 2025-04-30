@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
 
 @ExtendWith(SpringExtension.class)
-public class SystemRemoveBulkCaseTest {
+class SystemRemoveBulkCaseTest {
 
     @InjectMocks
     private SystemRemoveBulkCase systemRemoveBulkCase;
@@ -46,7 +46,7 @@ public class SystemRemoveBulkCaseTest {
     }
 
     @Test
-    public void shouldUnlinkCaseFromTheBulkCaseAndChangeStateIfInIncorrectState() {
+    void shouldUnlinkCaseFromTheBulkCaseAndChangeStateIfInIncorrectState() {
         LocalDateTime dateTime = LocalDateTime.of(2022, 8, 10, 10, 0);
 
         ConditionalOrder conditionalOrder = ConditionalOrder.builder()
@@ -86,7 +86,7 @@ public class SystemRemoveBulkCaseTest {
     }
 
     @Test
-    public void shouldUnlinkCaseFromTheBulkCaseAndRetainStateIfInCorrectState() {
+    void shouldUnlinkCaseFromTheBulkCaseAndRetainStateIfInCorrectState() {
         LocalDateTime dateTime = LocalDateTime.of(2022, 8, 10, 10, 0);
 
         ConditionalOrder conditionalOrder = ConditionalOrder.builder()
