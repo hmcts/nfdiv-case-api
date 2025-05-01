@@ -158,7 +158,7 @@ class SolicitorUpdateApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorUpdateApplication.aboutToSubmit(newCaseDetails, previousCaseDetails);
 
-        assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded().size()).isEqualTo(2);
+        assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded()).hasSize(2);
         assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded().get(0).getValue()).isSameAs(doc2.getValue());
         assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded().get(1).getValue()).isSameAs(doc1.getValue());
 
@@ -193,7 +193,7 @@ class SolicitorUpdateApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorUpdateApplication.aboutToSubmit(newCaseDetails, previousCaseDetails);
 
-        assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded().size()).isEqualTo(1);
+        assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded()).hasSize(1);
         assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded().get(0).getValue()).isSameAs(doc1.getValue());
 
         verify(solicitorUpdateApplicationService).aboutToSubmit(newCaseDetails);

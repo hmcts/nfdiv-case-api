@@ -91,7 +91,7 @@ class CitizenSubmitApplicationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(14);
+        assertThat(response.getErrors()).hasSize(14);
         assertThat(response.getErrors()).contains("Applicant1FirstName cannot be empty or null");
         assertThat(response.getErrors()).contains("ApplicationType cannot be empty or null");
     }
@@ -110,7 +110,7 @@ class CitizenSubmitApplicationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo("Applicant 1 must confirm prayer to dissolve their marriage (get a divorce)");
     }
 

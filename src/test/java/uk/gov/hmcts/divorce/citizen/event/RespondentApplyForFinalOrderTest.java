@@ -83,7 +83,7 @@ class RespondentApplyForFinalOrderTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = respondentApplyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         verify(applyForFinalOrderService).applyForFinalOrderAsApplicant2(caseDetails);
-        assertThat(response.getData().getFinalOrder().getApplicant2FinalOrderFeeOrderSummary()).isEqualTo(null);
+        assertThat(response.getData().getFinalOrder().getApplicant2FinalOrderFeeOrderSummary()).isNull();
         assertThat(response.getState()).isEqualTo(caseDetails.getState());
     }
 

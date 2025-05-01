@@ -79,7 +79,7 @@ class MarriageIrretrievablyBrokenForApplicant2Test {
         AboutToStartOrSubmitResponse<CaseData, State> actualResponse =
             marriageIrretrievablyBrokenForApplicant2Page.midEvent(details, details);
 
-        assertThat(actualResponse.getErrors().size()).isEqualTo(2);
+        assertThat(actualResponse.getErrors()).hasSize(2);
         assertThat(actualResponse.getErrors()).containsExactlyInAnyOrder(
             "To continue, applicant 1 must believe and declare that their marriage has irrevocably broken",
             "To continue, applicant 2 must believe and declare that their marriage has irrevocably broken");
