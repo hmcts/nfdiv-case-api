@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
-import uk.gov.hmcts.divorce.bulkaction.service.filter.CaseFilterProcessingState;
 import uk.gov.hmcts.divorce.bulkaction.util.BulkCaseTaskUtil;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -80,19 +79,12 @@ class PronounceCasesTaskTest {
             .data(bulkActionCaseData)
             .build();
 
-        final CaseFilterProcessingState caseFilterProcessingState = new CaseFilterProcessingState(
-            bulkListCaseDetails,
-            erroredCaseList,
-            processedCaseList
-        );
-
         final var user = mock(User.class);
 
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
 
-        final CaseDetails<BulkActionCaseData, BulkActionState> result =
-            pronounceCasesTask.apply(bulkActionCaseDetails);
+        pronounceCasesTask.apply(bulkActionCaseDetails);
 
         verify(bulkCaseTaskUtil).pronounceCases(bulkActionCaseDetails, awaitingPronouncement, postStates, user, SERVICE_AUTHORIZATION);
     }

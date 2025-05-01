@@ -63,7 +63,7 @@ class InviteApplicant2Test {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = inviteApplicant2.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(8);
+        assertThat(response.getErrors()).hasSize(8);
         assertThat(response.getErrors().get(0)).isEqualTo("Applicant1FirstName cannot be empty or null");
     }
 
@@ -80,7 +80,7 @@ class InviteApplicant2Test {
 
         verifyNoInteractions(notificationDispatcher);
 
-        assertThat(response.getErrors().size()).isEqualTo(5);
+        assertThat(response.getErrors()).hasSize(5);
         assertThat(response.getErrors()).containsExactlyInAnyOrder(
             "Applicant1FinancialOrder cannot be empty or null",
             "Applicant2Gender cannot be empty or null",

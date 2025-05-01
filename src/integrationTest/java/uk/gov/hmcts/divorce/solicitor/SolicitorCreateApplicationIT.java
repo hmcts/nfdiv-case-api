@@ -149,7 +149,7 @@ class SolicitorCreateApplicationIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData, caseData.getApplicant1()));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData, caseData.getApplicant1().getFullName()));
         stubForDocAssembly();
 
         final var jsonStringResponse = mockMvc.perform(MockMvcRequestBuilders.post(ABOUT_TO_SUBMIT_URL)

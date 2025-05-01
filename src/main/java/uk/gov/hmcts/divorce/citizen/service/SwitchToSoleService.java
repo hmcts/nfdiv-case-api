@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.citizen.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -43,22 +43,18 @@ import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SwitchToSoleService {
 
-    @Autowired
-    private CcdAccessService ccdAccessService;
+    private final CcdAccessService ccdAccessService;
 
-    @Autowired
-    private CaseAssignmentApi caseAssignmentApi;
+    private final CaseAssignmentApi caseAssignmentApi;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private CaseFlagsService caseFlagsService;
+    private final CaseFlagsService caseFlagsService;
 
     public void switchUserRoles(final CaseData caseData, final Long caseId) {
 

@@ -46,7 +46,7 @@ class SetupCaseFlagsTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
 
-        final CaseDetails<CaseData, State> result = setupCaseFlags.apply(caseDetails);
+        setupCaseFlags.apply(caseDetails);
 
         verify(caseFlagsService).initialiseCaseFlags(caseData);
     }

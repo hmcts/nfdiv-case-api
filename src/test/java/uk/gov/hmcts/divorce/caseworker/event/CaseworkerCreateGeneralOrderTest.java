@@ -22,7 +22,6 @@ import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -53,7 +52,6 @@ class CaseworkerCreateGeneralOrderTest {
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-        final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = ConfigTestUtil.createCaseDataConfigBuilder();
 
         caseworkerCreateGeneralOrder.configure(configBuilder);
