@@ -35,12 +35,12 @@ class CorrectRelationshipDetailsTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(
-            response.getData().getLabelContent().getApplicant2(),
-            "respondent"
+            "respondent",
+            response.getData().getLabelContent().getApplicant2()
         );
         assertEquals(
-            response.getData().getLabelContent().getUnionType(),
-            "divorce"
+            "divorce",
+            response.getData().getLabelContent().getUnionType()
         );
     }
 
@@ -58,12 +58,12 @@ class CorrectRelationshipDetailsTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(
-            response.getData().getLabelContent().getApplicant2(),
-            "applicant 2"
+            "applicant 2",
+            response.getData().getLabelContent().getApplicant2()
         );
         assertEquals(
-            response.getData().getLabelContent().getUnionType(),
-            "dissolution"
+            "dissolution",
+            response.getData().getLabelContent().getUnionType()
         );
     }
 }
