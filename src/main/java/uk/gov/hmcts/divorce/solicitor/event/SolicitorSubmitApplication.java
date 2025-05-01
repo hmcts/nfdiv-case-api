@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -45,6 +46,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateReadyForPayment;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_DIVORCE;
 
 @Slf4j
 @Component
@@ -52,6 +56,9 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_SUBMIT = "solicitor-submit-application";
+
+    @Value("${idam.client.redirect_uri}")
+    private String redirectUrl;
 
     private final PaymentService paymentService;
     private final SolPayment solPayment;
@@ -90,9 +97,19 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         }
 
         var application = caseData.getApplication();
-        OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(caseData, details.getId());
-
+//        OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(caseData, details.getId());
+//        Solicitors should generate the order summary and pay the fee applicable at the time of submission, not draft
+        OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
         application.setApplicationFeeOrderSummary(orderSummary);
+        String serviceRequestReference = paymentService.createServiceRequestReference(
+            redirectUrl,
+            details.getId(),
+            caseData.getApplicant1().getFullName(),
+            caseData.getApplication().getApplicationFeeOrderSummary()
+        );
+        application.setApplicationFeeServiceRequestReference(serviceRequestReference);
+
+//        application.setApplicationFeeOrderSummary(orderSummary);
         application.setSolApplicationFeeInPounds(
             NumberFormat.getNumberInstance().format(
                 new BigDecimal(application.getApplicationFeeOrderSummary().getPaymentTotal()).movePointLeft(2)
