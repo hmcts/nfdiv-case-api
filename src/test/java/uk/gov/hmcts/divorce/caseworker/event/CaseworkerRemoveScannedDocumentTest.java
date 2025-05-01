@@ -80,7 +80,7 @@ class CaseworkerRemoveScannedDocumentTest {
             caseworkerRemoveScannedDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
         final List<ListValue<ScannedDocument>> actualDocuments = response.getData().getDocuments().getScannedDocuments();
-        assertThat(actualDocuments.size()).isEqualTo(1);
+        assertThat(actualDocuments).hasSize(1);
         assertThat(actualDocuments.get(0).getValue()).isSameAs(doc2.getValue());
     }
 

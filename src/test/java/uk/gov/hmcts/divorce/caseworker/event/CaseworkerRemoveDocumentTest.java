@@ -398,7 +398,7 @@ class CaseworkerRemoveDocumentTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
         assertThat(response.getData().getGeneralApplication().getGeneralApplicationDocuments()).isNotEmpty();
-        assertThat(response.getData().getGeneralApplication().getGeneralApplicationDocuments().size()).isEqualTo(1);
+        assertThat(response.getData().getGeneralApplication().getGeneralApplicationDocuments()).hasSize(1);
         assertThat(response.getData().getGeneralApplication().getGeneralApplicationDocuments()
                 .get(0).getValue().getDocumentLink().getFilename()).isEqualTo("general_application1.pdf");
     }
@@ -571,7 +571,7 @@ class CaseworkerRemoveDocumentTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRemoveDocument.aboutToStart(caseDetails);
 
-        assertThat(response.getData().getRequestForInformationList().getRfiOnlineResponseDocuments().size()).isEqualTo(1);
+        assertThat(response.getData().getRequestForInformationList().getRfiOnlineResponseDocuments()).hasSize(1);
     }
 
     @Test
@@ -621,9 +621,9 @@ class CaseworkerRemoveDocumentTest {
         verify(documentRemovalService).deleteDocument(List.of(doc2));
         assertThat(responseRfi.getLatestResponse().getRequestForInformationResponseDetails())
             .isEqualTo(RFI_DOCUMENT_REMOVED_NOTICE + "\n\n" + TEST_TEXT);
-        assertThat(responseRfi.getLatestResponse().getRfiOfflineResponseDocs().size()).isEqualTo(0);
-        assertThat(responseRfi.getResponseByIndex(1).getRfiOfflineResponseDocs().size()).isEqualTo(1);
-        assertThat(responseDocsUploaded.size()).isEqualTo(1);
+        assertThat(responseRfi.getLatestResponse().getRfiOfflineResponseDocs()).hasSize(0);
+        assertThat(responseRfi.getResponseByIndex(1).getRfiOfflineResponseDocs()).hasSize(1);
+        assertThat(responseDocsUploaded).hasSize(1);
         assertThat(responseDocsUploaded.get(0).getValue()).isEqualTo(doc1.getValue());
     }
 
@@ -684,7 +684,7 @@ class CaseworkerRemoveDocumentTest {
         );
         assertThat(responseRfi.getLatestResponse().getRequestForInformationResponseDetails())
             .isEqualTo(RFI_DOCUMENT_REMOVED_NOTICE);
-        assertThat(responseRfi.getLatestResponse().getRequestForInformationResponseDocs().size()).isEqualTo(1);
+        assertThat(responseRfi.getLatestResponse().getRequestForInformationResponseDocs()).hasSize(1);
         assertThat(responseRfi.getLatestResponse().getRequestForInformationResponseDocs().get(0).getValue()).isEqualTo(doc1.getValue());
         assertThat(responseDocs).isNull();
     }

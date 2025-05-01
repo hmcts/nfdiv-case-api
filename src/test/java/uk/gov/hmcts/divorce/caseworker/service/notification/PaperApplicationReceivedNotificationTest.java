@@ -166,7 +166,7 @@ class PaperApplicationReceivedNotificationTest {
             .thenReturn(document);
         notificationHandler.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
-        assertThat(caseData.getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
+        assertThat(caseData.getDocuments().getDocumentsGenerated()).hasSize(1);
         assertThat(caseData.getDocuments().getDocumentsGenerated().get(0).getValue().getDocumentLink()).isEqualTo(document);
         assertThat(caseData.getDocuments().getDocumentsGenerated().get(0).getValue().getDocumentType())
             .isEqualTo(PAPER_APPLICATION_RECEIVED_LETTER);
@@ -201,7 +201,7 @@ class PaperApplicationReceivedNotificationTest {
         notificationHandler.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
         assertThat(caseData.getDocuments().getDocumentsGenerated()).isNull();
-        assertThat(caseData.getDocuments().getConfidentialDocumentsGenerated().size()).isEqualTo(1);
+        assertThat(caseData.getDocuments().getConfidentialDocumentsGenerated()).hasSize(1);
         assertThat(caseData.getDocuments().getConfidentialDocumentsGenerated().get(0).getValue().getDocumentLink()).isEqualTo(document);
         assertThat(caseData.getDocuments().getConfidentialDocumentsGenerated().get(0).getValue().getConfidentialDocumentsReceived())
             .isEqualTo(PAPER_APPLICATION_RECEIVED_CONFIDENTIAL_LETTER);

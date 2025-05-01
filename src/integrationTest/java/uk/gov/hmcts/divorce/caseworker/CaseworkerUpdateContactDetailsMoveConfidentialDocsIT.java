@@ -133,7 +133,7 @@ public class CaseworkerUpdateContactDetailsMoveConfidentialDocsIT {
         List<ListValue<DivorceDocument>> regularDocs = convertDocs(convertedResponse,
             "documentsGenerated",
             DivorceDocument.class);
-        assertThat(regularDocs).hasSize(0);
+        assertThat(regularDocs).isEmpty();
 
     }
 
@@ -215,7 +215,7 @@ public class CaseworkerUpdateContactDetailsMoveConfidentialDocsIT {
             convertedResponse,
             "documentsGenerated",
             DivorceDocument.class);
-        assertThat(regularDocs).hasSize(0);
+        assertThat(regularDocs).isEmpty();
     }
 
     private <T> List<ListValue<T>> convertDocs(AboutToStartOrSubmitCallbackResponse response,
