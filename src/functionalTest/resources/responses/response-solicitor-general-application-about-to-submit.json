@@ -61,7 +61,9 @@
           "document_filename": "dummy.file",
           "document_binary_url": "dummy.file/binary"
         },
-        "documentType": "generalApplication"
+        "documentType": "generalApplication",
+        "documentDateAdded": "2024-12-12",
+        "documentFileName": "dummy.file"
       }
     }],
     "dataVersion": 5,
