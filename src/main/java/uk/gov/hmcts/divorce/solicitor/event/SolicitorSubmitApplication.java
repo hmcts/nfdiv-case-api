@@ -97,8 +97,8 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         }
 
         var application = caseData.getApplication();
-//        OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(caseData, details.getId());
-//        Solicitors should generate the order summary and pay the fee applicable at the time of submission, not draft
+        // OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(caseData, details.getId());
+        // Solicitors should generate the order summary and pay the fee applicable at the time of submission, not draft
         OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
         application.setApplicationFeeOrderSummary(orderSummary);
         String serviceRequestReference = paymentService.createServiceRequestReference(
@@ -109,7 +109,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         );
         application.setApplicationFeeServiceRequestReference(serviceRequestReference);
 
-//        application.setApplicationFeeOrderSummary(orderSummary);
+        // application.setApplicationFeeOrderSummary(orderSummary);
         application.setSolApplicationFeeInPounds(
             NumberFormat.getNumberInstance().format(
                 new BigDecimal(application.getApplicationFeeOrderSummary().getPaymentTotal()).movePointLeft(2)
