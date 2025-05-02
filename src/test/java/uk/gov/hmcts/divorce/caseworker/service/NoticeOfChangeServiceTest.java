@@ -131,7 +131,7 @@ class NoticeOfChangeServiceTest {
                 caseId)
         );
 
-        assertEquals(exception.getMessage(), "No userId found for user with email " + TEST_SOLICITOR_EMAIL);
+        assertEquals("No userId found for user with email " + TEST_SOLICITOR_EMAIL, exception.getMessage());
     }
 
     @Test
@@ -152,7 +152,7 @@ class NoticeOfChangeServiceTest {
                 caseId)
         );
 
-        assertEquals(exception.getMessage(), "User is not in specified organisation for case " + caseId);
+        assertEquals("User is not in specified organisation for case " + caseId, exception.getMessage());
     }
 
     @Test
@@ -195,7 +195,7 @@ class NoticeOfChangeServiceTest {
             SERVICE_AUTHORIZATION,
             TEST_ORG_ID,
             "1");
-        assertEquals(applicant.getSolicitor().getAddress(), TEST_SOLICITOR_ADDRESS);
+        assertEquals(TEST_SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
     }
 
     @Test
@@ -244,7 +244,7 @@ class NoticeOfChangeServiceTest {
             SERVICE_AUTHORIZATION,
             TEST_ORG_ID,
             "1");
-        assertEquals(applicant.getSolicitor().getAddress(), TEST_SOLICITOR_ADDRESS);
+        assertEquals(TEST_SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
     }
 
     private static Applicant getApplicant(UserRole caseRole) {
