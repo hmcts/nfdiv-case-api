@@ -268,7 +268,7 @@ dependencies {
     exclude group: 'com.launchdarkly', module: 'launchdarkly-java-server-sdk'
   }
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '5.0.5'
-  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.3'
+  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.4'
   implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.1.7'
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '4.0.4'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.2.0'
@@ -312,7 +312,7 @@ dependencies {
   testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
   testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
-  testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.4'
+  testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.5'
   testImplementation group: 'org.simplify4u', name: 'slf4j2-mock', version: '2.3.0'
   testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.4.3', classifier: 'all'
 

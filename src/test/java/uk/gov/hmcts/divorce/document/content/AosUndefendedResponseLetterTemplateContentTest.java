@@ -115,7 +115,7 @@ class AosUndefendedResponseLetterTemplateContentTest {
 
         Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
-        assertThat(result.size()).isEqualTo(18);
+        assertThat(result).hasSize(18);
         assertThat(result).contains(
             entry("basicKey", "basicValue"),
             entry("caseReference", formatId(TEST_CASE_ID)),
@@ -147,7 +147,7 @@ class AosUndefendedResponseLetterTemplateContentTest {
 
         Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
-        assertThat(result.size()).isEqualTo(18);
+        assertThat(result).hasSize(18);
         assertThat(result).contains(
             entry("basicKey", "basicValue"),
             entry("caseReference", formatId(TEST_CASE_ID)),
@@ -179,7 +179,7 @@ class AosUndefendedResponseLetterTemplateContentTest {
 
         Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
-        assertThat(result.size()).isEqualTo(18);
+        assertThat(result).hasSize(18);
         assertThat(result).contains(
             entry("basicKey", "basicValue"),
             entry("caseReference", formatId(TEST_CASE_ID)),

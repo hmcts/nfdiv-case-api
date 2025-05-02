@@ -100,6 +100,6 @@ class UpdateCasesToBeRemovedTaskTest {
         final CaseDetails<BulkActionCaseData, BulkActionState> result =
             updateCasesToBeRemovedTask.apply(bulkActionCaseDetails);
 
-        assertThat(result.getData().getCasesToBeRemoved()).hasSize(0);
+        assertThat(result.getData().getCasesToBeRemoved()).isEmpty();
     }
 }

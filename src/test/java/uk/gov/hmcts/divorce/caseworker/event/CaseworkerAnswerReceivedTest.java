@@ -119,7 +119,7 @@ class CaseworkerAnswerReceivedTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerAnswerReceived.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(2);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(2);
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue()).isSameAs(d11);
     }
 
@@ -181,7 +181,7 @@ class CaseworkerAnswerReceivedTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerAnswerReceived.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(1);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(1);
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue()).isSameAs(d11);
     }
 

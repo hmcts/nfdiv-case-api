@@ -153,7 +153,7 @@ class DocumentUtilTest {
 
         final List<Letter> letters = mapToLetters(asList(doc1, doc2), NOTICE_OF_PROCEEDINGS_APP_1);
 
-        assertThat(letters.size()).isEqualTo(2);
+        assertThat(letters).hasSize(2);
         assertThat(
             letters.stream().map(letter -> letter.getDivorceDocument().getDocumentFileName()).toList())
             .containsExactlyInAnyOrder("doc1.pdf", "doc2.pdf");
@@ -315,17 +315,17 @@ class DocumentUtilTest {
         List<Letter> confidentialNop2 = getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_2);
         List<Letter> confidentialGeneralLetter = getLettersBasedOnContactPrivacy(caseData, GENERAL_LETTER);
 
-        assertThat(confidentialNop1.size()).isEqualTo(1);
+        assertThat(confidentialNop1).hasSize(1);
         assertThat(confidentialNop1.get(0).getDivorceDocument()).isNull();
         assertThat(confidentialNop1.get(0).getConfidentialDivorceDocument().getConfidentialDocumentsReceived())
             .isEqualTo(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_1);
 
-        assertThat(confidentialNop2.size()).isEqualTo(1);
+        assertThat(confidentialNop2).hasSize(1);
         assertThat(confidentialNop2.get(0).getDivorceDocument()).isNull();
         assertThat(confidentialNop2.get(0).getConfidentialDivorceDocument().getConfidentialDocumentsReceived())
             .isEqualTo(ConfidentialDocumentsReceived.NOTICE_OF_PROCEEDINGS_APP_2);
 
-        assertThat(confidentialGeneralLetter.size()).isEqualTo(1);
+        assertThat(confidentialGeneralLetter).hasSize(1);
         assertThat(confidentialGeneralLetter.get(0).getDivorceDocument()).isNull();
         assertThat(confidentialGeneralLetter.get(0).getConfidentialDivorceDocument().getConfidentialDocumentsReceived())
             .isEqualTo(ConfidentialDocumentsReceived.GENERAL_LETTER);
@@ -376,8 +376,8 @@ class DocumentUtilTest {
 
         removeDocumentsBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_2);
 
-        assertThat(caseData.getDocuments().getConfidentialDocumentsGenerated().size()).isEqualTo(0);
-        assertThat(caseData.getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
+        assertThat(caseData.getDocuments().getConfidentialDocumentsGenerated()).hasSize(0);
+        assertThat(caseData.getDocuments().getDocumentsGenerated()).hasSize(1);
     }
 
     @Test
@@ -404,8 +404,8 @@ class DocumentUtilTest {
 
         removeConfidentialDocuments(caseData, FINAL_ORDER_GRANTED_COVER_LETTER_APP_2);
 
-        assertThat(caseData.getDocuments().getConfidentialDocumentsGenerated().size()).isEqualTo(0);
-        assertThat(caseData.getDocuments().getDocumentsGenerated().size()).isEqualTo(1);
+        assertThat(caseData.getDocuments().getConfidentialDocumentsGenerated()).hasSize(0);
+        assertThat(caseData.getDocuments().getDocumentsGenerated()).hasSize(1);
     }
 
     @Test
@@ -432,8 +432,8 @@ class DocumentUtilTest {
 
         removeDocumentsBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_1);
 
-        assertThat(caseData.getDocuments().getConfidentialDocumentsGenerated().size()).isEqualTo(1);
-        assertThat(caseData.getDocuments().getDocumentsGenerated().size()).isEqualTo(0);
+        assertThat(caseData.getDocuments().getConfidentialDocumentsGenerated()).hasSize(1);
+        assertThat(caseData.getDocuments().getDocumentsGenerated()).hasSize(0);
     }
 
     @Test
