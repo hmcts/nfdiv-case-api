@@ -65,7 +65,7 @@ public class Applicant2SolicitorSwitchToSoleFo implements CCDConfig<CaseData, St
             .done()
             .complex(CaseData::getFinalOrder)
                 .mandatory(FinalOrder::getDoesApplicant2WantToApplyForFinalOrder)
-                .mandatory(FinalOrder::getApplicant2FinalOrderExplanation, "isFinalOrderOverdue=\"Yes\"")
+                .mandatory(FinalOrder::getApplicant2FinalOrderLateExplanation, "isFinalOrderOverdue=\"Yes\"")
             .done();
     }
 
