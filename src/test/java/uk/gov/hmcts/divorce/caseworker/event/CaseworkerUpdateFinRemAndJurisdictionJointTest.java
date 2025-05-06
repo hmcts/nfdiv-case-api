@@ -104,7 +104,7 @@ class CaseworkerUpdateFinRemAndJurisdictionJointTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUpdateFinRemAndJurisdictionJoint.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).isEqualTo(Collections.singletonList(APPLICANT_1_CONFIRM_FO_PRAYER_THEMSELVES_WARNING));
     }
 
@@ -120,7 +120,7 @@ class CaseworkerUpdateFinRemAndJurisdictionJointTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUpdateFinRemAndJurisdictionJoint.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).isEqualTo(Collections.singletonList(APPLICANT_1_CLEAR_FO_PRAYER_THEMSELVES_WARNING));
     }
 
@@ -137,7 +137,7 @@ class CaseworkerUpdateFinRemAndJurisdictionJointTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUpdateFinRemAndJurisdictionJoint.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(2);
+        assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors()).isEqualTo(
             List.of(APPLICANT_1_CLEAR_FO_PRAYER_THEMSELVES_WARNING, APPLICANT_1_CONFIRM_FO_PRAYER_CHILDREN_WARNING)
         );
@@ -171,7 +171,7 @@ class CaseworkerUpdateFinRemAndJurisdictionJointTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUpdateFinRemAndJurisdictionJoint.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).isEqualTo(Collections.singletonList(APPLICANT_1_CONFIRM_FO_PRAYER_CHILDREN_WARNING));
     }
 
@@ -187,7 +187,7 @@ class CaseworkerUpdateFinRemAndJurisdictionJointTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUpdateFinRemAndJurisdictionJoint.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).isEqualTo(Collections.singletonList(APPLICANT_1_CLEAR_FO_PRAYER_CHILDREN_WARNING));
     }
 
@@ -204,7 +204,7 @@ class CaseworkerUpdateFinRemAndJurisdictionJointTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUpdateFinRemAndJurisdictionJoint.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(2);
+        assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors()).isEqualTo(
             List.of(APPLICANT_1_CONFIRM_FO_PRAYER_THEMSELVES_WARNING, APPLICANT_1_CLEAR_FO_PRAYER_CHILDREN_WARNING)
         );
@@ -238,7 +238,7 @@ class CaseworkerUpdateFinRemAndJurisdictionJointTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUpdateFinRemAndJurisdictionJoint.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).isEqualTo(Collections.singletonList(APPLICANT_2_CONFIRM_FO_PRAYER_THEMSELVES_WARNING));
     }
 
@@ -254,7 +254,7 @@ class CaseworkerUpdateFinRemAndJurisdictionJointTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUpdateFinRemAndJurisdictionJoint.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).isEqualTo(Collections.singletonList(APPLICANT_2_CLEAR_FO_PRAYER_THEMSELVES_WARNING));
     }
 
@@ -271,7 +271,7 @@ class CaseworkerUpdateFinRemAndJurisdictionJointTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUpdateFinRemAndJurisdictionJoint.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(2);
+        assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors()).isEqualTo(
             List.of(APPLICANT_2_CLEAR_FO_PRAYER_THEMSELVES_WARNING, APPLICANT_2_CONFIRM_FO_PRAYER_CHILDREN_WARNING)
         );
@@ -305,7 +305,7 @@ class CaseworkerUpdateFinRemAndJurisdictionJointTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUpdateFinRemAndJurisdictionJoint.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).isEqualTo(Collections.singletonList(APPLICANT_2_CONFIRM_FO_PRAYER_CHILDREN_WARNING));
     }
 
@@ -321,7 +321,7 @@ class CaseworkerUpdateFinRemAndJurisdictionJointTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUpdateFinRemAndJurisdictionJoint.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).isEqualTo(Collections.singletonList(APPLICANT_2_CLEAR_FO_PRAYER_CHILDREN_WARNING));
     }
 
@@ -338,7 +338,7 @@ class CaseworkerUpdateFinRemAndJurisdictionJointTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUpdateFinRemAndJurisdictionJoint.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(2);
+        assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors()).isEqualTo(
             List.of(APPLICANT_2_CONFIRM_FO_PRAYER_THEMSELVES_WARNING, APPLICANT_2_CLEAR_FO_PRAYER_CHILDREN_WARNING)
         );

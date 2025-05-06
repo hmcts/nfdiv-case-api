@@ -18,12 +18,22 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_HWF;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_ORGANISATION_POLICY;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_ADDRESS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_PHONE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_ADDRESS;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_EMAIL;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_HWF;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_ORGANISATION_POLICY;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOLICITOR_ADDRESS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOLICITOR_PHONE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOL_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_WELSH_TRANSLATION;
@@ -35,6 +45,7 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERA
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_URGENT_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.MARRIAGE_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.ORGANISATION_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.RESPONDENT_WELSH_TRANSLATION;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SCANNED_SUBTYPE_RECEIVED;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SOL_PAYMENT_METHOD;
@@ -91,6 +102,48 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
         SearchField.<UserRole>builder()
             .label("Respondent Applied For Final Order")
             .id(APPLICANT_2_APPLIED_FOR_FINAL_ORDER)
+            .build(),
+        SearchField.<UserRole>builder().label("Applicant Solicitor Name")
+            .id(APPLICANT_1_SOLICITOR_NAME)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Applicant Solicitor Organisation Name")
+            .id(APPLICANT_1_ORGANISATION_POLICY)
+            .listElementCode(ORGANISATION_NAME)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Applicant Solicitor Email")
+            .id(APPLICANT_1_SOLICITOR_EMAIL)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Applicant Solicitor Phone")
+            .id(APPLICANT_1_SOLICITOR_PHONE)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Applicant Solicitor Address")
+            .id(APPLICANT_1_SOLICITOR_ADDRESS)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Respondent Solicitor Name")
+            .id(APPLICANT_2_SOLICITOR_NAME)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Respondent Solicitor Organisation Name")
+            .id(APPLICANT_2_ORGANISATION_POLICY)
+            .listElementCode(ORGANISATION_NAME)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Respondent Solicitor Email")
+            .id(APPLICANT_2_SOLICITOR_EMAIL)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Respondent Solicitor Phone")
+            .id(APPLICANT_2_SOLICITOR_PHONE)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Respondent Solicitor Address")
+            .id(APPLICANT_2_SOLICITOR_ADDRESS)
+            .userRole(UserRole.SUPER_USER)
             .build()
         );
 

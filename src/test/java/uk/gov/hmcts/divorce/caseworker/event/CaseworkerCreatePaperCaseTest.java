@@ -181,7 +181,7 @@ class CaseworkerCreatePaperCaseTest {
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerCreatePaperCase.aboutToSubmit(details, details);
+        caseworkerCreatePaperCase.aboutToSubmit(details, details);
 
         verify(notificationDispatcher).send(paperApplicationReceivedNotification, caseData, TEST_CASE_ID);
     }
@@ -194,7 +194,7 @@ class CaseworkerCreatePaperCaseTest {
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerCreatePaperCase.aboutToSubmit(details, details);
+        caseworkerCreatePaperCase.aboutToSubmit(details, details);
 
         verifyNoInteractions(notificationDispatcher);
     }

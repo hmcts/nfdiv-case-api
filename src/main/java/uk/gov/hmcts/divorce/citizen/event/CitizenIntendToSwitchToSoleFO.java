@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -33,27 +33,22 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CitizenIntendToSwitchToSoleFO implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String INTEND_SWITCH_TO_SOLE_FO = "intend-switch-to-sole-fo";
 
-    @Autowired
-    private CcdAccessService ccdAccessService;
+    private final CcdAccessService ccdAccessService;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private Applicant1IntendToSwitchToSoleFoNotification applicant1IntendToSwitchToSoleFoNotification;
+    private final Applicant1IntendToSwitchToSoleFoNotification applicant1IntendToSwitchToSoleFoNotification;
 
-    @Autowired
-    private Applicant2IntendToSwitchToSoleFoNotification applicant2IntendToSwitchToSoleFoNotification;
+    private final Applicant2IntendToSwitchToSoleFoNotification applicant2IntendToSwitchToSoleFoNotification;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

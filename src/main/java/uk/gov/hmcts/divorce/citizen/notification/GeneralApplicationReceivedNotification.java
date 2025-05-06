@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -20,17 +20,16 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_APPLIC
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class GeneralApplicationReceivedNotification implements ApplicantNotification {
 
     public static final String IS_DEEMED_SERVICE = "isDeemedService";
     public static final String IS_DISPENSE_SERVICE = "isDispenseService";
     public static final String IS_BAILIFF_SERVICE = "isBailiffService";
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {

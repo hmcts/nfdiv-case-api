@@ -26,7 +26,6 @@ import uk.gov.hmcts.divorce.document.print.model.Print;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,7 +65,9 @@ class LetterPrinterTest {
         Applicant applicant = caseData.getApplicant1();
         DocumentPackInfo documentPackInfo = getDocumentPackInfo();
 
-        List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType).toList();
+        List<Letter> expectedLetters = new ArrayList<>(
+            documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType).toList()
+        );
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
 
         letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, TEST_LETTER_NAME);
@@ -105,8 +106,10 @@ class LetterPrinterTest {
             ImmutableMap.of()
         );
 
-        List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
-                .collect(Collectors.toList());
+        List<Letter> expectedLetters = new ArrayList<>(
+            documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
+                .toList()
+        );
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
 
@@ -148,8 +151,9 @@ class LetterPrinterTest {
             ImmutableMap.of()
         );
 
-        List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
-            .collect(Collectors.toList());
+        List<Letter> expectedLetters = new ArrayList<>(
+            documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
+                .toList());
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
 
@@ -198,8 +202,9 @@ class LetterPrinterTest {
             ImmutableMap.of()
         );
 
-        List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
-                .collect(Collectors.toList());
+        List<Letter> expectedLetters = new ArrayList<>(
+            documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
+                .toList());
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
 
@@ -264,8 +269,9 @@ class LetterPrinterTest {
             ImmutableMap.of()
         );
 
-        List<Letter> expectedLetters = documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
-            .collect(Collectors.toList());
+        List<Letter> expectedLetters = new ArrayList<>(
+            documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType)
+                .toList());
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
 

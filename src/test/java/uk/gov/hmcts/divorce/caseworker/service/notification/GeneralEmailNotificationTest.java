@@ -25,7 +25,6 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.UUID;
 
 import static java.util.stream.Stream.ofNullable;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -272,7 +271,6 @@ class GeneralEmailNotificationTest {
         marriageDetails.setApplicant1Name(TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         marriageDetails.setApplicant2Name(APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
 
-        final String userId = UUID.randomUUID().toString();
         final User systemUpdateUser = caseWorkerUser();
 
         given(idamService.retrieveSystemUpdateUserDetails()).willReturn(systemUpdateUser);

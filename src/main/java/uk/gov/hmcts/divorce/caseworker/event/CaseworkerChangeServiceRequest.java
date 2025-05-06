@@ -101,7 +101,7 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(details.getData())
             .state(state)
             .build();
     }

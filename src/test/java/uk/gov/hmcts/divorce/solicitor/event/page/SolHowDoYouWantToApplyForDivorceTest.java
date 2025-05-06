@@ -34,12 +34,12 @@ class SolHowDoYouWantToApplyForDivorceTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(
-            response.getData().getLabelContent().getApplicant2(),
-            "respondent"
+            "respondent",
+            response.getData().getLabelContent().getApplicant2()
         );
         assertEquals(
-            response.getData().getLabelContent().getUnionType(),
-            "divorce"
+            "divorce",
+            response.getData().getLabelContent().getUnionType()
         );
     }
 
@@ -55,12 +55,12 @@ class SolHowDoYouWantToApplyForDivorceTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(
-            response.getData().getLabelContent().getApplicant2(),
-            "applicant 2"
+            "applicant 2",
+            response.getData().getLabelContent().getApplicant2()
         );
         assertEquals(
-            response.getData().getLabelContent().getUnionType(),
-            "dissolution"
+            "dissolution",
+            response.getData().getLabelContent().getUnionType()
         );
     }
 
@@ -76,8 +76,8 @@ class SolHowDoYouWantToApplyForDivorceTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted(),
-            YesOrNo.NO
+            YesOrNo.NO,
+            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()
         );
     }
 
@@ -92,12 +92,12 @@ class SolHowDoYouWantToApplyForDivorceTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted(),
-            YesOrNo.NO
+            YesOrNo.NO,
+            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()
         );
         assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted(),
-            YesOrNo.NO
+            YesOrNo.NO,
+            response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted()
         );
     }
 
@@ -113,8 +113,8 @@ class SolHowDoYouWantToApplyForDivorceTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted(),
-            YesOrNo.NO
+            YesOrNo.NO,
+            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()
         );
     }
 
@@ -129,12 +129,12 @@ class SolHowDoYouWantToApplyForDivorceTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted(),
-            YesOrNo.NO
+            YesOrNo.NO,
+            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()
         );
         assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted(),
-            YesOrNo.NO
+            YesOrNo.NO,
+            response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted()
         );
     }
 }

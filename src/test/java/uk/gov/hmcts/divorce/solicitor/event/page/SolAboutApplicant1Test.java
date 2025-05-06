@@ -34,7 +34,7 @@ class SolAboutApplicant1Test {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
-        assertEquals(response.getErrors().size(), 1);
+        assertEquals(1, response.getErrors().size());
         assertThat(response.getErrors()).containsExactly("You have entered an invalid email address. "
             + "Please check the email and enter it again, before submitting the application.");
     }

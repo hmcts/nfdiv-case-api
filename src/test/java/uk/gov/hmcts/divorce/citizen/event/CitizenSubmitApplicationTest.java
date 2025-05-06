@@ -20,8 +20,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Jurisdiction;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.PaymentService;
-import uk.gov.hmcts.divorce.payment.PaymentSetupService;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorSubmitJointApplicationService;
 import uk.gov.hmcts.divorce.testutil.TestConstants;
 
@@ -91,7 +91,7 @@ class CitizenSubmitApplicationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(14);
+        assertThat(response.getErrors()).hasSize(14);
         assertThat(response.getErrors()).contains("Applicant1FirstName cannot be empty or null");
         assertThat(response.getErrors()).contains("ApplicationType cannot be empty or null");
     }
@@ -110,7 +110,7 @@ class CitizenSubmitApplicationTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo("Applicant 1 must confirm prayer to dissolve their marriage (get a divorce)");
     }
 

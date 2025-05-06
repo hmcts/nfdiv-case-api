@@ -44,6 +44,6 @@ class ApplyForConditionalOrderDocumentPackTest {
     @Test
     void shouldReturnLetterId() {
         String result = applyForConditionalOrderDocumentPack.getLetterId();
-        Assertions.assertEquals(result, "apply-for-conditional-order-pack");
+        Assertions.assertEquals("apply-for-conditional-order-pack", result);
     }
 }

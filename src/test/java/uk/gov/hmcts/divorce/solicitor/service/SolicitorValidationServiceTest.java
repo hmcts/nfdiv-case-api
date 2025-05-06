@@ -162,6 +162,6 @@ class SolicitorValidationServiceTest {
 
         List<String> errors = solicitorValidationService.validateEmailBelongsToOrgUser(SOL_EMAIL, null, ORG_ID);
 
-        assertThat(errors).hasSize(0);
+        assertThat(errors).isEmpty();
     }
 }
