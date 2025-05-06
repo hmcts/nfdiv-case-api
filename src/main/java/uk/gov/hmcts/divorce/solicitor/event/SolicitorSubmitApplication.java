@@ -2,22 +2,27 @@ package uk.gov.hmcts.divorce.solicitor.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
+import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
+import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolConfirmJointApplication;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
@@ -58,6 +63,10 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     private final SubmissionService submissionService;
     private final PaymentSetupService paymentSetupService;
     private final CaseFlagsService caseFlagsService;
+    private final ServiceRequestSearchService serviceRequestSearchService;
+
+    @Value("${idam.client.redirect_uri}")
+    private String redirectUrl;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -90,6 +99,9 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         }
 
         var application = caseData.getApplication();
+
+        removeStaleServiceRequest(application);
+
         OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(caseData, details.getId());
 
         application.setApplicationFeeOrderSummary(orderSummary);
@@ -133,13 +145,16 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         if (caseData.getApplication().isSolicitorPaymentMethodPba()) {
             final Optional<String> pbaNumber = application.getPbaNumber();
             if (pbaNumber.isPresent()) {
+                String serviceRequest = findOrCreatePaymentServiceRequest(caseData, caseId);
+                application.setApplicationFeeServiceRequestReference(serviceRequest);
+
                 final PbaResponse response = paymentService.processPbaPayment(
                     caseId,
-                    caseData.getApplication().getApplicationFeeServiceRequestReference(),
+                    serviceRequest,
                     caseData.getApplicant1().getSolicitor(),
                     pbaNumber.get(),
-                    caseData.getApplication().getApplicationFeeOrderSummary(),
-                    caseData.getApplication().getFeeAccountReference()
+                    application.getApplicationFeeOrderSummary(),
+                    application.getFeeAccountReference()
                 );
 
                 if (response.getHttpStatus() == CREATED) {
@@ -147,7 +162,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                         applicationFeeOrderSummary,
                         caseData,
                         response.getPaymentReference(),
-                        caseData.getApplication().getApplicationFeeServiceRequestReference()
+                        serviceRequest
                     );
                 } else {
                     return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -191,6 +206,36 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
             caseData.getApplication().setApp2ContactMethodIsDigital(YES);
         }
+    }
+
+    private void removeStaleServiceRequest(Application application){
+        application.setApplicationFeeOrderSummary(null);
+        application.setApplicationFeeServiceRequestReference(null);
+    }
+
+    private String findOrCreatePaymentServiceRequest(CaseData data, long caseId) {
+        Application application = data.getApplication();
+        Fee fee = application.getApplicationFeeOrderSummary().getFees().get(0).getValue();
+        String responsibleParty = data.getApplicant1().getSolicitor().getName();
+
+        Optional<ServiceRequestDto> unpaidServiceRequest = serviceRequestSearchService.findUnpaidServiceRequest(
+            caseId, fee, data.getApplicant1().getFullName()
+        );
+
+        String serviceRequest;
+        if (unpaidServiceRequest.isPresent()) {
+            serviceRequest = unpaidServiceRequest.get().getPaymentGroupReference();
+
+            log.info("Found unpaid service request: {}, for case: {}", serviceRequest, caseId);
+        } else {
+            serviceRequest = paymentService.createServiceRequestReference(
+                redirectUrl, caseId, responsibleParty, application.getApplicationFeeOrderSummary()
+            );
+
+            log.info("Created new service request: {}, for case: {}", serviceRequest, caseId);
+        }
+
+        return serviceRequest;
     }
 
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
