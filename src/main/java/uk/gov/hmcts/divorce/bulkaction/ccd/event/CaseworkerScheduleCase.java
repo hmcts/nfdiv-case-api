@@ -98,17 +98,19 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         String serviceAuth = authTokenGenerator.generate();
 
         if (user.getUserDetails().getRoles().contains(CASE_WORKER.getRole())) {
+            User systemUser = idamService.retrieveSystemUpdateUserDetails();
+
             final List<ListValue<BulkListCaseDetails>> failedAwaitingPronouncementCases = bulkTriggerService.bulkTrigger(
                     bulkCaseDetails.getData().getBulkListCaseDetails(),
                     SYSTEM_LINK_WITH_BULK_CASE,
                     bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, SYSTEM_LINK_WITH_BULK_CASE),
-                    user,
+                    systemUser,
                     serviceAuth);
 
             failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
                     failedAwaitingPronouncementCases,
                     bulkCaseDetails,
-                    user,
+                    systemUser,
                     serviceAuth
             );
         }
