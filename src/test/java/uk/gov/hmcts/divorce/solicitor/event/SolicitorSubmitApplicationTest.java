@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
+import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
@@ -26,14 +27,17 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
+import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
+import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
 import uk.gov.hmcts.divorce.testutil.TestConstants;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.Integer.parseInt;
@@ -56,6 +60,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
@@ -89,6 +95,9 @@ class SolicitorSubmitApplicationTest {
     @Mock
     private CaseFlagsService caseFlagsService;
 
+    @Mock
+    private ServiceRequestSearchService serviceRequestSearchService;
+
     @InjectMocks
     private SolicitorSubmitApplication solicitorSubmitApplication;
 
@@ -109,6 +118,29 @@ class SolicitorSubmitApplicationTest {
 
         assertThat(response.getData().getApplication().getApplicationFeeOrderSummary())
             .isEqualTo(orderSummary);
+    }
+
+    @Test
+    void shouldDeleteStagnantOrderSummaryDataWhenAboutToStartIsInvoked() {
+
+        final long caseId = TEST_CASE_ID;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.getApplicant1().setAddress(AddressGlobalUK.builder().addressLine1("test").build());
+        caseDetails.setData(caseData);
+        caseData.getApplication().setApplicationFeeOrderSummary(OrderSummary.builder().build());
+        caseData.getApplication().setApplicationFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
+        caseDetails.setId(caseId);
+
+        when(paymentSetupService.createApplicationFeeOrderSummary(caseData, TEST_CASE_ID))
+            .thenReturn(orderSummary);
+
+        var response = solicitorSubmitApplication.aboutToStart(caseDetails);
+
+        assertThat(response.getData().getApplication().getApplicationFeeOrderSummary())
+            .isEqualTo(orderSummary);
+        assertThat(response.getData().getApplication().getApplicationFeeServiceRequestReference())
+            .isEqualTo(null);
     }
 
     @Test
@@ -147,9 +179,16 @@ class SolicitorSubmitApplicationTest {
         caseData.getApplication().setApplicationFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
+        Solicitor solicitor = Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .email(TEST_SOLICITOR_EMAIL)
+            .build();
+        caseData.getApplicant1().setSolicitor(solicitor);
 
         PbaResponse pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(TEST_CASE_ID, TEST_SERVICE_REFERENCE, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+        when(paymentService.createServiceRequestReference(null, TEST_CASE_ID, solicitor.getName(), orderSummary))
+            .thenReturn(TEST_SERVICE_REFERENCE);
+        when(paymentService.processPbaPayment(TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
 
         final CaseDetails<CaseData, State> expectedCaseDetails = new CaseDetails<>();
@@ -272,6 +311,11 @@ class SolicitorSubmitApplicationTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
+        Solicitor solicitor = Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .email(TEST_SOLICITOR_EMAIL)
+            .build();
+        caseData.getApplicant1().setSolicitor(solicitor);
 
         mockExpectedCaseDetails(caseDetails, caseData, Draft);
 
@@ -284,8 +328,10 @@ class SolicitorSubmitApplicationTest {
         when(submissionService.submitApplication(caseDetails)).thenReturn(expectedCaseDetails);
 
         var pbaResponse = new PbaResponse(CREATED, null, "1234");
+        when(paymentService.createServiceRequestReference(null, TEST_CASE_ID, solicitor.getName(), orderSummary))
+            .thenReturn(TEST_SERVICE_REFERENCE);
         when(paymentService.processPbaPayment(
-            TEST_CASE_ID, TEST_SERVICE_REFERENCE, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+            TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitApplication
@@ -445,12 +491,60 @@ class SolicitorSubmitApplicationTest {
         caseData.getApplication().setFeeAccountReference(FEE_ACCOUNT_REF);
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
         caseData.getApplication().setApplicationFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
+        Solicitor solicitor = Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .email(TEST_SOLICITOR_EMAIL)
+            .build();
+        caseData.getApplicant1().setSolicitor(solicitor);
 
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
         final var pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.processPbaPayment(TEST_CASE_ID, TEST_SERVICE_REFERENCE, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+        when(paymentService.createServiceRequestReference(null, TEST_CASE_ID, solicitor.getName(), orderSummary))
+            .thenReturn(TEST_SERVICE_REFERENCE);
+        when(paymentService.processPbaPayment(TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+            .thenReturn(pbaResponse);
+
+        mockExpectedCaseDetails(caseDetails, caseData, Submitted);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorSubmitApplication.aboutToSubmit(caseDetails, beforeCaseDetails);
+
+        assertThat(response.getState()).isEqualTo(Submitted);
+    }
+
+    @Test
+    void shouldReuseExistingUnpaidServiceRequestsWhenFound() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
+
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
+        caseData.getApplication().setPbaNumbers(
+            DynamicList.builder()
+                .value(DynamicListElement.builder().label(PBA_NUMBER).build())
+                .build()
+        );
+        caseData.getApplication().setFeeAccountReference(FEE_ACCOUNT_REF);
+        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
+        caseData.getApplication().setApplicationFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
+        Solicitor solicitor = Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .email(TEST_SOLICITOR_EMAIL)
+            .build();
+        caseData.getApplicant1().setSolicitor(solicitor);
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final var pbaResponse = new PbaResponse(CREATED, null, "1234");
+        Fee fee = orderSummary.getFees().get(0).getValue();
+        ServiceRequestDto serviceRequestResponse = ServiceRequestDto.builder().paymentGroupReference(TEST_SERVICE_REFERENCE).build();
+        when(serviceRequestSearchService.findUnpaidServiceRequest(TEST_CASE_ID, fee, TEST_SOLICITOR_NAME))
+            .thenReturn(Optional.of(serviceRequestResponse));
+        when(paymentService.processPbaPayment(TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
 
         mockExpectedCaseDetails(caseDetails, caseData, Submitted);
@@ -480,9 +574,16 @@ class SolicitorSubmitApplicationTest {
 
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
+        Solicitor solicitor = Solicitor.builder()
+            .name(TEST_SOLICITOR_NAME)
+            .email(TEST_SOLICITOR_EMAIL)
+            .build();
+        caseData.getApplicant1().setSolicitor(solicitor);
 
         final var pbaResponse = new PbaResponse(FORBIDDEN, "Account balance insufficient", null);
-        when(paymentService.processPbaPayment(TEST_CASE_ID, TEST_SERVICE_REFERENCE, null, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
+        when(paymentService.createServiceRequestReference(null, TEST_CASE_ID, solicitor.getName(), orderSummary))
+            .thenReturn(TEST_SERVICE_REFERENCE);
+        when(paymentService.processPbaPayment(TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =

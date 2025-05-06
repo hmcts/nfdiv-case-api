@@ -100,7 +100,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
         var application = caseData.getApplication();
 
-        removeStaleServiceRequest(application);
+        removeStaleOrderSummary(application);
 
         OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(caseData, details.getId());
 
@@ -145,7 +145,9 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         if (caseData.getApplication().isSolicitorPaymentMethodPba()) {
             final Optional<String> pbaNumber = application.getPbaNumber();
             if (pbaNumber.isPresent()) {
-                String serviceRequest = findOrCreatePaymentServiceRequest(caseData, caseId);
+                String responsibleParty = caseData.getApplicant1().getSolicitor().getName();
+                String serviceRequest = findOrCreatePaymentServiceRequest(application, responsibleParty, caseId);
+
                 application.setApplicationFeeServiceRequestReference(serviceRequest);
 
                 final PbaResponse response = paymentService.processPbaPayment(
@@ -208,18 +210,16 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         }
     }
 
-    private void removeStaleServiceRequest(Application application){
+    private void removeStaleOrderSummary(Application application) {
         application.setApplicationFeeOrderSummary(null);
         application.setApplicationFeeServiceRequestReference(null);
     }
 
-    private String findOrCreatePaymentServiceRequest(CaseData data, long caseId) {
-        Application application = data.getApplication();
+    private String findOrCreatePaymentServiceRequest(Application application, String responsibleParty, long caseId) {
         Fee fee = application.getApplicationFeeOrderSummary().getFees().get(0).getValue();
-        String responsibleParty = data.getApplicant1().getSolicitor().getName();
 
         Optional<ServiceRequestDto> unpaidServiceRequest = serviceRequestSearchService.findUnpaidServiceRequest(
-            caseId, fee, data.getApplicant1().getFullName()
+            caseId, fee, responsibleParty
         );
 
         String serviceRequest;
