@@ -60,7 +60,7 @@ class CreateTestCaseTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = createTestCase.midEvent(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).contains("User ID entered for applicant 2 is an invalid UUID");
     }
 }

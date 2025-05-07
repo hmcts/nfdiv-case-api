@@ -47,6 +47,6 @@ class BulkActionCaseDataTest {
         List<ListValue<BulkListCaseDetails>> result =
             bulkActionCaseData.calculateProcessedCases(List.of(getBulkListCaseDetailsListValue("1")));
 
-        assertThat(result).hasSize(0);
+        assertThat(result).isEmpty();
     }
 }

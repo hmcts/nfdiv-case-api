@@ -62,7 +62,7 @@ class CaseworkerUpdateApplicant1EmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant1Email.midEvent(details, details);
 
         verify(emailUpdateService).willApplicantBeMadeOffline(details, details, true);
-        assertThat(response.getWarnings().size()).isEqualTo(1);
+        assertThat(response.getWarnings()).hasSize(1);
     }
 
     @Test
@@ -83,7 +83,7 @@ class CaseworkerUpdateApplicant1EmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant1Email.midEvent(details, details);
 
         verify(emailUpdateService).willApplicantBeMadeOffline(details, details, true);
-        assertThat(response.getWarnings().size()).isEqualTo(0);
+        assertThat(response.getWarnings()).hasSize(0);
     }
 
     @Test
