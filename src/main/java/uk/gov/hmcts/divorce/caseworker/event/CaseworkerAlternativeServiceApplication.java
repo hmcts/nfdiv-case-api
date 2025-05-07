@@ -45,6 +45,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @RequiredArgsConstructor
 public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_SERVICE_RECEIVED = "caseworker-service-received";
+    private static final String Service_APPLICATION_RECEIVED = "Service application received";
 
     private final Clock clock;
 
@@ -67,15 +68,15 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
                 RequestedInformationSubmitted,
                 GeneralApplicationReceived
             )
-            .name("Service application received")
-            .description("Service application received")
+            .name(Service_APPLICATION_RECEIVED)
+            .description(Service_APPLICATION_RECEIVED)
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE, SOLICITOR, CITIZEN))
             .page("serviceApplicationReceived")
-            .pageLabel("Service application received")
+            .pageLabel(Service_APPLICATION_RECEIVED)
             .complex(CaseData::getAlternativeService)
                 .mandatory(AlternativeService::getReceivedServiceApplicationDate)
                 .mandatory(AlternativeService::getAlternativeServiceType)

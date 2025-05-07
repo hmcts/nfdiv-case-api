@@ -16,6 +16,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 public class CaseworkerRemoveGeneralEmails implements CCDConfig<CaseData, State, UserRole> {
 
+    private static final String REMOVE_GENERAL_EMAILS = "Remove general emails";
     public static final String CASEWORKER_REMOVE_GENERAL_EMAILS = "caseworker-remove-general-emails";
 
     @Override
@@ -23,13 +24,13 @@ public class CaseworkerRemoveGeneralEmails implements CCDConfig<CaseData, State,
         new PageBuilder(configBuilder
             .event(CASEWORKER_REMOVE_GENERAL_EMAILS)
             .forStates(POST_SUBMISSION_STATES)
-            .name("Remove general emails")
-            .description("Remove general emails")
+            .name(REMOVE_GENERAL_EMAILS)
+            .description(REMOVE_GENERAL_EMAILS)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER))
             .page("removeGeneralEmails")
-            .pageLabel("Remove general emails")
+            .pageLabel(REMOVE_GENERAL_EMAILS)
             .optional(CaseData::getGeneralEmails)
             .done();
     }

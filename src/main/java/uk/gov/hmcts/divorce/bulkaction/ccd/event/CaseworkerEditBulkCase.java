@@ -33,6 +33,8 @@ public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, Bul
 
     public static final String CASEWORKER_EDIT_BULK_CASE = "caseworker-edit-bulk-case";
 
+    private static final String EDIT_BULK_CASE = " Edit bulk case";
+
     private final ScheduleCaseService scheduleCaseService;
 
     private final PronouncementListDocService pronouncementListDocService;
@@ -42,8 +44,8 @@ public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, Bul
         new BulkActionPageBuilder(configBuilder
             .event(CASEWORKER_EDIT_BULK_CASE)
             .forStates(Created, Listed)
-            .name("Edit bulk case")
-            .description("Edit bulk case")
+            .name(EDIT_BULK_CASE)
+            .description(EDIT_BULK_CASE)
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
@@ -51,7 +53,7 @@ public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, Bul
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
             .page("editBulkCase")
-            .pageLabel("Edit bulk case")
+            .pageLabel(EDIT_BULK_CASE)
             .mandatory(BulkActionCaseData::getCourt)
             .mandatory(BulkActionCaseData::getDateAndTimeOfHearing);
     }

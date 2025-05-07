@@ -41,6 +41,9 @@ public class CcdUpdateService {
     private static final String SERVICE_ID = "ABA1";
     private static final String SERVICE_ID_FIELD = "HMCTSServiceId";
     private static final String SET_OPERATION = "$set";
+    private static final String SUPPLEMENTARY_DATA_UPDATES = "supplementary_data_updates";
+    private static final String FORMATTED_SUBMIT_EVENT = "Submit event for Case ID: {}, Event ID: {}";
+    private static final String FORMATTED_SUBMIT_EVENT_FAILED = "Submit Event Failed for Case ID: %s, Event ID: %s";
 
     private final CoreCaseDataApi coreCaseDataApi;
 
@@ -60,13 +63,13 @@ public class CcdUpdateService {
         final String userId = user.getUserDetails().getUid();
         final String authorization = user.getAuthToken();
 
-        log.info("Submit event for Case ID: {}, Event ID: {}", caseId, eventId);
+        log.info(FORMATTED_SUBMIT_EVENT, caseId, eventId);
 
         try {
             startAndSubmitEventForCaseworkers(eventId, serviceAuth, caseId.toString(), userId, authorization);
         } catch (final FeignException e) {
 
-            final String message = format("Submit Event Failed for Case ID: %s, Event ID: %s", caseId, eventId);
+            final String message = format(FORMATTED_SUBMIT_EVENT_FAILED, caseId, eventId);
             log.info(message, e);
             log.info(e.contentUTF8());
 
@@ -116,7 +119,7 @@ public class CcdUpdateService {
                 true,
                 caseDataContent);
         } catch (FeignException e) {
-            final String message = format("Submit Event Failed for Case ID: %s, Event ID: %s", caseId, eventId);
+            final String message = format(FORMATTED_SUBMIT_EVENT_FAILED, caseId, eventId);
             log.info(message, e);
             log.info(e.contentUTF8());
 
@@ -161,7 +164,7 @@ public class CcdUpdateService {
                 true,
                 caseDataContent);
         } catch (FeignException e) {
-            final String message = format("Submit Event Failed for Case ID: %s, Event ID: %s", caseId, eventId);
+            final String message = format(FORMATTED_SUBMIT_EVENT_FAILED, caseId, eventId);
             log.info(message, e);
             log.info(e.contentUTF8());
 
@@ -176,7 +179,7 @@ public class CcdUpdateService {
                                           final String serviceAuth,
                                           final Long caseId) {
 
-        log.info("Submit event for Case ID: {}, Event ID: {}", caseId, eventId);
+        log.info(FORMATTED_SUBMIT_EVENT, caseId, eventId);
         try {
             final String userId = authorization.getUserDetails().getUid();
 
@@ -206,7 +209,7 @@ public class CcdUpdateService {
                 true,
                 caseDataContent);
         } catch (final FeignException e) {
-            final String message = format("Submit Event Failed for Case ID: %s, Event ID: %s", caseId, eventId);
+            final String message = format(FORMATTED_SUBMIT_EVENT_FAILED, caseId, eventId);
             log.info(message, e);
             log.info(e.contentUTF8());
 
@@ -221,7 +224,7 @@ public class CcdUpdateService {
                                           final String serviceAuth,
                                           final Long caseId) {
 
-        log.info("Submit event for Case ID: {}, Event ID: {}", caseId, eventId);
+        log.info(FORMATTED_SUBMIT_EVENT, caseId, eventId);
         try {
             final String userId = authorization.getUserDetails().getUid();
 
@@ -251,7 +254,7 @@ public class CcdUpdateService {
                 true,
                 caseDataContent);
         } catch (final FeignException e) {
-            final String message = format("Submit Event Failed for Case ID: %s, Event ID: %s", caseId, eventId);
+            final String message = format(FORMATTED_SUBMIT_EVENT_FAILED, caseId, eventId);
             log.info(message, e);
             log.info(e.contentUTF8());
 
@@ -336,7 +339,7 @@ public class CcdUpdateService {
                                                      final String newValue) {
 
         Map<String, Map<String, Map<String, Object>>> supplementaryData = new HashMap<>();
-        supplementaryData.put("supplementary_data_updates",
+        supplementaryData.put(SUPPLEMENTARY_DATA_UPDATES,
             singletonMap("$set",
                 Map.of("orgs_assigned_users." + orgId, newValue,
                     "processed", true)));
@@ -349,7 +352,7 @@ public class CcdUpdateService {
                                                            final String serviceAuth,
                                                            final String orgId) {
         Map<String, Map<String, Map<String, Object>>> supplementaryData = new HashMap<>();
-        supplementaryData.put("supplementary_data_updates",
+        supplementaryData.put(SUPPLEMENTARY_DATA_UPDATES,
             singletonMap("$inc",
                 singletonMap("orgs_assigned_users." + orgId, "1")));
 
@@ -361,7 +364,7 @@ public class CcdUpdateService {
                                                          final String serviceAuth) {
         log.info("submitSupplementaryDataToCcdForServiceID Case ID: {}", caseId);
         Map<String, Map<String, Map<String, Object>>> supplementaryData = new HashMap<>();
-        supplementaryData.put("supplementary_data_updates",
+        supplementaryData.put(SUPPLEMENTARY_DATA_UPDATES,
             singletonMap(SET_OPERATION,
                 singletonMap(SERVICE_ID_FIELD, SERVICE_ID)));
         submitSupplementaryDataUpdateToCcd(caseId, authorisation, serviceAuth, supplementaryData);
