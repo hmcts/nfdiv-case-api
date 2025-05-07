@@ -35,6 +35,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class CaseworkerRemoveGeneralLetter implements CCDConfig<CaseData, State, UserRole> {
 
+    private static final String REMOVE_GENERAL_LETTER = "Remove general letter";
     public static final String CASEWORKER_REMOVE_GENERAL_LETTER = "caseworker-remove-general-letter";
 
     private final DocumentRemovalService documentRemovalService;
@@ -44,14 +45,14 @@ public class CaseworkerRemoveGeneralLetter implements CCDConfig<CaseData, State,
         new PageBuilder(configBuilder
             .event(CASEWORKER_REMOVE_GENERAL_LETTER)
             .forStates(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED)
-            .name("Remove general letter")
-            .description("Remove general letter")
+            .name(REMOVE_GENERAL_LETTER)
+            .description(REMOVE_GENERAL_LETTER)
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER))
             .page("removeGeneralLetter")
-            .pageLabel("Remove general letter")
+            .pageLabel(REMOVE_GENERAL_LETTER)
             .optional(CaseData::getGeneralLetters)
             .done();
     }
