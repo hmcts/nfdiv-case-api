@@ -11,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -23,7 +22,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
 import uk.gov.hmcts.divorce.payment.model.PaymentItem;
-import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
@@ -67,10 +65,8 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SOL_PAYMENT_MID_EVENT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_PAYMENT_CALLBACK_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
@@ -87,9 +83,6 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
     IdamWireMock.PropertiesInitializer.class,
     CaseDataWireMock.PropertiesInitializer.class,
     PaymentWireMock.PropertiesInitializer.class})
-@TestPropertySource(properties = {
-    "idam.client.redirect_uri=/payment-callback"
-})
 public class SolicitorSubmitApplicationIT {
 
     @Autowired
@@ -103,9 +96,6 @@ public class SolicitorSubmitApplicationIT {
 
     @MockBean
     private AuthTokenGenerator serviceTokenGenerator;
-
-    @MockBean
-    private ServiceRequestSearchService serviceRequestSearchService;
 
     @MockBean
     private PbaService pbaService;
@@ -222,16 +212,6 @@ public class SolicitorSubmitApplicationIT {
     void givenValidCaseDataWhenAboutToSubmitCallbackIsInvokedThenStateIsChangedAndEmailIsSentToApplicant()
         throws Exception {
 
-        var data = caseDataWithStatementOfTruth();
-        data.getApplication().setApplicationPayments(null);
-        data.getApplication().setApplicationFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
-        data.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
-        data.getApplication().setPbaNumbers(getPbaNumbersForAccount("PBA0012345"));
-        data.getApplication().setApplicationFeeOrderSummary(orderSummaryWithFee());
-        data.getApplicant1().getSolicitor().setOrganisationPolicy(organisationPolicy());
-        data.setCitizenPaymentCallbackUrl(TEST_PAYMENT_CALLBACK_URL);
-
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, TEST_SOLICITOR_NAME));
         stubCreditAccountPayment(
             CREATED,
             CreditAccountPaymentResponse
@@ -240,6 +220,14 @@ public class SolicitorSubmitApplicationIT {
                 .build(),
             orderSummaryWithFee()
         );
+
+        var data = caseDataWithStatementOfTruth();
+        data.getApplication().setApplicationPayments(null);
+        data.getApplication().setApplicationFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
+        data.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
+        data.getApplication().setPbaNumbers(getPbaNumbersForAccount("PBA0012345"));
+        data.getApplication().setApplicationFeeOrderSummary(orderSummaryWithFee());
+        data.getApplicant1().getSolicitor().setOrganisationPolicy(organisationPolicy());
 
         MvcResult mvcResult = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -250,7 +238,9 @@ public class SolicitorSubmitApplicationIT {
                     SOLICITOR_SUBMIT,
                     Draft.name())))
                 .accept(APPLICATION_JSON))
-            .andExpect(status().isOk())
+            .andExpect(
+                status().isOk()
+            )
             .andReturn();
 
         assertThatJson(mvcResult.getResponse().getContentAsString())
