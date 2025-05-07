@@ -173,7 +173,7 @@ class CaseworkerGrantFinalOrderTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToStart(details);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .isEqualTo(Collections.singletonList(ERROR_NO_CO_GRANTED_DATE));
     }

@@ -90,7 +90,7 @@ class CaseworkerGeneralApplicationReceivedTest {
             generalApplicationReceived.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(1);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(1);
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue())
             .isEqualTo(docs.get(0).getValue());
     }
@@ -117,7 +117,7 @@ class CaseworkerGeneralApplicationReceivedTest {
             generalApplicationReceived.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(2);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(2);
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue())
             .isEqualTo(docs.get(1).getValue());
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(1).getValue())
@@ -169,6 +169,6 @@ class CaseworkerGeneralApplicationReceivedTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             generalApplicationReceived.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getGeneralApplications().size()).isEqualTo(1);
+        assertThat(response.getData().getGeneralApplications()).hasSize(1);
     }
 }
