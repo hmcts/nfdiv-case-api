@@ -29,7 +29,7 @@ public class AttachExceptionRecordToCase implements CCDConfig<ExceptionRecord, E
             .description("Attach record to existing case")
             .showEventNotes()
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SYSTEMUPDATE))
-            .page("attachToExistingCase")
+            .page(ATTACH_TO_EXISTING_CASE)
             .pageLabel("Correspondence")
             .readonlyNoSummary(ExceptionRecord::getShowEnvelopeCaseReference,"envelopeCaseReference=\"ALWAYS_HIDE\"")
             .readonlyNoSummary(ExceptionRecord::getShowEnvelopeLegacyCaseReference,"envelopeLegacyCaseReference=\"ALWAYS_HIDE\"")

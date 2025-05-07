@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @RequiredArgsConstructor
 public class CaseworkerCreateCaseFlag implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_CASE_FLAG = "createFlags";
+    private static final String CREATE_FLAGS = "Create flags";
     private static final String ALWAYS_HIDE = "internalFlagLauncher = \"ALWAYS_HIDE\"";
 
     private final CaseFlagsService caseFlagsService;
@@ -39,14 +40,14 @@ public class CaseworkerCreateCaseFlag implements CCDConfig<CaseData, State, User
             .forStates(POST_SUBMISSION_STATES)
             .showCondition("caseFlagsSetupComplete=\"Yes\"")
             .aboutToStartCallback(this::aboutToStart)
-            .name("Create flags")
-            .description("Create flags")
+            .name(CREATE_FLAGS)
+            .description(CREATE_FLAGS)
             .showEventNotes()
             .showSummary()
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER, CASE_WORKER, LEGAL_ADVISOR, JUDGE))
             .page("caseworkerCreateFlags")
-            .pageLabel("Create flags")
+            .pageLabel(CREATE_FLAGS)
             .optional(CaseData::getCaseFlags, ALWAYS_HIDE, true, true)
             .complex(CaseData::getPartyFlags)
                 .optional(PartyFlags::getApplicant1Flags, ALWAYS_HIDE, true, true)
