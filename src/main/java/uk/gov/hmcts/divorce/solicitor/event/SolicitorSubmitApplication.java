@@ -98,7 +98,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                 .build();
         }
 
-        setOrderSummary(caseData, details.getId());
+        setPaymentOrderSummary(caseData, details.getId());
 
         caseData.getApplication().setSolStatementOfReconciliationCertify(null);
         caseData.getApplication().setSolStatementOfReconciliationDiscussed(null);
@@ -199,12 +199,8 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         }
     }
 
-    private void setOrderSummary(CaseData caseData, long caseId) {
+    private void setPaymentOrderSummary(CaseData caseData, long caseId) {
         Application application = caseData.getApplication();
-
-        // Stale order summary and SR are blanked out to ensure sols pay the fee at time of submit rather than creation (NFDIV-4857)
-        application.setApplicationFeeOrderSummary(null);
-        application.setApplicationFeeServiceRequestReference(null);
 
         OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(caseData, caseId);
 
@@ -217,11 +213,9 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     }
 
     private String findOrCreatePaymentServiceRequest(CaseData data, String responsibleParty, long caseId) {
-        Application application = data.getApplication();
-        Fee fee = application.getApplicationFeeOrderSummary().getFees().get(0).getValue();
-
+        Fee applicationFee = data.getApplication().getApplicationFeeOrderSummary().getFees().getFirst().getValue();
         Optional<ServiceRequestDto> unpaidServiceRequest = serviceRequestSearchService.findUnpaidServiceRequest(
-            caseId, fee, responsibleParty
+            caseId, applicationFee, responsibleParty
         );
 
         String serviceRequest;
@@ -230,9 +224,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
             log.info("Found unpaid service request: {}, for case: {}", serviceRequest, caseId);
         } else {
-            serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
-                data, caseId, redirectUrl
-            );
+            serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(data, caseId, redirectUrl);
 
             log.info("Created new service request: {}, for case: {}", serviceRequest, caseId);
         }

@@ -119,30 +119,7 @@ class SolicitorSubmitApplicationTest {
         assertThat(response.getData().getApplication().getApplicationFeeOrderSummary())
             .isEqualTo(orderSummary);
     }
-
-    @Test
-    void shouldDeleteStagnantOrderSummaryDataWhenAboutToStartIsInvoked() {
-
-        final long caseId = TEST_CASE_ID;
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        final CaseData caseData = validApplicant1CaseData();
-        caseData.getApplicant1().setAddress(AddressGlobalUK.builder().addressLine1("test").build());
-        caseDetails.setData(caseData);
-        caseData.getApplication().setApplicationFeeOrderSummary(OrderSummary.builder().build());
-        caseData.getApplication().setApplicationFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
-        caseDetails.setId(caseId);
-
-        when(paymentSetupService.createApplicationFeeOrderSummary(caseData, TEST_CASE_ID))
-            .thenReturn(orderSummary);
-
-        var response = solicitorSubmitApplication.aboutToStart(caseDetails);
-
-        assertThat(response.getData().getApplication().getApplicationFeeOrderSummary())
-            .isEqualTo(orderSummary);
-        assertThat(response.getData().getApplication().getApplicationFeeServiceRequestReference())
-            .isEqualTo(null);
-    }
-
+    
     @Test
     void shouldAddPaymentIfPaymentsExists() {
 
