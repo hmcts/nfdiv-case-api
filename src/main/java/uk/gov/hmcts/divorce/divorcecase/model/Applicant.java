@@ -240,6 +240,14 @@ public class Applicant {
     )
     private YesOrNo coPronouncedCoverLetterRegenerated;
 
+    @JsonUnwrapped
+    @CCD(
+        label = "General Application Options",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private GeneralApplicationOptions generalApplicationOptions;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(NO)
