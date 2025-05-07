@@ -186,7 +186,7 @@ class SolicitorSubmitApplicationTest {
         caseData.getApplicant1().setSolicitor(solicitor);
 
         PbaResponse pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.createServiceRequestReference(null, TEST_CASE_ID, solicitor.getName(), orderSummary))
+        when(paymentSetupService.createApplicationFeeServiceRequest(caseData, TEST_CASE_ID, null))
             .thenReturn(TEST_SERVICE_REFERENCE);
         when(paymentService.processPbaPayment(TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
@@ -328,7 +328,7 @@ class SolicitorSubmitApplicationTest {
         when(submissionService.submitApplication(caseDetails)).thenReturn(expectedCaseDetails);
 
         var pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.createServiceRequestReference(null, TEST_CASE_ID, solicitor.getName(), orderSummary))
+        when(paymentSetupService.createApplicationFeeServiceRequest(caseData, TEST_CASE_ID, null))
             .thenReturn(TEST_SERVICE_REFERENCE);
         when(paymentService.processPbaPayment(
             TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
@@ -501,7 +501,7 @@ class SolicitorSubmitApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         final var pbaResponse = new PbaResponse(CREATED, null, "1234");
-        when(paymentService.createServiceRequestReference(null, TEST_CASE_ID, solicitor.getName(), orderSummary))
+        when(paymentSetupService.createApplicationFeeServiceRequest(caseData, TEST_CASE_ID, null))
             .thenReturn(TEST_SERVICE_REFERENCE);
         when(paymentService.processPbaPayment(TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);
@@ -581,7 +581,7 @@ class SolicitorSubmitApplicationTest {
         caseData.getApplicant1().setSolicitor(solicitor);
 
         final var pbaResponse = new PbaResponse(FORBIDDEN, "Account balance insufficient", null);
-        when(paymentService.createServiceRequestReference(null, TEST_CASE_ID, solicitor.getName(), orderSummary))
+        when(paymentSetupService.createApplicationFeeServiceRequest(caseData, TEST_CASE_ID, null))
             .thenReturn(TEST_SERVICE_REFERENCE);
         when(paymentService.processPbaPayment(TEST_CASE_ID, TEST_SERVICE_REFERENCE, solicitor, PBA_NUMBER, orderSummary, FEE_ACCOUNT_REF))
             .thenReturn(pbaResponse);

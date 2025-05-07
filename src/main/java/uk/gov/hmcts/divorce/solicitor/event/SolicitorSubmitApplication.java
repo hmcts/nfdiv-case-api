@@ -98,18 +98,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                 .build();
         }
 
-        var application = caseData.getApplication();
-
-        removeStaleOrderSummary(application);
-
-        OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(caseData, details.getId());
-
-        application.setApplicationFeeOrderSummary(orderSummary);
-        application.setSolApplicationFeeInPounds(
-            NumberFormat.getNumberInstance().format(
-                new BigDecimal(application.getApplicationFeeOrderSummary().getPaymentTotal()).movePointLeft(2)
-            )
-        );
+        setOrderSummary(caseData, details.getId());
 
         caseData.getApplication().setSolStatementOfReconciliationCertify(null);
         caseData.getApplication().setSolStatementOfReconciliationDiscussed(null);
@@ -146,7 +135,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             final Optional<String> pbaNumber = application.getPbaNumber();
             if (pbaNumber.isPresent()) {
                 String responsibleParty = caseData.getApplicant1().getSolicitor().getName();
-                String serviceRequest = findOrCreatePaymentServiceRequest(application, responsibleParty, caseId);
+                String serviceRequest = findOrCreatePaymentServiceRequest(caseData, responsibleParty, caseId);
 
                 application.setApplicationFeeServiceRequestReference(serviceRequest);
 
@@ -210,12 +199,25 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         }
     }
 
-    private void removeStaleOrderSummary(Application application) {
+    private void setOrderSummary(CaseData caseData, long caseId) {
+        Application application = caseData.getApplication();
+
+        // Stale order summary and SR are blanked out to ensure sols pay the fee at time of submit rather than creation (NFDIV-4857)
         application.setApplicationFeeOrderSummary(null);
         application.setApplicationFeeServiceRequestReference(null);
+
+        OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(caseData, caseId);
+
+        application.setApplicationFeeOrderSummary(orderSummary);
+        application.setSolApplicationFeeInPounds(
+            NumberFormat.getNumberInstance().format(
+                new BigDecimal(application.getApplicationFeeOrderSummary().getPaymentTotal()).movePointLeft(2)
+            )
+        );
     }
 
-    private String findOrCreatePaymentServiceRequest(Application application, String responsibleParty, long caseId) {
+    private String findOrCreatePaymentServiceRequest(CaseData data, String responsibleParty, long caseId) {
+        Application application = data.getApplication();
         Fee fee = application.getApplicationFeeOrderSummary().getFees().get(0).getValue();
 
         Optional<ServiceRequestDto> unpaidServiceRequest = serviceRequestSearchService.findUnpaidServiceRequest(
@@ -228,8 +230,8 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
             log.info("Found unpaid service request: {}, for case: {}", serviceRequest, caseId);
         } else {
-            serviceRequest = paymentService.createServiceRequestReference(
-                redirectUrl, caseId, responsibleParty, application.getApplicationFeeOrderSummary()
+            serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
+                data, caseId, redirectUrl
             );
 
             log.info("Created new service request: {}, for case: {}", serviceRequest, caseId);
