@@ -92,7 +92,7 @@ class Applicant2SolicitorUpdateContactDetailsTest {
         var beforeDetails = caseDetailsWithApplicant2Solicitor(beforeSolicitor);
         var afterDetails = caseDetailsWithApplicant2Solicitor(afterSolicitor);
 
-        var response = applicant2SolicitorUpdateContactDetails.aboutToSubmit(afterDetails, beforeDetails);
+        applicant2SolicitorUpdateContactDetails.aboutToSubmit(afterDetails, beforeDetails);
 
         verify(caseFlagsService).updatePartyNameInCaseFlags(afterDetails.getData(), CaseFlagsService.PartyFlagType.APPLICANT_2_SOLICITOR);
     }

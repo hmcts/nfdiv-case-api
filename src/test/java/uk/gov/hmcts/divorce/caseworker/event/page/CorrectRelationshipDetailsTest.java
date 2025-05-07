@@ -17,12 +17,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORC
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class CorrectRelationshipDetailsTest {
+class CorrectRelationshipDetailsTest {
 
     private final CorrectRelationshipDetails page = new CorrectRelationshipDetails();
 
     @Test
-    public void shouldSetCaseLabelsForSoleDivorce() {
+    void shouldSetCaseLabelsForSoleDivorce() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.setApplicationType(SOLE_APPLICATION);
@@ -35,17 +35,17 @@ public class CorrectRelationshipDetailsTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(
-            response.getData().getLabelContent().getApplicant2(),
-            "respondent"
+            "respondent",
+            response.getData().getLabelContent().getApplicant2()
         );
         assertEquals(
-            response.getData().getLabelContent().getUnionType(),
-            "divorce"
+            "divorce",
+            response.getData().getLabelContent().getUnionType()
         );
     }
 
     @Test
-    public void shouldSetCaseLabelsForJointDissolution() {
+    void shouldSetCaseLabelsForJointDissolution() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setApplicationType(JOINT_APPLICATION);
@@ -58,12 +58,12 @@ public class CorrectRelationshipDetailsTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(
-            response.getData().getLabelContent().getApplicant2(),
-            "applicant 2"
+            "applicant 2",
+            response.getData().getLabelContent().getApplicant2()
         );
         assertEquals(
-            response.getData().getLabelContent().getUnionType(),
-            "dissolution"
+            "dissolution",
+            response.getData().getLabelContent().getUnionType()
         );
     }
 }

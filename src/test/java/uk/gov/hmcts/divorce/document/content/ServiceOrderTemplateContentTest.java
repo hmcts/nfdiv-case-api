@@ -57,7 +57,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 
 @ExtendWith(MockitoExtension.class)
-public class ServiceOrderTemplateContentTest {
+class ServiceOrderTemplateContentTest {
 
     @Mock
     private CommonContent commonContent;
@@ -66,7 +66,7 @@ public class ServiceOrderTemplateContentTest {
     private ServiceOrderTemplateContent serviceOrderTemplateContent;
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingDispensedWithServiceGrantedDocument() {
+    void shouldSuccessfullyApplyContentFromCaseDataForGeneratingDispensedWithServiceGrantedDocument() {
         CaseData caseData = buildCaseData(YES, DISPENSED);
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
@@ -89,7 +89,7 @@ public class ServiceOrderTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingJudicialSeparationDispensedWithServiceGrantedDocument() {
+    void shouldSuccessfullyApplyContentFromCaseDataForGeneratingJudicialSeparationDispensedWithServiceGrantedDocument() {
         CaseData caseData = buildCaseData(YES, DISPENSED);
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
 
@@ -113,7 +113,7 @@ public class ServiceOrderTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingSeparationDispensedWithServiceGrantedDocument() {
+    void shouldSuccessfullyApplyContentFromCaseDataForGeneratingSeparationDispensedWithServiceGrantedDocument() {
         CaseData caseData = buildCaseData(YES, DISPENSED);
         caseData.setSupplementaryCaseType(SEPARATION);
 
@@ -137,7 +137,7 @@ public class ServiceOrderTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingDeemedWithServiceGrantedDocument() {
+    void shouldSuccessfullyApplyContentFromCaseDataForGeneratingDeemedWithServiceGrantedDocument() {
         CaseData caseData = buildCaseData(YES, DEEMED);
         caseData.getAlternativeService().setDeemedServiceDate(LocalDate.of(2021, 6, 20));
 
@@ -161,7 +161,7 @@ public class ServiceOrderTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingJudicialSeparationDeemedWithServiceGrantedDocument() {
+    void shouldSuccessfullyApplyContentFromCaseDataForGeneratingJudicialSeparationDeemedWithServiceGrantedDocument() {
         CaseData caseData = buildCaseData(YES, DEEMED);
         caseData.getAlternativeService().setDeemedServiceDate(LocalDate.of(2021, 6, 20));
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
@@ -186,7 +186,7 @@ public class ServiceOrderTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForGeneratingSeparationDeemedWithServiceGrantedDocument() {
+    void shouldSuccessfullyApplyContentFromCaseDataForGeneratingSeparationDeemedWithServiceGrantedDocument() {
         CaseData caseData = buildCaseData(YES, DEEMED);
         caseData.getAlternativeService().setDeemedServiceDate(LocalDate.of(2021, 6, 20));
         caseData.setSupplementaryCaseType(SEPARATION);
@@ -211,7 +211,7 @@ public class ServiceOrderTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromDivorceCaseDataForGeneratingDispensedWithServiceRefusalDocument() {
+    void shouldSuccessfullyApplyContentFromDivorceCaseDataForGeneratingDispensedWithServiceRefusalDocument() {
         CaseData caseData = buildCaseData(NO, DISPENSED);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
@@ -238,7 +238,7 @@ public class ServiceOrderTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromDissolutionCaseDataForGeneratingDispensedWithServiceRefusalDocument() {
+    void shouldSuccessfullyApplyContentFromDissolutionCaseDataForGeneratingDispensedWithServiceRefusalDocument() {
         CaseData caseData = buildCaseData(NO, DISPENSED);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
@@ -266,7 +266,7 @@ public class ServiceOrderTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromDivorceCaseDataForGeneratingDeemedServiceRefusalDocument() {
+    void shouldSuccessfullyApplyContentFromDivorceCaseDataForGeneratingDeemedServiceRefusalDocument() {
         CaseData caseData = buildCaseData(NO, DEEMED);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
@@ -293,7 +293,7 @@ public class ServiceOrderTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromDissolutionCaseDataForGeneratingDeemedServiceRefusalDocument() {
+    void shouldSuccessfullyApplyContentFromDissolutionCaseDataForGeneratingDeemedServiceRefusalDocument() {
         CaseData caseData = buildCaseData(NO, DEEMED);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
@@ -320,7 +320,7 @@ public class ServiceOrderTemplateContentTest {
     }
 
     @Test
-    public void shouldApplyWelshContentIfApplicant1LanguagePreferenceIsWelshOnDivorce() {
+    void shouldApplyWelshContentIfApplicant1LanguagePreferenceIsWelshOnDivorce() {
         CaseData caseData = buildCaseData(NO, DEEMED);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DIVORCE);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
@@ -337,7 +337,7 @@ public class ServiceOrderTemplateContentTest {
     }
 
     @Test
-    public void shouldApplyWelshContentIfApplicant1LanguagePreferenceIsWelshOnDissolution() {
+    void shouldApplyWelshContentIfApplicant1LanguagePreferenceIsWelshOnDissolution() {
         CaseData caseData = buildCaseData(NO, DEEMED);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");

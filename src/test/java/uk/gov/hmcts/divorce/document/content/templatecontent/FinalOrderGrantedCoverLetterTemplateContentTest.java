@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDa
 class FinalOrderGrantedCoverLetterTemplateContentTest {
 
     private static final String NAME = "name";
-    public static final String CASE_REFERENCE = "caseReference";
+    static final String CASE_REFERENCE = "caseReference";
 
 
     @Mock
@@ -42,12 +42,12 @@ class FinalOrderGrantedCoverLetterTemplateContentTest {
     private FinalOrderGrantedCoverLetterTemplateContent finalOrderGrantedCoverLetterTemplateContent;
 
     @Test
-    public void shouldBeAbleToHandleFinalOrderCoverLetterTemplate() {
+    void shouldBeAbleToHandleFinalOrderCoverLetterTemplate() {
         assertThat(finalOrderGrantedCoverLetterTemplateContent.getSupportedTemplates()).containsOnly(FINAL_ORDER_COVER_LETTER_TEMPLATE_ID);
     }
 
     @Test
-    public void shouldProvideCorrectTemplateContentForFoGrantedCoverLetter() {
+    void shouldProvideCorrectTemplateContentForFoGrantedCoverLetter() {
         CaseData caseData = validApplicant1CaseData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
         setMockClock(clock);

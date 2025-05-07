@@ -109,7 +109,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
     }
 
     @Test
-    public void shouldValidateApplicant1SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() {
+    void shouldValidateApplicant1SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() {
         Solicitor solicitor = Solicitor.builder()
             .organisationPolicy(organisationPolicy())
             .email(TEST_SOLICITOR_EMAIL)
@@ -141,7 +141,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
     }
 
     @Test
-    public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() {
+    void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() {
         Solicitor solicitor = Solicitor.builder()
             .organisationPolicy(organisationPolicy())
             .email(TEST_SOLICITOR_EMAIL)
@@ -173,7 +173,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
     }
 
     @Test
-    public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorOrgIsNotPopulated() {
+    void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorOrgIsNotPopulated() {
         Solicitor solicitor = Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build();
 
         final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
@@ -189,7 +189,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
     }
 
     @Test
-    public void shouldThrow403ForbiddenExceptionWhenServiceIsNotWhitelistedInReferenceData() {
+    void shouldThrow403ForbiddenExceptionWhenServiceIsNotWhitelistedInReferenceData() {
         byte[] emptyBody = {};
         Request request = Request.create(GET, EMPTY, Map.of(), emptyBody, UTF_8, null);
 
@@ -221,7 +221,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
     }
 
     @Test
-    public void shouldValidateApplicant1SolicitorEmailAndReturnErrorsWhenInValid() {
+    void shouldValidateApplicant1SolicitorEmailAndReturnErrorsWhenInValid() {
         Solicitor solicitor = Solicitor.builder()
             .organisationPolicy(organisationPolicy())
             .email("invalidEmail")

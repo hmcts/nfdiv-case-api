@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -23,21 +23,18 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class EmailUpdateService {
 
-    @Autowired
-    InviteApplicantToCaseNotification inviteApplicantToCaseNotification;
-    @Autowired
-    NotificationDispatcher notificationDispatcher;
-    @Autowired
-    CcdAccessService ccdAccessService;
+    private final InviteApplicantToCaseNotification inviteApplicantToCaseNotification;
+    private final NotificationDispatcher notificationDispatcher;
+    private final CcdAccessService ccdAccessService;
 
     public CaseDetails<CaseData, State> processEmailUpdate(final CaseDetails<CaseData, State> caseDetails,
                                                       final CaseDetails<CaseData, State> beforeCaseDetails,
                                                       boolean isApplicant1) {
 
         final CaseData data = caseDetails.getData();
-        final CaseData beforeData = beforeCaseDetails.getData();
 
         final Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
         final Applicant partner = isApplicant1 ? data.getApplicant2() : data.getApplicant1();

@@ -33,6 +33,6 @@ class SetFailedBulkCaseMigrationVersionToZeroTest {
 
         var result = setFailedBulkCaseMigrationVersionToZero.apply(caseDetails);
 
-        Assertions.assertThat(result.getData().getRetiredFields().getBulkCaseDataVersion()).isEqualTo(0);
+        Assertions.assertThat(result.getData().getRetiredFields().getBulkCaseDataVersion()).isZero();
     }
 }

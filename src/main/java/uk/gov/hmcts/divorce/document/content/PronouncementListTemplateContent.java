@@ -1,9 +1,9 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.stream.Stream.ofNullable;
@@ -42,19 +41,16 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TI
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class PronouncementListTemplateContent {
 
-    @Autowired
-    private CcdSearchService ccdSearchService;
+    private final CcdSearchService ccdSearchService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Map<String, Object> apply(final BulkActionCaseData caseData,
@@ -117,7 +113,7 @@ public class PronouncementListTemplateContent {
             .peek(caseDetails -> {
                 log.info("Found case in Bulk List {}", caseDetails.getId());
             })
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private boolean isCaseToBeRemoved(final BulkActionCaseData caseData, final CaseDetails caseDetails) {

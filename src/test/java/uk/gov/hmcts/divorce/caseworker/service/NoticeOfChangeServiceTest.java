@@ -69,7 +69,7 @@ class NoticeOfChangeServiceTest {
     private NoticeOfChangeService noticeOfChangeService;
 
     @Test
-    public void shouldRevokeAccessForOrganisation() {
+    void shouldRevokeAccessForOrganisation() {
         Applicant applicant = getApplicant(UserRole.APPLICANT_1_SOLICITOR);
         Long caseId = 1234567890L;
         List<String> roles = List.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
@@ -89,7 +89,7 @@ class NoticeOfChangeServiceTest {
     }
 
     @Test
-    public void shouldChangeAccessWithinOrganisation() {
+    void shouldChangeAccessWithinOrganisation() {
         Long caseId = 1234567890L;
         String userId = "userIdTest";
 
@@ -115,7 +115,7 @@ class NoticeOfChangeServiceTest {
     }
 
     @Test
-    public void shouldThrowNoSuchElementExceptionWhenUserNotFound() {
+    void shouldThrowNoSuchElementExceptionWhenUserNotFound() {
         Applicant applicant = getApplicant(UserRole.APPLICANT_1_SOLICITOR);
         Long caseId = 1234567890L;
         List<String> roles = List.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
@@ -131,11 +131,11 @@ class NoticeOfChangeServiceTest {
                 caseId)
         );
 
-        assertEquals(exception.getMessage(), "No userId found for user with email " + TEST_SOLICITOR_EMAIL);
+        assertEquals("No userId found for user with email " + TEST_SOLICITOR_EMAIL, exception.getMessage());
     }
 
     @Test
-    public void shouldThrowIllegalArgumentExceptionWhenUserIsNotInSpecifiedOrg() {
+    void shouldThrowIllegalArgumentExceptionWhenUserIsNotInSpecifiedOrg() {
         Applicant applicant = getApplicant(UserRole.APPLICANT_1_SOLICITOR);
         Long caseId = 1234567890L;
         List<String> roles = List.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
@@ -152,11 +152,11 @@ class NoticeOfChangeServiceTest {
                 caseId)
         );
 
-        assertEquals(exception.getMessage(), "User is not in specified organisation for case " + caseId);
+        assertEquals("User is not in specified organisation for case " + caseId, exception.getMessage());
     }
 
     @Test
-    public void shouldApplyNoticeOfChangeDecisionWhenPreviousRepresentationWasNotDigital() {
+    void shouldApplyNoticeOfChangeDecisionWhenPreviousRepresentationWasNotDigital() {
         Long caseId = 1234567890L;
         String userId = "userIdTest";
         OrganisationsResponse organisationResponse = OrganisationsResponse.builder()
@@ -195,11 +195,11 @@ class NoticeOfChangeServiceTest {
             SERVICE_AUTHORIZATION,
             TEST_ORG_ID,
             "1");
-        assertEquals(applicant.getSolicitor().getAddress(), TEST_SOLICITOR_ADDRESS);
+        assertEquals(TEST_SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
     }
 
     @Test
-    public void shouldApplyNoticeOfChangeDecisionWhenPreviousRepresentationWasDigital() {
+    void shouldApplyNoticeOfChangeDecisionWhenPreviousRepresentationWasDigital() {
         Long caseId = 1234567890L;
         String userId = "userIdTest";
         OrganisationsResponse organisationResponse = OrganisationsResponse.builder()
@@ -244,7 +244,7 @@ class NoticeOfChangeServiceTest {
             SERVICE_AUTHORIZATION,
             TEST_ORG_ID,
             "1");
-        assertEquals(applicant.getSolicitor().getAddress(), TEST_SOLICITOR_ADDRESS);
+        assertEquals(TEST_SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
     }
 
     private static Applicant getApplicant(UserRole caseRole) {

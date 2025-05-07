@@ -15,7 +15,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 class AlternativeServiceUtilTest {
 
     @Test
-    public void shouldAddNewServiceApplicationToCollectionAndSetApplicationToNull() {
+    void shouldAddNewServiceApplicationToCollectionAndSetApplicationToNull() {
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
@@ -23,12 +23,12 @@ class AlternativeServiceUtilTest {
         caseData.archiveAlternativeServiceApplicationOnCompletion();
 
         assertThat(caseData.getAlternativeServiceOutcomes()).isNotNull();
-        assertThat(caseData.getAlternativeServiceOutcomes().size()).isEqualTo(1);
+        assertThat(caseData.getAlternativeServiceOutcomes()).hasSize(1);
         assertThat(caseData.getAlternativeService()).isNull();
     }
 
     @Test
-    public void shouldAddSecondServiceApplicationToCollectionIfOneExists() {
+    void shouldAddSecondServiceApplicationToCollectionIfOneExists() {
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
@@ -43,7 +43,7 @@ class AlternativeServiceUtilTest {
         caseData.getAlternativeService().getBailiff().setSuccessfulServedByBailiff(YesOrNo.YES);
         caseData.archiveAlternativeServiceApplicationOnCompletion();
 
-        assertThat(caseData.getAlternativeServiceOutcomes().size()).isEqualTo(3);
+        assertThat(caseData.getAlternativeServiceOutcomes()).hasSize(3);
         assertThat(caseData.getAlternativeServiceOutcomes().get(0).getValue().getAlternativeServiceType()).isEqualTo(BAILIFF);
         assertThat(caseData.getAlternativeServiceOutcomes().get(0).getValue().getSuccessfulServedByBailiff())
             .isEqualTo(YesOrNo.YES);
@@ -53,7 +53,7 @@ class AlternativeServiceUtilTest {
     }
 
     @Test
-    public void shouldNotAddToServiceApplicationCollectionIfServiceApplicationIsNull() {
+    void shouldNotAddToServiceApplicationCollectionIfServiceApplicationIsNull() {
         final CaseData caseData = caseData();
         caseData.setAlternativeService(null);
         caseData.archiveAlternativeServiceApplicationOnCompletion();
@@ -61,7 +61,7 @@ class AlternativeServiceUtilTest {
     }
 
     @Test
-    public void assertIsApplicationGrantedYes() {
+    void assertIsApplicationGrantedYes() {
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setServiceApplicationGranted(YesOrNo.YES);
 
@@ -69,7 +69,7 @@ class AlternativeServiceUtilTest {
     }
 
     @Test
-    public void assertIsApplicationGrantedNo() {
+    void assertIsApplicationGrantedNo() {
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setServiceApplicationGranted(YesOrNo.NO);
 

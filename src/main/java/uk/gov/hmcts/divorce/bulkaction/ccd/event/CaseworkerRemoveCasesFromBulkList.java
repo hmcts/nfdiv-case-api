@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -20,7 +20,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
@@ -31,15 +30,14 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validat
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
     public static final String CASEWORKER_REMOVE_CASES_BULK_LIST = "caseworker-remove-cases-bulk-list";
 
-    @Autowired
-    private CaseRemovalService caseRemovalService;
+    private final CaseRemovalService caseRemovalService;
 
-    @Autowired
-    private PronouncementListDocService pronouncementListDocService;
+    private final PronouncementListDocService pronouncementListDocService;
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
@@ -113,12 +111,12 @@ public class CaseworkerRemoveCasesFromBulkList implements CCDConfig<BulkActionCa
         List<ListValue<BulkListCaseDetails>> casesToRemove =
             bulkActionCaseData.getBulkListCaseDetails().stream()
                 .filter(c -> !casesAcceptedToListForHearing.contains(c.getValue().getCaseReference().getCaseReference()))
-                .collect(toList());
+                .toList();
 
         bulkActionCaseData.setBulkListCaseDetails(
             bulkActionCaseData.getBulkListCaseDetails().stream()
                 .filter(lv -> !casesToRemove.contains(lv))
-                .collect(toList()));
+                .toList());
         bulkActionCaseData.setCasesToBeRemoved(casesToRemove);
 
         if (bulkActionCaseData.getPronouncementListDocument() != null) {

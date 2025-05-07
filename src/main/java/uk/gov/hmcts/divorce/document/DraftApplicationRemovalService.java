@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.document;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -9,16 +9,15 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class DraftApplicationRemovalService {
 
-    @Autowired
-    private DocumentRemovalService documentRemovalService;
+    private final DocumentRemovalService documentRemovalService;
 
     public List<ListValue<DivorceDocument>> removeDraftApplicationDocument(final List<ListValue<DivorceDocument>> generatedDocuments,
                                                                            final Long caseId) {
@@ -40,12 +39,9 @@ public class DraftApplicationRemovalService {
             log.info("No draft application document found for case id {} ", caseId);
         }
 
-        final List<ListValue<DivorceDocument>> generatedDocumentsExcludingApplication = generatedDocuments
-            .stream()
+        return generatedDocuments.stream()
             .filter(document -> !isApplicationDocument(document))
-            .collect(toList());
-
-        return generatedDocumentsExcludingApplication;
+            .toList();
     }
 
     private boolean isApplicationDocument(ListValue<DivorceDocument> document) {

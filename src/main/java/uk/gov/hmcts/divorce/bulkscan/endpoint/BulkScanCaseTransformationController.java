@@ -6,8 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -33,12 +32,12 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class BulkScanCaseTransformationController {
 
     public static final String TRANSFORMATION_AND_OCR_WARNINGS = "warnings";
 
-    @Autowired
-    private BulkScanService bulkScanService;
+    private final BulkScanService bulkScanService;
 
     @PostMapping(path = "/transform-exception-record", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     @Operation(summary = "Transform exception record into CCD case data")
@@ -87,6 +86,6 @@ public class BulkScanCaseTransformationController {
         return warnings
             .stream()
             .map(ListValue::getValue)
-            .collect(toList());
+            .toList();
     }
 }

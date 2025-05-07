@@ -205,6 +205,24 @@ public final class DocumentConstants {
     public static final String APPLICANT1 = "applicant1";
     public static final String APPLICANT2 = "applicant2";
 
+    public static final String REQUEST_FOR_INFORMATION_LETTER_DOCUMENT_NAME = "RequestForInformationLetter";
+    public static final String REQUEST_FOR_INFORMATION_LETTER_TEMPLATE_ID = "REQUEST_FOR_INFORMATION_LETTER";
+    public static final String REQUEST_FOR_INFORMATION_RESPONSE_LETTER_DOCUMENT_NAME = "RequestForInformationResponseLetter";
+    public static final String REQUEST_FOR_INFORMATION_RESPONSE_LETTER_TEMPLATE_ID = "REQUEST_FOR_INFORMATION_RESPONSE_LETTER";
+    public static final String REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER_DOCUMENT_NAME = "RequestForInformationPartnerResponseLetter";
+    public static final String REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER_TEMPLATE_ID
+        = "REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER";
+    public static final String REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_DOCUMENT_NAME = "RequestForInformationSolicitorLetter";
+    public static final String REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_TEMPLATE_ID = "REQUEST_FOR_INFORMATION_SOLICITOR_LETTER";
+    public static final String REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER_DOCUMENT_NAME
+        = "RequestForInformationSolicitorResponseLetter";
+    public static final String REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER_TEMPLATE_ID
+        = "REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER";
+    public static final String REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER_DOCUMENT_NAME
+        = "RequestForInformationPartnerSolicitorResponseLetter";
+    public static final String REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER_TEMPLATE_ID
+        = "REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER";
+
     private DocumentConstants() {
     }
 }

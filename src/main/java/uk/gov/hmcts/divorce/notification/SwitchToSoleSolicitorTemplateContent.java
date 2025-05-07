@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.notification;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -14,16 +14,15 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NO
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_PLUS_14_DAYS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
+@RequiredArgsConstructor
 public class SwitchToSoleSolicitorTemplateContent {
 
-    @Autowired
-    Clock clock;
+    private final Clock clock;
 
-    @Autowired
-    CommonContent commonContent;
+    private final CommonContent commonContent;
 
     public static final String APPLICANT_1_NAME = "applicant 1 name";
     public static final String APPLICANT_2_NAME = "applicant 2 name";
@@ -38,7 +37,8 @@ public class SwitchToSoleSolicitorTemplateContent {
                 ? applicant.getSolicitor().getReference()
                 : NOT_PROVIDED);
         templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
-        templateContent.put(DATE_PLUS_14_DAYS, LocalDate.now(clock).plusDays(14).format(DATE_TIME_FORMATTER));
+        templateContent.put(DATE_PLUS_14_DAYS, LocalDate.now(clock).plusDays(14).format(
+            getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
 
         return templateContent;
     }

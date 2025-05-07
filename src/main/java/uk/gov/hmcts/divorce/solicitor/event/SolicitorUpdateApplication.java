@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -37,15 +37,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_UPDATE = "solicitor-update-application";
 
-    @Autowired
-    private SolAboutTheSolicitor solAboutTheSolicitor;
+    private final SolAboutTheSolicitor solAboutTheSolicitor;
 
-    @Autowired
-    private SolicitorUpdateApplicationService solicitorUpdateApplicationService;
+    private final SolicitorUpdateApplicationService solicitorUpdateApplicationService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -66,6 +65,18 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
         );
 
         pages.forEach(page -> page.addTo(pageBuilder));
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("Solicitor update application about to start callback invoked for Case Id: {}", details.getId());
+
+        CaseData data = details.getData();
+        data.getApplicant1().setNonConfidentialAddress(data.getApplicant1().getAddress());
+        data.getApplicant2().setNonConfidentialAddress(data.getApplicant2().getAddress());
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
@@ -96,6 +107,7 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
             .showSummary()
             .showEventNotes()
             .ttlIncrement(180)
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR));
     }

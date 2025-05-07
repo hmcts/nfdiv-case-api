@@ -16,7 +16,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +29,11 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAlternativeService
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ENFORCEMENT;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_BAILIFF;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DEEMED;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ENFORCEMENT;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_BAILIFF;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DEEMED;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -41,7 +41,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerConfirmServicePaymentTest {
+class CaseworkerConfirmServicePaymentTest {
 
     @Mock
     PaymentService paymentService;

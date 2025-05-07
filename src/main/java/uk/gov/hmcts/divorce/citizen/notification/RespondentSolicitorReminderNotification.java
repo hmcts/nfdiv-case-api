@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -23,17 +23,16 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENC
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_SOLICITOR_HAS_NOT_RESPONDED;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class RespondentSolicitorReminderNotification implements ApplicantNotification {
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
     @Override
     public void sendToApplicant2Solicitor(CaseData caseData, Long caseId) {
@@ -52,10 +51,13 @@ public class RespondentSolicitorReminderNotification implements ApplicantNotific
 
         Applicant respondent = caseData.getApplicant2();
 
-        var templateVars = commonContent.basicTemplateVars(caseData, id, respondent.getLanguagePreference());
+        var languagePreference = respondent.getLanguagePreference();
+        var dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(languagePreference);
 
-        templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
-        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+        var templateVars = commonContent.basicTemplateVars(caseData, id, languagePreference);
+
+        templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(dateTimeFormatter));
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(dateTimeFormatter));
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(SOLICITOR_NAME, respondent.getSolicitor().getName());

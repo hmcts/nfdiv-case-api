@@ -23,7 +23,7 @@ import static uk.gov.hmcts.divorce.bulkscan.validation.OcrValidator.WARNING_NOT_
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.populateD8OcrDataFields;
 
 @ExtendWith(MockitoExtension.class)
-public class OcrValidatorTest {
+class OcrValidatorTest {
 
     @InjectMocks
     private OcrValidator validator;
@@ -36,8 +36,8 @@ public class OcrValidatorTest {
 
         OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
-        assertThat(response.getErrors()).hasSize(0);
-        assertThat(response.getWarnings()).hasSize(0);
+        assertThat(response.getErrors()).isEmpty();
+        assertThat(response.getWarnings()).isEmpty();
         assertThat(response.getStatus()).isEqualTo(SUCCESS);
     }
 

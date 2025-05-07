@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -26,15 +26,14 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ApplicationSubmittedNotification implements ApplicantNotification {
 
     private static final String APPLICANT2_NAME = "applicant2 name";
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {

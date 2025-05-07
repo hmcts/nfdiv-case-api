@@ -480,13 +480,13 @@ class LegalAdvisorMakeDecisionTest {
             legalAdvisorMakeDecision.aboutToSubmit(caseDetails, null);
 
         ConditionalOrder actualConditionalOrder = response.getData().getConditionalOrder();
-        assertThat(actualConditionalOrder.getClarificationResponses()).hasSize(0);
+        assertThat(actualConditionalOrder.getClarificationResponses()).isEmpty();
         assertThat(actualConditionalOrder.getCannotUploadClarificationDocuments()).isNull();
-        assertThat(actualConditionalOrder.getClarificationUploadDocuments()).hasSize(0);
+        assertThat(actualConditionalOrder.getClarificationUploadDocuments()).isEmpty();
     }
 
     @Test
-    public void midEventShouldGenerateTheRefusalOrderDoc() {
+    void midEventShouldGenerateTheRefusalOrderDoc() {
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder().granted(NO).refusalDecision(MORE_INFO).build())
             .build();

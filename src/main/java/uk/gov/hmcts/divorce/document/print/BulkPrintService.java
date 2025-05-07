@@ -1,9 +1,9 @@
 package uk.gov.hmcts.divorce.document.print;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
@@ -17,16 +17,17 @@ import uk.gov.hmcts.reform.sendletter.api.model.v3.Document;
 import uk.gov.hmcts.reform.sendletter.api.model.v3.LetterV3;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.Base64.getEncoder;
-import static java.util.stream.Collectors.toList;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class BulkPrintService {
     private static final String XEROX_TYPE_PARAMETER = "NFDIV001";
     private static final String LETTER_TYPE_KEY = "letterType";
@@ -35,17 +36,13 @@ public class BulkPrintService {
     private static final String RECIPIENTS = "recipients";
     private static final String IS_INTERNATIONAL = "isInternational";
 
-    @Autowired
-    private SendLetterApi sendLetterApi;
+    private final SendLetterApi sendLetterApi;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private CaseDocumentAccessManagement documentManagementClient;
+    private final CaseDocumentAccessManagement documentManagementClient;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
     public UUID print(final Print print) {
         final String authToken = authTokenGenerator.generate();
@@ -82,20 +79,22 @@ public class BulkPrintService {
         final var systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
         final var userAuth = systemUpdateUser.getAuthToken();
 
-        return print.getLetters().stream()
-            .map(letter ->
-                new Document(
-                    getEncoder().encodeToString(
-                        getDocumentBytes(
-                            letter,
-                            serviceAuth,
-                            userAuth
-                        )
-                    ),
-                    letter.getNumCopiesToPrint()
+        return new ArrayList<>(
+            print.getLetters().stream()
+                .map(letter ->
+                    new Document(
+                        getEncoder().encodeToString(
+                            getDocumentBytes(
+                                letter,
+                                serviceAuth,
+                                userAuth
+                            )
+                        ),
+                        letter.getNumCopiesToPrint()
+                    )
                 )
-            )
-            .collect(toList());
+                .toList()
+        );
     }
 
     private UUID triggerPrintRequest(Print print, String authToken, List<Document> documents) {

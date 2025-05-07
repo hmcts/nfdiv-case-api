@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -22,13 +22,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SystemLinkApplicant1 implements CCDConfig<CaseData, State, UserRole> {
 
-    @Autowired
-    private CcdAccessService ccdAccessService;
+    private final CcdAccessService ccdAccessService;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
 
     public static final String SYSTEM_LINK_APPLICANT_1 = "system-link-applicant1";
 
@@ -37,8 +36,8 @@ public class SystemLinkApplicant1 implements CCDConfig<CaseData, State, UserRole
         configBuilder
             .event(SYSTEM_LINK_APPLICANT_1)
             .forAllStates()
-            .name("Link Applicant 1 to case")
-            .description("Link Applicant 1 to case so they are online")
+            .name("Link App or App 1 to case")
+            .description("Link Applicant or Applicant1 to case so they are online")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER)
             .retries(120, 120)
