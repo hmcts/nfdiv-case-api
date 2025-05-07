@@ -103,7 +103,7 @@ class SolPaymentTest {
     }
 
     @Test
-    void shouldReusePreviousServiceRequestWhenFound() {
+    void shouldReuseServiceRequestFromPreviousPaymentAttemptWhenFound() {
         final CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.setApplicationType(SOLE_APPLICATION);

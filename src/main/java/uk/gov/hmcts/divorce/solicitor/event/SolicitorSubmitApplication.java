@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.solicitor.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -62,9 +61,6 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     private final PaymentSetupService paymentSetupService;
     private final CaseFlagsService caseFlagsService;
     private final ServiceRequestSearchService serviceRequestSearchService;
-
-    @Value("${idam.client.redirect_uri}")
-    private String redirectUrl;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
