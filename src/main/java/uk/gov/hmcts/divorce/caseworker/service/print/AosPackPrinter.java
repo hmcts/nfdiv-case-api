@@ -52,7 +52,7 @@ public class AosPackPrinter {
 
             boolean app2HasSolicitor = app2.isRepresented() && app2.getSolicitor() != null;
             boolean app2IsOverseas = YES.equals(app2.getCorrespondenceAddressIsOverseas());
-            boolean reissuedAsOfflineAOS = OFFLINE_AOS.equals(caseData.getApplication().getReissueOption());
+            boolean reissuedAsOfflineAOS = OFFLINE_AOS.equals(caseData.getApplication().getPreviousReissueOption());
 
             var app2NeedsD10 = reissuedAsOfflineAOS
                     || (app2HasSolicitor ? YES.equals(app2.getSolicitor().getAddressOverseas()) : app2IsOverseas);
