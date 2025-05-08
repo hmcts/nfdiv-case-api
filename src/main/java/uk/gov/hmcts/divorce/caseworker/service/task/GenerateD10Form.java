@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentsWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
 
@@ -41,9 +42,10 @@ public class GenerateD10Form implements CaseTask {
         var app2 = caseData.getApplicant2();
         var overseasAddress = app2.isRepresented() ? app2.getSolicitor().getAddressOverseas() == YesOrNo.YES
                 : app2.getCorrespondenceAddressIsOverseas() == YesOrNo.YES;
+        boolean reissuedAsOfflineAOS = OFFLINE_AOS.equals(caseData.getApplication().getReissueOption());
 
         var d10Needed = caseData.getApplicationType().isSole() && (!caseData.getApplication().isCourtServiceMethod()
-            || caseData.isJudicialSeparationCase() || overseasAddress);
+            || caseData.isJudicialSeparationCase() || overseasAddress || reissuedAsOfflineAOS);
 
         if (d10Needed && !d10DocumentAlreadyGenerated) {
             try {
