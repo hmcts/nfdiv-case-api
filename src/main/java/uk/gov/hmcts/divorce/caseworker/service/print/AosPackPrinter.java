@@ -15,6 +15,7 @@ import java.util.UUID;
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
@@ -51,8 +52,10 @@ public class AosPackPrinter {
 
             boolean app2HasSolicitor = app2.isRepresented() && app2.getSolicitor() != null;
             boolean app2IsOverseas = YES.equals(app2.getCorrespondenceAddressIsOverseas());
+            boolean reissuedAsOfflineAOS = OFFLINE_AOS.equals(caseData.getApplication().getReissueOption());
 
-            var app2NeedsD10 = app2HasSolicitor ? YES.equals(app2.getSolicitor().getAddressOverseas()) : app2IsOverseas;
+            var app2NeedsD10 = reissuedAsOfflineAOS
+                    || (app2HasSolicitor ? YES.equals(app2.getSolicitor().getAddressOverseas()) : app2IsOverseas);
 
             var d10Needed = caseData.getApplicationType().isSole() && app2NeedsD10;
             final UUID letterId = bulkPrintService.printAosRespondentPack(print, d10Needed);
