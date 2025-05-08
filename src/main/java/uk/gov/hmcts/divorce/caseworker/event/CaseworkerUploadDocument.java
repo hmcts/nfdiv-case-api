@@ -33,21 +33,22 @@ public class CaseworkerUploadDocument implements CCDConfig<CaseData, State, User
     public static final String CASEWORKER_UPLOAD_DOCUMENT = "caseworker-upload-document";
     public static final String ERROR_REMOVE_DOCUMENTS = "Documents cannot be removed by 'Upload document'. "
         + "Use 'Remove documents' to remove documents.";
+    private static final String UPLOAD_DOCUMENT = "Upload document";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_UPLOAD_DOCUMENT)
             .forStates(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED)
-            .name("Upload document")
-            .description("Upload document")
+            .name(UPLOAD_DOCUMENT)
+            .description(UPLOAD_DOCUMENT)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary(false)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER, RPA_ROBOT)
             .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("uploadDocument")
-            .pageLabel("Upload document")
+            .pageLabel(UPLOAD_DOCUMENT)
             .complex(CaseData::getDocuments)
                 .optional(CaseDocuments::getDocumentsUploaded)
                 .done();
