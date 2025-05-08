@@ -65,7 +65,7 @@ class CaseworkerUploadConfidentialDocumentTest {
             caseworkerUploadConfidentialDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
         List<ListValue<ConfidentialDivorceDocument>> actualDocuments = response.getData().getDocuments().getConfidentialDocumentsUploaded();
-        assertThat(actualDocuments.size()).isEqualTo(2);
+        assertThat(actualDocuments).hasSize(2);
         assertThat(actualDocuments.get(0).getValue()).isSameAs(doc1.getValue());
         assertThat(actualDocuments.get(1).getValue()).isSameAs(doc2.getValue());
     }
@@ -98,7 +98,7 @@ class CaseworkerUploadConfidentialDocumentTest {
             caseworkerUploadConfidentialDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
         List<ListValue<ConfidentialDivorceDocument>> actualDocuments = response.getData().getDocuments().getConfidentialDocumentsUploaded();
-        assertThat(actualDocuments.size()).isEqualTo(3);
+        assertThat(actualDocuments).hasSize(3);
         assertThat(actualDocuments.get(0).getValue()).isSameAs(doc3.getValue());
         assertThat(actualDocuments.get(1).getValue()).isSameAs(doc1.getValue());
         assertThat(actualDocuments.get(2).getValue()).isSameAs(doc2.getValue());

@@ -21,6 +21,7 @@ import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FO_GRANTED_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_SOLE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
@@ -34,6 +35,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_GR
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_COPIES;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_COPIES;
@@ -154,6 +156,8 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
             ? applicant.getSolicitor().getReference()
             : "not provided");
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
+        templateVars.put(FO_GRANTED_DATE, caseData.getFinalOrder()
+                .getGrantedDate().format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
 
         return templateVars;
     }
@@ -167,6 +171,8 @@ public class FinalOrderGrantedNotification implements ApplicantNotification {
 
         templateVars.put(DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE,
             formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_COPIES, KEYWORD_COPIES)));
+        templateVars.put(FO_GRANTED_DATE, caseData.getFinalOrder()
+                .getGrantedDate().format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
 
         return templateVars;
     }

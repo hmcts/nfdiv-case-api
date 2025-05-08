@@ -179,7 +179,7 @@ class CaseworkerProgressPaperCaseTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        var response = caseworkerProgressPaperCase.aboutToSubmit(caseDetails, caseDetails);
+        caseworkerProgressPaperCase.aboutToSubmit(caseDetails, caseDetails);
 
         verify(caseFlagsService).initialiseCaseFlags(caseData);
     }

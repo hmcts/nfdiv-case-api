@@ -24,8 +24,8 @@ plugins {
   id 'org.sonarqube' version '6.1.0.5360'
   id 'org.springframework.boot' version '3.3.5'
   id 'com.github.ben-manes.versions' version '0.52.0'
-  id 'hmcts.ccd.sdk' version '5.5.19'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1668'
+  id 'hmcts.ccd.sdk' version '5.5.20'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1697'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -268,7 +268,7 @@ dependencies {
     exclude group: 'com.launchdarkly', module: 'launchdarkly-java-server-sdk'
   }
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '5.0.5'
-  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.3'
+  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.4'
   implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.1.7'
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '4.0.4'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.2.0'
@@ -312,7 +312,7 @@ dependencies {
   testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
   testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
-  testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.4'
+  testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.5'
   testImplementation group: 'org.simplify4u', name: 'slf4j2-mock', version: '2.3.0'
   testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.4.3', classifier: 'all'
 
@@ -326,7 +326,7 @@ dependencies {
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
-  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.51.0'
+  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.52.0'
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:2.3.0'
 }
 

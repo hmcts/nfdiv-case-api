@@ -30,7 +30,7 @@ class SetApplicantOfflineStatusTest {
 
         final var result = task.apply(details);
 
-        assertEquals(result.getData().getApplicant1().getOffline(), NO);
+        assertEquals(NO, result.getData().getApplicant1().getOffline());
     }
 
     @Test
@@ -61,7 +61,7 @@ class SetApplicantOfflineStatusTest {
 
         final var result = task.apply(details);
 
-        assertEquals(result.getData().getApplicant2().getOffline(), NO);
+        assertEquals(NO, result.getData().getApplicant2().getOffline());
     }
 
     @Test
@@ -75,7 +75,7 @@ class SetApplicantOfflineStatusTest {
 
         final var result = task.apply(details);
 
-        assertEquals(result.getData().getApplicant2().getOffline(), NO);
+        assertEquals(NO, result.getData().getApplicant2().getOffline());
     }
 
     @Test
@@ -89,7 +89,7 @@ class SetApplicantOfflineStatusTest {
 
         final var result = task.apply(details);
 
-        assertEquals(result.getData().getApplicant2().getOffline(), YES);
+        assertEquals(YES, result.getData().getApplicant2().getOffline());
     }
 
     @Test
@@ -108,6 +108,6 @@ class SetApplicantOfflineStatusTest {
 
         final var result = task.apply(details);
 
-        assertEquals(result.getData().getApplicant2().getOffline(), YES);
+        assertEquals(YES, result.getData().getApplicant2().getOffline());
     }
 }
