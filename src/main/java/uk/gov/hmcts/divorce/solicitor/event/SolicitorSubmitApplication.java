@@ -191,6 +191,10 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     private void setPaymentOrderSummary(CaseData caseData, long caseId) {
         Application application = caseData.getApplication();
 
+        // Blanked out to stop cases with SRs made on case create from paying the old fee (NFD-4857)
+        application.setApplicationFeeOrderSummary(null);
+        application.setApplicationFeeServiceRequestReference(null);
+
         OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(caseData, caseId);
 
         application.setApplicationFeeOrderSummary(orderSummary);
