@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.payment.client.FeesAndPaymentsClient;
 import uk.gov.hmcts.divorce.payment.client.PaymentClient;
@@ -74,9 +73,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSummary;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeResponse;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getPbaNumbersForAccount;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.orderSummaryWithFee;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
@@ -237,7 +234,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldProcessPbaPaymentSuccessfullyWhenPbaAccountIsValid() {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -270,7 +266,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturn403WithErrorCodeCae0004WhenAccountIsDeleted() throws Exception {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -306,7 +301,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturn403WithErrorCodeCae0003WhenAccountIsHold() throws Exception {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -342,7 +336,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturn4InternalServerErrorWhenResponseEntityIsNull() {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -367,7 +360,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturnGenericErrorWhenGatewayTimeout() throws Exception {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -399,7 +391,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturnGeneralErrorWhenOtherHttpError() throws Exception {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -437,7 +428,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturnGenericErrorWhenInternalServerError() throws Exception {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -469,7 +459,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturn403WithErrorCodeCae0001WhenAccountHasInsufficientBalance() throws Exception {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -506,7 +495,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturnGeneralErrorWhenErrorCodeIsUnknown() throws Exception {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -543,7 +531,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturn404WhenPaymentAccountIsNotFound() {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -576,7 +563,6 @@ class PaymentServiceTest {
 
     @Test
     void shouldReturnGeneralErrorWhenThereIsAnErrorParsingPaymentResponse() throws Exception {
-        var caseData = caseData();
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -607,19 +593,6 @@ class PaymentServiceTest {
                 + "Please try again after 2 minutes with a different Payment Account, or alternatively use a different payment method. "
                 + "For Payment Account support call 01633 652125 (Option 3) or email MiddleOffice.DDServices@liberata.com."
             );
-    }
-
-    private CaseData caseData() {
-        var caseData = caseDataWithOrderSummary();
-        caseData.getApplication().setPbaNumbers(getPbaNumbersForAccount("PBA0012345"));
-        caseData.getApplicant1().setSolicitor(
-            Solicitor
-                .builder()
-                .reference("1234")
-                .organisationPolicy(organisationPolicy())
-                .build()
-        );
-        return caseData;
     }
 
     private static CreditAccountPaymentResponse buildPaymentClientResponse(

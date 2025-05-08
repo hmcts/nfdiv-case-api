@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
-import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
@@ -131,9 +130,7 @@ class SolicitorGeneralApplicationTest {
 
     @Test
     void shouldAddGeneralApplicationDocumentToListOfCaseDocumentsAndUpdateState() {
-        final DivorceDocument document = DivorceDocument.builder()
-                .documentLink(Document.builder().build())
-                .build();
+
         final CaseData caseData = caseData();
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
         docs.get(0).getValue().setDocumentFileName("Testfile");
@@ -149,16 +146,14 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(1);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(1);
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue())
             .isEqualTo(docs.get(0).getValue());
     }
 
     @Test
     void shouldAddGeneralApplicationDocumentsToListOfCaseDocumentsAndUpdateState() {
-        final DivorceDocument document = DivorceDocument.builder()
-            .documentLink(Document.builder().build())
-            .build();
+
         final CaseData caseData = caseData();
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(2);
         docs.get(0).getValue().setDocumentFileName("Testfile");
@@ -176,7 +171,7 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(2);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(2);
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue())
             .isEqualTo(docs.get(1).getValue());
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(1).getValue())
@@ -336,7 +331,7 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .contains("General Application cannot be submitted as this case is currently linked to an active bulk action case");
     }
@@ -393,7 +388,7 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .contains(
                 "General Application payment could not be completed as the invokers organisation policy did not match any on the case"
@@ -486,16 +481,14 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .contains("Account balance insufficient");
     }
 
     @Test
     void shouldReturnErrorIfUrgentFlagIsSetButNoReasonProvided() {
-        final DivorceDocument document = DivorceDocument.builder()
-            .documentLink(Document.builder().build())
-            .build();
+
         final CaseData caseData = caseData();
         caseData.getGeneralApplication().setGeneralApplicationUrgentCase(YES);
 
@@ -508,7 +501,7 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .contains("General Application marked as urgent need an accompanying reason why it is urgent");
     }

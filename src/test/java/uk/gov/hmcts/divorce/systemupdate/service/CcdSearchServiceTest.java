@@ -772,7 +772,7 @@ class CcdSearchServiceTest {
         final List<CaseDetails> searchResult =
             ccdSearchService.searchSolePaperApplicationsWhereApplicant2OfflineFlagShouldBeSet(user, SERVICE_AUTHORIZATION);
 
-        assertThat(searchResult.size()).isEqualTo(100);
+        assertThat(searchResult).hasSize(100);
     }
 
     @Test

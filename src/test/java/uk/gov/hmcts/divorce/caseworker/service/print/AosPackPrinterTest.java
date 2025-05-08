@@ -85,7 +85,7 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("respondent-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc2.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc3.getValue());
     }
@@ -124,7 +124,7 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("respondent-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc2.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc3.getValue());
     }
@@ -163,7 +163,7 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("respondent-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc2.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc3.getValue());
     }
@@ -203,7 +203,7 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("respondent-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc2.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc3.getValue());
     }
@@ -246,7 +246,7 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("respondent-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(doc1.getValue());
         assertThat(print.getLetters().get(0).getDivorceDocument()).isNull();
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
@@ -287,7 +287,7 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("applicant-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
     }
@@ -331,7 +331,7 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("applicant-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(5);
+        assertThat(print.getLetters()).hasSize(5);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
         assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(doc3.getValue());
@@ -392,7 +392,7 @@ class AosPackPrinterTest {
         assertThat(print.getLetters().get(2).getConfidentialDivorceDocument()).isSameAs(coversheet.getValue());
         assertThat(print.getLetters().get(3).getConfidentialDivorceDocument()).isSameAs(nopAppTwo.getValue());
         assertThat(print.getLetters().get(4).getDivorceDocument()).isSameAs(application.getValue());
-        assertThat(print.getLetters().size()).isEqualTo(5);
+        assertThat(print.getLetters()).hasSize(5);
     }
 
     @Test
@@ -434,7 +434,7 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("applicant-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(5);
+        assertThat(print.getLetters()).hasSize(5);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
         assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(doc3.getValue());
@@ -551,7 +551,7 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("applicant-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(doc1.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
     }

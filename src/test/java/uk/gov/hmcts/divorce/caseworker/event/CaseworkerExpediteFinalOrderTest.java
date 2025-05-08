@@ -92,7 +92,7 @@ class CaseworkerExpediteFinalOrderTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerExpediteFinalOrder.aboutToStart(details);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .isEqualTo(Collections.singletonList(ERROR_NO_GENERAL_ORDER));
     }
@@ -118,7 +118,7 @@ class CaseworkerExpediteFinalOrderTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerExpediteFinalOrder.aboutToStart(details);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .isEqualTo(Collections.singletonList(ERROR_NO_CO_GRANTED_DATE));
     }

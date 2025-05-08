@@ -35,6 +35,13 @@ public class CitizenRequestForInformationResponseNotification implements Applica
     public static final String SKIP_REQUEST_FOR_INFORMATION_RESPONSE_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID =
         "Skipping Request For Information Response Offline Notification to {} for case id: {}. Requested Documents Not Provided.";
 
+    private static final String APPLICANT = "applicant";
+    private static final String APPLICANT_SOLICITOR = "applicant solicitor";
+    private static final String APPLICANT_1 = "applicant 1";
+    private static final String APPLICANT_1_SOLICITOR = "applicant 1 solicitor";
+    private static final String APPLICANT_2 = "applicant 2";
+    private static final String APPLICANT_2_SOLICITOR = "applicant 2 solicitor";
+
     private final NotificationService notificationService;
     private final CommonContent commonContent;
     private final RequestForInformationResponseDocumentPack requestForInformationResponseDocumentPack;
@@ -43,7 +50,7 @@ public class CitizenRequestForInformationResponseNotification implements Applica
     @Override
     public void sendToApplicant1(CaseData caseData, Long caseId) {
         log.info(REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_TO_FOR_CASE_ID,
-            caseData.getApplicationType().isSole() ? "applicant" : "applicant 1", caseId);
+            caseData.getApplicationType().isSole() ? APPLICANT : APPLICANT_1, caseId);
 
         RequestForInformationResponse latestResponse =
             caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
@@ -64,9 +71,9 @@ public class CitizenRequestForInformationResponseNotification implements Applica
 
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
-        if (allDocsProvided(caseData, caseId, caseData.getApplicationType().isSole() ? "applicant" : "applicant 1")) {
+        if (allDocsProvided(caseData, caseId, caseData.getApplicationType().isSole() ? APPLICANT : APPLICANT_1)) {
             log.info(REQUEST_FOR_INFORMATION_RESPONSE_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID,
-                caseData.getApplicationType().isSole() ? "applicant" : "applicant 1", caseId);
+                caseData.getApplicationType().isSole() ? APPLICANT : APPLICANT_1, caseId);
 
             Applicant applicant1 = caseData.getApplicant1();
             var documentPackInfo = requestForInformationResponseDocumentPack.getDocumentPack(caseData, applicant1);
@@ -83,7 +90,7 @@ public class CitizenRequestForInformationResponseNotification implements Applica
     @Override
     public void sendToApplicant1Solicitor(CaseData caseData, Long caseId) {
 
-        String party = caseData.getApplicationType().isSole() ? "applicant solicitor" : "applicant 1 solicitor";
+        String party = caseData.getApplicationType().isSole() ? APPLICANT_SOLICITOR : APPLICANT_1_SOLICITOR;
         if (allDocsProvided(
                 caseData,
                 caseId,
@@ -114,10 +121,10 @@ public class CitizenRequestForInformationResponseNotification implements Applica
         if (allDocsProvided(
             caseData,
             caseId,
-            caseData.getApplicationType().isSole() ? "applicant solicitor" : "applicant 1 solicitor")
+            caseData.getApplicationType().isSole() ? APPLICANT_SOLICITOR : APPLICANT_1_SOLICITOR)
         ) {
             log.info(REQUEST_FOR_INFORMATION_RESPONSE_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID,
-                caseData.getApplicationType().isSole() ? "applicant solicitor" : "applicant 1 solicitor", caseId);
+                caseData.getApplicationType().isSole() ? APPLICANT_SOLICITOR : APPLICANT_1_SOLICITOR, caseId);
 
             Applicant applicant1 = caseData.getApplicant1();
             var documentPackInfo = requestForInformationResponseDocumentPack.getDocumentPack(caseData, applicant1);
@@ -133,7 +140,7 @@ public class CitizenRequestForInformationResponseNotification implements Applica
 
     @Override
     public void sendToApplicant2(CaseData caseData, Long caseId) {
-        log.info(REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_TO_FOR_CASE_ID, "applicant 2", caseId);
+        log.info(REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_TO_FOR_CASE_ID, APPLICANT_2, caseId);
 
         RequestForInformationResponse latestResponse =
             caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
@@ -154,10 +161,10 @@ public class CitizenRequestForInformationResponseNotification implements Applica
 
     @Override
     public void sendToApplicant2Solicitor(CaseData caseData, Long caseId) {
-        if (allDocsProvided(caseData, caseId, "applicant 2 solicitor")) {
+        if (allDocsProvided(caseData, caseId, APPLICANT_2_SOLICITOR)) {
 
             log.info(REQUEST_FOR_INFORMATION_RESPONSE_NOTIFICATION_TO_FOR_CASE_ID,
-                    "applicant 2 solicitor", caseId);
+                APPLICANT_2_SOLICITOR, caseId);
 
             Applicant applicant2 = caseData.getApplicant2();
 
@@ -178,8 +185,8 @@ public class CitizenRequestForInformationResponseNotification implements Applica
 
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
-        if (allDocsProvided(caseData, caseId,  "applicant 2")) {
-            log.info(REQUEST_FOR_INFORMATION_RESPONSE_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID, "applicant 2", caseId);
+        if (allDocsProvided(caseData, caseId,  APPLICANT_2)) {
+            log.info(REQUEST_FOR_INFORMATION_RESPONSE_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID, APPLICANT_2, caseId);
 
             Applicant applicant2 = caseData.getApplicant2();
             var documentPackInfo = requestForInformationResponseDocumentPack.getDocumentPack(caseData, applicant2);
@@ -195,8 +202,8 @@ public class CitizenRequestForInformationResponseNotification implements Applica
 
     @Override
     public void sendToApplicant2SolicitorOffline(final CaseData caseData, final Long caseId) {
-        if (allDocsProvided(caseData, caseId, "applicant 2 solicitor")) {
-            log.info(REQUEST_FOR_INFORMATION_RESPONSE_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID, "applicant 2 solicitor", caseId);
+        if (allDocsProvided(caseData, caseId, APPLICANT_2_SOLICITOR)) {
+            log.info(REQUEST_FOR_INFORMATION_RESPONSE_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID, APPLICANT_2_SOLICITOR, caseId);
 
             Applicant applicant2 = caseData.getApplicant2();
             var documentPackInfo = requestForInformationResponseDocumentPack.getDocumentPack(caseData, applicant2);
