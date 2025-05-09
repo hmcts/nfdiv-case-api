@@ -279,6 +279,18 @@ public class SwitchToSoleService {
 
         finalOrder.setDateApplicant1DeclaredIntentionToSwitchToSoleFo(dateApplicant2DeclaredIntentionToSwitchToSoleFo);
         finalOrder.setDateApplicant2DeclaredIntentionToSwitchToSoleFo(dateApplicant1DeclaredIntentionToSwitchToSoleFo);
+
+        String applicant1FinalOrderLateExplanation = finalOrder.getApplicant1FinalOrderLateExplanation();
+        String applicant2FinalOrderLateExplanation = finalOrder.getApplicant2FinalOrderLateExplanation();
+
+        finalOrder.setApplicant2FinalOrderLateExplanation(applicant1FinalOrderLateExplanation);
+        finalOrder.setApplicant1FinalOrderLateExplanation(applicant2FinalOrderLateExplanation);
+
+        String applicant1FinalOrderLateExplanationTranslated = finalOrder.getApplicant1FinalOrderLateExplanationTranslated();
+        String applicant2FinalOrderLateExplanationTranslated = finalOrder.getApplicant2FinalOrderLateExplanationTranslated();
+
+        finalOrder.setApplicant2FinalOrderLateExplanationTranslated(applicant1FinalOrderLateExplanationTranslated);
+        finalOrder.setApplicant1FinalOrderLateExplanationTranslated(applicant2FinalOrderLateExplanationTranslated);
     }
 
     private void populateSwitchedToSoleData(final Application application) {
