@@ -61,7 +61,7 @@ public class CaseDocuments {
     private List<ListValue<DivorceDocument>> applicant1DocumentsUploaded;
 
     @CCD(
-        label = "Applicant 2 Documents uploaded",
+        label = "${labelContentTheApplicant2UC} Documents uploaded",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
         access = {Applicant2Access.class}
