@@ -28,49 +28,11 @@ public class DeemedServiceJourneyOptions {
     private YesOrNo deemedIUnderstand;
 
     @CCD(
-        label = "Will you be using Help with Fees for this application?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo deemedUseHelpWithFees;
-
-    @CCD(
-        label = "Do you have a help with fees reference number?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo deemedHaveHwfReference;
-
-    @CCD(
-        label = "Are you able to upload evidence?",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo deemedCanUploadEvidence;
-
-    @CCD(
-        label = "Help with fees reference",
-        regex = "([Hh][Ww][Ff]-?)?[0-9a-zA-Z]{3}-?[0-9a-zA-Z]{3}$",
-        access = {DefaultAccess.class}
-    )
-    private String deemedHwfRefNumber;
-
-    @CCD(
         label = "Provide a statement",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
     private String deemedNoEvidenceStatement;
-
-    @CCD(
-        label = "Upload documents",
-        typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument"
-    )
-    private List<ListValue<DivorceDocument>> deemedEvidenceDocs;
-
-    @CCD(
-        label = "Cannot upload some or all of my documents",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo deemedCannotUploadDocs;
 
     @CCD(
         label = "Tell us about your evidence",
