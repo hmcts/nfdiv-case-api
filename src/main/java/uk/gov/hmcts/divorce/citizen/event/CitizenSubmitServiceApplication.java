@@ -27,7 +27,7 @@ import java.util.Collections;
 
 import static com.microsoft.applicationinsights.boot.dependencies.apachecommons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -99,7 +99,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             details.setState(AwaitingServicePayment);
         } else {
             serviceFee.setHelpWithFeesReferenceNumber(userOptions.citizenHwfReference());
-            details.setState(AwaitingGeneralConsideration);
+            details.setState(AwaitingServiceConsideration);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

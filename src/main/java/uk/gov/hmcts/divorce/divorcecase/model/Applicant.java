@@ -76,16 +76,23 @@ public class Applicant {
     )
     private YesOrNo agreedToReceiveEmails;
 
-    @Builder.Default
-    private GeneralApplication generalApplication = new GeneralApplication();
+    @CCD(
+        label = "Draft Service Applications",
+        typeOverride = Collection,
+        typeParameterOverride = "AlternativeService",
+        access = {SolicitorAndSystemUpdateAccess.class},
+        searchable = false
+    )
+    private List<ListValue<AlternativeService>> draftServiceApplications;
 
     @CCD(
-        label = "General Applications",
+        label = "Service Payments",
         typeOverride = Collection,
-        typeParameterOverride = "GeneralApplication",
-        access = {SolicitorAndSystemUpdateAccess.class}
+        typeParameterOverride = "Payment",
+        access = {DefaultAccess.class},
+        searchable = false
     )
-    private List<ListValue<GeneralApplication>> generalApplications;
+    private List<ListValue<Payment>> servicePayments;
 
     @CCD(
         label = "Has the applicant confirmed the receipt?"
