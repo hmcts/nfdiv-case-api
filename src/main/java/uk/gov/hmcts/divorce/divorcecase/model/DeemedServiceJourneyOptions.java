@@ -17,12 +17,6 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 public class DeemedServiceJourneyOptions {
 
     @CCD(
-            label = "You're about to apply for deemed service",
-            access = {DefaultAccess.class}
-    )
-    private YesOrNo deemedIUnderstand;
-
-    @CCD(
         label = "Provide a statement",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
@@ -35,10 +29,4 @@ public class DeemedServiceJourneyOptions {
         access = {DefaultAccess.class}
     )
     private String deemedEvidenceDetails;
-
-    @CCD(
-        label = "Statement of Truth",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo deemedStatementOfTruth;
 }
