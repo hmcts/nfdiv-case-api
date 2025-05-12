@@ -154,6 +154,17 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
             }
         }
 
+        List<String> docErrors = GeneralApplicationUploadDocument.validateGeneralApplicationUploadedDocuments(
+            generalApplication.getGeneralApplicationDocuments()
+        );
+
+        if (!docErrors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(details.getData())
+                .errors(docErrors)
+                .build();
+        }
+
         if (generalApplication.getGeneralApplicationFee().isPaymentMethodPba()) {
             final Solicitor invokingSolicitor = getInvokingSolicitor(data, request.getHeader(AUTHORIZATION));
 
