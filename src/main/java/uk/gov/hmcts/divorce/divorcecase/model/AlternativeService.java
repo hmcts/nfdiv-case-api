@@ -100,6 +100,11 @@ public class AlternativeService {
     )
     private YesOrNo alternativeServiceFeeRequired;
 
+    @CCD(
+        label = "Service application answers"
+    )
+    private DivorceDocument serviceApplicationAnswers;
+
     @JsonUnwrapped
     @Builder.Default
     @CCD(access = {CaseworkerAccessOnlyAccess.class})
@@ -147,5 +152,14 @@ public class AlternativeService {
     @JsonIgnore
     public boolean isApplicationGrantedDeemedOrDispensed() {
         return YES.equals(serviceApplicationGranted) && DEEMED.equals(alternativeServiceType) || DISPENSED.equals(alternativeServiceType);
+    }
+
+    @JsonIgnore
+    public JourneyOptions getUserJourneyOptions(Applicant applicant) {
+        if (alternativeServiceType.equals(AlternativeServiceType.DEEMED)) {
+            return applicant.getGeneralApplicationOptions().getDeemedServiceJourneyOptions();
+        }
+
+        return null;
     }
 }

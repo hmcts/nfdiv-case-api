@@ -11,13 +11,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CitizenAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -25,6 +28,7 @@ import java.util.stream.Stream;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -71,6 +75,17 @@ public class Applicant {
         label = "They have agreed to receive notifications and be served (delivered) court documents by email"
     )
     private YesOrNo agreedToReceiveEmails;
+
+    @Builder.Default
+    private GeneralApplication generalApplication = new GeneralApplication();
+
+    @CCD(
+        label = "General Applications",
+        typeOverride = Collection,
+        typeParameterOverride = "GeneralApplication",
+        access = {SolicitorAndSystemUpdateAccess.class}
+    )
+    private List<ListValue<GeneralApplication>> generalApplications;
 
     @CCD(
         label = "Has the applicant confirmed the receipt?"
