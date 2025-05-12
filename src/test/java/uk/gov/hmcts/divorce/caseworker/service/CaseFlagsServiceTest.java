@@ -80,7 +80,7 @@ class CaseFlagsServiceTest {
 
         caseFlagsService.initialiseCaseFlags(caseData);
 
-        assertThat(caseData.getCaseFlags().getDetails().size()).isNotEqualTo(0);
+        assertThat(caseData.getCaseFlags().getDetails().size()).isNotZero();
     }
 
     @Test
@@ -130,7 +130,7 @@ class CaseFlagsServiceTest {
 
         caseFlagsService.initialiseAllInternalPartyFlags(caseData);
 
-        assertThat(caseData.getPartyFlags().getApplicant1Flags().getDetails().size()).isNotEqualTo(0);
+        assertThat(caseData.getPartyFlags().getApplicant1Flags().getDetails().size()).isNotZero();
     }
 
     @Test
@@ -151,7 +151,7 @@ class CaseFlagsServiceTest {
 
         caseFlagsService.initialiseAllInternalPartyFlags(caseData);
 
-        assertThat(caseData.getPartyFlags().getApplicant2Flags().getDetails().size()).isNotEqualTo(0);
+        assertThat(caseData.getPartyFlags().getApplicant2Flags().getDetails().size()).isNotZero();
     }
 
     @Test
@@ -169,7 +169,7 @@ class CaseFlagsServiceTest {
 
         caseFlagsService.initialiseAllInternalPartyFlags(caseData);
 
-        assertThat(caseData.getPartyFlags().getApplicant1SolicitorFlags().getDetails().size()).isNotEqualTo(0);
+        assertThat(caseData.getPartyFlags().getApplicant1SolicitorFlags().getDetails().size()).isNotZero();
     }
 
     @Test
@@ -199,7 +199,7 @@ class CaseFlagsServiceTest {
 
         caseFlagsService.initialiseAllInternalPartyFlags(caseData);
 
-        assertThat(caseData.getPartyFlags().getApplicant2SolicitorFlags().getDetails().size()).isNotEqualTo(0);
+        assertThat(caseData.getPartyFlags().getApplicant2SolicitorFlags().getDetails().size()).isNotZero();
     }
 
     @Test
@@ -276,12 +276,12 @@ class CaseFlagsServiceTest {
         assertThat(caseData.getPartyFlags().getApplicant1Flags().getDetails().get(0).getValue().getName()).isEqualTo("App2 Flag");
         assertThat(caseData.getPartyFlags().getApplicant1Flags().getRoleOnCase()).isEqualTo(TEXT_APPLICANT1_FLAGS_ROLE);
         assertThat(caseData.getPartyFlags().getApplicant1Flags().getGroupId().toString())
-            .isEqualTo(caseData.getPartyFlags().getApplicant1GroupId());
+            .hasToString(caseData.getPartyFlags().getApplicant1GroupId());
         assertThat(caseData.getPartyFlags().getApplicant2Flags().getPartyName()).isEqualTo("Applicant1 User");
         assertThat(caseData.getPartyFlags().getApplicant2Flags().getDetails().get(0).getValue().getName()).isEqualTo("App1 Flag");
         assertThat(caseData.getPartyFlags().getApplicant2Flags().getRoleOnCase()).isEqualTo(TEXT_APPLICANT2_FLAGS_ROLE);
         assertThat(caseData.getPartyFlags().getApplicant2Flags().getGroupId().toString())
-            .isEqualTo(caseData.getPartyFlags().getApplicant2GroupId());
+            .hasToString(caseData.getPartyFlags().getApplicant2GroupId());
     }
 
     @Test
@@ -294,12 +294,12 @@ class CaseFlagsServiceTest {
         assertThat(caseData.getPartyFlags().getApplicant1SolicitorFlags().getDetails().get(0).getValue().getName()).isEqualTo("Sol2 Flag");
         assertThat(caseData.getPartyFlags().getApplicant1SolicitorFlags().getRoleOnCase()).isEqualTo(TEXT_APPLICANT1_SOL_FLAGS_ROLE);
         assertThat(caseData.getPartyFlags().getApplicant1SolicitorFlags().getGroupId().toString())
-            .isEqualTo(caseData.getPartyFlags().getApplicant1SolicitorGroupId());
+            .hasToString(caseData.getPartyFlags().getApplicant1SolicitorGroupId());
         assertThat(caseData.getPartyFlags().getApplicant2SolicitorFlags().getPartyName()).isEqualTo("Applicant1 Solicitor");
         assertThat(caseData.getPartyFlags().getApplicant2SolicitorFlags().getDetails().get(0).getValue().getName()).isEqualTo("Sol1 Flag");
         assertThat(caseData.getPartyFlags().getApplicant2SolicitorFlags().getRoleOnCase()).isEqualTo(TEXT_APPLICANT2_SOL_FLAGS_ROLE);
         assertThat(caseData.getPartyFlags().getApplicant2SolicitorFlags().getGroupId().toString())
-            .isEqualTo(caseData.getPartyFlags().getApplicant2SolicitorGroupId());
+            .hasToString(caseData.getPartyFlags().getApplicant2SolicitorGroupId());
     }
 
     private CaseData getCaseDataForTest(boolean applicant1,

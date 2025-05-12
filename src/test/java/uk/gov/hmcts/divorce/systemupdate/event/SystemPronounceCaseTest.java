@@ -254,10 +254,6 @@ class SystemPronounceCaseTest {
             .data(caseData)
             .build();
 
-        Map<String, Object> mockCaseDataMap = Map.of(
-            "conditionalOrder", Map.of("court", "Birmingham", "dateAndTimeOfHearing", LocalDateTime.now().toString())
-        );
-
         buildConditionalOrder(caseData);
 
         underTest.aboutToSubmit(details, details);

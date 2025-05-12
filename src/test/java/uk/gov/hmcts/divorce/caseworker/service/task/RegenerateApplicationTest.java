@@ -45,7 +45,7 @@ class RegenerateApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        final var result = regenerateApplication.apply(caseDetails);
+        regenerateApplication.apply(caseDetails);
 
         verify(generateApplicationHelper)
             .generateApplicationDocument(

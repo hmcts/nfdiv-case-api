@@ -81,6 +81,7 @@ public class PaymentService {
     public static final String CA_E0003 = "CA-E0003";
     public static final String HMCTS_ORG_ID = "ABA1";
     private static final String ERROR_SERVICE_REF_REQUEST = "Failed to create service reference for case: %s";
+    private static final String LOG_PAYMENT_ERROR = "Payment Reference: {} Generating error message for {} error code";
 
     private final HttpServletRequest httpServletRequest;
 
@@ -290,14 +291,14 @@ public class PaymentService {
         if (httpStatus == HttpStatus.FORBIDDEN) {
             switch (errorCode) {
                 case CA_E0001:
-                    log.info("Payment Reference: {} Generating error message for {} error code",
+                    log.info(LOG_PAYMENT_ERROR,
                         creditAccountPaymentResponse.getPaymentReference(),
                         errorCode
                     );
                     errorMessage = String.format(CAE0001.value(), pbaNumber);
                     break;
                 case CA_E0004:
-                    log.info("Payment Reference: {} Generating error message for {} error code",
+                    log.info(LOG_PAYMENT_ERROR,
                         creditAccountPaymentResponse.getPaymentReference(),
                         errorCode
                     );
@@ -305,7 +306,7 @@ public class PaymentService {
                     break;
 
                 case CA_E0003:
-                    log.info("Payment Reference: {} Generating error message for {} error code",
+                    log.info(LOG_PAYMENT_ERROR,
                         creditAccountPaymentResponse.getPaymentReference(),
                         errorCode
                     );
@@ -313,7 +314,7 @@ public class PaymentService {
                     break;
 
                 default:
-                    log.info("Payment Reference: {} Generating error message for {} error code",
+                    log.info(LOG_PAYMENT_ERROR,
                         creditAccountPaymentResponse.getPaymentReference(),
                         errorCode
                     );

@@ -37,7 +37,7 @@ class Applicant2SolConfirmContactDetailsTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
-        assertEquals(response.getErrors().size(), 1);
+        assertEquals(1, response.getErrors().size());
     }
 
     @Test
@@ -57,6 +57,6 @@ class Applicant2SolConfirmContactDetailsTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
-        assertEquals(response.getErrors(), null);
+        assertEquals(null, response.getErrors());
     }
 }

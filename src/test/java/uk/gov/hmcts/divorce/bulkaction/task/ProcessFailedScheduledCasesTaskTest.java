@@ -87,8 +87,7 @@ class ProcessFailedScheduledCasesTaskTest {
         when(bulkCaseTaskUtil.processCases(bulkActionCaseDetails, bulkListCaseDetails,
                 SYSTEM_UPDATE_CASE_COURT_HEARING, user, SERVICE_AUTHORIZATION)).thenReturn(bulkActionCaseDetails);
 
-        final CaseDetails<BulkActionCaseData, BulkActionState> result =
-                processFailedScheduledCasesTask.apply(bulkActionCaseDetails);
+        processFailedScheduledCasesTask.apply(bulkActionCaseDetails);
 
         verify(bulkCaseTaskUtil).processCases(bulkActionCaseDetails, bulkListCaseDetails,
                 SYSTEM_UPDATE_CASE_COURT_HEARING, user, SERVICE_AUTHORIZATION);

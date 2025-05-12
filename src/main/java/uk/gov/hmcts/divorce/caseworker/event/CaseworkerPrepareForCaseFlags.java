@@ -26,6 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 @RequiredArgsConstructor
 public class CaseworkerPrepareForCaseFlags implements CCDConfig<CaseData, State, UserRole> {
+    private static final String PREPARE_FOR_CASE_FLAGS = "Prepare for Case flags";
     public static final String CASEWORKER_PREPARE_FOR_CASEFLAGS = "caseworker-prepare-caseflags";
 
     private final CaseFlagsService caseFlagsService;
@@ -35,15 +36,15 @@ public class CaseworkerPrepareForCaseFlags implements CCDConfig<CaseData, State,
         new PageBuilder(configBuilder
             .event(CASEWORKER_PREPARE_FOR_CASEFLAGS)
             .forStates(STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED)
-            .name("Prepare for Case flags")
-            .description("Prepare for Case flags")
+            .name(PREPARE_FOR_CASE_FLAGS)
+            .description(PREPARE_FOR_CASE_FLAGS)
             .showCondition("caseFlagsSetupComplete!=\"Yes\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("prepareForCaseFlags")
-            .pageLabel("Prepare for Case flags");
+            .pageLabel(PREPARE_FOR_CASE_FLAGS);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(

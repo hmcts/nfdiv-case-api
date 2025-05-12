@@ -84,8 +84,7 @@ class DropCaseTaskTest {
         when(bulkCaseTaskUtil.processCases(bulkActionCaseDetails, bulkListCaseDetails,
                 SYSTEM_REMOVE_BULK_CASE, user, SERVICE_AUTHORIZATION)).thenReturn(bulkActionCaseDetails);
 
-        final CaseDetails<BulkActionCaseData, BulkActionState> result =
-            dropCaseTask.apply(bulkActionCaseDetails);
+        dropCaseTask.apply(bulkActionCaseDetails);
 
         verify(bulkCaseTaskUtil).processCases(bulkActionCaseDetails, bulkListCaseDetails,
                 SYSTEM_REMOVE_BULK_CASE, user, SERVICE_AUTHORIZATION);
