@@ -48,7 +48,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.event.page.GeneralApplicationUploadDocument.GENERAL_APPLICATION_DOCUMENT_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType.DEEMED_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
@@ -146,7 +148,7 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(1);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(1);
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue())
             .isEqualTo(docs.get(0).getValue());
     }
@@ -171,7 +173,7 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(2);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(2);
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue())
             .isEqualTo(docs.get(1).getValue());
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(1).getValue())
@@ -331,7 +333,7 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .contains("General Application cannot be submitted as this case is currently linked to an active bulk action case");
     }
@@ -339,12 +341,18 @@ class SolicitorGeneralApplicationTest {
     @Test
     void shouldReturnErrorsIfSolicitorOrganisationPolicyDoesNotMatchOneOnCase() {
         final CaseData caseData = caseData();
+
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
+
         caseData.setGeneralApplication(
             GeneralApplication.builder()
                 .generalApplicationFee(
                     FeeDetails.builder()
                         .paymentMethod(FEE_PAY_BY_ACCOUNT)
                         .build())
+                .generalApplicationDocuments(docs)
                 .build()
         );
         caseData.getApplicant1().setSolicitorRepresented(YES);
@@ -388,7 +396,7 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .contains(
                 "General Application payment could not be completed as the invokers organisation policy did not match any on the case"
@@ -418,6 +426,11 @@ class SolicitorGeneralApplicationTest {
                 .build())
             )
             .build();
+
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
+
         caseData.setGeneralApplication(
             GeneralApplication.builder()
                 .generalApplicationFee(
@@ -435,6 +448,7 @@ class SolicitorGeneralApplicationTest {
                         )
                         .paymentMethod(FEE_PAY_BY_ACCOUNT)
                         .build())
+                .generalApplicationDocuments(docs)
                 .build()
         );
         caseData.getApplicant1().setSolicitorRepresented(YES);
@@ -481,7 +495,7 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .contains("Account balance insufficient");
     }
@@ -501,8 +515,28 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .contains("General Application marked as urgent need an accompanying reason why it is urgent");
+    }
+
+    @Test
+    void shouldReturnErrorIfGeneralApplicationDocumentsIsNotAdded() {
+
+        final CaseData caseData = caseData();
+        caseData.getGeneralApplication().setGeneralApplicationUrgentCase(NO);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setState(Holding);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorGeneralApplication.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).isNotNull();
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors())
+            .contains(GENERAL_APPLICATION_DOCUMENT_ERROR);
     }
 }

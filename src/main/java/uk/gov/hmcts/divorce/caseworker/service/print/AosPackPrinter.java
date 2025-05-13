@@ -29,6 +29,7 @@ public class AosPackPrinter {
 
     private static final String LETTER_TYPE_RESPONDENT_PACK = "respondent-aos-pack";
     private static final String LETTER_TYPE_APPLICANT_PACK = "applicant-aos-pack";
+    private static final String LOG_LETTER_SERVICE_RESPONSE = "Letter service responded with letter Id {} for case {}";
 
     private final BulkPrintService bulkPrintService;
 
@@ -57,7 +58,7 @@ public class AosPackPrinter {
 
             var d10Needed = caseData.getApplicationType().isSole() && app2NeedsD10;
             final UUID letterId = bulkPrintService.printAosRespondentPack(print, d10Needed);
-            log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
+            log.info(LOG_LETTER_SERVICE_RESPONSE, letterId, caseId);
         } else {
             log.warn(
                 "AoS Pack print for respondent has missing documents. Expected documents with type {} , for Case ID: {}",
@@ -83,7 +84,7 @@ public class AosPackPrinter {
             );
             final UUID letterId = bulkPrintService.print(print);
 
-            log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
+            log.info(LOG_LETTER_SERVICE_RESPONSE, letterId, caseId);
         } else {
             log.warn(
                 "AoS Pack for print applicant has missing documents. Expected documents with type {} , for Case ID: {}",
@@ -110,7 +111,7 @@ public class AosPackPrinter {
             );
             final UUID letterId = bulkPrintService.printWithD10Form(print);
 
-            log.info("Letter service responded with letter Id {} for case {}", letterId, caseId);
+            log.info(LOG_LETTER_SERVICE_RESPONSE, letterId, caseId);
         } else {
             log.warn(
                 "AoS Pack for print applicant has missing documents. Expected documents with type {} , for Case ID: {}",

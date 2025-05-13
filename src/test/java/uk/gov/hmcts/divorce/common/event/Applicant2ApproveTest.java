@@ -92,7 +92,7 @@ class Applicant2ApproveTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = applicant2Approve.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(4);
+        assertThat(response.getErrors()).hasSize(4);
         assertThat(response.getErrors().get(0)).isEqualTo("Applicant2FirstName cannot be empty or null");
     }
 
@@ -105,7 +105,7 @@ class Applicant2ApproveTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = applicant2Approve.aboutToSubmit(details, details);
 
-        assertThat(response.getErrors().size()).isEqualTo(4);
+        assertThat(response.getErrors()).hasSize(4);
         assertThat(response.getErrors()).containsExactlyInAnyOrder(
             "Applicant2StatementOfTruth cannot be empty or null",
             "MarriageApplicant2Name cannot be empty or null",

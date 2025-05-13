@@ -32,6 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @RequiredArgsConstructor
 public class CaseworkerRemoveScannedDocument implements CCDConfig<CaseData, State, UserRole> {
 
+    private static final String REMOVE_SCANNED_DOCUMENT = "Remove scanned document";
     public static final String CASEWORKER_REMOVE_SCANNED_DOCUMENT = "caseworker-remove-scanned-document";
 
     private final DocumentRemovalService documentRemovalService;
@@ -41,15 +42,15 @@ public class CaseworkerRemoveScannedDocument implements CCDConfig<CaseData, Stat
         new PageBuilder(configBuilder
             .event(CASEWORKER_REMOVE_SCANNED_DOCUMENT)
             .forStates(POST_SUBMISSION_STATES)
-            .name("Remove scanned document")
-            .description("Remove scanned document")
+            .name(REMOVE_SCANNED_DOCUMENT)
+            .description(REMOVE_SCANNED_DOCUMENT)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary(false)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER)
             .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("removeScannedDocument")
-            .pageLabel("Remove scanned document")
+            .pageLabel(REMOVE_SCANNED_DOCUMENT)
             .complex(CaseData::getDocuments)
                 .optional(CaseDocuments::getScannedDocuments)
                 .done();

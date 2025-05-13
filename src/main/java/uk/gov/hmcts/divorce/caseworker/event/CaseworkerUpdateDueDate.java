@@ -21,14 +21,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class CaseworkerUpdateDueDate implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_UPDATE_DUE_DATE = "caseworker-update-due-date";
+    private static final String UPDATE_DUE_DATE = "Update due date";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_UPDATE_DUE_DATE)
             .forStates(POST_SUBMISSION_STATES)
-            .name("Update due date")
-            .description("Update due date")
+            .name(UPDATE_DUE_DATE)
+            .description(UPDATE_DUE_DATE)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER, CASE_WORKER)
             .grantHistoryOnly(
@@ -36,7 +37,7 @@ public class CaseworkerUpdateDueDate implements CCDConfig<CaseData, State, UserR
                 LEGAL_ADVISOR,
                 JUDGE))
             .page("updateDueDate")
-            .pageLabel("Update due date")
+            .pageLabel(UPDATE_DUE_DATE)
             .optional(CaseData::getDueDate);
     }
 }

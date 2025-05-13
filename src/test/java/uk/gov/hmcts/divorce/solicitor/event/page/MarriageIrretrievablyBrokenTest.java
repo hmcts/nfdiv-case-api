@@ -32,10 +32,10 @@ class MarriageIrretrievablyBrokenTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
-        assertEquals(response.getErrors().size(), 1);
+        assertEquals(1, response.getErrors().size());
         assertEquals(
-            response.getErrors().get(0),
-            "To continue, applicant 1 must believe and declare that their marriage has irrevocably broken"
+            "To continue, applicant 1 must believe and declare that their marriage has irrevocably broken",
+            response.getErrors().get(0)
         );
     }
 
@@ -52,14 +52,14 @@ class MarriageIrretrievablyBrokenTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
-        assertEquals(response.getErrors().size(), 2);
+        assertEquals(2, response.getErrors().size());
         assertEquals(
-            response.getErrors().get(0),
-            "To continue, applicant 1 must believe and declare that their marriage has irrevocably broken"
+            "To continue, applicant 1 must believe and declare that their marriage has irrevocably broken",
+            response.getErrors().get(0)
         );
         assertEquals(
-            response.getErrors().get(1),
-            "To continue, applicant 2 must believe and declare that their marriage has irrevocably broken"
+            "To continue, applicant 2 must believe and declare that their marriage has irrevocably broken",
+            response.getErrors().get(1)
         );
     }
 
@@ -75,7 +75,7 @@ class MarriageIrretrievablyBrokenTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
-        assertEquals(response.getErrors().size(), 0);
+        assertEquals(0, response.getErrors().size());
     }
 
     @Test
@@ -91,6 +91,6 @@ class MarriageIrretrievablyBrokenTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
-        assertEquals(response.getErrors().size(), 0);
+        assertEquals(0, response.getErrors().size());
     }
 }

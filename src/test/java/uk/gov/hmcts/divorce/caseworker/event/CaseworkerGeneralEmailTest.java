@@ -400,7 +400,7 @@ class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(NO_VALID_EMAIL_ERROR);
     }
 
@@ -425,7 +425,7 @@ class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(NO_VALID_EMAIL_ERROR);
     }
 
@@ -448,7 +448,7 @@ class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors()).isEqualTo(null);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -472,7 +472,7 @@ class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors()).isEqualTo(null);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -495,7 +495,7 @@ class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(NO_VALID_EMAIL_ERROR);
     }
 
@@ -520,7 +520,7 @@ class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(NO_VALID_EMAIL_ERROR);
     }
 
@@ -545,7 +545,7 @@ class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors()).isEqualTo(null);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -569,7 +569,7 @@ class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors()).isEqualTo(null);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -591,7 +591,7 @@ class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(NO_VALID_EMAIL_ERROR);
     }
 
@@ -615,7 +615,7 @@ class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors()).isEqualTo(null);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -797,7 +797,7 @@ class CaseworkerGeneralEmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
 
         assertThat(response.getData().getGeneralEmails().get(0).getValue()
-            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+            .getGeneralEmailAttachmentLinks()).hasSize(3);
     }
 
     @Test
@@ -843,7 +843,7 @@ class CaseworkerGeneralEmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
 
         assertThat(response.getData().getGeneralEmails().get(0).getValue()
-            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+            .getGeneralEmailAttachmentLinks()).hasSize(3);
     }
 
     @Test
@@ -889,7 +889,7 @@ class CaseworkerGeneralEmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
 
         assertThat(response.getData().getGeneralEmails().get(0).getValue()
-            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+            .getGeneralEmailAttachmentLinks()).hasSize(3);
     }
 
     @Test
@@ -935,7 +935,7 @@ class CaseworkerGeneralEmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
 
         assertThat(response.getData().getGeneralEmails().get(0).getValue()
-            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+            .getGeneralEmailAttachmentLinks()).hasSize(3);
     }
 
     @Test
@@ -981,7 +981,7 @@ class CaseworkerGeneralEmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
 
         assertThat(response.getData().getGeneralEmails().get(0).getValue()
-            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+            .getGeneralEmailAttachmentLinks()).hasSize(3);
     }
 
     @Test
@@ -1036,7 +1036,7 @@ class CaseworkerGeneralEmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
 
         assertThat(response.getData().getGeneralEmails().get(0).getValue()
-            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+            .getGeneralEmailAttachmentLinks()).hasSize(3);
     }
 
     @Test
