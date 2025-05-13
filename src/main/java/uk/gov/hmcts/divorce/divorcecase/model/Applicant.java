@@ -18,7 +18,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CitizenAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
-import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
 
 import java.util.List;
 import java.util.Objects;
@@ -76,14 +75,14 @@ public class Applicant {
     )
     private YesOrNo agreedToReceiveEmails;
 
-    @CCD(
-        label = "Draft Service Applications",
-        typeOverride = Collection,
-        typeParameterOverride = "AlternativeService",
-        access = {SolicitorAndSystemUpdateAccess.class},
-        searchable = false
-    )
-    private List<ListValue<AlternativeService>> draftServiceApplications;
+//    @CCD(
+//        label = "Draft Service Applications",
+//        typeOverride = Collection,
+//        typeParameterOverride = "AlternativeService",
+//        access = {SolicitorAndSystemUpdateAccess.class},
+//        searchable = false
+//    )
+//    private List<ListValue<AlternativeService>> draftServiceApplications;
 
     @CCD(
         label = "Service Payments",

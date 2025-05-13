@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.service.GeneralApplicationService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -37,8 +36,6 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
     public static final String CITIZEN_SERVICE_PAYMENT= "citizen-service-payment-made";
 
     private final PaymentSetupService paymentSetupService;
-
-    private final GeneralApplicationService generalApplicationService;
 
     private final Clock clock;
 

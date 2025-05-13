@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -80,4 +81,13 @@ public class GeneralApplicationOptions {
         access = {DefaultAccess.class}
     )
     private YesOrNo genAppsCannotUploadDocs;
+
+    @JsonIgnore
+    public ApplicationAnswers getApplicationAnswers() {
+        if (generalApplicationType.equals(GeneralApplicationType.DEEMED_SERVICE)) {
+            return deemedServiceJourneyOptions;
+        }
+
+        return null;
+    }
 }

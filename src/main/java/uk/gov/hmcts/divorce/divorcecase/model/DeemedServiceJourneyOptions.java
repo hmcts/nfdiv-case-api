@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
@@ -15,7 +16,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeemedServiceJourneyOptions implements JourneyOptions {
+public class DeemedServiceJourneyOptions implements ApplicationAnswers {
 
     @CCD(
             label = "You're about to apply for deemed service",
@@ -43,27 +44,16 @@ public class DeemedServiceJourneyOptions implements JourneyOptions {
     )
     private YesOrNo deemedStatementOfTruth;
 
-    @Override
     @JsonIgnore
-    public boolean citizenWillMakePayment() {
-        return YesOrNo.NO.equals(deemedUseHelpWithFees);
-    }
-
     @Override
-    @JsonIgnore
-    public String citizenHwfReference() {
-        return deemedHwfRefNumber;
-    }
-
-    @Override
-    @JsonIgnore
     public DivorceDocument generateAnswerDocument() {
         return DivorceDocument.builder().documentComment("Example").build();
     }
 
-    @Override
     @JsonIgnore
+    @Override
     public AlternativeServiceType serviceApplicationType() {
+
         return AlternativeServiceType.DEEMED;
     }
 }

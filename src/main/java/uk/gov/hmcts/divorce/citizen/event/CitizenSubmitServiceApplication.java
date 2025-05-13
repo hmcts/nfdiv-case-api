@@ -10,12 +10,12 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.service.GeneralApplicationService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationAnswers;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.JourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
@@ -42,7 +42,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @RequiredArgsConstructor
 public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CITIZEN_SUBMIT_SERVICE_APPLICATION = "citizen-submit-service-application";
+    public static final String CITIZEN_SERVICE_APPLICATION = "citizen-service-application";
 
     private static final String AWAITING_DECISION_ERROR = """
         A service application has already been submitted and is awaiting a decision.
@@ -50,27 +50,27 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
     private final PaymentSetupService paymentSetupService;
 
-    private final GeneralApplicationService generalApplicationService;
-
     private final Clock clock;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CITIZEN_SUBMIT_SERVICE_APPLICATION)
+            .event(CITIZEN_SERVICE_APPLICATION)
             .forStates(POST_SUBMISSION_STATES)
-            .name("Citizen Submit Service Application")
-            .description("Citizen Submit Service Application")
+            .name("Citizen Service Application")
+            .description("Citizen Service Application")
             .showSummary()
             .showEventNotes()
             .showCondition(NEVER_SHOW)
             .grant(CREATE_READ_UPDATE, CREATOR)
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE, APPLICANT_1_SOLICITOR));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} About to Submit callback invoked for Case Id: {}", CITIZEN_SUBMIT_SERVICE_APPLICATION, details.getId());
+        log.info("{} About to Submit callback invoked for Case Id: {}", CITIZEN_SERVICE_APPLICATION, details.getId());
 
         if (beforeDetails.getData().getAlternativeService() != null) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -82,12 +82,12 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         long caseId = details.getId();
         AlternativeService alternativeService = data.getAlternativeService();
         Applicant applicant = data.getApplicant1();
-        JourneyOptions userOptions = alternativeService.getUserJourneyOptions(applicant);
+        GeneralApplicationOptions userOptions = applicant.getGeneralApplicationOptions();
 
         setServiceApplicationDetails(alternativeService, userOptions);
 
         FeeDetails serviceFee = alternativeService.getServicePaymentFee();
-        if (userOptions.citizenWillMakePayment()) {
+        if (userOptions.getGenAppsUseHelpWithFees().equals(YesOrNo.NO)) {
             alternativeService.setAlternativeServiceFeeRequired(YesOrNo.YES);
 
             OrderSummary orderSummary = paymentSetupService.createServiceApplicationOrderSummary(alternativeService, caseId);
@@ -98,7 +98,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             serviceFee.setServiceRequestReference(serviceRequest);
             details.setState(AwaitingServicePayment);
         } else {
-            serviceFee.setHelpWithFeesReferenceNumber(userOptions.citizenHwfReference());
+            serviceFee.setHelpWithFeesReferenceNumber(userOptions.getGenAppsHwfRefNumber());
             details.setState(AwaitingServiceConsideration);
         }
 
@@ -110,7 +110,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                             CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} submitted callback invoked for Case Id: {}", CITIZEN_SUBMIT_SERVICE_APPLICATION, details.getId());
+        log.info("{} submitted callback invoked for Case Id: {}", CITIZEN_SERVICE_APPLICATION, details.getId());
 
         AlternativeService serviceApplication = details.getData().getAlternativeService();
         boolean citizenUsingHwf = isNotBlank(serviceApplication.getServicePaymentFee().getHelpWithFeesReferenceNumber());
@@ -122,10 +122,12 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         return SubmittedCallbackResponse.builder().build();
     }
 
-    private void setServiceApplicationDetails(AlternativeService alternativeService, JourneyOptions journeyOptions) {
-        alternativeService.setServiceApplicationAnswers(journeyOptions.generateAnswerDocument());
+    private void setServiceApplicationDetails(AlternativeService alternativeService, GeneralApplicationOptions genAppOptions) {
+        ApplicationAnswers applicationAnswers = genAppOptions.getApplicationAnswers();
+
+        alternativeService.setServiceApplicationAnswers(applicationAnswers.generateAnswerDocument());
         alternativeService.setReceivedServiceApplicationDate(LocalDate.now(clock));
         alternativeService.setReceivedServiceAddedDate(LocalDate.now(clock));
-        alternativeService.setAlternativeServiceType(journeyOptions.serviceApplicationType());
+        alternativeService.setAlternativeServiceType(applicationAnswers.serviceApplicationType());
     }
 }

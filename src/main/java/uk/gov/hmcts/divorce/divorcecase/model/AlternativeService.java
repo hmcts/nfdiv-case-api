@@ -153,13 +153,4 @@ public class AlternativeService {
     public boolean isApplicationGrantedDeemedOrDispensed() {
         return YES.equals(serviceApplicationGranted) && DEEMED.equals(alternativeServiceType) || DISPENSED.equals(alternativeServiceType);
     }
-
-    @JsonIgnore
-    public JourneyOptions getUserJourneyOptions(Applicant applicant) {
-        if (alternativeServiceType.equals(AlternativeServiceType.DEEMED)) {
-            return applicant.getGeneralApplicationOptions().getDeemedServiceJourneyOptions();
-        }
-
-        return null;
-    }
 }
