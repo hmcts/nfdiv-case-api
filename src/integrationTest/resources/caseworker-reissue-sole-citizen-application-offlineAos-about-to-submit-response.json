@@ -73,6 +73,18 @@
     "accessCode": "${json-unit.any-string}",
     "documentsGenerated": [
       {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-bb67-ac1422bb811a",
+            "document_filename": "D10.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/c35b1868-e397-457a-bb67-ac1422bb811a/binary"
+          },
+          "documentFileName": "D10.pdf",
+          "documentType": "d10"
+        }
+      },
+      {
         "id": "Divorce application",
         "value": {
           "documentLink": {
