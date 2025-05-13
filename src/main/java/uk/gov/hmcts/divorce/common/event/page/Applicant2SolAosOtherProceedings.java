@@ -39,7 +39,7 @@ public class Applicant2SolAosOtherProceedings implements CcdPageConfiguration {
                 "applicant2LegalProceedingsConcluded=\"Yes\"")
             .label("applicant2LegalProceedingsOngoingLabel", LEGAL_PROCEEDINGS_ONGOING,
                 "applicant2LegalProceedingsConcluded=\"No\"")
-            .optional(Applicant::getLpDocuments,
+            .optional(Applicant::getLegalProceedingDocs,
                 "applicant2LegalProceedings=\"Yes\" AND applicant2LegalProceedingsConcluded=\"*\"")
             .done();
     }
@@ -49,16 +49,14 @@ public class Applicant2SolAosOtherProceedings implements CcdPageConfiguration {
         final CaseData caseData = details.getData();
         final Applicant respondent = caseData.getApplicant2();
 
-        if (isNull(respondent.getLpDocuments())
-            || isEmpty(respondent.getLpDocuments())) {
-
+        if (isEmpty(respondent.getLegalProceedingDocs())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(singletonList(OTHER_PROCEEDINGS_NO_DOCUMENT_ERROR))
                 .build();
         }
 
         List<String> documentErrors =
-            validateUploadedDocumentsForMandatoryFields(respondent.getLpDocuments());
+            validateUploadedDocumentsForMandatoryFields(respondent.getLegalProceedingDocs());
 
         if (!documentErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()

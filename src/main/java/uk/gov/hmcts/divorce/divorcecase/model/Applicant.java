@@ -219,7 +219,8 @@ public class Applicant {
     private TranslatedToLanguage legalProceedingsDetailsTranslatedTo;
 
     @CCD(
-        label = "Have the ongoing proceedings been concluded?"
+        label = "Have the ongoing proceedings been concluded?",
+        searchable = false
     )
     private YesOrNo legalProceedingsConcluded;
 
@@ -227,12 +228,14 @@ public class Applicant {
         label = "Upload your evidence",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class, Applicant2DeleteAccess.class}
+        access = {DefaultAccess.class, Applicant2DeleteAccess.class},
+        searchable = false
     )
-    private List<ListValue<DivorceDocument>> lpDocuments;
+    private List<ListValue<DivorceDocument>> legalProceedingDocs;
 
     @CCD(
-        label = "Unable to upload evidence?"
+        label = "Unable to upload evidence?",
+        searchable = false
     )
     private YesOrNo unableToUploadEvidence;
 

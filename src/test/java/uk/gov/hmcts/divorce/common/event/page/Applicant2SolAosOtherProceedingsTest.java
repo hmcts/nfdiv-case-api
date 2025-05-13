@@ -30,7 +30,7 @@ class Applicant2SolAosOtherProceedingsTest {
     void shouldReturnErrorWhenNoDocumentsAreUploaded() {
         CaseData caseData = new CaseData();
         Applicant applicant2 = new Applicant();
-        applicant2.setLpDocuments(null);
+        applicant2.setLegalProceedingDocs(null);
         caseData.setApplicant2(applicant2);
 
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -48,7 +48,7 @@ class Applicant2SolAosOtherProceedingsTest {
         ListValue<DivorceDocument> document = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder().documentLink(null).build())
             .build();
-        applicant2.setLpDocuments(singletonList(document));
+        applicant2.setLegalProceedingDocs(singletonList(document));
         caseData.setApplicant2(applicant2);
 
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -66,7 +66,7 @@ class Applicant2SolAosOtherProceedingsTest {
         ListValue<DivorceDocument> document = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder().documentLink(Document.builder().build()).build())
             .build();
-        applicant2.setLpDocuments(singletonList(document));
+        applicant2.setLegalProceedingDocs(singletonList(document));
         caseData.setApplicant2(applicant2);
 
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();

@@ -38,7 +38,7 @@ class SaveLegalProceedingDocumentsToCaseDocumentsTest {
             .value(DivorceDocument.builder().documentFileName("test-doc.pdf").build())
             .build();
 
-        applicant2.setLpDocuments(Collections.singletonList(document));
+        applicant2.setLegalProceedingDocs(Collections.singletonList(document));
         caseData.setApplicant2(applicant2);
         caseData.setDocuments(new CaseDocuments());
 
@@ -50,7 +50,7 @@ class SaveLegalProceedingDocumentsToCaseDocumentsTest {
         assertThat(caseData.getDocuments().getConfidentialDocumentsUploaded()).isNotEmpty();
         assertThat(caseData.getDocuments().getConfidentialDocumentsUploaded().get(0).getValue().getDocumentFileName())
             .isEqualTo("test-doc.pdf");
-        assertThat(caseData.getApplicant2().getLpDocuments()).isNull();
+        assertThat(caseData.getApplicant2().getLegalProceedingDocs()).isNull();
     }
 
     @Test
@@ -63,7 +63,7 @@ class SaveLegalProceedingDocumentsToCaseDocumentsTest {
             .value(DivorceDocument.builder().documentFileName("test-doc.pdf").build())
             .build();
 
-        applicant2.setLpDocuments(Collections.singletonList(document));
+        applicant2.setLegalProceedingDocs(Collections.singletonList(document));
         caseData.setApplicant2(applicant2);
         caseData.setDocuments(new CaseDocuments());
 
@@ -75,14 +75,14 @@ class SaveLegalProceedingDocumentsToCaseDocumentsTest {
         assertThat(caseData.getDocuments().getApplicant2DocumentsUploaded()).isNotEmpty();
         assertThat(caseData.getDocuments().getApplicant2DocumentsUploaded().get(0).getValue().getDocumentFileName())
             .isEqualTo("test-doc.pdf");
-        assertThat(caseData.getApplicant2().getLpDocuments()).isNull();
+        assertThat(caseData.getApplicant2().getLegalProceedingDocs()).isNull();
     }
 
     @Test
     void shouldDoNothingWhenDocumentsListIsEmpty() {
         CaseData caseData = new CaseData();
         Applicant applicant2 = new Applicant();
-        applicant2.setLpDocuments(Collections.emptyList());
+        applicant2.setLegalProceedingDocs(Collections.emptyList());
         caseData.setApplicant2(applicant2);
         caseData.setDocuments(new CaseDocuments());
 

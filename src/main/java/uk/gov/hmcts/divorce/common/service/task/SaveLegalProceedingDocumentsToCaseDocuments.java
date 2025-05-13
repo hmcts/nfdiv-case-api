@@ -27,7 +27,7 @@ public class SaveLegalProceedingDocumentsToCaseDocuments implements CaseTask {
 
         CaseData caseData = caseDetails.getData();
         CaseDocuments caseDocuments = caseData.getDocuments();
-        List<ListValue<DivorceDocument>> documents = caseData.getApplicant2().getLpDocuments();
+        List<ListValue<DivorceDocument>> documents = caseData.getApplicant2().getLegalProceedingDocs();
 
         if (!CollectionUtils.isEmpty(documents)) {
             if (caseData.getApplicant2().isConfidentialContactDetails()) {
@@ -45,7 +45,7 @@ public class SaveLegalProceedingDocumentsToCaseDocuments implements CaseTask {
                         divorceDocument.getId()));
                 });
             }
-            caseData.getApplicant2().setLpDocuments(null);
+            caseData.getApplicant2().setLegalProceedingDocs(null);
         }
 
         return caseDetails;
