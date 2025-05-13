@@ -45,6 +45,12 @@ public class GeneralApplicationOptions {
     private GeneralApplicationType generalApplicationType;
 
     @CCD(
+        label = "You're about to apply for service",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo genAppsIUnderstand;
+
+    @CCD(
         label = "Will you be using Help with Fees for this application?",
         access = {DefaultAccess.class}
     )
@@ -81,6 +87,12 @@ public class GeneralApplicationOptions {
         access = {DefaultAccess.class}
     )
     private YesOrNo genAppsCannotUploadDocs;
+
+    @CCD(
+        label = "Statement of Truth",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo genAppsStatementOfTruth;
 
     @JsonIgnore
     public ApplicationAnswers getApplicationAnswers() {

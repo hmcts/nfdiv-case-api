@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -17,12 +16,6 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DeemedServiceJourneyOptions implements ApplicationAnswers {
-
-    @CCD(
-            label = "You're about to apply for deemed service",
-            access = {DefaultAccess.class}
-    )
-    private YesOrNo deemedIUnderstand;
 
     @CCD(
         label = "Provide a statement",
@@ -37,12 +30,6 @@ public class DeemedServiceJourneyOptions implements ApplicationAnswers {
         access = {DefaultAccess.class}
     )
     private String deemedEvidenceDetails;
-
-    @CCD(
-        label = "Statement of Truth",
-        access = {DefaultAccess.class}
-    )
-    private YesOrNo deemedStatementOfTruth;
 
     @JsonIgnore
     @Override
