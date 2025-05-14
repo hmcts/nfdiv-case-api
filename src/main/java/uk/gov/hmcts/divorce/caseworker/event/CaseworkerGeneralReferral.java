@@ -34,6 +34,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_GENERAL_REFERRAL = "caseworker-general-referral";
 
+    private static final String GENERAL_REFERRAL = "General referral";
+
     private final Clock clock;
 
     @Override
@@ -41,15 +43,15 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
         new PageBuilder(configBuilder
             .event(CASEWORKER_GENERAL_REFERRAL)
             .forStates(POST_SUBMISSION_STATES)
-            .name("General referral")
-            .description("General referral")
+            .name(GENERAL_REFERRAL)
+            .description(GENERAL_REFERRAL)
             .showSummary(false)
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN, JUDGE))
             .page("generalReferral")
-            .pageLabel("General referral")
+            .pageLabel(GENERAL_REFERRAL)
             .complex(CaseData::getGeneralReferral)
                 .mandatory(GeneralReferral::getGeneralReferralReason)
                 .mandatory(GeneralReferral::getGeneralReferralUrgentCase)

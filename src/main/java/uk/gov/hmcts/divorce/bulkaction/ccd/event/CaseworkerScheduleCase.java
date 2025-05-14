@@ -39,6 +39,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYS
 @RequiredArgsConstructor
 public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
     public static final String CASEWORKER_SCHEDULE_CASE = "caseworker-schedule-case";
+    private static final String SCHEDULE_CASES_FOR_LISTING = "Schedule cases for listing";
     private final ScheduleCaseService scheduleCaseService;
     private final BulkTriggerService bulkTriggerService;
     private final BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
@@ -52,8 +53,8 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         new BulkActionPageBuilder(configBuilder
             .event(CASEWORKER_SCHEDULE_CASE)
             .forStates(Created, Listed)
-            .name("Schedule cases for listing")
-            .description("Schedule cases for listing")
+            .name(SCHEDULE_CASES_FOR_LISTING)
+            .description(SCHEDULE_CASES_FOR_LISTING)
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
@@ -61,7 +62,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
             .page("scheduleForListing")
-            .pageLabel("Schedule cases for listing")
+            .pageLabel(SCHEDULE_CASES_FOR_LISTING)
             .mandatory(BulkActionCaseData::getCourt)
             .mandatory(BulkActionCaseData::getDateAndTimeOfHearing)
             .mandatoryNoSummary(BulkActionCaseData::getBulkListCaseDetails);

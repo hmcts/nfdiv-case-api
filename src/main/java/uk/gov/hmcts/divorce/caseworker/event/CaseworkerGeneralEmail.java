@@ -64,6 +64,8 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
 
     public static final String CASEWORKER_CREATE_GENERAL_EMAIL = "caseworker-create-general-email";
 
+    private static final String CREATE_GENERAL_EMAIL = "Create general email";
+
     private static final String NO_VALID_EMAIL_ERROR
         = "You cannot send an email because no email address has been provided for this party.";
 
@@ -87,8 +89,8 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         new PageBuilder(configBuilder
             .event(CASEWORKER_CREATE_GENERAL_EMAIL)
             .forStates(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED)
-            .name("Create general email")
-            .description("Create general email")
+            .name(CREATE_GENERAL_EMAIL)
+            .description(CREATE_GENERAL_EMAIL)
             .showSummary()
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
@@ -96,7 +98,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE, SOLICITOR, CITIZEN, JUDGE))
             .page("createGeneralEmail", this::midEvent)
-            .pageLabel("Create general email")
+            .pageLabel(CREATE_GENERAL_EMAIL)
             .complex(CaseData::getGeneralEmail)
             .mandatory(GeneralEmail::getGeneralEmailParties)
             .mandatory(GeneralEmail::getGeneralEmailOtherRecipientEmail, "generalEmailParties=\"other\"")
