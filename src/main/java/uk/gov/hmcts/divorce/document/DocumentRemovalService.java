@@ -42,14 +42,14 @@ public class DocumentRemovalService {
 
         documentsToRemove.stream()
             .filter(document -> document.getValue().getDocumentLink() != null)
-            .parallel().forEach(document -> {
+            .parallel().forEach(document ->
                 documentManagementClient.deleteDocument(
                     systemUser.getAuthToken(),
                     authTokenGenerator.generate(),
                     document.getValue().getDocumentLink(),
                     true
-                );
-            });
+                )
+            );
     }
 
     public void handleDeletionOfScannedDocuments(CaseData beforeCaseData, CaseData currentCaseData) {
@@ -87,13 +87,13 @@ public class DocumentRemovalService {
 
         scannedDocsToRemove.stream()
             .filter(document -> document.getValue().getUrl() != null)
-            .parallel().forEach(document -> {
+            .parallel().forEach(document ->
                 documentManagementClient.deleteDocument(
                     systemUser.getAuthToken(),
                     authTokenGenerator.generate(),
                     document.getValue().getUrl(),
                     true
-                );
-            });
+                )
+            );
     }
 }
