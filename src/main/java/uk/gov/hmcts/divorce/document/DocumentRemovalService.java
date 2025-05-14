@@ -40,14 +40,16 @@ public class DocumentRemovalService {
 
         final var systemUser = idamService.retrieveSystemUpdateUserDetails();
 
-        documentsToRemove.stream().parallel().forEach(document -> {
-            documentManagementClient.deleteDocument(
-                systemUser.getAuthToken(),
-                authTokenGenerator.generate(),
-                document.getValue().getDocumentLink(),
-                true
-            );
-        });
+        documentsToRemove.stream()
+            .filter(document -> document.getValue().getDocumentLink() != null)
+            .parallel().forEach(document -> {
+                documentManagementClient.deleteDocument(
+                    systemUser.getAuthToken(),
+                    authTokenGenerator.generate(),
+                    document.getValue().getDocumentLink(),
+                    true
+                );
+            });
     }
 
     public void handleDeletionOfScannedDocuments(CaseData beforeCaseData, CaseData currentCaseData) {
@@ -83,13 +85,15 @@ public class DocumentRemovalService {
 
         final var systemUser = idamService.retrieveSystemUpdateUserDetails();
 
-        scannedDocsToRemove.stream().parallel().forEach(document -> {
-            documentManagementClient.deleteDocument(
-                systemUser.getAuthToken(),
-                authTokenGenerator.generate(),
-                document.getValue().getUrl(),
-                true
-            );
-        });
+        scannedDocsToRemove.stream()
+            .filter(document -> document.getValue().getUrl() != null)
+            .parallel().forEach(document -> {
+                documentManagementClient.deleteDocument(
+                    systemUser.getAuthToken(),
+                    authTokenGenerator.generate(),
+                    document.getValue().getUrl(),
+                    true
+                );
+            });
     }
 }
