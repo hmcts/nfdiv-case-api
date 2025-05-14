@@ -2,15 +2,14 @@ package uk.gov.hmcts.divorce.caseworker.service.task;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.task.GenerateFormHelper;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.documentsWithDocumentType;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D10;
 
@@ -40,12 +39,12 @@ public class GenerateD10Form implements CaseTask {
             documentsWithDocumentType(caseData.getDocuments().getDocumentsGenerated(), D10);
 
         var app2 = caseData.getApplicant2();
-        var overseasAddress = app2.isRepresented() ? app2.getSolicitor().getAddressOverseas() == YesOrNo.YES
-                : app2.getCorrespondenceAddressIsOverseas() == YesOrNo.YES;
-        boolean reissuedAsOfflineAOS = OFFLINE_AOS.equals(caseData.getApplication().getReissueOption());
+        var app2Offline = app2.isRepresented() && app2.getSolicitor() != null
+            ? !app2.getSolicitor().hasOrgId()
+            : StringUtils.isEmpty(caseData.getApplicant2().getEmail()) || caseData.getApplicant2().isApplicantOffline();
 
-        var d10Needed = caseData.getApplicationType().isSole() && (!caseData.getApplication().isCourtServiceMethod()
-            || caseData.isJudicialSeparationCase() || overseasAddress || reissuedAsOfflineAOS);
+        var d10Needed = caseData.getApplicationType().isSole() && (!caseData.getApplication().isCourtServiceMethod() || app2Offline
+            || caseData.isJudicialSeparationCase());
 
         if (d10Needed && !d10DocumentAlreadyGenerated) {
             try {
