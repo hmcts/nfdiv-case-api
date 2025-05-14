@@ -2,12 +2,6 @@ buildscript {
   repositories {
     mavenLocal()
     mavenCentral()
-    maven {
-      url "https://jitpack.io"
-      content {
-        excludeGroup "com.github.ben-manes.versions"
-      }
-    }
   }
   dependencies {
     classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '3.2.1263'
@@ -25,7 +19,7 @@ plugins {
   id 'org.springframework.boot' version '3.4.5'
   id 'com.github.ben-manes.versions' version '0.52.0'
   id 'hmcts.ccd.sdk' version '5.5.21'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1701'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1705'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -226,7 +220,6 @@ dependencyManagement {
 repositories {
   mavenLocal()
   mavenCentral()
-  maven { url 'https://jitpack.io' }
 }
 
 def versions = [
@@ -260,7 +253,7 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.8.0'
-  implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '8.10.1') {
+  implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.4') {
     exclude group: 'org.apache.commons', module: 'commons-compress'
     exclude group: 'com.google.guava', module: 'guava'
     exclude group: 'org.apache.poi', module: 'poi-ooxml'
@@ -269,8 +262,8 @@ dependencies {
   }
   implementation group: 'com.github.hmcts', name: 'core-case-data-store-client', version: '5.1.0'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.4'
-  implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.1.7'
-  implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '4.0.4'
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.1.9'
+  implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '5.0.3'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.2'
   implementation group: 'com.github.hmcts', name: 'ccd-case-document-am-client', version: '1.59.2'
 
@@ -314,7 +307,7 @@ dependencies {
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
   testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.5'
   testImplementation group: 'org.simplify4u', name: 'slf4j2-mock', version: '2.3.0'
-  testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.4.3', classifier: 'all'
+  testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.4.9', classifier: 'all'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
@@ -499,3 +492,4 @@ task fortifyScan(type: JavaExec) {
     classpath += sourceSets.test.runtimeClasspath
     jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
+
