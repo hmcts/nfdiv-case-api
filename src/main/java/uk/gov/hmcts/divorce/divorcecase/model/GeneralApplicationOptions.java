@@ -2,6 +2,8 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +23,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class GeneralApplicationOptions {
 
     @JsonUnwrapped
@@ -40,7 +43,8 @@ public class GeneralApplicationOptions {
     @CCD(
         label = "Active General Application Type",
         typeOverride = FixedList,
-        typeParameterOverride = "GeneralApplicationType"
+        typeParameterOverride = "GeneralApplicationType",
+        access = {DefaultAccess.class}
     )
     private GeneralApplicationType generalApplicationType;
 
@@ -101,5 +105,10 @@ public class GeneralApplicationOptions {
         }
 
         return null;
+    }
+
+    @JsonIgnore
+    public boolean awaitingDocuments() {
+        return !YesOrNo.YES.equals(genAppsCannotUploadDocs);
     }
 }

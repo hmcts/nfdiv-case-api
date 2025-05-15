@@ -34,7 +34,9 @@ public class DeemedServiceJourneyOptions implements ApplicationAnswers {
     @JsonIgnore
     @Override
     public DivorceDocument generateAnswerDocument() {
-        return DivorceDocument.builder().documentComment("Example").build();
+        return DivorceDocument.builder()
+                .documentComment("Example")
+                .build();
     }
 
     @JsonIgnore

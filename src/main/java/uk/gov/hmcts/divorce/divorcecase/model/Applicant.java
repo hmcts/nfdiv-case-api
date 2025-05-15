@@ -75,14 +75,14 @@ public class Applicant {
     )
     private YesOrNo agreedToReceiveEmails;
 
-//    @CCD(
-//        label = "Draft Service Applications",
-//        typeOverride = Collection,
-//        typeParameterOverride = "AlternativeService",
-//        access = {SolicitorAndSystemUpdateAccess.class},
-//        searchable = false
-//    )
-//    private List<ListValue<AlternativeService>> draftServiceApplications;
+    //    @CCD(
+    //        label = "Draft Service Applications",
+    //        typeOverride = Collection,
+    //        typeParameterOverride = "AlternativeService",
+    //        access = {SolicitorAndSystemUpdateAccess.class},
+    //        searchable = false
+    //    )
+    //    private List<ListValue<AlternativeService>> draftServiceApplications;
 
     @CCD(
         label = "Service Payments",

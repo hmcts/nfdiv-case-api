@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.WaysToPay;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant1DeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
@@ -251,6 +252,12 @@ public class Application {
         access = {DefaultAccess.class, Applicant1DeleteAccess.class}
     )
     private String applicationFeeServiceRequestReference;
+
+    @CCD(
+        label = "Application Fee Service Request Reference",
+        access = {DefaultAccess.class, Applicant1DeleteAccess.class}
+    )
+    private WaysToPay testServiceRequestReference;
 
     @CCD(
         label = "The respondent agrees that the divorce service can send notifications by email.",

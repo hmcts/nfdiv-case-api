@@ -69,15 +69,6 @@ public class GeneralApplication {
     private FeeDetails generalApplicationFee = new FeeDetails();
 
     @CCD(
-        label = "Payments",
-        typeOverride = Collection,
-        typeParameterOverride = "Payment",
-        access = {DefaultAccess.class},
-        searchable = false
-    )
-    private List<ListValue<Payment>> generalApplicationPayments;
-
-    @CCD(
         label = "Is this an urgent application?"
     )
     private YesOrNo generalApplicationUrgentCase;
@@ -87,9 +78,4 @@ public class GeneralApplication {
         typeOverride = TextArea
     )
     private String generalApplicationUrgentCaseReason;
-
-    @CCD(
-        label = "Awaiting payment"
-    )
-    private YesOrNo awaitingPayment;
 }

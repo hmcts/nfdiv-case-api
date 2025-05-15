@@ -94,7 +94,7 @@ public class PaymentSetupService {
         log.info("Service Application payment service request not found for case id: {}, creating service request", caseId);
 
         return paymentService.createServiceRequestReference(
-            "",
+            null,
             caseId,
             responsibleParty,
             feeDetails.getOrderSummary()
