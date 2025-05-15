@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_RETURN_TO_PREVIOUS_STATE = "caseworker-return-to-previous-state";
+    private static final String RETURN_TO_PREVIOUS_STATE = "Return to previous state";
     private static final String INVALID_STATE_ERROR
         = "You cannot move this case into a pre-submission state. Select another state before continuing.";
     private static final String CASE_MUST_BE_ISSUED_ERROR
@@ -38,8 +39,8 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
         new PageBuilder(configBuilder
             .event(CASEWORKER_RETURN_TO_PREVIOUS_STATE)
             .forStates(PRE_RETURN_TO_PREVIOUS_STATES)
-            .name("Return to previous state")
-            .description("Return to previous state")
+            .name(RETURN_TO_PREVIOUS_STATE)
+            .description(RETURN_TO_PREVIOUS_STATE)
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
@@ -47,7 +48,7 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
             .page("returnToPreviousState", this::midEvent)
-            .pageLabel("Return to previous state")
+            .pageLabel(RETURN_TO_PREVIOUS_STATE)
             .complex(CaseData::getApplication)
                 .readonly(Application::getCurrentState)
                 .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "State to transfer case to")

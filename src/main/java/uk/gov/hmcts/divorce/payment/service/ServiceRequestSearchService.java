@@ -74,6 +74,7 @@ public class ServiceRequestSearchService {
         BigDecimal expectedAmountDue = new BigDecimal(penceToPounds(expectedFee.getAmount()));
 
         return sr.getFees().stream()
+            .filter(f -> f.getAmountDue() != null)
             .anyMatch(f -> expectedFeeCode.equals(f.getCode()) && expectedAmountDue.compareTo(f.getAmountDue()) == 0);
     }
 

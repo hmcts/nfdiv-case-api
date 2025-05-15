@@ -36,8 +36,8 @@ class OcrValidatorTest {
 
         OcrValidationResponse response = validator.validateExceptionRecord(D8.getName(), request);
 
-        assertThat(response.getErrors()).hasSize(0);
-        assertThat(response.getWarnings()).hasSize(0);
+        assertThat(response.getErrors()).isEmpty();
+        assertThat(response.getWarnings()).isEmpty();
         assertThat(response.getStatus()).isEqualTo(SUCCESS);
     }
 

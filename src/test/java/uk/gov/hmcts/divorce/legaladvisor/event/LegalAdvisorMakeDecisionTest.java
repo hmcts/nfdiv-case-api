@@ -480,9 +480,9 @@ class LegalAdvisorMakeDecisionTest {
             legalAdvisorMakeDecision.aboutToSubmit(caseDetails, null);
 
         ConditionalOrder actualConditionalOrder = response.getData().getConditionalOrder();
-        assertThat(actualConditionalOrder.getClarificationResponses()).hasSize(0);
+        assertThat(actualConditionalOrder.getClarificationResponses()).isEmpty();
         assertThat(actualConditionalOrder.getCannotUploadClarificationDocuments()).isNull();
-        assertThat(actualConditionalOrder.getClarificationUploadDocuments()).hasSize(0);
+        assertThat(actualConditionalOrder.getClarificationUploadDocuments()).isEmpty();
     }
 
     @Test
