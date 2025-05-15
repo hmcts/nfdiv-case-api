@@ -505,7 +505,7 @@ class CaseValidationTest {
         caseDetails.setState(State.AwaitingApplicant2Response);
 
         List<String> errors = validateCitizenResendInvite(caseDetails);
-        assertThat(errors).hasSize(0);
+        assertThat(errors).isEmpty();
     }
 
     @Test

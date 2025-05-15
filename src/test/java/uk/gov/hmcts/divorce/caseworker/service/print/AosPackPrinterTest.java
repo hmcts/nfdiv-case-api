@@ -72,7 +72,7 @@ class AosPackPrinterTest {
                 Applicant.builder()
                     .email("testresp@test.com")
                     .solicitorRepresented(YES)
-                    .solicitor(Solicitor.builder().build())
+                    .solicitor(Solicitor.builder().addressOverseas(YES).build())
                     .build())
             .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
             .build();
@@ -85,13 +85,13 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("respondent-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc2.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc3.getValue());
     }
 
     @Test
-    void shouldPrintAosPackWithD10ForRespondentIfEmailIsBlank() {
+    void shouldPrintAosPackWithD10ForRespondentIfRespondentRepresentedAndSolicitorOverseas() {
 
         final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -112,6 +112,7 @@ class AosPackPrinterTest {
                     .email("")
                     .solicitorRepresented(NO)
                     .solicitor(Solicitor.builder().build())
+                    .addressOverseas(YES)
                     .build())
             .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
             .build();
@@ -124,13 +125,13 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("respondent-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc2.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc3.getValue());
     }
 
     @Test
-    void shouldPrintAosPackWithoutD10ForRespondentIfEmailIsPresent() {
+    void shouldPrintAosPackWithD10ForRespondentWhenNotRepresented() {
 
         final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -151,11 +152,12 @@ class AosPackPrinterTest {
                     .email("testresp@test.com")
                     .solicitorRepresented(NO)
                     .solicitor(Solicitor.builder().build())
+                    .addressOverseas(YES)
                     .build())
             .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
             .build();
 
-        when(bulkPrintService.printAosRespondentPack(printCaptor.capture(), eq(false))).thenReturn(randomUUID());
+        when(bulkPrintService.printAosRespondentPack(printCaptor.capture(), eq(true))).thenReturn(randomUUID());
 
         aosPackPrinter.sendAosLetterToRespondent(caseData, TEST_CASE_ID);
 
@@ -163,7 +165,7 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("respondent-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc2.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc3.getValue());
     }
@@ -203,7 +205,7 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("respondent-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc2.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc3.getValue());
     }
@@ -246,7 +248,7 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("respondent-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(doc1.getValue());
         assertThat(print.getLetters().get(0).getDivorceDocument()).isNull();
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
@@ -287,7 +289,7 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("applicant-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
     }
@@ -331,7 +333,7 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("applicant-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(5);
+        assertThat(print.getLetters()).hasSize(5);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
         assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(doc3.getValue());
@@ -392,7 +394,7 @@ class AosPackPrinterTest {
         assertThat(print.getLetters().get(2).getConfidentialDivorceDocument()).isSameAs(coversheet.getValue());
         assertThat(print.getLetters().get(3).getConfidentialDivorceDocument()).isSameAs(nopAppTwo.getValue());
         assertThat(print.getLetters().get(4).getDivorceDocument()).isSameAs(application.getValue());
-        assertThat(print.getLetters().size()).isEqualTo(5);
+        assertThat(print.getLetters()).hasSize(5);
     }
 
     @Test
@@ -434,7 +436,7 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("applicant-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(5);
+        assertThat(print.getLetters()).hasSize(5);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
         assertThat(print.getLetters().get(2).getDivorceDocument()).isSameAs(doc3.getValue());
@@ -551,7 +553,7 @@ class AosPackPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo("applicant-aos-pack");
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(doc1.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
     }

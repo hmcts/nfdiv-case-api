@@ -51,7 +51,7 @@ class EmailUpdateServiceTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        final CaseDetails<CaseData, State> newDetails = emailUpdateService.processEmailUpdate(details, details, true);
+        emailUpdateService.processEmailUpdate(details, details, true);
 
         verifyNoInteractions(inviteApplicantToCaseNotification);
     }
@@ -65,7 +65,7 @@ class EmailUpdateServiceTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        final CaseDetails<CaseData, State> newDetails = emailUpdateService.processEmailUpdate(details, details, true);
+        emailUpdateService.processEmailUpdate(details, details, true);
 
         verifyNoInteractions(inviteApplicantToCaseNotification);
     }
@@ -79,7 +79,7 @@ class EmailUpdateServiceTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        final CaseDetails<CaseData, State> newDetails = emailUpdateService.processEmailUpdate(details, details, true);
+        emailUpdateService.processEmailUpdate(details, details, true);
 
         verifyNoInteractions(inviteApplicantToCaseNotification);
     }
@@ -94,7 +94,7 @@ class EmailUpdateServiceTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        final CaseDetails<CaseData, State> newDetails = emailUpdateService.processEmailUpdate(details, details, false);
+        emailUpdateService.processEmailUpdate(details, details, false);
 
         verifyNoInteractions(inviteApplicantToCaseNotification);
     }
@@ -109,7 +109,7 @@ class EmailUpdateServiceTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        final CaseDetails<CaseData, State> newDetails = emailUpdateService.processEmailUpdate(details, details, false);
+        emailUpdateService.processEmailUpdate(details, details, false);
 
         verify(inviteApplicantToCaseNotification).send(caseData,TEST_CASE_ID,false);
     }
@@ -124,7 +124,7 @@ class EmailUpdateServiceTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        final CaseDetails<CaseData, State> newDetails = emailUpdateService.processEmailUpdate(details, details, false);
+        emailUpdateService.processEmailUpdate(details, details, false);
 
         verify(inviteApplicantToCaseNotification).send(caseData,TEST_CASE_ID,false);
     }

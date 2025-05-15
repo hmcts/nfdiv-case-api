@@ -8,9 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -51,9 +51,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_2_SOLICITOR_APPLIED_FOR_FINAL_ORDER;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_NOTICE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_NOTICE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesLookup;
@@ -99,19 +99,19 @@ public class Applicant2SolicitorApplyForFinalOrderIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private AuthTokenGenerator serviceTokenGenerator;
 
-    @MockBean
+    @MockitoBean
     private PbaService pbaService;
 
-    @MockBean
+    @MockitoBean
     private WebMvcConfig webMvcConfig;
 
-    @MockBean
+    @MockitoBean
     private Clock clock;
 
-    @MockBean
+    @MockitoBean
     private NotificationService notificationService;
 
     @BeforeAll
@@ -154,7 +154,7 @@ public class Applicant2SolicitorApplyForFinalOrderIT {
             data.getApplication().getApplicationFeeOrderSummary()
         );
         data.getFinalOrder().setApplicant2SolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
-        var serviceRequestBody = buildServiceReferenceRequest(data, data.getApplicant2());
+        var serviceRequestBody = buildServiceReferenceRequest(data, data.getApplicant2().getFullName());
         serviceRequestBody.setFees(List.of(
             PaymentItem.builder()
                 .ccdCaseNumber(TEST_CASE_ID.toString())

@@ -53,8 +53,6 @@ class UpdateCourtHearingDetailsTaskTest {
             bulkListCaseDetailsListValue2
         );
 
-        final List<ListValue<BulkListCaseDetails>> output = new ArrayList<>();
-
         final var bulkActionCaseData = BulkActionCaseData
             .builder()
             .dateAndTimeOfHearing(LocalDateTime.of(2021, 11, 10, 0, 0, 0))
@@ -75,8 +73,7 @@ class UpdateCourtHearingDetailsTaskTest {
         when(bulkCaseTaskUtil.processCases(bulkActionCaseDetails, bulkListCaseDetails,
                 SYSTEM_UPDATE_CASE_COURT_HEARING, user, SERVICE_AUTHORIZATION)).thenReturn(bulkActionCaseDetails);
 
-        final CaseDetails<BulkActionCaseData, BulkActionState> result =
-                updateCourtHearingDetailsTask.apply(bulkActionCaseDetails);
+        updateCourtHearingDetailsTask.apply(bulkActionCaseDetails);
 
         verify(bulkCaseTaskUtil).processCases(bulkActionCaseDetails, bulkListCaseDetails,
                 SYSTEM_UPDATE_CASE_COURT_HEARING, user, SERVICE_AUTHORIZATION);

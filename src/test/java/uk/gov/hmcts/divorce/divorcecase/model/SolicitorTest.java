@@ -132,8 +132,8 @@ class SolicitorTest {
         final Solicitor solicitor2 = Solicitor.builder()
             .organisationPolicy(OrganisationPolicy.<UserRole>builder().build()).build();
 
-        assertThat(solicitor1.getOrganisationId()).isEqualTo(null);
-        assertThat(solicitor2.getOrganisationId()).isEqualTo(null);
+        assertThat(solicitor1.getOrganisationId()).isNull();
+        assertThat(solicitor2.getOrganisationId()).isNull();
     }
 
     @Test
@@ -142,8 +142,8 @@ class SolicitorTest {
 
         solicitor.setAddressToOrganisationDefault(null);
 
-        assertThat(solicitor.getAddress()).isEqualTo(null);
-        assertThat(solicitor.getAddressOverseas()).isEqualTo(null);
+        assertThat(solicitor.getAddress()).isNull();
+        assertThat(solicitor.getAddressOverseas()).isNull();
     }
 
     @Test
@@ -155,8 +155,8 @@ class SolicitorTest {
 
         solicitor.setAddressToOrganisationDefault(organisationResponse);
 
-        assertThat(solicitor.getAddress()).isEqualTo(null);
-        assertThat(solicitor.getAddressOverseas()).isEqualTo(null);
+        assertThat(solicitor.getAddress()).isNull();
+        assertThat(solicitor.getAddressOverseas()).isNull();
     }
 
     @Test
@@ -169,6 +169,6 @@ class SolicitorTest {
         solicitor.setAddressToOrganisationDefault(organisationResponse);
 
         assertThat(solicitor.getAddress()).isEqualTo(TEST_SOLICITOR_ADDRESS);
-        assertThat(solicitor.getAddressOverseas()).isEqualTo(null);
+        assertThat(solicitor.getAddressOverseas()).isNull();
     }
 }

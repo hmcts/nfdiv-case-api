@@ -18,17 +18,18 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CreateExceptionRecord implements CCDConfig<ExceptionRecord, ExceptionRecordState, UserRole> {
 
     public static final String CREATE_EXCEPTION = "createException";
+    private static final String CREATE_AN_EXCEPTION_RECORD = "Create an exception record";
 
     @Override
     public void configure(final ConfigBuilder<ExceptionRecord, ExceptionRecordState, UserRole> configBuilder) {
         new ExceptionRecordPageBuilder(configBuilder
             .event(CREATE_EXCEPTION)
             .initialState(ScannedRecordReceived)
-            .name("Create an exception record")
-            .description("Create an exception record")
+            .name(CREATE_AN_EXCEPTION_RECORD)
+            .description(CREATE_AN_EXCEPTION_RECORD)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SYSTEMUPDATE))
-            .page("createException")
+            .page(CREATE_EXCEPTION)
             .pageLabel("Correspondence")
             .readonly(ExceptionRecord::getEnvelopeLabel)
             .optional(ExceptionRecord::getJourneyClassification)

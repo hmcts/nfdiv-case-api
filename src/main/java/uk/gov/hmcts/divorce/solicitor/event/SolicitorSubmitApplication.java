@@ -12,12 +12,14 @@ import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.PaymentService;
-import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
+import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolConfirmJointApplication;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
@@ -58,6 +60,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
     private final SubmissionService submissionService;
     private final PaymentSetupService paymentSetupService;
     private final CaseFlagsService caseFlagsService;
+    private final ServiceRequestSearchService serviceRequestSearchService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -89,15 +92,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                 .build();
         }
 
-        var application = caseData.getApplication();
-        OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(caseData, details.getId());
-
-        application.setApplicationFeeOrderSummary(orderSummary);
-        application.setSolApplicationFeeInPounds(
-            NumberFormat.getNumberInstance().format(
-                new BigDecimal(application.getApplicationFeeOrderSummary().getPaymentTotal()).movePointLeft(2)
-            )
-        );
+        setPaymentOrderSummary(caseData, details.getId());
 
         caseData.getApplication().setSolStatementOfReconciliationCertify(null);
         caseData.getApplication().setSolStatementOfReconciliationDiscussed(null);
@@ -135,11 +130,11 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             if (pbaNumber.isPresent()) {
                 final PbaResponse response = paymentService.processPbaPayment(
                     caseId,
-                    caseData.getApplication().getApplicationFeeServiceRequestReference(),
+                    application.getApplicationFeeServiceRequestReference(),
                     caseData.getApplicant1().getSolicitor(),
                     pbaNumber.get(),
-                    caseData.getApplication().getApplicationFeeOrderSummary(),
-                    caseData.getApplication().getFeeAccountReference()
+                    application.getApplicationFeeOrderSummary(),
+                    application.getFeeAccountReference()
                 );
 
                 if (response.getHttpStatus() == CREATED) {
@@ -147,7 +142,7 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
                         applicationFeeOrderSummary,
                         caseData,
                         response.getPaymentReference(),
-                        caseData.getApplication().getApplicationFeeServiceRequestReference()
+                        application.getApplicationFeeServiceRequestReference()
                     );
                 } else {
                     return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -191,6 +186,23 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
             caseData.getApplication().setApp2ContactMethodIsDigital(YES);
         }
+    }
+
+    private void setPaymentOrderSummary(CaseData caseData, long caseId) {
+        Application application = caseData.getApplication();
+
+        // Blanked out to stop cases with SRs made on case create from paying the old fee (NFD-4857)
+        application.setApplicationFeeOrderSummary(null);
+        application.setApplicationFeeServiceRequestReference(null);
+
+        OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(caseData, caseId);
+
+        application.setApplicationFeeOrderSummary(orderSummary);
+        application.setSolApplicationFeeInPounds(
+            NumberFormat.getNumberInstance().format(
+                new BigDecimal(application.getApplicationFeeOrderSummary().getPaymentTotal()).movePointLeft(2)
+            )
+        );
     }
 
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

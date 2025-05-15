@@ -9,8 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -91,16 +91,16 @@ public class SolicitorSubmitApplicationIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private WebMvcConfig webMvcConfig;
 
-    @MockBean
+    @MockitoBean
     private AuthTokenGenerator serviceTokenGenerator;
 
-    @MockBean
+    @MockitoBean
     private PbaService pbaService;
 
-    @MockBean
+    @MockitoBean
     private NotificationService notificationService;
 
     @BeforeAll
@@ -128,7 +128,7 @@ public class SolicitorSubmitApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1()));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1().getFullName()));
 
         mockMvc.perform(post(ABOUT_TO_START_URL)
                 .contentType(APPLICATION_JSON)
@@ -149,7 +149,7 @@ public class SolicitorSubmitApplicationIT {
     public void createsServiceRequestToPrepareCaseForPayment() throws Exception {
         var data = caseDataWithOrderSummary();
         data.getApplication().setSolPaymentHowToPay(FEE_PAY_BY_ACCOUNT);
-        var serviceRequestBody = buildServiceReferenceRequest(data, data.getApplicant1());
+        var serviceRequestBody = buildServiceReferenceRequest(data, data.getApplicant1().getFullName());
         serviceRequestBody.setFees(List.of(
             PaymentItem.builder()
                 .ccdCaseNumber(TEST_CASE_ID.toString())

@@ -45,7 +45,7 @@ class GenerateApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        final var result = generateApplication.apply(caseDetails);
+        generateApplication.apply(caseDetails);
 
         verify(generateApplicationHelper)
             .generateApplicationDocument(
