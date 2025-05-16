@@ -98,7 +98,7 @@ class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldRemoveStaleEmailTextAndRecipientDataInAboutToStart() throws Exception {
+    void shouldRemoveStaleEmailTextAndRecipientDataInAboutToStart() {
         final CaseData caseData = caseData();
 
         caseData.setGeneralEmail(
@@ -124,7 +124,7 @@ class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldRemoveEmailAttachmentsInAboutToStartIfTheyHaveAlreadyBeenDelivered() throws Exception {
+    void shouldRemoveEmailAttachmentsInAboutToStartIfTheyHaveAlreadyBeenDelivered() {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
@@ -166,7 +166,7 @@ class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldRemoveEmailAttachmentsInAboutToStartIfTheyHaveAlreadyBeenDeliveredConfidential() throws Exception {
+    void shouldRemoveEmailAttachmentsInAboutToStartIfTheyHaveAlreadyBeenDeliveredConfidential() {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
@@ -208,7 +208,7 @@ class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldNotRemoveGeneralEmailAttachmentsInAboutToStartIfPreviousEmailsHadDifferentAttachments() throws Exception {
+    void shouldNotRemoveGeneralEmailAttachmentsInAboutToStartIfPreviousEmailsHadDifferentAttachments() {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
@@ -257,7 +257,7 @@ class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldNotRemoveGeneralEmailAttachmentsInAboutToStartIfPreviousEmailsHadDifferentContent() throws Exception {
+    void shouldNotRemoveGeneralEmailAttachmentsInAboutToStartIfPreviousEmailsHadDifferentContent() {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
@@ -307,7 +307,7 @@ class CaseworkerGeneralEmailTest {
 
 
     @Test
-    void shouldNotRemoveGeneralEmailAttachmentsInAboutToStartIfNoEmailsHaveBeenDelivered() throws Exception {
+    void shouldNotRemoveGeneralEmailAttachmentsInAboutToStartIfNoEmailsHaveBeenDelivered() {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
@@ -338,7 +338,7 @@ class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldNotRemoveGeneralEmailAttachmentsIfDeliveredEmailsWentToDifferentParties() throws Exception {
+    void shouldNotRemoveGeneralEmailAttachmentsIfDeliveredEmailsWentToDifferentParties() {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
@@ -619,7 +619,7 @@ class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldSetGeneralEmailDetailsWhenExistingGeneralEmailsIsNull() throws Exception {
+    void shouldSetGeneralEmailDetailsWhenExistingGeneralEmailsIsNull() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -656,7 +656,7 @@ class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldAddToTopOfExistingGeneralEmailsWhenThereIsExistingGeneralEmail() throws Exception {
+    void shouldAddToTopOfExistingGeneralEmailsWhenThereIsExistingGeneralEmail() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -714,7 +714,7 @@ class CaseworkerGeneralEmailTest {
 
 
     @Test
-    void shouldSetConfidentialGeneralEmailDetails() throws Exception {
+    void shouldSetConfidentialGeneralEmailDetails() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -754,7 +754,7 @@ class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldAddSelectedUploadedDocsToAttachmentsListInAboutToSubmit() throws Exception {
+    void shouldAddSelectedUploadedDocsToAttachmentsListInAboutToSubmit() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -801,7 +801,7 @@ class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldAddSelectedGeneratedDocsToAttachmentsListInAboutToSubmit() throws Exception {
+    void shouldAddSelectedGeneratedDocsToAttachmentsListInAboutToSubmit() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -847,7 +847,7 @@ class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldAddSelectedApp1DocsToAttachmentsListInAboutToSubmit() throws Exception {
+    void shouldAddSelectedApp1DocsToAttachmentsListInAboutToSubmit() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -893,7 +893,7 @@ class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldAddSelectedApp2DocsToAttachmentsListInAboutToSubmit() throws Exception {
+    void shouldAddSelectedApp2DocsToAttachmentsListInAboutToSubmit() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -939,7 +939,7 @@ class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldAddSelectedScannedDocsToAttachmentsListInAboutToSubmit() throws Exception {
+    void shouldAddSelectedScannedDocsToAttachmentsListInAboutToSubmit() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -985,7 +985,7 @@ class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldAddSelectedGenOrderDocsToAttachmentsListInAboutToSubmit() throws Exception {
+    void shouldAddSelectedGenOrderDocsToAttachmentsListInAboutToSubmit() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -1035,7 +1035,7 @@ class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getGeneralEmails().get(0).getValue()
+        assertThat(response.getData().getGeneralEmails().getFirst().getValue()
             .getGeneralEmailAttachmentLinks()).hasSize(3);
     }
 

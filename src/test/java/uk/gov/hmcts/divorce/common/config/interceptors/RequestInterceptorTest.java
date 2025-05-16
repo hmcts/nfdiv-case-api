@@ -37,7 +37,7 @@ class RequestInterceptorTest {
     }
 
     @Test
-    void shouldAppendBearerPrefixWhenServiceAuthDoesNotIncludeBearerPrefix() throws Exception {
+    void shouldAppendBearerPrefixWhenServiceAuthDoesNotIncludeBearerPrefix() {
         when(validator.getServiceName(AUTH_TOKEN_WITH_BEARER_PREFIX))
             .thenReturn("ccd_data");
 
@@ -52,7 +52,7 @@ class RequestInterceptorTest {
     }
 
     @Test
-    void shouldNotAppendBearerPrefixWhenServiceAuthIncludesBearerPrefix() throws Exception {
+    void shouldNotAppendBearerPrefixWhenServiceAuthIncludesBearerPrefix() {
         when(validator.getServiceName(AUTH_TOKEN_WITH_BEARER_PREFIX))
             .thenReturn("ccd_data");
 

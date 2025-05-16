@@ -31,7 +31,7 @@ class CaseworkerCreateCaseFlagTest {
     private CaseworkerCreateCaseFlag caseworkerCreateCaseFlag;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerCreateCaseFlag.configure(configBuilder);
@@ -43,11 +43,10 @@ class CaseworkerCreateCaseFlagTest {
 
     @Test
     void shouldInitialisePartyFlagsInAboutToStartEvent() {
-        Long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = validApplicant1CaseData();
         caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
+        caseDetails.setId(TEST_CASE_ID);
 
         caseworkerCreateCaseFlag.aboutToStart(caseDetails);
 

@@ -34,7 +34,7 @@ class CaseworkerUpdateApplicant2EmailTest {
     private CaseworkerUpdateApplicant2Email caseworkerUpdateApplicant2Email;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerUpdateApplicant2Email.configure(configBuilder);
@@ -83,7 +83,7 @@ class CaseworkerUpdateApplicant2EmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.midEvent(details, details);
 
         verify(emailUpdateService).willApplicantBeMadeOffline(details, details, false);
-        assertThat(response.getWarnings()).hasSize(0);
+        assertThat(response.getWarnings()).isEmpty();
     }
 
     @Test

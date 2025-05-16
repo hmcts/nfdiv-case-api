@@ -62,7 +62,7 @@ class CaseworkerCreateGeneralOrderTest {
     }
 
     @Test
-    void shouldReturnListOfScannedDocumentNames() throws Exception {
+    void shouldReturnListOfScannedDocumentNames() {
         final CaseData caseData = caseData();
 
         ScannedDocument scannedDocument = getScannedGeneralOrderDocument();
@@ -83,7 +83,7 @@ class CaseworkerCreateGeneralOrderTest {
     }
 
     @Test
-    void shouldSetGeneralOrderDocumentsWhenThereIsNoExistingGeneralOrder() throws Exception {
+    void shouldSetGeneralOrderDocumentsWhenThereIsNoExistingGeneralOrder() {
         final CaseData caseData = caseData();
 
         final Document generalOrderDocument = getGeneralOrderDocument();
@@ -104,7 +104,7 @@ class CaseworkerCreateGeneralOrderTest {
     }
 
     @Test
-    void shouldAddLatestGeneralOrderDocumentToTopWhenThereIsExistingGeneralOrder() throws Exception {
+    void shouldAddLatestGeneralOrderDocumentToTopWhenThereIsExistingGeneralOrder() {
         final CaseData caseData = caseData();
 
         Document generalOrderDocument1 = getGeneralOrderDocument();
@@ -133,7 +133,7 @@ class CaseworkerCreateGeneralOrderTest {
     }
 
     @Test
-    void shouldSetGeneralOrderScannedDocument() throws Exception {
+    void shouldSetGeneralOrderScannedDocument() {
         final CaseData caseData = caseData();
 
         final Document generalOrder = getGeneralOrderDocument();

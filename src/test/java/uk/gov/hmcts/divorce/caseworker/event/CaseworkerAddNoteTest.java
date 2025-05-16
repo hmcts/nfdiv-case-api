@@ -55,7 +55,7 @@ class CaseworkerAddNoteTest {
     private CaseworkerAddNote caseworkerAddNote;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerAddNote.configure(configBuilder);

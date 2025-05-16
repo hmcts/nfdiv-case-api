@@ -22,7 +22,7 @@ class CaseworkerUpdateGeneralApplicationTest {
     private CaseworkerUpdateGeneralApplication caseworkerUpdateGeneralApplication;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerUpdateGeneralApplication.configure(configBuilder);

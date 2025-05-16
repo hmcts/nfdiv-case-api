@@ -27,7 +27,7 @@ class CaseworkerManageCaseFlagTest {
     private CaseworkerManageCaseFlag caseworkerManageCaseFlag;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerManageCaseFlag.configure(configBuilder);

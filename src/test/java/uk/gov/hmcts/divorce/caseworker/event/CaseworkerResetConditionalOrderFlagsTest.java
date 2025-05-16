@@ -34,7 +34,7 @@ class CaseworkerResetConditionalOrderFlagsTest {
     private CaseworkerResetConditionalOrderFlags caseworkerResetConditionalOrderFlags;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerResetConditionalOrderFlags.configure(configBuilder);

@@ -22,7 +22,7 @@ class CaseworkerResponseToJudgeTest {
     private CaseworkerResponseToJudge caseworkerResponseToJudge;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerResponseToJudge.configure(configBuilder);
