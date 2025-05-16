@@ -18,6 +18,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.InterimApplicationGeneratorService;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
@@ -49,6 +51,8 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
     """;
 
     private final PaymentSetupService paymentSetupService;
+
+    private final InterimApplicationGeneratorService interimApplicationGeneratorService;
 
     private final Clock clock;
 
@@ -96,6 +100,11 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServicePayment);
         }
 
+        DivorceDocument applicationDocument = interimApplicationGeneratorService.generateAnswerDocument(
+          caseId, applicant, data
+        );
+        newServiceApplication.setServiceApplicationAnswers(applicationDocument);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .state(details.getState())
@@ -120,7 +129,6 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
         return AlternativeService.builder()
             .serviceApplicationDocuments(userOptions.getInterimAppsEvidenceDocs())
-            .serviceApplicationAnswers(applicationAnswers.generateAnswerDocument())
             .receivedServiceApplicationDate(LocalDate.now(clock))
             .receivedServiceAddedDate(LocalDate.now(clock))
             .alternativeServiceType(applicationAnswers.serviceApplicationType())
