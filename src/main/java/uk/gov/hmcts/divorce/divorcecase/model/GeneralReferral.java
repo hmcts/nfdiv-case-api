@@ -63,7 +63,8 @@ public class GeneralReferral {
 
     @CCD(
         label = "Further details for Judge or Legal Advisor",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String generalReferralJudgeOrLegalAdvisorDetails;
 
@@ -92,7 +93,8 @@ public class GeneralReferral {
     @CCD(
         label = "Please provide further details",
         hint = "Provide direction for any general orders or general letters to be created by caseworkers.",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String generalReferralDecisionReason;
 
@@ -103,7 +105,8 @@ public class GeneralReferral {
 
     @CCD(
         label = "Urgent referral reason",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String generalReferralUrgentCaseReason;
 
@@ -114,7 +117,8 @@ public class GeneralReferral {
 
     @CCD(
         label = "Fraud referral reason",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String generalReferralFraudCaseReason;
 }

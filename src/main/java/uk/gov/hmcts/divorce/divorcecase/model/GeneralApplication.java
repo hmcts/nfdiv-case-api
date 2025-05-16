@@ -34,7 +34,8 @@ public class GeneralApplication {
 
     @CCD(
         label = "Please provide more information about general application type",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String generalApplicationTypeOtherComments;
 
@@ -46,21 +47,24 @@ public class GeneralApplication {
     private GeneralApplicationFee generalApplicationFeeType;
 
     @CCD(
-            label = "General Application Document"
+        label = "General Application Document",
+        searchable = false
     )
     private DivorceDocument generalApplicationDocument;
 
     @CCD(
-            label = "General Application Documents",
-            typeOverride = Collection,
-            typeParameterOverride = "DivorceDocument",
-            access = {DefaultAccess.class, CaseworkerDeleteAccess.class}
+        label = "General Application Documents",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
+        access = {DefaultAccess.class, CaseworkerDeleteAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> generalApplicationDocuments;
 
     @CCD(
         label = "Additional comments about the supporting document",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String generalApplicationDocumentComments;
 
@@ -75,7 +79,8 @@ public class GeneralApplication {
 
     @CCD(
         label = "How does this qualify as an urgent application?",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String generalApplicationUrgentCaseReason;
 }
