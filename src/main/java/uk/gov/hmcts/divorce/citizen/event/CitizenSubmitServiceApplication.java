@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
@@ -64,11 +65,11 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .description("Citizen service application")
             .showSummary()
             .showEventNotes()
-//            .showCondition(NEVER_SHOW)
-            .grant(CREATE_READ_UPDATE, CREATOR, CASE_WORKER)
+            .showCondition(NEVER_SHOW)
+            .grant(CREATE_READ_UPDATE, CREATOR)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
-            .grantHistoryOnly(SUPER_USER, JUDGE, APPLICANT_1_SOLICITOR));
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE, APPLICANT_1_SOLICITOR));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -85,7 +86,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
         Applicant applicant = data.getApplicant1();
         InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
-        AlternativeService newServiceApplication = buildServiceApplication(userOptions);
+        AlternativeService newServiceApplication = createServiceApplication(userOptions);
         data.setAlternativeService(newServiceApplication);
 
         if (userOptions.willMakePayment()) {
@@ -123,7 +124,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         return SubmittedCallbackResponse.builder().build();
     }
 
-    private AlternativeService buildServiceApplication(InterimApplicationOptions userOptions) {
+    private AlternativeService createServiceApplication(InterimApplicationOptions userOptions) {
         ApplicationAnswers applicationAnswers = userOptions.getApplicationAnswers();
 
         return AlternativeService.builder()

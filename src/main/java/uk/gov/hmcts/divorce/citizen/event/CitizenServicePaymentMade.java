@@ -40,6 +40,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 @RequiredArgsConstructor
 public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, UserRole> {
+
     public static final String CITIZEN_SERVICE_PAYMENT= "citizen-service-payment-made";
 
     private final PaymentSetupService paymentSetupService;
