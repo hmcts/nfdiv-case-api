@@ -25,10 +25,13 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10_CONFIDENTIAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.scannedDocMustBeReclassifiedByCaseworker;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -122,10 +125,15 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
                 CaseDocuments.ScannedDocumentSubtypes.valueOf(scannedDocument.getSubtype().toUpperCase(Locale.ROOT));
             final DocumentType documentType = getDocumentType(scannedDocumentSubtype);
 
-            if (isNotEmpty(documentType)) {
-                caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, scannedDocument);
-                caseData.getDocuments().setScannedSubtypeReceived(scannedDocumentSubtype);
+            if (isEmpty(documentType)) {
+                return;
             }
+
+            if (!scannedDocMustBeReclassifiedByCaseworker(scannedDocumentSubtype)) {
+                caseData.reclassifyScannedDocumentToChosenDocumentType(documentType, clock, scannedDocument);
+            }
+
+            caseData.getDocuments().setScannedSubtypeReceived(scannedDocumentSubtype);
         }
     }
 
@@ -141,7 +149,7 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
 
         // TODO: extend once Nullity document types added
 
-        if (D10.equals(scannedDocumentSubtype)) {
+        if (D10.equals(scannedDocumentSubtype) || D10_CONFIDENTIAL.equals(scannedDocumentSubtype)) {
             return RESPONDENT_ANSWERS;
         } else if (D84.equals(scannedDocumentSubtype)) {
             return CONDITIONAL_ORDER_APPLICATION;
