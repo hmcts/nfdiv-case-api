@@ -100,7 +100,7 @@ public class InterimApplicationOptions {
 
     @JsonIgnore
     public ApplicationAnswers getApplicationAnswers() {
-        if (generalApplicationType.equals(GeneralApplicationType.DEEMED_SERVICE)) {
+        if (interimApplicationType.equals(GeneralApplicationType.DEEMED_SERVICE)) {
             return deemedServiceJourneyOptions;
         }
 
@@ -109,6 +109,11 @@ public class InterimApplicationOptions {
 
     @JsonIgnore
     public boolean awaitingDocuments() {
-        return !YesOrNo.YES.equals(genAppsCannotUploadDocs);
+        return !YesOrNo.YES.equals(interimAppsCannotUploadDocs);
+    }
+
+    @JsonIgnore
+    public boolean willMakePayment() {
+      return YesOrNo.NO.equals(interimAppsHaveHwfReference);
     }
 }

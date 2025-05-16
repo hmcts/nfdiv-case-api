@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationAnswers;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
@@ -26,7 +26,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static com.microsoft.applicationinsights.boot.dependencies.apachecommons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
@@ -75,38 +74,25 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         long caseId = details.getId();
         log.info("{} About to Submit callback invoked for Case Id: {}", CITIZEN_SERVICE_APPLICATION, details.getId());
 
-        AlternativeService alternativeService = data.getAlternativeService();
-        if (alternativeService != null && alternativeService.getReceivedServiceApplicationDate() != null) {
+        if (serviceAppAwaitingReview(data.getAlternativeService())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(Collections.singletonList(AWAITING_DECISION_ERROR))
                 .build();
         }
 
         Applicant applicant = data.getApplicant1();
-        GeneralApplicationOptions userOptions = applicant.getGeneralApplicationOptions();
-        ApplicationAnswers applicationAnswers = userOptions.getApplicationAnswers();
-
-        AlternativeService newServiceApplication = createServiceApplication(userOptions, applicationAnswers);
+        InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
+        AlternativeService newServiceApplication = createServiceApplication(userOptions);
         data.setAlternativeService(newServiceApplication);
 
-        FeeDetails serviceFee = newServiceApplication.getServicePaymentFee();
-        if (userOptions.getGenAppsUseHelpWithFees().equals(YesOrNo.NO)) {
-            newServiceApplication.setAlternativeServiceFeeRequired(YesOrNo.YES);
+        if (userOptions.willMakePayment()) {
+            prepareCaseForServicePayment(newServiceApplication, applicant, caseId);
 
-            OrderSummary orderSummary = paymentSetupService.createServiceApplicationOrderSummary(
-                    newServiceApplication, caseId
-            );
-            serviceFee.setOrderSummary(orderSummary);
-
-            String serviceRequest = paymentSetupService.createServiceApplicationPaymentServiceRequest(
-                newServiceApplication, caseId, applicant.getFullName()
-            );
-            serviceFee.setServiceRequestReference(serviceRequest);
-
-            applicant.setServicePayments(new ArrayList<>());
             details.setState(AwaitingServicePayment);
         } else {
-            serviceFee.setHelpWithFeesReferenceNumber(userOptions.getGenAppsHwfRefNumber());
+            FeeDetails serviceFee = newServiceApplication.getServicePaymentFee();
+            serviceFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
+
             details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServicePayment);
         }
 
@@ -120,26 +106,45 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
                                             CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} submitted callback invoked for Case Id: {}", CITIZEN_SERVICE_APPLICATION, details.getId());
 
-        AlternativeService serviceApplication = details.getData().getAlternativeService();
-        boolean citizenUsingHwf = isNotBlank(serviceApplication.getServicePaymentFee().getHelpWithFeesReferenceNumber());
+        InterimApplicationOptions userOptions = details.getData().getApplicant1().getInterimApplicationOptions();
 
-        if (citizenUsingHwf) {
-            // Send notifications;
+        if (!userOptions.willMakePayment()) {
+            // Send notifications if using HWF;
         }
 
         return SubmittedCallbackResponse.builder().build();
     }
 
-    private AlternativeService createServiceApplication(
-            GeneralApplicationOptions userOptions,
-            ApplicationAnswers applicationAnswers
-    ) {
+    private AlternativeService createServiceApplication(InterimApplicationOptions userOptions) {
+        ApplicationAnswers applicationAnswers = userOptions.getApplicationAnswers();
+
         return AlternativeService.builder()
-            .serviceApplicationDocuments(userOptions.getGenAppsEvidenceDocs())
+            .serviceApplicationDocuments(userOptions.getInterimAppsEvidenceDocs())
             .serviceApplicationAnswers(applicationAnswers.generateAnswerDocument())
             .receivedServiceApplicationDate(LocalDate.now(clock))
             .receivedServiceAddedDate(LocalDate.now(clock))
             .alternativeServiceType(applicationAnswers.serviceApplicationType())
             .build();
+    }
+
+    private void prepareCaseForServicePayment(AlternativeService serviceApplication, Applicant applicant, long caseId) {
+      serviceApplication.setAlternativeServiceFeeRequired(YesOrNo.YES);
+
+      FeeDetails serviceFee = serviceApplication.getServicePaymentFee();
+      OrderSummary orderSummary = paymentSetupService.createServiceApplicationOrderSummary(
+        serviceApplication, caseId
+      );
+      serviceFee.setOrderSummary(orderSummary);
+
+      String serviceRequest = paymentSetupService.createServiceApplicationPaymentServiceRequest(
+        serviceApplication, caseId, applicant.getFullName()
+      );
+      serviceFee.setServiceRequestReference(serviceRequest);
+
+      applicant.setServicePayments(new ArrayList<>());
+    }
+
+    private boolean serviceAppAwaitingReview(AlternativeService alternativeService) {
+      return alternativeService != null && alternativeService.getReceivedServiceApplicationDate() != null;
     }
 }
