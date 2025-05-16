@@ -49,7 +49,7 @@ public class SystemUpdateCaseWithCourtHearing implements CCDConfig<CaseData, Sta
             .forStates(AwaitingPronouncement, OfflineDocumentReceived)
             .showCondition(NEVER_SHOW)
             .name("Update case with court hearing")
-            .description("Update case with court hearin")
+            .description("Update case with court hearing")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR));
