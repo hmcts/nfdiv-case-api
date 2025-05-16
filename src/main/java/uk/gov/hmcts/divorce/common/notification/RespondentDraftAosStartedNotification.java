@@ -15,13 +15,17 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_DRAFT_AOS_STARTED_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_DRAFT_AOS_STARTED_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_DRAFT_AOS_STARTED_APPLICATION;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_DRAFT_AOS_STARTED_APPLICATION_OVERDUE;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -42,12 +46,21 @@ public class RespondentDraftAosStartedNotification implements ApplicantNotificat
 
         Applicant applicant = caseData.getApplicant1();
 
+        final boolean isOverdue = caseData.getDueDate() != null && caseData.getDueDate().isBefore(LocalDate.now());
+
         var templateContent = commonContent.mainTemplateVars(caseData, id, applicant, caseData.getApplicant2());
+
+        if (isOverdue) {
+            templateContent.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(
+                getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())
+            ));
+        }
+
         templateContent.put(NAME, applicant.getFullName());
 
         notificationService.sendEmail(
                 applicant.getEmail(),
-                RESPONDENT_DRAFT_AOS_STARTED_APPLICATION,
+                isOverdue ? RESPONDENT_DRAFT_AOS_STARTED_APPLICATION_OVERDUE : RESPONDENT_DRAFT_AOS_STARTED_APPLICATION,
                 templateContent,
                 applicant.getLanguagePreference(),
                 id);
