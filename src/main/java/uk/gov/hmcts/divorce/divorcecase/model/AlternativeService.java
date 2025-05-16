@@ -100,6 +100,11 @@ public class AlternativeService {
     )
     private YesOrNo alternativeServiceFeeRequired;
 
+    @CCD(
+        label = "Service application answers"
+    )
+    private DivorceDocument serviceApplicationAnswers;
+
     @JsonUnwrapped
     @Builder.Default
     @CCD(access = {CaseworkerAccessOnlyAccess.class})
