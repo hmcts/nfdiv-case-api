@@ -14,11 +14,12 @@ public class InterimApplicationGeneratorService {
   private final DeemedServiceApplicationGenerator deemedServiceApplicationGenerator;
 
   public DivorceDocument generateAnswerDocument(
-    GeneralApplicationType applicationType,
     long caseId,
     Applicant applicant,
     CaseData caseData
   ) {
+    GeneralApplicationType applicationType = applicant.getInterimApplicationOptions().getInterimApplicationType();
+
     if (GeneralApplicationType.DEEMED_SERVICE.equals(applicationType)) {
       return deemedServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
     }

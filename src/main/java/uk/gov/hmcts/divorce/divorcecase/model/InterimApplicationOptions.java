@@ -24,7 +24,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
-public class GeneralApplicationOptions {
+public class InterimApplicationOptions {
 
     @JsonUnwrapped
     @CCD(
@@ -41,66 +41,66 @@ public class GeneralApplicationOptions {
     private DeemedServiceJourneyOptions deemedServiceJourneyOptions;
 
     @CCD(
-        label = "Active General Application Type",
+        label = "Active Interim Application Type",
         typeOverride = FixedList,
         typeParameterOverride = "GeneralApplicationType",
         access = {DefaultAccess.class}
     )
-    private GeneralApplicationType generalApplicationType;
+    private GeneralApplicationType interimApplicationType;
 
     @CCD(
         label = "You're about to apply for service",
         access = {DefaultAccess.class}
     )
-    private YesOrNo genAppsIUnderstand;
+    private YesOrNo interimAppsIUnderstand;
 
     @CCD(
         label = "Will you be using Help with Fees for this application?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo genAppsUseHelpWithFees;
+    private YesOrNo interimAppsUseHelpWithFees;
 
     @CCD(
         label = "Do you have a help with fees reference number?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo genAppsHaveHwfReference;
+    private YesOrNo interimAppsHaveHwfReference;
 
     @CCD(
         label = "Are you able to upload evidence?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo genAppsCanUploadEvidence;
+    private YesOrNo interimAppsCanUploadEvidence;
 
     @CCD(
         label = "Help with fees reference",
         regex = "([Hh][Ww][Ff]-?)?[0-9a-zA-Z]{3}-?[0-9a-zA-Z]{3}$",
         access = {DefaultAccess.class}
     )
-    private String genAppsHwfRefNumber;
+    private String interimAppsHwfRefNumber;
 
     @CCD(
         label = "Upload documents",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument"
     )
-    private List<ListValue<DivorceDocument>> genAppsEvidenceDocs;
+    private List<ListValue<DivorceDocument>> interimAppsEvidenceDocs;
 
     @CCD(
         label = "Cannot upload some or all of my documents",
         access = {DefaultAccess.class}
     )
-    private YesOrNo genAppsCannotUploadDocs;
+    private YesOrNo interimAppsCannotUploadDocs;
 
     @CCD(
         label = "Statement of Truth",
         access = {DefaultAccess.class}
     )
-    private YesOrNo genAppsStatementOfTruth;
+    private YesOrNo interimAppsStatementOfTruth;
 
     @JsonIgnore
     public ApplicationAnswers getApplicationAnswers() {
-        if (generalApplicationType.equals(GeneralApplicationType.DEEMED_SERVICE)) {
+        if (interimApplicationType.equals(GeneralApplicationType.DEEMED_SERVICE)) {
             return deemedServiceJourneyOptions;
         }
 
@@ -109,6 +109,11 @@ public class GeneralApplicationOptions {
 
     @JsonIgnore
     public boolean awaitingDocuments() {
-        return !YesOrNo.YES.equals(genAppsCannotUploadDocs);
+        return !YesOrNo.YES.equals(interimAppsCannotUploadDocs);
+    }
+
+    @JsonIgnore
+    public boolean willMakePayment() {
+      return YesOrNo.NO.equals(interimAppsHaveHwfReference);
     }
 }

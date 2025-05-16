@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -40,7 +40,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 @RequiredArgsConstructor
 public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, UserRole> {
-
     public static final String CITIZEN_SERVICE_PAYMENT= "citizen-service-payment-made";
 
     private final PaymentSetupService paymentSetupService;
@@ -84,15 +83,8 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
         String paymentReference = paymentValidatorService.getLastPayment(servicePayments).getReference();
         alternativeService.setDateOfPayment(LocalDate.now(clock));
         alternativeService.getServicePaymentFee().setPaymentReference(paymentReference);
-        data.updateCaseDataWithPaymentDetails(
-            alternativeService.getServicePaymentFee().getOrderSummary(),
-            data,
-            paymentReference,
-            alternativeService.getServicePaymentFee().getServiceRequestReference()
-        );
-
         data.getApplicant1().setServicePayments(new ArrayList<>());
-        GeneralApplicationOptions userOptions = data.getApplicant1().getGeneralApplicationOptions();
+        InterimApplicationOptions userOptions = data.getApplicant1().getInterimApplicationOptions();
 
         details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServiceConsideration);
 
