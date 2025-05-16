@@ -26,11 +26,13 @@ public class DeemedServiceApplicationGenerator {
                                       final CaseData caseData) {
         log.info("Generating deemed service application document for {}", caseId);
 
-        Document document = caseDataDocumentService.renderDocument(templateContent.getTemplateContent(caseData, caseId, applicant),
+        Document document = caseDataDocumentService.renderDocument(
+            templateContent.getTemplateContent(caseData, caseId, applicant),
             caseId,
             DEEMED_SERVICE_APPLICATION_TEMPLATE_ID,
             applicant.getLanguagePreference(),
-            DEEMED_SERVICE_APPLICATION_DOCUMENT_NAME);
+            DEEMED_SERVICE_APPLICATION_DOCUMENT_NAME
+        );
 
         return DivorceDocument
           .builder()
