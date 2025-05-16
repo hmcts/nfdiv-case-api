@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.InterimApplicationGeneratorService;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
@@ -27,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import static com.microsoft.applicationinsights.boot.dependencies.apachecommons.lang3.StringUtils.isNotBlank;
-import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
@@ -51,6 +51,8 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
     private final PaymentSetupService paymentSetupService;
 
+    private final InterimApplicationGeneratorService interimApplicationGeneratorService;
+
     private final Clock clock;
 
     @Override
@@ -62,11 +64,11 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .description("Citizen service application")
             .showSummary()
             .showEventNotes()
-            .showCondition(NEVER_SHOW)
-            .grant(CREATE_READ_UPDATE, CREATOR)
+//            .showCondition(NEVER_SHOW)
+            .grant(CREATE_READ_UPDATE, CREATOR, CASE_WORKER)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
-            .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE, APPLICANT_1_SOLICITOR));
+            .grantHistoryOnly(SUPER_USER, JUDGE, APPLICANT_1_SOLICITOR));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -75,6 +77,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         long caseId = details.getId();
         log.info("{} About to Submit callback invoked for Case Id: {}", CITIZEN_SERVICE_APPLICATION, details.getId());
 
+        data.setAlternativeService(null);
         AlternativeService alternativeService = data.getAlternativeService();
         if (alternativeService != null && alternativeService.getReceivedServiceApplicationDate() != null) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -88,6 +91,10 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
         AlternativeService newServiceApplication = createServiceApplication(userOptions, applicationAnswers);
         data.setAlternativeService(newServiceApplication);
+        newServiceApplication.setServiceApplicationAnswers(
+          interimApplicationGeneratorService.generateAnswerDocument(
+            userOptions.getGeneralApplicationType(), caseId, applicant, data
+        ));
 
         FeeDetails serviceFee = newServiceApplication.getServicePaymentFee();
         if (userOptions.getGenAppsUseHelpWithFees().equals(YesOrNo.NO)) {
@@ -136,7 +143,6 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
     ) {
         return AlternativeService.builder()
             .serviceApplicationDocuments(userOptions.getGenAppsEvidenceDocs())
-            .serviceApplicationAnswers(applicationAnswers.generateAnswerDocument())
             .receivedServiceApplicationDate(LocalDate.now(clock))
             .receivedServiceAddedDate(LocalDate.now(clock))
             .alternativeServiceType(applicationAnswers.serviceApplicationType())
