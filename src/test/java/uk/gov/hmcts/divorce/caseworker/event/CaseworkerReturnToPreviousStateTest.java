@@ -35,7 +35,7 @@ class CaseworkerReturnToPreviousStateTest {
     private CaseworkerReturnToPreviousState caseworkerReturnToPreviousState;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerReturnToPreviousState.configure(configBuilder);

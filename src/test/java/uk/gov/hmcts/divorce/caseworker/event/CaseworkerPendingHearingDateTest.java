@@ -21,7 +21,7 @@ class CaseworkerPendingHearingDateTest {
     private CaseworkerPendingHearingDate caseworkerPendingHearingDate;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerPendingHearingDate.configure(configBuilder);
