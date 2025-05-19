@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.divorce.payment.PaymentCallbackService;
+import uk.gov.hmcts.divorce.payment.service.PaymentCallbackService;
 import uk.gov.hmcts.divorce.payment.model.PaymentCallbackDto;
 
 import static org.mockito.Mockito.verify;

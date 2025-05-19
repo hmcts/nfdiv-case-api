@@ -6,15 +6,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.payment.PaymentCallbackService;
 import uk.gov.hmcts.divorce.payment.model.PaymentCallbackDto;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus;
+import uk.gov.hmcts.divorce.payment.service.PaymentCallbackService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import static org.mockito.Mockito.verify;
@@ -39,23 +39,23 @@ public class PaymentCallbackControllerIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private RequestInterceptor requestInterceptor;
 
-    @MockBean
+    @MockitoBean
     private NotificationService notificationService;
 
-    @MockBean
+    @MockitoBean
     private WebMvcConfig webMvcConfig;
 
-    @MockBean
+    @MockitoBean
     private AuthTokenGenerator authTokenGenerator;
 
-    @MockBean
+    @MockitoBean
     private PaymentCallbackService paymentCallbackService;
 
     @Test
-    public void givenValidServiceAuthTokenThenProcessesPaymentCallback() throws Exception {
+    void givenValidServiceAuthTokenThenProcessesPaymentCallback() throws Exception {
         PaymentCallbackDto paymentCallback = cardPaymentCallback();
 
         mockMvc.perform(put(PAYMENT_UPDATE_PATH)
@@ -70,7 +70,7 @@ public class PaymentCallbackControllerIT {
     }
 
     @Test
-    public void givenMissingServiceAuthTokenThenDoesNotProcessCallback() throws Exception {
+    void givenMissingServiceAuthTokenThenDoesNotProcessCallback() throws Exception {
         mockMvc.perform(put(PAYMENT_UPDATE_PATH)
                         .contentType(APPLICATION_JSON)
                         .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)

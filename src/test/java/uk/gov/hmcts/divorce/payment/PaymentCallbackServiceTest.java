@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.payment.model.OnlinePaymentMethod;
 import uk.gov.hmcts.divorce.payment.model.PaymentCallbackDto;
 import uk.gov.hmcts.divorce.payment.model.PaymentCallbackDto.PaymentDto;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus;
+import uk.gov.hmcts.divorce.payment.service.PaymentCallbackService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
