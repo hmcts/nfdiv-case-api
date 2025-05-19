@@ -22,7 +22,7 @@ class CaseworkerUpdateDueDateTest {
     private CaseworkerUpdateDueDate caseworkerUpdateDueDate;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerUpdateDueDate.configure(configBuilder);
