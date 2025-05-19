@@ -129,7 +129,7 @@ class CitizenSubmitApplicationTest {
             .thenReturn(orderSummary());
 
         when(paymentSetupService.createApplicationFeeServiceRequest(
-            caseData, caseId
+            caseData, caseId, caseData.getCitizenPaymentCallbackUrl()
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);
@@ -164,7 +164,7 @@ class CitizenSubmitApplicationTest {
             .thenReturn(orderSummary());
 
         when(paymentSetupService.createApplicationFeeServiceRequest(
-            caseData, caseId
+            caseData, caseId, caseData.getCitizenPaymentCallbackUrl()
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitApplication.aboutToSubmit(caseDetails, caseDetails);

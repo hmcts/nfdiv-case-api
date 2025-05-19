@@ -94,7 +94,9 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
             data = submittedDetails.getData();
             state = submittedDetails.getState();
         } else {
-            prepareCaseDataForApplicationPayment(details.getData(), details.getId());
+            prepareCaseDataForApplicationPayment(
+                details.getData(), details.getId(), details.getData().getCitizenPaymentCallbackUrl()
+            );
 
             state = AwaitingPayment;
         }
@@ -116,13 +118,13 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
         return SubmittedCallbackResponse.builder().build();
     }
 
-    public void prepareCaseDataForApplicationPayment(CaseData data, long caseId) {
+    public void prepareCaseDataForApplicationPayment(CaseData data, long caseId, String redirectUrl) {
         Application application = data.getApplication();
 
         OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(data, caseId);
         application.setApplicationFeeOrderSummary(orderSummary);
 
-        String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(data, caseId);
+        String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(data, caseId, redirectUrl);
         application.setApplicationFeeServiceRequestReference(serviceRequest);
     }
 }

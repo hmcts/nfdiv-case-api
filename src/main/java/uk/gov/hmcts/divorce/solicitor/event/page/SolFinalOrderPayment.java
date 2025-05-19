@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
@@ -25,6 +26,9 @@ public class SolFinalOrderPayment implements CcdPageConfiguration {
     private final PbaService pbaService;
 
     private final PaymentSetupService paymentSetupService;
+
+    @Value("${idam.client.redirect_uri}")
+    private String redirectUrl;
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -70,7 +74,7 @@ public class SolFinalOrderPayment implements CcdPageConfiguration {
             finalOrder.setFinalOrderPbaNumbers(pbaNumbersDynamicList);
 
             String serviceRequest = paymentSetupService.createFinalOrderFeeServiceRequest(
-                caseData, caseId, finalOrder.getApplicant2SolFinalOrderFeeOrderSummary()
+                caseData, caseId, redirectUrl, finalOrder.getApplicant2SolFinalOrderFeeOrderSummary()
             );
             finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequest);
 

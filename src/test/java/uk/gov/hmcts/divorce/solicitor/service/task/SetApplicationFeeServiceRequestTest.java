@@ -39,7 +39,7 @@ class SetApplicationFeeServiceRequestTest {
 
         when(paymentSetupService.createApplicationFeeOrderSummary(caseData, TEST_CASE_ID))
             .thenReturn(orderSummary);
-        when(paymentSetupService.createApplicationFeeServiceRequest(caseData, TEST_CASE_ID))
+        when(paymentSetupService.createApplicationFeeServiceRequest(caseData, TEST_CASE_ID, null))
             .thenReturn(TEST_SERVICE_REFERENCE);
 
         final CaseDetails<CaseData, State> result = setApplicationFeeServiceRequest.apply(caseDetails);
