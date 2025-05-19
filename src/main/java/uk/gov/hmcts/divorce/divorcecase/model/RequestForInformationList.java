@@ -139,8 +139,10 @@ public class RequestForInformationList {
                     && !rfi.getValue().getRequestForInformationResponses().isEmpty()
                 ) {
                     rfi.getValue().getRequestForInformationResponses().forEach(rfiResponse -> {
-                        if (!rfiResponse.getValue().isOffline()) {
-                            responseDocs.addAll(rfiResponse.getValue().getRequestForInformationResponseDocs());
+                        RequestForInformationResponse responseValue = rfiResponse.getValue();
+
+                        if (responseValue != null && !responseValue.isOffline() && responseValue.getRequestForInformationResponseDocs() != null) {
+                            responseDocs.addAll(responseValue.getRequestForInformationResponseDocs());
                         }
                     });
                 }
