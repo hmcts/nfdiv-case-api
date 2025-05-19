@@ -109,6 +109,18 @@
         }
       },
       {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentLink": {
+            "document_url": "${json-unit.any-string}",
+            "document_filename": "D10.pdf",
+            "document_binary_url": "${json-unit.any-string}"
+          },
+          "documentFileName": "D10.pdf",
+          "documentType": "d10"
+        }
+      },
+      {
         "id": "Notice of proceeding applicant",
         "value": {
           "documentLink": {
