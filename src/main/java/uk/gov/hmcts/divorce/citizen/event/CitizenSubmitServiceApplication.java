@@ -140,8 +140,6 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             serviceApplication, caseId, applicant.getFullName()
         );
         serviceFee.setServiceRequestReference(serviceRequest);
-
-        applicant.setServicePayments(new ArrayList<>());
     }
 
     private boolean serviceAppAwaitingReview(AlternativeService alternativeService) {

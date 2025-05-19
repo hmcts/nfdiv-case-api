@@ -84,7 +84,6 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
         String paymentReference = paymentValidatorService.getLastPayment(servicePayments).getReference();
         alternativeService.setDateOfPayment(LocalDate.now(clock));
         alternativeService.getServicePaymentFee().setPaymentReference(paymentReference);
-        data.getApplicant1().setServicePayments(new ArrayList<>());
         InterimApplicationOptions userOptions = data.getApplicant1().getInterimApplicationOptions();
 
         details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServiceConsideration);
