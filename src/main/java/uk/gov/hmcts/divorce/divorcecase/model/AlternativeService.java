@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
@@ -121,6 +122,15 @@ public class AlternativeService {
         typeParameterOverride = "DivorceDocument"
     )
     private List<ListValue<DivorceDocument>> serviceApplicationDocuments;
+
+    @CCD(
+      label = "Service Payments",
+      typeOverride = Collection,
+      typeParameterOverride = "Payment",
+      access = {DefaultAccess.class},
+      searchable = false
+    )
+    private List<ListValue<Payment>> servicePayments;
 
     @SuppressWarnings("PMD")
     @JsonIgnore

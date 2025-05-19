@@ -254,12 +254,6 @@ public class Application {
     private String applicationFeeServiceRequestReference;
 
     @CCD(
-        label = "Application Fee Service Request Reference",
-        access = {DefaultAccess.class, Applicant1DeleteAccess.class}
-    )
-    private WaysToPay testServiceRequestReference;
-
-    @CCD(
         label = "The respondent agrees that the divorce service can send notifications by email.",
         access = {DefaultAccess.class, Applicant2Access.class}
     )

@@ -126,9 +126,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildRequestForInformationTab(configBuilder);
         buildCaseFlagTab(configBuilder);
 
-        configBuilder.tab("ServiceRequestTab", "Service Requests")
-            .field("testServiceRequestReference");
-
         // Commented out as requested by service team. This can't be available for super users. Maybe we need a "Developer" role?
         //buildLetterPackTab(configBuilder);
     }

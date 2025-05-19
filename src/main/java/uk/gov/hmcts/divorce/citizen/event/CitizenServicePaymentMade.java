@@ -72,7 +72,7 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
         CaseData data = details.getData();
         long caseId = details.getId();
         AlternativeService alternativeService = data.getAlternativeService();
-        List<ListValue<Payment>> servicePayments = data.getApplicant1().getServicePayments();
+        List<ListValue<Payment>> servicePayments = alternativeService.getServicePayments();
 
         List<String> validationErrors = paymentValidatorService.validatePayments(servicePayments, caseId);
         if (CollectionUtils.isNotEmpty(validationErrors)) {
