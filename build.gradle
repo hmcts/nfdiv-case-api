@@ -213,7 +213,7 @@ dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
     //CVE-2020-23064
-    dependency group: 'org.json', name: 'json', version: '20250107'
+    dependency group: 'org.json', name: 'json', version: '20250517'
   }
 }
 
