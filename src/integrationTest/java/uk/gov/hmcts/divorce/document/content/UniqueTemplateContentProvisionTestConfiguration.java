@@ -1,11 +1,11 @@
 package uk.gov.hmcts.divorce.document.content;
 
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import uk.gov.hmcts.divorce.common.config.ConditionalOrderCourtDetailsConfig;
 import uk.gov.hmcts.divorce.notification.CommonContent;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateCertificateOfEntitlementHelper;
 
 import java.time.Clock;
@@ -14,24 +14,24 @@ import java.time.Clock;
 @ComponentScan(basePackages = {"uk.gov.hmcts.divorce.document.content.templatecontent"})
 public class UniqueTemplateContentProvisionTestConfiguration {
 
-    @MockBean
+    @MockitoBean
     private ConditionalOrderCommonContent conditionalOrderCommonContent;
 
-    @MockBean
+    @MockitoBean
     private Clock clock;
 
-    @MockBean
+    @MockitoBean
     private DocmosisCommonContent docmosisCommonContent;
 
-    @MockBean
+    @MockitoBean
     private CommonContent commonContent;
 
-    @MockBean
+    @MockitoBean
     private PaymentService paymentService;
 
-    @MockBean
+    @MockitoBean
     private GenerateCertificateOfEntitlementHelper generateCertificateOfEntitlementHelper;
 
-    @MockBean
+    @MockitoBean
     private ConditionalOrderCourtDetailsConfig conditionalOrderCourtDetailsConfig;
 }

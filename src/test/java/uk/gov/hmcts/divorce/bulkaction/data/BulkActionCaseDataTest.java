@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
 @ExtendWith(MockitoExtension.class)
-public class BulkActionCaseDataTest {
+class BulkActionCaseDataTest {
 
     @Test
     void shouldReturnBulkListCaseDetailsWhenErroredListIsEmpty() {
@@ -47,6 +47,6 @@ public class BulkActionCaseDataTest {
         List<ListValue<BulkListCaseDetails>> result =
             bulkActionCaseData.calculateProcessedCases(List.of(getBulkListCaseDetailsListValue("1")));
 
-        assertThat(result).hasSize(0);
+        assertThat(result).isEmpty();
     }
 }

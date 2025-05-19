@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetail
 
 @ExtendWith(MockitoExtension.class)
 
-public class UpdateCasesToBeRemovedTaskTest {
+class UpdateCasesToBeRemovedTaskTest {
 
     @Mock
     private BulkTriggerService bulkTriggerService;
@@ -100,6 +100,6 @@ public class UpdateCasesToBeRemovedTaskTest {
         final CaseDetails<BulkActionCaseData, BulkActionState> result =
             updateCasesToBeRemovedTask.apply(bulkActionCaseDetails);
 
-        assertThat(result.getData().getCasesToBeRemoved()).hasSize(0);
+        assertThat(result.getData().getCasesToBeRemoved()).isEmpty();
     }
 }

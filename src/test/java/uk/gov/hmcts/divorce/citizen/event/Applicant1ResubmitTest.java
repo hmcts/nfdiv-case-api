@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(SpringExtension.class)
-public class Applicant1ResubmitTest {
+class Applicant1ResubmitTest {
 
     @Mock
     private Applicant1ResubmitNotification applicant1ResubmitNotification;
@@ -65,8 +65,8 @@ public class Applicant1ResubmitTest {
         verify(notificationDispatcher).send(applicant1ResubmitNotification, caseData, details.getId());
 
         assertThat(response.getState()).isEqualTo(AwaitingApplicant2Response);
-        assertThat(response.getData().getApplication().getApplicant2ConfirmApplicant1Information()).isEqualTo(null);
-        assertThat(response.getData().getApplication().getApplicant2ExplainsApplicant1IncorrectInformation()).isEqualTo(null);
+        assertThat(response.getData().getApplication().getApplicant2ConfirmApplicant1Information()).isNull();
+        assertThat(response.getData().getApplication().getApplicant2ExplainsApplicant1IncorrectInformation()).isNull();
     }
 
     @Test

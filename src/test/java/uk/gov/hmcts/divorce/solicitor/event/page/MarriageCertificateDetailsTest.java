@@ -20,12 +20,12 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class MarriageCertificateDetailsTest {
+class MarriageCertificateDetailsTest {
 
     private final MarriageCertificateDetails page = new MarriageCertificateDetails();
 
     @Test
-    public void shouldSetPlaceOfMarriageToUkIfMarriageTookPlaceInUk() {
+    void shouldSetPlaceOfMarriageToUkIfMarriageTookPlaceInUk() {
         final CaseData caseData = caseData();
         caseData.setApplication(Application.builder()
             .marriageDetails(MarriageDetails.builder()
@@ -47,7 +47,7 @@ public class MarriageCertificateDetailsTest {
     }
 
     @Test
-    public void shouldNotSetPlaceOfMarriageIfMarriageDidNotTakePlaceInUk() {
+    void shouldNotSetPlaceOfMarriageIfMarriageDidNotTakePlaceInUk() {
         final CaseData caseData = caseData();
         caseData.setApplication(Application.builder()
             .marriageDetails(MarriageDetails.builder()

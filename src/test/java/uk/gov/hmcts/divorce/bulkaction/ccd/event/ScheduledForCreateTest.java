@@ -15,7 +15,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfi
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class ScheduledForCreateTest {
+class ScheduledForCreateTest {
 
     @InjectMocks
     private CreateBulkList scheduledForCreate;

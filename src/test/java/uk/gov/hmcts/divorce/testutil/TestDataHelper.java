@@ -93,7 +93,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static feign.Request.HttpMethod.GET;
 import static java.lang.String.format;
@@ -1328,11 +1327,13 @@ public class TestDataHelper {
     }
 
     public static List<ListValue<ScannedDocument>> scannedDocuments(List<String> scannedDocumentSubtypes) {
-        return scannedDocumentSubtypes
-            .stream()
-            .map(TestDataHelper::scannedDocuments)
-            .flatMap(java.util.Collection::stream)
-            .collect(Collectors.toList());
+        return new ArrayList<>(
+            scannedDocumentSubtypes
+                .stream()
+                .map(TestDataHelper::scannedDocuments)
+                .flatMap(java.util.Collection::stream)
+                .toList()
+        );
     }
 
     private static List<ListValue<ScannedDocument>> scannedDocuments(String subtype) {

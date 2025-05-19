@@ -23,7 +23,7 @@ class SolHowDoYouWantToApplyForDivorceTest {
     private final SolHowDoYouWantToApplyForDivorce page = new SolHowDoYouWantToApplyForDivorce();
 
     @Test
-    public void shouldSetContentForSoleDivorces() {
+    void shouldSetContentForSoleDivorces() {
         final CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.setApplicationType(SOLE_APPLICATION);
@@ -34,17 +34,17 @@ class SolHowDoYouWantToApplyForDivorceTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(
-            response.getData().getLabelContent().getApplicant2(),
-            "respondent"
+            "respondent",
+            response.getData().getLabelContent().getApplicant2()
         );
         assertEquals(
-            response.getData().getLabelContent().getUnionType(),
-            "divorce"
+            "divorce",
+            response.getData().getLabelContent().getUnionType()
         );
     }
 
     @Test
-    public void shouldSetContentForJointDissolutions() {
+    void shouldSetContentForJointDissolutions() {
         final CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.setApplicationType(JOINT_APPLICATION);
@@ -55,17 +55,17 @@ class SolHowDoYouWantToApplyForDivorceTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(
-            response.getData().getLabelContent().getApplicant2(),
-            "applicant 2"
+            "applicant 2",
+            response.getData().getLabelContent().getApplicant2()
         );
         assertEquals(
-            response.getData().getLabelContent().getUnionType(),
-            "dissolution"
+            "dissolution",
+            response.getData().getLabelContent().getUnionType()
         );
     }
 
     @Test
-    public void shouldSetCoIsSubmittedForSole() {
+    void shouldSetCoIsSubmittedForSole() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder().build());
@@ -76,13 +76,13 @@ class SolHowDoYouWantToApplyForDivorceTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted(),
-            YesOrNo.NO
+            YesOrNo.NO,
+            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()
         );
     }
 
     @Test
-    public void shouldSetCoIsSubmittedForJoint() {
+    void shouldSetCoIsSubmittedForJoint() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
 
@@ -92,17 +92,17 @@ class SolHowDoYouWantToApplyForDivorceTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted(),
-            YesOrNo.NO
+            YesOrNo.NO,
+            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted()
         );
         assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted(),
-            YesOrNo.NO
+            YesOrNo.NO,
+            response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted()
         );
     }
 
     @Test
-    public void shouldSetCoIsDraftedForSole() {
+    void shouldSetCoIsDraftedForSole() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setConditionalOrder(ConditionalOrder.builder().build());
@@ -113,13 +113,13 @@ class SolHowDoYouWantToApplyForDivorceTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted(),
-            YesOrNo.NO
+            YesOrNo.NO,
+            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()
         );
     }
 
     @Test
-    public void shouldSetCoIsDraftedForJoint() {
+    void shouldSetCoIsDraftedForJoint() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
 
@@ -129,12 +129,12 @@ class SolHowDoYouWantToApplyForDivorceTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted(),
-            YesOrNo.NO
+            YesOrNo.NO,
+            response.getData().getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted()
         );
         assertEquals(
-            response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted(),
-            YesOrNo.NO
+            YesOrNo.NO,
+            response.getData().getConditionalOrder().getConditionalOrderApplicant2Questions().getIsDrafted()
         );
     }
 }

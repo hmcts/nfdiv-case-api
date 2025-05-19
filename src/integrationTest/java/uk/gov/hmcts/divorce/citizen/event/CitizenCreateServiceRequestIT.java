@@ -8,8 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -60,13 +60,13 @@ public class CitizenCreateServiceRequestIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private RequestInterceptor requestInterceptor;
 
-    @MockBean
+    @MockitoBean
     private WebMvcConfig webMvcConfig;
 
-    @MockBean
+    @MockitoBean
     private AuthTokenGenerator authTokenGenerator;
 
     @BeforeAll
@@ -85,7 +85,7 @@ public class CitizenCreateServiceRequestIT {
         data.getApplication().setApplicationFeeOrderSummary(orderSummary());
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1()));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1().getFullName()));
 
         triggerCitizenCreateServiceRequest(data, AwaitingPayment)
             .andExpect(jsonPath("$.data.applicationFeeServiceRequestReference")
@@ -98,7 +98,7 @@ public class CitizenCreateServiceRequestIT {
         data.getFinalOrder().setApplicant2FinalOrderFeeOrderSummary(orderSummary());
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1()));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant1().getFullName()));
 
         triggerCitizenCreateServiceRequest(data, AwaitingFinalOrderPayment)
             .andExpect(jsonPath("$.data.applicant2FinalOrderFeeServiceRequestReference")

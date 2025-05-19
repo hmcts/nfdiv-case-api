@@ -30,7 +30,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.jointCaseDataWithOrderSummary;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant2IntendToSwitchToSoleFoNotificationTest {
+class Applicant2IntendToSwitchToSoleFoNotificationTest {
 
     @Mock
     private NotificationService notificationService;

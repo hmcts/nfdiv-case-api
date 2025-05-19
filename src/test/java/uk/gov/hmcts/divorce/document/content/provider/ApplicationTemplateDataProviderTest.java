@@ -121,7 +121,7 @@ class ApplicationTemplateDataProviderTest {
     }
 
     @Test
-    public void shouldMapCorrectMarriageDetails() {
+    void shouldMapCorrectMarriageDetails() {
         Map<String, Object> templateContent = new HashMap<>();
         Application application = Application.builder()
             .marriageDetails(MarriageDetails.builder()

@@ -38,7 +38,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataWithGene
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContentWithCtscContactDetails;
 
 @ExtendWith(MockitoExtension.class)
-public class GeneralLetterTemplateContentTest {
+class GeneralLetterTemplateContentTest {
 
     @Mock
     private CommonContent commonContent;
@@ -64,12 +64,12 @@ public class GeneralLetterTemplateContentTest {
             .build();
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         setMockClock(clock, LocalDate.of(2022, 3, 16));
     }
 
     @Test
-    public void shouldMapTemplateContentWhenRecipientIsApplicant1() {
+    void shouldMapTemplateContentWhenRecipientIsApplicant1() {
         var caseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
 
         when(commonContent.getPartner(any(), any())).thenReturn("wife");
@@ -92,7 +92,7 @@ public class GeneralLetterTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentWhenRecipientIsApplicant2() {
+    void shouldMapTemplateContentWhenRecipientIsApplicant2() {
         var caseData = buildCaseDataWithGeneralLetter(GeneralParties.RESPONDENT);
 
         when(commonContent.getPartner(any(), any())).thenReturn("husband");
@@ -115,7 +115,7 @@ public class GeneralLetterTemplateContentTest {
     }
 
     @Test
-    public void shouldMapTemplateContentWhenRecipientIsOther() {
+    void shouldMapTemplateContentWhenRecipientIsOther() {
         var caseData = buildCaseDataWithGeneralLetter(GeneralParties.OTHER);
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);

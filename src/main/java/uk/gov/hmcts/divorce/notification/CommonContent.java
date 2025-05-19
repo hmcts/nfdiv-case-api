@@ -125,6 +125,7 @@ public class CommonContent {
     public static final String APPLICANT2_LABEL = "applicant2Label";
 
     public static final String PRONOUNCE_BY_DATE = "pronounceByDate";
+    public static final String FO_GRANTED_DATE = "finalOrderGrantedDate";
     public static final int CO_SUBMISSION_DATE_PLUS_DAYS = 56;
 
     public static final String DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE = "digitalFinalOrderCertificateCopyFee";

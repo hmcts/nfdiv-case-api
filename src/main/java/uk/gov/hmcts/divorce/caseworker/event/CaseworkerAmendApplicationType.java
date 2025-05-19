@@ -45,6 +45,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_AMEND_APPLICATION_TYPE = "caseworker-amend-application-type";
+    private static final String AMEND_APPLICATION_TYPE = "Amend application type";
     private static final Set<DissolveDivorce> DISSOLVE_DIVORCE_SET = Set.of(DissolveDivorce.DISSOLVE_DIVORCE);
     private static final Set<EndCivilPartnership> END_CIVIL_PARTNERSHIP_SET = Set.of(EndCivilPartnership.END_CIVIL_PARTNERSHIP);
     private static final Set<JudicialSeparation> JUDICIAL_SEPARATION_SET = Set.of(JudicialSeparation.JUDICIAL_SEPARATION);
@@ -58,13 +59,13 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
         new PageBuilder(configBuilder
             .event(CASEWORKER_AMEND_APPLICATION_TYPE)
             .forStates(STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED)
-            .name("Amend application type")
-            .description("Amend application type")
+            .name(AMEND_APPLICATION_TYPE)
+            .description(AMEND_APPLICATION_TYPE)
             .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR, CASE_WORKER)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted))
-            .page("Amend application type")
+            .page(AMEND_APPLICATION_TYPE)
             .label("prayerChangeLabel","Completing this event will change the prayer on the case. "
                 + "Please make sure that you have confirmed this with the Applicant before proceeding.");
     }

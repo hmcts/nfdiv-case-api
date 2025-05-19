@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -33,6 +34,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentListValue;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorUpdateApplicationTest {
@@ -55,6 +57,49 @@ class SolicitorUpdateApplicationTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(SOLICITOR_UPDATE);
+    }
+
+    @Test
+    void shouldSetAddressFieldsOfApplicants() {
+        final var caseData = validJointApplicant1CaseData();
+        caseData.getApplicant1().setAddress(AddressGlobalUK.builder()
+            .addressLine1("App 1")
+            .postTown("town")
+            .postCode("postcode")
+            .country("UK")
+            .build());
+
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder()
+            .addressLine1("App 2")
+            .postTown("town")
+            .postCode("postcode")
+            .country("UK")
+            .build());
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+        details.setCreatedDate(LOCAL_DATE_TIME);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorUpdateApplication.aboutToStart(details);
+
+        assertThat(response.getData().getApplicant1().getNonConfidentialAddress().getAddressLine1()).isEqualTo("App 1");
+        assertThat(response.getData().getApplicant2().getNonConfidentialAddress().getAddressLine1()).isEqualTo("App 2");
+    }
+
+    @Test
+    void shouldHandleNullAddresses() {
+        final var caseData = caseData();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+        details.setCreatedDate(LOCAL_DATE_TIME);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorUpdateApplication.aboutToStart(details);
+
+        assertThat(response.getData().getApplicant1().getNonConfidentialAddress()).isNull();
+        assertThat(response.getData().getApplicant2().getNonConfidentialAddress()).isNull();
     }
 
     @Test
@@ -113,7 +158,7 @@ class SolicitorUpdateApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorUpdateApplication.aboutToSubmit(newCaseDetails, previousCaseDetails);
 
-        assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded().size()).isEqualTo(2);
+        assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded()).hasSize(2);
         assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded().get(0).getValue()).isSameAs(doc2.getValue());
         assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded().get(1).getValue()).isSameAs(doc1.getValue());
 
@@ -148,7 +193,7 @@ class SolicitorUpdateApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorUpdateApplication.aboutToSubmit(newCaseDetails, previousCaseDetails);
 
-        assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded().size()).isEqualTo(1);
+        assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded()).hasSize(1);
         assertThat(response.getData().getDocuments().getApplicant1DocumentsUploaded().get(0).getValue()).isSameAs(doc1.getValue());
 
         verify(solicitorUpdateApplicationService).aboutToSubmit(newCaseDetails);

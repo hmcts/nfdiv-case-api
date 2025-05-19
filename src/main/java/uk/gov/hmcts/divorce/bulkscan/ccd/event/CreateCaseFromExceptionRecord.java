@@ -22,17 +22,19 @@ public class CreateCaseFromExceptionRecord implements CCDConfig<ExceptionRecord,
 
     public static final String CREATE_NEW_CASE = "createNewCase";
 
+    private static final String CREATE_NEW_CASE_FROM_EXCEPTION = "Create new case from exception";
+
     @Override
     public void configure(final ConfigBuilder<ExceptionRecord, ExceptionRecordState, UserRole> configBuilder) {
         new ExceptionRecordPageBuilder(configBuilder
             .event(CREATE_NEW_CASE)
             .forStateTransition(ScannedRecordReceived, ScannedRecordCaseCreated)
-            .name("Create new case from exception")
-            .description("Create new case from exception")
+            .name(CREATE_NEW_CASE_FROM_EXCEPTION)
+            .description(CREATE_NEW_CASE_FROM_EXCEPTION)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SYSTEMUPDATE)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
-            .page("createNewCase")
+            .page(CREATE_NEW_CASE)
             .pageLabel("Correspondence")
             .mandatory(ExceptionRecord::getScannedDocuments)
             .mandatory(ExceptionRecord::getScanOCRData);

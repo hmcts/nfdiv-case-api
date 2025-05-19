@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerPrepareForCaseFlagsTest {
+class CaseworkerPrepareForCaseFlagsTest {
 
     @Mock
     private CaseFlagsService caseFlagsService;
@@ -58,7 +58,7 @@ public class CaseworkerPrepareForCaseFlagsTest {
         caseDetails.setData(CaseData.builder().build());
         caseDetails.setId(TestConstants.TEST_CASE_ID);
 
-        var response = caseworkerPrepareForCaseFlags.aboutToSubmit(caseDetails, null);
+        caseworkerPrepareForCaseFlags.aboutToSubmit(caseDetails, null);
 
         verify(caseFlagsService).initialiseCaseFlags(caseDetails.getData());
     }

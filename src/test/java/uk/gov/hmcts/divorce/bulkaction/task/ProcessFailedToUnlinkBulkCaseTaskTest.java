@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
 @ExtendWith(MockitoExtension.class)
-public class ProcessFailedToUnlinkBulkCaseTaskTest {
+class ProcessFailedToUnlinkBulkCaseTaskTest {
 
     @Mock
     private BulkCaseTaskUtil bulkCaseTaskUtil;
@@ -94,8 +94,7 @@ public class ProcessFailedToUnlinkBulkCaseTaskTest {
         when(bulkCaseTaskUtil.processCases(bulkActionCaseDetails, BulkCaseProcessingService.getFailedBulkCases(bulkActionCaseDetails),
                 SYSTEM_REMOVE_BULK_CASE, user, SERVICE_AUTHORIZATION)).thenReturn(bulkActionCaseDetails);
 
-        final CaseDetails<BulkActionCaseData, BulkActionState> result =
-            processFailedToUnlinkBulkCaseTask.apply(bulkActionCaseDetails);
+        processFailedToUnlinkBulkCaseTask.apply(bulkActionCaseDetails);
 
         verify(bulkCaseTaskUtil).processCases(bulkActionCaseDetails, BulkCaseProcessingService.getFailedBulkCases(bulkActionCaseDetails),
                 SYSTEM_REMOVE_BULK_CASE, user, SERVICE_AUTHORIZATION);
