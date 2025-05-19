@@ -21,9 +21,6 @@ public class PaymentSetupService {
 
     private final PaymentService paymentService;
 
-    public static final String PAYMENT_CALLBACK_URL =
-        System.getenv().getOrDefault("CASE_API_URL", "http://localhost:4013") + PAYMENT_UPDATE_PATH;
-
     public String createApplicationFeeServiceRequest(CaseData data, long caseId) {
         if (data.getApplication() != null && data.getApplication().getApplicationFeeServiceRequestReference() != null) {
             return data.getApplication().getApplicationFeeServiceRequestReference();
@@ -32,7 +29,7 @@ public class PaymentSetupService {
         log.info("Application fee service request not found for case id: {}, creating service request", caseId);
 
         return paymentService.createServiceRequestReference(
-            PAYMENT_CALLBACK_URL,
+            getPaymentCallbackUrl(),
             caseId,
             data.getApplicant1().getFullName(),
             data.getApplication().getApplicationFeeOrderSummary()
@@ -57,7 +54,7 @@ public class PaymentSetupService {
         log.info("Final order fee service request not found for case id: {}, creating service request", caseId);
 
         return paymentService.createServiceRequestReference(
-            PAYMENT_CALLBACK_URL,
+            getPaymentCallbackUrl(),
             caseId,
             data.getApplicant2().getFullName(),
             orderSummary
@@ -72,5 +69,9 @@ public class PaymentSetupService {
         log.info("Final order fee order summary not found for case id: {}, creating order summary", caseId);
 
         return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
+    }
+
+    public static String getPaymentCallbackUrl() {
+        return System.getenv().getOrDefault("CASE_API_URL", "http://localhost:4013") + PAYMENT_UPDATE_PATH;
     }
 }
