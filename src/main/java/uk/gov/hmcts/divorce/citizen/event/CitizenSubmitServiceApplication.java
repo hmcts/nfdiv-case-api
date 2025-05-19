@@ -46,7 +46,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
     private static final String AWAITING_DECISION_ERROR = """
         A service application has already been submitted and is awaiting a decision.
-    """;
+        """;
 
     private final PaymentSetupService paymentSetupService;
 
@@ -128,23 +128,23 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
     }
 
     private void prepareCaseForServicePayment(AlternativeService serviceApplication, Applicant applicant, long caseId) {
-      serviceApplication.setAlternativeServiceFeeRequired(YesOrNo.YES);
+        serviceApplication.setAlternativeServiceFeeRequired(YesOrNo.YES);
 
-      FeeDetails serviceFee = serviceApplication.getServicePaymentFee();
-      OrderSummary orderSummary = paymentSetupService.createServiceApplicationOrderSummary(
-        serviceApplication, caseId
-      );
-      serviceFee.setOrderSummary(orderSummary);
+        FeeDetails serviceFee = serviceApplication.getServicePaymentFee();
+        OrderSummary orderSummary = paymentSetupService.createServiceApplicationOrderSummary(
+            serviceApplication, caseId
+        );
+        serviceFee.setOrderSummary(orderSummary);
 
-      String serviceRequest = paymentSetupService.createServiceApplicationPaymentServiceRequest(
-        serviceApplication, caseId, applicant.getFullName()
-      );
-      serviceFee.setServiceRequestReference(serviceRequest);
+        String serviceRequest = paymentSetupService.createServiceApplicationPaymentServiceRequest(
+            serviceApplication, caseId, applicant.getFullName()
+        );
+        serviceFee.setServiceRequestReference(serviceRequest);
 
-      applicant.setServicePayments(new ArrayList<>());
+        applicant.setServicePayments(new ArrayList<>());
     }
 
     private boolean serviceAppAwaitingReview(AlternativeService alternativeService) {
-      return alternativeService != null && alternativeService.getReceivedServiceApplicationDate() != null;
+        return alternativeService != null && alternativeService.getReceivedServiceApplicationDate() != null;
     }
 }

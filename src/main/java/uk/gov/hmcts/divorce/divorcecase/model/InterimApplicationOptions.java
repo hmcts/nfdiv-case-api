@@ -114,6 +114,6 @@ public class InterimApplicationOptions {
 
     @JsonIgnore
     public boolean willMakePayment() {
-      return YesOrNo.NO.equals(interimAppsHaveHwfReference);
+        return YesOrNo.NO.equals(interimAppsHaveHwfReference);
     }
 }
