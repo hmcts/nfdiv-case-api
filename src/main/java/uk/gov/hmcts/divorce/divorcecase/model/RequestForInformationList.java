@@ -138,11 +138,11 @@ public class RequestForInformationList {
                 if (rfi.getValue().getRequestForInformationResponses() != null
                     && !rfi.getValue().getRequestForInformationResponses().isEmpty()
                 ) {
-                    rfi.getValue().getRequestForInformationResponses().forEach(rfiResponse -> {
-                        RequestForInformationResponse responseValue = rfiResponse.getValue();
+                    rfi.getValue().getRequestForInformationResponses().forEach(rfiResponseValue -> {
+                        RequestForInformationResponse response = rfiResponseValue.getValue();
 
-                        if (responseValue != null && !responseValue.isOffline() && responseValue.getRequestForInformationResponseDocs() != null) {
-                            responseDocs.addAll(responseValue.getRequestForInformationResponseDocs());
+                        if (response != null && !response.isOffline() && response.getRequestForInformationResponseDocs() != null) {
+                            responseDocs.addAll(response.getRequestForInformationResponseDocs());
                         }
                     });
                 }
