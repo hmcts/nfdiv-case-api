@@ -124,11 +124,11 @@ public class AlternativeService {
     private List<ListValue<DivorceDocument>> serviceApplicationDocuments;
 
     @CCD(
-      label = "Service Payments",
-      typeOverride = Collection,
-      typeParameterOverride = "Payment",
-      access = {DefaultAccess.class},
-      searchable = false
+        label = "Service Payments",
+        typeOverride = Collection,
+        typeParameterOverride = "Payment",
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private List<ListValue<Payment>> servicePayments;
 
