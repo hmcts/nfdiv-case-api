@@ -33,8 +33,16 @@ public class PaymentCallbackService {
 
     private final UpdateSuccessfulPaymentStatus updateSuccessfulPaymentStatus;
 
-    private static final String LOG_NOT_PROCESSING_CALLBACK = """
-        Not processing callback for payment {}, case id: {}, status: {}, payment method: {}
+    private static final String LOG_CALLBACK_RECEIVED = """
+        Payment callback received for payment: {}, case id: {}, service request status: {}, payment method: {}
+        """;
+
+    private static final String LOG_NOT_PROCESSING_INVALID_PAYMENT = """
+        Not processing payment callback ({}) for case id: {}, payment was done by PBA or is incomplete.
+        """;
+
+    private static final String LOG_NOT_PROCESSING_COMPLETED_CALLBACK = """
+        Not processing payment callback ({}) for case id: {}, case is no longer awaiting payment.
         """;
 
     public void handleCallback(PaymentCallbackDto paymentCallback) {
@@ -43,8 +51,10 @@ public class PaymentCallbackService {
         final ServiceRequestStatus serviceRequestStatus = paymentCallback.getServiceRequestStatus();
         final OnlinePaymentMethod paymentMethod = paymentCallback.getPayment().getPaymentMethod();
 
+        log.info(LOG_CALLBACK_RECEIVED, paymentRef, caseRef, serviceRequestStatus, paymentMethod);
+
         if (serviceRequestNotPaid(serviceRequestStatus) || isSolicitorPbaPayment(paymentMethod)) {
-            log.info(LOG_NOT_PROCESSING_CALLBACK, paymentRef, caseRef, serviceRequestStatus, paymentMethod);
+            log.info(LOG_NOT_PROCESSING_INVALID_PAYMENT, paymentRef, caseRef);
             return;
         }
 
@@ -55,7 +65,7 @@ public class PaymentCallbackService {
         final String paymentMadeEvent = paymentMadeEvent(state);
 
         if (paymentMadeEvent == null) {
-            log.info(LOG_NOT_PROCESSING_CALLBACK, paymentRef, caseRef, serviceRequestStatus, paymentMethod);
+            log.info(LOG_NOT_PROCESSING_COMPLETED_CALLBACK, paymentRef, caseRef);
             return;
         }
 
