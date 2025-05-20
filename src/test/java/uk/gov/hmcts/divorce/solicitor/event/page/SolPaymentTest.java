@@ -87,7 +87,7 @@ class SolPaymentTest {
 
         when(pbaService.populatePbaDynamicList())
             .thenReturn(pbaNumbers);
-        when(paymentSetupService.createApplicationFeeServiceRequest(any(CaseData.class), eq(TEST_CASE_ID), eq(null)))
+        when(paymentSetupService.createApplicationFeeServiceRequest(any(CaseData.class), eq(TEST_CASE_ID)))
             .thenReturn(TEST_SERVICE_REFERENCE);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = solPayment.midEvent(details, details);

@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
@@ -30,9 +29,6 @@ public class SolPayment implements CcdPageConfiguration {
     private final PbaService pbaService;
     private final PaymentSetupService paymentSetupService;
     private final ServiceRequestSearchService serviceRequestSearchService;
-
-    @Value("${idam.client.redirect_uri}")
-    private String redirectUrl;
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -103,7 +99,7 @@ public class SolPayment implements CcdPageConfiguration {
 
             log.info("Found unpaid service request: {}, for case: {}", serviceRequest, caseId);
         } else {
-            serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(data, caseId, redirectUrl);
+            serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(data, caseId);
 
             log.info("Created new service request: {}, for case: {}", serviceRequest, caseId);
         }

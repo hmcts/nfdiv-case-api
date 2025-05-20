@@ -69,7 +69,7 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
         application.setApplicationFeeOrderSummary(orderSummary);
 
         String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
-            data, caseId, data.getCitizenPaymentCallbackUrl()
+            data, caseId
         );
         application.setApplicationFeeServiceRequestReference(serviceRequest);
     }
@@ -82,7 +82,7 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
         finalOrder.setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
 
         String serviceRequest = paymentSetupService.createFinalOrderFeeServiceRequest(
-            data, caseId, data.getCitizenPaymentCallbackUrl(), finalOrder.getApplicant2FinalOrderFeeOrderSummary()
+            data, caseId, finalOrder.getApplicant2FinalOrderFeeOrderSummary()
         );
         finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequest);
     }
