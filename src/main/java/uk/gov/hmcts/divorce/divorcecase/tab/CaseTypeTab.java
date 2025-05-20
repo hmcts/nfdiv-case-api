@@ -396,10 +396,16 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("receivedServiceAddedDate")
             .field("alternativeServiceType")
             .field("alternativeServiceJudgeOrLegalAdvisorDetails")
+            .field("serviceApplicationAnswers")
             .field("serviceApplicationDocuments", "serviceApplicationDocuments=\"*\"")
             .field("alternativeServiceFeeRequired")
+            .field("servicePaymentFeeServiceRequestReference")
+            .field("servicePaymentFeeOrderSummary")
+            .field("servicePaymentFeePaymentReference")
             .field("servicePaymentFeePaymentMethod", "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\"")
-            .field("dateOfPayment", "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\"")
+            .field(
+              "dateOfPayment",
+              "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\" OR servicePaymentFeePaymentReference=\"*\"")
             .field("servicePaymentFeeAccountNumber",
                 "servicePaymentFeePaymentMethod=\"feePayByAccount\" AND alternativeServiceFeeRequired=\"Yes\"")
             .field("servicePaymentFeeAccountReferenceNumber",
