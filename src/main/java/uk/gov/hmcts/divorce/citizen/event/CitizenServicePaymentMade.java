@@ -22,7 +22,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
@@ -41,7 +40,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @RequiredArgsConstructor
 public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CITIZEN_SERVICE_PAYMENT= "citizen-service-payment-made";
+    public static final String CITIZEN_SERVICE_PAYMENT = "citizen-service-payment-made";
 
     private final PaymentSetupService paymentSetupService;
 
@@ -72,7 +71,7 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
         CaseData data = details.getData();
         long caseId = details.getId();
         AlternativeService alternativeService = data.getAlternativeService();
-        List<ListValue<Payment>> servicePayments = data.getApplicant1().getServicePayments();
+        List<ListValue<Payment>> servicePayments = alternativeService.getServicePayments();
 
         List<String> validationErrors = paymentValidatorService.validatePayments(servicePayments, caseId);
         if (CollectionUtils.isNotEmpty(validationErrors)) {
@@ -84,7 +83,6 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
         String paymentReference = paymentValidatorService.getLastPayment(servicePayments).getReference();
         alternativeService.setDateOfPayment(LocalDate.now(clock));
         alternativeService.getServicePaymentFee().setPaymentReference(paymentReference);
-        data.getApplicant1().setServicePayments(new ArrayList<>());
         InterimApplicationOptions userOptions = data.getApplicant1().getInterimApplicationOptions();
 
         details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServiceConsideration);

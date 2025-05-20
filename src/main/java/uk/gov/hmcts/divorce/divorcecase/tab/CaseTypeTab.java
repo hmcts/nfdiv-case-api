@@ -126,9 +126,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildRequestForInformationTab(configBuilder);
         buildCaseFlagTab(configBuilder);
 
-        configBuilder.tab("ServiceRequestTab", "Service Requests")
-            .field("testServiceRequestReference");
-
         // Commented out as requested by service team. This can't be available for super users. Maybe we need a "Developer" role?
         //buildLetterPackTab(configBuilder);
     }
@@ -406,7 +403,9 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("servicePaymentFeeOrderSummary")
             .field("servicePaymentFeePaymentReference")
             .field("servicePaymentFeePaymentMethod", "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\"")
-            .field("dateOfPayment", "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\" OR servicePaymentFeePaymentReference=\"*\"")
+            .field(
+              "dateOfPayment",
+              "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\" OR servicePaymentFeePaymentReference=\"*\"")
             .field("servicePaymentFeeAccountNumber",
                 "servicePaymentFeePaymentMethod=\"feePayByAccount\" AND alternativeServiceFeeRequired=\"Yes\"")
             .field("servicePaymentFeeAccountReferenceNumber",

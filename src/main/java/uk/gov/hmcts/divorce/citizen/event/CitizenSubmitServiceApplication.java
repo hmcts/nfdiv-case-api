@@ -25,7 +25,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
@@ -48,7 +47,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
     private static final String AWAITING_DECISION_ERROR = """
         A service application has already been submitted and is awaiting a decision.
-    """;
+        """;
 
     private final PaymentSetupService paymentSetupService;
 
@@ -136,23 +135,21 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
     }
 
     private void prepareCaseForServicePayment(AlternativeService serviceApplication, Applicant applicant, long caseId) {
-      serviceApplication.setAlternativeServiceFeeRequired(YesOrNo.YES);
+        serviceApplication.setAlternativeServiceFeeRequired(YesOrNo.YES);
 
-      FeeDetails serviceFee = serviceApplication.getServicePaymentFee();
-      OrderSummary orderSummary = paymentSetupService.createServiceApplicationOrderSummary(
-        serviceApplication, caseId
-      );
-      serviceFee.setOrderSummary(orderSummary);
+        FeeDetails serviceFee = serviceApplication.getServicePaymentFee();
+        OrderSummary orderSummary = paymentSetupService.createServiceApplicationOrderSummary(
+            serviceApplication, caseId
+        );
+        serviceFee.setOrderSummary(orderSummary);
 
-      String serviceRequest = paymentSetupService.createServiceApplicationPaymentServiceRequest(
-        serviceApplication, caseId, applicant.getFullName()
-      );
-      serviceFee.setServiceRequestReference(serviceRequest);
-
-      applicant.setServicePayments(new ArrayList<>());
+        String serviceRequest = paymentSetupService.createServiceApplicationPaymentServiceRequest(
+            serviceApplication, caseId, applicant.getFullName()
+        );
+        serviceFee.setServiceRequestReference(serviceRequest);
     }
 
     private boolean serviceAppAwaitingReview(AlternativeService alternativeService) {
-      return alternativeService != null && alternativeService.getReceivedServiceApplicationDate() != null;
+        return alternativeService != null && alternativeService.getReceivedServiceApplicationDate() != null;
     }
 }

@@ -72,7 +72,7 @@ class AosPackPrinterTest {
                 Applicant.builder()
                     .email("testresp@test.com")
                     .solicitorRepresented(YES)
-                    .solicitor(Solicitor.builder().build())
+                    .solicitor(Solicitor.builder().addressOverseas(YES).build())
                     .build())
             .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
             .build();
@@ -91,7 +91,7 @@ class AosPackPrinterTest {
     }
 
     @Test
-    void shouldPrintAosPackWithD10ForRespondentIfEmailIsBlank() {
+    void shouldPrintAosPackWithD10ForRespondentIfRespondentRepresentedAndSolicitorOverseas() {
 
         final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -112,6 +112,7 @@ class AosPackPrinterTest {
                     .email("")
                     .solicitorRepresented(NO)
                     .solicitor(Solicitor.builder().build())
+                    .addressOverseas(YES)
                     .build())
             .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
             .build();
@@ -130,7 +131,7 @@ class AosPackPrinterTest {
     }
 
     @Test
-    void shouldPrintAosPackWithoutD10ForRespondentIfEmailIsPresent() {
+    void shouldPrintAosPackWithD10ForRespondentWhenNotRepresented() {
 
         final ListValue<DivorceDocument> doc2 = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -151,11 +152,12 @@ class AosPackPrinterTest {
                     .email("testresp@test.com")
                     .solicitorRepresented(NO)
                     .solicitor(Solicitor.builder().build())
+                    .addressOverseas(YES)
                     .build())
             .documents(CaseDocuments.builder().documentsGenerated(asList(doc2, doc3)).build())
             .build();
 
-        when(bulkPrintService.printAosRespondentPack(printCaptor.capture(), eq(false))).thenReturn(randomUUID());
+        when(bulkPrintService.printAosRespondentPack(printCaptor.capture(), eq(true))).thenReturn(randomUUID());
 
         aosPackPrinter.sendAosLetterToRespondent(caseData, TEST_CASE_ID);
 

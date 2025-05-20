@@ -2,12 +2,6 @@ buildscript {
   repositories {
     mavenLocal()
     mavenCentral()
-    maven {
-      url "https://jitpack.io"
-      content {
-        excludeGroup "com.github.ben-manes.versions"
-      }
-    }
   }
   dependencies {
     classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '3.2.1263'
@@ -21,11 +15,11 @@ plugins {
   id 'pmd'
   id 'jacoco'
   id 'org.owasp.dependencycheck' version '12.1.1'
-  id 'org.sonarqube' version '6.1.0.5360'
-  id 'org.springframework.boot' version '3.3.5'
+  id 'org.sonarqube' version '6.2.0.5505'
+  id 'org.springframework.boot' version '3.4.5'
   id 'com.github.ben-manes.versions' version '0.52.0'
-  id 'hmcts.ccd.sdk' version '5.5.20'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1701'
+  id 'hmcts.ccd.sdk' version '5.5.21'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1717'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -219,14 +213,13 @@ dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
     //CVE-2020-23064
-    dependency group: 'org.json', name: 'json', version: '20250107'
+    dependency group: 'org.json', name: 'json', version: '20250517'
   }
 }
 
 repositories {
   mavenLocal()
   mavenCentral()
-  maven { url 'https://jitpack.io' }
 }
 
 def versions = [
@@ -260,29 +253,29 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.8.0'
-  implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '8.10.1') {
+  implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.4') {
     exclude group: 'org.apache.commons', module: 'commons-compress'
     exclude group: 'com.google.guava', module: 'guava'
     exclude group: 'org.apache.poi', module: 'poi-ooxml'
     exclude group: 'org.apache.poi', module: 'poi'
     exclude group: 'com.launchdarkly', module: 'launchdarkly-java-server-sdk'
   }
-  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '5.0.5'
+  implementation group: 'com.github.hmcts', name: 'core-case-data-store-client', version: '5.1.0'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.4'
-  implementation group: 'com.github.hmcts', name: 'java-logging', version: '6.1.7'
-  implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '4.0.4'
-  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.2.0'
-  implementation group: 'com.github.hmcts', name: 'ccd-case-document-am-client', version: '1.59.1'
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.1.9'
+  implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '5.0.3'
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.2'
+  implementation group: 'com.github.hmcts', name: 'ccd-case-document-am-client', version: '1.59.2'
 
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core'
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.6.0'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.8.8'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
   implementation group: 'org.springframework.retry', name: 'spring-retry'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '4.1.5'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '4.2.1'
 
   implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.28'
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '5.2.1-RELEASE'
@@ -306,15 +299,15 @@ dependencies {
   testImplementation group: 'com.github.stefanbirkner', name: 'system-lambda', version: '1.2.1'
   testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.3'
   testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.27.3'
-  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '4.1.5'
-  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.1.4'
+  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '4.2.1'
+  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.2.1'
   testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.2.0'
   testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
   testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
   testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.5'
   testImplementation group: 'org.simplify4u', name: 'slf4j2-mock', version: '2.3.0'
-  testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.4.3', classifier: 'all'
+  testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.4.9', classifier: 'all'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
@@ -322,7 +315,7 @@ dependencies {
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
 
-  functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.2.0'
+  functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.2'
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
@@ -499,3 +492,4 @@ task fortifyScan(type: JavaExec) {
     classpath += sourceSets.test.runtimeClasspath
     jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
+

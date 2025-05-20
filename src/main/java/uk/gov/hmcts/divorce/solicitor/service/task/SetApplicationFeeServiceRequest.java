@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.service.task;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -16,9 +15,6 @@ public class SetApplicationFeeServiceRequest implements CaseTask {
 
     private final PaymentSetupService paymentSetupService;
 
-    @Value("${idam.client.redirect_uri}")
-    private String redirectUrl;
-
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> details) {
         var data = details.getData();
@@ -29,9 +25,7 @@ public class SetApplicationFeeServiceRequest implements CaseTask {
         );
         application.setApplicationFeeOrderSummary(orderSummary);
 
-        String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
-            data, details.getId(), redirectUrl
-        );
+        String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(data, details.getId());
         application.setApplicationFeeServiceRequestReference(serviceRequest);
 
         return details;
