@@ -81,7 +81,7 @@ class CaseworkerRescindConditionalOrderTest {
     private CaseworkerRescindConditionalOrder caseworkerRescindConditionalOrder;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerRescindConditionalOrder.configure(configBuilder);

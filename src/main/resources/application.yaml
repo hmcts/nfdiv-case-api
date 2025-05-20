@@ -358,7 +358,7 @@ uk:
             RESPONDENT_DRAFT_AOS_STARTED_APPLICATION_OVERDUE: '5b577659-b9de-4146-8e62-d1d4121d7760'
 
 s2s-authorised:
-  services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
+  services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator,payment_app}
 
 idam:
   s2s-auth:

@@ -22,7 +22,7 @@ class SolicitorArchiveCaseTest {
     private SolicitorArchiveCase solicitorArchiveCase;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         solicitorArchiveCase.configure(configBuilder);
