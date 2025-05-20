@@ -42,6 +42,7 @@ java:
           alias: IDAM_OLD_DIVORCE_PASSWORD
   environment:
     NOTIFY_TEMPLATE_SIGN_IN_DIVORCE_URL: https://nfdiv-apply-for-divorce.{{ .Values.global.environment }}.platform.hmcts.net/
+    CASE_API_URL: http://nfdiv-case-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
     NOTIFY_TEMPLATE_SIGN_IN_DISSOLUTION_URL: https://nfdiv-end-civil-partnership.{{ .Values.global.environment }}.platform.hmcts.net/
     NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DIVORCE_URL: https://nfdiv-apply-for-divorce.{{ .Values.global.environment }}.platform.hmcts.net/applicant2
     NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DISSOLUTION_URL: https://nfdiv-end-civil-partnership.{{ .Values.global.environment }}.platform.hmcts.net/applicant2
