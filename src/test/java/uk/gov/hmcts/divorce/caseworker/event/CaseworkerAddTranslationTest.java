@@ -20,7 +20,7 @@ class CaseworkerAddTranslationTest {
     private CaseworkerAddTranslation caseworkerAddTranslation;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerAddTranslation.configure(configBuilder);
