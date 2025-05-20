@@ -22,7 +22,7 @@ class CaseworkerAwaitingJudgeClarificationTest {
     private CaseworkerAwaitingJudgeClarification caseworkerAwaitingJudgeClarification;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerAwaitingJudgeClarification.configure(configBuilder);
