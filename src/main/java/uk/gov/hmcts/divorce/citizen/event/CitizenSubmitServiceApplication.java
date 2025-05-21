@@ -23,7 +23,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.Collections;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -73,11 +72,11 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         long caseId = details.getId();
         log.info("{} About to Submit callback invoked for Case Id: {}", CITIZEN_SERVICE_APPLICATION, details.getId());
 
-        if (serviceAppAwaitingReview(data.getAlternativeService())) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(Collections.singletonList(AWAITING_DECISION_ERROR))
-                .build();
-        }
+//        if (serviceAppAwaitingReview(data.getAlternativeService())) {
+//            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+//                .errors(Collections.singletonList(AWAITING_DECISION_ERROR))
+//                .build();
+//        }
 
         Applicant applicant = data.getApplicant1();
         InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
@@ -123,6 +122,8 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .receivedServiceApplicationDate(LocalDate.now(clock))
             .receivedServiceAddedDate(LocalDate.now(clock))
             .alternativeServiceType(applicationAnswers.serviceApplicationType())
+            .serviceApplicationDocsUploadedPreSubmission(userOptions.awaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
+            .serviceApplicationSubmittedOnline(YesOrNo.YES)
             .build();
     }
 
