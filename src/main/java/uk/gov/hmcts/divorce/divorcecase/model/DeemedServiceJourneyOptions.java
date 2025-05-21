@@ -1,13 +1,19 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+<<<<<<< HEAD
 import com.fasterxml.jackson.annotation.JsonIgnore;
+=======
+>>>>>>> NFDIV-4717
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+<<<<<<< HEAD
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+=======
+>>>>>>> NFDIV-4717
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
@@ -42,7 +48,6 @@ public class DeemedServiceJourneyOptions implements ApplicationAnswers {
     @JsonIgnore
     @Override
     public AlternativeServiceType serviceApplicationType() {
-
         return AlternativeServiceType.DEEMED;
     }
 }
