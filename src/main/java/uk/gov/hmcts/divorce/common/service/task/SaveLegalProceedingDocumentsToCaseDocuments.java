@@ -30,21 +30,12 @@ public class SaveLegalProceedingDocumentsToCaseDocuments implements CaseTask {
         List<ListValue<DivorceDocument>> documents = caseData.getApplicant2().getLegalProceedingDocs();
 
         if (!CollectionUtils.isEmpty(documents)) {
-            if (caseData.getApplicant2().isConfidentialContactDetails()) {
                 documents.forEach(divorceDocument -> {
                     caseDocuments.setConfidentialDocumentsUploaded(CaseDocuments.addDocumentToTop(
                         caseDocuments.getConfidentialDocumentsUploaded(),
                         mapToConfidentialDivorceDocument(divorceDocument.getValue()),
                         divorceDocument.getId()));
                 });
-            } else {
-                documents.forEach(divorceDocument -> {
-                    caseDocuments.setApplicant2DocumentsUploaded(CaseDocuments.addDocumentToTop(
-                        caseDocuments.getApplicant2DocumentsUploaded(),
-                        divorceDocument.getValue(),
-                        divorceDocument.getId()));
-                });
-            }
             caseData.getApplicant2().setLegalProceedingDocs(null);
         }
 

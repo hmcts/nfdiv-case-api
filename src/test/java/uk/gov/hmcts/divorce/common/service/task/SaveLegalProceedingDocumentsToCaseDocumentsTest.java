@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
-import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -28,11 +27,10 @@ class SaveLegalProceedingDocumentsToCaseDocumentsTest {
     }
 
     @Test
-    void shouldSaveDocumentsToConfidentialDocumentsUploadedWhenContactDetailsAreConfidential() {
+    void shouldSaveDocumentsToConfidentialDocumentsUploaded() {
         // Arrange
         CaseData caseData = new CaseData();
         Applicant applicant2 = new Applicant();
-        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
 
         ListValue<DivorceDocument> document = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder().documentFileName("test-doc.pdf").build())
@@ -53,30 +51,6 @@ class SaveLegalProceedingDocumentsToCaseDocumentsTest {
         assertThat(caseData.getApplicant2().getLegalProceedingDocs()).isNull();
     }
 
-    @Test
-    void shouldSaveDocumentsToApplicant2DocumentsUploadedWhenContactDetailsAreNotConfidential() {
-        CaseData caseData = new CaseData();
-        Applicant applicant2 = new Applicant();
-        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
-
-        ListValue<DivorceDocument> document = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder().documentFileName("test-doc.pdf").build())
-            .build();
-
-        applicant2.setLegalProceedingDocs(Collections.singletonList(document));
-        caseData.setApplicant2(applicant2);
-        caseData.setDocuments(new CaseDocuments());
-
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-
-        saveLegalProceedingDocumentsToCaseDocuments.apply(caseDetails);
-
-        assertThat(caseData.getDocuments().getApplicant2DocumentsUploaded()).isNotEmpty();
-        assertThat(caseData.getDocuments().getApplicant2DocumentsUploaded().get(0).getValue().getDocumentFileName())
-            .isEqualTo("test-doc.pdf");
-        assertThat(caseData.getApplicant2().getLegalProceedingDocs()).isNull();
-    }
 
     @Test
     void shouldDoNothingWhenDocumentsListIsEmpty() {
@@ -92,6 +66,5 @@ class SaveLegalProceedingDocumentsToCaseDocumentsTest {
         saveLegalProceedingDocumentsToCaseDocuments.apply(caseDetails);
 
         assertThat(caseData.getDocuments().getConfidentialDocumentsUploaded()).isNull();
-        assertThat(caseData.getDocuments().getApplicant2DocumentsUploaded()).isNull();
     }
 }
