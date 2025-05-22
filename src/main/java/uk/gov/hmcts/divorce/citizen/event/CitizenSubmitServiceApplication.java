@@ -23,6 +23,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.Collections;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -42,7 +43,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
     public static final String CITIZEN_SERVICE_APPLICATION = "citizen-service-application";
 
-    private static final String AWAITING_DECISION_ERROR = """
+    public static final String AWAITING_DECISION_ERROR = """
         A service application has already been submitted and is awaiting a decision.
         """;
 
@@ -72,15 +73,15 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         long caseId = details.getId();
         log.info("{} About to Submit callback invoked for Case Id: {}", CITIZEN_SERVICE_APPLICATION, details.getId());
 
-//        if (serviceAppAwaitingReview(data.getAlternativeService())) {
-//            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-//                .errors(Collections.singletonList(AWAITING_DECISION_ERROR))
-//                .build();
-//        }
+        if (serviceAppAwaitingReview(data.getAlternativeService())) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(AWAITING_DECISION_ERROR))
+                .build();
+        }
 
         Applicant applicant = data.getApplicant1();
         InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
-        AlternativeService newServiceApplication = createServiceApplication(userOptions);
+        AlternativeService newServiceApplication = buildServiceApplication(userOptions);
         data.setAlternativeService(newServiceApplication);
 
         if (userOptions.willMakePayment()) {
@@ -104,16 +105,16 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
                                             CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} submitted callback invoked for Case Id: {}", CITIZEN_SERVICE_APPLICATION, details.getId());
 
-        InterimApplicationOptions userOptions = details.getData().getApplicant1().getInterimApplicationOptions();
+        AlternativeService alternativeService = details.getData().getAlternativeService();
 
-        if (!userOptions.willMakePayment()) {
-            // Send notifications if using HWF;
+        if (!YesOrNo.YES.equals(alternativeService.getAlternativeServiceFeeRequired())) {
+            // Send notifications for HWF scenario
         }
 
         return SubmittedCallbackResponse.builder().build();
     }
 
-    private AlternativeService createServiceApplication(InterimApplicationOptions userOptions) {
+    private AlternativeService buildServiceApplication(InterimApplicationOptions userOptions) {
         ApplicationAnswers applicationAnswers = userOptions.getApplicationAnswers();
 
         return AlternativeService.builder()
@@ -121,7 +122,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .serviceApplicationAnswers(applicationAnswers.generateAnswerDocument())
             .receivedServiceApplicationDate(LocalDate.now(clock))
             .receivedServiceAddedDate(LocalDate.now(clock))
-            .alternativeServiceType(applicationAnswers.serviceApplicationType())
+            .alternativeServiceType(userOptions.getInterimApplicationType().getServiceType())
             .serviceApplicationDocsUploadedPreSubmission(userOptions.awaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
             .build();
@@ -143,6 +144,6 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
     }
 
     private boolean serviceAppAwaitingReview(AlternativeService alternativeService) {
-        return alternativeService != null && alternativeService.getReceivedServiceApplicationDate() != null;
+        return alternativeService != null && alternativeService.getAlternativeServiceType() != null;
     }
 }

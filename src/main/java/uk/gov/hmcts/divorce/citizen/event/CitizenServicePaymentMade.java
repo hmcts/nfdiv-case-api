@@ -9,15 +9,14 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
@@ -41,8 +40,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CITIZEN_SERVICE_PAYMENT = "citizen-service-payment-made";
-
-    private final PaymentSetupService paymentSetupService;
 
     private final Clock clock;
 
@@ -83,9 +80,9 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
         String paymentReference = paymentValidatorService.getLastPayment(servicePayments).getReference();
         alternativeService.setDateOfPayment(LocalDate.now(clock));
         alternativeService.getServicePaymentFee().setPaymentReference(paymentReference);
-        InterimApplicationOptions userOptions = data.getApplicant1().getInterimApplicationOptions();
 
-        details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServiceConsideration);
+        boolean awaitingDocuments = YesOrNo.NO.equals(alternativeService.getServiceApplicationDocsUploadedPreSubmission());
+        details.setState(awaitingDocuments ? AwaitingDocuments : AwaitingServiceConsideration);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

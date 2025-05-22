@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
 @Data
@@ -36,11 +37,5 @@ public class DeemedServiceJourneyOptions implements ApplicationAnswers {
         return DivorceDocument.builder()
                 .documentComment("Example")
                 .build();
-    }
-
-    @JsonIgnore
-    @Override
-    public AlternativeServiceType serviceApplicationType() {
-        return AlternativeServiceType.DEEMED;
     }
 }
