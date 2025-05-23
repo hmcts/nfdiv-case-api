@@ -73,7 +73,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         long caseId = details.getId();
         log.info("{} About to Submit callback invoked for Case Id: {}", CITIZEN_SERVICE_APPLICATION, details.getId());
 
-        if (serviceAppAwaitingReview(data.getAlternativeService())) {
+        if (serviceAppAwaitingDecision(data.getAlternativeService())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(Collections.singletonList(AWAITING_DECISION_ERROR))
                 .build();
@@ -143,7 +143,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         serviceFee.setServiceRequestReference(serviceRequest);
     }
 
-    private boolean serviceAppAwaitingReview(AlternativeService alternativeService) {
+    private boolean serviceAppAwaitingDecision(AlternativeService alternativeService) {
         return alternativeService != null && alternativeService.getAlternativeServiceType() != null;
     }
 }

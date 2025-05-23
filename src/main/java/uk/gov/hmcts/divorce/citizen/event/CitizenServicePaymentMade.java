@@ -63,11 +63,10 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
+        long caseId = details.getId();
         log.info("{} About to Submit callback invoked for Case Id: {}", CITIZEN_SERVICE_PAYMENT, details.getId());
 
-        CaseData data = details.getData();
-        long caseId = details.getId();
-        AlternativeService alternativeService = data.getAlternativeService();
+        AlternativeService alternativeService = details.getData().getAlternativeService();
         List<ListValue<Payment>> servicePayments = alternativeService.getServicePayments();
 
         List<String> validationErrors = paymentValidatorService.validatePayments(servicePayments, caseId);
@@ -78,11 +77,11 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
         }
 
         String paymentReference = paymentValidatorService.getLastPayment(servicePayments).getReference();
-        alternativeService.setDateOfPayment(LocalDate.now(clock));
-        alternativeService.getServicePaymentFee().setPaymentReference(paymentReference);
+        boolean isAwaitingDocuments = YesOrNo.NO.equals(alternativeService.getServiceApplicationDocsUploadedPreSubmission());
 
-        boolean awaitingDocuments = YesOrNo.NO.equals(alternativeService.getServiceApplicationDocsUploadedPreSubmission());
-        details.setState(awaitingDocuments ? AwaitingDocuments : AwaitingServiceConsideration);
+        alternativeService.getServicePaymentFee().setPaymentReference(paymentReference);
+        details.setState(isAwaitingDocuments ? AwaitingDocuments : AwaitingServiceConsideration);
+        alternativeService.setDateOfPayment(LocalDate.now(clock));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
