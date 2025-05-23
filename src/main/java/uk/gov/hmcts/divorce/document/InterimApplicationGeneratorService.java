@@ -24,6 +24,6 @@ public class InterimApplicationGeneratorService {
             return deemedServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
         }
 
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

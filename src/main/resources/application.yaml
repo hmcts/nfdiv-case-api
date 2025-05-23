@@ -491,7 +491,7 @@ docmosis:
       REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER: FL-NFD-GOR-ENG-Request-For-Information-Partner-Response.docx
       REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER: FL-NFD-GOR-ENG-Request-For-Information-Partner-Solicitor-Response.docx
       RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-ENG-Respondent-Started-Drafting-AoS-Application.docx
-      DEEMED_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Deemed-Service-Application.docx
+      DEEMED_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Deemed-Service-Application.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V1.docx
@@ -584,7 +584,7 @@ docmosis:
       REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Partner-Response.docx
       REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Partner-Solicitor-Response.docx
       RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-WEL-Respondent-Started-Drafting-AoS-Application-Cy.docx
-      DEEMED_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Deemed-Service-Application.docx # TODO: Add Welsh
+      DEEMED_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Deemed-Service-Application_V1.docx # TODO: Add Welsh
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}
