@@ -1,11 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-<<<<<<< HEAD
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-=======
->>>>>>> nfdiv-4737-service-application-payments
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,13 +15,8 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-<<<<<<< HEAD
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class DeemedServiceJourneyOptions implements ApplicationAnswers {
-=======
-public class DeemedServiceJourneyOptions implements ApplicationAnswers {
-
->>>>>>> nfdiv-4737-service-application-payments
     @CCD(
         label = "Provide a statement",
         typeOverride = TextArea,
