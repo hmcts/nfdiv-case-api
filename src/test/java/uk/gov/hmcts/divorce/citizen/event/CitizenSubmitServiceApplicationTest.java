@@ -17,8 +17,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.document.InterimApplicationGeneratorService;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 
 import java.time.Clock;
@@ -41,9 +39,6 @@ class CitizenSubmitServiceApplicationTest {
 
     @Mock
     private Clock clock;
-
-    @Mock
-    InterimApplicationGeneratorService interimApplicationGeneratorService;
 
     @InjectMocks
     private CitizenSubmitServiceApplication citizenSubmitServiceApplication;
@@ -96,11 +91,6 @@ class CitizenSubmitServiceApplicationTest {
             any(AlternativeService.class), eq(TEST_CASE_ID), eq(TEST_FIRST_NAME)
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
-        DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationGeneratorService.generateAnswerDocument(
-            TEST_CASE_ID, caseData.getApplicant1(), caseData
-        )).thenReturn(generatedApplication);
-
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
             caseDetails, caseDetails
@@ -108,7 +98,6 @@ class CitizenSubmitServiceApplicationTest {
 
         AlternativeService alternativeService = response.getData().getAlternativeService();
         assertThat(response.getState()).isEqualTo(State.AwaitingServicePayment);
-        assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
         assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isEqualTo(orderSummary);
         assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
         assertThat(alternativeService.getAlternativeServiceFeeRequired()).isEqualTo(YesOrNo.YES);
@@ -137,18 +126,12 @@ class CitizenSubmitServiceApplicationTest {
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setId(TEST_CASE_ID);
 
-        DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationGeneratorService.generateAnswerDocument(
-            TEST_CASE_ID, caseData.getApplicant1(), caseData
-        )).thenReturn(generatedApplication);
-
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
             caseDetails, caseDetails
         );
 
         AlternativeService alternativeService = response.getData().getAlternativeService();
         assertThat(response.getState()).isEqualTo(State.AwaitingServicePayment);
-        assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
         assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isNull();
         assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isNull();
         assertThat(alternativeService.getAlternativeServiceFeeRequired()).isNotEqualTo(YesOrNo.YES);
@@ -177,18 +160,12 @@ class CitizenSubmitServiceApplicationTest {
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setId(TEST_CASE_ID);
 
-        DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationGeneratorService.generateAnswerDocument(
-            TEST_CASE_ID, caseData.getApplicant1(), caseData
-        )).thenReturn(generatedApplication);
-
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
             caseDetails, caseDetails
         );
 
         AlternativeService alternativeService = response.getData().getAlternativeService();
         assertThat(response.getState()).isEqualTo(State.AwaitingDocuments);
-        assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
         assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isNull();
         assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isNull();
         assertThat(alternativeService.getAlternativeServiceFeeRequired()).isNotEqualTo(YesOrNo.YES);
