@@ -22,7 +22,6 @@ import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -53,7 +52,6 @@ class CaseworkerCreateGeneralOrderTest {
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-        final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = ConfigTestUtil.createCaseDataConfigBuilder();
 
         caseworkerCreateGeneralOrder.configure(configBuilder);
@@ -64,7 +62,7 @@ class CaseworkerCreateGeneralOrderTest {
     }
 
     @Test
-    void shouldReturnListOfScannedDocumentNames() throws Exception {
+    void shouldReturnListOfScannedDocumentNames() {
         final CaseData caseData = caseData();
 
         ScannedDocument scannedDocument = getScannedGeneralOrderDocument();
@@ -85,7 +83,7 @@ class CaseworkerCreateGeneralOrderTest {
     }
 
     @Test
-    void shouldSetGeneralOrderDocumentsWhenThereIsNoExistingGeneralOrder() throws Exception {
+    void shouldSetGeneralOrderDocumentsWhenThereIsNoExistingGeneralOrder() {
         final CaseData caseData = caseData();
 
         final Document generalOrderDocument = getGeneralOrderDocument();
@@ -106,7 +104,7 @@ class CaseworkerCreateGeneralOrderTest {
     }
 
     @Test
-    void shouldAddLatestGeneralOrderDocumentToTopWhenThereIsExistingGeneralOrder() throws Exception {
+    void shouldAddLatestGeneralOrderDocumentToTopWhenThereIsExistingGeneralOrder() {
         final CaseData caseData = caseData();
 
         Document generalOrderDocument1 = getGeneralOrderDocument();
@@ -135,7 +133,7 @@ class CaseworkerCreateGeneralOrderTest {
     }
 
     @Test
-    void shouldSetGeneralOrderScannedDocument() throws Exception {
+    void shouldSetGeneralOrderScannedDocument() {
         final CaseData caseData = caseData();
 
         final Document generalOrder = getGeneralOrderDocument();

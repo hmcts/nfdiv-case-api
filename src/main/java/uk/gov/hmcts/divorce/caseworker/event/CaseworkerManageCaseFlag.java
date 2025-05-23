@@ -23,6 +23,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class CaseworkerManageCaseFlag implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_MANAGE_CASE_FLAG = "manageFlags";
+    private static final String MANAGE_FLAGS = "Manage flags";
     private static final String ALWAYS_HIDE = "internalFlagLauncher = \"ALWAYS_HIDE\"";
 
     @Override
@@ -31,14 +32,14 @@ public class CaseworkerManageCaseFlag implements CCDConfig<CaseData, State, User
             .event(CASEWORKER_MANAGE_CASE_FLAG)
             .forStates(POST_SUBMISSION_STATES)
             .showCondition("caseFlagsSetupComplete=\"Yes\"")
-            .name("Manage flags")
-            .description("Manage flags")
+            .name(MANAGE_FLAGS)
+            .description(MANAGE_FLAGS)
             .showEventNotes()
             .showSummary()
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER, CASE_WORKER, LEGAL_ADVISOR, JUDGE))
             .page("caseworkerManageFlags")
-            .pageLabel("Manage flags")
+            .pageLabel(MANAGE_FLAGS)
             .optional(CaseData::getCaseFlags, ALWAYS_HIDE, true, true)
             .complex(CaseData::getPartyFlags)
                 .optional(PartyFlags::getApplicant1Flags, ALWAYS_HIDE, true, true)

@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -16,10 +16,10 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class RegenerateConditionalOrderPronouncedCoverLetter implements CaseTask {
 
-    @Autowired
-    private ConditionalOrderPronouncedCoverLetterHelper coverLetterHelper;
+    private final ConditionalOrderPronouncedCoverLetterHelper coverLetterHelper;
 
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {

@@ -35,7 +35,7 @@ class CaseworkerReturnToPreviousStateTest {
     private CaseworkerReturnToPreviousState caseworkerReturnToPreviousState;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerReturnToPreviousState.configure(configBuilder);
@@ -105,7 +105,7 @@ class CaseworkerReturnToPreviousStateTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerReturnToPreviousState.midEvent(details, null);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(INVALID_STATE_ERROR);
     }
 
@@ -122,7 +122,7 @@ class CaseworkerReturnToPreviousStateTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerReturnToPreviousState.midEvent(details, null);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(CASE_MUST_BE_ISSUED_ERROR);
     }
 }

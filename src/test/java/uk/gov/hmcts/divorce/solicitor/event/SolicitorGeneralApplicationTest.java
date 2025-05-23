@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
-import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
@@ -29,8 +28,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
-import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationSelectFee;
@@ -48,7 +48,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.event.page.GeneralApplicationUploadDocument.GENERAL_APPLICATION_DOCUMENT_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType.DEEMED_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
@@ -83,6 +85,9 @@ class SolicitorGeneralApplicationTest {
 
     @Mock
     private HttpServletRequest request;
+
+    @Mock
+    private ServiceRequestSearchService serviceRequestSearchService;
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
@@ -127,9 +132,7 @@ class SolicitorGeneralApplicationTest {
 
     @Test
     void shouldAddGeneralApplicationDocumentToListOfCaseDocumentsAndUpdateState() {
-        final DivorceDocument document = DivorceDocument.builder()
-                .documentLink(Document.builder().build())
-                .build();
+
         final CaseData caseData = caseData();
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
         docs.get(0).getValue().setDocumentFileName("Testfile");
@@ -145,16 +148,14 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(1);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(1);
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue())
             .isEqualTo(docs.get(0).getValue());
     }
 
     @Test
     void shouldAddGeneralApplicationDocumentsToListOfCaseDocumentsAndUpdateState() {
-        final DivorceDocument document = DivorceDocument.builder()
-            .documentLink(Document.builder().build())
-            .build();
+
         final CaseData caseData = caseData();
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(2);
         docs.get(0).getValue().setDocumentFileName("Testfile");
@@ -172,7 +173,7 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(2);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(2);
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue())
             .isEqualTo(docs.get(1).getValue());
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(1).getValue())
@@ -294,6 +295,9 @@ class SolicitorGeneralApplicationTest {
         when(organisationClient.getUserOrganisation(AUTH_HEADER_VALUE, TEST_AUTHORIZATION_TOKEN))
             .thenReturn(organisationsResponse);
         when(organisationsResponse.getOrganisationIdentifier()).thenReturn("App1OrgPolicy");
+        when(paymentService.createServiceRequestReference(
+            null, TEST_CASE_ID, "", generalApplicationOrderSummary)
+        ).thenReturn(TEST_SERVICE_REFERENCE);
 
         final var pbaResponse = new PbaResponse(CREATED, null, "1234");
         when(paymentService.processPbaPayment(
@@ -329,7 +333,7 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .contains("General Application cannot be submitted as this case is currently linked to an active bulk action case");
     }
@@ -337,12 +341,18 @@ class SolicitorGeneralApplicationTest {
     @Test
     void shouldReturnErrorsIfSolicitorOrganisationPolicyDoesNotMatchOneOnCase() {
         final CaseData caseData = caseData();
+
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
+
         caseData.setGeneralApplication(
             GeneralApplication.builder()
                 .generalApplicationFee(
                     FeeDetails.builder()
                         .paymentMethod(FEE_PAY_BY_ACCOUNT)
                         .build())
+                .generalApplicationDocuments(docs)
                 .build()
         );
         caseData.getApplicant1().setSolicitorRepresented(YES);
@@ -386,7 +396,7 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .contains(
                 "General Application payment could not be completed as the invokers organisation policy did not match any on the case"
@@ -416,6 +426,11 @@ class SolicitorGeneralApplicationTest {
                 .build())
             )
             .build();
+
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
+
         caseData.setGeneralApplication(
             GeneralApplication.builder()
                 .generalApplicationFee(
@@ -433,6 +448,7 @@ class SolicitorGeneralApplicationTest {
                         )
                         .paymentMethod(FEE_PAY_BY_ACCOUNT)
                         .build())
+                .generalApplicationDocuments(docs)
                 .build()
         );
         caseData.getApplicant1().setSolicitorRepresented(YES);
@@ -461,6 +477,9 @@ class SolicitorGeneralApplicationTest {
         when(organisationClient.getUserOrganisation(AUTH_HEADER_VALUE, TEST_AUTHORIZATION_TOKEN))
             .thenReturn(organisationsResponse);
         when(organisationsResponse.getOrganisationIdentifier()).thenReturn("App2OrgPolicy");
+        when(paymentService.createServiceRequestReference(
+            null, TEST_CASE_ID, "", generalApplicationOrderSummary)
+        ).thenReturn(TEST_SERVICE_REFERENCE);
 
         final var pbaResponse = new PbaResponse(FORBIDDEN, "Account balance insufficient", null);
         when(paymentService.processPbaPayment(
@@ -476,16 +495,14 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .contains("Account balance insufficient");
     }
 
     @Test
     void shouldReturnErrorIfUrgentFlagIsSetButNoReasonProvided() {
-        final DivorceDocument document = DivorceDocument.builder()
-            .documentLink(Document.builder().build())
-            .build();
+
         final CaseData caseData = caseData();
         caseData.getGeneralApplication().setGeneralApplicationUrgentCase(YES);
 
@@ -498,8 +515,28 @@ class SolicitorGeneralApplicationTest {
             solicitorGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .contains("General Application marked as urgent need an accompanying reason why it is urgent");
+    }
+
+    @Test
+    void shouldReturnErrorIfGeneralApplicationDocumentsIsNotAdded() {
+
+        final CaseData caseData = caseData();
+        caseData.getGeneralApplication().setGeneralApplicationUrgentCase(NO);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setState(Holding);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorGeneralApplication.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).isNotNull();
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors())
+            .contains(GENERAL_APPLICATION_DOCUMENT_ERROR);
     }
 }

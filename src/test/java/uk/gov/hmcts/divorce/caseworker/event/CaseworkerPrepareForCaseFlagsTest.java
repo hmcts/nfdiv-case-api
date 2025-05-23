@@ -31,7 +31,7 @@ class CaseworkerPrepareForCaseFlagsTest {
     private CaseworkerPrepareForCaseFlags caseworkerPrepareForCaseFlags;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerPrepareForCaseFlags.configure(configBuilder);
@@ -58,7 +58,7 @@ class CaseworkerPrepareForCaseFlagsTest {
         caseDetails.setData(CaseData.builder().build());
         caseDetails.setId(TestConstants.TEST_CASE_ID);
 
-        var response = caseworkerPrepareForCaseFlags.aboutToSubmit(caseDetails, null);
+        caseworkerPrepareForCaseFlags.aboutToSubmit(caseDetails, null);
 
         verify(caseFlagsService).initialiseCaseFlags(caseDetails.getData());
     }

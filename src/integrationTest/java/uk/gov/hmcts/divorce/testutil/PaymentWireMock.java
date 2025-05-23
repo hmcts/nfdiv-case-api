@@ -12,7 +12,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.payment.model.CasePaymentRequest;
 import uk.gov.hmcts.divorce.payment.model.CreateServiceRequestBody;
@@ -34,7 +33,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.penceToPounds;
-import static uk.gov.hmcts.divorce.payment.PaymentService.HMCTS_ORG_ID;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.HMCTS_ORG_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FEE_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
@@ -125,7 +124,7 @@ public final class PaymentWireMock {
         }
     }
 
-    public static CreateServiceRequestBody buildServiceReferenceRequest(CaseData data, Applicant responsibleParty) {
+    public static CreateServiceRequestBody buildServiceReferenceRequest(CaseData data, String responsibleParty) {
         return CreateServiceRequestBody.builder()
             .ccdCaseNumber(TEST_CASE_ID)
             .caseReference(TEST_CASE_ID)
@@ -141,7 +140,7 @@ public final class PaymentWireMock {
             ))
             .casePaymentRequest(
                 CasePaymentRequest.builder()
-                    .responsibleParty(responsibleParty.getFullName())
+                    .responsibleParty(responsibleParty)
                     .action("payment")
                     .build()
             ).build();

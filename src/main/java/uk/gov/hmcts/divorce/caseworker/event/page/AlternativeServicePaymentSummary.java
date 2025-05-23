@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 
 public class AlternativeServicePaymentSummary implements CcdPageConfiguration {
+    private static final String FEE_PAY_BY_ACCOUNT = "servicePaymentFeePaymentMethod=\"feePayByAccount\"";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -21,15 +22,15 @@ public class AlternativeServicePaymentSummary implements CcdPageConfiguration {
             .label(
                 "LabelPayAccountHeading",
                 "Payment Method: Fee Account",
-                "servicePaymentFeePaymentMethod=\"feePayByAccount\"")
+                FEE_PAY_BY_ACCOUNT)
             .label(
                 "LabelPayAccountReference1",
                 "Your pay account reference: **${servicePaymentFeeAccountReferenceNumber}**",
-                "servicePaymentFeePaymentMethod=\"feePayByAccount\"")
+                FEE_PAY_BY_ACCOUNT)
             .label(
                 "LabelPayAccountReference2",
                 "Fee account number: **${servicePaymentFeeAccountNumber}**",
-                "servicePaymentFeePaymentMethod=\"feePayByAccount\"")
+                FEE_PAY_BY_ACCOUNT)
             .label(
                 "LabelPayHWFHeading",
                 "Payment Method: Help with Fees",

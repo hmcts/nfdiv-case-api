@@ -143,9 +143,11 @@ public class RequestForInformationList {
                 if (rfi.getValue().getRequestForInformationResponses() != null
                     && !rfi.getValue().getRequestForInformationResponses().isEmpty()
                 ) {
-                    rfi.getValue().getRequestForInformationResponses().forEach(rfiResponse -> {
-                        if (!rfiResponse.getValue().isOffline()) {
-                            responseDocs.addAll(rfiResponse.getValue().getRequestForInformationResponseDocs());
+                    rfi.getValue().getRequestForInformationResponses().forEach(rfiResponseValue -> {
+                        RequestForInformationResponse response = rfiResponseValue.getValue();
+
+                        if (response != null && !response.isOffline() && response.getRequestForInformationResponseDocs() != null) {
+                            responseDocs.addAll(response.getRequestForInformationResponseDocs());
                         }
                     });
                 }

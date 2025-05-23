@@ -42,6 +42,7 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 @RequiredArgsConstructor
 public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, UserRole> {
 
+    private static final String PROGRESS_PAPER_CASE = "Progress paper case";
     public static final String CASEWORKER_PROGRESS_PAPER_CASE = "caseworker-progress-paper-case";
 
     private final CaseFlagsService caseFlagsService;
@@ -53,8 +54,8 @@ public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, U
         new PageBuilder(configBuilder
             .event(CASEWORKER_PROGRESS_PAPER_CASE)
             .forState(NewPaperCase)
-            .name("Progress paper case")
-            .description("Progress paper case")
+            .name(PROGRESS_PAPER_CASE)
+            .description(PROGRESS_PAPER_CASE)
             .showEventNotes()
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
@@ -67,8 +68,8 @@ public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, U
                 SOLICITOR,
                 LEGAL_ADVISOR,
                 JUDGE))
-            .page("Progress paper case")
-            .pageLabel("Progress paper case")
+            .page(PROGRESS_PAPER_CASE)
+            .pageLabel(PROGRESS_PAPER_CASE)
             .complex(CaseData::getApplication)
             .mandatory(Application::getProgressPaperCase)
             .done()

@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validat
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CitizenResendInvite implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CITIZEN_RESEND_INVITE = "citizen-resend-invite";
@@ -35,11 +36,9 @@ public class CitizenResendInvite implements CCDConfig<CaseData, State, UserRole>
     @Value("${applicant_2.to_link_to_case_offset_days}")
     private long toLinkToCaseOffsetDays;
 
-    @Autowired
-    private ApplicationSentForReviewNotification applicationSentForReviewNotification;
+    private final ApplicationSentForReviewNotification applicationSentForReviewNotification;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

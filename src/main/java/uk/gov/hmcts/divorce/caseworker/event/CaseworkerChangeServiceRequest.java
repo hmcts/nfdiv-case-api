@@ -43,6 +43,8 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
 
     public static final String CASEWORKER_CHANGE_SERVICE_REQUEST = "caseworker-change-service-request";
 
+    private static final String CHANGE_SERVICE_REQUEST = "Change service request";
+
     private final GenerateApplicant1NoticeOfProceeding generateApplicant1NoticeOfProceeding;
 
     private final GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
@@ -61,15 +63,15 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
                 RequestedInformationSubmitted,
                 AwaitingHWFDecision
             )
-            .name("Change service request")
-            .description("Change service request")
+            .name(CHANGE_SERVICE_REQUEST)
+            .description(CHANGE_SERVICE_REQUEST)
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(SOLICITOR, LEGAL_ADVISOR, JUDGE))
             .page("changeServiceRequest")
-            .pageLabel("Change service request")
+            .pageLabel(CHANGE_SERVICE_REQUEST)
             .complex(CaseData::getApplication)
             .mandatory(Application::getServiceMethod);
     }
@@ -101,7 +103,7 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(details.getData())
             .state(state)
             .build();
     }

@@ -40,6 +40,6 @@ class AwaitingConditionalOrderReminderNotificationDocumentPackTest {
     @Test
     void shouldReturnLetterId() {
         String result = awaitingConditionalOrderReminderNotificationDocumentPack.getLetterId();
-        Assertions.assertEquals(result, "conditional-order-reminder-pack");
+        Assertions.assertEquals("conditional-order-reminder-pack", result);
     }
 }

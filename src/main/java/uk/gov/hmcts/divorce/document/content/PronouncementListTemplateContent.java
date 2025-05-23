@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.stream.Stream.ofNullable;
@@ -114,7 +113,7 @@ public class PronouncementListTemplateContent {
             .peek(caseDetails -> {
                 log.info("Found case in Bulk List {}", caseDetails.getId());
             })
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private boolean isCaseToBeRemoved(final BulkActionCaseData caseData, final CaseDetails caseDetails) {
