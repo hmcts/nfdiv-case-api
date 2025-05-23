@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosResponseLetterPackToApplicant;
 import uk.gov.hmcts.divorce.common.service.task.GenerateAndLinkRespondentAnswers;
+import uk.gov.hmcts.divorce.common.service.task.SaveLegalProceedingDocumentsToCaseDocuments;
 import uk.gov.hmcts.divorce.common.service.task.SendAosNotifications;
 import uk.gov.hmcts.divorce.common.service.task.SetSubmissionAndDueDate;
 import uk.gov.hmcts.divorce.common.service.task.SetSubmitAosState;
@@ -36,6 +37,9 @@ class SubmitAosServiceTest {
     @Mock
     private SendAosResponseLetterPackToApplicant sendAosResponseLetterPackToApplicant;
 
+    @Mock
+    private SaveLegalProceedingDocumentsToCaseDocuments saveLegalProceedingDocumentsToCaseDocuments;
+
     @InjectMocks
     private SubmitAosService submitAosService;
 
@@ -47,6 +51,7 @@ class SubmitAosServiceTest {
         when(setSubmitAosState.apply(caseDetails)).thenReturn(caseDetails);
         when(setSubmissionAndDueDate.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(generateAndLinkRespondentAnswers.apply(caseDetails)).thenReturn(expectedCaseDetails);
+        when(saveLegalProceedingDocumentsToCaseDocuments.apply(caseDetails)).thenReturn(expectedCaseDetails);
 
         final CaseDetails<CaseData, State> result = submitAosService.submitAos(caseDetails);
 
@@ -55,6 +60,7 @@ class SubmitAosServiceTest {
         verify(setSubmitAosState).apply(caseDetails);
         verify(setSubmissionAndDueDate).apply(caseDetails);
         verify(generateAndLinkRespondentAnswers).apply(caseDetails);
+        verify(saveLegalProceedingDocumentsToCaseDocuments).apply(caseDetails);
     }
 
     @Test
