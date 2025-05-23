@@ -7,7 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 
 import java.time.Clock;
@@ -47,17 +47,17 @@ public class DeemedServiceApplicationTemplateContent implements TemplateContent 
             .getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 
         AlternativeService alternativeService = caseData.getAlternativeService();
-        GeneralApplicationOptions generalApplicationOptions = applicant.getGeneralApplicationOptions();
-        DeemedServiceJourneyOptions applicationAnswers = applicant.getGeneralApplicationOptions().getDeemedServiceJourneyOptions();
+        InterimApplicationOptions interimApplicationOptions = applicant.getInterimApplicationOptions();
+        DeemedServiceJourneyOptions applicationAnswers = applicant.getInterimApplicationOptions().getDeemedServiceJourneyOptions();
         DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
 
         templateContent.put(APPLICANT_1_FULL_NAME, applicant.getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
         templateContent.put(CCD_CASE_REFERENCE, formatId(caseId));
         templateContent.put(
-          SERVICE_APPLICATION_RECEIVED_DATE, dateTimeFormatter.format(alternativeService.getReceivedServiceApplicationDate())
+            SERVICE_APPLICATION_RECEIVED_DATE, dateTimeFormatter.format(alternativeService.getReceivedServiceApplicationDate())
         );
-        templateContent.put(DEEMED_EVIDENCE_UPLOADED, YesOrNo.YES.equals(generalApplicationOptions.getGenAppsCanUploadEvidence()));
+        templateContent.put(DEEMED_EVIDENCE_UPLOADED, YesOrNo.YES.equals(interimApplicationOptions.getInterimAppsCanUploadEvidence()));
         templateContent.put(DEEMED_EVIDENCE_DETAILS, applicationAnswers.getDeemedEvidenceDetails());
         templateContent.put(DEEMED_NO_EVIDENCE_STATEMENT, applicationAnswers.getDeemedNoEvidenceStatement());
         templateContent.put(DIVORCE_OR_DISSOLUTION, caseData.isDivorce() ? "divorce application" : "application for civil partnership");

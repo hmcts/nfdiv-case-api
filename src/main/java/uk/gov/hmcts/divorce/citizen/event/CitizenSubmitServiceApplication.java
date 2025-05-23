@@ -12,7 +12,6 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationAnswers;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
@@ -100,7 +99,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         }
 
         DivorceDocument applicationDocument = interimApplicationGeneratorService.generateAnswerDocument(
-          caseId, applicant, data
+            caseId, applicant, data
         );
         newServiceApplication.setServiceApplicationAnswers(applicationDocument);
 
@@ -124,8 +123,6 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
     }
 
     private AlternativeService buildServiceApplication(InterimApplicationOptions userOptions) {
-        ApplicationAnswers applicationAnswers = userOptions.getApplicationAnswers();
-
         return AlternativeService.builder()
             .serviceApplicationDocuments(userOptions.getInterimAppsEvidenceDocs())
             .receivedServiceApplicationDate(LocalDate.now(clock))

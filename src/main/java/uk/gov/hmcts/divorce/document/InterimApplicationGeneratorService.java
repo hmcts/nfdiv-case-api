@@ -11,19 +11,19 @@ import uk.gov.hmcts.divorce.document.print.generator.DeemedServiceApplicationGen
 @Service
 @RequiredArgsConstructor
 public class InterimApplicationGeneratorService {
-  private final DeemedServiceApplicationGenerator deemedServiceApplicationGenerator;
+    private final DeemedServiceApplicationGenerator deemedServiceApplicationGenerator;
 
-  public DivorceDocument generateAnswerDocument(
-    long caseId,
-    Applicant applicant,
-    CaseData caseData
-  ) {
-    GeneralApplicationType applicationType = applicant.getInterimApplicationOptions().getInterimApplicationType();
+    public DivorceDocument generateAnswerDocument(
+        long caseId,
+        Applicant applicant,
+        CaseData caseData
+    ) {
+        GeneralApplicationType applicationType = applicant.getInterimApplicationOptions().getInterimApplicationType();
 
-    if (GeneralApplicationType.DEEMED_SERVICE.equals(applicationType)) {
-      return deemedServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
+        if (GeneralApplicationType.DEEMED_SERVICE.equals(applicationType)) {
+            return deemedServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
+        }
+
+        return null;
     }
-
-    return null;
-  }
 }
