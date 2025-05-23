@@ -152,6 +152,7 @@ public final class DocmosisTemplateConstants {
     public static final String DEEMED_EVIDENCE_UPLOADED = "deemedEvidenceUploaded";
     public static final String DEEMED_EVIDENCE_DETAILS = "deemedEvidenceDetails";
     public static final String DEEMED_NO_EVIDENCE_STATEMENT = "deemedNoEvidenceStatement";
+    public static final String STATEMENT_OF_TRUTH = "statementOfTruth";
     public static final String DISPENSED_SERVICE_COST = "dispensedServiceCost";
     public static final String ARRANGE_SERVICE_BY_DATE = "arrangeServiceBeforeDate";
     public static final String SOLICITOR_ORGANISATION_NAME = "organisationName";

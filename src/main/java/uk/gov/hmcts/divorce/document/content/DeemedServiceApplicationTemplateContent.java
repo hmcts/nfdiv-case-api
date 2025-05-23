@@ -8,9 +8,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 
-import java.time.Clock;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +24,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DEEMED_NO_EVIDENCE_STATEMENT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_RECEIVED_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.STATEMENT_OF_TRUTH;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
@@ -32,7 +33,6 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 public class DeemedServiceApplicationTemplateContent implements TemplateContent {
 
     private final DocmosisCommonContent docmosisCommonContent;
-    private final Clock clock;
 
     @Override
     public List<String> getSupportedTemplates() {
@@ -49,7 +49,8 @@ public class DeemedServiceApplicationTemplateContent implements TemplateContent 
         AlternativeService alternativeService = caseData.getAlternativeService();
         InterimApplicationOptions interimApplicationOptions = applicant.getInterimApplicationOptions();
         DeemedServiceJourneyOptions applicationAnswers = applicant.getInterimApplicationOptions().getDeemedServiceJourneyOptions();
-        DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
+        LanguagePreference languagePreference = applicant.getLanguagePreference();
+        DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(languagePreference);
 
         templateContent.put(APPLICANT_1_FULL_NAME, applicant.getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
@@ -61,6 +62,7 @@ public class DeemedServiceApplicationTemplateContent implements TemplateContent 
         templateContent.put(DEEMED_EVIDENCE_DETAILS, applicationAnswers.getDeemedEvidenceDetails());
         templateContent.put(DEEMED_NO_EVIDENCE_STATEMENT, applicationAnswers.getDeemedNoEvidenceStatement());
         templateContent.put(DIVORCE_OR_DISSOLUTION, caseData.isDivorce() ? "divorce application" : "application for civil partnership");
+        templateContent.put(STATEMENT_OF_TRUTH, LanguagePreference.WELSH.equals(languagePreference) ? "Ydw" : "Yes");
 
         return templateContent;
     }
