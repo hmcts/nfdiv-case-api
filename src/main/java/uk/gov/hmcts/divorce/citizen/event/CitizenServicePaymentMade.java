@@ -9,15 +9,14 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
@@ -42,8 +41,6 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
 
     public static final String CITIZEN_SERVICE_PAYMENT = "citizen-service-payment-made";
 
-    private final PaymentSetupService paymentSetupService;
-
     private final Clock clock;
 
     private final PaymentValidatorService paymentValidatorService;
@@ -66,11 +63,10 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
+        long caseId = details.getId();
         log.info("{} About to Submit callback invoked for Case Id: {}", CITIZEN_SERVICE_PAYMENT, details.getId());
 
-        CaseData data = details.getData();
-        long caseId = details.getId();
-        AlternativeService alternativeService = data.getAlternativeService();
+        AlternativeService alternativeService = details.getData().getAlternativeService();
         List<ListValue<Payment>> servicePayments = alternativeService.getServicePayments();
 
         List<String> validationErrors = paymentValidatorService.validatePayments(servicePayments, caseId);
@@ -81,11 +77,11 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
         }
 
         String paymentReference = paymentValidatorService.getLastPayment(servicePayments).getReference();
-        alternativeService.setDateOfPayment(LocalDate.now(clock));
-        alternativeService.getServicePaymentFee().setPaymentReference(paymentReference);
-        InterimApplicationOptions userOptions = data.getApplicant1().getInterimApplicationOptions();
+        boolean isAwaitingDocuments = YesOrNo.NO.equals(alternativeService.getServiceApplicationDocsUploadedPreSubmission());
 
-        details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServiceConsideration);
+        alternativeService.getServicePaymentFee().setPaymentReference(paymentReference);
+        details.setState(isAwaitingDocuments ? AwaitingDocuments : AwaitingServiceConsideration);
+        alternativeService.setDateOfPayment(LocalDate.now(clock));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

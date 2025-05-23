@@ -109,11 +109,11 @@ public class InterimApplicationOptions {
 
     @JsonIgnore
     public boolean awaitingDocuments() {
-        return !YesOrNo.YES.equals(interimAppsCannotUploadDocs);
+        return YesOrNo.YES.equals(interimAppsCannotUploadDocs);
     }
 
     @JsonIgnore
     public boolean willMakePayment() {
-        return YesOrNo.NO.equals(interimAppsHaveHwfReference);
+        return !YesOrNo.YES.equals(interimAppsUseHelpWithFees);
     }
 }

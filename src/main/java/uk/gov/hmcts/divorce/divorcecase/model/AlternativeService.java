@@ -102,9 +102,20 @@ public class AlternativeService {
     private YesOrNo alternativeServiceFeeRequired;
 
     @CCD(
-        label = "Service application answers"
+        label = "Documents uploaded before submission?"
+    )
+    private YesOrNo serviceApplicationDocsUploadedPreSubmission;
+
+    @CCD(
+        label = "Service application answers",
+        searchable = false
     )
     private DivorceDocument serviceApplicationAnswers;
+
+    @CCD(
+        label = "Service application submitted online"
+    )
+    private YesOrNo serviceApplicationSubmittedOnline;
 
     @JsonUnwrapped
     @Builder.Default
