@@ -15,6 +15,7 @@ import java.util.Map;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JUDICIAL_SEPARATION_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JUDICIAL_SEPARATION_APPLICATION_CY;
@@ -61,7 +62,7 @@ public class PaperApplicationReceivedTemplateContent {
         } else if (data.isDivorce()) {
             return prefersWelsh ? DIVORCE_APPLICATION_CY : DIVORCE_APPLICATION;
         } else {
-            return prefersWelsh ? END_CIVIL_PARTNERSHIP_CY : DIVORCE_APPLICATION;
+            return prefersWelsh ? END_CIVIL_PARTNERSHIP_CY : END_CIVIL_PARTNERSHIP;
         }
     }
 }
