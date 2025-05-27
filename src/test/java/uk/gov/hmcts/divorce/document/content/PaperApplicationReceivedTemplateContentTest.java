@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 
 import java.time.Clock;
@@ -19,10 +20,12 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JUDICIAL_SEPARATION_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.THE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.PaperApplicationReceivedTemplateContent.DATE_OF_RESPONSE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -72,8 +75,31 @@ class PaperApplicationReceivedTemplateContentTest {
                 entry(RECIPIENT_NAME, "test_first_name test_middle_name test_last_name"),
                 entry(RECIPIENT_ADDRESS, "line 1\ntown\npostcode"),
                 entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT),
-                entry(IS_DIVORCE, true),
+                entry(THE_APPLICATION, DIVORCE_APPLICATION),
                 entry(DATE_OF_RESPONSE, "29 March 2022")
+        );
+    }
+
+    @Test
+    void shouldMapTemplateContentForJudicialSeparations() {
+        setUp();
+        var caseData = TestDataHelper.caseData();
+        caseData.getApplicant1().setAddress(AddressGlobalUK.builder().addressLine1("line 1\ntown\npostcode").build());
+        caseData.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
+            .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
+
+        final Map<String, Object> templateContent = paperApplicationReceivedTemplateContent
+            .getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1());
+
+        assertThat(templateContent).contains(
+            entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+            entry(RECIPIENT_NAME, "test_first_name test_middle_name test_last_name"),
+            entry(RECIPIENT_ADDRESS, "line 1\ntown\npostcode"),
+            entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT),
+            entry(THE_APPLICATION, JUDICIAL_SEPARATION_APPLICATION),
+            entry(DATE_OF_RESPONSE, "29 March 2022")
         );
     }
 }
