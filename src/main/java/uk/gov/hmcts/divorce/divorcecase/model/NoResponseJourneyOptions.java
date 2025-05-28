@@ -40,4 +40,10 @@ public class NoResponseJourneyOptions {
         access = {DefaultAccess.class}
     )
     private NoResponseProcessServerOrBailiff noResponseProcessServerOrBailiff;
+
+    @CCD(
+        label = "Have you already tried to find your partner's contact details?",
+        access = {DefaultAccess.class}
+    )
+    private NoResponseOwnSearches noResponseOwnSearches;
 }
