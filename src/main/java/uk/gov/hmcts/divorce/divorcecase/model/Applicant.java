@@ -62,6 +62,12 @@ public class Applicant {
     private YesOrNo confirmFullName;
 
     @CCD(
+        label = "Confirm your name matches your marriage certificate",
+        searchable = false
+    )
+    private YesOrNo confirmNameMatchesCertificate;
+
+    @CCD(
         label = "Email address",
         typeOverride = Email
     )
