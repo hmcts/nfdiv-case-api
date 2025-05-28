@@ -42,6 +42,12 @@ public class NoResponseJourneyOptions {
     private NoResponseProcessServerOrBailiff noResponseProcessServerOrBailiff;
 
     @CCD(
+        label = "I confirm that my partner's address is within England and Wales",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo noResponseRespondentAddressInEnglandWales;
+
+    @CCD(
         label = "Have you already tried to find your partner's contact details?",
         access = {DefaultAccess.class}
     )
