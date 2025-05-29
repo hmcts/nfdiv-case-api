@@ -28,4 +28,11 @@ public class NoResponseJourneyOptions {
             access = {DefaultAccess.class}
     )
     private YesOrNo noResponsePartnerHasReceivedPapers;
+
+    @CCD(
+        label = "I have a new postal or email address",
+        access = {DefaultAccess.class},
+        typeParameterOverride = "NoResponseNewEmailAndPostalAddress"
+    )
+    private NoResponseNewEmailAndPostalAddress noResponseUpdateEmailAndPostalAddress;
 }
