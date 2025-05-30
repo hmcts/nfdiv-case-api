@@ -16,7 +16,8 @@ import java.util.Set;
 public class DivorceGeneralOrder {
 
     @CCD(
-        label = "General Order"
+        label = "General Order",
+        searchable = false
     )
     private DivorceDocument generalOrderDocument;
 

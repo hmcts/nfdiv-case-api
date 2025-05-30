@@ -30,14 +30,16 @@ public class ClarificationResponse {
     @CCD(
         label = "List of responses for Conditional Order clarification",
         typeOverride = Collection,
-        typeParameterOverride = "TextArea"
+        typeParameterOverride = "TextArea",
+        searchable = false
     )
     private List<ListValue<String>> clarificationResponses;
 
     @CCD(
         label = "Documents uploaded for the Conditional Order Clarification",
         typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument"
+        typeParameterOverride = "DivorceDocument",
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> clarificationUploadDocuments;
 
