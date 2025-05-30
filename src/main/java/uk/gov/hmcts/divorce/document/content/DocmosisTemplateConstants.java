@@ -173,6 +173,8 @@ public final class DocmosisTemplateConstants {
     public static final String PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP = "process to end your civil partnership";
     public static final String PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY = "broses o ddod â’ch partneriaeth sifil i ben";
     public static final String JUDICIAL_SEPARATION_PROCESS = "judicial separation process";
+    public static final String JUDICIAL_SEPARATION_APPLICATION = "judicial separation application";
+    public static final String JUDICIAL_SEPARATION_APPLICATION_CY = "cais am ymwahaniad cyfreithiol";
     public static final String SEPARATION_PROCESS = "separation process";
     public static final String DUE_DATE = "dueDate";
     public static final String APPLICANT_SOLICITOR_REGISTERED = "isApplicantSolicitorRegistered";
