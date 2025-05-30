@@ -56,12 +56,14 @@ public class ServiceRequestSearchService {
     private List<ServiceRequestDto> getServiceRequestsForCase(long caseId) {
         final User user = idamService.retrieveSystemUpdateUserDetails();
 
-        return Optional.of(
-            paymentClient.getServiceRequests(
-                user.getAuthToken(),
-                authTokenGenerator.generate(),
-                String.valueOf(caseId)
-            )).map(CaseServiceRequestsResponse::getServiceRequests)
+        CaseServiceRequestsResponse serviceRequestsResponse = paymentClient.getServiceRequests(
+            user.getAuthToken(),
+            authTokenGenerator.generate(),
+            String.valueOf(caseId)
+        );
+
+        return Optional.ofNullable(serviceRequestsResponse)
+            .map(CaseServiceRequestsResponse::getServiceRequests)
             .orElse(Collections.emptyList());
     }
 
