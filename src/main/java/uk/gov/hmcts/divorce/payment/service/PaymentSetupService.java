@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
 import static uk.gov.hmcts.divorce.controller.PaymentCallbackController.PAYMENT_UPDATE_PATH;
@@ -11,12 +12,13 @@ import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_NOTICE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_WITHOUT_NOTICE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 
-@Service
 @Slf4j
 @RequiredArgsConstructor
+@Service
 public class PaymentSetupService {
 
     private final PaymentService paymentService;
@@ -69,6 +71,35 @@ public class PaymentSetupService {
         log.info("Final order fee order summary not found for case id: {}, creating order summary", caseId);
 
         return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
+    }
+
+    public OrderSummary createServiceApplicationOrderSummary(AlternativeService alternativeService, long caseId) {
+        var serviceApplicationFee = alternativeService.getServicePaymentFee();
+        if (serviceApplicationFee != null && serviceApplicationFee.getOrderSummary() != null) {
+            return serviceApplicationFee.getOrderSummary();
+        }
+
+        log.info("Service application order summary not found for case id: {}, creating order summary", caseId);
+
+        return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE);
+    }
+
+    public String createServiceApplicationPaymentServiceRequest(
+        AlternativeService alternativeService, long caseId, String responsibleParty
+    ) {
+        var feeDetails = alternativeService.getServicePaymentFee();
+        if (feeDetails != null && feeDetails.getServiceRequestReference() != null) {
+            return feeDetails.getServiceRequestReference();
+        }
+
+        log.info("Service Application payment service request not found for case id: {}, creating service request", caseId);
+
+        return paymentService.createServiceRequestReference(
+            null,
+            caseId,
+            responsibleParty,
+            feeDetails.getOrderSummary()
+        );
     }
 
     public static String getPaymentCallbackUrl() {
