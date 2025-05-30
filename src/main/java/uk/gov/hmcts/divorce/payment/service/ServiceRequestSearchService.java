@@ -9,10 +9,12 @@ import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.payment.client.PaymentClient;
+import uk.gov.hmcts.divorce.payment.model.CaseServiceRequestsResponse;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,11 +56,13 @@ public class ServiceRequestSearchService {
     private List<ServiceRequestDto> getServiceRequestsForCase(long caseId) {
         final User user = idamService.retrieveSystemUpdateUserDetails();
 
-        return paymentClient.getServiceRequests(
-            user.getAuthToken(),
-            authTokenGenerator.generate(),
-            String.valueOf(caseId)
-        ).getServiceRequests();
+        return Optional.of(
+            paymentClient.getServiceRequests(
+                user.getAuthToken(),
+                authTokenGenerator.generate(),
+                String.valueOf(caseId)
+            )).map(CaseServiceRequestsResponse::getServiceRequests)
+            .orElse(Collections.emptyList());
     }
 
     private boolean isServiceRequestUnpaidWithMatchingFee(ServiceRequestDto serviceRequest, Fee fee, String responsibleParty) {
