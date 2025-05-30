@@ -64,6 +64,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.DISSOLUTION_COURT_
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.HUSBAND_JOINT;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IDAM_INACTIVITY_POLICY;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IDAM_INACTIVITY_POLICY_CY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
@@ -484,7 +486,8 @@ class CommonContentTest {
             .isNotEmpty()
             .contains(
                 entry(PARTNER, "gwraig"),
-                entry(SMART_SURVEY, result.get(CommonContent.SMART_SURVEY)));
+                entry(SMART_SURVEY, result.get(CommonContent.SMART_SURVEY)),
+                entry(IDAM_INACTIVITY_POLICY, result.get(IDAM_INACTIVITY_POLICY_CY)));
     }
 
     @Test
@@ -510,7 +513,8 @@ class CommonContentTest {
         assertThat(result)
             .isNotEmpty()
             .contains(
-                entry(PARTNER, "wife")
+                entry(PARTNER, "wife"),
+                entry(IDAM_INACTIVITY_POLICY, result.get(IDAM_INACTIVITY_POLICY))
             );
     }
 
