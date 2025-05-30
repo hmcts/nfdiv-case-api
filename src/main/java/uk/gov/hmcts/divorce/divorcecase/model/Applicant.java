@@ -89,26 +89,43 @@ public class Applicant {
     )
     private YesOrNo languagePreferenceWelsh;
 
+    // Retired
     @CCD(
         label = "Did they change their last name when they got married?"
     )
     private YesOrNo lastNameChangedWhenMarried;
 
+    // Retired
     @CCD(label = "How did they change their last name when they got married?")
     private Set<ChangedNameHow> lastNameChangedWhenMarriedMethod;
 
+    // Retired
     @CCD(
         label = "Details of how they changed their last name when they got married",
         typeOverride = TextArea
     )
     private String lastNameChangedWhenMarriedOtherDetails;
 
+    // Retired
     @CCD(
         label = "Have they changed their name since they got married?"
     )
     private YesOrNo nameDifferentToMarriageCertificate;
 
-    @CCD(label = "How did they change their name since they got married?")
+    @CCD(
+        label = "Why is their legal name different to the marriage certificate?",
+        searchable = false
+    )
+    private ChangedNameWhy whyNameDifferentToMarriageCertificate;
+
+    @CCD(
+        label = "Why is their legal name different to the marriage certificate?",
+        searchable = false,
+        typeOverride = TextArea
+    )
+    private String whyNameDifferentToMarriageCertificateOtherDetails;
+
+    @CCD(label = "How did they change their name?")
     private Set<ChangedNameHow> nameDifferentToMarriageCertificateMethod;
 
     @CCD(
