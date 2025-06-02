@@ -83,20 +83,15 @@ public class ReIssueApplicationService {
                     .getNoResponseJourneyOptions()
                     .getNoResponseUpdateEmailAndPostalAddress();
 
-            ReissueOption noResponseReissueOptions;
 
             switch (noResponseOptions) {
                 case NEW_ADDRESS ->
-                    noResponseReissueOptions = isEmpty(caseData.getApplicant1().getEmail()) ? OFFLINE_AOS : DIGITAL_AOS;
+                    reissueOption = isEmpty(caseData.getApplicant2().getEmail()) ? OFFLINE_AOS : DIGITAL_AOS;
 
-                case NEW_EMAIL_ADDRESS, NEW_EMAIL_AND_POSTAL_ADDRESS ->
-                    noResponseReissueOptions = DIGITAL_AOS;
-
-                default ->
-                    noResponseReissueOptions = null;
+                case NEW_EMAIL_ADDRESS, NEW_EMAIL_AND_POSTAL_ADDRESS -> reissueOption = DIGITAL_AOS;
             }
 
-            caseData.getApplication().setReissueOption(noResponseReissueOptions);
+            caseData.getApplication().setReissueOption(reissueOption);
         }
 
         log.info("For case id {} reissue option selected is {} ", caseDetails.getId(), reissueOption);

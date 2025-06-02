@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -19,6 +20,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
@@ -40,6 +42,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateIssue;
 
 @Component
@@ -54,6 +57,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
         "Case has not been issued therefore it cannot be reissued";
 
     private final ReIssueApplicationService reIssueApplicationService;
+    private final SetServiceType setServiceType;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -129,6 +133,10 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
 
         log.info("Caseworker reissue application about to submit callback invoked for case id: {}", details.getId());
 
+        caseTasks(
+            setServiceType
+        ).run(details);
+
         log.info("Validating Issue for Case Id: {}", details.getId());
         final List<String> caseValidationErrors = validateIssue(details.getData());
 
@@ -142,6 +150,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
         try {
             final CaseDetails<CaseData, State> result = reIssueApplicationService.process(details);
 
+            details.getData().setCaseInvite(beforeDetails.getData().getCaseInvite()); //Restore original case invite after updating email
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(result.getData())
                 .state(result.getState())
