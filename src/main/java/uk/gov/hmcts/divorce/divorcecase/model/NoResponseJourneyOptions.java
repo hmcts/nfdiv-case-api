@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.Address;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
@@ -50,15 +49,17 @@ public class NoResponseJourneyOptions {
 
 
     @CCD(
-        label = "I have a new postal or email address",
+        label = "I have a new email address for my partner",
         access = {DefaultAccess.class}
     )
-    private String newApplicant2Email;
+    private String noResponsePartnerEmail;
 
     @CCD(
-        label = "I have a new postal or email address",
-        access = {DefaultAccess.class},
-        typeParameterOverride = "AddressGlobalUK"
+        label = "I have a new postal address for my partner",
+        access = {DefaultAccess.class}
     )
-    private AddressGlobalUK newApplicant2Address;
+    private AddressGlobalUK noResponsePartnerAddress;
+
+    @CCD(label = "Is your partner's new address international?")
+    private YesOrNo noResponsePartnerAddressOverseas;
 }
