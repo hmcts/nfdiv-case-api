@@ -47,8 +47,8 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
             .aboutToSubmitCallback(this::aboutToSubmit)
             .name("Create paper case")
             .description("Create paper case")
-            .grant(CREATE_READ_UPDATE, CASE_WORKER, CASE_WORKER_BULK_SCAN, SYSTEMUPDATE)
-            .grantHistoryOnly(SUPER_USER, JUDGE));
+            .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, SYSTEMUPDATE)
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
