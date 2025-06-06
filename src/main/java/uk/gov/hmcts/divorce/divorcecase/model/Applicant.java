@@ -84,10 +84,6 @@ public class Applicant {
     private YesOrNo languagePreferenceWelsh;
 
     // To be retired
-    @CCD(label = "Have they changed their name since they got married?")
-    private YesOrNo nameDifferentToMarriageCertificate;
-
-    // To be retired
     @CCD(label = "Did they change their last name when they got married?")
     private YesOrNo lastNameChangedWhenMarried;
 
@@ -101,6 +97,10 @@ public class Applicant {
         typeOverride = TextArea
     )
     private String lastNameChangedWhenMarriedOtherDetails;
+
+    // To be retired
+    @CCD(label = "Have they changed their name since they got married?")
+    private YesOrNo nameDifferentToMarriageCertificate;
 
     @CCD(
         label = "Does your name match the marriage certificate?",
