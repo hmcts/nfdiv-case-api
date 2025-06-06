@@ -15,7 +15,11 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifica
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
-import uk.gov.hmcts.divorce.divorcecase.model.*;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.JudicialSeparationReissueOption;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponseNewEmailAndPostalAddress;
+import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
@@ -74,8 +78,10 @@ public class ReIssueApplicationService {
         ReissueOption reissueOption = caseData.getApplication().getReissueOption();
 
         if (reissueOption == null) {
-            log.info("For case id {} reissue option is null, hence setting it to option based on new contact details for reissue."
-                , caseDetails.getId());
+            log.info(
+                "For case id {} reissue option is null, hence setting it to option based on new contact details for reissue.",
+                caseDetails.getId()
+            );
 
             NoResponseNewEmailAndPostalAddress noResponseOptions =
                 caseData.getApplicant1()
@@ -89,6 +95,8 @@ public class ReIssueApplicationService {
                     reissueOption = isEmpty(caseData.getApplicant2().getEmail()) ? OFFLINE_AOS : DIGITAL_AOS;
 
                 case NEW_EMAIL_ADDRESS, NEW_EMAIL_AND_POSTAL_ADDRESS -> reissueOption = DIGITAL_AOS;
+
+                default -> reissueOption = null; // Default required or checkstyle error. Might want to throw if noResponseOptions not set?
             }
 
             caseData.getApplication().setReissueOption(reissueOption);
