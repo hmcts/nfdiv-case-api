@@ -82,7 +82,8 @@ public class AlternativeServiceOutcome {
     @CCD(
         label = "Reason for refusal",
         typeOverride = TextArea,
-        displayOrder = 8
+        displayOrder = 8,
+        searchable = false
     )
     private String serviceApplicationRefusalReason;
 
@@ -138,7 +139,8 @@ public class AlternativeServiceOutcome {
     @CCD(
         label = "Reason for failure to serve",
         typeOverride = TextArea,
-        displayOrder = 16
+        displayOrder = 16,
+        searchable = false
     )
     private String reasonFailureToServeByBailiff;
 

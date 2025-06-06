@@ -47,14 +47,16 @@ public class GeneralLetter {
         label = "Add attachments",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> generalLetterAttachments;
 
     @CCD(
         label = "Please provide details",
         typeOverride = TextArea,
-        access = {SystemUpdateAndSuperUserAccess.class}
+        access = {SystemUpdateAndSuperUserAccess.class},
+        searchable = false
     )
     private String generalLetterDetails;
 
