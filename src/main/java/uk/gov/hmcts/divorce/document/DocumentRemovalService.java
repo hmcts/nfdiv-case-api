@@ -12,7 +12,9 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -54,46 +56,53 @@ public class DocumentRemovalService {
 
     public void handleDeletionOfScannedDocuments(CaseData beforeCaseData, CaseData currentCaseData) {
 
-        List<ListValue<ScannedDocument>> scannedDocsToRemove = new ArrayList<>(
+        List<Document> scannedDocsToRemove = new ArrayList<>(
             findScannedDocumentsForRemoval(
                 beforeCaseData.getDocuments().getScannedDocuments(),
                 currentCaseData.getDocuments().getScannedDocuments()
             ));
 
         if (!scannedDocsToRemove.isEmpty()) {
-            deleteScannedDocuments(scannedDocsToRemove);
+            deleteDocuments(scannedDocsToRemove);
         }
     }
 
-    private List<ListValue<ScannedDocument>> findScannedDocumentsForRemoval(final List<ListValue<ScannedDocument>> beforeDocs,
-                                                                            final List<ListValue<ScannedDocument>> currentDocs) {
-
-        List<ListValue<ScannedDocument>> scannedDocsToRemove = new ArrayList<>();
-
-        if (beforeDocs != null && currentDocs != null) {
-            beforeDocs.forEach(document -> {
-                if (!currentDocs.contains(document)) {
-                    scannedDocsToRemove.add(document);
-                }
-            });
+    private List<Document> findScannedDocumentsForRemoval(final List<ListValue<ScannedDocument>> beforeScannedDocs,
+                                                                            final List<ListValue<ScannedDocument>> afterScannedDocs) {
+        if (beforeScannedDocs == null || afterScannedDocs == null) {
+            return Collections.emptyList();
         }
 
-        return scannedDocsToRemove;
+        List<Document> beforeDocs = mapScannedDocumentsToUrls(beforeScannedDocs);
+        List<Document> afterDocs = mapScannedDocumentsToUrls(afterScannedDocs);
+
+        return beforeDocs.stream()
+            .filter(document -> !afterDocs.contains(document))
+            .toList();
     }
 
-    private void deleteScannedDocuments(final List<ListValue<ScannedDocument>> scannedDocsToRemove) {
+    private List<Document> mapScannedDocumentsToUrls(List<ListValue<ScannedDocument>> scannedDocuments) {
+        return scannedDocuments.stream()
+            .map(ListValue::getValue)
+            .filter(Objects::nonNull)
+            .map(ScannedDocument::getUrl)
+            .filter(Objects::nonNull)
+            .toList();
+    }
 
+    private void deleteDocuments(final List<Document> documents) {
         final var systemUser = idamService.retrieveSystemUpdateUserDetails();
 
-        scannedDocsToRemove.stream()
-            .filter(document -> document.getValue().getUrl() != null)
-            .parallel().forEach(document ->
+        documents.stream()
+            .parallel().forEach(document -> {
+                log.info("Deleting document: {}", document.getFilename());
+
                 documentManagementClient.deleteDocument(
                     systemUser.getAuthToken(),
                     authTokenGenerator.generate(),
-                    document.getValue().getUrl(),
-                    true
-                )
-            );
+                    document,
+                    false
+                );
+            });
     }
 }
