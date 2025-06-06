@@ -59,10 +59,9 @@ public class Applicant {
     @CCD(
         label = "Confirm your full name"
     )
-
     private YesOrNo confirmFullName;
 
-        @CCD(
+    @CCD(
         label = "Email address",
         typeOverride = Email
     )
@@ -78,6 +77,12 @@ public class Applicant {
     )
     private YesOrNo confirmReceipt;
 
+    @CCD(
+        label = "Is the language preference Welsh?",
+        hint = "Select \"No\" for English or \"Yes\" for bilingual"
+    )
+    private YesOrNo languagePreferenceWelsh;
+
     // To be retired
     @CCD(label = "Have they changed their name since they got married?")
     private YesOrNo nameDifferentToMarriageCertificate;
@@ -92,16 +97,10 @@ public class Applicant {
 
     // To be retired
     @CCD(
-        label = "Details of how they changed their last name when they got married",
+        label = "Have they changed their name since they got married?",
         typeOverride = TextArea
     )
     private String lastNameChangedWhenMarriedOtherDetails;
-
-    @CCD(
-        label = "Details of how they changed their last name when they got married",
-        typeOverride = TextArea
-    )
-    private String applicant2LastNameChangedWhenMarriedOtherDetails;
 
     @CCD(
         label = "Does your name match the marriage certificate?",
@@ -116,7 +115,7 @@ public class Applicant {
     private ChangedNameWhy whyNameDifferent;
 
     @CCD(
-        label = "Why is their legal name different to the marriage certificate?",
+        label = "Details of why their legal name is different to the marriage certificate",
         searchable = false,
         typeOverride = TextArea
     )
@@ -139,12 +138,6 @@ public class Applicant {
         typeOverride = TextArea
     )
     private String nameChangedHowOtherDetails;
-
-    @CCD(
-        label = "Is the language preference Welsh?",
-        hint = "Select \"No\" for English or \"Yes\" for bilingual"
-    )
-    private YesOrNo languagePreferenceWelsh;
 
     @CCD(
         label = "Address",
