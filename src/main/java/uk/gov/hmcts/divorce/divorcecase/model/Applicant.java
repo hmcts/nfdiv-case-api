@@ -97,7 +97,7 @@ public class Applicant {
 
     // To be retired
     @CCD(
-        label = "Have they changed their name since they got married?",
+        label = "Details of how they changed their last name when they got married",
         typeOverride = TextArea
     )
     private String lastNameChangedWhenMarriedOtherDetails;
@@ -121,7 +121,7 @@ public class Applicant {
     )
     private String whyNameDifferentOtherDetails;
 
-    @CCD(label = "How did they change their name?")
+    @CCD(label = "How did they change their name since they got married?")
     private Set<ChangedNameHow> nameDifferentToMarriageCertificateMethod;
 
     @CCD(
