@@ -28,6 +28,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -170,6 +171,9 @@ public class CaseDocuments {
     @AllArgsConstructor
     public enum ScannedDocumentSubtypes implements HasLabel {
 
+        @JsonProperty("ConfidentialD10")
+        D10_CONFIDENTIAL("D10 Confidential"),
+
         @JsonProperty("D10")
         D10("D10"),
 
@@ -195,6 +199,12 @@ public class CaseDocuments {
         RFIR("RFIR");
 
         private final String label;
+
+        private static final EnumSet<ScannedDocumentSubtypes> CONFIDENTIAL_SUBTYPES = EnumSet.of(D10_CONFIDENTIAL, D10);
+
+        public boolean isConfidential() {
+            return CONFIDENTIAL_SUBTYPES.contains(this);
+        }
     }
 
     @Getter
@@ -305,6 +315,10 @@ public class CaseDocuments {
             .filter(divorceDocument -> documentType == divorceDocument.getDocumentType())
             .map(DivorceDocument::getDocumentLink)
             .findFirst();
+    }
+
+    public static boolean scannedDocMustBeReclassifiedByCaseworker(ScannedDocumentSubtypes scannedDocumentSubtype) {
+        return scannedDocumentSubtype == null || scannedDocumentSubtype.isConfidential();
     }
 
     @JsonIgnore
