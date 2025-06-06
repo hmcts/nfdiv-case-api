@@ -28,4 +28,28 @@ public class NoResponseJourneyOptions {
             access = {DefaultAccess.class}
     )
     private YesOrNo noResponsePartnerHasReceivedPapers;
+
+    @CCD(
+        label = "Do you want to apply for in person service, alternative service, or try something else?",
+        access = {DefaultAccess.class}
+    )
+    private NoResponseNoNewAddressDetails noResponseNoNewAddressDetails;
+
+    @CCD(
+        label = "In person service by process server or court bailiff?",
+        access = {DefaultAccess.class}
+    )
+    private NoResponseProcessServerOrBailiff noResponseProcessServerOrBailiff;
+
+    @CCD(
+        label = "I confirm that my partner's address is within England and Wales",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo noResponseRespondentAddressInEnglandWales;
+
+    @CCD(
+        label = "Have you already tried to find your partner's contact details?",
+        access = {DefaultAccess.class}
+    )
+    private NoResponseOwnSearches noResponseOwnSearches;
 }
