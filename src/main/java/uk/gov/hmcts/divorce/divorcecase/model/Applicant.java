@@ -59,21 +59,38 @@ public class Applicant {
     @CCD(
         label = "Confirm your full name"
     )
+
     private YesOrNo confirmFullName;
 
-    // Retired?
+        @CCD(
+        label = "Email address",
+        typeOverride = Email
+    )
+    private String email;
+
+    @CCD(
+        label = "They have agreed to receive notifications and be served (delivered) court documents by email"
+    )
+    private YesOrNo agreedToReceiveEmails;
+
+    @CCD(
+        label = "Has the applicant confirmed the receipt?"
+    )
+    private YesOrNo confirmReceipt;
+
+    // To be retired
     @CCD(label = "Have they changed their name since they got married?")
     private YesOrNo nameDifferentToMarriageCertificate;
 
-    // Retired?
+    // To be retired
     @CCD(label = "Did they change their last name when they got married?")
     private YesOrNo lastNameChangedWhenMarried;
 
-    // Retired?
+    // To be retired
     @CCD(label = "How did they change their last name when they got married?")
     private Set<ChangedNameHow> lastNameChangedWhenMarriedMethod;
 
-    // Retired?
+    // To be retired
     @CCD(
         label = "Details of how they changed their last name when they got married",
         typeOverride = TextArea
@@ -122,22 +139,6 @@ public class Applicant {
         typeOverride = TextArea
     )
     private String nameChangedHowOtherDetails;
-
-    @CCD(
-        label = "Email address",
-        typeOverride = Email
-    )
-    private String email;
-
-    @CCD(
-        label = "They have agreed to receive notifications and be served (delivered) court documents by email"
-    )
-    private YesOrNo agreedToReceiveEmails;
-
-    @CCD(
-        label = "Has the applicant confirmed the receipt?"
-    )
-    private YesOrNo confirmReceipt;
 
     @CCD(
         label = "Is the language preference Welsh?",
