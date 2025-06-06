@@ -61,11 +61,67 @@ public class Applicant {
     )
     private YesOrNo confirmFullName;
 
+    // Retired?
+    @CCD(label = "Have they changed their name since they got married?")
+    private YesOrNo nameDifferentToMarriageCertificate;
+
+    // Retired?
+    @CCD(label = "Did they change their last name when they got married?")
+    private YesOrNo lastNameChangedWhenMarried;
+
+    // Retired?
+    @CCD(label = "How did they change their last name when they got married?")
+    private Set<ChangedNameHow> lastNameChangedWhenMarriedMethod;
+
+    // Retired?
+    @CCD(
+        label = "Details of how they changed their last name when they got married",
+        typeOverride = TextArea
+    )
+    private String lastNameChangedWhenMarriedOtherDetails;
+
+    @CCD(
+        label = "Details of how they changed their last name when they got married",
+        typeOverride = TextArea
+    )
+    private String applicant2LastNameChangedWhenMarriedOtherDetails;
+
     @CCD(
         label = "Does your name match the marriage certificate?",
         searchable = false
     )
     private YesOrNo confirmNameMatchesCertificate;
+
+    @CCD(
+        label = "Why is their legal name different to the marriage certificate?",
+        searchable = false
+    )
+    private ChangedNameWhy whyNameDifferent;
+
+    @CCD(
+        label = "Why is their legal name different to the marriage certificate?",
+        searchable = false,
+        typeOverride = TextArea
+    )
+    private String whyNameDifferentOtherDetails;
+
+    @CCD(label = "How did they change their name?")
+    private Set<ChangedNameHow> nameDifferentToMarriageCertificateMethod;
+
+    @CCD(
+        label = "Details of how they changed their name since they got married",
+        typeOverride = TextArea
+    )
+    private String nameDifferentToMarriageCertificateOtherDetails;
+
+    @CCD(label = "How did they change their name?")
+    private Set<ChangedNameHow> nameChangedHow;
+
+    @CCD(
+        label = "Details of how they changed their name",
+        typeOverride = TextArea
+    )
+    private String nameChangedHowOtherDetails;
 
     @CCD(
         label = "Email address",
@@ -88,60 +144,6 @@ public class Applicant {
         hint = "Select \"No\" for English or \"Yes\" for bilingual"
     )
     private YesOrNo languagePreferenceWelsh;
-
-    // Retired
-    @CCD(
-        label = "Did they change their last name when they got married?"
-    )
-    private YesOrNo lastNameChangedWhenMarried;
-
-    // Retired
-    @CCD(label = "How did they change their last name when they got married?")
-    private Set<ChangedNameHow> lastNameChangedWhenMarriedMethod;
-
-    // Retired
-    @CCD(
-        label = "Details of how they changed their last name when they got married",
-        typeOverride = TextArea
-    )
-    private String lastNameChangedWhenMarriedOtherDetails;
-
-    // Retired
-    @CCD(
-        label = "Have they changed their name since they got married?"
-    )
-    private YesOrNo nameDifferentToMarriageCertificate;
-
-    @CCD(
-        label = "Why is their legal name different to the marriage certificate?",
-        searchable = false
-    )
-    private ChangedNameWhy whyNameDifferentToMarriageCertificate;
-
-    @CCD(
-        label = "Why is their legal name different to the marriage certificate?",
-        searchable = false,
-        typeOverride = TextArea
-    )
-    private String whyNameDifferentToMarriageCertificateOtherDetails;
-
-    @CCD(label = "How did they change their name?")
-    private Set<ChangedNameHow> nameDifferentToMarriageCertificateMethod;
-
-    @CCD(
-        label = "Details of how they changed their name since they got married",
-        typeOverride = TextArea
-    )
-    private String nameDifferentToMarriageCertificateOtherDetails;
-
-    @CCD(label = "How did they change their name?")
-    private Set<ChangedNameHow> nameChangedHow;
-
-    @CCD(
-        label = "Details of how they changed their name",
-        typeOverride = TextArea
-    )
-    private String nameChangedHowOtherDetails;
 
     @CCD(
         label = "Address",
