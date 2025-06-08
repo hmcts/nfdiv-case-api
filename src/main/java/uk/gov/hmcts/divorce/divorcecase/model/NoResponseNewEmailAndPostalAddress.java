@@ -9,7 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum NoResponseNewEmailAndPostalAddress implements HasLabel {
     @JsonProperty("newPostalAddress")
-    NEW_ADDRESS("I have a new postal address"),
+    NEW_POSTAL_ADDRESS("I have a new postal address"),
 
     @JsonProperty("newEmailAddress")
     NEW_EMAIL_ADDRESS("I have a new email address"),

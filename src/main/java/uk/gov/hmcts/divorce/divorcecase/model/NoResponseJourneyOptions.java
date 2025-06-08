@@ -38,7 +38,7 @@ public class NoResponseJourneyOptions {
         access = {DefaultAccess.class},
         typeParameterOverride = "NoResponseNewEmailAndPostalAddress"
     )
-    private NoResponseNewEmailAndPostalAddress noResponseUpdateEmailAndPostalAddress;
+    private NoResponseNewEmailAndPostalAddress noResponseNewEmailAndPostalAddress;
 
     @CCD(
         label = "I have a new postal or email address",
@@ -52,7 +52,7 @@ public class NoResponseJourneyOptions {
         label = "I have a new email address for my partner",
         access = {DefaultAccess.class}
     )
-    private String noResponsePartnerEmail;
+    private String noResponsePartnerEmailAddress;
 
     @CCD(
         label = "I have a new postal address for my partner",

@@ -17,8 +17,12 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifica
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.JudicialSeparationReissueOption;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponseNewEmailAndPostalAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
@@ -81,6 +85,9 @@ class ReIssueApplicationServiceTest {
     @Mock
     private ResetAosFields resetAosFields;
 
+    @Mock
+    private SetServiceType setServiceType;
+
     @InjectMocks
     private ReIssueApplicationService reIssueApplicationService;
 
@@ -96,6 +103,7 @@ class ReIssueApplicationServiceTest {
         caseData.getApplication().setReissueOption(DIGITAL_AOS);
         caseData.getApplicant2().setOffline(NO);
 
+        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
@@ -127,6 +135,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         caseData.getApplication().setReissueOption(OFFLINE_AOS);
 
+        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
@@ -163,6 +172,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
 
+        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
@@ -198,6 +208,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         caseData.getApplication().setReissueOption(REISSUE_CASE);
 
+        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
@@ -232,6 +243,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
+        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
@@ -276,6 +288,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
+        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
@@ -320,6 +333,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
+        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
@@ -367,6 +381,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
+        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
@@ -502,5 +517,93 @@ class ReIssueApplicationServiceTest {
         assertThatThrownBy(() -> reIssueApplicationService.sendNotifications(caseDetails, null))
             .isExactlyInstanceOf(InvalidReissueOptionException.class)
             .hasMessage("Exception occurred while sending reissue application notifications for case id 1616591401473378");
+    }
+
+    @Test
+    void shouldSetReissueOptionToDigitalAosWhenNoResponseUpdateContactDetailsIsSetToNewEmailAddress() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+
+        setUpCaseDetails(caseDetails, NoResponseNewEmailAndPostalAddress.NEW_EMAIL_ADDRESS);
+
+        final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
+
+        assertThat(response.getData().getApplication().getPreviousReissueOption()).isEqualTo(DIGITAL_AOS);
+    }
+
+    @Test
+    void shouldSetReissueOptionToDigitalAosWhenNoResponseUpdateContactDetailsIsSetToNewEmailAndPostalAddress() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+
+        setUpCaseDetails(caseDetails, NoResponseNewEmailAndPostalAddress.NEW_EMAIL_AND_POSTAL_ADDRESS);
+
+        final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
+
+        assertThat(response.getData().getApplication().getPreviousReissueOption()).isEqualTo(DIGITAL_AOS);
+    }
+
+    @Test
+    void shouldSetReissueOptionToDigitalAosWhenNoResponseUpdateContactDetailsIsSetToNewPostalAddress() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
+            .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
+                .noResponseNewEmailAndPostalAddress(NoResponseNewEmailAndPostalAddress.NEW_POSTAL_ADDRESS).build()).build());
+
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
+        when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
+        when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
+        when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplication.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
+        when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
+
+
+        final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
+
+        assertThat(response.getData().getApplication().getPreviousReissueOption()).isEqualTo(OFFLINE_AOS);
+    }
+
+
+    private void setUpCaseDetails(CaseDetails<CaseData, State> caseDetails, NoResponseNewEmailAndPostalAddress newEmailAndPostalAddress) {
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
+            .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
+                .noResponseNewEmailAndPostalAddress(newEmailAndPostalAddress).build()).build());
+
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
+        when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
+        when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
+        when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
+    }
+
+    @Test
+    void shouldThrowInvalidReissueOptionExceptionWhenNoResponseUpdateContactDetailsIsNotSet() {
+
+        final CaseData caseData = caseData();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        assertThatThrownBy(() -> reIssueApplicationService.process(caseDetails))
+            .isExactlyInstanceOf(InvalidReissueOptionException.class)
+            .hasMessage("Invalid reissue option for CaseId: 1616591401473378");
     }
 }

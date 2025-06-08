@@ -15,13 +15,19 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifica
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.JudicialSeparationReissueOption;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseNewEmailAndPostalAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
+
+import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -62,6 +68,9 @@ public class ReIssueApplicationService {
 
     private final GenerateD84Form generateD84Form;
 
+    private final SetServiceType setServiceType;
+
+
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
 
         CaseData caseData = caseDetails.getData();
@@ -82,21 +91,25 @@ public class ReIssueApplicationService {
                 "For case id {} reissue option is null, hence setting it to option based on new contact details for reissue.",
                 caseDetails.getId()
             );
+            log.info("For case id {} reissue option is null, hence setting it to option based on new contact details for reissue.",
+                caseDetails.getId());
 
             NoResponseNewEmailAndPostalAddress noResponseOptions =
-                caseData.getApplicant1()
-                    .getInterimApplicationOptions()
-                    .getNoResponseJourneyOptions()
-                    .getNoResponseUpdateEmailAndPostalAddress();
+                Optional.ofNullable(caseData.getApplicant1())
+                    .map(Applicant::getInterimApplicationOptions)
+                    .map(InterimApplicationOptions::getNoResponseJourneyOptions)
+                    .map(NoResponseJourneyOptions::getNoResponseNewEmailAndPostalAddress)
+                    .orElseThrow(() ->  new InvalidReissueOptionException(String.format("Invalid reissue option for CaseId: %s",
+                        caseDetails.getId())));
 
 
             switch (noResponseOptions) {
-                case NEW_ADDRESS ->
+                case NEW_POSTAL_ADDRESS ->
                     reissueOption = isEmpty(caseData.getApplicant2().getEmail()) ? OFFLINE_AOS : DIGITAL_AOS;
 
                 case NEW_EMAIL_ADDRESS, NEW_EMAIL_AND_POSTAL_ADDRESS -> reissueOption = DIGITAL_AOS;
 
-                default -> reissueOption = null; // Default required or checkstyle error. Might want to throw if noResponseOptions not set?
+                default -> { }
             }
 
             caseData.getApplication().setReissueOption(reissueOption);
@@ -120,6 +133,7 @@ public class ReIssueApplicationService {
             caseDetails.getData().getApplicant2().setOffline(NO);
 
             return caseTasks(
+                setServiceType,
                 setPostIssueState,
                 setReIssueAndDueDate,
                 generateApplicant1NoticeOfProceeding,
@@ -133,6 +147,7 @@ public class ReIssueApplicationService {
             caseDetails.getData().getApplicant2().setOffline(YES);
 
             return caseTasks(
+                setServiceType,
                 setPostIssueState,
                 setReIssueAndDueDate,
                 setNoticeOfProceedingDetailsForRespondent,
@@ -146,6 +161,7 @@ public class ReIssueApplicationService {
         } else if (REISSUE_CASE.equals(reissueOption)) {
             log.info("For case id {} processing complete reissue ", caseDetails.getId());
             return caseTasks(
+                setServiceType,
                 setPostIssueState,
                 setReIssueAndDueDate,
                 setNoticeOfProceedingDetailsForRespondent,
