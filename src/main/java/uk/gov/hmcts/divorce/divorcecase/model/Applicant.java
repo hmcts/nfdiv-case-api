@@ -112,7 +112,7 @@ public class Applicant {
         label = "Why is their legal name different to the marriage certificate?",
         searchable = false
     )
-    private ChangedNameWhy whyNameDifferent;
+    private Set<ChangedNameWhy> whyNameDifferent;
 
     @CCD(
         label = "Details of why their legal name is different to the marriage certificate",
