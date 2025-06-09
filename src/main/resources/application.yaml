@@ -57,6 +57,8 @@ uk:
           webformUrl: ${WEBFORM_URL:https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/}
           webformCyUrl: ${WEBFORM_CY_URL:https://contact-us-about-a-divorce-application-cy.form.service.justice.gov.uk/}
           smartSurvey: https://www.smartsurvey.co.uk/s/NFD_Feedback/?pageurl=email
+          idamInactivityPolicy: If you do not log into your online account within 90 days, your account will become inactive, and you will have to reset your account. You do this by requesting a password reset with the email you used when creating your account.
+          idamInactivityPolicyCy: Os na fyddwch yn mewngofnodi i'ch cyfrif ar-lein o fewn 90 diwrnod, bydd eich cyfrif yn cael ei nodi fel cyfrif segur a bydd rhaid i chi ailosod eich cyfrif. Gallwch wneud hyn drwy ddefnyddio'r cyfeiriad e-bost a ddefnyddiwyd gennych i greu eich cyfrif i ofyn i'ch cyfrinair gael ei ailosod.
         templates:
           english:
             REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT: 'e15fa45a-f100-4b07-b1ca-ad96c633a30d'
@@ -95,7 +97,7 @@ uk:
             OVERSEAS_RESPONDENT_APPLICATION_ISSUED: '68f87276-f170-46cd-aa2a-847605068eae'
             SOLE_APPLICANT_APPLICATION_SUBMITTED: '3ecccc69-81e7-4bcd-8316-0547fd30795f'
             SOLE_APPLICANT_AMENDED_APPLICATION_SUBMITTED: 'd87e0405-15bb-405b-b277-27cec5444106'
-            SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED: '203ac27e-c8de-4cee-b948-8ed763f3566c'
+            SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED: '811ca79c-7c94-4492-bf72-3a4e68108e72'
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS: 'a5c1b595-4fff-4fbe-a05b-7bc014f25d61'
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE: 'c8c7932f-87f9-4aae-a0bf-3f856469e1cd'
             JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS: '70f02c39-1665-46de-89a0-336739bf5fdc'
@@ -115,7 +117,7 @@ uk:
             CITIZEN_PARTNER_CLARIFICATION_SUBMITTED: 'f920cda2-bb38-4050-972a-a9fabccc31d4'
             SOLICITOR_CO_REFUSED_SOLE_JOINT: '24a593b6-81eb-41ff-bccc-8b9796354b7c'
             CITIZEN_APPLICATION_WITHDRAWN: '952beacb-0e73-4fde-94d4-60cfcbec2d63'
-            CITIZEN_APPLY_FOR_CONDITIONAL_ORDER: 'ac38984c-d05b-4036-8963-672c03b6ed75'
+            CITIZEN_APPLY_FOR_CONDITIONAL_ORDER: 'b9763ac7-6900-4310-b956-c9c03a143eb8'
             CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER: '406322e1-7bfe-405b-b2b8-d249f759fadf'
             APPLICANT1_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER: '9d8f6c26-07d5-4da2-97e1-c126a9d30f59'
             JOINT_APPLIED_FOR_CONDITIONAL_ORDER: 'b729d25a-b578-4a1f-8207-dea3d2ac877d'
@@ -123,7 +125,7 @@ uk:
             JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER: '4fafe287-cdd5-432e-aa24-631bf449ccec'
             SOLICITOR_CONDITIONAL_ORDER_PRONOUNCED: 'd2d0eff2-d719-48b5-9019-cee81e2afa57'
             JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER: '29ae2a99-d163-4d04-8ebc-7850acb1aa28'
-            CITIZEN_CONDITIONAL_ORDER_PRONOUNCED: '4240b63b-5d5a-4cf9-a578-e0a5d19e1d21'
+            CITIZEN_CONDITIONAL_ORDER_PRONOUNCED: '7b1b2eaa-df11-4841-bf6e-51c511405232'
             CITIZEN_CONDITIONAL_ORDER_REFUSED: '2247b12e-e560-42a8-af40-dd192ab17f74'
             CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT: '556b79db-acb8-4cb6-b25b-bd0fd6d60927'
             CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED: 'affe507c-7c08-4129-9d15-fa7e9a0783c9'
@@ -243,7 +245,7 @@ uk:
             OVERSEAS_RESPONDENT_APPLICATION_ISSUED: 'ce248bd2-ea3a-4d21-8b18-3427fc3985c1'
             SOLE_APPLICANT_APPLICATION_SUBMITTED: '3ecccc69-81e7-4bcd-8316-0547fd30795f'
             SOLE_APPLICANT_AMENDED_APPLICATION_SUBMITTED: 'd87e0405-15bb-405b-b277-27cec5444106'
-            SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED: '4500c618-c62b-4cc4-a255-b402bb03188b'
+            SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED: 'c2302534-e798-463d-92dc-507653096dc8'
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS: '369c9dee-7727-445f-82f1-87e41f7768eb'
             SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE: 'f27eb618-5436-42c7-be17-f4b6bcb76d4c'
             JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS: '227cea41-d6b9-4183-b8f1-23a6a1c7a347'
@@ -264,7 +266,7 @@ uk:
             SOLICITOR_CO_REFUSED_SOLE_JOINT: 'ea14c049-5c8c-4a77-aa88-c31a8522eb83'
             CITIZEN_APPLICATION_WITHDRAWN: '471ea2f0-9be6-40bf-93e5-148f66fb9b56'
             SOLICITOR_CONDITIONAL_ORDER_PRONOUNCED: 'f55439e9-ace1-4aec-ab23-c022266775ba'
-            CITIZEN_APPLY_FOR_CONDITIONAL_ORDER: '7804c030-8d6d-4464-8420-de6105e61692'
+            CITIZEN_APPLY_FOR_CONDITIONAL_ORDER: 'f732c926-fe3d-459c-8d65-05273cb0879c'
             CITIZEN_APPLIED_FOR_CONDITIONAL_ORDER: '87f8ca2a-5304-4dce-9acd-e51fd29ca460'
             APPLICANT1_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER: 'c84e046f-aa97-4fbd-837e-9aebce124b2a'
             JOINT_APPLIED_FOR_CONDITIONAL_ORDER: '3d2d2f28-faa6-464a-8330-439ad4fcfffd'
@@ -272,7 +274,7 @@ uk:
             JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER: 'ca3f20d9-d64e-4875-bc7b-e6e0f76ba286'
             JOINT_SOLICITOR_APPLIED_FOR_CONDITIONAL_ORDER: 'aba8cda5-779e-4943-8fe6-13b7f6a03cf3'
             JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER: '96dac743-6d10-4122-adc7-7b29e75ebcc0' #TODO: Update Welsh translation
-            CITIZEN_CONDITIONAL_ORDER_PRONOUNCED: '9669c85c-45d2-4d8a-a6e0-48531ad2e171'
+            CITIZEN_CONDITIONAL_ORDER_PRONOUNCED: 'e6e2e425-023a-4016-934e-6746a512b70f'
             CITIZEN_CONDITIONAL_ORDER_REFUSED: '3241af91-b9fd-457f-8124-bce924a1b1f0'
             CITIZEN_CONDITIONAL_ORDER_REFUSED_FOR_AMENDMENT: '9673c9c0-8ade-4cec-82a2-a54cb8afdbc3'
             CITIZEN_CONDITIONAL_ORDER_ENTITLEMENT_GRANTED: '4c8118ab-9a71-4e73-ab5a-740dd9fe678c'
