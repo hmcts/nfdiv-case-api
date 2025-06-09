@@ -27,6 +27,8 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AWAITING_DECISION_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -195,5 +197,43 @@ class CitizenSubmitServiceApplicationTest {
         assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
         assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.NO);
         assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
+    }
+
+    @Test
+    void shouldTriggerNotificationsIfApplicationSubmittedWithHelpWithFees() {
+        CaseData caseData = CaseData.builder().build();
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        caseData.setAlternativeService(
+            AlternativeService.builder()
+                .alternativeServiceFeeRequired(YesOrNo.NO)
+                .alternativeServiceType(AlternativeServiceType.DEEMED)
+                .build()
+        );
+
+        citizenSubmitServiceApplication.submitted(caseDetails, caseDetails);
+
+        verify(interimApplicationGeneratorService).sendNotifications(
+            TEST_CASE_ID, AlternativeServiceType.DEEMED, caseData
+        );
+    }
+
+    @Test
+    void shouldNotTriggerNotificationsIfApplicationRequiresPayment() {
+        CaseData caseData = CaseData.builder().build();
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        caseData.setAlternativeService(
+            AlternativeService.builder()
+                .alternativeServiceFeeRequired(YesOrNo.YES)
+                .alternativeServiceType(AlternativeServiceType.DEEMED)
+                .build()
+        );
+
+        citizenSubmitServiceApplication.submitted(caseDetails, caseDetails);
+
+        verifyNoInteractions(interimApplicationGeneratorService);
     }
 }

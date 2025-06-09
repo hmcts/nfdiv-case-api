@@ -67,4 +67,27 @@ class InterimApplicationGeneratorServiceTest {
             () -> interimApplicationGeneratorService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData)
         );
     }
+
+    @Test
+    void shouldDelegateToDeemedServiceNotificationWhenApplicationTypeIsDeemed() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(GeneralApplicationType.DEEMED_SERVICE)
+                            .build())
+                    .build()
+            ).build();
+
+        DivorceDocument generatedDocument = DivorceDocument.builder().build();
+        when(deemedServiceApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
+            .thenReturn(generatedDocument);
+
+        DivorceDocument result = interimApplicationGeneratorService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
+
+        verify(deemedServiceApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
+        assertThat(result).isEqualTo(generatedDocument);
+    }
 }

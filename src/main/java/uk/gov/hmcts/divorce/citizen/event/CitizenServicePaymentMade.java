@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.InterimApplicationGeneratorService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
@@ -44,6 +45,8 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
     private final Clock clock;
 
     private final PaymentValidatorService paymentValidatorService;
+
+    private final InterimApplicationGeneratorService interimApplicationGeneratorService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -93,7 +96,11 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
                                             CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} submitted callback invoked for Case Id: {}", CITIZEN_SERVICE_PAYMENT, details.getId());
 
-        // Send notifications;
+        CaseData data = details.getData();
+
+        interimApplicationGeneratorService.sendNotifications(
+            details.getId(), data.getAlternativeService().getAlternativeServiceType(), data
+        );
 
         return SubmittedCallbackResponse.builder().build();
     }

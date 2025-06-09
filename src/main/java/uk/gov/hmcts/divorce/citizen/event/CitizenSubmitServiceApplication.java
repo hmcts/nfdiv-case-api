@@ -115,10 +115,11 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
                                             CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} submitted callback invoked for Case Id: {}", CITIZEN_SERVICE_APPLICATION, details.getId());
 
-        AlternativeService alternativeService = details.getData().getAlternativeService();
+        CaseData data = details.getData();
+        AlternativeService alternativeService = data.getAlternativeService();
 
         if (!YesOrNo.YES.equals(alternativeService.getAlternativeServiceFeeRequired())) {
-            // Send notifications for HWF scenario
+            interimApplicationGeneratorService.sendNotifications(details.getId(), alternativeService.getAlternativeServiceType(), data);
         }
 
         return SubmittedCallbackResponse.builder().build();
