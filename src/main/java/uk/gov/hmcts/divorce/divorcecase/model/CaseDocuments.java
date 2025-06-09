@@ -370,6 +370,24 @@ public class CaseDocuments {
             : Optional.empty();
     }
 
+    public boolean documentPresentInList(List<ListValue<DivorceDocument>> documents, DivorceDocument document) {
+        if (isEmpty(documents) || document == null) {
+            return false;
+        }
+
+        return documents.stream()
+            .filter(Objects::nonNull)
+            .map(ListValue::getValue)
+            .filter(Objects::nonNull)
+            .anyMatch(
+                divorceDocument ->
+                    divorceDocument.getDocumentLink() != null
+                        && divorceDocument.getDocumentLink().equals(document.getDocumentLink())
+                        && divorceDocument.getDocumentType() != null
+                        && divorceDocument.getDocumentType().equals(document.getDocumentType())
+            );
+    }
+
     public boolean isGivenDocumentUnderConfidentialList(final DocumentType documentType) {
         return ofNullable(getConfidentialDocumentsGenerated())
             .orElseGet(Collections::emptyList)
