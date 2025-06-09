@@ -356,7 +356,7 @@ uk:
             RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: '6b3000f3-deb6-49a8-8021-93f6f96e5f25'
 
 s2s-authorised:
-  services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator}
+  services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator,payment_app}
 
 idam:
   s2s-auth:
@@ -479,7 +479,7 @@ docmosis:
       JUDICIAL_SEPARATION_JOINT_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Joint_V1.docx
       NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2: FL-NFD-GRP-ENG-Grant-Of-Representation-V2.docx
       NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: FL-NFD-GOR-ENG-SOLICITOR-APPLIED-FOR-FINAL-ORDER.docx
-      NFD_APPLICANT_PAPERCASE_RECEIVED: FL-NFD-GOR-ENG-PaperCase-Received-Applicant.docx
+      NFD_APPLICANT_PAPERCASE_RECEIVED: FL-NFD-GOR-ENG-PaperCase-Received-Applicant-V2.docx
       NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_citizen_letter_V1.docx
       NFD_SOL_STOPPED_REP_NOTIFY_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_notify_citizen_V1.docx
       REQUEST_FOR_INFORMATION_LETTER: FL-NFD-GOR-ENG-Request-For-Information.docx
@@ -571,7 +571,7 @@ docmosis:
       JUDICIAL_SEPARATION_JOINT_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Joint_V1.docx
       NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2: FL-NFD-GRP-WEL-Grant-Of-Representation.docx
       NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: FL-NFD-GOR-WEL-SOLICITOR-APPLIED-FOR-FINAL-ORDER.docx
-      NFD_APPLICANT_PAPERCASE_RECEIVED: FL-NFD-GOR-WEL-PaperCase-Received-Applicant.docx
+      NFD_APPLICANT_PAPERCASE_RECEIVED: FL-NFD-GOR-WEL-PaperCase-Received-Applicant-V2.docx
       NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-WEL-Solicitor_stopped_representation_citizen_letter_V1.docx
       NFD_SOL_STOPPED_REP_NOTIFY_APP: FL-NFD-GOR-WEL-Solicitor_stopped_representation_notify_citizen_V1.docx
       REQUEST_FOR_INFORMATION_LETTER: FL-NFD-GOR-WEL-Request-For-Information.docx

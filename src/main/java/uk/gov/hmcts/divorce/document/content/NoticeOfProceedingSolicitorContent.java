@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.document.content;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -142,7 +143,9 @@ public class NoticeOfProceedingSolicitorContent {
             templateContent.put(APPLICANT_2_SOLICITOR_ADDRESS, applicant2.getSolicitor().getFirmAndAddress());
             templateContent.put(APPLICANT_1_SOLICITOR_ADDRESS, applicant1.getSolicitor().getFirmAndAddress());
             templateContent.put(IS_APP1_REPRESENTED, applicant1.isRepresented());
-            templateContent.put(ADDRESS_BASED_OVERSEAS, !AddressUtil.isEnglandOrWales(applicant2.getAddress()));
+            templateContent.put(ADDRESS_BASED_OVERSEAS,
+                YesOrNo.YES.equals(applicant2.getAddressOverseas()) || !AddressUtil.isEnglandOrWales(applicant2.getAddress())
+            );
         }
 
         return templateContent;

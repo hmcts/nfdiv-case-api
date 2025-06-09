@@ -22,7 +22,7 @@ class CaseworkerUpdateOfflineStatusTest {
     private CaseworkerUpdateOfflineStatus caseworkerUpdateOfflineStatus;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerUpdateOfflineStatus.configure(configBuilder);

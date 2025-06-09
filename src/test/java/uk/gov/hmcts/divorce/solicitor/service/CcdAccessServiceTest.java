@@ -478,7 +478,7 @@ class CcdAccessServiceTest {
     }
 
     @Test
-    void shouldReturnTrueCallingHasCreatorRole() throws NoSuchMethodException  {
+    void shouldReturnTrueCallingHasCreatorRole()  {
         String userToken = "Bearer SystemUpdateAuthToken";
         User user = new User(TEST_SERVICE_AUTH_TOKEN, UserInfo.builder().uid("user-id").build());
         when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN)).thenReturn(user);
@@ -499,7 +499,7 @@ class CcdAccessServiceTest {
     }
 
     @Test
-    void shouldReturnFalseCallingHasCreatorRole() throws NoSuchMethodException  {
+    void shouldReturnFalseCallingHasCreatorRole()  {
         String userToken = "Bearer SystemUpdateAuthToken";
         User user = new User(TEST_SERVICE_AUTH_TOKEN, UserInfo.builder().uid("user-id").build());
         when(idamService.retrieveUser(SYSTEM_UPDATE_AUTH_TOKEN)).thenReturn(user);
