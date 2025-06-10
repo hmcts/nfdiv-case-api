@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -17,7 +18,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 
