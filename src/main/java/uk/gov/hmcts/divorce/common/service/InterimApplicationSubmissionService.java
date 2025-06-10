@@ -39,6 +39,7 @@ public class InterimApplicationSubmissionService {
     ) {
         if (AlternativeServiceType.DEEMED.equals(serviceType)) {
             notificationDispatcher.send(deemedApplicationSubmittedNotification, caseData, caseId);
+            return;
         }
 
         throw new UnsupportedOperationException();
