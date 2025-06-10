@@ -17,7 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.InterimApplicationGeneratorService;
+import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
@@ -50,7 +50,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
     private final PaymentSetupService paymentSetupService;
 
-    private final InterimApplicationGeneratorService interimApplicationGeneratorService;
+    private final InterimApplicationSubmissionService interimApplicationSubmissionService;
 
     private final Clock clock;
 
@@ -98,7 +98,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServicePayment);
         }
 
-        DivorceDocument applicationDocument = interimApplicationGeneratorService.generateAnswerDocument(
+        DivorceDocument applicationDocument = interimApplicationSubmissionService.generateAnswerDocument(
             caseId, applicant, data
         );
         newServiceApplication.setServiceApplicationAnswers(applicationDocument);
@@ -119,7 +119,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         AlternativeService alternativeService = data.getAlternativeService();
 
         if (!YesOrNo.YES.equals(alternativeService.getAlternativeServiceFeeRequired())) {
-            interimApplicationGeneratorService.sendNotifications(details.getId(), alternativeService.getAlternativeServiceType(), data);
+            interimApplicationSubmissionService.sendNotifications(details.getId(), alternativeService.getAlternativeServiceType(), data);
         }
 
         return SubmittedCallbackResponse.builder().build();

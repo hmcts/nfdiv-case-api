@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.document;
+package uk.gov.hmcts.divorce.common.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,12 +19,12 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-class InterimApplicationGeneratorServiceTest {
+class InterimApplicationSubmissionServiceTest {
     @Mock
     private DeemedServiceApplicationGenerator deemedServiceApplicationGenerator;
 
     @InjectMocks
-    private InterimApplicationGeneratorService interimApplicationGeneratorService;
+    private InterimApplicationSubmissionService interimApplicationSubmissionService;
 
     @Test
     void shouldDelegateToDeemedServiceApplicationGeneratorWhenApplicationTypeIsDeemed() {
@@ -43,7 +43,7 @@ class InterimApplicationGeneratorServiceTest {
         when(deemedServiceApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
             .thenReturn(generatedDocument);
 
-        DivorceDocument result = interimApplicationGeneratorService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
+        DivorceDocument result = interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
 
         verify(deemedServiceApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
         assertThat(result).isEqualTo(generatedDocument);
@@ -64,7 +64,7 @@ class InterimApplicationGeneratorServiceTest {
 
         assertThrows(
             UnsupportedOperationException.class,
-            () -> interimApplicationGeneratorService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData)
+            () -> interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData)
         );
     }
 
@@ -85,7 +85,7 @@ class InterimApplicationGeneratorServiceTest {
         when(deemedServiceApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
             .thenReturn(generatedDocument);
 
-        DivorceDocument result = interimApplicationGeneratorService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
+        DivorceDocument result = interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
 
         verify(deemedServiceApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
         assertThat(result).isEqualTo(generatedDocument);

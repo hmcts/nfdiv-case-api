@@ -17,7 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.document.InterimApplicationGeneratorService;
+import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 
@@ -45,7 +45,7 @@ class CitizenSubmitServiceApplicationTest {
     private Clock clock;
 
     @Mock
-    InterimApplicationGeneratorService interimApplicationGeneratorService;
+    InterimApplicationSubmissionService interimApplicationSubmissionService;
 
     @InjectMocks
     private CitizenSubmitServiceApplication citizenSubmitServiceApplication;
@@ -99,7 +99,7 @@ class CitizenSubmitServiceApplicationTest {
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationGeneratorService.generateAnswerDocument(
+        when(interimApplicationSubmissionService.generateAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -140,7 +140,7 @@ class CitizenSubmitServiceApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationGeneratorService.generateAnswerDocument(
+        when(interimApplicationSubmissionService.generateAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -180,7 +180,7 @@ class CitizenSubmitServiceApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationGeneratorService.generateAnswerDocument(
+        when(interimApplicationSubmissionService.generateAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -214,7 +214,7 @@ class CitizenSubmitServiceApplicationTest {
 
         citizenSubmitServiceApplication.submitted(caseDetails, caseDetails);
 
-        verify(interimApplicationGeneratorService).sendNotifications(
+        verify(interimApplicationSubmissionService).sendNotifications(
             TEST_CASE_ID, AlternativeServiceType.DEEMED, caseData
         );
     }
@@ -234,6 +234,6 @@ class CitizenSubmitServiceApplicationTest {
 
         citizenSubmitServiceApplication.submitted(caseDetails, caseDetails);
 
-        verifyNoInteractions(interimApplicationGeneratorService);
+        verifyNoInteractions(interimApplicationSubmissionService);
     }
 }

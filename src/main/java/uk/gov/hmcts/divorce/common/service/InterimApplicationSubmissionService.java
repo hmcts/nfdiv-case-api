@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.document;
+package uk.gov.hmcts.divorce.common.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 @Service
 @RequiredArgsConstructor
-public class InterimApplicationGeneratorService {
+public class InterimApplicationSubmissionService {
     private final DeemedServiceApplicationGenerator deemedServiceApplicationGenerator;
     private final NotificationDispatcher notificationDispatcher;
     private final DeemedServiceApplicationSubmittedNotification deemedApplicationSubmittedNotification;
