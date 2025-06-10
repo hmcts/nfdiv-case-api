@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -44,6 +45,8 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
     private final Clock clock;
 
     private final PaymentValidatorService paymentValidatorService;
+
+    private final InterimApplicationSubmissionService interimApplicationSubmissionService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -93,7 +96,11 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
                                             CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} submitted callback invoked for Case Id: {}", CITIZEN_SERVICE_PAYMENT, details.getId());
 
-        // Send notifications;
+        CaseData data = details.getData();
+
+        interimApplicationSubmissionService.sendNotifications(
+            details.getId(), data.getAlternativeService().getAlternativeServiceType(), data
+        );
 
         return SubmittedCallbackResponse.builder().build();
     }

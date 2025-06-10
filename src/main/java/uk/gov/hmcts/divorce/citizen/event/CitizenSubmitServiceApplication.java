@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -17,7 +18,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.InterimApplicationGeneratorService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
@@ -50,7 +50,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
     private final PaymentSetupService paymentSetupService;
 
-    private final InterimApplicationGeneratorService interimApplicationGeneratorService;
+    private final InterimApplicationSubmissionService interimApplicationSubmissionService;
 
     private final Clock clock;
 
@@ -98,7 +98,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServicePayment);
         }
 
-        DivorceDocument applicationDocument = interimApplicationGeneratorService.generateAnswerDocument(
+        DivorceDocument applicationDocument = interimApplicationSubmissionService.generateAnswerDocument(
             caseId, applicant, data
         );
         newServiceApplication.setServiceApplicationAnswers(applicationDocument);
@@ -115,10 +115,11 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
                                             CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} submitted callback invoked for Case Id: {}", CITIZEN_SERVICE_APPLICATION, details.getId());
 
-        AlternativeService alternativeService = details.getData().getAlternativeService();
+        CaseData data = details.getData();
+        AlternativeService alternativeService = data.getAlternativeService();
 
         if (!YesOrNo.YES.equals(alternativeService.getAlternativeServiceFeeRequired())) {
-            // Send notifications for HWF scenario
+            interimApplicationSubmissionService.sendNotifications(details.getId(), alternativeService.getAlternativeServiceType(), data);
         }
 
         return SubmittedCallbackResponse.builder().build();
