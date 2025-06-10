@@ -15,10 +15,10 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MADE_PAYMENT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.USED_HELP_WITH_FEES;
+import static uk.gov.hmcts.divorce.notification.CommonContent.MADE_PAYMENT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.USED_HELP_WITH_FEES;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.DEEMED_SERVICE_APPLICATION_AWAITING_DOCUMENTS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.DEEMED_SERVICE_APPLICATION_SUBMITTED;
@@ -37,7 +37,7 @@ public class DeemedServiceApplicationSubmittedNotification implements ApplicantN
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
-        log.info("Sending deemed service application submitted notification for case id {}", caseId);
+        log.info("Sending deemed service application submitted notification to applicant 1 on case id {}", caseId);
 
         AlternativeService serviceApplication = caseData.getAlternativeService();
         boolean awaitingDocuments = YesOrNo.NO.equals(serviceApplication.getServiceApplicationDocsUploadedPreSubmission());
