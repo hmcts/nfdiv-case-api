@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -45,6 +46,7 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
             .event(CREATE_PAPER_CASE)
             .initialState(NewPaperCase)
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .showCondition(NEVER_SHOW)
             .name("Create paper case")
             .description("Create paper case")
             .grant(CREATE_READ_UPDATE, CASE_WORKER, CASE_WORKER_BULK_SCAN, SYSTEMUPDATE)
@@ -83,9 +85,7 @@ public class CaseworkerCreatePaperCase implements CCDConfig<CaseData, State, Use
             }
         }
 
-        if (!data.isJudicialSeparationCase()) {
-            notificationDispatcher.send(paperApplicationReceivedNotification, data, details.getId());
-        }
+        notificationDispatcher.send(paperApplicationReceivedNotification, data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
