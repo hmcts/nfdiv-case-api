@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.caseworker.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
@@ -30,7 +31,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
@@ -85,35 +85,6 @@ public class ReIssueApplicationService {
             caseData.getApplication().setJudicialSeparationReissueOption(null);
         }
         ReissueOption reissueOption = caseData.getApplication().getReissueOption();
-
-        if (reissueOption == null) {
-            log.info(
-                "For case id {} reissue option is null, hence setting it to option based on new contact details for reissue.",
-                caseDetails.getId()
-            );
-            log.info("For case id {} reissue option is null, hence setting it to option based on new contact details for reissue.",
-                caseDetails.getId());
-
-            NoResponseNewEmailAndPostalAddress noResponseOptions =
-                Optional.ofNullable(caseData.getApplicant1())
-                    .map(Applicant::getInterimApplicationOptions)
-                    .map(InterimApplicationOptions::getNoResponseJourneyOptions)
-                    .map(NoResponseJourneyOptions::getNoResponseNewEmailAndPostalAddress)
-                    .orElseThrow(() ->  new InvalidReissueOptionException(String.format("Invalid reissue option for CaseId: %s",
-                        caseDetails.getId())));
-
-
-            switch (noResponseOptions) {
-                case NEW_POSTAL_ADDRESS ->
-                    reissueOption = isEmpty(caseData.getApplicant2().getEmail()) ? OFFLINE_AOS : DIGITAL_AOS;
-
-                case NEW_EMAIL_ADDRESS, NEW_EMAIL_AND_POSTAL_ADDRESS -> reissueOption = DIGITAL_AOS;
-
-                default -> { }
-            }
-
-            caseData.getApplication().setReissueOption(reissueOption);
-        }
 
         log.info("For case id {} reissue option selected is {} ", caseDetails.getId(), reissueOption);
 
@@ -210,5 +181,38 @@ public class ReIssueApplicationService {
             );
         }
 
+    }
+
+    public void updateReissueOptionForNewContactDetails(CaseData caseData, Long caseId) {
+
+        NoResponseNewEmailAndPostalAddress noResponseOptions =
+            Optional.of(caseData.getApplicant1())
+                .map(Applicant::getInterimApplicationOptions)
+                .map(InterimApplicationOptions::getNoResponseJourneyOptions)
+                .map(NoResponseJourneyOptions::getNoResponseNewEmailAndPostalAddress)
+                .orElseThrow(() -> new InvalidReissueOptionException(
+                    String.format("Invalid update contact details option selected for CaseId: %s", caseId)));
+
+        var noResponseJourneyOptions = caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions();
+        boolean isNewAddressOverseas = noResponseJourneyOptions.getNoResponsePartnerAddressOverseas().equals(YES);
+        boolean isOldAddressOverseas = caseData.getApplicant2().isBasedOverseas()
+            || caseData.getApplicant2().getAddressOverseas() == YES;
+
+        ReissueOption reissueOption = null;
+
+        switch (noResponseOptions) {
+            case NEW_POSTAL_ADDRESS -> reissueOption = isNewAddressOverseas ? REISSUE_CASE :
+                StringUtils.isEmpty(caseData.getApplicant2().getEmail()) ? OFFLINE_AOS : DIGITAL_AOS;
+
+            case NEW_EMAIL_ADDRESS -> reissueOption =
+                isOldAddressOverseas ? REISSUE_CASE : DIGITAL_AOS;
+
+            case NEW_EMAIL_AND_POSTAL_ADDRESS -> reissueOption =
+                isNewAddressOverseas ? REISSUE_CASE : DIGITAL_AOS;
+
+            default -> reissueOption = REISSUE_CASE;
+        }
+
+        caseData.getApplication().setReissueOption(reissueOption);
     }
 }
