@@ -73,7 +73,7 @@ class DeemedServiceApplicationTemplateContentTest {
         expectedEntries.put("applicant1FullName", TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME);
         expectedEntries.put("applicant2FullName", TEST_FIRST_NAME);
         expectedEntries.put("deemedEvidenceUploaded", true);
-        expectedEntries.put("divorceOrDissolution", "divorce application");
+        expectedEntries.put("divorceOrDissolution", "cais am ysgariad");
         expectedEntries.put("deemedEvidenceDetails", DEEMED_EVIDENCE);
         expectedEntries.put("deemedNoEvidenceStatement", DEEMED_NO_EVIDENCE_STATEMENT);
         expectedEntries.put("statementOfTruth", "Ydw");
