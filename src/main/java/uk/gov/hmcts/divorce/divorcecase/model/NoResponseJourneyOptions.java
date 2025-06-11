@@ -52,4 +52,16 @@ public class NoResponseJourneyOptions {
         access = {DefaultAccess.class}
     )
     private NoResponseOwnSearches noResponseOwnSearches;
+
+    @CCD(
+        label = "Do you think your partner is still in the UK or is receiving UK benefits?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo noResponsePartnerInUKOrReceivingBenefits;
+
+    @CCD(
+        label = "Search gov records or apply to dispense with service?",
+        access = {DefaultAccess.class}
+    )
+    private NoResponseSearchOrDispense noResponseSearchOrDispense;
 }
