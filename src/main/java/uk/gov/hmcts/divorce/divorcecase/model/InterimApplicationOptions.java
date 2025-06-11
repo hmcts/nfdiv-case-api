@@ -44,7 +44,7 @@ public class InterimApplicationOptions {
         typeOverride = FixedList,
         typeParameterOverride = "GeneralApplicationType"
     )
-    private GeneralApplicationType interimApplicationType;
+    private InterimApplicationType interimApplicationType;
 
     @CCD(
         label = "You're about to apply for service",
