@@ -22,7 +22,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.JudicialSeparationReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.NoResponseNewEmailAndPostalAddress;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrPostalAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
@@ -104,7 +104,6 @@ public class ReIssueApplicationService {
             caseDetails.getData().getApplicant2().setOffline(NO);
 
             return caseTasks(
-                setServiceType,
                 setPostIssueState,
                 setReIssueAndDueDate,
                 generateApplicant1NoticeOfProceeding,
@@ -118,7 +117,6 @@ public class ReIssueApplicationService {
             caseDetails.getData().getApplicant2().setOffline(YES);
 
             return caseTasks(
-                setServiceType,
                 setPostIssueState,
                 setReIssueAndDueDate,
                 setNoticeOfProceedingDetailsForRespondent,
@@ -132,7 +130,6 @@ public class ReIssueApplicationService {
         } else if (REISSUE_CASE.equals(reissueOption)) {
             log.info("For case id {} processing complete reissue ", caseDetails.getId());
             return caseTasks(
-                setServiceType,
                 setPostIssueState,
                 setReIssueAndDueDate,
                 setNoticeOfProceedingDetailsForRespondent,
@@ -185,11 +182,11 @@ public class ReIssueApplicationService {
 
     public void updateReissueOptionForNewContactDetails(CaseData caseData, Long caseId) {
 
-        NoResponseNewEmailAndPostalAddress noResponseOptions =
+        NoResponsePartnerNewEmailOrPostalAddress noResponseOptions =
             Optional.of(caseData.getApplicant1())
                 .map(Applicant::getInterimApplicationOptions)
                 .map(InterimApplicationOptions::getNoResponseJourneyOptions)
-                .map(NoResponseJourneyOptions::getNoResponseNewEmailAndPostalAddress)
+                .map(NoResponseJourneyOptions::getNoResponsePartnerNewEmailOrPostalAddress)
                 .orElseThrow(() -> new InvalidReissueOptionException(
                     String.format("Invalid update contact details option selected for CaseId: %s", caseId)));
 

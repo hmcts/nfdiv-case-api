@@ -19,7 +19,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
@@ -35,7 +34,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
@@ -82,7 +80,7 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
-            .grant(CREATE_READ_UPDATE, CASE_WORKER, CREATOR, SYSTEMUPDATE)
+            .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE)
             .grantHistoryOnly(
                 SOLICITOR,
                 SUPER_USER,
@@ -131,7 +129,6 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
 
         log.info("Caseworker reissue application about to submit callback invoked for case id: {}", details.getId());
 
-
         log.info("Validating Issue for Case Id: {}", details.getId());
         final List<String> caseValidationErrors = validateIssue(details.getData());
 
@@ -144,10 +141,6 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
 
         try {
             final CaseDetails<CaseData, State> result = reIssueApplicationService.process(details);
-
-
-            Optional.ofNullable(caseData.getApplicant1().getInterimApplicationOptions())
-                .ifPresent(options -> options.setNoResponseJourneyOptions(null));
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(result.getData())

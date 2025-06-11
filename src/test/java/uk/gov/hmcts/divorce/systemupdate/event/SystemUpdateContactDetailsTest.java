@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.NoResponseNewEmailAndPostalAddress;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrPostalAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -92,7 +92,7 @@ class SystemUpdateContactDetailsTest {
         final CaseData caseData = validCaseDataForReIssueApplication();
         caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
             .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
-                .noResponseNewEmailAndPostalAddress(NoResponseNewEmailAndPostalAddress.NEW_EMAIL_ADDRESS)
+                .noResponsePartnerNewEmailOrPostalAddress(NoResponsePartnerNewEmailOrPostalAddress.NEW_EMAIL_ADDRESS)
                 .noResponsePartnerAddressOverseas(YesOrNo.NO)
                 .build())
             .build());
@@ -102,6 +102,8 @@ class SystemUpdateContactDetailsTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemUpdateContactDetails.aboutToSubmit(caseDetails, null);
+
+        assertThat(response.getData().getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()).isNull();
 
         verify(reIssueApplicationService).updateReissueOptionForNewContactDetails(caseData, caseDetails.getId());
     }

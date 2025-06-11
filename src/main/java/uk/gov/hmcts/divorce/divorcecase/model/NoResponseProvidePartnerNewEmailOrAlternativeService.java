@@ -7,15 +7,15 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 @Getter
 @AllArgsConstructor
-public enum NoResponseNewEmailAndPostalAddress implements HasLabel {
-    @JsonProperty("newPostalAddress")
-    NEW_POSTAL_ADDRESS("I have a new postal address"),
+public enum NoResponseProvidePartnerNewEmailOrAlternativeService implements HasLabel {
+    @JsonProperty("provideNewEmailAddress")
+    NEW_ADDRESS("I want to provide a new email address"),
 
     @JsonProperty("newEmailAddress")
     NEW_EMAIL_ADDRESS("I have a new email address"),
 
-    @JsonProperty("newEmailAndPostalAddress")
-    NEW_EMAIL_AND_POSTAL_ADDRESS("I have a new email address and postal address");
+    @JsonProperty("applyForAlternativeService")
+    NEW_EMAIL_AND_POSTAL_ADDRESS("I want to apply for alternative service to serve by email only ");
 
     private final String label;
 }

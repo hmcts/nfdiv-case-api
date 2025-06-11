@@ -20,6 +20,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
@@ -30,6 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -37,7 +39,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @RequiredArgsConstructor
 @Slf4j
 public class SystemUpdateContactDetails implements CCDConfig<CaseData, State, UserRole> {
-    public static final String SYSTEM_UPDATE_CONTACT_DETAILS = "system-update-contact-details";
+    public static final String SYSTEM_UPDATE_CONTACT_DETAILS = "update-details-and-reissue";
 
     private final IdamService idamService;
 
@@ -51,10 +53,10 @@ public class SystemUpdateContactDetails implements CCDConfig<CaseData, State, Us
             .event(SYSTEM_UPDATE_CONTACT_DETAILS)
             .forStates(AwaitingAos, AosOverdue, AwaitingDocuments, AwaitingService)
             .showCondition(NEVER_SHOW)
-            .name("System update contact details")
-            .description("System update contact details")
+            .name("Update details and reissue")
+            .description("Update details and reissue")
             .grant(CREATE_READ_UPDATE, CREATOR)
-            .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE)
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE, LEGAL_ADVISOR)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted);
@@ -86,6 +88,10 @@ public class SystemUpdateContactDetails implements CCDConfig<CaseData, State, Us
         if (!ObjectUtils.isEmpty(newEmail)) {
             applicant2.setEmail(newEmail);
         }
+
+
+        Optional.ofNullable(caseData.getApplicant1().getInterimApplicationOptions())
+            .ifPresent(options -> options.setNoResponseJourneyOptions(null));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
