@@ -46,7 +46,7 @@ public class InterimApplicationOptions {
         typeParameterOverride = "GeneralApplicationType",
         access = {DefaultAccess.class}
     )
-    private GeneralApplicationType interimApplicationType;
+    private InterimApplicationType interimApplicationType;
 
     @CCD(
         label = "You're about to apply for service",
