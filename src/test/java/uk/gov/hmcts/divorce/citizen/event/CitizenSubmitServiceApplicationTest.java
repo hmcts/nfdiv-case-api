@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -82,7 +82,7 @@ class CitizenSubmitServiceApplicationTest {
                     .interimApplicationOptions(InterimApplicationOptions.builder()
                         .interimAppsUseHelpWithFees(YesOrNo.NO)
                         .interimAppsCannotUploadDocs(YesOrNo.YES)
-                        .interimApplicationType(GeneralApplicationType.DEEMED_SERVICE)
+                        .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
                         .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
                         .build())
                     .build()
@@ -130,7 +130,7 @@ class CitizenSubmitServiceApplicationTest {
                     .interimApplicationOptions(InterimApplicationOptions.builder()
                         .interimAppsUseHelpWithFees(YesOrNo.YES)
                         .interimAppsCannotUploadDocs(YesOrNo.NO)
-                        .interimApplicationType(GeneralApplicationType.DEEMED_SERVICE)
+                        .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
                         .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
                         .build())
                     .build()
@@ -170,7 +170,7 @@ class CitizenSubmitServiceApplicationTest {
                     .interimApplicationOptions(InterimApplicationOptions.builder()
                         .interimAppsUseHelpWithFees(YesOrNo.YES)
                         .interimAppsCannotUploadDocs(YesOrNo.YES)
-                        .interimApplicationType(GeneralApplicationType.DEEMED_SERVICE)
+                        .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
                         .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
                         .build())
                     .build()

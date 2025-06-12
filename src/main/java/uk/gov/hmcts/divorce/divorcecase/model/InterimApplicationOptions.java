@@ -43,7 +43,7 @@ public class InterimApplicationOptions {
     @CCD(
         label = "Active Interim Application Type",
         typeOverride = FixedList,
-        typeParameterOverride = "GeneralApplicationType",
+        typeParameterOverride = "InterimApplicationType",
         access = {DefaultAccess.class}
     )
     private InterimApplicationType interimApplicationType;
@@ -100,7 +100,7 @@ public class InterimApplicationOptions {
 
     @JsonIgnore
     public ApplicationAnswers getApplicationAnswers() {
-        if (interimApplicationType.equals(GeneralApplicationType.DEEMED_SERVICE)) {
+        if (interimApplicationType.equals(InterimApplicationType.DEEMED_SERVICE)) {
             return deemedServiceJourneyOptions;
         }
 

@@ -6,7 +6,7 @@ import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DeemedServi
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.generator.DeemedServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -23,9 +23,9 @@ public class InterimApplicationSubmissionService {
         Applicant applicant,
         CaseData caseData
     ) {
-        GeneralApplicationType applicationType = applicant.getInterimApplicationOptions().getInterimApplicationType();
+        InterimApplicationType applicationType = applicant.getInterimApplicationOptions().getInterimApplicationType();
 
-        if (GeneralApplicationType.DEEMED_SERVICE.equals(applicationType)) {
+        if (InterimApplicationType.DEEMED_SERVICE.equals(applicationType)) {
             return deemedServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
         }
 

@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.generator.DeemedServiceApplicationGenerator;
@@ -34,7 +34,7 @@ class InterimApplicationSubmissionServiceTest {
                     Applicant.builder()
                         .interimApplicationOptions(
                             InterimApplicationOptions.builder()
-                                .interimApplicationType(GeneralApplicationType.DEEMED_SERVICE)
+                                .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
                                 .build())
                         .build()
                 ).build();
@@ -76,7 +76,7 @@ class InterimApplicationSubmissionServiceTest {
                 Applicant.builder()
                     .interimApplicationOptions(
                         InterimApplicationOptions.builder()
-                            .interimApplicationType(GeneralApplicationType.DEEMED_SERVICE)
+                            .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
                             .build())
                     .build()
             ).build();
