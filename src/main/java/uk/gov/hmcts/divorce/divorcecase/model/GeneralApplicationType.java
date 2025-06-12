@@ -10,35 +10,34 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 public enum GeneralApplicationType implements HasLabel {
 
     @JsonProperty("dispensedWithService")
-    DISPENSED_WITH_SERVICE("Dispensed with service", AlternativeServiceType.DISPENSED),
+    DISPENSED_WITH_SERVICE("Dispensed with service"),
 
     @JsonProperty("deemedService")
-    DEEMED_SERVICE("Deemed service", AlternativeServiceType.DEEMED),
+    DEEMED_SERVICE("Deemed service"),
 
     @JsonProperty("otherAlternativeServiceMethod")
-    OTHER_ALTERNATIVE_SERVICE_METHODS("Alternative service", AlternativeServiceType.ALTERNATIVE_SERVICE),
+    OTHER_ALTERNATIVE_SERVICE_METHODS("Alternative service"),
 
     @JsonProperty("expedite")
-    EXPEDITE("Expedite", null),
+    EXPEDITE("Expedite"),
 
     @JsonProperty("issueDivorceWithoutMarriageCertificate")
-    ISSUE_DIVORCE_WITHOUT_CERT("Issue divorce without marriage certificate", null),
+    ISSUE_DIVORCE_WITHOUT_CERT("Issue divorce without marriage certificate"),
 
     @JsonProperty("orderOnFilingOfAnswers")
-    ORDER_ON_FILLING_OF_ANSWERS("Order on filing of Answers", null),
+    ORDER_ON_FILLING_OF_ANSWERS("Order on filing of Answers"),
 
     @JsonProperty("permissionOnDaOot")
-    PERMISSION_ON_DA_OOT("Permission on FO OOT", null),
+    PERMISSION_ON_DA_OOT("Permission on FO OOT"),
 
     @JsonProperty("disclosureViaDwp")
-    DISCLOSURE_VIA_DWP("Disclosure via DWP", null),
+    DISCLOSURE_VIA_DWP("Disclosure via DWP"),
 
     @JsonProperty("amendApplication")
-    AMEND_APPLICATION("Amend Application", null),
+    AMEND_APPLICATION("Amend Application"),
 
     @JsonProperty("other")
-    OTHER("Other", null);
+    OTHER("Other");
 
     private final String label;
-    private final AlternativeServiceType serviceType;
 }
