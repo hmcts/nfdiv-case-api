@@ -445,7 +445,7 @@ docmosis:
       NFD_NOP_A1_SOLE_APP1_CIT_CS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-A1-V4.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-A2-V5.docx
       NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V4.docx
-      NFD_NOP_SOLE_RESPONDENT_CITIZEN: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx
+      NFD_NOP_SOLE_RESPONDENT_CITIZEN: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V13.docx
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V4.docx
       NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V4.docx
       NFD_NOP_JA1_JOINT_APP1APP2_CIT: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Joint-V3.docx
@@ -543,7 +543,7 @@ docmosis:
       NFD_NOP_A1_SOLE_APP1_CIT_CS: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Sole_V3.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: FL-NFD-GOR-WEL-Notice-Of-Proceedings-Overseas-Sole-V4-Cy.docx
       NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V4.docx #TODO: add Welsh translation
-      NFD_NOP_SOLE_RESPONDENT_CITIZEN: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx
+      NFD_NOP_SOLE_RESPONDENT_CITIZEN: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V13.docx
       NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V4.docx #TODO: add translated content
       NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V4.docx #TODO: add translated content
       NFD_NOP_JA1_JOINT_APP1APP2_CIT: FL-NFD-GOR-WEL-Notice-Of-Proceedings-Joint-V3-Cy.docx
