@@ -129,9 +129,9 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
     }
 
     private AlternativeService buildServiceApplication(InterimApplicationOptions userOptions) {
-        boolean userWillProvideEvidence = YesOrNo.YES.equals(userOptions.getInterimAppsCanUploadEvidence());
+        boolean evidenceNotSubmitted = YesOrNo.NO.equals(userOptions.getInterimAppsCanUploadEvidence());
 
-        if (!userWillProvideEvidence) {
+        if (evidenceNotSubmitted) {
             documentRemovalService.deleteDocument(userOptions.getInterimAppsEvidenceDocs());
         }
 
@@ -143,7 +143,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .serviceApplicationDocsUploadedPreSubmission(userOptions.awaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
             .serviceApplicationDocuments(
-                userWillProvideEvidence ? userOptions.getInterimAppsEvidenceDocs() : null
+                evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs()
             )
             .build();
     }

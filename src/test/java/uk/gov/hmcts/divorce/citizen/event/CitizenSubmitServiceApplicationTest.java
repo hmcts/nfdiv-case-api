@@ -220,6 +220,7 @@ class CitizenSubmitServiceApplicationTest {
                 Applicant.builder()
                     .firstName(TEST_FIRST_NAME)
                     .interimApplicationOptions(InterimApplicationOptions.builder()
+                        .interimAppsCanUploadEvidence(YesOrNo.NO)
                         .interimAppsEvidenceDocs(evidenceDocs)
                         .interimAppsUseHelpWithFees(YesOrNo.YES)
                         .interimAppsCannotUploadDocs(YesOrNo.YES)
