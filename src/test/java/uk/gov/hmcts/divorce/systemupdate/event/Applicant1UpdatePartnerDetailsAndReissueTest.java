@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
+import uk.gov.hmcts.divorce.citizen.event.Applicant1UpdatePartnerDetailsAndReissue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateContactDetails.UPDATE_PARTNER_DETAILS_AND_REISSUE;
+import static uk.gov.hmcts.divorce.citizen.event.Applicant1UpdatePartnerDetailsAndReissue.UPDATE_PARTNER_DETAILS_AND_REISSUE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -38,7 +39,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForReIssueApplication;
 
 @ExtendWith(MockitoExtension.class)
-class SystemUpdateContactDetailsTest {
+class Applicant1UpdatePartnerDetailsAndReissueTest {
 
     @Mock
     private IdamService idamService;
@@ -54,13 +55,13 @@ class SystemUpdateContactDetailsTest {
 
 
     @InjectMocks
-    private SystemUpdateContactDetails systemUpdateContactDetails;
+    private Applicant1UpdatePartnerDetailsAndReissue applicant1UpdatePartnerDetailsAndReissue;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        systemUpdateContactDetails.configure(configBuilder);
+        applicant1UpdatePartnerDetailsAndReissue.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -80,7 +81,7 @@ class SystemUpdateContactDetailsTest {
             .updateReissueOptionForNewContactDetails(caseData, caseDetails.getId());
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            systemUpdateContactDetails.aboutToSubmit(caseDetails, null);
+            applicant1UpdatePartnerDetailsAndReissue.aboutToSubmit(caseDetails, null);
 
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo("Invalid update contact details option selected for CaseId: 12345");
@@ -101,7 +102,7 @@ class SystemUpdateContactDetailsTest {
         caseDetails.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            systemUpdateContactDetails.aboutToSubmit(caseDetails, null);
+            applicant1UpdatePartnerDetailsAndReissue.aboutToSubmit(caseDetails, null);
 
         assertThat(response.getData().getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()).isNull();
 
@@ -123,7 +124,7 @@ class SystemUpdateContactDetailsTest {
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        systemUpdateContactDetails.submitted(caseDetails, beforeDetails);
+        applicant1UpdatePartnerDetailsAndReissue.submitted(caseDetails, beforeDetails);
 
         verify(ccdUpdateService).submitEvent(TEST_CASE_ID, CASEWORKER_REISSUE_APPLICATION, user, TEST_SERVICE_AUTH_TOKEN);
     }

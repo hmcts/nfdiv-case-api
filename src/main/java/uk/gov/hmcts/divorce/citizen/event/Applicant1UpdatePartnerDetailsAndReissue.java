@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.systemupdate.event;
+package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class SystemUpdateContactDetails implements CCDConfig<CaseData, State, UserRole> {
+public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseData, State, UserRole> {
     public static final String UPDATE_PARTNER_DETAILS_AND_REISSUE = "update-partner-details-and-reissue";
 
     private final IdamService idamService;
