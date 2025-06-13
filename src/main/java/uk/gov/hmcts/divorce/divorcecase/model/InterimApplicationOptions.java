@@ -1,6 +1,9 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +23,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class InterimApplicationOptions {
 
     @JsonUnwrapped
@@ -93,4 +97,23 @@ public class InterimApplicationOptions {
         access = {DefaultAccess.class}
     )
     private YesOrNo interimAppsStatementOfTruth;
+
+    @JsonIgnore
+    public ApplicationAnswers getApplicationAnswers() {
+        if (interimApplicationType.equals(InterimApplicationType.DEEMED_SERVICE)) {
+            return deemedServiceJourneyOptions;
+        }
+
+        return null;
+    }
+
+    @JsonIgnore
+    public boolean awaitingDocuments() {
+        return YesOrNo.YES.equals(interimAppsCannotUploadDocs);
+    }
+
+    @JsonIgnore
+    public boolean willMakePayment() {
+        return !YesOrNo.YES.equals(interimAppsUseHelpWithFees);
+    }
 }

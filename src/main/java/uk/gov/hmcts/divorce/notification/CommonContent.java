@@ -117,6 +117,9 @@ public class CommonContent {
     public static final String DIVORCE_WELSH = "ysgariad";
     public static final String DISSOLUTION_WELSH = "diddymiad";
 
+    public static final String USED_HELP_WITH_FEES = "usedHelpWithFees";
+    public static final String MADE_PAYMENT = "madePayment";
+
     public static final String APPLICANT = "Applicant";
     public static final String APPLICANT_1 = "Applicant 1";
     public static final String APPLICANT_2 = "Applicant 2";
