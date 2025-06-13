@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @RequiredArgsConstructor
 @Slf4j
 public class SystemUpdateContactDetails implements CCDConfig<CaseData, State, UserRole> {
-    public static final String SYSTEM_UPDATE_CONTACT_DETAILS = "update-details-and-reissue";
+    public static final String UPDATE_PARTNER_DETAILS_AND_REISSUE = "update-partner-details-and-reissue";
 
     private final IdamService idamService;
 
@@ -50,7 +50,7 @@ public class SystemUpdateContactDetails implements CCDConfig<CaseData, State, Us
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
-            .event(SYSTEM_UPDATE_CONTACT_DETAILS)
+            .event(UPDATE_PARTNER_DETAILS_AND_REISSUE)
             .forStates(AwaitingAos, AosOverdue, AwaitingDocuments, AwaitingService)
             .showCondition(NEVER_SHOW)
             .name("Update details and reissue")
@@ -100,7 +100,7 @@ public class SystemUpdateContactDetails implements CCDConfig<CaseData, State, Us
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} submitted callback invoked for case id: {}", SYSTEM_UPDATE_CONTACT_DETAILS, details.getId());
+        log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_AND_REISSUE, details.getId());
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();

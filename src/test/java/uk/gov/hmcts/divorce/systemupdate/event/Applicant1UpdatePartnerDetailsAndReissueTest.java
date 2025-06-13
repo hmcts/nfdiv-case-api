@@ -29,7 +29,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateContactDetails.SYSTEM_UPDATE_CONTACT_DETAILS;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateContactDetails.UPDATE_PARTNER_DETAILS_AND_REISSUE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -64,7 +64,7 @@ class SystemUpdateContactDetailsTest {
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SYSTEM_UPDATE_CONTACT_DETAILS);
+            .contains(UPDATE_PARTNER_DETAILS_AND_REISSUE);
     }
 
     @Test
