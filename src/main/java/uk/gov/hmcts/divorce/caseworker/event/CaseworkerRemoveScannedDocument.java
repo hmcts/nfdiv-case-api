@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 
 import java.util.List;
 
@@ -33,6 +34,8 @@ public class CaseworkerRemoveScannedDocument implements CCDConfig<CaseData, Stat
 
     private static final String REMOVE_SCANNED_DOCUMENT = "Remove scanned document";
     public static final String CASEWORKER_REMOVE_SCANNED_DOCUMENT = "caseworker-remove-scanned-document";
+
+    private final DocumentRemovalService documentRemovalService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -70,6 +73,8 @@ public class CaseworkerRemoveScannedDocument implements CCDConfig<CaseData, Stat
                 .errors(List.of("Scanned documents cannot be added by 'Remove scanned documents'"))
                 .build();
         }
+
+        documentRemovalService.handleDeletionOfScannedDocuments(beforeCaseData, caseData);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
