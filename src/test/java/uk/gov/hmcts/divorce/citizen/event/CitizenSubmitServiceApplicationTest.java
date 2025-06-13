@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
@@ -18,11 +19,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 
 import java.time.Clock;
 import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -46,6 +49,9 @@ class CitizenSubmitServiceApplicationTest {
 
     @Mock
     InterimApplicationSubmissionService interimApplicationSubmissionService;
+
+    @Mock
+    DocumentRemovalService documentRemovalService;
 
     @InjectMocks
     private CitizenSubmitServiceApplication citizenSubmitServiceApplication;
@@ -198,6 +204,50 @@ class CitizenSubmitServiceApplicationTest {
         assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.NO);
         assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
     }
+
+    @Test
+    void shouldDeleteEvidenceDocsIfUserIndicatedTheyWontProvideEvidence() {
+        setMockClock(clock);
+
+        var evidenceDocs = List.of(
+            ListValue.<DivorceDocument>builder()
+                .value(DivorceDocument.builder().build())
+                .build()
+        );
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .firstName(TEST_FIRST_NAME)
+                    .interimApplicationOptions(InterimApplicationOptions.builder()
+                        .interimAppsEvidenceDocs(evidenceDocs)
+                        .interimAppsUseHelpWithFees(YesOrNo.YES)
+                        .interimAppsCannotUploadDocs(YesOrNo.YES)
+                        .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
+                        .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
+                        .build())
+                    .build()
+            ).build();
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        DivorceDocument generatedApplication = DivorceDocument.builder().build();
+        when(interimApplicationSubmissionService.generateAnswerDocument(
+            TEST_CASE_ID, caseData.getApplicant1(), caseData
+        )).thenReturn(generatedApplication);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
+            caseDetails, caseDetails
+        );
+
+        verify(documentRemovalService).deleteDocument(evidenceDocs);
+
+        AlternativeService alternativeService = response.getData().getAlternativeService();
+        assertThat(response.getState()).isEqualTo(State.AwaitingDocuments);
+        assertThat(alternativeService.getServiceApplicationDocuments()).isEqualTo(null);
+    }
+
 
     @Test
     void shouldTriggerNotificationsIfApplicationSubmittedWithHelpWithFees() {

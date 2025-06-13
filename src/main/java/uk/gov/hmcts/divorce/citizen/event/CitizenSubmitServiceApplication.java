@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
@@ -51,6 +52,8 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
     private final PaymentSetupService paymentSetupService;
 
     private final InterimApplicationSubmissionService interimApplicationSubmissionService;
+
+    private final DocumentRemovalService documentRemovalService;
 
     private final Clock clock;
 
@@ -126,6 +129,12 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
     }
 
     private AlternativeService buildServiceApplication(InterimApplicationOptions userOptions) {
+        boolean userWillProvideEvidence = YesOrNo.YES.equals(userOptions.getInterimAppsCanUploadEvidence());
+
+        if (!userWillProvideEvidence) {
+            documentRemovalService.deleteDocument(userOptions.getInterimAppsEvidenceDocs());
+        }
+
         return AlternativeService.builder()
             .serviceApplicationDocuments(userOptions.getInterimAppsEvidenceDocs())
             .receivedServiceApplicationDate(LocalDate.now(clock))
@@ -133,7 +142,9 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .alternativeServiceType(userOptions.getInterimApplicationType().getServiceType())
             .serviceApplicationDocsUploadedPreSubmission(userOptions.awaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
-            .serviceApplicationDocuments(userOptions.getInterimAppsEvidenceDocs())
+            .serviceApplicationDocuments(
+                userWillProvideEvidence ? userOptions.getInterimAppsEvidenceDocs() : null
+            )
             .build();
     }
 
