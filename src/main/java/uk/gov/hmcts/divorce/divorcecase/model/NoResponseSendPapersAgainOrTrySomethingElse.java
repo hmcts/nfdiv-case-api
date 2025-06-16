@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 @Getter
 @AllArgsConstructor
-public enum NoResponsePartnerSendPapersAgainOrTrySomethingElse implements HasLabel {
+public enum NoResponseSendPapersAgainOrTrySomethingElse implements HasLabel {
     @JsonProperty("sendPapersAgain")
     SEND_PAPERS_AGAIN("I want to send the divorce papers again"),
 

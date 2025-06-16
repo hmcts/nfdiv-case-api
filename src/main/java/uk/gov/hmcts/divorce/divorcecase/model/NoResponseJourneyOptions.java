@@ -65,7 +65,7 @@ public class NoResponseJourneyOptions {
     @CCD(
         label = "Send papers again or try something else",
         access = {DefaultAccess.class},
-        typeParameterOverride = "NoResponsePartnerSendPapersAgainOrTrySomethingElse"
+        typeParameterOverride = "NoResponseSendPapersAgainOrTrySomethingElse"
     )
-    private NoResponsePartnerSendPapersAgainOrTrySomethingElse noResponsePartnerSendPapersAgainOrTrySomethingElse;
+    private NoResponseSendPapersAgainOrTrySomethingElse noResponseSendPapersAgainOrTrySomethingElse;
 }
