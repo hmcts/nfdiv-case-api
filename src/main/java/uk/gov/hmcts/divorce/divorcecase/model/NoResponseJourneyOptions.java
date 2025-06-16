@@ -61,4 +61,11 @@ public class NoResponseJourneyOptions {
 
     @CCD(label = "Is your partner's new address international?")
     private YesOrNo noResponsePartnerAddressOverseas;
+
+    @CCD(
+        label = "Send papers again or try something else",
+        access = {DefaultAccess.class},
+        typeParameterOverride = "NoResponsePartnerSendPapersAgainOrTrySomethingElse"
+    )
+    private NoResponsePartnerSendPapersAgainOrTrySomethingElse noResponsePartnerSendPapersAgainOrTrySomethingElse;
 }
