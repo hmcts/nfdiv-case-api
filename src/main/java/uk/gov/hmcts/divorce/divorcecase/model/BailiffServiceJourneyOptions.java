@@ -46,7 +46,7 @@ public class BailiffServiceJourneyOptions {
     @CCD(
         label = "What is your partner's approximate age?"
     )
-    private int bailiffPartnersApproximateAge;
+    private Integer bailiffPartnersApproximateAge;
 
     @CCD(
         label = "How tall is your partner?"
