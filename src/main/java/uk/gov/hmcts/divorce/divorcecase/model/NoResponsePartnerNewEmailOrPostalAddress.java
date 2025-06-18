@@ -15,7 +15,10 @@ public enum NoResponsePartnerNewEmailOrPostalAddress implements HasLabel {
     NEW_EMAIL_ADDRESS("I have a new email address"),
 
     @JsonProperty("newEmailAndPostalAddress")
-    NEW_EMAIL_AND_POSTAL_ADDRESS("I have a new email address and postal address");
+    NEW_EMAIL_AND_POSTAL_ADDRESS("I have a new email address and postal address"),
+
+    @JsonProperty("contactDetailsUpdated")
+    CONTACT_DETAILS_UPDATED("Contact details have been updated");
 
     private final String label;
 }
