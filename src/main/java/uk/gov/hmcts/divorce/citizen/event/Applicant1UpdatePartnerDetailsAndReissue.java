@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -20,8 +21,10 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
@@ -81,12 +84,13 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
         var newEmail = noResponseJourney.getNoResponsePartnerEmailAddress();
         var applicant2 = caseData.getApplicant2();
 
-        if (!ObjectUtils.isEmpty(newAddress)) {
+        if (!isEmpty(newAddress)) {
             applicant2.setAddress(newAddress);
         }
 
-        if (!ObjectUtils.isEmpty(newEmail)) {
+        if (!isEmpty(newEmail)) {
             applicant2.setEmail(newEmail);
+            applicant2.setAddressOverseas(Objects.requireNonNullElse(applicant2.getAddressOverseas(), YesOrNo.NO));
         }
 
 

@@ -191,7 +191,7 @@ public class ReIssueApplicationService {
                     String.format("Invalid update contact details option selected for CaseId: %s", caseId)));
 
         var noResponseJourneyOptions = caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions();
-        boolean isNewAddressOverseas = noResponseJourneyOptions.getNoResponsePartnerAddressOverseas().equals(YES);
+        boolean isNewAddressOverseas = YES.equals(noResponseJourneyOptions.getNoResponsePartnerAddressOverseas());
         boolean isOldAddressOverseas = caseData.getApplicant2().isBasedOverseas()
             || caseData.getApplicant2().getAddressOverseas() == YES;
 
