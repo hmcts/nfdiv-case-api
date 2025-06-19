@@ -98,15 +98,8 @@ public class Applicant {
     )
     private String lastNameChangedWhenMarriedOtherDetails;
 
-    // To be retired
-    @CCD(label = "Have they changed their name since they got married?")
+    @CCD(label = "Is any part of their name written differently on the marriage certificate?")
     private YesOrNo nameDifferentToMarriageCertificate;
-
-    @CCD(
-        label = "Does your name match the marriage certificate?",
-        searchable = false
-    )
-    private YesOrNo confirmNameMatchesCertificate;
 
     @CCD(
         label = "Why is their legal name different to the marriage certificate?",
