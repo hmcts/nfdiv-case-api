@@ -53,7 +53,6 @@ class Applicant1UpdatePartnerDetailsAndReissueTest {
     @Mock
     private ReIssueApplicationService reIssueApplicationService;
 
-
     @InjectMocks
     private Applicant1UpdatePartnerDetailsAndReissue applicant1UpdatePartnerDetailsAndReissue;
 
@@ -104,7 +103,11 @@ class Applicant1UpdatePartnerDetailsAndReissueTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1UpdatePartnerDetailsAndReissue.aboutToSubmit(caseDetails, null);
 
-        assertThat(response.getData().getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()).isNull();
+        assertThat(response.getData().getApplicant1().getInterimApplicationOptions()
+                .getNoResponseJourneyOptions()).isNotNull();
+        assertThat(response.getData().getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
+                .getNoResponsePartnerNewEmailOrPostalAddress())
+                .isEqualTo(NoResponsePartnerNewEmailOrPostalAddress.CONTACT_DETAILS_UPDATED);
 
         verify(reIssueApplicationService).updateReissueOptionForNewContactDetails(caseData, caseDetails.getId());
     }
