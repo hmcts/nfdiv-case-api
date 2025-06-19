@@ -8,9 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
-import uk.gov.hmcts.divorce.citizen.notification.Applicant1UpdatedPartnerContactDetailsNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrPostalAddress;
@@ -52,7 +50,6 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
     private final CcdUpdateService ccdUpdateService;
     private final ReIssueApplicationService reIssueApplicationService;
     private final NotificationDispatcher notificationDispatcher;
-    private final Applicant1UpdatedPartnerContactDetailsNotification applicant1UpdatePartnerDetailsNotification;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -118,11 +115,6 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
 
         ccdUpdateService
             .submitEvent(caseId, CASEWORKER_REISSUE_APPLICATION, user, serviceAuth);
-
-        if (applicant2.isBasedOverseas() || YesOrNo.YES.equals(applicant2.getAddressOverseas())) {
-
-            notificationDispatcher.send(applicant1UpdatePartnerDetailsNotification, caseData, caseId);
-        }
 
         return SubmittedCallbackResponse.builder().build();
     }

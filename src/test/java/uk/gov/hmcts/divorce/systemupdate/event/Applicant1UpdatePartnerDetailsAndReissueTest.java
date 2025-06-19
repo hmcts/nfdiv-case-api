@@ -20,17 +20,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
-import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.citizen.event.Applicant1UpdatePartnerDetailsAndReissue.UPDATE_PARTNER_DETAILS_AND_REISSUE;
@@ -55,10 +52,6 @@ class Applicant1UpdatePartnerDetailsAndReissueTest {
 
     @Mock
     private ReIssueApplicationService reIssueApplicationService;
-
-    @Mock
-    private NotificationDispatcher notificationDispatcher;
-
 
     @InjectMocks
     private Applicant1UpdatePartnerDetailsAndReissue applicant1UpdatePartnerDetailsAndReissue;
@@ -137,46 +130,5 @@ class Applicant1UpdatePartnerDetailsAndReissueTest {
         applicant1UpdatePartnerDetailsAndReissue.submitted(caseDetails, beforeDetails);
 
         verify(ccdUpdateService).submitEvent(TEST_CASE_ID, CASEWORKER_REISSUE_APPLICATION, user, TEST_SERVICE_AUTH_TOKEN);
-    }
-
-    @Test
-    void shouldSendNotificationWhenApplicantUpdateContactDetailsForPartnerOverseas() {
-
-        final CaseData caseData = caseData();
-
-        caseData.getApplicant2().setAddressOverseas(YesOrNo.YES);
-        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        var user = mock(User.class);
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
-
-        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        applicant1UpdatePartnerDetailsAndReissue.submitted(caseDetails, beforeDetails);
-
-        verify(notificationDispatcher).send(any(), any(), any());
-    }
-
-    @Test
-    void shouldNotSendNotificationWhenApplicantUpdateContactDetailsForPartnerUKBased() {
-
-        final CaseData caseData = caseData();
-
-        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        var user = mock(User.class);
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
-
-        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        applicant1UpdatePartnerDetailsAndReissue.submitted(caseDetails, beforeDetails);
-
-        verifyNoInteractions(notificationDispatcher);
     }
 }
