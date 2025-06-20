@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.AND_CONDITION;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.FIRST_NAME_HINT;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.FIRST_NAME_LABEL;
+import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.HOW_NAME_WRITTEN_ON_CERTIFICATE_LABEL;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.IS_NAME_DIFFERENT_HINT;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.IS_NAME_DIFFERENT_LABEL;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.WHY_NAME_DIFFERENT_DETAILS_LABEL;
@@ -27,7 +28,7 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
     private static final String IF_YOU_DO_NOT_PROVIDE_EVIDENCE_LABEL = """
         If you do not provide evidence to explain the difference in the ${labelContentRespondentsOrApplicant2s} name and how it is
         written on the certificate, the conditional order will be delayed until an explanation or evidence is provided.
-    """;
+        """;
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -53,8 +54,10 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
             .done()
             .complex(CaseData::getApplication)
                 .complex(Application::getMarriageDetails)
-                    .label("app2NameOnCertificate", "## How is the ${labelContentRespondentsOrApplicant2s} name written on the ${labelContentMarriageOrCivilPartnership} certificate?")
-                    .mandatoryWithLabel(MarriageDetails::getApplicant2Name,"${labelContentRespondentsOrApplicant2s} full name")
+                    .label("app2NameOnCertificate",
+                        String.format(HOW_NAME_WRITTEN_ON_CERTIFICATE_LABEL, "${labelContentTheApplicant2}"))
+                    .mandatoryWithLabel(MarriageDetails::getApplicant2Name,
+                        "${labelContentRespondentsOrApplicant2s} full name")
                 .done()
             .done()
             .complex(CaseData::getApplicant2)

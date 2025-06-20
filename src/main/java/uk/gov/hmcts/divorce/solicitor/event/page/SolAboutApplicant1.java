@@ -27,35 +27,37 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
 
     public static final String FIRST_NAME_LABEL = """
        %s first name
-    """;
+        """;
     public static final String FIRST_NAME_HINT = """
         Do not enter an abbreviated name or a nickname unless it is their legal name.
         For example, if David is their legal name, do not enter Dave instead of David
-    """;
+        """;
 
     public static final String IS_NAME_DIFFERENT_LABEL = """
         Is the %s name different from the name on the ${labelContentMarriageOrCivilPartnership} certificate?
-    """;
+        """;
     public static final String IS_NAME_DIFFERENT_HINT = """
         If the %s name is different on the ${labelContentMarriageOrCivilPartnership} certificate, you will have to upload some
         evidence like a government issued ID, a passport, driving licence or birth certificate, deed poll.
-    """;
+        """;
     private static final String APPLICANTS_OR_APPLICANT1S = "${labelContentApplicantsOrApplicant1s}";
 
+    public static final String HOW_NAME_WRITTEN_ON_CERTIFICATE_LABEL = """
+        ## How is %s's name written on the ${labelContentMarriageOrCivilPartnership} certificate?"
+        """;
 
     public static final String WHY_NAME_DIFFERENT_LABEL = """
         Why is %s name different to how it is written on the ${labelContentMarriageOrCivilPartnership} certificate?
-    """;
+        """;
     public static final String WHY_NAME_DIFFERENT_HINT = """
         You must explain the reason for the difference, for example, they changed their name or part of their name was not included on the
         ${labelContentMarriageOrCivilPartnership} certificate. If you are unable to explain the difference by providing evidence, it may
         take longer to process the application. If you indicate the reason for the difference, you will have to upload some evidence like a
         government issued ID, a passport, driving licence or birth certificate, deed poll.
-    """;
-
+        """;
     public static final String WHY_NAME_DIFFERENT_DETAILS_LABEL = """
         Please provide other details of why their name is different on the ${labelContentMarriageOrCivilPartnership} certificate
-    """;
+        """;
 
     public static final String AND_CONDITION = "%s AND %s";
     private static final String NAME_DIFFERENT = "applicant1NameDifferentToMarriageCertificate=\"Yes\"";
@@ -84,7 +86,8 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
             .done()
             .complex(CaseData::getApplication)
                 .complex(Application::getMarriageDetails)
-                    .label("nameOnCertificate", "## How is the ${labelContentApplicantsOrApplicant1s} name written on the ${labelContentMarriageOrCivilPartnership} certificate?")
+                    .label("nameOnCertificate",
+                        String.format(HOW_NAME_WRITTEN_ON_CERTIFICATE_LABEL, "${labelContentTheApplicantOrApplicant1}"))
                     .mandatoryWithLabel(MarriageDetails::getApplicant1Name,"${labelContentApplicantsOrApplicant1s} full name")
                 .done()
             .done()
@@ -123,7 +126,8 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                     "${labelContentApplicantsOrApplicant1s} email address")
                 .optionalWithLabel(Applicant::getPhoneNumber,
                     "${labelContentApplicantsOrApplicant1s} phone number")
-                .optionalWithLabel(Applicant::getAddressOverseas, "Is ${labelContentApplicantsOrApplicant1s} address international?")
+                .optionalWithLabel(Applicant::getAddressOverseas,
+                    "Is ${labelContentApplicantsOrApplicant1s} address international?")
                 .mandatoryWithLabel(Applicant::getNonConfidentialAddress,
                     "${labelContentApplicantsOrApplicant1s} home address")
                 .label("LabelHorizontalLine1-SolAboutApplicant1", DARK_HORIZONTAL_RULE)
