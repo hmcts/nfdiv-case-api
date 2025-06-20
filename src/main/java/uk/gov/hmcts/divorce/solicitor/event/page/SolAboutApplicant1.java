@@ -15,6 +15,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails.APPLICANT_REFUGE_LABEL;
 import static uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails.THE_APPLICANT_OR_APPLICANT1;
+import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.NO_DEFAULT_VALUE;
 import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.andShowCondition;
 
 public class SolAboutApplicant1 implements CcdPageConfiguration {
@@ -73,13 +74,13 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
             .pageLabel("About the applicant")
             .complex(CaseData::getApplicant1)
                 .mandatory(Applicant::getFirstName,
-                    "", null, String.format(FIRST_NAME_LABEL, APPLICANTS_OR_APPLICANT1S), FIRST_NAME_HINT)
+                    "", NO_DEFAULT_VALUE, String.format(FIRST_NAME_LABEL, APPLICANTS_OR_APPLICANT1S), FIRST_NAME_HINT)
                 .optionalWithLabel(Applicant::getMiddleName,
                     "${labelContentApplicantsOrApplicant1s} middle name")
                 .mandatoryWithLabel(Applicant::getLastName,
                     "${labelContentApplicantsOrApplicant1s} last name")
                 .mandatory(Applicant::getNameDifferentToMarriageCertificate,
-                    "", null,
+                    "", NO_DEFAULT_VALUE,
                     String.format(IS_NAME_DIFFERENT_LABEL, APPLICANTS_OR_APPLICANT1S),
                     String.format(IS_NAME_DIFFERENT_HINT, APPLICANTS_OR_APPLICANT1S)
                 )
@@ -94,21 +95,21 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
             .complex(CaseData::getApplicant1)
                 .mandatory(Applicant::getWhyNameDifferent,
                     NAME_DIFFERENT,
-                    null,
+                    NO_DEFAULT_VALUE,
                     String.format(WHY_NAME_DIFFERENT_LABEL, APPLICANTS_OR_APPLICANT1S),
                     WHY_NAME_DIFFERENT_HINT
                 )
                 .mandatory(Applicant::getWhyNameDifferentOtherDetails,
                     andShowCondition(NAME_DIFFERENT, OTHER_REASON_NAME_DIFFERENT),
-                    null,
+                    NO_DEFAULT_VALUE,
                     WHY_NAME_DIFFERENT_DETAILS_LABEL)
                 .mandatory(Applicant::getNameDifferentToMarriageCertificateMethod,
                     andShowCondition(NAME_DIFFERENT, CHANGED_PARTS_OF_NAME),
-                    null,
+                    NO_DEFAULT_VALUE,
                     "What evidence will be provided for the name change?")
                 .mandatory(Applicant::getNameDifferentToMarriageCertificateOtherDetails,
                     andShowCondition(NAME_DIFFERENT, CHANGED_PARTS_OF_NAME, CHANGED_NAME_IN_OTHER_WAY),
-                    null,
+                    NO_DEFAULT_VALUE,
                     "Please provide other details of what evidence will be provided")
                 .mandatoryWithoutDefaultValue(Applicant::getGender, "divorceOrDissolution=\"dissolution\"",
                 "Is ${labelContentTheApplicantOrApplicant1} male or female?")

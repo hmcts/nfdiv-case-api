@@ -7,10 +7,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.joining;
-
 public class PageBuilder {
 
     private final EventBuilder<CaseData, UserRole, State> eventBuilder;
@@ -34,10 +30,5 @@ public class PageBuilder {
         return String.join(" AND ", caseFieldConditions);
     }
 
-    public static String notShowForState(final State... states) {
-        return Stream.of(states)
-            .map(State::name)
-            .collect(joining("\" AND [STATE]!=\"", "[STATE]!=\"", "\""));
-    }
-
+    public static String NO_DEFAULT_VALUE = null;
 }
