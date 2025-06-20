@@ -15,6 +15,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails.APPLICANT_REFUGE_LABEL;
 import static uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails.THE_APPLICANT_OR_APPLICANT1;
+import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.andShowCondition;
 
 public class SolAboutApplicant1 implements CcdPageConfiguration {
 
@@ -24,6 +25,44 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
     private static final String DARK_HORIZONTAL_RULE =
         "![Dark Rule](https://raw.githubusercontent.com/hmcts/nfdiv-case-api/master/resources/image/LabelDarkHorizontalRule.png)";
 
+    public static final String FIRST_NAME_LABEL = """
+       %s first name
+    """;
+    public static final String FIRST_NAME_HINT = """
+        Do not enter an abbreviated name or a nickname unless it is their legal name.
+        For example, if David is their legal name, do not enter Dave instead of David
+    """;
+
+    public static final String IS_NAME_DIFFERENT_LABEL = """
+        Is the %s name different from the name on the ${labelContentMarriageOrCivilPartnership} certificate?
+    """;
+    public static final String IS_NAME_DIFFERENT_HINT = """
+        If the %s name is different on the ${labelContentMarriageOrCivilPartnership} certificate, you will have to upload some
+        evidence like a government issued ID, a passport, driving licence or birth certificate, deed poll.
+    """;
+    private static final String APPLICANTS_OR_APPLICANT1S = "${labelContentApplicantsOrApplicant1s}";
+
+
+    public static final String WHY_NAME_DIFFERENT_LABEL = """
+        Why is %s name different to how it is written on the ${labelContentMarriageOrCivilPartnership} certificate?
+    """;
+    public static final String WHY_NAME_DIFFERENT_HINT = """
+        You must explain the reason for the difference, for example, they changed their name or part of their name was not included on the
+        ${labelContentMarriageOrCivilPartnership} certificate. If you are unable to explain the difference by providing evidence, it may
+        take longer to process the application. If you indicate the reason for the difference, you will have to upload some evidence like a
+        government issued ID, a passport, driving licence or birth certificate, deed poll.
+    """;
+
+    public static final String WHY_NAME_DIFFERENT_DETAILS_LABEL = """
+        Please provide other details of why their name is different on the ${labelContentMarriageOrCivilPartnership} certificate
+    """;
+
+    public static final String AND_CONDITION = "%s AND %s";
+    private static final String NAME_DIFFERENT = "applicant1NameDifferentToMarriageCertificate=\"Yes\"";
+    private static final String OTHER_REASON_NAME_DIFFERENT = "applicant1WhyNameDifferentCONTAINS\"other\"";
+    private static final String CHANGED_PARTS_OF_NAME = "applicant1WhyNameDifferentCONTAINS\"changedPartsOfName\"";
+    private static final String CHANGED_NAME_IN_OTHER_WAY = "applicant1NameDifferentToMarriageCertificateMethodCONTAINS\"other\"";
+
     @Override
     public void addTo(final PageBuilder pageBuilder) {
 
@@ -31,24 +70,46 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
             .page("SolAboutApplicant1", this::midEvent)
             .pageLabel("About the applicant")
             .complex(CaseData::getApplicant1)
-                .mandatoryWithLabel(Applicant::getFirstName,
-                    "${labelContentApplicantsOrApplicant1s} first name")
+                .mandatory(Applicant::getFirstName,
+                    "", null, String.format(FIRST_NAME_LABEL, APPLICANTS_OR_APPLICANT1S), FIRST_NAME_HINT)
                 .optionalWithLabel(Applicant::getMiddleName,
                     "${labelContentApplicantsOrApplicant1s} middle name")
                 .mandatoryWithLabel(Applicant::getLastName,
                     "${labelContentApplicantsOrApplicant1s} last name")
-                .mandatoryWithLabel(Applicant::getNameDifferentToMarriageCertificate,
-                    "Is ${labelContentTheApplicantOrApplicant1} name different to that on the"
-                        + " ${labelContentMarriageOrCivilPartnership} certificate?")
-                .mandatoryWithoutDefaultValue(Applicant::getNameDifferentToMarriageCertificateMethod,
-                    "applicant1NameDifferentToMarriageCertificate=\"Yes\"",
-                    "What evidence will be provided for the name change? ")
-                .mandatoryWithoutDefaultValue(Applicant::getNameDifferentToMarriageCertificateOtherDetails,
-                    "applicant1NameDifferentToMarriageCertificateMethod=\"other\"",
-                    "If not through marriage or deed poll, please provide details of how they legally changed they name")
+                .mandatory(Applicant::getNameDifferentToMarriageCertificate,
+                    "", null,
+                    String.format(IS_NAME_DIFFERENT_LABEL, APPLICANTS_OR_APPLICANT1S),
+                    String.format(IS_NAME_DIFFERENT_HINT, APPLICANTS_OR_APPLICANT1S)
+                )
+            .done()
+            .complex(CaseData::getApplication)
+                .complex(Application::getMarriageDetails)
+                    .label("nameOnCertificate", "## How is the ${labelContentApplicantsOrApplicant1s} name written on the ${labelContentMarriageOrCivilPartnership} certificate?")
+                    .mandatoryWithLabel(MarriageDetails::getApplicant1Name,"${labelContentApplicantsOrApplicant1s} full name")
+                .done()
+            .done()
+            .complex(CaseData::getApplicant1)
+                .mandatory(Applicant::getWhyNameDifferent,
+                    NAME_DIFFERENT,
+                    null,
+                    String.format(WHY_NAME_DIFFERENT_LABEL, APPLICANTS_OR_APPLICANT1S),
+                    WHY_NAME_DIFFERENT_HINT
+                )
+                .mandatory(Applicant::getWhyNameDifferentOtherDetails,
+                    andShowCondition(NAME_DIFFERENT, OTHER_REASON_NAME_DIFFERENT),
+                    null,
+                    WHY_NAME_DIFFERENT_DETAILS_LABEL)
+                .mandatory(Applicant::getNameDifferentToMarriageCertificateMethod,
+                    andShowCondition(NAME_DIFFERENT, CHANGED_PARTS_OF_NAME),
+                    null,
+                    "What evidence will be provided for the name change?")
+                .mandatory(Applicant::getNameDifferentToMarriageCertificateOtherDetails,
+                    andShowCondition(NAME_DIFFERENT, CHANGED_PARTS_OF_NAME, CHANGED_NAME_IN_OTHER_WAY),
+                    null,
+                    "Please provide other details of what evidence will be provided")
                 .mandatoryWithoutDefaultValue(Applicant::getGender, "divorceOrDissolution=\"dissolution\"",
                 "Is ${labelContentTheApplicantOrApplicant1} male or female?")
-                .done()
+            .done()
             .complex(CaseData::getApplication)
                 .mandatory(Application::getDivorceWho, "divorceOrDissolution=\"divorce\"", null,
                 "Who is ${labelContentTheApplicantOrApplicant1} divorcing?")
