@@ -180,7 +180,9 @@ public class ReIssueApplicationService {
 
     }
 
-    public void updateReissueOptionForNewContactDetails(CaseData caseData, Long caseId) {
+    public void updateReissueOptionForNewContactDetails(CaseDetails<CaseData, State> caseDetails, Long caseId) {
+
+        CaseData caseData = caseDetails.getData();
 
         NoResponsePartnerNewEmailOrPostalAddress noResponseOptions =
             Optional.of(caseData.getApplicant1())
@@ -209,6 +211,8 @@ public class ReIssueApplicationService {
 
             default -> reissueOption = REISSUE_CASE;
         }
+
+        caseTasks(setServiceType).run(caseDetails);
 
         caseData.getApplication().setReissueOption(reissueOption);
     }

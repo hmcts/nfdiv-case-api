@@ -9,7 +9,10 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -69,16 +72,11 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
 
         CaseData caseData = details.getData();
 
-        try {
-            reIssueApplicationService.updateReissueOptionForNewContactDetails(caseData, details.getId());
-        } catch (InvalidReissueOptionException ex) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(List.of(String.format("Invalid update contact details option selected for CaseId: %s",
-                    details.getId())))
-                .build();
-        }
+        var noResponseJourney = Optional.of(caseData.getApplicant1())
+                .map(Applicant::getInterimApplicationOptions)
+                .map(InterimApplicationOptions::getNoResponseJourneyOptions)
+                .orElseGet(() -> NoResponseJourneyOptions.builder().build());
 
-        var noResponseJourney = caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions();
         var newAddress = noResponseJourney.getNoResponsePartnerAddress();
         var newEmail = noResponseJourney.getNoResponsePartnerEmailAddress();
         var applicant2 = caseData.getApplicant2();
@@ -92,6 +90,14 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
             applicant2.setAddressOverseas(Objects.requireNonNullElse(applicant2.getAddressOverseas(), YesOrNo.NO));
         }
 
+        try {
+            reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
+        } catch (InvalidReissueOptionException ex) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .errors(List.of(String.format("Invalid update contact details option selected for CaseId: %s",
+                            details.getId())))
+                    .build();
+        }
 
         Optional.ofNullable(caseData.getApplicant1().getInterimApplicationOptions())
             .ifPresent(options -> options.setNoResponseJourneyOptions(null));
