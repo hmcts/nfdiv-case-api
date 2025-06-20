@@ -7,7 +7,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 
-import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.NO_DEFAULT_VALUE;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.AND_CONDITION;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.FIRST_NAME_HINT;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.FIRST_NAME_LABEL;
@@ -39,13 +38,12 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
             .pageLabel("About the other party")
             .complex(CaseData::getApplicant2)
                 .mandatory(Applicant::getFirstName,
-                    "", NO_DEFAULT_VALUE, String.format(FIRST_NAME_LABEL, RESPONDENTS_OR_APPLICANT2S), FIRST_NAME_HINT)
+                    ALWAYS_SHOW, NO_DEFAULT_VALUE, String.format(FIRST_NAME_LABEL, RESPONDENTS_OR_APPLICANT2S), FIRST_NAME_HINT)
                 .optionalWithLabel(Applicant::getMiddleName,
                     "${labelContentRespondentsOrApplicant2s} middle name")
                 .mandatoryWithLabel(Applicant::getLastName,
                     "${labelContentRespondentsOrApplicant2s} last name")
-                .mandatory(Applicant::getNameDifferentToMarriageCertificate,
-                    "", NO_DEFAULT_VALUE,
+                .mandatory(Applicant::getNameDifferentToMarriageCertificate, ALWAYS_SHOW, NO_DEFAULT_VALUE,
                     String.format(IS_NAME_DIFFERENT_LABEL, RESPONDENTS_OR_APPLICANT2S),
                     String.format(
                         IS_NAME_DIFFERENT_HINT + " " + IF_YOU_DO_NOT_PROVIDE_EVIDENCE_LABEL,

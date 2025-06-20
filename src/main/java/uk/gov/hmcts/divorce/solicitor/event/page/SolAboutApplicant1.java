@@ -15,7 +15,6 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails.APPLICANT_REFUGE_LABEL;
 import static uk.gov.hmcts.divorce.caseworker.event.page.UpdateContactDetails.THE_APPLICANT_OR_APPLICANT1;
-import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.NO_DEFAULT_VALUE;
 import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.andShowCondition;
 
 public class SolAboutApplicant1 implements CcdPageConfiguration {
@@ -74,13 +73,12 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
             .pageLabel("About the applicant")
             .complex(CaseData::getApplicant1)
                 .mandatory(Applicant::getFirstName,
-                    "", NO_DEFAULT_VALUE, String.format(FIRST_NAME_LABEL, APPLICANTS_OR_APPLICANT1S), FIRST_NAME_HINT)
+                    ALWAYS_SHOW, NO_DEFAULT_VALUE, String.format(FIRST_NAME_LABEL, APPLICANTS_OR_APPLICANT1S), FIRST_NAME_HINT)
                 .optionalWithLabel(Applicant::getMiddleName,
                     "${labelContentApplicantsOrApplicant1s} middle name")
                 .mandatoryWithLabel(Applicant::getLastName,
                     "${labelContentApplicantsOrApplicant1s} last name")
-                .mandatory(Applicant::getNameDifferentToMarriageCertificate,
-                    "", NO_DEFAULT_VALUE,
+                .mandatory(Applicant::getNameDifferentToMarriageCertificate, ALWAYS_SHOW, NO_DEFAULT_VALUE,
                     String.format(IS_NAME_DIFFERENT_LABEL, APPLICANTS_OR_APPLICANT1S),
                     String.format(IS_NAME_DIFFERENT_HINT, APPLICANTS_OR_APPLICANT1S)
                 )
