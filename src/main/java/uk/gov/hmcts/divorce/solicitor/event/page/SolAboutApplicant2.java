@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 
 import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.andShowCondition;
+import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.EVIDENCE_FOR_NAME_CHANGE_LABEL;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.FIRST_NAME_HINT;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.FIRST_NAME_LABEL;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.HOW_NAME_WRITTEN_ON_CERTIFICATE_LABEL;
@@ -74,7 +75,7 @@ public class SolAboutApplicant2 implements CcdPageConfiguration {
                 .mandatory(Applicant::getNameDifferentToMarriageCertificateMethod,
                     andShowCondition(NAME_IS_DIFFERENT, HAS_CHANGED_PARTS_OF_NAME),
                     NO_DEFAULT_VALUE,
-                    "What evidence will be provided for the name change?")
+                    EVIDENCE_FOR_NAME_CHANGE_LABEL)
                 .mandatory(Applicant::getNameDifferentToMarriageCertificateOtherDetails,
                     andShowCondition(NAME_IS_DIFFERENT, HAS_CHANGED_PARTS_OF_NAME, HAS_CHANGED_NAME_IN_OTHER_WAY),
                     NO_DEFAULT_VALUE,

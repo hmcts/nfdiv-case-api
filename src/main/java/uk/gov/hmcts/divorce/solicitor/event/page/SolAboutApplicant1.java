@@ -54,7 +54,13 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
         government issued ID, a passport, driving licence or birth certificate, deed poll.
         """;
     public static final String WHY_NAME_DIFFERENT_DETAILS_LABEL = """
-        Please provide other details of why their name is different on the ${labelContentMarriageOrCivilPartnership} certificate
+        If you selected ‘Other’, please provide details explaining why their name is different on the
+        ${labelContentMarriageOrCivilPartnership} certificate
+        """;
+
+    public static final String EVIDENCE_FOR_NAME_CHANGE_LABEL = """
+        What evidence will be provided for the name change? Select an option if you have indicated that they changed their last name
+        or parts of their name
         """;
 
     private static final String APPLICANTS_OR_APPLICANT1S = "${labelContentApplicantsOrApplicant1s}";
@@ -105,7 +111,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                 .mandatory(Applicant::getNameDifferentToMarriageCertificateMethod,
                     andShowCondition(NAME_IS_DIFFERENT, HAS_CHANGED_PARTS_OF_NAME),
                     NO_DEFAULT_VALUE,
-                    "What evidence will be provided for the name change?")
+                    EVIDENCE_FOR_NAME_CHANGE_LABEL)
                 .mandatory(Applicant::getNameDifferentToMarriageCertificateOtherDetails,
                     andShowCondition(NAME_IS_DIFFERENT, HAS_CHANGED_PARTS_OF_NAME, HAS_CHANGED_NAME_IN_OTHER_WAY),
                     NO_DEFAULT_VALUE,
