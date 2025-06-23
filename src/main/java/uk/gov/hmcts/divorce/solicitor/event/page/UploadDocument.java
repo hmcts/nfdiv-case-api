@@ -19,9 +19,10 @@ public class UploadDocument implements CcdPageConfiguration {
                     + "or a certified copy or translation.\n\n"
                     + "You can also upload any other evidence or applications, if required. "
                     + "For example a deed poll to show a change of name, or an application for ‘dispensed with’ service.\n\n"
-                    + "If you have indicated that there is a difference in the applicant's or respondent's names and how it is"
-                    + " written on the ${labelContentMarriageOrCivilPartnership} certificate then upload some evidence like a"
-                    + " government issued ID, a passport, driving licence or birth certificate, deed poll.\n\n"
+                    + "If you have indicated that there is a difference in ${labelContentTheApplicantOrApplicant1}'s or"
+                    + " ${labelContentTheApplicant2}'s names and how it is written on the ${labelContentMarriageOrCivilPartnership}"
+                    + " certificate then upload some evidence like a government issued ID, a passport,"
+                    + " driving licence or birth certificate, deed poll.\n\n"
                     + "Make sure the image you upload shows the entire document and all the text is legible.")
             .complex(CaseData::getDocuments)
                 .optional(CaseDocuments::getApplicant1DocumentsUploaded)
