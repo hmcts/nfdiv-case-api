@@ -1,11 +1,17 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+
+import java.time.LocalDate;
+
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
 @Data
 @Builder
@@ -15,14 +21,10 @@ public class BailiffServiceJourneyOptions {
     @CCD(label = "Enter your partner's name")
     private String bailiffPartnersName;
 
-    @CCD(
-        label = "Is your partner currently resident in a refuge?"
-    )
+    @CCD(label = "Is your partner currently resident in a refuge?")
     private YesOrNoOrNotKnown bailiffPartnerInARefuge;
 
-    @CCD(
-        label = "Do you know your partner's phone number?"
-    )
+    @CCD(label = "Do you know your partner's phone number?")
     private YesOrNo bailiffKnowPartnersPhone;
 
     @CCD(
@@ -30,4 +32,46 @@ public class BailiffServiceJourneyOptions {
         regex = "^[0-9 +().-]{9,}$"
     )
     private String bailiffPartnersPhone;
+
+    @CCD(label = "Do you know your partner's date of birth?")
+    private YesOrNo bailiffKnowPartnersDateOfBirth;
+
+    @CCD(
+        label = "What is your partner's date of birth?",
+        typeOverride = Date
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate bailiffPartnersDateOfBirth;
+
+    @CCD(
+        label = "What is your partner's approximate age?"
+    )
+    private Integer bailiffPartnersApproximateAge;
+
+    @CCD(
+        label = "How tall is your partner?"
+    )
+    private String bailiffPartnersHeight;
+
+    @CCD(
+        label = "What is your partner's hair colour?"
+    )
+    private String bailiffPartnersHairColour;
+
+    @CCD(
+        label = "What is your partner's eye colour?"
+    )
+    private String bailiffPartnersEyeColour;
+
+    @CCD(
+        label = "What is your partner's ethnic group?",
+        typeOverride = TextArea
+    )
+    private String bailiffPartnersEthnicGroup;
+
+    @CCD(
+        label = "Does your partner have distinguishing features?",
+        typeOverride = TextArea
+    )
+    private String bailiffPartnersDistinguishingFeatures;
 }
