@@ -91,7 +91,18 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
         }
 
         try {
-            reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
+
+            boolean updateReissueOptionsForNewContactDetails = Optional.ofNullable(caseData.getApplicant1())
+                    .map(Applicant::getInterimApplicationOptions)
+                    .map(InterimApplicationOptions::getNoResponseJourneyOptions)
+                    .map(NoResponseJourneyOptions::getNoResponsePartnerNewEmailOrPostalAddress)
+                    .isPresent();
+
+            if (updateReissueOptionsForNewContactDetails) {
+                reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
+            } else {
+                reIssueApplicationService.process(details);
+            }
         } catch (InvalidReissueOptionException ex) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .errors(List.of(String.format("Invalid update contact details option selected for CaseId: %s",
