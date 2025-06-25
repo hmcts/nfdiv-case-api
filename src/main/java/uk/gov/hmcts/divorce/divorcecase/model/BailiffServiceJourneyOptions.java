@@ -1,17 +1,15 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.FieldType;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -84,13 +82,12 @@ public class BailiffServiceJourneyOptions {
     @CCD(label = "Does your partner have access to a vehicle?")
     private YesOrNoOrNotKnown bailiffDoesPartnerHaveVehicle;
 
+    @JsonUnwrapped(prefix = "bailiffPartnerVehicle")
     @CCD(
-        label = "Partner vehicle details",
-        typeOverride = FieldType.Collection,
-        typeParameterOverride = "Vehicle"
+        label = "Partner vehicle details"
     )
-    private List<ListValue<Vehicle>> bailiffPartnerVehicles;
+    private Vehicle bailiffPartnerVehicle;
 
-    @CCD(label = "Partner vehicle details")
+    @CCD(label = "Has your partner been violent in the past?")
     private YesOrNoOrNotKnown bailiffHasPartnerBeenViolent;
 }
