@@ -6,9 +6,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.FieldType;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -74,4 +77,20 @@ public class BailiffServiceJourneyOptions {
         typeOverride = TextArea
     )
     private String bailiffPartnersDistinguishingFeatures;
+
+    @CCD(label = "When is best to serve papers to your partner?")
+    private String bailiffBestTimeToServePapers;
+
+    @CCD(label = "Does your partner have access to a vehicle?")
+    private YesOrNoOrNotKnown bailiffDoesPartnerHaveVehicle;
+
+    @CCD(
+        label = "Partner vehicle details",
+        typeOverride = FieldType.Collection,
+        typeParameterOverride = "Vehicle"
+    )
+    private List<ListValue<Vehicle>> bailiffPartnerVehicles;
+
+    @CCD(label = "Partner vehicle details")
+    private YesOrNoOrNotKnown bailiffHasPartnerBeenViolent;
 }
