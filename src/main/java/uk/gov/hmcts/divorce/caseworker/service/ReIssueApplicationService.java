@@ -180,7 +180,9 @@ public class ReIssueApplicationService {
 
     }
 
-    public void updateReissueOptionForNewContactDetails(CaseData caseData, Long caseId) {
+    public void updateReissueOptionForNewContactDetails(CaseDetails<CaseData, State> caseDetails, Long caseId) {
+
+        CaseData caseData = caseDetails.getData();
 
         NoResponsePartnerNewEmailOrPostalAddress noResponseOptions =
             Optional.of(caseData.getApplicant1())
@@ -191,7 +193,7 @@ public class ReIssueApplicationService {
                     String.format("Invalid update contact details option selected for CaseId: %s", caseId)));
 
         var noResponseJourneyOptions = caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions();
-        boolean isNewAddressOverseas = noResponseJourneyOptions.getNoResponsePartnerAddressOverseas().equals(YES);
+        boolean isNewAddressOverseas = YES.equals(noResponseJourneyOptions.getNoResponsePartnerAddressOverseas());
         boolean isOldAddressOverseas = caseData.getApplicant2().isBasedOverseas()
             || caseData.getApplicant2().getAddressOverseas() == YES;
 
@@ -209,6 +211,8 @@ public class ReIssueApplicationService {
 
             default -> reissueOption = REISSUE_CASE;
         }
+
+        caseTasks(setServiceType).run(caseDetails);
 
         caseData.getApplication().setReissueOption(reissueOption);
     }

@@ -1,15 +1,18 @@
-package uk.gov.hmcts.divorce.systemupdate.event;
+package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -20,8 +23,10 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
@@ -38,8 +43,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class SystemUpdateContactDetails implements CCDConfig<CaseData, State, UserRole> {
-    public static final String SYSTEM_UPDATE_CONTACT_DETAILS = "update-details-and-reissue";
+public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseData, State, UserRole> {
+    public static final String UPDATE_PARTNER_DETAILS_AND_REISSUE = "update-partner-details-and-reissue";
 
     private final IdamService idamService;
 
@@ -50,7 +55,7 @@ public class SystemUpdateContactDetails implements CCDConfig<CaseData, State, Us
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
-            .event(SYSTEM_UPDATE_CONTACT_DETAILS)
+            .event(UPDATE_PARTNER_DETAILS_AND_REISSUE)
             .forStates(AwaitingAos, AosOverdue, AwaitingDocuments, AwaitingService)
             .showCondition(NEVER_SHOW)
             .name("Update details and reissue")
@@ -67,28 +72,32 @@ public class SystemUpdateContactDetails implements CCDConfig<CaseData, State, Us
 
         CaseData caseData = details.getData();
 
-        try {
-            reIssueApplicationService.updateReissueOptionForNewContactDetails(caseData, details.getId());
-        } catch (InvalidReissueOptionException ex) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(List.of(String.format("Invalid update contact details option selected for CaseId: %s",
-                    details.getId())))
-                .build();
-        }
+        var noResponseJourney = Optional.of(caseData.getApplicant1())
+                .map(Applicant::getInterimApplicationOptions)
+                .map(InterimApplicationOptions::getNoResponseJourneyOptions)
+                .orElseGet(() -> NoResponseJourneyOptions.builder().build());
 
-        var noResponseJourney = caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions();
         var newAddress = noResponseJourney.getNoResponsePartnerAddress();
         var newEmail = noResponseJourney.getNoResponsePartnerEmailAddress();
         var applicant2 = caseData.getApplicant2();
 
-        if (!ObjectUtils.isEmpty(newAddress)) {
+        if (!isEmpty(newAddress)) {
             applicant2.setAddress(newAddress);
         }
 
-        if (!ObjectUtils.isEmpty(newEmail)) {
+        if (!isEmpty(newEmail)) {
             applicant2.setEmail(newEmail);
+            applicant2.setAddressOverseas(Objects.requireNonNullElse(applicant2.getAddressOverseas(), YesOrNo.NO));
         }
 
+        try {
+            reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
+        } catch (InvalidReissueOptionException ex) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .errors(List.of(String.format("Invalid update contact details option selected for CaseId: %s",
+                            details.getId())))
+                    .build();
+        }
 
         Optional.ofNullable(caseData.getApplicant1().getInterimApplicationOptions())
             .ifPresent(options -> options.setNoResponseJourneyOptions(null));
@@ -100,7 +109,7 @@ public class SystemUpdateContactDetails implements CCDConfig<CaseData, State, Us
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} submitted callback invoked for case id: {}", SYSTEM_UPDATE_CONTACT_DETAILS, details.getId());
+        log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_AND_REISSUE, details.getId());
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
