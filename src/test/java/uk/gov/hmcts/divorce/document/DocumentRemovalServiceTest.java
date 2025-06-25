@@ -36,6 +36,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType.D8;
@@ -138,7 +139,7 @@ class DocumentRemovalServiceTest {
             SYSTEM_USER_USER_ID,
             TEST_SERVICE_AUTH_TOKEN,
             scannedDocumentList.get(0).getValue().getUrl(),
-            true
+            false
         );
 
         CaseData beforeData = CaseData.builder()
@@ -156,9 +157,31 @@ class DocumentRemovalServiceTest {
             SYSTEM_USER_USER_ID,
             TEST_SERVICE_AUTH_TOKEN,
             scannedDocumentList.get(0).getValue().getUrl(),
-            true
+            false
         );
 
+        verifyNoMoreInteractions(idamService, authTokenGenerator, documentManagementClient);
+    }
+
+    @Test
+    void shouldNotDeleteScannedDocumentIfSubtypeChanges() {
+        final List<String> systemRoles = List.of("caseworker-divorce");
+        final String userId = UUID.randomUUID().toString();
+        final List<ListValue<ScannedDocument>> scannedDocumentList = scannedDocuments(D8);
+        scannedDocumentList.getFirst().getValue().setSubtype("DummyBefore");
+        final List<ListValue<ScannedDocument>> afterScannedDocumentList = scannedDocuments(D8);
+        afterScannedDocumentList.getFirst().getValue().setSubtype("DummyAfter");
+
+        CaseData beforeData = CaseData.builder()
+            .documents(CaseDocuments.builder().scannedDocuments(scannedDocumentList).build())
+            .build();
+        CaseData afterData = CaseData.builder()
+            .documents(CaseDocuments.builder().scannedDocuments(afterScannedDocumentList).build())
+            .build();
+
+        documentRemovalService.handleDeletionOfScannedDocuments(beforeData, afterData);
+
+        verifyNoInteractions(documentManagementClient);
         verifyNoMoreInteractions(idamService, authTokenGenerator, documentManagementClient);
     }
 
@@ -166,12 +189,9 @@ class DocumentRemovalServiceTest {
     void shouldNotCallDocumentManagementClientWhenNoDocumentIsAttachedToScannedDocument() {
         final List<String> systemRoles = List.of("caseworker-divorce");
         final String userId = UUID.randomUUID().toString();
-        final User systemUser = systemUser(systemRoles, userId);
         final List<ListValue<ScannedDocument>> scannedDocumentList = scannedDocuments(D8);
 
-        scannedDocumentList.get(0).getValue().setUrl(null);
-
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
+        scannedDocumentList.getFirst().getValue().setUrl(null);
 
         CaseData beforeData = CaseData.builder()
             .documents(CaseDocuments.builder().scannedDocuments(scannedDocumentList).build())

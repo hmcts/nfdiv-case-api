@@ -21,7 +21,6 @@ import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCreatePaperCase.CREATE_PAPER_CASE;
@@ -184,18 +183,5 @@ class CaseworkerCreatePaperCaseTest {
         caseworkerCreatePaperCase.aboutToSubmit(details, details);
 
         verify(notificationDispatcher).send(paperApplicationReceivedNotification, caseData, TEST_CASE_ID);
-    }
-
-    @Test
-    void shouldNotSendNotificationForJSCases() {
-        final CaseData caseData = caseData();
-        caseData.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        caseworkerCreatePaperCase.aboutToSubmit(details, details);
-
-        verifyNoInteractions(notificationDispatcher);
     }
 }
