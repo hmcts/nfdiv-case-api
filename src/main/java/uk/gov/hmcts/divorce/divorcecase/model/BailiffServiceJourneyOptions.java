@@ -83,9 +83,7 @@ public class BailiffServiceJourneyOptions {
     private YesOrNoOrNotKnown bailiffDoesPartnerHaveVehicle;
 
     @JsonUnwrapped(prefix = "bailiffPartnerVehicle")
-    @CCD(
-        label = "Partner vehicle details"
-    )
+    @CCD(label = "Partner vehicle details")
     private Vehicle bailiffPartnerVehicle;
 
     @CCD(label = "Has your partner been violent in the past?")
