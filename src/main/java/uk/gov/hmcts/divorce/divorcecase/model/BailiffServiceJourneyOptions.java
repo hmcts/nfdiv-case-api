@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -74,4 +75,17 @@ public class BailiffServiceJourneyOptions {
         typeOverride = TextArea
     )
     private String bailiffPartnersDistinguishingFeatures;
+
+    @CCD(label = "When is best to serve papers to your partner?")
+    private String bailiffBestTimeToServePapers;
+
+    @CCD(label = "Does your partner have access to a vehicle?")
+    private YesOrNoOrNotKnown bailiffDoesPartnerHaveVehicle;
+
+    @JsonUnwrapped(prefix = "bailiffPartnerVehicle")
+    @CCD(label = "Partner vehicle details")
+    private Vehicle bailiffPartnerVehicle;
+
+    @CCD(label = "Has your partner been violent in the past?")
+    private YesOrNoOrNotKnown bailiffHasPartnerBeenViolent;
 }
