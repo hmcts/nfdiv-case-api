@@ -87,7 +87,7 @@ public class ReIssueApplicationService {
         ReissueOption reissueOption = caseData.getApplication().getReissueOption();
 
         if (reissueOption == null) {
-            reissueOption = setReissueOptionsForCitizen(caseData);
+            reissueOption = setReissueOptionsForCitizen(caseData.getApplicant2());
         }
 
         log.info("For case id {} reissue option selected is {} ", caseDetails.getId(), reissueOption);
@@ -221,18 +221,11 @@ public class ReIssueApplicationService {
         caseData.getApplication().setReissueOption(reissueOption);
     }
 
-    private ReissueOption setReissueOptionsForCitizen(CaseData caseData) {
-        boolean isApplicant2AddressOverseas = caseData.getApplicant2().isBasedOverseas()
-            || caseData.getApplicant2().getAddressOverseas() == YES;
+    private ReissueOption setReissueOptionsForCitizen(Applicant applicant2) {
 
-        if (isApplicant2AddressOverseas) {
-            return REISSUE_CASE;
-        } else {
-            if (StringUtils.isEmpty(caseData.getApplicant2().getEmail())) {
-                return OFFLINE_AOS;
-            } else {
-                return DIGITAL_AOS;
-            }
-        }
+        return (applicant2.isBasedOverseas() || applicant2.getAddressOverseas() == YES)
+            ? REISSUE_CASE
+            : StringUtils.isEmpty(applicant2.getEmail()) ? OFFLINE_AOS : DIGITAL_AOS;
+
     }
 }
