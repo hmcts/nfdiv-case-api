@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 @Getter
 @AllArgsConstructor
-public enum AlternativeOptions implements HasLabel {
+public enum AlternativeServiceMethod implements HasLabel {
     @JsonProperty("byEmail")
     EMAIL("By email"),
 

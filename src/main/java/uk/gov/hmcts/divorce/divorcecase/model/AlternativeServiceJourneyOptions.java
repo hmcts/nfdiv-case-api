@@ -23,50 +23,50 @@ public class AlternativeServiceJourneyOptions {
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String alternativeReason;
+    private String altServiceReasonForApplying;
 
     @CCD(
         label = "How would you like to apply to send the papers?",
         typeOverride = FixedRadioList,
-        typeParameterOverride = "AlternativeOptions"
+        typeParameterOverride = "AlternativeServiceMethod"
     )
-    private AlternativeOptions alternativeOptions;
+    private AlternativeServiceMethod altServiceMethod;
 
     @CCD(
         label = "Email address"
     )
-    private String alternativePartnerEmail;
+    private String altServicePartnerEmail;
 
     @CCD(label = "How do you want to send the divorce papers?")
-    private Set<AlternativeDifferentWay> alternativeDifferentWays;
+    private Set<AlternativeServiceDifferentWays> altServiceDifferentWays;
 
     @CCD(
         label = "Phone number",
         regex = "^[0-9 +().-]{9,}$"
     )
-    private String alternativePhone;
+    private String altServicePartnerPhone;
 
     @CCD(
         label = "WhatsApp number",
         regex = "^[0-9 +().-]{9,}$"
     )
-    private String alternativeWhatsApp;
+    private String altServicePartnerWANum;
 
     @CCD(
         label = "Details of private message on social media",
         typeOverride = TextArea
     )
-    private String alternativeSocialDetails;
+    private String altServicePartnerSocialDetails;
 
     @CCD(
         label = "Details of other way of sending the papers",
         typeOverride = TextArea
     )
-    private String alternativeOtherDetails;
+    private String altServicePartnerOtherDetails;
 
     @CCD(
         label = "Why are you applying to send the documents by such specific method?",
         typeOverride = TextArea
     )
-    private String alternativeMethodReason;
+    private String altServiceMethodJustification;
 }

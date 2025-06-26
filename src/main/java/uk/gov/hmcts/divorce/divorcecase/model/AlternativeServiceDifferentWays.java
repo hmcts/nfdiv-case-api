@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 @Getter
 @AllArgsConstructor
-public enum AlternativeDifferentWay implements HasLabel {
+public enum AlternativeServiceDifferentWays implements HasLabel {
 
     @JsonProperty("textMessage")
     TEXT_MESSAGE("Text Message"),
