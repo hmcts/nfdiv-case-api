@@ -22,6 +22,8 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocument
 @RequiredArgsConstructor
 public class SaveLegalProceedingDocumentsToCaseDocuments implements CaseTask {
 
+    private static final String DOCUMENT_COMMENT = "Legal proceeding document uploaded by respondent";
+
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
 
@@ -45,7 +47,7 @@ public class SaveLegalProceedingDocumentsToCaseDocuments implements CaseTask {
     private ConfidentialDivorceDocument mapToConfidentialDivorceDocument(final DivorceDocument divorceDocument) {
         return ConfidentialDivorceDocument.builder()
             .documentLink(divorceDocument.getDocumentLink())
-            .documentComment(divorceDocument.getDocumentComment())
+            .documentComment(DOCUMENT_COMMENT)
             .documentFileName(divorceDocument.getDocumentFileName())
             .documentDateAdded(divorceDocument.getDocumentDateAdded())
             .documentEmailContent(divorceDocument.getDocumentEmailContent())
