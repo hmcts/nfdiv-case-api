@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -16,6 +17,8 @@ import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.common.notification.SoleApplicationNotDisputedNotification.DOC_NOT_UPLOADED;
+import static uk.gov.hmcts.divorce.common.notification.SoleApplicationNotDisputedNotification.DOC_UPLOADED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
@@ -88,6 +91,8 @@ public class SoleApplicationDisputedNotification implements ApplicantNotificatio
 
         Map<String, String> templateVars = disputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.put(DISPUTED_AOS_FEE,formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_ISSUE,KEYWORD_DIVORCE_ANSWERS)));
+        templateVars.put(DOC_UPLOADED, caseData.getApplicant2().getUnableToUploadEvidence() == YesOrNo.YES ? NO : YES);
+        templateVars.put(DOC_NOT_UPLOADED, caseData.getApplicant2().getUnableToUploadEvidence() == YesOrNo.YES ? YES : NO);
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
             getState(caseDetails).equals(AwaitingConditionalOrder)
