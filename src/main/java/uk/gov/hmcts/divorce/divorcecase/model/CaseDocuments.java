@@ -56,7 +56,8 @@ public class CaseDocuments {
         label = "Applicant 1 uploaded documents",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> applicant1DocumentsUploaded;
 
@@ -64,7 +65,8 @@ public class CaseDocuments {
         label = "Applicant 2 Documents uploaded",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {Applicant2Access.class}
+        access = {Applicant2Access.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> applicant2DocumentsUploaded;
 
@@ -72,7 +74,8 @@ public class CaseDocuments {
         label = "Documents uploaded",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> documentsUploaded;
 
@@ -80,7 +83,8 @@ public class CaseDocuments {
         label = "Confidential documents uploaded",
         typeOverride = Collection,
         typeParameterOverride = "ConfidentialDivorceDocument",
-        access = {CaseworkerCourtAdminWithSolicitorAccess.class}
+        access = {CaseworkerCourtAdminWithSolicitorAccess.class},
+        searchable = false
     )
     private List<ListValue<ConfidentialDivorceDocument>> confidentialDocumentsUploaded;
 
@@ -88,7 +92,8 @@ public class CaseDocuments {
         label = "Confidential documents generated",
         typeOverride = Collection,
         typeParameterOverride = "ConfidentialDivorceDocument",
-        access = {CaseworkerCourtAdminWithSolicitorAccess.class}
+        access = {CaseworkerCourtAdminWithSolicitorAccess.class},
+        searchable = false
     )
     private List<ListValue<ConfidentialDivorceDocument>> confidentialDocumentsGenerated;
 
@@ -96,7 +101,8 @@ public class CaseDocuments {
         label = "Documents generated",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> documentsGenerated;
 
@@ -112,19 +118,22 @@ public class CaseDocuments {
         label = "Upload Answer Received supporting documents",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> answerReceivedSupportingDocuments;
 
     @CCD(
         label = "Select scanned document name",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private DynamicList scannedDocumentNames;
 
     @CCD(
         label = "Select general order document name",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private DynamicList generalOrderDocumentNames;
 
@@ -132,7 +141,8 @@ public class CaseDocuments {
         label = "Amended applications",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> amendedApplications;
 
@@ -140,7 +150,8 @@ public class CaseDocuments {
         label = "Documents uploaded",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> documentsUploadedOnConfirmService;
 
@@ -148,7 +159,8 @@ public class CaseDocuments {
         label = "Documents uploaded",
         typeOverride = Collection,
         typeParameterOverride = "LetterPack",
-        access = {CaseworkerCourtAdminWithSolicitorAccess.class}
+        access = {CaseworkerCourtAdminWithSolicitorAccess.class},
+        searchable = false
     )
     private List<ListValue<LetterPack>> letterPacks;
 

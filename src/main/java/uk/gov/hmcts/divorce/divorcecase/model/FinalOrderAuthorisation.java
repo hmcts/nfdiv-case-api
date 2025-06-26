@@ -13,7 +13,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 public class FinalOrderAuthorisation {
 
     @CCD(
-        label = "General Order Authorising Overdue Final Order"
+        label = "General Order Authorising Overdue Final Order",
+        searchable = false
     )
     private DivorceGeneralOrder finalOrderGeneralOrder;
 
