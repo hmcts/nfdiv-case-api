@@ -10,9 +10,12 @@ import uk.gov.hmcts.divorce.document.print.documentpack.ApplyForConditionalOrder
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.notification.exception.NotificationException;
+import uk.gov.service.notify.NotificationClientException;
 
 import java.util.Map;
 
+import static java.lang.String.*;
 import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_CONDITIONAL_ORDER;
@@ -60,6 +63,9 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
 
     @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
+
+        doNotSendNotifications(caseData, caseData.getApplicant1(), true);
+
         log.info("Notifying applicant 1 solicitor that they can apply for a conditional order: {}", id);
 
         Applicant applicant1 = caseData.getApplicant1();
@@ -89,6 +95,9 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
 
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long id) {
+
+        doNotSendNotifications(caseData, caseData.getApplicant1(), false);
+
         log.info("Notifying applicant 1 offline that they can apply for a conditional order: {}", id);
         final Applicant applicant1 = caseData.getApplicant1();
         var documentPackInfo = applyForConditionalOrderDocumentPack.getDocumentPack(caseData, applicant1);
@@ -96,9 +105,12 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
     }
 
     public void sendToApplicant2(final CaseData caseData, final Long id) {
+        Applicant applicant2 = caseData.getApplicant2();
+
+        doNotSendNotifications(caseData, applicant2, true);
+
         if (!caseData.getApplicationType().isSole() && nonNull(caseData.getApplicant2().getEmail())) {
             log.info("Notifying applicant 2 that they can apply for a conditional order: {}", id);
-            final Applicant applicant2 = caseData.getApplicant2();
             final Map<String, String> templateVars = commonContent
                 .conditionalOrderTemplateVars(caseData, id, applicant2, caseData.getApplicant1());
             templateVars.put(IS_REMINDER, NO);
@@ -135,6 +147,7 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
 
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long id) {
+
         if (!caseData.getApplicationType().isSole()) {
             log.info("Notifying applicant 2 offline that they can apply for a conditional order: {}", id);
             final Applicant applicant2 = caseData.getApplicant2();
@@ -161,5 +174,16 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
 
         return templateVars;
+    }
+
+    private void doNotSendNotifications(CaseData caseData, Applicant applicant, boolean isEmail) {
+
+        boolean isApplicantOffline = applicant.isApplicantOffline();
+
+        String message = format("Applicant %s %s", applicant.getFullName(), isEmail ? "has no email address" : "is not offline in a joint case");
+        if (!caseData.getApplicationType().isSole() && !applicant.isApplicantOffline() || applica) {
+            log.error(message);
+            throw new NotificationException(new NotificationClientException(message));
+        }
     }
 }
