@@ -42,6 +42,7 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SUBMITTED_DATE_IS_NULL;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicantsStatus;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCasesAcceptedToListForHearing;
@@ -677,6 +678,35 @@ class CaseValidationTest {
 
         List<String> errors = validateChangeServiceRequest(caseData);
 
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    void shouldValidateApplicantsStatusForJointCaseWhenOneOfTheApplicantsIsOnline() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(NO);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        List<String> errors = validateApplicantsStatus(caseDetails);
+        assertThat(errors).hasSize(1);
+        assertThat(errors).containsExactly("Invalid offline status for applicants in a joint application");
+    }
+
+    @Test
+    void shouldValidateApplicantsStatusForJointCaseWhenBothApplicantsAreOffline() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(YES);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        List<String> errors = validateApplicantsStatus(caseDetails);
         assertThat(errors).isEmpty();
     }
 }

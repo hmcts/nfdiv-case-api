@@ -222,6 +222,17 @@ public final class ValidationUtil {
             : singletonList("Not possible to update applicant 2 invite email address");
     }
 
+    public static List<String> validateApplicantsStatus(CaseDetails<CaseData, State> details) {
+        CaseData caseData = details.getData();
+        boolean isJoint = !caseData.getApplicationType().isSole();
+        boolean applicantOfflineStatusMatches =
+            caseData.getApplicant1().isApplicantOffline() == caseData.getApplicant2().isApplicantOffline();
+
+        return isJoint && applicantOfflineStatusMatches
+            ? emptyList()
+            : singletonList("Invalid offline status for applicants in a joint application");
+    }
+
     @SafeVarargs
     public static <E> List<E> flattenLists(List<E>... lists) {
         return Arrays.stream(lists).flatMap(Collection::stream).collect(toList());

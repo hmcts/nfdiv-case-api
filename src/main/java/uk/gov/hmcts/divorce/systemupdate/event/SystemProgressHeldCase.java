@@ -14,6 +14,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import java.util.List;
+
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -23,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicantsStatus;
 
 @Component
 @Slf4j
@@ -49,6 +52,19 @@ public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRo
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
         final Long caseId = details.getId();
+
+        final List<String> validationErrors = validateApplicantsStatus(details);
+
+        if (!validationErrors.isEmpty()) {
+            log.error("Applicants have different offline status in a joint case. Both applicants needs to be either online or offline for caseID: {}",
+                details.getId());
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(validationErrors)
+                .data(caseData)
+                .build();
+        }
+
         log.info("20wk holding period elapsed for case({}), sending notifications declaring conditional order can be applied for", caseId);
 
         caseData.setDueDate(null);
