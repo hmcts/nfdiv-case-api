@@ -13,6 +13,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrPostalAddress;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -91,7 +93,18 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
         }
 
         try {
-            reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
+
+            boolean updateReissueOptionsForNewContactDetails = Optional.ofNullable(caseData.getApplicant1())
+                    .map(Applicant::getInterimApplicationOptions)
+                    .map(InterimApplicationOptions::getNoResponseJourneyOptions)
+                    .map(NoResponseJourneyOptions::getNoResponsePartnerNewEmailOrPostalAddress)
+                    .isPresent();
+
+            if (updateReissueOptionsForNewContactDetails) {
+                reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
+            } else {
+                reIssueApplicationService.process(details);
+            }
         } catch (InvalidReissueOptionException ex) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .errors(List.of(String.format("Invalid update contact details option selected for CaseId: %s",
@@ -100,7 +113,9 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
         }
 
         Optional.ofNullable(caseData.getApplicant1().getInterimApplicationOptions())
-            .ifPresent(options -> options.setNoResponseJourneyOptions(null));
+                .ifPresent(options -> options.setNoResponseJourneyOptions(NoResponseJourneyOptions.builder()
+                        .noResponseSendPapersAgainOrTrySomethingElse(NoResponseSendPapersAgainOrTrySomethingElse.SEND_PAPERS_AGAIN).build()));
+
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
