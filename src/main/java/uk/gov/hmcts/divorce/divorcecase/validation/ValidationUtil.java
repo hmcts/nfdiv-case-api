@@ -222,7 +222,7 @@ public final class ValidationUtil {
             : singletonList("Not possible to update applicant 2 invite email address");
     }
 
-    public static List<String> validateApplicantsStatus(CaseDetails<CaseData, State> details) {
+    `validateJointApplicantOfflineStatus`
         CaseData caseData = details.getData();
         boolean isJoint = !caseData.getApplicationType().isSole();
         boolean applicantOfflineStatusMatches =
