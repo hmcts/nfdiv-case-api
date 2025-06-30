@@ -88,4 +88,46 @@ public class BailiffServiceJourneyOptions {
 
     @CCD(label = "Has your partner been violent in the past?")
     private YesOrNoOrNotKnown bailiffHasPartnerBeenViolent;
+
+    @CCD(
+        label = "Provide details of any violent incidents",
+        typeOverride = TextArea
+    )
+    private String bailiffPartnerViolenceDetails;
+
+    @CCD(label = "Has your partner made threats against you?")
+    private YesOrNoOrNotKnown bailiffHasPartnerMadeThreats;
+
+    @CCD(
+        label = "Provide details of any threats",
+        typeOverride = TextArea
+    )
+    private String bailiffPartnerThreatsDetails;
+
+    @CCD(label = "Have police been involved with your partner?")
+    private YesOrNoOrNotKnown bailiffHavePoliceBeenInvolved;
+
+    @CCD(
+        label = "Provide details of any police involvement",
+        typeOverride = TextArea
+    )
+    private String bailiffPoliceInvolvedDetails;
+
+    @CCD(label = "Have social services been involved with your partner?")
+    private YesOrNoOrNotKnown bailiffHaveSocialServicesBeenInvolved;
+
+    @CCD(
+        label = "Provide details of any social services involvement",
+        typeOverride = TextArea
+    )
+    private String bailiffSocialServicesInvolvedDetails;
+
+    @CCD(label = "Are there any dangerous animals at the property?")
+    private YesOrNoOrNotKnown bailiffAreThereDangerousAnimals;
+
+    @CCD(
+        label = "Provide details of any dangerous animals",
+        typeOverride = TextArea
+    )
+    private String bailiffDangerousAnimalsDetails;
 }
