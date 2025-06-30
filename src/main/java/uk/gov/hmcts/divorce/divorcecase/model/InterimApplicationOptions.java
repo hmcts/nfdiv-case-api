@@ -36,6 +36,14 @@ public class InterimApplicationOptions {
     )
     private DeemedServiceJourneyOptions deemedServiceJourneyOptions;
 
+    @JsonUnwrapped
+    @CCD(
+        label = "Dispense With Service Journey Options",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private DispenseWithServiceJourneyOptions dispenseWithServiceJourneyOptions;
+
     @CCD(
         label = "Active Interim Application Type",
         typeOverride = FixedList,
