@@ -39,7 +39,8 @@ public class InterimApplicationOptions {
     @JsonUnwrapped
     @CCD(
         label = "Dispense With Service Journey Options",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private DispenseWithServiceJourneyOptions dispenseWithServiceJourneyOptions;
 
