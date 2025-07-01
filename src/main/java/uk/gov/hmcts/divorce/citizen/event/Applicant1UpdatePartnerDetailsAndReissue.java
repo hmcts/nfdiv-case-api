@@ -30,6 +30,7 @@ import java.util.Optional;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
+import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.SEND_PAPERS_AGAIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -111,11 +112,16 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
                     .build();
         }
 
-        Optional.ofNullable(caseData.getApplicant1().getInterimApplicationOptions())
-                .ifPresent(options -> options.setNoResponseJourneyOptions(NoResponseJourneyOptions.builder()
-                        .noResponseSendPapersAgainOrTrySomethingElse(NoResponseSendPapersAgainOrTrySomethingElse.SEND_PAPERS_AGAIN)
-                        .build()));
+        var noResponseJourneyOptions = getNoResponseJourneyOptions(caseData);
 
+        if (!isEmpty(noResponseJourneyOptions)) {
+
+            if (SEND_PAPERS_AGAIN.equals(
+                noResponseJourneyOptions.getNoResponseSendPapersAgainOrTrySomethingElse())) {
+               noResponseJourneyOptions.setNoResponseSendPapersAgainOrTrySomethingElse(NoResponseSendPapersAgainOrTrySomethingElse.SEND_PAPERS_AGAIN)
+                details.setState(AwaitingAos);
+            }
+        }       // Add logic for more options if required
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -124,14 +130,32 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_AND_REISSUE, details.getId());
 
-        final User user = idamService.retrieveSystemUpdateUserDetails();
-        final String serviceAuth = authTokenGenerator.generate();
+        NoResponseJourneyOptions noResponseJourneyOptions = getNoResponseJourneyOptions(details.getData());
 
-        ccdUpdateService
-            .submitEvent(details.getId(), CASEWORKER_REISSUE_APPLICATION, user, serviceAuth);
+        if (processNoResponseJourneyOptions(noResponseJourneyOptions)) {
+
+            log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_AND_REISSUE, details.getId());
+
+            final User user = idamService.retrieveSystemUpdateUserDetails();
+            final String serviceAuth = authTokenGenerator.generate();
+
+            ccdUpdateService
+                .submitEvent(details.getId(), CASEWORKER_REISSUE_APPLICATION, user, serviceAuth);
+        }
 
         return SubmittedCallbackResponse.builder().build();
     }
+
+    private NoResponseJourneyOptions getNoResponseJourneyOptions(CaseData caseData) {
+        return Optional.ofNullable(caseData.getApplicant1().getInterimApplicationOptions())
+            .map(InterimApplicationOptions::getNoResponseJourneyOptions)
+            .orElse(null);
+    }
+
+    private boolean processNoResponseJourneyOptions(NoResponseJourneyOptions options) {
+        return options != null
+            && options.getNoResponseSendPapersAgainOrTrySomethingElse() != null;
+    }
+
 }
