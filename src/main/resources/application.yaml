@@ -498,7 +498,7 @@ docmosis:
       DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V3.docx #TODO: update template once available
       JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Solicitor-Cover-Letter-JS.docx
       CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V3.docx
-      RESPONDENT_ANSWERS: FL-NFD-GOR-WEL-Respondent-Answers-Cy-V1.docx
+      RESPONDENT_ANSWERS: FL-NFD-GOR-WEL-Respondent-Answers-Cy-V2.docx
       CERTIFICATE_OF_SERVICE: FL-NFD-GOR-WEL-Certificate-Of-Service-CY-V1.docx      #TODO: update content after changes made in NFDIV-3144
       SERVICE_ORDER: FL-NFD-GOR-WEL-Service-Order-V3-Cy.docx
       BULK_CASE_PRONOUNCEMENT: FL-NFD-GOR-ENG-Pronouncement-List-V3.docx  #TODO: update content
