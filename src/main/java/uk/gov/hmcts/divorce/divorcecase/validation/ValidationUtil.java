@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.divorcecase.validation;
 import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
@@ -27,6 +28,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
 public final class ValidationUtil {
+    private static final String PBA_NUMBER_NOT_PRESENT_ERROR =
+        "PBA number not present when payment method is 'Solicitor fee account (PBA)' for CaseId: ";
 
     public static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year and one day ago.";
     public static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION =
@@ -225,5 +228,10 @@ public final class ValidationUtil {
     @SafeVarargs
     public static <E> List<E> flattenLists(List<E>... lists) {
         return Arrays.stream(lists).flatMap(Collection::stream).collect(toList());
+    }
+
+    public static List<String> validateSolicitorPbaNumbers(DynamicList pbaNumbersDynamicList, Long caseId) {
+        boolean pbaListEmpty = pbaNumbersDynamicList == null || pbaNumbersDynamicList.getListItems().isEmpty();
+        return pbaListEmpty ? singletonList(String.format(PBA_NUMBER_NOT_PRESENT_ERROR + "%s", caseId)) : emptyList();
     }
 }
