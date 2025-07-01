@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
@@ -76,6 +77,8 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
         "General Application payment could not be completed as the invokers organisation policy did not match any on the case";
     private static final String GENERAL_APPLICATION_URGENT_CASE_REASON_ERROR =
         "General Application marked as urgent need an accompanying reason why it is urgent";
+    private static final String PBA_NUMBER_NOT_PRESENT_ERROR =
+        "PBA number not present when payment method is 'Solicitor fee account (PBA)' for CaseId: ";
 
     private static final EnumSet<State> GENERAL_APPLICATION_STATES = EnumSet.complementOf(EnumSet.of(
         Draft,
@@ -165,45 +168,61 @@ public class SolicitorGeneralApplication implements CCDConfig<CaseData, State, U
                 .build();
         }
 
-        if (generalApplication.getGeneralApplicationFee().isPaymentMethodPba()) {
-            final Solicitor invokingSolicitor = getInvokingSolicitor(data, request.getHeader(AUTHORIZATION));
+        final FeeDetails feeDetails = generalApplication.getGeneralApplicationFee();
+        final boolean pbaNumberPresent = Optional.ofNullable(feeDetails.getPbaNumbers())
+            .map(DynamicList::getListItems)
+            .map(pbaList -> !pbaList.isEmpty())
+            .orElse(false);
 
-            if (isNull(invokingSolicitor)) {
-                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                    .data(details.getData())
-                    .errors(singletonList(GENERAL_APPLICATION_ORG_POLICY_ERROR))
-                    .build();
-            }
+        if (feeDetails.isPaymentMethodPba()) {
+            if (pbaNumberPresent) {
+                final Solicitor invokingSolicitor = getInvokingSolicitor(data, request.getHeader(AUTHORIZATION));
 
-            String responsibleOrganisation = Optional.of(invokingSolicitor)
+                if (isNull(invokingSolicitor)) {
+                    return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                        .data(details.getData())
+                        .errors(singletonList(GENERAL_APPLICATION_ORG_POLICY_ERROR))
+                        .build();
+                }
+
+                String responsibleOrganisation = Optional.of(invokingSolicitor)
                     .map(Solicitor::getOrganisationPolicy)
                     .map(OrganisationPolicy::getOrganisation)
                     .map(Organisation::getOrganisationName)
                     .orElse("");
-            prepareServiceRequest(details.getId(), generalApplication.getGeneralApplicationFee(), responsibleOrganisation);
+                prepareServiceRequest(details.getId(), generalApplication.getGeneralApplicationFee(), responsibleOrganisation);
 
-            final PbaResponse response = paymentService.processPbaPayment(
-                details.getId(),
-                generalApplication.getGeneralApplicationFee().getServiceRequestReference(),
-                invokingSolicitor,
-                generalApplication.getGeneralApplicationFee().getPbaNumber(),
-                generalApplication.getGeneralApplicationFee().getOrderSummary(),
-                generalApplication.getGeneralApplicationFee().getAccountReferenceNumber()
-            );
-
-            final OrderSummary generalApplicationFeeOrderSummary = generalApplication.getGeneralApplicationFee().getOrderSummary();
-
-            if (response.getHttpStatus() == CREATED) {
-                data.updateCaseDataWithPaymentDetails(
-                    generalApplicationFeeOrderSummary,
-                    data,
-                    response.getPaymentReference(),
-                    generalApplication.getGeneralApplicationFee().getServiceRequestReference()
+                final PbaResponse response = paymentService.processPbaPayment(
+                    details.getId(),
+                    generalApplication.getGeneralApplicationFee().getServiceRequestReference(),
+                    invokingSolicitor,
+                    generalApplication.getGeneralApplicationFee().getPbaNumber(),
+                    generalApplication.getGeneralApplicationFee().getOrderSummary(),
+                    generalApplication.getGeneralApplicationFee().getAccountReferenceNumber()
                 );
+
+                final OrderSummary generalApplicationFeeOrderSummary = generalApplication.getGeneralApplicationFee().getOrderSummary();
+
+                if (response.getHttpStatus() == CREATED) {
+                    data.updateCaseDataWithPaymentDetails(
+                        generalApplicationFeeOrderSummary,
+                        data,
+                        response.getPaymentReference(),
+                        generalApplication.getGeneralApplicationFee().getServiceRequestReference()
+                    );
+                } else {
+                    return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                        .data(details.getData())
+                        .errors(singletonList(response.getErrorMessage()))
+                        .build();
+                }
             } else {
+                log.error(
+                    PBA_NUMBER_NOT_PRESENT_ERROR + details.getId());
+
                 return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .data(details.getData())
-                    .errors(singletonList(response.getErrorMessage()))
+                    .errors(singletonList(String.format(PBA_NUMBER_NOT_PRESENT_ERROR + details.getId())))
                     .build();
             }
         }

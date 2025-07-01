@@ -73,6 +73,8 @@ class SolicitorGeneralApplicationTest {
 
     private static final String PBA_NUMBER = "PBA0012345";
     private static final String FEE_ACCOUNT_REF = "REF01";
+    private static final String PBA_NUMBER_NOT_PRESENT_ERROR =
+        "PBA number not present when payment method is 'Solicitor fee account (PBA)' for CaseId: ";
 
     @Mock
     private GeneralApplicationSelectFee generalApplicationSelectFee;
@@ -252,6 +254,7 @@ class SolicitorGeneralApplicationTest {
                                     DynamicListElement.builder()
                                         .label(PBA_NUMBER)
                                         .build())
+                                .listItems(List.of(DynamicListElement.builder().label(PBA_NUMBER).build()))
                                 .build()
                         )
                         .paymentMethod(FEE_PAY_BY_ACCOUNT)
@@ -351,6 +354,15 @@ class SolicitorGeneralApplicationTest {
                 .generalApplicationFee(
                     FeeDetails.builder()
                         .paymentMethod(FEE_PAY_BY_ACCOUNT)
+                        .pbaNumbers(
+                            DynamicList.builder()
+                                .value(
+                                    DynamicListElement.builder()
+                                        .label(PBA_NUMBER)
+                                        .build())
+                                .listItems(List.of(DynamicListElement.builder().label(PBA_NUMBER).build()))
+                                .build()
+                        )
                         .build())
                 .generalApplicationDocuments(docs)
                 .build()
@@ -444,6 +456,7 @@ class SolicitorGeneralApplicationTest {
                                     DynamicListElement.builder()
                                         .label(PBA_NUMBER)
                                         .build())
+                                .listItems(List.of(DynamicListElement.builder().label(PBA_NUMBER).build()))
                                 .build()
                         )
                         .paymentMethod(FEE_PAY_BY_ACCOUNT)
@@ -538,5 +551,38 @@ class SolicitorGeneralApplicationTest {
         assertThat(response.getErrors().size()).isEqualTo(1);
         assertThat(response.getErrors())
             .contains(GENERAL_APPLICATION_DOCUMENT_ERROR);
+    }
+
+    @Test
+    void shouldReturnErrorIfGeneralApplicationPayByAccountPbaNumberNotPresent() {
+
+        final CaseData caseData = caseData();
+        List<ListValue<DivorceDocument>> docs = getListOfDivorceDocumentListValue(1);
+        docs.get(0).getValue().setDocumentFileName("Testfile");
+        docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
+
+        caseData.setGeneralApplication(
+            GeneralApplication.builder()
+                .generalApplicationFee(
+                    FeeDetails.builder()
+                        .serviceRequestReference(TEST_SERVICE_REFERENCE)
+                        .accountReferenceNumber(FEE_ACCOUNT_REF)
+                        .paymentMethod(FEE_PAY_BY_ACCOUNT)
+                        .build())
+                .generalApplicationDocuments(docs)
+                .build());
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setState(Holding);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorGeneralApplication.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).isNotNull();
+        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors())
+            .contains(PBA_NUMBER_NOT_PRESENT_ERROR + TEST_CASE_ID);
     }
 }
