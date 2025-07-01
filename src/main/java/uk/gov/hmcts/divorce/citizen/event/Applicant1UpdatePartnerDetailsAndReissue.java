@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -29,6 +30,7 @@ import java.util.Optional;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
+import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.SEND_PAPERS_AGAIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -91,7 +93,18 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
         }
 
         try {
-            reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
+
+            boolean updateReissueOptionsForNewContactDetails = Optional.ofNullable(caseData.getApplicant1())
+                    .map(Applicant::getInterimApplicationOptions)
+                    .map(InterimApplicationOptions::getNoResponseJourneyOptions)
+                    .map(NoResponseJourneyOptions::getNoResponsePartnerNewEmailOrPostalAddress)
+                    .isPresent();
+
+            if (updateReissueOptionsForNewContactDetails) {
+                reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
+            } else {
+                reIssueApplicationService.process(details);
+            }
         } catch (InvalidReissueOptionException ex) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .errors(List.of(String.format("Invalid update contact details option selected for CaseId: %s",
@@ -99,8 +112,16 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
                     .build();
         }
 
-        Optional.ofNullable(caseData.getApplicant1().getInterimApplicationOptions())
-            .ifPresent(options -> options.setNoResponseJourneyOptions(null));
+        var noResponseJourneyOptions = getNoResponseJourneyOptions(caseData);
+
+        if (!isEmpty(noResponseJourneyOptions)) {
+
+            if (SEND_PAPERS_AGAIN.equals(
+                noResponseJourneyOptions.getNoResponseSendPapersAgainOrTrySomethingElse())) {
+               noResponseJourneyOptions.setNoResponseSendPapersAgainOrTrySomethingElse(NoResponseSendPapersAgainOrTrySomethingElse.SEND_PAPERS_AGAIN)
+                details.setState(AwaitingAos);
+            }
+        }       // Add logic for more options if required
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -109,14 +130,32 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_AND_REISSUE, details.getId());
 
-        final User user = idamService.retrieveSystemUpdateUserDetails();
-        final String serviceAuth = authTokenGenerator.generate();
+        NoResponseJourneyOptions noResponseJourneyOptions = getNoResponseJourneyOptions(details.getData());
 
-        ccdUpdateService
-            .submitEvent(details.getId(), CASEWORKER_REISSUE_APPLICATION, user, serviceAuth);
+        if (processNoResponseJourneyOptions(noResponseJourneyOptions)) {
+
+            log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_AND_REISSUE, details.getId());
+
+            final User user = idamService.retrieveSystemUpdateUserDetails();
+            final String serviceAuth = authTokenGenerator.generate();
+
+            ccdUpdateService
+                .submitEvent(details.getId(), CASEWORKER_REISSUE_APPLICATION, user, serviceAuth);
+        }
 
         return SubmittedCallbackResponse.builder().build();
     }
+
+    private NoResponseJourneyOptions getNoResponseJourneyOptions(CaseData caseData) {
+        return Optional.ofNullable(caseData.getApplicant1().getInterimApplicationOptions())
+            .map(InterimApplicationOptions::getNoResponseJourneyOptions)
+            .orElse(null);
+    }
+
+    private boolean processNoResponseJourneyOptions(NoResponseJourneyOptions options) {
+        return options != null
+            && options.getNoResponseSendPapersAgainOrTrySomethingElse() != null;
+    }
+
 }
