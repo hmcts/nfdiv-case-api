@@ -60,7 +60,6 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
 
     @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
-
         log.info("Notifying applicant 1 solicitor that they can apply for a conditional order: {}", id);
 
         Applicant applicant1 = caseData.getApplicant1();
@@ -90,7 +89,6 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
 
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long id) {
-
         log.info("Notifying applicant 1 offline that they can apply for a conditional order: {}", id);
         final Applicant applicant1 = caseData.getApplicant1();
         var documentPackInfo = applyForConditionalOrderDocumentPack.getDocumentPack(caseData, applicant1);
@@ -98,10 +96,9 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
     }
 
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        Applicant applicant2 = caseData.getApplicant2();
-
         if (!caseData.getApplicationType().isSole() && nonNull(caseData.getApplicant2().getEmail())) {
             log.info("Notifying applicant 2 that they can apply for a conditional order: {}", id);
+            final Applicant applicant2 = caseData.getApplicant2();
             final Map<String, String> templateVars = commonContent
                 .conditionalOrderTemplateVars(caseData, id, applicant2, caseData.getApplicant1());
             templateVars.put(IS_REMINDER, NO);
@@ -138,7 +135,6 @@ public class AwaitingConditionalOrderNotification implements ApplicantNotificati
 
     @Override
     public void sendToApplicant2Offline(final CaseData caseData, final Long id) {
-
         if (!caseData.getApplicationType().isSole()) {
             log.info("Notifying applicant 2 offline that they can apply for a conditional order: {}", id);
             final Applicant applicant2 = caseData.getApplicant2();

@@ -56,7 +56,9 @@ class SystemProgressHeldCaseTest {
     void shouldSendNotifications() {
         final CaseData caseData = caseData();
         caseData.setApplicant1(applicantRepresentedBySolicitor());
-        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplicant1().setOffline(YesOrNo.NO);
+        caseData.getApplicant2().setOffline(YesOrNo.NO);
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().data(caseData).build();
 
         underTest.aboutToSubmit(details, details);
@@ -68,8 +70,10 @@ class SystemProgressHeldCaseTest {
     void shouldSetDueDateToNullSend() {
         final CaseData caseData = caseData();
         caseData.setDueDate(LocalDate.now());
+        caseData.getApplicant1().setOffline(YesOrNo.NO);
+        caseData.getApplicant2().setOffline(YesOrNo.NO);
         caseData.setApplicant1(applicantRepresentedBySolicitor());
-        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().data(caseData).build();
 
         underTest.aboutToSubmit(details, details);
@@ -90,7 +94,8 @@ class SystemProgressHeldCaseTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = underTest.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).containsExactly("Invalid offline status for applicants in a joint application");
+        assertThat(response.getErrors()).containsExactly("Applicants have different offline status in a joint case."
+            + " Both applicants needs to be either online or offline for caseID: " +  TEST_CASE_ID);
         verifyNoInteractions(notificationDispatcher);
     }
 }

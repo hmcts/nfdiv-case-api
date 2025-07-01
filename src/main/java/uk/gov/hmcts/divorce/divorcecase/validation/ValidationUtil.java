@@ -222,7 +222,7 @@ public final class ValidationUtil {
             : singletonList("Not possible to update applicant 2 invite email address");
     }
 
-    `validateJointApplicantOfflineStatus`
+    public static List<String> validateJointApplicantOfflineStatus(CaseDetails<CaseData, State> details) {
         CaseData caseData = details.getData();
         boolean isJoint = !caseData.getApplicationType().isSole();
         boolean applicantOfflineStatusMatches =
@@ -230,7 +230,8 @@ public final class ValidationUtil {
 
         return isJoint && applicantOfflineStatusMatches
             ? emptyList()
-            : singletonList("Invalid offline status for applicants in a joint application");
+            : singletonList(String.format("Applicants have different offline status in a joint case."
+            + " Both applicants needs to be either online or offline for caseID: %s", details.getId()));
     }
 
     @SafeVarargs

@@ -25,7 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicantsStatus;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateJointApplicantOfflineStatus;
 
 @Component
 @Slf4j
@@ -53,11 +53,10 @@ public class SystemProgressHeldCase implements CCDConfig<CaseData, State, UserRo
         final CaseData caseData = details.getData();
         final Long caseId = details.getId();
 
-        final List<String> validationErrors = validateApplicantsStatus(details);
+        final List<String> validationErrors = validateJointApplicantOfflineStatus(details);
 
         if (!validationErrors.isEmpty()) {
-            log.error("Applicants have different offline status in a joint case. Both applicants needs to be either online or offline for caseID: {}",
-                details.getId());
+            log.error(validationErrors.getFirst());
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(validationErrors)
