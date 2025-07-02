@@ -21,7 +21,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
-public class DispenseWithServiceJourneyOptions {
+public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
 
     @CCD(
         label = "Did you and your partner live together?",
