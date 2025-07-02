@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.RegenerateCourtOrdersNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
@@ -69,6 +70,10 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
             .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR))
             .page("regenerateCourtOrderDocs")
+            .complex(CaseData::getConditionalOrder)
+                .mandatory(ConditionalOrder::getCourt)
+                .mandatory(ConditionalOrder::getPronouncementJudge)
+            .done()
             .pageLabel(REGENERATE_COURT_ORDERS)
             .label("regenerateCourtOrdersWarningLabel", """
                 Updating court orders recreates the Certificate of Entitlement,
