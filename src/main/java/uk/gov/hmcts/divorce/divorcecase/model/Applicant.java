@@ -84,16 +84,21 @@ public class Applicant {
     private YesOrNo languagePreferenceWelsh;
 
     @CCD(
-        label = "Did they change their last name when they got married?"
+        label = "Did they change their last name when they got married?",
+        searchable = false
     )
     private YesOrNo lastNameChangedWhenMarried;
 
-    @CCD(label = "How did they change their last name when they got married?")
+    @CCD(
+        label = "How did they change their last name when they got married?",
+        searchable = false
+    )
     private Set<ChangedNameHow> lastNameChangedWhenMarriedMethod;
 
     @CCD(
         label = "Details of how they changed their last name when they got married",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String lastNameChangedWhenMarriedOtherDetails;
 
@@ -102,12 +107,16 @@ public class Applicant {
     )
     private YesOrNo nameDifferentToMarriageCertificate;
 
-    @CCD(label = "How did they change their name since they got married?")
+    @CCD(
+        label = "How did they change their name since they got married?",
+        searchable = false
+    )
     private Set<ChangedNameHow> nameDifferentToMarriageCertificateMethod;
 
     @CCD(
         label = "Details of how they changed their name since they got married",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String nameDifferentToMarriageCertificateOtherDetails;
 
@@ -116,7 +125,8 @@ public class Applicant {
 
     @CCD(
         label = "Details of how they changed their name",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String nameChangedHowOtherDetails;
 
@@ -130,7 +140,10 @@ public class Applicant {
     /* Second address field to allow solicitors to enter applicant addresses when creating applications
      * and view non-confidential addresses for solicitor service. We do not give solicitors read access to the
      * primary "address" field as it can contain a confidential address. */
-    @CCD(label = "Non-Confidential Address")
+    @CCD(
+        label = "Non-Confidential Address",
+        searchable = false
+    )
     private AddressGlobalUK nonConfidentialAddress;
 
     @CCD(label = "Is this an international address?")
@@ -183,7 +196,8 @@ public class Applicant {
     private YesOrNo usedWelshTranslationOnSubmission;
 
     @CCD(
-        label = "Who are the financial orders for?"
+        label = "Who are the financial orders for?",
+        searchable = false
     )
     private Set<FinancialOrderFor> financialOrdersFor;
 
@@ -196,20 +210,23 @@ public class Applicant {
         label = "Provide details of the other legal proceedings",
         hint = "Provide as much information as possible, such as the case number(s); "
             + "the names of the people involved and if the proceedings are ongoing or if they’ve finished.",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String legalProceedingsDetails;
 
     @CCD(
         label = "Provide details of the other legal proceedings(Translated)",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String legalProceedingsDetailsTranslated;
 
     @CCD(
         label = "Translated To?",
         typeOverride = FixedRadioList,
-        typeParameterOverride = "TranslatedToLanguage"
+        typeParameterOverride = "TranslatedToLanguage",
+        searchable = false
     )
     private TranslatedToLanguage legalProceedingsDetailsTranslatedTo;
 

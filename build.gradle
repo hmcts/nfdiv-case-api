@@ -19,7 +19,7 @@ plugins {
   id 'org.springframework.boot' version '3.4.5'
   id 'com.github.ben-manes.versions' version '0.52.0'
   id 'hmcts.ccd.sdk' version '5.5.21'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1765'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1783'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -252,7 +252,7 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
-  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.9.0'
+  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.9.1'
   implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.4') {
     exclude group: 'org.apache.commons', module: 'commons-compress'
     exclude group: 'com.google.guava', module: 'guava'
@@ -277,7 +277,7 @@ dependencies {
   implementation group: 'org.springframework.retry', name: 'spring-retry'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '4.2.1'
 
-  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.28'
+  implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.29'
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '5.2.1-RELEASE'
   implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.5.0'
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.9.0'
