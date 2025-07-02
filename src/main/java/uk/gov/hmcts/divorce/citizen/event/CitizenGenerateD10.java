@@ -78,7 +78,6 @@ public class CitizenGenerateD10 implements CCDConfig<CaseData, State, UserRole> 
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} aboutToSubmit callback invoked for Case Id: {}", CITIZEN_GENERATE_D10, details.getId());
 
-        log.info("{}", details.getData().getApplicant1().getInterimApplicationOptions().getInterimApplicationType());
         details.getData().getApplication().setServiceMethod(PERSONAL_SERVICE);
         CaseData data = caseTasks(generateD10Form).run(details).getData();
 
