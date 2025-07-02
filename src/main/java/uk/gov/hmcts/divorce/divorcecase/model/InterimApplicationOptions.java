@@ -110,6 +110,8 @@ public class InterimApplicationOptions {
     public ApplicationAnswers getApplicationAnswers() {
         if (interimApplicationType.equals(InterimApplicationType.DEEMED_SERVICE)) {
             return deemedServiceJourneyOptions;
+        } else if (interimApplicationType.equals(InterimApplicationType.DISPENSE_WITH_SERVICE)) {
+            return dispenseWithServiceJourneyOptions;
         }
 
         return null;
