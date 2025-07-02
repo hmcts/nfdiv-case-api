@@ -259,11 +259,11 @@ public class Applicant {
 
     @JsonUnwrapped
     @CCD(
-        label = "General Application Options",
+        label = "Service & General Application Options",
         access = {DefaultAccess.class},
         searchable = false
     )
-    private GeneralApplicationOptions generalApplicationOptions;
+    private InterimApplicationOptions interimApplicationOptions;
 
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
