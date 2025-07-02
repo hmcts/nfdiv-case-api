@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -96,4 +97,23 @@ public class InterimApplicationOptions {
         access = {DefaultAccess.class}
     )
     private YesOrNo interimAppsStatementOfTruth;
+
+    @JsonIgnore
+    public ApplicationAnswers getApplicationAnswers() {
+        if (interimApplicationType.equals(InterimApplicationType.DEEMED_SERVICE)) {
+            return deemedServiceJourneyOptions;
+        }
+
+        return null;
+    }
+
+    @JsonIgnore
+    public boolean awaitingDocuments() {
+        return YesOrNo.YES.equals(interimAppsCannotUploadDocs);
+    }
+
+    @JsonIgnore
+    public boolean willMakePayment() {
+        return !YesOrNo.YES.equals(interimAppsUseHelpWithFees);
+    }
 }
