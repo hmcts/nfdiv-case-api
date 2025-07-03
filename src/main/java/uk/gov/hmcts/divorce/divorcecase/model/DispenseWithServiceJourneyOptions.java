@@ -92,4 +92,16 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
         access = {DefaultAccess.class}
     )
     private String dispensePartnerLastSeenDescription;
+
+    @CCD(
+        label = "Do you have any email addresses for your partner?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo dispenseHavePartnerEmailAddresses;
+
+    @CCD(
+        label = "Have you searched for a decree absolute or final order?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo dispenseHaveSearchedFinalOrder;
 }
