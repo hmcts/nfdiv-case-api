@@ -130,4 +130,22 @@ public class BailiffServiceJourneyOptions {
         typeOverride = TextArea
     )
     private String bailiffDangerousAnimalsDetails;
+
+    @CCD(label = "Is your partner know to have any mental issues that may affect their behaviour?")
+    private YesOrNoOrNotKnown bailiffDoesPartnerHaveMentalIssues;
+
+    @CCD(
+        label = "Provide details of any mental issues that may affect their behaviour",
+        typeOverride = TextArea
+    )
+    private String bailiffPartnerMentalIssuesDetails;
+
+    @CCD(label = "Does your partner hold a firearms license?")
+    private YesOrNoOrNotKnown bailiffDoesPartnerHoldFirearmsLicense;
+
+    @CCD(
+        label = "Provide details about the firearms license",
+        typeOverride = TextArea
+    )
+    private String bailiffPartnerFirearmsLicenseDetails;
 }
