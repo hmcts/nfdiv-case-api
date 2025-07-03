@@ -70,6 +70,7 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
             .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR))
             .page("regenerateCourtOrderDocs")
+            .label("regeneratedConditionalOrderDetails", "# Conditional Order Details")
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getCourt)
                 .mandatory(ConditionalOrder::getPronouncementJudge)
