@@ -10,19 +10,23 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 public enum InterimApplicationType implements HasLabel {
 
     @JsonProperty("dispenseWithService")
-    DISPENSE_WITH_SERVICE("Dispense with service"),
+    DISPENSE_WITH_SERVICE("Dispense with service", AlternativeServiceType.DISPENSED),
 
     @JsonProperty("deemedService")
-    DEEMED_SERVICE("Deemed service"),
+    DEEMED_SERVICE("Deemed service", AlternativeServiceType.DEEMED),
 
     @JsonProperty("alternativeService")
-    ALTERNATIVE_SERVICE("Alternative service"),
+    ALTERNATIVE_SERVICE("Alternative service", AlternativeServiceType.ALTERNATIVE_SERVICE),
 
     @JsonProperty("bailiffService")
-    BAILIFF_SERVICE("Bailiff service"),
+    BAILIFF_SERVICE("Bailiff service", AlternativeServiceType.BAILIFF),
 
     @JsonProperty("searchGovRecords")
-    SEARCH_GOV_RECORDS("Search government records");
+    SEARCH_GOV_RECORDS("Search government records", null),
+
+    @JsonProperty("processServerService")
+    PROCESS_SERVER_SERVICE("Process server service", null);
 
     private final String label;
+    private final AlternativeServiceType serviceType;
 }
