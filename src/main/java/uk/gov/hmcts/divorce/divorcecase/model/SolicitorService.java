@@ -38,7 +38,8 @@ public class SolicitorService {
 
     @CCD(
         label = "What Documents did you serve?",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String documentsServed;
 
@@ -77,7 +78,8 @@ public class SolicitorService {
     @CCD(
         label = "Give the address where you served the documents?",
         hint = "Include the fax or DX number, e-mail address or other electronic identification",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String addressServed;
 

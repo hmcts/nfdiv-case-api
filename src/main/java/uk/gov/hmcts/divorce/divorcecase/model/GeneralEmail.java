@@ -50,43 +50,50 @@ public class GeneralEmail {
 
     @CCD(
         label = "Please provide details",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String generalEmailDetails;
 
     @CCD(
         label = "Select uploaded documents to attach",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private DynamicMultiSelectList geUploadedDocumentNames;
 
     @CCD(
         label = "Select generated documents to attach",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private DynamicMultiSelectList geGeneratedDocumentNames;
 
     @CCD(
         label = "Select scanned documents to attach",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private DynamicMultiSelectList geScannedDocumentNames;
 
     @CCD(
         label = "Select applicant 1 documents to attach",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private DynamicMultiSelectList geApplicant1DocumentNames;
 
     @CCD(
         label = "Select applicant 2 documents to attach",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private DynamicMultiSelectList geApplicant2DocumentNames;
 
     @CCD(
         label = "Select general order documents to attach",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private DynamicMultiSelectList geGeneralOrderDocumentNames;
 
@@ -94,13 +101,15 @@ public class GeneralEmail {
         label = "Add attachments",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class, CaseworkerDeleteAccess.class}
+        access = {DefaultAccess.class, CaseworkerDeleteAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> generalEmailAttachments;
 
     @CCD(
         label = "Attached documents",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private DynamicMultiSelectList geAttachedDocumentNames;
 
