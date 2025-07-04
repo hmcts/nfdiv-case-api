@@ -16,7 +16,10 @@ public enum AlternativeServiceType implements HasLabel {
     DISPENSED("Dispensed with service"),
 
     @JsonProperty("bailiff")
-    BAILIFF("Bailiff application");
+    BAILIFF("Bailiff application"),
+
+    @JsonProperty("alternativeService")
+    ALTERNATIVE_SERVICE("Alternative service");
 
     private final String label;
 }
