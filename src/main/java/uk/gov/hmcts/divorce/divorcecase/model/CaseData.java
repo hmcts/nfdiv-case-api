@@ -31,6 +31,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.InternalCaseFlagsAccess;
@@ -379,7 +380,7 @@ public class CaseData {
         label = "Case matches",
         typeOverride = Collection,
         typeParameterOverride = "CaseMatch",
-        access = {CaseworkerAccess.class},
+        access = {CaseworkerAccess.class, CaseworkerDeleteAccess.class},
         searchable = false
     )
     @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
