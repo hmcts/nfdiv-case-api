@@ -104,4 +104,11 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
         access = {DefaultAccess.class}
     )
     private YesOrNo dispenseHaveSearchedFinalOrder;
+
+    @CCD(
+        label = "Explain why you have not requested a search",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispensePartnerWhyNoFinalOrderSearch;
 }
