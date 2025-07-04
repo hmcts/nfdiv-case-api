@@ -236,7 +236,7 @@ public class Applicant {
     private TranslatedToLanguage legalProceedingsDetailsTranslatedTo;
 
     @CCD(
-        label = "Have the ongoing proceedings been concluded?",
+        label = "Have the proceedings been concluded?",
         searchable = false
     )
     private YesOrNo legalProceedingsConcluded;
