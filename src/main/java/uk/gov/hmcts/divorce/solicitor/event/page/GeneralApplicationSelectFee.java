@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
@@ -15,7 +16,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
+import java.util.List;
+
+import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateSolicitorPbaNumbers;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_NOTICE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_WITHOUT_NOTICE;
@@ -23,6 +28,7 @@ import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class GeneralApplicationSelectFee implements CcdPageConfiguration {
 
     private final PaymentService paymentService;
@@ -48,6 +54,17 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
         var generalApplication = caseData.getGeneralApplication();
 
         DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
+
+        List<String> validationErrors = validateSolicitorPbaNumbers(pbaNumbersDynamicList, details.getId());
+
+        if (!validationErrors.isEmpty()) {
+            String pbaNotFoundError = validationErrors.getFirst();
+            log.error(pbaNotFoundError + "{}", details.getId());
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(singletonList(String.format(pbaNotFoundError + "%s", details.getId())))
+                .build();
+        }
 
         generalApplication.getGeneralApplicationFee().setPbaNumbers(pbaNumbersDynamicList);
 
