@@ -130,7 +130,8 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
     }
 
     private AlternativeService buildServiceApplication(InterimApplicationOptions userOptions) {
-        boolean evidenceNotSubmitted = YesOrNo.NO.equals(userOptions.getInterimAppsCanUploadEvidence());
+        boolean evidenceNotSubmitted = YesOrNo.NO.equals(userOptions.getInterimAppsCanUploadEvidence())
+            && userOptions.getInterimAppsEvidenceDocs() != null;
 
         if (evidenceNotSubmitted && !CollectionUtils.isEmpty(userOptions.getInterimAppsEvidenceDocs())) {
             documentRemovalService.deleteDocument(userOptions.getInterimAppsEvidenceDocs());
