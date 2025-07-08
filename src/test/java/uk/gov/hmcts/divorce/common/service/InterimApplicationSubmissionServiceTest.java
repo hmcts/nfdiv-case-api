@@ -90,4 +90,24 @@ class InterimApplicationSubmissionServiceTest {
         verify(deemedServiceApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
         assertThat(result).isEqualTo(generatedDocument);
     }
+
+    @Test
+    void shouldDelegateToAlternativeServiceApplicationGeneratorWhenApplicationTypeIsAlternativeService() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(InterimApplicationType.ALTERNATIVE_SERVICE)
+                            .build())
+                    .build()
+            ).build();
+
+        DivorceDocument generatedDocument = DivorceDocument.builder().build();
+
+        DivorceDocument result = interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
+
+        assertThat(result).isEqualTo(generatedDocument);
+    }
 }
