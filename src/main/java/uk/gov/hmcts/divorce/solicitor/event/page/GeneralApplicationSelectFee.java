@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -13,12 +12,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.validation.SolicitorPbaValidation;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
-import java.util.List;
-
-import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateSolicitorPbaNumbers;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
@@ -53,20 +50,13 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
         final CaseData caseData = details.getData();
         var generalApplication = caseData.getGeneralApplication();
 
-        DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
+        SolicitorPbaValidation pbaNumbers = validateSolicitorPbaNumbers( caseData, pbaService, details.getId());
 
-        List<String> validationErrors = validateSolicitorPbaNumbers(pbaNumbersDynamicList, details.getId());
-
-        if (!validationErrors.isEmpty()) {
-            String pbaNotFoundError = validationErrors.getFirst();
-            log.error(pbaNotFoundError + "{}", details.getId());
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(singletonList(String.format(pbaNotFoundError + "%s", details.getId())))
-                .build();
+        if (pbaNumbers.isEmpty()) {
+            return pbaNumbers.getErrorResponse();
         }
 
-        generalApplication.getGeneralApplicationFee().setPbaNumbers(pbaNumbersDynamicList);
+        generalApplication.getGeneralApplicationFee().setPbaNumbers(pbaNumbers.getPbaNumbersList());
 
         prepareOrderSummary(caseData);
 

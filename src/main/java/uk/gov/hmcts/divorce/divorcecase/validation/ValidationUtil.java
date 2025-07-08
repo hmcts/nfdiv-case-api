@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
@@ -12,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,8 +30,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
 public final class ValidationUtil {
-    private static final String PBA_NUMBER_NOT_PRESENT_ERROR =
-        "PBA number not present when payment method is 'Solicitor fee account (PBA)' for CaseId: ";
 
     public static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year and one day ago.";
     public static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION =
@@ -230,8 +230,15 @@ public final class ValidationUtil {
         return Arrays.stream(lists).flatMap(Collection::stream).collect(toList());
     }
 
-    public static List<String> validateSolicitorPbaNumbers(DynamicList pbaNumbersDynamicList, Long caseId) {
-        boolean pbaListEmpty = pbaNumbersDynamicList == null || pbaNumbersDynamicList.getListItems().isEmpty();
-        return pbaListEmpty ? singletonList(String.format(PBA_NUMBER_NOT_PRESENT_ERROR + "%s", caseId)) : emptyList();
+    public static SolicitorPbaValidation validateSolicitorPbaNumbers(CaseData caseData, PbaService pbaService, Long caseId) {
+        try {
+            final DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
+            log.info("Successfully retrieved PBA numbers for Case Id: {}", caseId);
+            return SolicitorPbaValidation.success(pbaNumbersDynamicList);
+        } catch (FeignException e) {
+            log.error("Failed to retrieve PBA numbers for Case Id: {}", caseId);
+            return SolicitorPbaValidation.error(caseData,
+                "No PBA numbers associated with the provided email address");
+        }
     }
 }
