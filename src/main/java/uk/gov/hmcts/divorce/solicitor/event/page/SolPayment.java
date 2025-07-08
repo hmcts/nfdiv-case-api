@@ -38,6 +38,7 @@ public class SolPayment implements CcdPageConfiguration {
             .page("SolPayment")
             .pageLabel("Payment for this application")
             .label(
+
                 "LabelSolPaymentPara-1",
                 "Amount to pay: **£${solApplicationFeeInPounds}**")
             .complex(CaseData::getApplication)
