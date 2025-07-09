@@ -25,4 +25,8 @@ public class PageBuilder {
 
         return eventBuilder.fields().page(id, callback);
     }
+
+    public static String andShowCondition(final String... caseFieldConditions) {
+        return String.join(" AND ", caseFieldConditions);
+    }
 }
