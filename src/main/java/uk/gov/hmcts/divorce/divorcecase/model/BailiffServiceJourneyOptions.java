@@ -77,7 +77,7 @@ public class BailiffServiceJourneyOptions {
     private String bailiffPartnersDistinguishingFeatures;
 
     @CCD(label = "When is best to serve papers to your partner?")
-    private String bailiffBestTimeToServePapers;
+    private String bailiffBestTimeToServe;
 
     @CCD(label = "Does your partner have access to a vehicle?")
     private YesOrNoOrNotKnown bailiffDoesPartnerHaveVehicle;
