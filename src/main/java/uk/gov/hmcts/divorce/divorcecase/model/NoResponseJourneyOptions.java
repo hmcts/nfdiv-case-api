@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +16,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class NoResponseJourneyOptions {
 
     @CCD(
@@ -52,4 +55,16 @@ public class NoResponseJourneyOptions {
         access = {DefaultAccess.class}
     )
     private NoResponseOwnSearches noResponseOwnSearches;
+
+    @CCD(
+        label = "Do you think your partner is still in the UK or is receiving UK benefits?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo noResponsePartnerInUkOrReceivingBenefits;
+
+    @CCD(
+        label = "Search gov records or apply to dispense with service?",
+        access = {DefaultAccess.class}
+    )
+    private NoResponseSearchOrDispense noResponseSearchOrDispense;
 }
