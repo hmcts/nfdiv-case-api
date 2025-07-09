@@ -25,7 +25,7 @@ public class FeeDetails {
 
     @CCD(
         label = "Here are your order details",
-            access = {CaseworkerAndSuperUserAccess.class, CaseworkerDeleteAccess.class}
+        access = {CaseworkerAndSuperUserAccess.class, CaseworkerDeleteAccess.class}
     )
     private OrderSummary orderSummary;
 
@@ -44,7 +44,8 @@ public class FeeDetails {
     private String accountNumber;
 
     @CCD(
-        label = "Select your account number"
+        label = "Select your account number",
+        searchable = false
     )
     private DynamicList pbaNumbers;
 
@@ -58,8 +59,11 @@ public class FeeDetails {
     )
     private String helpWithFeesReferenceNumber;
 
-    @CCD(label = "Service request reference")
+    @CCD(label = "Payment service request")
     private String serviceRequestReference;
+
+    @CCD(label = "Payment reference")
+    private String paymentReference;
 
     @JsonIgnore
     public boolean isPaymentMethodPba() {
