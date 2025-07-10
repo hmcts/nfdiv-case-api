@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -44,6 +45,8 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
     private static final String APPLY_FOR_CO_DATE = "apply for CO date";
     private static final String ISSUE_DATE_PLUS_37_DAYS = "issue date plus 37 days";
     private static final String ISSUE_DATE_PLUS_141_DAYS = "issue date plus 141 days";
+    public static final String DOC_NOT_UPLOADED = "docNotUploaded";
+    public static final String DOC_UPLOADED = "docUploaded";
 
     private final NotificationService notificationService;
 
@@ -72,13 +75,18 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
     public void sendToApplicant2(final CaseDetails<CaseData, State> caseDetails) {
         log.info("Sending AOS not disputed notification to Respondent for: {}", caseDetails.getId());
         CaseData caseData = caseDetails.getData();
+        Long id = caseDetails.getId();
+
+        Map<String, String> templateVars = notDisputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+        templateVars.put(DOC_UPLOADED, caseData.getApplicant2().getUnableToUploadEvidence() == YesOrNo.YES ? NO : YES);
+        templateVars.put(DOC_NOT_UPLOADED, caseData.getApplicant2().getUnableToUploadEvidence() == YesOrNo.YES ? YES : NO);
 
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),
             getState(caseDetails).equals(AwaitingConditionalOrder)
                 ? SOLE_RESPONDENT_AOS_SUBMITTED_AWAITING_CO
                 : SOLE_RESPONDENT_AOS_SUBMITTED,
-            notDisputedTemplateVars(caseData, caseDetails.getId(), caseData.getApplicant2(), caseData.getApplicant1()),
+            templateVars,
             caseData.getApplicant2().getLanguagePreference(),
             caseDetails.getId()
         );
