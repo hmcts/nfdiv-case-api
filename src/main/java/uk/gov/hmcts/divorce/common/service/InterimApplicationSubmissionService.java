@@ -27,6 +27,8 @@ public class InterimApplicationSubmissionService {
 
         if (InterimApplicationType.DEEMED_SERVICE.equals(applicationType)) {
             return deemedServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
+        } else if (InterimApplicationType.BAILIFF_SERVICE.equals(applicationType)) {
+            return null;
         }
 
         throw new UnsupportedOperationException();
@@ -39,6 +41,8 @@ public class InterimApplicationSubmissionService {
     ) {
         if (AlternativeServiceType.DEEMED.equals(serviceType)) {
             notificationDispatcher.send(deemedApplicationSubmittedNotification, caseData, caseId);
+            return;
+        } else if (AlternativeServiceType.BAILIFF.equals(serviceType)) {
             return;
         }
 

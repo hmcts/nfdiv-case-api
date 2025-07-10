@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -17,8 +18,10 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ENFORCEMENT;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_BAILIFF;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_NOTICE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_WITHOUT_NOTICE;
@@ -209,6 +212,27 @@ class PaymentSetupServiceTest {
         );
 
         verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE);
+        assertThat(response).isEqualTo(orderSummary);
+    }
+
+    @Test
+    void shouldUseBailiffFeeWhenServiceApplicationTypeIsBailiff() {
+        final CaseData caseData = new CaseData();
+        final OrderSummary orderSummary = OrderSummary.builder().build();
+        caseData.setAlternativeService(
+            AlternativeService.builder()
+                .alternativeServiceType(AlternativeServiceType.BAILIFF)
+                .build()
+        );
+
+        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF))
+            .thenReturn(orderSummary);
+
+        OrderSummary response = paymentSetupService.createServiceApplicationOrderSummary(
+            caseData.getAlternativeService(), TEST_CASE_ID
+        );
+
+        verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF);
         assertThat(response).isEqualTo(orderSummary);
     }
 

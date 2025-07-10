@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -74,4 +75,77 @@ public class BailiffServiceJourneyOptions {
         typeOverride = TextArea
     )
     private String bailiffPartnersDistinguishingFeatures;
+
+    @CCD(label = "When is best to serve papers to your partner?")
+    private String bailiffBestTimeToServe;
+
+    @CCD(label = "Does your partner have access to a vehicle?")
+    private YesOrNoOrNotKnown bailiffDoesPartnerHaveVehicle;
+
+    @JsonUnwrapped(prefix = "bailiffPartnerVehicle")
+    @CCD(label = "Partner vehicle details")
+    private Vehicle bailiffPartnerVehicle;
+
+    @CCD(label = "Has your partner been violent in the past?")
+    private YesOrNoOrNotKnown bailiffHasPartnerBeenViolent;
+
+    @CCD(
+        label = "Provide details of any violent incidents",
+        typeOverride = TextArea
+    )
+    private String bailiffPartnerViolenceDetails;
+
+    @CCD(label = "Has your partner made threats against you?")
+    private YesOrNoOrNotKnown bailiffHasPartnerMadeThreats;
+
+    @CCD(
+        label = "Provide details of any threats",
+        typeOverride = TextArea
+    )
+    private String bailiffPartnerThreatsDetails;
+
+    @CCD(label = "Have police been involved with your partner?")
+    private YesOrNoOrNotKnown bailiffHavePoliceBeenInvolved;
+
+    @CCD(
+        label = "Provide details of any police involvement",
+        typeOverride = TextArea
+    )
+    private String bailiffPoliceInvolvedDetails;
+
+    @CCD(label = "Have social services been involved with your partner?")
+    private YesOrNoOrNotKnown bailiffHaveSocialServicesBeenInvolved;
+
+    @CCD(
+        label = "Provide details of any social services involvement",
+        typeOverride = TextArea
+    )
+    private String bailiffSocialServicesInvolvedDetails;
+
+    @CCD(label = "Are there any dangerous animals at the property?")
+    private YesOrNoOrNotKnown bailiffAreThereDangerousAnimals;
+
+    @CCD(
+        label = "Provide details of any dangerous animals",
+        typeOverride = TextArea
+    )
+    private String bailiffDangerousAnimalsDetails;
+
+    @CCD(label = "Is your partner know to have any mental issues that may affect their behaviour?")
+    private YesOrNoOrNotKnown bailiffDoesPartnerHaveMentalIssues;
+
+    @CCD(
+        label = "Provide details of any mental issues that may affect their behaviour",
+        typeOverride = TextArea
+    )
+    private String bailiffPartnerMentalIssuesDetails;
+
+    @CCD(label = "Does your partner hold a firearms license?")
+    private YesOrNoOrNotKnown bailiffDoesPartnerHoldFirearmsLicense;
+
+    @CCD(
+        label = "Provide details about the firearms license",
+        typeOverride = TextArea
+    )
+    private String bailiffPartnerFirearmsLicenseDetails;
 }
