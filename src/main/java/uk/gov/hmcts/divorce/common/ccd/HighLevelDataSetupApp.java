@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 
 public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
@@ -44,6 +45,10 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
 
     private final CcdEnvironment environment;
 
+    private static final Set<Integer> TOLERABLE_EXCEPTIONS = Set.of(
+        HttpStatus.GATEWAY_TIMEOUT.value(), HttpStatus.CONFLICT.value()
+    );
+
     public HighLevelDataSetupApp(CcdEnvironment dataSetupEnvironment) {
         super(dataSetupEnvironment);
         environment = dataSetupEnvironment;
@@ -56,7 +61,7 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
     @Override
     protected boolean shouldTolerateDataSetupFailure(Throwable e) {
         if (e instanceof ImportException importException) {
-            return importException.getHttpStatusCode() == HttpStatus.GATEWAY_TIMEOUT.value();
+            return TOLERABLE_EXCEPTIONS.contains(importException.getHttpStatusCode());
         }
 
         var env = getDataSetupEnvironment();
