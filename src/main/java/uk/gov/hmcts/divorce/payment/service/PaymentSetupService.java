@@ -88,9 +88,9 @@ public class PaymentSetupService {
 
         if (isBailiffApplication) {
             return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF);
-        } else {
-            return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE);
         }
+
+        return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE);
     }
 
     public String createServiceApplicationPaymentServiceRequest(
