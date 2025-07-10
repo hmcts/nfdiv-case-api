@@ -216,7 +216,7 @@ class PaymentSetupServiceTest {
     }
 
     @Test
-    void shouldUseBailiffFeeServiceApplicationTypeIsBailiff() {
+    void shouldUseBailiffFeeWhenServiceApplicationTypeIsBailiff() {
         final CaseData caseData = new CaseData();
         final OrderSummary orderSummary = OrderSummary.builder().build();
         caseData.setAlternativeService(
