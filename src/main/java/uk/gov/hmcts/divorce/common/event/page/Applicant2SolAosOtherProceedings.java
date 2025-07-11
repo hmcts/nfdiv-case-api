@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.common.event.page;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -48,8 +49,9 @@ public class Applicant2SolAosOtherProceedings implements CcdPageConfiguration {
                                                                   CaseDetails<CaseData, State> detailsBefore) {
         final CaseData caseData = details.getData();
         final Applicant respondent = caseData.getApplicant2();
+        final boolean legalProceedingsConcluded = YesOrNo.YES.equals(respondent.getLegalProceedingsConcluded());
 
-        if (isEmpty(respondent.getLegalProceedingDocs())) {
+        if (legalProceedingsConcluded && isEmpty(respondent.getLegalProceedingDocs())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(singletonList(OTHER_PROCEEDINGS_NO_DOCUMENT_ERROR))
                 .build();
