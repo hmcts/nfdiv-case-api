@@ -49,9 +49,9 @@ public class Applicant2SolAosOtherProceedings implements CcdPageConfiguration {
                                                                   CaseDetails<CaseData, State> detailsBefore) {
         final CaseData caseData = details.getData();
         final Applicant respondent = caseData.getApplicant2();
-        final boolean legalProceedingsConcluded = YesOrNo.YES.equals(respondent.getLegalProceedingsConcluded());
+        final boolean hadOtherLegalProceedings = YesOrNo.YES.equals(respondent.getLegalProceedings());
 
-        if (legalProceedingsConcluded && isEmpty(respondent.getLegalProceedingDocs())) {
+        if (hadOtherLegalProceedings && isEmpty(respondent.getLegalProceedingDocs())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(singletonList(OTHER_PROCEEDINGS_NO_DOCUMENT_ERROR))
                 .build();
