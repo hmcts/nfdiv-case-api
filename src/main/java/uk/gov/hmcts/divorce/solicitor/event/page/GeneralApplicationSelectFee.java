@@ -50,7 +50,7 @@ public class GeneralApplicationSelectFee implements CcdPageConfiguration {
         final CaseData caseData = details.getData();
         var generalApplication = caseData.getGeneralApplication();
 
-        SolicitorPbaValidation pbaNumbers = validateSolicitorPbaNumbers( caseData, pbaService, details.getId());
+        SolicitorPbaValidation pbaNumbers = validateSolicitorPbaNumbers(caseData, pbaService, details.getId());
 
         if (pbaNumbers.isEmpty()) {
             return pbaNumbers.getErrorResponse();
