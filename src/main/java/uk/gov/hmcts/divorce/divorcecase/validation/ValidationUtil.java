@@ -228,7 +228,7 @@ public final class ValidationUtil {
         boolean applicantOfflineStatusMatches =
             caseData.getApplicant1().isApplicantOffline() == caseData.getApplicant2().isApplicantOffline();
 
-        return isJoint && applicantOfflineStatusMatches
+        return isJoint && !applicantOfflineStatusMatches
             ? singletonList(String.format("Applicants have different offline status in a joint case."
             + " Both applicants needs to be either online or offline for caseID: %s", details.getId()))
             : emptyList();
