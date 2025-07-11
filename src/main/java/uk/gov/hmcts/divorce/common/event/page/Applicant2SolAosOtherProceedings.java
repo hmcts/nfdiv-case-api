@@ -51,7 +51,13 @@ public class Applicant2SolAosOtherProceedings implements CcdPageConfiguration {
         final Applicant respondent = caseData.getApplicant2();
         final boolean hadOtherLegalProceedings = YesOrNo.YES.equals(respondent.getLegalProceedings());
 
-        if (hadOtherLegalProceedings && isEmpty(respondent.getLegalProceedingDocs())) {
+        if (!hadOtherLegalProceedings) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .build();
+        }
+
+        if (isEmpty(respondent.getLegalProceedingDocs())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(singletonList(OTHER_PROCEEDINGS_NO_DOCUMENT_ERROR))
                 .build();
