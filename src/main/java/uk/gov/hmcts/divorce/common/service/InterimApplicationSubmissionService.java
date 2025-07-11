@@ -29,6 +29,10 @@ public class InterimApplicationSubmissionService {
             return deemedServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
         }
 
+        if (InterimApplicationType.ALTERNATIVE_SERVICE.equals(applicationType)) {
+            return DivorceDocument.builder().build();
+        }
+
         throw new UnsupportedOperationException();
     }
 
@@ -39,6 +43,10 @@ public class InterimApplicationSubmissionService {
     ) {
         if (AlternativeServiceType.DEEMED.equals(serviceType)) {
             notificationDispatcher.send(deemedApplicationSubmittedNotification, caseData, caseId);
+            return;
+        }
+
+        if (AlternativeServiceType.ALTERNATIVE_SERVICE.equals(serviceType)) {
             return;
         }
 
