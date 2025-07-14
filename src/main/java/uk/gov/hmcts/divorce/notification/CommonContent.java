@@ -235,7 +235,7 @@ public class CommonContent {
     }
 
     public Map<String, String> serviceApplicationTemplateVars(CaseData data, Long id, Applicant applicant) {
-        Map<String, String> templateVars = basicTemplateVars(data, id, applicant.getLanguagePreference());
+        Map<String, String> templateVars = mainTemplateVars(data, id, applicant, data.getApplicant2());
 
         AlternativeService serviceApplication = data.getAlternativeService();
         boolean madePayment = YesOrNo.YES.equals(serviceApplication.getAlternativeServiceFeeRequired());

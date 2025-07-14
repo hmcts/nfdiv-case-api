@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.citizen.notification.interimapplications;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
@@ -24,9 +23,6 @@ public class DeemedServiceApplicationSubmittedNotification implements ApplicantN
 
     private final NotificationService notificationService;
     private final CommonContent commonContent;
-
-    @Value("${interim_application.response_offset_days}")
-    private long applicationResponseOffsetDays;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
