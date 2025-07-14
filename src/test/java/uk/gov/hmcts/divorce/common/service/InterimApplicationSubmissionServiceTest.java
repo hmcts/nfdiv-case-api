@@ -5,12 +5,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.BailiffServiceApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DeemedServiceApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.generator.DeemedServiceApplicationGenerator;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertThrows;
@@ -22,6 +26,15 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 class InterimApplicationSubmissionServiceTest {
     @Mock
     private DeemedServiceApplicationGenerator deemedServiceApplicationGenerator;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private DeemedServiceApplicationSubmittedNotification deemedNotification;
+
+    @Mock
+    private BailiffServiceApplicationSubmittedNotification bailiffNotification;
 
     @InjectMocks
     private InterimApplicationSubmissionService interimApplicationSubmissionService;
@@ -71,23 +84,20 @@ class InterimApplicationSubmissionServiceTest {
     @Test
     void shouldDelegateToDeemedServiceNotificationWhenApplicationTypeIsDeemed() {
         long caseId = TEST_CASE_ID;
-        CaseData caseData = CaseData.builder()
-            .applicant1(
-                Applicant.builder()
-                    .interimApplicationOptions(
-                        InterimApplicationOptions.builder()
-                            .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
-                            .build())
-                    .build()
-            ).build();
+        CaseData caseData = CaseData.builder().build();
 
-        DivorceDocument generatedDocument = DivorceDocument.builder().build();
-        when(deemedServiceApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
-            .thenReturn(generatedDocument);
+        interimApplicationSubmissionService.sendNotifications(caseId, AlternativeServiceType.DEEMED, caseData);
 
-        DivorceDocument result = interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
+        verify(notificationDispatcher).send(deemedNotification, caseData, caseId);
+    }
 
-        verify(deemedServiceApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
-        assertThat(result).isEqualTo(generatedDocument);
+    @Test
+    void shouldDelegateToBailiffServiceNotificationWhenApplicationTypeIsBailiff() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder().build();
+
+        interimApplicationSubmissionService.sendNotifications(caseId, AlternativeServiceType.BAILIFF, caseData);
+
+        verify(notificationDispatcher).send(bailiffNotification, caseData, caseId);
     }
 }
