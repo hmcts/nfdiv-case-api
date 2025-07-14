@@ -110,5 +110,32 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
-    private String dispensePartnerWhyNoFinalOrderSearch;
+    private String dispenseWhyNoFinalOrderSearch;
+
+    @CCD(
+        label = "Tell us the email addresses you have for your partner",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispensePartnerEmailAddresses;
+
+    @CCD(
+        label = "Do you have any phone numbers for your partner?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo dispenseHavePartnerPhoneNumbers;
+
+    @CCD(
+        label = "Tell us the phone numbers you have for your partner",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispensePartnerPhoneNumbers;
+
+    @CCD(
+        label = "Have you tried using a tracing agent to find your partner?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo dispenseTriedTracingAgent;
+
 }
