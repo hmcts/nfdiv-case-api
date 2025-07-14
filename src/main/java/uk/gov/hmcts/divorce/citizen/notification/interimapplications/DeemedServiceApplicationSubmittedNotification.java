@@ -12,17 +12,10 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.notification.CommonContent.MADE_PAYMENT;
-import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.USED_HELP_WITH_FEES;
-import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.DEEMED_SERVICE_APPLICATION_AWAITING_DOCUMENTS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.DEEMED_SERVICE_APPLICATION_SUBMITTED;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -52,19 +45,6 @@ public class DeemedServiceApplicationSubmittedNotification implements ApplicantN
     }
 
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
-        Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
-
-        AlternativeService serviceApplication = caseData.getAlternativeService();
-        boolean madePayment = YesOrNo.YES.equals(serviceApplication.getAlternativeServiceFeeRequired());
-        DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
-
-        String responseDate = serviceApplication.getReceivedServiceApplicationDate()
-            .plusDays(applicationResponseOffsetDays)
-            .format(dateTimeFormatter);
-        templateVars.put(MADE_PAYMENT, madePayment ? YES : NO);
-        templateVars.put(USED_HELP_WITH_FEES, !madePayment ? YES : NO);
-        templateVars.put(SUBMISSION_RESPONSE_DATE, madePayment ? responseDate : "");
-
-        return templateVars;
+        return commonContent.serviceApplicationTemplateVars(caseData, id, applicant);
     }
 }

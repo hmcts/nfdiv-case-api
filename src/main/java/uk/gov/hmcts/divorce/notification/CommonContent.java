@@ -2,9 +2,11 @@ package uk.gov.hmcts.divorce.notification;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
@@ -14,6 +16,7 @@ import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +40,7 @@ import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonCont
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @RequiredArgsConstructor
@@ -156,6 +160,9 @@ public class CommonContent {
 
     private final EmailTemplatesConfig config;
 
+    @Value("${interim_application.response_offset_days}")
+    private long interimApplicationResponseOffsetDays;
+
     public String getWebFormUrl(LanguagePreference languagePreference) {
         return WELSH.equals(languagePreference)
             ? config.getTemplateVars().get(WEBFORM_CY_URL)
@@ -224,6 +231,23 @@ public class CommonContent {
     public Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant) {
         Map<String, String> templateVars = solicitorTemplateVarsPreIssue(data, id, applicant);
         templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        return templateVars;
+    }
+
+    public Map<String, String> serviceApplicationTemplateVars(CaseData data, Long id, Applicant applicant) {
+        Map<String, String> templateVars = basicTemplateVars(data, id, applicant.getLanguagePreference());
+
+        AlternativeService serviceApplication = data.getAlternativeService();
+        boolean madePayment = YesOrNo.YES.equals(serviceApplication.getAlternativeServiceFeeRequired());
+        DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
+
+        String responseDate = serviceApplication.getReceivedServiceApplicationDate()
+            .plusDays(interimApplicationResponseOffsetDays)
+            .format(dateTimeFormatter);
+        templateVars.put(MADE_PAYMENT, madePayment ? YES : NO);
+        templateVars.put(USED_HELP_WITH_FEES, !madePayment ? YES : NO);
+        templateVars.put(SUBMISSION_RESPONSE_DATE, madePayment ? responseDate : "");
+
         return templateVars;
     }
 
