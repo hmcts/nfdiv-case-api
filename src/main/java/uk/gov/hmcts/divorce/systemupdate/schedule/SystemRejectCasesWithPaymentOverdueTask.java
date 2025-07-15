@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.service.task.UpdateSuccessfulPaymentStatus;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -22,7 +23,9 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.systemupdate.event.NonPaymentRejectCase.SYSTEM_REJECTED;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.SUPPLEMENTARY_CASE_TYPE;
 
 @Component
 @RequiredArgsConstructor
@@ -30,6 +33,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
 
     private static final String LAST_MODIFIED = "last_modified";
+    private static final String NEW_PAPER_CASE = "newPaperCase";
 
     private final CcdSearchService ccdSearchService;
 
@@ -37,11 +41,7 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
 
     private final AuthTokenGenerator authTokenGenerator;
 
-    private final PaymentStatusService paymentStatusService;
-
     private final CcdUpdateService ccdUpdateService;
-
-    private final UpdateSuccessfulPaymentStatus updateSuccessfulPaymentStatus;
 
     @Override
     public void run() {
@@ -51,17 +51,34 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
         final var serviceAuth = authTokenGenerator.generate();
 
         try {
+            final BoolQueryBuilder paperOrJudicialSeparationCases = boolQuery()
+                .should(matchQuery(String.format(DATA, SUPPLEMENTARY_CASE_TYPE), "judicialSeparation"))
+                .should(matchQuery(String.format(DATA, SUPPLEMENTARY_CASE_TYPE), "separation"))
+                .should(matchQuery(String.format(DATA, NEW_PAPER_CASE), "Yes"))
+                .minimumShouldMatch(1);
+
+            final MatchQueryBuilder awaitingPaymentQuery = matchQuery(STATE, AwaitingPayment);
+
             final BoolQueryBuilder query = boolQuery()
-                    .must(matchQuery(STATE, AwaitingPayment))
-                    .filter(rangeQuery(LAST_MODIFIED)
-                            .gte(LocalDate.now().minusDays(14)));
+                .should(
+                    boolQuery()
+                        .must(awaitingPaymentQuery)
+                        .mustNot(paperOrJudicialSeparationCases)
+                        .filter(rangeQuery(LAST_MODIFIED).lte(LocalDate.now().minusDays(14)))  // regular cases inactive for 14+ days
+                )
+                .should(
+                    boolQuery()
+                        .must(awaitingPaymentQuery)
+                        .must(paperOrJudicialSeparationCases)
+                        .filter(rangeQuery(LAST_MODIFIED).lte(LocalDate.now().minusDays(17)))  // special cases inactive for 17+ days
+                )
+                .minimumShouldMatch(1);
 
             final List<CaseDetails> casesInAwaitingPaymentStateForPaymentOverdue =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPayment);
 
             casesInAwaitingPaymentStateForPaymentOverdue.forEach(caseDetails ->
-                ccdUpdateService.submitEventWithRetry(caseDetails.getId().toString(), SYSTEM_REJECTED,
-                    updateSuccessfulPaymentStatus, user, serviceAuth));
+                ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_REJECTED, user, serviceAuth));
 
             log.info("SystemRejectCasesWithPaymentOverdueTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {

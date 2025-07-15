@@ -62,7 +62,7 @@ public class NonPaymentRejectCase implements CCDConfig<CaseData, State, UserRole
             .name(REJECT)
             .description(REJECT)
             .showEventNotes()
-      //      .ttlIncrement(180)
+            .ttlIncrement(180)
             .grant(CREATE_READ_UPDATE,
                 SYSTEMUPDATE)
             .grantHistoryOnly(
