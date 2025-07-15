@@ -66,10 +66,10 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
     private static final String APPLICANTS_OR_APPLICANT1S = "${labelContentApplicantsOrApplicant1s}";
     private static final String THE_APPLICANT_OR_APPLICANT1 = "${labelContentTheApplicantOrApplicant1}";
 
-    private static final String NAME_IS_DIFFERENT = "applicant1NameDifferentToMarriageCertificate=\"Yes\"";
-    private static final String NAME_IS_DIFFERENT_FOR_OTHER_REASON = "applicant1WhyNameDifferentCONTAINS\"other\"";
-    private static final String HAS_CHANGED_PARTS_OF_NAME = "applicant1WhyNameDifferentCONTAINS\"changedPartsOfName\"";
-    private static final String HAS_CHANGED_NAME_IN_OTHER_WAY = "applicant1NameDifferentToMarriageCertificateMethodCONTAINS\"other\"";
+    public static final String APP1_NAME_IS_DIFFERENT = "applicant1NameDifferentToMarriageCertificate=\"Yes\"";
+    public static final String APP1_NAME_IS_DIFFERENT_FOR_OTHER_REASON = "applicant1WhyNameDifferentCONTAINS\"other\"";
+    public static final String APP1_HAS_CHANGED_PARTS_OF_NAME = "applicant1WhyNameDifferentCONTAINS\"changedPartsOfName\"";
+    public static final String APP1_HAS_CHANGED_NAME_IN_OTHER_WAY = "applicant1NameDifferentToMarriageCertificateMethodCONTAINS\"other\"";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
@@ -99,21 +99,21 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
             .done()
             .complex(CaseData::getApplicant1)
                 .mandatory(Applicant::getWhyNameDifferent,
-                    NAME_IS_DIFFERENT,
+                    APP1_NAME_IS_DIFFERENT,
                     NO_DEFAULT_VALUE,
                     String.format(WHY_NAME_DIFFERENT_LABEL, THE_APPLICANT_OR_APPLICANT1),
                     WHY_NAME_DIFFERENT_HINT
                 )
                 .mandatory(Applicant::getWhyNameDifferentOtherDetails,
-                    andShowCondition(NAME_IS_DIFFERENT, NAME_IS_DIFFERENT_FOR_OTHER_REASON),
+                    andShowCondition(APP1_NAME_IS_DIFFERENT, APP1_NAME_IS_DIFFERENT_FOR_OTHER_REASON),
                     NO_DEFAULT_VALUE,
                     WHY_NAME_DIFFERENT_DETAILS_LABEL)
                 .mandatory(Applicant::getNameDifferentToMarriageCertificateMethod,
-                    andShowCondition(NAME_IS_DIFFERENT, HAS_CHANGED_PARTS_OF_NAME),
+                    andShowCondition(APP1_NAME_IS_DIFFERENT, APP1_HAS_CHANGED_PARTS_OF_NAME),
                     NO_DEFAULT_VALUE,
                     EVIDENCE_FOR_NAME_CHANGE_LABEL)
                 .mandatory(Applicant::getNameDifferentToMarriageCertificateOtherDetails,
-                    andShowCondition(NAME_IS_DIFFERENT, HAS_CHANGED_PARTS_OF_NAME, HAS_CHANGED_NAME_IN_OTHER_WAY),
+                    andShowCondition(APP1_NAME_IS_DIFFERENT, APP1_HAS_CHANGED_PARTS_OF_NAME, APP1_HAS_CHANGED_NAME_IN_OTHER_WAY),
                     NO_DEFAULT_VALUE,
                     "Please provide other details of what evidence will be provided")
                 .mandatoryWithoutDefaultValue(Applicant::getGender, "divorceOrDissolution=\"dissolution\"",

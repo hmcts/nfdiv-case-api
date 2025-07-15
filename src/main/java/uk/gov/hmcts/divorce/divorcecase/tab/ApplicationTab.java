@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.andShowCondition;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.SeparationOrderGranted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -16,6 +17,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.notShowForState;
+import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.APP1_HAS_CHANGED_NAME_IN_OTHER_WAY;
+import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.APP1_HAS_CHANGED_PARTS_OF_NAME;
+import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.APP1_NAME_IS_DIFFERENT;
+import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.APP1_NAME_IS_DIFFERENT_FOR_OTHER_REASON;
+import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant2.APP2_HAS_CHANGED_NAME_IN_OTHER_WAY;
+import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant2.APP2_HAS_CHANGED_PARTS_OF_NAME;
+import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant2.APP2_NAME_IS_DIFFERENT;
+import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant2.APP2_NAME_IS_DIFFERENT_FOR_OTHER_REASON;
 
 @Component
 public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
@@ -215,10 +224,19 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("newPaperCase", NEVER_SHOW)
             .field("marriageFormationType", NOT_NEW_PAPER_CASE)
             .field("applicant1NameDifferentToMarriageCertificate")
-            .field("applicant1NameDifferentToMarriageCertificateMethod")
-            .field("applicant1NameDifferentToMarriageCertificateOtherDetails")
-            .field("applicant1WhyNameDifferent")
-            .field("applicant1WhyNameDifferentOtherDetails")
+            .field(
+                "applicant1NameDifferentToMarriageCertificateMethod",
+                andShowCondition(APP1_NAME_IS_DIFFERENT, APP1_HAS_CHANGED_PARTS_OF_NAME)
+            )
+            .field(
+                "applicant1NameDifferentToMarriageCertificateOtherDetails",
+                andShowCondition(APP1_NAME_IS_DIFFERENT, APP1_HAS_CHANGED_PARTS_OF_NAME, APP1_HAS_CHANGED_NAME_IN_OTHER_WAY)
+            )
+            .field("applicant1WhyNameDifferent", APP1_NAME_IS_DIFFERENT)
+            .field(
+                "applicant1WhyNameDifferentOtherDetails",
+                andShowCondition(APP1_NAME_IS_DIFFERENT, APP1_NAME_IS_DIFFERENT_FOR_OTHER_REASON)
+            )
             .field("applicant1LastNameChangedWhenMarried")
             .field("applicant1LastNameChangedWhenMarriedMethod")
             .field("applicant1LastNameChangedWhenMarriedOtherDetails")
@@ -287,10 +305,19 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2LastName")
             .field("applicant2Gender")
             .field("applicant2NameDifferentToMarriageCertificate")
-            .field("applicant2NameDifferentToMarriageCertificateMethod")
-            .field("applicant2NameDifferentToMarriageCertificateOtherDetails")
-            .field("applicant2WhyNameDifferent")
-            .field("applicant2WhyNameDifferentOtherDetails")
+            .field(
+                "applicant2NameDifferentToMarriageCertificateMethod",
+                andShowCondition(APP2_NAME_IS_DIFFERENT, APP2_HAS_CHANGED_PARTS_OF_NAME)
+            )
+            .field(
+                "applicant2NameDifferentToMarriageCertificateOtherDetails",
+                andShowCondition(APP2_NAME_IS_DIFFERENT, APP2_HAS_CHANGED_PARTS_OF_NAME, APP2_HAS_CHANGED_NAME_IN_OTHER_WAY)
+            )
+            .field("applicant2WhyNameDifferent", APP2_NAME_IS_DIFFERENT)
+            .field(
+                "applicant2WhyNameDifferentOtherDetails",
+                andShowCondition(APP2_NAME_IS_DIFFERENT, APP2_NAME_IS_DIFFERENT_FOR_OTHER_REASON)
+            )
             .field("applicant2LastNameChangedWhenMarried")
             .field("applicant2LastNameChangedWhenMarriedMethod")
             .field("applicant2LastNameChangedWhenMarriedOtherDetails")
