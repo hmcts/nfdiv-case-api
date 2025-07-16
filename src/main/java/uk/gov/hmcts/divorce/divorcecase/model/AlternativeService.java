@@ -121,16 +121,10 @@ public class AlternativeService {
     private YesOrNo serviceApplicationSubmittedOnline;
 
     @CCD(
-        label = "Alternative Service Method selected",
+        label = "Medium requested for alternative service",
         searchable = false
     )
-    private AlternativeServiceMethod alternativeServiceMethod;
-
-    @CCD(
-        label = "Different ways of serving the application",
-        searchable = false
-    )
-    private Set<AlternativeServiceDifferentWays> alternativeServiceDifferentWays;
+    private Set<AlternativeServiceMediumType> alternativeServiceMediumSelected;
 
     @JsonUnwrapped
     @Builder.Default

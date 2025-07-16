@@ -9,8 +9,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceDifferentWays;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceMethod;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceMediumType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -66,7 +65,7 @@ class AlternativeServiceApplicationSubmittedNotificationTest {
         data.setAlternativeService(AlternativeService.builder()
                 .serviceApplicationDocsUploadedPreSubmission(YesOrNo.NO)
                 .alternativeServiceFeeRequired(YesOrNo.NO)
-                .alternativeServiceMethod(AlternativeServiceMethod.EMAIL)
+                .alternativeServiceMediumSelected(Set.of(AlternativeServiceMediumType.EMAIL))
                 .receivedServiceApplicationDate(LocalDate.of(2020, 1, 1))
             .build());
 
@@ -103,7 +102,7 @@ class AlternativeServiceApplicationSubmittedNotificationTest {
         data.setAlternativeService(AlternativeService.builder()
             .serviceApplicationDocsUploadedPreSubmission(YesOrNo.YES)
             .alternativeServiceFeeRequired(YesOrNo.YES)
-            .alternativeServiceMethod(AlternativeServiceMethod.EMAIL)
+            .alternativeServiceMediumSelected(Set.of(AlternativeServiceMediumType.EMAIL))
             .receivedServiceApplicationDate(LocalDate.of(2020, 1, 1))
             .build());
 
@@ -141,7 +140,7 @@ class AlternativeServiceApplicationSubmittedNotificationTest {
         data.setAlternativeService(AlternativeService.builder()
             .serviceApplicationDocsUploadedPreSubmission(YesOrNo.YES)
             .alternativeServiceFeeRequired(YesOrNo.YES)
-            .alternativeServiceMethod(AlternativeServiceMethod.EMAIL)
+            .alternativeServiceMediumSelected(Set.of(AlternativeServiceMediumType.EMAIL))
             .receivedServiceApplicationDate(LocalDate.of(2020, 1, 1))
             .build());
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
@@ -176,8 +175,7 @@ class AlternativeServiceApplicationSubmittedNotificationTest {
         data.setAlternativeService(AlternativeService.builder()
             .serviceApplicationDocsUploadedPreSubmission(YesOrNo.YES)
             .alternativeServiceFeeRequired(YesOrNo.YES)
-            .alternativeServiceMethod(AlternativeServiceMethod.EMAIL_AND_DIFFERENT)
-                .alternativeServiceDifferentWays(Set.of(AlternativeServiceDifferentWays.TEXT_MESSAGE))
+            .alternativeServiceMediumSelected(Set.of(AlternativeServiceMediumType.EMAIL, AlternativeServiceMediumType.TEXT))
             .receivedServiceApplicationDate(LocalDate.of(2020, 1, 1))
             .build());
 
@@ -214,8 +212,7 @@ class AlternativeServiceApplicationSubmittedNotificationTest {
         data.setAlternativeService(AlternativeService.builder()
             .serviceApplicationDocsUploadedPreSubmission(YesOrNo.YES)
             .alternativeServiceFeeRequired(YesOrNo.YES)
-            .alternativeServiceMethod(AlternativeServiceMethod.DIFFERENT_WAY)
-            .alternativeServiceDifferentWays(Set.of(AlternativeServiceDifferentWays.TEXT_MESSAGE))
+            .alternativeServiceMediumSelected(Set.of(AlternativeServiceMediumType.TEXT))
             .receivedServiceApplicationDate(LocalDate.of(2020, 1, 1))
             .build());
 
