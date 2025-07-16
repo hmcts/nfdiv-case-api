@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
@@ -137,16 +138,24 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         }
 
         return AlternativeService.builder()
-            .serviceApplicationDocuments(userOptions.getInterimAppsEvidenceDocs())
-            .receivedServiceApplicationDate(LocalDate.now(clock))
-            .receivedServiceAddedDate(LocalDate.now(clock))
-            .alternativeServiceType(userOptions.getInterimApplicationType().getServiceType())
-            .serviceApplicationDocsUploadedPreSubmission(userOptions.awaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
-            .serviceApplicationSubmittedOnline(YesOrNo.YES)
-            .serviceApplicationDocuments(
-                evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs()
-            )
-            .build();
+                .serviceApplicationDocuments(userOptions.getInterimAppsEvidenceDocs())
+                .receivedServiceApplicationDate(LocalDate.now(clock))
+                .receivedServiceAddedDate(LocalDate.now(clock))
+                .alternativeServiceType(userOptions.getInterimApplicationType().getServiceType())
+                .serviceApplicationDocsUploadedPreSubmission(userOptions.awaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
+                .serviceApplicationSubmittedOnline(YesOrNo.YES)
+                .serviceApplicationDocuments(
+                        evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs()
+                )
+                .alternativeServiceMethod(userOptions.getInterimApplicationType().getServiceType()
+                        .equals(AlternativeServiceType.ALTERNATIVE_SERVICE)
+                        ? userOptions.getAlternativeServiceJourneyOptions().getAltServiceMethod()
+                        : null)
+                .alternativeServiceDifferentWays(userOptions.getInterimApplicationType().getServiceType()
+                        == AlternativeServiceType.ALTERNATIVE_SERVICE
+                        ? userOptions.getAlternativeServiceJourneyOptions().getAltServiceDifferentWays()
+                        : null)
+                .build();
     }
 
     private void prepareCaseForServicePayment(AlternativeService serviceApplication, Applicant applicant, long caseId) {
