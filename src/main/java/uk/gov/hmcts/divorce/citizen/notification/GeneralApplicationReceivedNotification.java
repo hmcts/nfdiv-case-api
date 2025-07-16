@@ -27,7 +27,7 @@ public class GeneralApplicationReceivedNotification implements ApplicantNotifica
     public static final String IS_DISPENSE_SERVICE = "isDispenseService";
     public static final String IS_BAILIFF_SERVICE = "isBailiffService";
     public static final String IS_ALTERNATIVE_SERVICE = "isAlternativeService";
-    public static final String IS_SEARCH_GOV_SERVICE = "isGovSearchService";
+    public static final String IS_SEARCH_GOV_SERVICE = "isSearchGovService";
 
     private final NotificationService notificationService;
 
