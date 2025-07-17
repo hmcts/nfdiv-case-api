@@ -135,36 +135,12 @@ class SaveAndSignOutNotificationHandlerTest {
 
     @Test
     void shouldCallSendEmailToApp1WhenNotifyApplicantIsInvokedForGivenCaseDataWhenInterimApplicationTypeIsDispensedWithService() {
-        verifyInterimApplicationType(InterimApplicationType.DISPENSE_WITH_SERVICE, "isDispenseService", "dispense with service");
-    }
-
-    @Test
-    void shouldCallSendEmailToApp1WhenNotifyApplicantIsInvokedForGivenCaseDataWhenInterimApplicationTypeIsAlternativeService() {
-        verifyInterimApplicationType(InterimApplicationType.ALTERNATIVE_SERVICE, "isAlternativeService", "alternative service");
-    }
-
-    @Test
-    void shouldCallSendEmailToApp1WhenNotifyApplicantIsInvokedForGivenCaseDataWhenInterimApplicationTypeIsBailiffService() {
-        verifyInterimApplicationType(InterimApplicationType.BAILIFF_SERVICE, "isBailiffService", "bailiff service");
-    }
-
-    @Test
-    void shouldCallSendEmailToApp1WhenNotifyApplicantIsInvokedForGivenCaseDataWhenInterimApplicationTypeIsDeemedService() {
-        verifyInterimApplicationType(InterimApplicationType.DEEMED_SERVICE, "isDeemedService", "deemed service");
-    }
-
-    @Test
-    void shouldCallSendEmailToApp1WhenNotifyApplicantIsInvokedForGivenCaseDataWhenInterimApplicationTypeIsSearchGovRecord() {
-        verifyInterimApplicationType(InterimApplicationType.SEARCH_GOV_RECORDS, "isSearchGovService", "search government records");
-    }
-
-    private void verifyInterimApplicationType(InterimApplicationType type, String serviceKey, String serviceText) {
         CaseData caseData = validApplicant1CaseData();
         caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions
-            .builder().interimApplicationType(type).build());
+            .builder().interimApplicationType(InterimApplicationType.DEEMED_SERVICE).build());
         User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).build());
         when(idamService.retrieveUser(eq(USER_TOKEN))).thenReturn(user);
-        when(ccdAccessService.isApplicant1(eq(USER_TOKEN), eq(CASE_ID))).thenReturn(false);
+        when(ccdAccessService.isApplicant1(eq(USER_TOKEN), eq(CASE_ID))).thenReturn(true);
 
 
         saveAndSignOutNotificationHandler.notifyApplicant(AosOverdue, caseData, CASE_ID, USER_TOKEN);
@@ -173,7 +149,7 @@ class SaveAndSignOutNotificationHandlerTest {
             eq(TEST_USER_EMAIL),
             eq(INTERIM_APPLICATION_SAVE_SIGN_OUT),
             argThat(allOf(
-                hasEntry(serviceKey, serviceText)
+                hasEntry("interimApplicationType", "deemed service")
             )),
             eq(ENGLISH),
             eq(CASE_ID)

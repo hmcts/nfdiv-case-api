@@ -12,11 +12,6 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
-import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_ALTERNATIVE_SERVICE;
-import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_BAILIFF_SERVICE;
-import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_DEEMED_SERVICE;
-import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_DISPENSE_SERVICE;
-import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_SEARCH_GOV_SERVICE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.INTERIM_APPLICATION_SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT;
@@ -25,6 +20,8 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SAVE_SIGN_OUT;
 @Component
 @RequiredArgsConstructor
 public class SaveAndSignOutNotificationHandler {
+
+    public static final String INTERIM_APPLICATION_TYPE = "interimApplicationType";
 
     private final CcdAccessService ccdAccessService;
 
@@ -45,15 +42,14 @@ public class SaveAndSignOutNotificationHandler {
         final var isInterimApplication = State.AosOverdue.equals(state) && !isEmpty(applicant1.getInterimApplicationOptions());
 
         final var emailTemplate = State.InformationRequested.equals(state)
-            ? REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT : isInterimApplication ? INTERIM_APPLICATION_SAVE_SIGN_OUT : SAVE_SIGN_OUT;
+            ? REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT
+            : isApplicant1 && isInterimApplication ? INTERIM_APPLICATION_SAVE_SIGN_OUT : SAVE_SIGN_OUT;
         final var templateContent = commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
         templateContent.put(SMART_SURVEY, commonContent.getSmartSurvey());
 
         if (isInterimApplication) {
-          templateContent.put(
-            INTERIM_APPLICATION_TYPE,
-            applicant1.getInterimApplicationOptions().getInterimApplicationType().getLabel()
-          )
+            templateContent.put(
+                INTERIM_APPLICATION_TYPE, applicant1.getInterimApplicationOptions().getInterimApplicationType().getLabel().toLowerCase());
         }
 
         notificationService.sendEmail(
