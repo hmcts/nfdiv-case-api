@@ -268,7 +268,16 @@ public enum DocumentType implements HasLabel {
     REQUEST_FOR_INFORMATION_RESPONSE_DOC("RFI response document", true),
 
     @JsonProperty("paperApplicationReceivedLetter")
-    PAPER_APPLICATION_RECEIVED_LETTER("Paper Application Received Letter", true);
+    PAPER_APPLICATION_RECEIVED_LETTER("Paper Application Received Letter", true),
+
+    @JsonProperty("dispenseNoTraceCertificate")
+    DISPENSE_NO_TRACE_CERTIFICATE("No Trace Certificate", true),
+
+    @JsonProperty("dispenseEmailEvidence")
+    DISPENSE_EMAIL_EVIDENCE("Dispense Email Evidence", true),
+
+    @JsonProperty("dispensePhoneNumberEvidence")
+    DISPENSE_PHONE_NUMBER_EVIDENCE("Dispense Phone Number Evidence", true);
 
     private final String label;
     private final boolean potentiallyConfidential;

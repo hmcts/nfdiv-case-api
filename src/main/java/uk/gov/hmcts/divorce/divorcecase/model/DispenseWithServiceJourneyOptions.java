@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.LocalDate;
 
@@ -137,5 +138,4 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
         access = {DefaultAccess.class}
     )
     private YesOrNo dispenseTriedTracingAgent;
-
 }

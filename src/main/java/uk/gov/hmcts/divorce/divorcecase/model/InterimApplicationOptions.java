@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.util.List;
 
@@ -105,6 +106,12 @@ public class InterimApplicationOptions {
         access = {DefaultAccess.class}
     )
     private YesOrNo interimAppsStatementOfTruth;
+
+    @CCD(
+        label = "Temp Doc Upload Type",
+        access = {DefaultAccess.class}
+    )
+    private DocumentType interimAppsTempDocUploadType; // Can delete this field - the FE will never submit it
 
     @JsonIgnore
     public ApplicationAnswers getApplicationAnswers() {
