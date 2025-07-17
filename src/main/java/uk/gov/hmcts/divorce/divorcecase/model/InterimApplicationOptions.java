@@ -111,7 +111,7 @@ public class InterimApplicationOptions {
         label = "Temp Doc Upload Type",
         access = {DefaultAccess.class}
     )
-    private DocumentType interimAppsTempDocUploadType; // Can delete this field - the FE will never submit it
+    private DocumentType interimAppsTempDocUploadType;
 
     @JsonIgnore
     public ApplicationAnswers getApplicationAnswers() {
