@@ -555,14 +555,14 @@ class GenerateApplicant2NoticeOfProceedingsTest {
     }
 
     @Test
-    void shouldGenerateNoPWithoutCoversheetWhenSoleWithAppNotRepresented() {
+    void shouldGenerateNoPWithoutCoversheetWhenSoleWithAppNotRepresentedAndOnline() {
         setMockClock(clock);
         MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
-        caseData.getApplicant2().setOffline(YES);
+        caseData.getApplicant2().setOffline(NO);
 
         final Map<String, Object> templateContent = new HashMap<>();
 

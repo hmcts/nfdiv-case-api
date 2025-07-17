@@ -172,7 +172,7 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
             boolean app2BasedOverseas = applicant2.isBasedOverseas() || applicant2.getCorrespondenceAddressIsOverseas() == YesOrNo.YES;
             boolean app2IsOffline = applicant2.isApplicantOffline() || OFFLINE_AOS.equals(caseData.getApplication().getReissueOption());
             final List<Letter> oldCoversheetLetters = getLettersBasedOnContactPrivacy(caseData, COVERSHEET);
-            boolean outdatedCoversheetIsPresent = CollectionUtils.isEmpty(oldCoversheetLetters);
+            boolean outdatedCoversheetIsPresent = !CollectionUtils.isEmpty(oldCoversheetLetters);
 
             boolean isCoversheetRequired = !isCourtService || app2BasedOverseas || app2IsOffline || outdatedCoversheetIsPresent;
 
