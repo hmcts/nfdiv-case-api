@@ -39,7 +39,8 @@ public class SaveAndSignOutNotificationHandler {
         Applicant applicant2 =  caseData.getApplicant2();
         final var applicant = isApplicant1 ? applicant1 : applicant2;
         final var partner = isApplicant1 ? applicant2 : applicant1;
-        final var isInterimApplication = State.AosOverdue.equals(state) && !isEmpty(applicant1.getInterimApplicationOptions());
+        final var isInterimApplication = State.AosOverdue.equals(state)
+            && !isEmpty(applicant1.getInterimApplicationOptions().getInterimApplicationType());
 
         final var emailTemplate = State.InformationRequested.equals(state)
             ? REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT
