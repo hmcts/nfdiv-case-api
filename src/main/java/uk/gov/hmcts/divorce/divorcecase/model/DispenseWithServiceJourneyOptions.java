@@ -137,5 +137,4 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
         access = {DefaultAccess.class}
     )
     private YesOrNo dispenseTriedTracingAgent;
-
 }
