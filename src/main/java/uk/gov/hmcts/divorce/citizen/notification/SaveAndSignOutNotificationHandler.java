@@ -50,14 +50,10 @@ public class SaveAndSignOutNotificationHandler {
         templateContent.put(SMART_SURVEY, commonContent.getSmartSurvey());
 
         if (isInterimApplication) {
-            switch (applicant1.getInterimApplicationOptions().getInterimApplicationType()) {
-                case DEEMED_SERVICE -> templateContent.put(IS_DEEMED_SERVICE, "deemed service");
-                case BAILIFF_SERVICE -> templateContent.put(IS_BAILIFF_SERVICE, "bailiff service");
-                case ALTERNATIVE_SERVICE -> templateContent.put(IS_ALTERNATIVE_SERVICE, "alternative service");
-                case DISPENSE_WITH_SERVICE -> templateContent.put(IS_DISPENSE_SERVICE, "dispense with service");
-                // We could have it as a case or leave it as default for search gov records
-                default -> templateContent.put(IS_SEARCH_GOV_SERVICE, "search government records");
-            }
+          templateContent.put(
+            INTERIM_APPLICATION_TYPE,
+            applicant1.getInterimApplicationOptions().getInterimApplicationType().getLabel()
+          )
         }
 
         notificationService.sendEmail(
