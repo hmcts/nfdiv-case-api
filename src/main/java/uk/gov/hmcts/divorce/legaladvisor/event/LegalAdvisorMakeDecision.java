@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.RefusalOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -25,6 +26,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
@@ -56,6 +58,8 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String LEGAL_ADVISOR_MAKE_DECISION = "legal-advisor-make-decision";
+
+    private static final String SELECT_FREE_TEXT_OPTION = "You need to select the free text option to input the refusal reason";
 
     private final LegalAdvisorRejectedDecisionNotification rejectedNotification;
 
@@ -187,6 +191,16 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details,
                                                                   final CaseDetails<CaseData, State> detailsBefore) {
         CaseData caseData = details.getData();
+
+        ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
+        if (conditionalOrder.getRefusalDecision() == MORE_INFO
+            && conditionalOrder.getRefusalClarificationReason().contains(ClarificationReason.LEGAL_NAME_DIFFERENT_TO_CERTIFICATE)
+            && !conditionalOrder.getRefusalClarificationReason().contains(ClarificationReason.OTHER)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(List.of(SELECT_FREE_TEXT_OPTION))
+                .build();
+        }
 
         caseData.getConditionalOrder().setRefusalOrderDocument(generateRefusalDocument(
             caseData,
