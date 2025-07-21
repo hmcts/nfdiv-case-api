@@ -137,16 +137,16 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         }
 
         return AlternativeService.builder()
-                .serviceApplicationDocuments(userOptions.getInterimAppsEvidenceDocs())
-                .receivedServiceApplicationDate(LocalDate.now(clock))
-                .receivedServiceAddedDate(LocalDate.now(clock))
-                .alternativeServiceType(userOptions.getInterimApplicationType().getServiceType())
-                .serviceApplicationDocsUploadedPreSubmission(userOptions.awaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
-                .serviceApplicationSubmittedOnline(YesOrNo.YES)
-                .serviceApplicationDocuments(
-                        evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs()
-                )
-                .build();
+            .serviceApplicationDocuments(userOptions.getInterimAppsEvidenceDocs())
+            .receivedServiceApplicationDate(LocalDate.now(clock))
+            .receivedServiceAddedDate(LocalDate.now(clock))
+            .alternativeServiceType(userOptions.getInterimApplicationType().getServiceType())
+            .serviceApplicationDocsUploadedPreSubmission(userOptions.awaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
+            .serviceApplicationSubmittedOnline(YesOrNo.YES)
+            .serviceApplicationDocuments(
+                    evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs()
+            )
+            .build();
     }
 
     private void prepareCaseForServicePayment(AlternativeService serviceApplication, Applicant applicant, long caseId) {
