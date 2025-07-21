@@ -200,7 +200,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(
             REVIEW_DEADLINE_DATE,
             holdingPeriodService.getRespondByDateFor(caseData.getApplication().getIssueDate())
-                .format(getDateTimeFormatterForPreferredLanguage(languagePreference))
+                    .format(getDateTimeFormatterForPreferredLanguage(languagePreference))
         );
 
         return templateVars;
