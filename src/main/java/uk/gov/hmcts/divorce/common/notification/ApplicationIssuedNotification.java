@@ -207,7 +207,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         var isInterimApplicationNoResponseReissue = SEND_PAPERS_AGAIN.equals(
             noResponseJourney.getNoResponseSendPapersAgainOrTrySomethingElse());
-        var dueDate = isInterimApplicationNoResponseReissue ? caseData.getDueDate() : caseData.getApplication().getIssueDate();
+        var dueDate = isInterimApplicationNoResponseReissue ? caseData.getApplication().getReissueDate() : caseData.getApplication().getIssueDate();
 
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(
