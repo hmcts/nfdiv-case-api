@@ -194,6 +194,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
 
         ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
         if (conditionalOrder.getRefusalDecision() == MORE_INFO
+            && conditionalOrder.getRefusalClarificationReason() != null
             && conditionalOrder.getRefusalClarificationReason().contains(ClarificationReason.LEGAL_NAME_DIFFERENT_TO_CERTIFICATE)
             && !conditionalOrder.getRefusalClarificationReason().contains(ClarificationReason.OTHER)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
