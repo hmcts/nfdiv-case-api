@@ -12,11 +12,6 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceDifferentWays;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceJourneyOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceMediumType;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceMethod;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
@@ -31,8 +26,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -143,11 +136,6 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             documentRemovalService.deleteDocument(userOptions.getInterimAppsEvidenceDocs());
         }
 
-        Set<AlternativeServiceMediumType> alternativeServiceMediumSelected =
-            userOptions.getInterimApplicationType().getServiceType().equals(AlternativeServiceType.ALTERNATIVE_SERVICE)
-                ? getSelectedMediumFromOptions(userOptions.getAlternativeServiceJourneyOptions())
-                : null;
-
         return AlternativeService.builder()
                 .serviceApplicationDocuments(userOptions.getInterimAppsEvidenceDocs())
                 .receivedServiceApplicationDate(LocalDate.now(clock))
@@ -158,7 +146,6 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
                 .serviceApplicationDocuments(
                         evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs()
                 )
-                .alternativeServiceMediumSelected(alternativeServiceMediumSelected)
                 .build();
     }
 
@@ -179,36 +166,5 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
     private boolean serviceAppAwaitingDecision(AlternativeService alternativeService) {
         return alternativeService != null && alternativeService.getAlternativeServiceType() != null;
-    }
-
-    private Set<AlternativeServiceMediumType> getSelectedMediumFromOptions(
-        AlternativeServiceJourneyOptions alternativeServiceJourneyOptions) {
-        Set<AlternativeServiceMediumType> alternativeServiceMediumSelected = new HashSet<>();
-
-        if (alternativeServiceJourneyOptions.getAltServiceMethod() != AlternativeServiceMethod.DIFFERENT_WAY) {
-            alternativeServiceMediumSelected.add(AlternativeServiceMediumType.EMAIL);
-        }
-
-        if (alternativeServiceJourneyOptions.getAltServiceMethod() != AlternativeServiceMethod.EMAIL) {
-            for (AlternativeServiceDifferentWays way : alternativeServiceJourneyOptions.getAltServiceDifferentWays()) {
-                switch (way) {
-                    case AlternativeServiceDifferentWays.TEXT_MESSAGE:
-                        alternativeServiceMediumSelected.add(AlternativeServiceMediumType.TEXT);
-                        break;
-                    case AlternativeServiceDifferentWays.WHATSAPP:
-                        alternativeServiceMediumSelected.add(AlternativeServiceMediumType.WHATSAPP);
-                        break;
-                    case AlternativeServiceDifferentWays.SOCIAL_MEDIA:
-                        alternativeServiceMediumSelected.add(AlternativeServiceMediumType.SOCIAL_MEDIA);
-                        break;
-                    case AlternativeServiceDifferentWays.OTHER:
-                        alternativeServiceMediumSelected.add(AlternativeServiceMediumType.OTHER);
-                        break;
-                    default:
-                        log.warn("Unknown alternative service medium type: {}", way);
-                }
-            }
-        }
-        return alternativeServiceMediumSelected;
     }
 }

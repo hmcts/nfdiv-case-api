@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceMediumType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
@@ -69,16 +68,6 @@ public class AlternativeServiceApplicationSubmittedNotification implements Appli
         templateVars.put(MADE_PAYMENT, madePayment ? YES : NO);
         templateVars.put(USED_HELP_WITH_FEES, !madePayment ? YES : NO);
         templateVars.put(SUBMISSION_RESPONSE_DATE, madePayment ? responseDate : "");
-
-        boolean multipleWaysSelected = serviceApplication.getAlternativeServiceMediumSelected().size() > 1;
-
-        boolean onlyOneWaySelected = serviceApplication.getAlternativeServiceMediumSelected().size() == 1
-            && !serviceApplication.getAlternativeServiceMediumSelected().contains(AlternativeServiceMediumType.EMAIL);
-
-        templateVars.put(MULTIPLE_WAYS_SELECTED, multipleWaysSelected ? YES : NO);
-        templateVars.put(DIFFERENT_WAY_SELECTED, onlyOneWaySelected ? YES : NO);
-        templateVars.put(OPTIONAL_PARTNER_LABEL, onlyOneWaySelected
-            ? commonContent.getPartner(caseData, partner, applicant.getLanguagePreference()) : "");
 
         return templateVars;
     }

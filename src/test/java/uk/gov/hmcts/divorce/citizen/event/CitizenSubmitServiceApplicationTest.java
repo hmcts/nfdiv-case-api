@@ -12,10 +12,6 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceDifferentWays;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceJourneyOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceMediumType;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -30,7 +26,6 @@ import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import java.time.Clock;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -128,7 +123,6 @@ class CitizenSubmitServiceApplicationTest {
         assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
         assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.NO);
         assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
-        assertThat(alternativeService.getAlternativeServiceMediumSelected()).isNull();
     }
 
     @Test
@@ -169,7 +163,6 @@ class CitizenSubmitServiceApplicationTest {
         assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
         assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.YES);
         assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
-        assertThat(alternativeService.getAlternativeServiceMediumSelected()).isNull();
     }
 
     @Test
@@ -210,7 +203,6 @@ class CitizenSubmitServiceApplicationTest {
         assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
         assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.NO);
         assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
-        assertThat(alternativeService.getAlternativeServiceMediumSelected()).isNull();
     }
 
     @Test
@@ -294,99 +286,5 @@ class CitizenSubmitServiceApplicationTest {
         citizenSubmitServiceApplication.submitted(caseDetails, caseDetails);
 
         verifyNoInteractions(interimApplicationSubmissionService);
-    }
-
-    @Test
-    void shouldSetAlternativeServiceFieldsWhenServiceIsAlternativeServiceAndMethodIsEmail() {
-        setMockClock(clock);
-
-        CaseData caseData = CaseData.builder()
-            .applicant1(
-                Applicant.builder()
-                    .firstName(TEST_FIRST_NAME)
-                    .interimApplicationOptions(InterimApplicationOptions.builder()
-                        .interimAppsUseHelpWithFees(YesOrNo.YES)
-                        .interimAppsCannotUploadDocs(YesOrNo.YES)
-                        .interimApplicationType(InterimApplicationType.ALTERNATIVE_SERVICE)
-                        .alternativeServiceJourneyOptions(
-                            AlternativeServiceJourneyOptions.builder()
-                                .altServiceMethod(AlternativeServiceMethod.EMAIL)
-                                .altServiceDifferentWays(Set.of(AlternativeServiceDifferentWays.TEXT_MESSAGE))
-                                .build())
-                        .build())
-                    .build()
-            ).build();
-
-        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
-        caseDetails.setId(TEST_CASE_ID);
-
-        DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateAnswerDocument(
-            TEST_CASE_ID, caseData.getApplicant1(), caseData
-        )).thenReturn(generatedApplication);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
-            caseDetails, caseDetails
-        );
-
-        AlternativeService alternativeService = response.getData().getAlternativeService();
-        assertThat(response.getState()).isEqualTo(State.AwaitingDocuments);
-        assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
-        assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isNull();
-        assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isNull();
-        assertThat(alternativeService.getAlternativeServiceFeeRequired()).isNotEqualTo(YesOrNo.YES);
-        assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
-        assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.NO);
-        assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.ALTERNATIVE_SERVICE);
-        assertThat(alternativeService.getAlternativeServiceMediumSelected()).containsExactly(AlternativeServiceMediumType.EMAIL);
-    }
-
-    @Test
-    void shouldSetAlternativeServiceFieldsWhenServiceIsAlternativeServiceAndMethodIsEmailAndDifferent() {
-        setMockClock(clock);
-
-        CaseData caseData = CaseData.builder()
-            .applicant1(
-                Applicant.builder()
-                    .firstName(TEST_FIRST_NAME)
-                    .interimApplicationOptions(InterimApplicationOptions.builder()
-                        .interimAppsUseHelpWithFees(YesOrNo.YES)
-                        .interimAppsCannotUploadDocs(YesOrNo.YES)
-                        .interimApplicationType(InterimApplicationType.ALTERNATIVE_SERVICE)
-                        .alternativeServiceJourneyOptions(
-                            AlternativeServiceJourneyOptions.builder()
-                                .altServiceMethod(AlternativeServiceMethod.EMAIL_AND_DIFFERENT)
-                                .altServiceDifferentWays(Set.of(AlternativeServiceDifferentWays.TEXT_MESSAGE,
-                                    AlternativeServiceDifferentWays.OTHER))
-                                .build())
-                        .build())
-                    .build()
-            ).build();
-
-        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
-        caseDetails.setId(TEST_CASE_ID);
-
-        DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateAnswerDocument(
-            TEST_CASE_ID, caseData.getApplicant1(), caseData
-        )).thenReturn(generatedApplication);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
-            caseDetails, caseDetails
-        );
-
-        AlternativeService alternativeService = response.getData().getAlternativeService();
-        assertThat(response.getState()).isEqualTo(State.AwaitingDocuments);
-        assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
-        assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isNull();
-        assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isNull();
-        assertThat(alternativeService.getAlternativeServiceFeeRequired()).isNotEqualTo(YesOrNo.YES);
-        assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
-        assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.NO);
-        assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.ALTERNATIVE_SERVICE);
-        assertThat(alternativeService.getAlternativeServiceMediumSelected().size()).isEqualTo(3);
-        assertThat(alternativeService.getAlternativeServiceMediumSelected())
-            .containsExactlyInAnyOrder(AlternativeServiceMediumType.EMAIL,
-                AlternativeServiceMediumType.TEXT, AlternativeServiceMediumType.OTHER);
     }
 }

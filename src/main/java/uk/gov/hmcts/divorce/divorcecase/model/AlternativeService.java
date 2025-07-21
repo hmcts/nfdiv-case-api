@@ -17,7 +17,6 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
@@ -119,12 +118,6 @@ public class AlternativeService {
         label = "Service application submitted online"
     )
     private YesOrNo serviceApplicationSubmittedOnline;
-
-    @CCD(
-        label = "Medium requested for alternative service",
-        searchable = false
-    )
-    private Set<AlternativeServiceMediumType> alternativeServiceMediumSelected;
 
     @JsonUnwrapped
     @Builder.Default
