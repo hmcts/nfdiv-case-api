@@ -86,10 +86,6 @@ public class ReIssueApplicationService {
         }
         ReissueOption reissueOption = caseData.getApplication().getReissueOption();
 
-        if (reissueOption == null) {
-            reissueOption = setReissueOptionsForCitizen(caseData.getApplicant2());
-        }
-
         log.info("For case id {} reissue option selected is {} ", caseDetails.getId(), reissueOption);
 
         var updatedCaseDetails = updateCase(caseDetails, reissueOption);
@@ -219,13 +215,5 @@ public class ReIssueApplicationService {
         caseTasks(setServiceType).run(caseDetails);
 
         caseData.getApplication().setReissueOption(reissueOption);
-    }
-
-    private ReissueOption setReissueOptionsForCitizen(Applicant applicant2) {
-
-        return (applicant2.isBasedOverseas() || applicant2.getAddressOverseas() == YES)
-            ? REISSUE_CASE
-            : StringUtils.isEmpty(applicant2.getEmail()) ? OFFLINE_AOS : DIGITAL_AOS;
-
     }
 }

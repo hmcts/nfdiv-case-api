@@ -647,8 +647,8 @@ class ReIssueApplicationServiceTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        assertThatThrownBy(() -> reIssueApplicationService.process(caseDetails))
+        assertThatThrownBy(() -> reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId()))
             .isExactlyInstanceOf(InvalidReissueOptionException.class)
-            .hasMessage("Invalid reissue option for CaseId: 1616591401473378");
+            .hasMessage("Invalid update contact details option selected for CaseId: 1616591401473378");
     }
 }

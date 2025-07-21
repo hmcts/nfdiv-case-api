@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -30,7 +29,7 @@ import java.util.Optional;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
-import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.SEND_PAPERS_AGAIN;
+import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.TRY_SOMETHING_ELSE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -113,7 +112,7 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
         }
 
         if (processNoResponseJourneyOptions(getNoResponseJourneyOptions(caseData))) {
-                details.setState(AwaitingAos);
+            details.setState(AwaitingAos);
         }       // Add logic for more options if required
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -148,7 +147,7 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
 
     private boolean processNoResponseJourneyOptions(NoResponseJourneyOptions options) {
         return options != null
-            && options.getNoResponseSendPapersAgainOrTrySomethingElse() != null;
+            && !TRY_SOMETHING_ELSE.equals(options.getNoResponseSendPapersAgainOrTrySomethingElse());
     }
 
 }

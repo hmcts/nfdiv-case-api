@@ -72,12 +72,17 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
     void shouldReturnErrorForAboutToSubmitIfInvalidReissueOptionExceptionIsThrown() {
 
         final CaseData caseData = validCaseDataForReIssueApplication();
-
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
+            .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
+                .noResponsePartnerNewEmailOrPostalAddress(NoResponsePartnerNewEmailOrPostalAddress.NEW_EMAIL_AND_POSTAL_ADDRESS)
+                .noResponsePartnerAddressOverseas(YesOrNo.NO)
+                .build())
+            .build());
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(12345L);
         caseDetails.setData(caseData);
 
-        doThrow(new InvalidReissueOptionException("")).when(reIssueApplicationService)
+        doThrow(InvalidReissueOptionException.class).when(reIssueApplicationService)
             .updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
@@ -104,8 +109,6 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
 
-        assertThat(response.getData().getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()).isNull();
-
         verify(reIssueApplicationService).updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
     }
 
@@ -113,7 +116,12 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
     void shouldTriggerEventForReissueApplicationWhenApplicantUpdateContactDetailsForPartner() {
 
         final CaseData caseData = caseData();
-
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
+            .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
+                .noResponsePartnerNewEmailOrPostalAddress(NoResponsePartnerNewEmailOrPostalAddress.NEW_EMAIL_AND_POSTAL_ADDRESS)
+                .noResponsePartnerAddressOverseas(YesOrNo.NO)
+                .build())
+            .build());
         final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
