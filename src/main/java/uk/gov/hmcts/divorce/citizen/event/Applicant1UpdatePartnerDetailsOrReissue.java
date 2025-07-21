@@ -46,7 +46,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @RequiredArgsConstructor
 @Slf4j
 public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseData, State, UserRole> {
-    public static final String UPDATE_PARTNER_DETAILS_AND_REISSUE = "update-partner-details-or-reissue";
+    public static final String UPDATE_PARTNER_DETAILS_OR_REISSUE = "update-partner-details-or-reissue";
 
     private final IdamService idamService;
 
@@ -57,11 +57,11 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
-            .event(UPDATE_PARTNER_DETAILS_AND_REISSUE)
+            .event(UPDATE_PARTNER_DETAILS_OR_REISSUE)
             .forStates(AwaitingAos, AosOverdue, AwaitingDocuments, AwaitingService)
             .showCondition(NEVER_SHOW)
-            .name("Update details or reissue")
-            .description("Update details or reissue")
+            .name("Update details and reissue")
+            .description("Update details and reissue")
             .grant(CREATE_READ_UPDATE, CREATOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE, LEGAL_ADVISOR)
             .retries(120, 120)
@@ -112,15 +112,8 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
                     .build();
         }
 
-        var noResponseJourneyOptions = getNoResponseJourneyOptions(caseData);
-
-        if (!isEmpty(noResponseJourneyOptions)) {
-
-            if (SEND_PAPERS_AGAIN.equals(
-                noResponseJourneyOptions.getNoResponseSendPapersAgainOrTrySomethingElse())) {
-               noResponseJourneyOptions.setNoResponseSendPapersAgainOrTrySomethingElse(NoResponseSendPapersAgainOrTrySomethingElse.SEND_PAPERS_AGAIN);
+        if (processNoResponseJourneyOptions(getNoResponseJourneyOptions(caseData))) {
                 details.setState(AwaitingAos);
-            }
         }       // Add logic for more options if required
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -135,7 +128,7 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
 
         if (processNoResponseJourneyOptions(noResponseJourneyOptions)) {
 
-            log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_AND_REISSUE, details.getId());
+            log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_OR_REISSUE, details.getId());
 
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuth = authTokenGenerator.generate();

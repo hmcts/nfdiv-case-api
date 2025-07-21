@@ -7,16 +7,20 @@ import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.SEND_PAPERS_AGAIN;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
@@ -196,12 +200,19 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     }
 
     private Map<String, String> soleApplicant1TemplateVars(final CaseData caseData, Long id, LanguagePreference languagePreference) {
+        var noResponseJourney = Optional.of(caseData.getApplicant1())
+            .map(Applicant::getInterimApplicationOptions)
+            .map(InterimApplicationOptions::getNoResponseJourneyOptions)
+            .orElseGet(() -> NoResponseJourneyOptions.builder().build());
+
+        var isInterimApplicationNoResponseReissue = SEND_PAPERS_AGAIN.equals(
+            noResponseJourney.getNoResponseSendPapersAgainOrTrySomethingElse());
+        var dueDate = isInterimApplicationNoResponseReissue ? caseData.getDueDate() : caseData.getApplication().getIssueDate();
+
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(
             REVIEW_DEADLINE_DATE,
-            holdingPeriodService.getRespondByDateFor(caseData.getApplication().getIssueDate())
-                    .format(getDateTimeFormatterForPreferredLanguage(languagePreference))
-        );
+            holdingPeriodService.getRespondByDateFor(dueDate).format(getDateTimeFormatterForPreferredLanguage(languagePreference)));
 
         return templateVars;
     }
