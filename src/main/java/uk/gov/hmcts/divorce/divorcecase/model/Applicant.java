@@ -89,11 +89,17 @@ public class Applicant {
     private YesOrNo languagePreferenceWelsh;
 
     // To be retired
-    @CCD(label = "Did they change their last name when they got married?")
+    @CCD(
+        label = "Did they change their last name when they got married?",
+        searchable = false
+    )
     private YesOrNo lastNameChangedWhenMarried;
 
     // To be retired
-    @CCD(label = "How did they change their last name when they got married?")
+    @CCD(
+        label = "How did they change their last name when they got married?",
+        searchable = false
+    )
     private Set<ChangedNameHow> lastNameChangedWhenMarriedMethod;
 
     // To be retired
