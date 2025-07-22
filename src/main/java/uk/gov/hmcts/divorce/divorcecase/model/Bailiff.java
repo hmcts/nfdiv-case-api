@@ -29,7 +29,10 @@ public class Bailiff {
     )
     private String localCourtEmail;
 
-    @CCD(label = "Certificate of Service")
+    @CCD(
+        label = "Certificate of Service",
+        searchable = false
+    )
     private DivorceDocument certificateOfServiceDocument;
 
     @CCD(
@@ -45,7 +48,8 @@ public class Bailiff {
 
     @CCD(
         label = "Reason for failure to serve",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String reasonFailureToServeByBailiff;
 }

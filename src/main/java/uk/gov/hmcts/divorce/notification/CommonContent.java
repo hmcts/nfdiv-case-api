@@ -139,6 +139,8 @@ public class CommonContent {
     public static final String CIVIL_PARTNER = "civil partner";
     public static final String CIVIL_PARTNER_CY = "partner sifil";
     public static final String SMART_SURVEY = "smartSurvey";
+    public static final String IDAM_INACTIVITY_POLICY = "idamInactivityPolicy";
+    public static final String IDAM_INACTIVITY_POLICY_CY = "idamInactivityPolicyCy";
     public static final String REQUEST_FOR_INFORMATION_DETAILS = "request information details";
     public static final String SENT_TO_BOTH_APPLICANTS = "sentToBothApplicants";
     public static final String GENERAL_FEE = "generalFee";
@@ -178,6 +180,7 @@ public class CommonContent {
         templateVars.put(WEBFORM_URL, getWebFormUrl(applicant.getLanguagePreference()));
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
         templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(IDAM_INACTIVITY_POLICY, getIdamInactivityPolicy(languagePreference));
 
         getPhoneAndOpeningTimes(languagePreference, templateVars);
         return templateVars;
@@ -470,5 +473,11 @@ public class CommonContent {
 
     private String getUserNameForSelectedLanguage(LanguagePreference languagePreference) {
         return languagePreference == WELSH ? "Defnyddiwr" : "User";
+    }
+
+    private String getIdamInactivityPolicy(LanguagePreference languagePreference) {
+        return WELSH.equals(languagePreference)
+            ? config.getTemplateVars().get(IDAM_INACTIVITY_POLICY_CY)
+            : config.getTemplateVars().get(IDAM_INACTIVITY_POLICY);
     }
 }
