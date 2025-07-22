@@ -96,7 +96,7 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
             boolean updateReissueOptionsForNewContactDetails = Optional.ofNullable(caseData.getApplicant1())
                     .map(Applicant::getInterimApplicationOptions)
                     .map(InterimApplicationOptions::getNoResponseJourneyOptions)
-                    .map(NoResponseJourneyOptions::getNoResponsePartnerNewEmailOrPostalAddress)
+                    .map(NoResponseJourneyOptions::getNoResponsePartnerNewEmailOrAddress)
                     .isPresent();
 
             if (updateReissueOptionsForNewContactDetails) {
