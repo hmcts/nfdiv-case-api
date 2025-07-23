@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.generator.BailiffServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.DeemedServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
@@ -15,6 +16,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 @RequiredArgsConstructor
 public class InterimApplicationSubmissionService {
     private final DeemedServiceApplicationGenerator deemedServiceApplicationGenerator;
+    private final BailiffServiceApplicationGenerator bailiffServiceApplicationGenerator;
     private final NotificationDispatcher notificationDispatcher;
     private final DeemedServiceApplicationSubmittedNotification deemedApplicationSubmittedNotification;
 
@@ -28,7 +30,7 @@ public class InterimApplicationSubmissionService {
         if (InterimApplicationType.DEEMED_SERVICE.equals(applicationType)) {
             return deemedServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
         } else if (InterimApplicationType.BAILIFF_SERVICE.equals(applicationType)) {
-            return null;
+            return bailiffServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
         }
 
         throw new UnsupportedOperationException();

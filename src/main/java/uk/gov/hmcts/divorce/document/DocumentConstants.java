@@ -222,6 +222,9 @@ public final class DocumentConstants {
     public static final String DEEMED_SERVICE_APPLICATION_TEMPLATE_ID = "DEEMED_SERVICE_APPLICATION";
     public static final String DEEMED_SERVICE_APPLICATION_DOCUMENT_NAME = "DeemedServiceApplicationAnswers";
 
+    public static final String BAILIFF_SERVICE_APPLICATION_TEMPLATE_ID = "BAILIFF_SERVICE_APPLICATION";
+    public static final String BAILIFF_SERVICE_APPLICATION_DOCUMENT_NAME = "BailiffServiceApplicationAnswers";
+
     private DocumentConstants() {
     }
 }
