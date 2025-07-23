@@ -39,6 +39,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.util.SolicitorAddressPopulator.parseOrganisationAddress;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Slf4j
 @Component
@@ -98,7 +99,14 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
         log.info("{} about to start callback invoked for Case Id: {}", SOLICITOR_SUBMIT_JOINT_APPLICATION, details.getId());
         CaseData data = details.getData();
 
-        data.getApplication().setApplicant1SolicitorAnswersLink(data.getApplication().getMiniApplicationLink());
+        data.getDocuments()
+            .getDocumentsGenerated()
+            .stream()
+            .filter(document -> APPLICATION.equals(document.getValue().getDocumentType()))
+            .findFirst()
+            .ifPresent(draftDivorceApplication ->
+                data.getApplication().setApplicant1SolicitorAnswersLink(draftDivorceApplication.getValue().getDocumentLink())
+            );
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .build();
