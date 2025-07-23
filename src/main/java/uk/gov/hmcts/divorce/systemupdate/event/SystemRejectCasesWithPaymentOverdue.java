@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ApplicationRejectedFeeNotPaid implements CCDConfig<CaseData, State, UserRole> {
+public class SystemRejectCasesWithPaymentOverdue implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APPLICATION_REJECTED_FEE_NOT_PAID = "application-rejected-fee-not-paid";
     private static final String APPLICATION_REJECTED = "Application rejected";
