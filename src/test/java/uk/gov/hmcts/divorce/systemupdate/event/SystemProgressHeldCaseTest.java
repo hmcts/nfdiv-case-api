@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.AwaitingConditionalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -88,6 +89,11 @@ class SystemProgressHeldCaseTest {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.getApplicant1().setOffline(YesOrNo.YES);
         caseData.getApplicant2().setOffline(YesOrNo.NO);
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        Solicitor solicitor = Solicitor.builder().name("solicitor").firmName("firm").build();
+        caseData.getApplicant1().setSolicitor(solicitor);
+        caseData.getApplicant2().setSolicitor(solicitor);
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
