@@ -19,12 +19,14 @@ import java.util.Map;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_SERVICE_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_ADDRESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_RECEIVED_DATE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
@@ -35,8 +37,6 @@ public class BailiffServiceApplicationTemplateContent implements TemplateContent
 
     private final DocmosisCommonContent docmosisCommonContent;
 
-    public static final String SERVICE_APPLICATION_RECEIVED_DATE = "serviceApplicationReceivedDate";
-    public static final String CCD_CASE_REFERENCE = "ccdCaseReference";
     public static final String BAILIFF_KNOW_PARTNERS_PHONE = "bailiffKnowPartnersPhone";
     public static final String BAILIFF_PARTNERS_PHONE = "bailiffPartnersPhone";
     public static final String BAILIFF_KNOW_PARTNERS_DATE_OF_BIRTH = "bailiffKnowPartnersDateOfBirth";

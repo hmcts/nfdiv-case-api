@@ -26,6 +26,10 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static uk.gov.hmcts.divorce.document.content.BailiffServiceApplicationTemplateContent.CONFIDENTIAL_ADDRESS_PLACEHOLDER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_1_ADDRESS_LINE_1;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 
 @ExtendWith(MockitoExtension.class)
 class BailiffServiceApplicationTemplateContentTest {
@@ -35,10 +39,6 @@ class BailiffServiceApplicationTemplateContentTest {
 
     @InjectMocks
     private BailiffServiceApplicationTemplateContent templateContent;
-
-    private static final long TEST_CASE_ID = 1616591401473378L;
-    private static final String TEST_FIRST_NAME = "John";
-    private static final String TEST_LAST_NAME = "Smith";
 
     private static final String TEST_PHONE = "07700111222";
     private static final String TEST_VEHICLE_MODEL = "Ford Focus";
@@ -168,7 +168,9 @@ class BailiffServiceApplicationTemplateContentTest {
             .firstName(TEST_FIRST_NAME)
             .lastName(TEST_LAST_NAME)
             .contactDetailsType(ContactDetailsType.PRIVATE)
-            .address(AddressGlobalUK.builder().addressLine1("test").build())
+            .address(AddressGlobalUK.builder()
+                .addressLine1(TEST_APPLICANT_1_ADDRESS_LINE_1)
+                .build())
             .build();
 
         return CaseData.builder()
