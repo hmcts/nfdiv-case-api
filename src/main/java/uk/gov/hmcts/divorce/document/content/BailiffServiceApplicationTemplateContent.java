@@ -86,12 +86,11 @@ public class BailiffServiceApplicationTemplateContent implements TemplateContent
 
         AlternativeService alternativeService = caseData.getAlternativeService();
         InterimApplicationOptions applicationOptions = applicant.getInterimApplicationOptions();
-        BailiffServiceJourneyOptions applicationAnswers = applicant.getInterimApplicationOptions().getBailiffServiceJourneyOptions();
         LanguagePreference languagePreference = applicant.getLanguagePreference();
         DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(languagePreference);
         Applicant applicant2 = caseData.getApplicant2();
-        boolean partnerPhotoUploaded = YesOrNo.YES.equals(applicationOptions.getInterimAppsCanUploadEvidence()) &&
-            !YesOrNo.YES.equals(applicationOptions.getInterimAppsCannotUploadDocs());
+        boolean partnerPhotoUploaded = YesOrNo.YES.equals(applicationOptions.getInterimAppsCanUploadEvidence())
+            && !YesOrNo.YES.equals(applicationOptions.getInterimAppsCannotUploadDocs());
 
 
         templateContent.put(APPLICANT_1_FULL_NAME, applicant.getFullName());
@@ -109,6 +108,7 @@ public class BailiffServiceApplicationTemplateContent implements TemplateContent
         );
         templateContent.put(DIVORCE_OR_DISSOLUTION, getApplicationType(languagePreference, caseData));
 
+        BailiffServiceJourneyOptions applicationAnswers = applicant.getInterimApplicationOptions().getBailiffServiceJourneyOptions();
         return bailiffApplicationContent(templateContent, applicationAnswers, dateTimeFormatter);
     }
 
@@ -117,7 +117,6 @@ public class BailiffServiceApplicationTemplateContent implements TemplateContent
         BailiffServiceJourneyOptions applicationAnswers,
         DateTimeFormatter dateTimeFormatter
     ) {
-        log.info("Test: {}", applicationAnswers.getBailiffKnowPartnersPhone());
         templateContent.put(BAILIFF_KNOW_PARTNERS_PHONE, applicationAnswers.getBailiffKnowPartnersPhone().toBoolean());
         templateContent.put(BAILIFF_PARTNERS_PHONE, applicationAnswers.getBailiffPartnersPhone());
         templateContent.put(BAILIFF_KNOW_PARTNERS_DATE_OF_BIRTH, applicationAnswers.getBailiffKnowPartnersDateOfBirth().toBoolean());
