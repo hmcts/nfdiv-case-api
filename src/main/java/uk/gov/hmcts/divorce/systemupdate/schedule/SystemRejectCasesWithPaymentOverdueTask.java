@@ -5,9 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.common.service.task.UpdateSuccessfulPaymentStatus;
 import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.payment.service.PaymentStatusService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
@@ -22,7 +20,7 @@ import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
-import static uk.gov.hmcts.divorce.systemupdate.event.NonPaymentRejectCase.SYSTEM_REJECTED;
+import static uk.gov.hmcts.divorce.systemupdate.event.ApplicationRejectedFeeNotPaid.APPLICATION_REJECTED_FEE_NOT_PAID;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.SUPPLEMENTARY_CASE_TYPE;
@@ -64,13 +62,13 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
                     boolQuery()
                         .must(awaitingPaymentQuery)
                         .mustNot(paperOrJudicialSeparationCases)
-                        .filter(rangeQuery(LAST_MODIFIED).lte(LocalDate.now().minusDays(14)))  // regular cases inactive for 14+ days
+                        .filter(rangeQuery(LAST_MODIFIED).lte(LocalDate.now().minusDays(14)))
                 )
                 .should(
                     boolQuery()
                         .must(awaitingPaymentQuery)
                         .must(paperOrJudicialSeparationCases)
-                        .filter(rangeQuery(LAST_MODIFIED).lte(LocalDate.now().minusDays(17)))  // special cases inactive for 17+ days
+                        .filter(rangeQuery(LAST_MODIFIED).lte(LocalDate.now().minusDays(17)))
                 )
                 .minimumShouldMatch(1);
 
@@ -78,7 +76,7 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPayment);
 
             casesInAwaitingPaymentStateForPaymentOverdue.forEach(caseDetails ->
-                ccdUpdateService.submitEvent(caseDetails.getId(), SYSTEM_REJECTED, user, serviceAuth));
+                ccdUpdateService.submitEvent(caseDetails.getId(), APPLICATION_REJECTED_FEE_NOT_PAID, user, serviceAuth));
 
             log.info("SystemRejectCasesWithPaymentOverdueTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
