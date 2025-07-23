@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
 
@@ -690,6 +691,11 @@ class CaseValidationTest {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant2().setOffline(NO);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        Solicitor solicitor = Solicitor.builder().name("solicitor").firmName("firm").build();
+        caseData.getApplicant1().setSolicitor(solicitor);
+        caseData.getApplicant2().setSolicitor(solicitor);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
