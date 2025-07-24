@@ -686,7 +686,7 @@ class CaseValidationTest {
     }
 
     @Test
-    void shouldValidateApplicantsStatusForJointCaseWhenOneOfTheApplicantsIsOnline() {
+    void shouldValidateApplicantsStatusForJointlyRepresentedJointCaseWhenOneOfTheApplicantsIsOnline() {
         CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.getApplicant1().setOffline(YES);
@@ -704,6 +704,47 @@ class CaseValidationTest {
         List<String> errors = validateJointApplicantOfflineStatus(caseDetails);
         assertThat(errors).hasSize(1);
         assertThat(errors).containsExactly(INVALID_JOINT_OFFLINE_STATUS);
+    }
+
+    @Test
+    void shouldNotValidateApplicantsStatusForSoleCaseWhenOneOfTheApplicantsIsOnline() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(NO);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        Solicitor solicitor = Solicitor.builder().name("solicitor").firmName("firm").build();
+        caseData.getApplicant1().setSolicitor(solicitor);
+        caseData.getApplicant2().setSolicitor(solicitor);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        List<String> errors = validateJointApplicantOfflineStatus(caseDetails);
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    void shouldNotValidateApplicantsStatusForSeparatelyRepresentedJointCaseWhenOneOfTheApplicantsIsOnline() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(NO);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        Solicitor app1Solicitor = Solicitor.builder().name("solicitor").firmName("firm").build();
+        Solicitor app2Solicitor = Solicitor.builder().name("solicitor2").firmName("firm2").build();
+        caseData.getApplicant1().setSolicitor(app1Solicitor);
+        caseData.getApplicant2().setSolicitor(app2Solicitor);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        List<String> errors = validateJointApplicantOfflineStatus(caseDetails);
+        assertThat(errors).isEmpty();
     }
 
     @Test
