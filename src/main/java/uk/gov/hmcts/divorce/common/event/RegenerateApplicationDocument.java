@@ -17,6 +17,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.TTL_PROFILE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
@@ -36,7 +37,7 @@ public class RegenerateApplicationDocument implements CCDConfig<CaseData, State,
             .forAllStates()
             .name("Regenerate D8")
             .description("Regenerate D8")
-            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
+            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE, TTL_PROFILE)
             .grantHistoryOnly(LEGAL_ADVISOR, SUPER_USER, JUDGE, CASE_WORKER)
             .retries(120, 120)
             .aboutToSubmitCallback(this::aboutToSubmit);
