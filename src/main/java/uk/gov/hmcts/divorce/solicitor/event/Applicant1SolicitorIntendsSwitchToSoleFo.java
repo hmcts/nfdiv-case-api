@@ -72,10 +72,7 @@ public class Applicant1SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseD
             .complex(CaseData::getApplicant2)
                 .readonlyNoSummary(Applicant::getSolicitorRepresented, NEVER_SHOW)
             .done()
-            .label("app1OtherApplicantIsRepresented",
-                getOtherApplicantIsRepresentedLabel(), "applicant2SolicitorRepresented=\"Yes\"")
-            .label("app1OtherApplicantIsNotRepresented",
-                getOtherApplicantIsNotRepresentedLabel(),"applicant2SolicitorRepresented=\"No\"")
+            .label("app1OtherApplicantCanStillApply", getOtherApplicantCanStillApplyLabel())
             .label("app1IntendsSwitchToSoleFoInfo", getIntendsToSwitchToSoleInformationLabel())
             .complex(CaseData::getFinalOrder)
                 .optionalNoSummary(FinalOrder::getApplicant1IntendsToSwitchToSole, null, BLANK_LABEL)
@@ -124,18 +121,9 @@ public class Applicant1SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseD
         return SubmittedCallbackResponse.builder().build();
     }
 
-    public static String getOtherApplicantIsRepresentedLabel() {
+    public static String getOtherApplicantCanStillApplyLabel() {
         return """
                 The quickest way to ${labelContentFinaliseDivorceOrLegallyEndYourCivilPartnership}
-                is for the other applicant’s solicitor to confirm the joint application for a final order.
-                They have been emailed details of how to do this.
-                """;
-    }
-
-
-    public static String getOtherApplicantIsNotRepresentedLabel() {
-        return """
-                The quickest way to finalise the ${labelContentFinaliseDivorceOrLegallyEndYourCivilPartnership}
                 is for the other applicant to confirm the joint application for a final order.
                 They have been emailed details of how to do this.
                 """;
