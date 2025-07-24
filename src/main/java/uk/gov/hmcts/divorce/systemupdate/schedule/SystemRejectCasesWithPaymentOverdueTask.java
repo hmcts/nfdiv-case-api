@@ -55,7 +55,7 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
                 .should(matchQuery(String.format(DATA, SUPPLEMENTARY_CASE_TYPE), "judicialSeparation"))
                 .should(matchQuery(String.format(DATA, SUPPLEMENTARY_CASE_TYPE), "separation"))
                 .should(matchQuery(String.format(DATA, NEW_PAPER_CASE), "Yes"))
-                .filter(existsQuery(ISSUE_DATE))
+                .mustNot(existsQuery(ISSUE_DATE))
                 .minimumShouldMatch(1);
 
             final MatchQueryBuilder awaitingPaymentQuery = matchQuery(STATE, AwaitingPayment);
