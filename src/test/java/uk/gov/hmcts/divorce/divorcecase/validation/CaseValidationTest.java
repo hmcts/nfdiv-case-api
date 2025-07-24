@@ -53,6 +53,7 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validat
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCasesAcceptedToListForHearing;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCitizenResendInvite;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateJointApplicantOfflineStatus;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateJurisdictionConnections;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateSolicitorPbaNumbers;
@@ -68,6 +69,8 @@ class CaseValidationTest {
     private static final String EMPTY = " cannot be empty or null";
     private static final String IN_THE_FUTURE = " can not be in the future.";
     private static final String MORE_THAN_ONE_HUNDRED_YEARS_AGO = " can not be more than 100 years ago.";
+    private static final String INVALID_JOINT_OFFLINE_STATUS = "Applicants have different offline status in a joint case."
+        + " Both applicants needs to be either online or offline for caseID: " +  TEST_CASE_ID;
 
     @Test
     void shouldValidateBasicCase() {
@@ -686,6 +689,36 @@ class CaseValidationTest {
 
         List<String> errors = validateChangeServiceRequest(caseData);
 
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    void shouldValidateApplicantsStatusForJointCaseWhenOneOfTheApplicantsIsOnline() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(NO);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        List<String> errors = validateJointApplicantOfflineStatus(caseDetails);
+        assertThat(errors).hasSize(1);
+        assertThat(errors).containsExactly(INVALID_JOINT_OFFLINE_STATUS);
+    }
+
+    @Test
+    void shouldValidateApplicantsStatusForJointCaseWhenBothApplicantsAreOffline() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(YES);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        List<String> errors = validateJointApplicantOfflineStatus(caseDetails);
         assertThat(errors).isEmpty();
     }
 

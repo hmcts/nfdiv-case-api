@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -31,6 +32,7 @@ class Applicant2SolAosOtherProceedingsTest {
         CaseData caseData = new CaseData();
         Applicant applicant2 = new Applicant();
         applicant2.setLegalProceedingDocs(null);
+        applicant2.setLegalProceedings(YesOrNo.YES);
         caseData.setApplicant2(applicant2);
 
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -45,6 +47,7 @@ class Applicant2SolAosOtherProceedingsTest {
     void shouldReturnErrorWhenDocumentLinkIsMissing() {
         CaseData caseData = new CaseData();
         Applicant applicant2 = new Applicant();
+        applicant2.setLegalProceedings(YesOrNo.YES);
         ListValue<DivorceDocument> document = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder().documentLink(null).build())
             .build();
