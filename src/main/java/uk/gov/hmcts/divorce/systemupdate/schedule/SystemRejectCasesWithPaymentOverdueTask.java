@@ -6,6 +6,8 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.payment.service.PaymentStatusService;
+import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
@@ -17,11 +19,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRejectCasesWithPaymentOverdue.APPLICATION_REJECTED_FEE_NOT_PAID;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.SUPPLEMENTARY_CASE_TYPE;
 
@@ -32,14 +36,12 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
 
     private static final String LAST_MODIFIED = "last_modified";
     private static final String NEW_PAPER_CASE = "newPaperCase";
-
     private final CcdSearchService ccdSearchService;
-
     private final IdamService idamService;
-
     private final AuthTokenGenerator authTokenGenerator;
-
     private final CcdUpdateService ccdUpdateService;
+    private final PaymentStatusService paymentStatusService;
+    private final CaseDetailsConverter caseDetailsConverter;
 
     @Override
     public void run() {
@@ -53,6 +55,7 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
                 .should(matchQuery(String.format(DATA, SUPPLEMENTARY_CASE_TYPE), "judicialSeparation"))
                 .should(matchQuery(String.format(DATA, SUPPLEMENTARY_CASE_TYPE), "separation"))
                 .should(matchQuery(String.format(DATA, NEW_PAPER_CASE), "Yes"))
+                .filter(existsQuery(ISSUE_DATE))
                 .minimumShouldMatch(1);
 
             final MatchQueryBuilder awaitingPaymentQuery = matchQuery(STATE, AwaitingPayment);
@@ -75,8 +78,14 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
             final List<CaseDetails> casesInAwaitingPaymentStateForPaymentOverdue =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPayment);
 
-            casesInAwaitingPaymentStateForPaymentOverdue.forEach(caseDetails ->
-                ccdUpdateService.submitEvent(caseDetails.getId(), APPLICATION_REJECTED_FEE_NOT_PAID, user, serviceAuth));
+            casesInAwaitingPaymentStateForPaymentOverdue.stream()
+                .map(caseDetailsConverter::convertToCaseDetailsFromReformModel)
+                .filter(caseDetails ->
+                    !paymentStatusService.hasSuccessfulPayment(caseDetails, user.getAuthToken(), serviceAuth)).toList()
+                .forEach(caseDetails -> {
+                    log.info("Rejecting case {} due to fee not paid within allocated time", caseDetails.getId());
+                    ccdUpdateService.submitEvent(caseDetails.getId(), APPLICATION_REJECTED_FEE_NOT_PAID, user, serviceAuth);
+                    });
 
             log.info("SystemRejectCasesWithPaymentOverdueTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
