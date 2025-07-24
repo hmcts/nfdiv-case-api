@@ -82,7 +82,9 @@ class RespondentAnswersTemplateContentTest {
             entry("inWhichCountryIsYourLifeMainlyBased", "Country"),
             entry("respLegalProceedingsExist", YES.getValue()),
             entry("respLegalProceedingsDescription", "some description"),
-            entry("respSolicitorRepresented", YES.getValue())
+            entry("respSolicitorRepresented", YES.getValue()),
+            entry("isDivorce", true),
+            entry("intendToDelay", false)
         );
     }
 
