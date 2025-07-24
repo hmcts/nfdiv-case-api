@@ -19,6 +19,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.D84;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 
@@ -139,6 +140,9 @@ public class AosPackPrinter {
         if (null != divorceApplicationLetter) {
             currentAosLetters.add(divorceApplicationLetter);
         }
+
+        addD84ToPack(caseData, currentAosLetters);
+
         return currentAosLetters;
     }
 
@@ -159,6 +163,9 @@ public class AosPackPrinter {
         if (null != divorceApplicationLetter) {
             currentAosLetters.add(divorceApplicationLetter);
         }
+
+        addD84ToPack(caseData, currentAosLetters);
+
         return currentAosLetters;
     }
 
@@ -193,6 +200,19 @@ public class AosPackPrinter {
             currentAosLetters.add(divorceApplicationLetter);
         }
 
+        addD84ToPack(caseData, currentAosLetters);
+
         return currentAosLetters;
+    }
+
+    private void addD84ToPack(final CaseData caseData, final List<Letter> currentAosLetters) {
+        var d84Needed = !caseData.getApplicationType().isSole() && caseData.isJudicialSeparationCase();
+        if (d84Needed) {
+            //Get the D84 form from generated documents
+            final Letter d84Letter = firstElement(getLettersBasedOnContactPrivacy(caseData, D84));
+            if (null != d84Letter) {
+                currentAosLetters.add(d84Letter);
+            }
+        }
     }
 }
