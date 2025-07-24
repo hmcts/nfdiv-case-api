@@ -130,4 +130,44 @@ class ConditionalOrderCommonContentTest {
 
         assertThat(result).isEqualTo(CommonContent.SPOUSE);
     }
+
+    @Test
+    void shouldGenerateLegalAdvisorCommentsForMoreInfoWhenLegalNameDifferentSelected() {
+        final List<ConditionalOrderCommonContent.RefusalReason> refusalReasons =
+            List.of(
+                new ConditionalOrderCommonContent.RefusalReason(
+                    "Difference between legal name(s) and names(s) on marriage certificate"),
+                new ConditionalOrderCommonContent.RefusalReason("Provide evidence of legal name difference"));
+
+        CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .applicationType(JOINT_APPLICATION)
+            .supplementaryCaseType(JUDICIAL_SEPARATION)
+            .applicant1(
+                Applicant.builder()
+                    .firstName("Bob")
+                    .lastName("Smith")
+                    .address(APPLICANT_ADDRESS)
+                    .languagePreferenceWelsh(NO)
+                    .build()
+            )
+            .applicant2(
+                Applicant.builder()
+                    .gender(FEMALE)
+                    .build()
+            )
+            .conditionalOrder(
+                ConditionalOrder.builder()
+                    .refusalDecision(RefusalOption.MORE_INFO)
+                    .refusalClarificationReason(Collections.singleton(ClarificationReason.LEGAL_NAME_DIFFERENT_TO_CERTIFICATE))
+                    .refusalClarificationAdditionalInfo("Provide evidence of legal name difference")
+                    .build()
+            )
+            .build();
+
+        List<ConditionalOrderCommonContent.RefusalReason> result = conditionalOrderCommonContent.generateLegalAdvisorComments(
+            caseData.getConditionalOrder());
+
+        assertThat(result).isEqualTo(refusalReasons);
+    }
 }

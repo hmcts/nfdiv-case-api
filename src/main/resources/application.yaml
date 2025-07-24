@@ -402,7 +402,7 @@ docmosis:
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-ENG-Divorce-Application-Joint_V1.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
       REJECTED_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order_V3.docx
-      CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline_V4.docx
+      CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline_V5.docx
       CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V2.docx
       JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx
       JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx
@@ -534,7 +534,7 @@ docmosis:
       NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Joint-Solicitor-V1.docx
       REJECTED_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Refusal-Order_V1.docx
       REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V2.docx #TODO: update welsh content
-      CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Clarification-Refusal-Order_V2.docx
+      CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Clarification-Refusal-Order_V3.docx
       CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V2.docx #TODO: update welsh content
       JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx #TODO: update welsh content
       JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx #TODO: update welsh content
