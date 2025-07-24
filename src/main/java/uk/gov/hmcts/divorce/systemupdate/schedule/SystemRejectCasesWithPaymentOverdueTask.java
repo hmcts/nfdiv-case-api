@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.SUPPLEM
 @Slf4j
 public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
 
-    private static final String LAST_MODIFIED = "last_modified";
+    private static final String LAST_STATE_MODIFIED_DATE = "last_state_modified_date";
     private static final String NEW_PAPER_CASE = "newPaperCase";
     private final CcdSearchService ccdSearchService;
     private final IdamService idamService;
@@ -65,13 +65,13 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
                     boolQuery()
                         .must(awaitingPaymentQuery)
                         .mustNot(paperOrJudicialSeparationCases)
-                        .filter(rangeQuery(LAST_MODIFIED).lte(LocalDate.now().minusDays(14)))
+                        .filter(rangeQuery(LAST_STATE_MODIFIED_DATE).lte(LocalDate.now().minusDays(14)))
                 )
                 .should(
                     boolQuery()
                         .must(awaitingPaymentQuery)
                         .must(paperOrJudicialSeparationCases)
-                        .filter(rangeQuery(LAST_MODIFIED).lte(LocalDate.now().minusDays(17)))
+                        .filter(rangeQuery(LAST_STATE_MODIFIED_DATE).lte(LocalDate.now().minusDays(17)))
                 )
                 .minimumShouldMatch(1);
 

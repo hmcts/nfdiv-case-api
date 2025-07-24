@@ -17,8 +17,8 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -44,7 +44,7 @@ public class SystemRejectCasesWithPaymentOverdue implements CCDConfig<CaseData, 
 
         new PageBuilder(configBuilder
             .event(APPLICATION_REJECTED_FEE_NOT_PAID)
-            .forStateTransition(STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED, Rejected)
+            .forStateTransition(AwaitingPayment, Rejected)
             .name(APPLICATION_REJECTED)
             .description(APPLICATION_REJECTED)
             .aboutToSubmitCallback(this::aboutToSubmit)

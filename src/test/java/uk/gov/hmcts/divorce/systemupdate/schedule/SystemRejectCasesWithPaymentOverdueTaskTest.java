@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,8 +54,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOK
 
 @ExtendWith(MockitoExtension.class)
 class SystemRejectCasesWithPaymentOverdueTaskTest {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().findAndRegisterModules();
-    private static final String LAST_MODIFIED = "last_modified";
+    private static final String LAST_STATE_MODIFIED_DATE = "last_state_modified_date";
     private static final String NEW_PAPER_CASE = "newPaperCase";
 
     private BoolQueryBuilder query;
@@ -104,13 +102,13 @@ class SystemRejectCasesWithPaymentOverdueTaskTest {
                 boolQuery()
                     .must(awaitingPaymentQuery)
                     .mustNot(paperOrJudicialSeparationCases)
-                    .filter(rangeQuery(LAST_MODIFIED).lte(LocalDate.now().minusDays(14)))
+                    .filter(rangeQuery(LAST_STATE_MODIFIED_DATE).lte(LocalDate.now().minusDays(14)))
             )
             .should(
                 boolQuery()
                     .must(awaitingPaymentQuery)
                     .must(paperOrJudicialSeparationCases)
-                    .filter(rangeQuery(LAST_MODIFIED).lte(LocalDate.now().minusDays(17)))
+                    .filter(rangeQuery(LAST_STATE_MODIFIED_DATE).lte(LocalDate.now().minusDays(17)))
             )
             .minimumShouldMatch(1);
 
