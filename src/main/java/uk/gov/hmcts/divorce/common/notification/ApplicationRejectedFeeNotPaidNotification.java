@@ -38,7 +38,7 @@ public class ApplicationRejectedFeeNotPaidNotification implements ApplicantNotif
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long caseId) {
         if (!caseData.getApplicationType().isSole()) {
-            log.info("Sending Respondent draft aos started notification to applicant 2 for case : {}", caseId);
+            log.info("Sending application rejected notification to applicant 2 for case : {}", caseId);
 
             Applicant applicant2 = caseData.getApplicant2();
 
