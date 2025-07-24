@@ -1,8 +1,10 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
@@ -13,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -251,5 +254,17 @@ public final class ValidationUtil {
     @SafeVarargs
     public static <E> List<E> flattenLists(List<E>... lists) {
         return Arrays.stream(lists).flatMap(Collection::stream).collect(toList());
+    }
+
+    public static SolicitorPbaValidation validateSolicitorPbaNumbers(CaseData caseData, PbaService pbaService, Long caseId) {
+        try {
+            final DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
+            log.info("Successfully retrieved PBA numbers for Case Id: {}", caseId);
+            return SolicitorPbaValidation.success(pbaNumbersDynamicList);
+        } catch (FeignException e) {
+            log.error("Failed to retrieve PBA numbers for Case Id: {}", caseId);
+            return SolicitorPbaValidation.error(caseData,
+                "No PBA numbers associated with the provided email address");
+        }
     }
 }
