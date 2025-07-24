@@ -6,17 +6,21 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.ApplicationRejectedFeeNotPaidNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -33,6 +37,7 @@ public class SystemRejectCasesWithPaymentOverdue implements CCDConfig<CaseData, 
 
     private final NotificationDispatcher notificationDispatcher;
     private final ApplicationRejectedFeeNotPaidNotification applicationRejectedFeeNotPaidNotification;
+    private final CcdAccessService ccdAccessService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -42,7 +47,7 @@ public class SystemRejectCasesWithPaymentOverdue implements CCDConfig<CaseData, 
             .forStateTransition(STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED, Rejected)
             .name(APPLICATION_REJECTED)
             .description(APPLICATION_REJECTED)
-            .submittedCallback(this::submitted)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .ttlIncrement(180)
             .grant(CREATE_READ_UPDATE,
                 SYSTEMUPDATE)
@@ -53,12 +58,18 @@ public class SystemRejectCasesWithPaymentOverdue implements CCDConfig<CaseData, 
                 JUDGE));
     }
 
-    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
-                                               CaseDetails<CaseData, State> beforeDetails) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails) {
+
         log.info("{} submitted callback invoked for case id: {}", APPLICATION_REJECTED_FEE_NOT_PAID, details.getId());
+
+        ccdAccessService.removeUsersWithRole(details.getId(), List.of(CREATOR.getRole()));
 
         notificationDispatcher.send(applicationRejectedFeeNotPaidNotification, details.getData(), details.getId());
 
-        return SubmittedCallbackResponse.builder().build();
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
     }
 }
