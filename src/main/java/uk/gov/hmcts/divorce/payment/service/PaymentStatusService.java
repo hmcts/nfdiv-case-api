@@ -117,7 +117,7 @@ public class PaymentStatusService {
                 : caseDetails.getData().getFinalOrder().getFinalOrderPayments();
     }
 
-    private boolean hasSuccessfulPayment(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
+    public boolean hasSuccessfulPayment(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
                                          String userToken, String s2sToken) {
 
         final List<ListValue<uk.gov.hmcts.divorce.divorcecase.model.Payment>> payments = getPayments(caseDetails);
