@@ -85,7 +85,7 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
                 .forEach(caseDetails -> {
                     log.info("Rejecting case {} due to fee not paid within allocated time", caseDetails.getId());
                     ccdUpdateService.submitEvent(caseDetails.getId(), APPLICATION_REJECTED_FEE_NOT_PAID, user, serviceAuth);
-                    });
+                });
 
             log.info("SystemRejectCasesWithPaymentOverdueTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
