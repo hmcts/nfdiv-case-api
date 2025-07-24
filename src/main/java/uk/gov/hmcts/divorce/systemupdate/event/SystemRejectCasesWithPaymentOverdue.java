@@ -9,16 +9,20 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.ApplicationRejectedFeeNotPaidNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.List;
+import java.util.Objects;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -62,14 +66,33 @@ public class SystemRejectCasesWithPaymentOverdue implements CCDConfig<CaseData, 
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("{} submitted callback invoked for case id: {}", APPLICATION_REJECTED_FEE_NOT_PAID, details.getId());
+        log.info("{} aboutToSubmit callback invoked for case id: {}", APPLICATION_REJECTED_FEE_NOT_PAID, details.getId());
 
-        ccdAccessService.removeUsersWithRole(details.getId(), List.of(CREATOR.getRole()));
+        CaseData caseData = details.getData();
+
+        final var roles = List.of(CREATOR.getRole(), APPLICANT_2.getRole());
+
+        if (Objects.nonNull(caseData.getCaseInvite())) {
+            caseData.setCaseInvite(new CaseInvite(caseData.getCaseInvite().applicant2InviteEmailAddress(), null, null));
+        }
+
+        removeSolicitorOrganisationPolicy(caseData.getApplicant1());
+        removeSolicitorOrganisationPolicy(caseData.getApplicant2());
+
+        ccdAccessService.removeUsersWithRole(details.getId(), roles);
+
+        caseData.getApplication().setPreviousState(details.getState());
 
         notificationDispatcher.send(applicationRejectedFeeNotPaidNotification, details.getData(), details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .build();
+    }
+
+    private void removeSolicitorOrganisationPolicy(final Applicant applicant) {
+        if (applicant.isRepresented()) {
+            applicant.getSolicitor().setOrganisationPolicy(null);
+        }
     }
 }
