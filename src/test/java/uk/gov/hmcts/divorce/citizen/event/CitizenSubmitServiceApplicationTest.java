@@ -12,6 +12,8 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -286,5 +288,102 @@ class CitizenSubmitServiceApplicationTest {
         citizenSubmitServiceApplication.submitted(caseDetails, caseDetails);
 
         verifyNoInteractions(interimApplicationSubmissionService);
+    }
+
+    @Test
+    void shouldSetRespondentEmailAddressWhenEmailProvidedAsPartOfAlternativeServiceApplication() {
+        setMockClock(clock);
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .firstName(TEST_FIRST_NAME)
+                    .interimApplicationOptions(InterimApplicationOptions.builder()
+                        .interimAppsUseHelpWithFees(YesOrNo.NO)
+                        .interimAppsCannotUploadDocs(YesOrNo.YES)
+                        .interimApplicationType(InterimApplicationType.ALTERNATIVE_SERVICE)
+                        .alternativeServiceJourneyOptions(
+                            AlternativeServiceJourneyOptions.builder()
+                                .altServiceMethod(AlternativeServiceMethod.EMAIL)
+                                .altServicePartnerEmail("newEmail@test.com")
+                                .build())
+                        .build())
+                    .build()
+            )
+            .applicant2(
+                Applicant.builder()
+                    .email("oldEmail@test.com")
+                    .build())
+            .build();
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        when(paymentSetupService.createServiceApplicationOrderSummary(any(AlternativeService.class), eq(TEST_CASE_ID)))
+            .thenReturn(orderSummary);
+
+        when(paymentSetupService.createServiceApplicationPaymentServiceRequest(
+            any(AlternativeService.class), eq(TEST_CASE_ID), eq(TEST_FIRST_NAME)
+        )).thenReturn(TEST_SERVICE_REFERENCE);
+
+        DivorceDocument generatedApplication = DivorceDocument.builder().build();
+        when(interimApplicationSubmissionService.generateAnswerDocument(
+            TEST_CASE_ID, caseData.getApplicant1(), caseData
+        )).thenReturn(generatedApplication);
+
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
+            caseDetails, caseDetails
+        );
+
+        assertThat(response.getData().getApplicant2().getEmail()).isEqualTo("newEmail@test.com");
+    }
+
+    @Test
+    void shouldNotSetRespondentEmailAddressWhenEmailProvidedAsPartOfAlternativeServiceApplicationIsNull() {
+        setMockClock(clock);
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .firstName(TEST_FIRST_NAME)
+                    .interimApplicationOptions(InterimApplicationOptions.builder()
+                        .interimAppsUseHelpWithFees(YesOrNo.NO)
+                        .interimAppsCannotUploadDocs(YesOrNo.YES)
+                        .interimApplicationType(InterimApplicationType.ALTERNATIVE_SERVICE)
+                        .alternativeServiceJourneyOptions(
+                            AlternativeServiceJourneyOptions.builder()
+                                .altServiceMethod(AlternativeServiceMethod.EMAIL)
+                                .build())
+                        .build())
+                    .build()
+            )
+            .applicant2(
+                Applicant.builder()
+                    .email("oldEmail@test.com")
+                    .build())
+            .build();
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        when(paymentSetupService.createServiceApplicationOrderSummary(any(AlternativeService.class), eq(TEST_CASE_ID)))
+            .thenReturn(orderSummary);
+
+        when(paymentSetupService.createServiceApplicationPaymentServiceRequest(
+            any(AlternativeService.class), eq(TEST_CASE_ID), eq(TEST_FIRST_NAME)
+        )).thenReturn(TEST_SERVICE_REFERENCE);
+
+        DivorceDocument generatedApplication = DivorceDocument.builder().build();
+        when(interimApplicationSubmissionService.generateAnswerDocument(
+            TEST_CASE_ID, caseData.getApplicant1(), caseData
+        )).thenReturn(generatedApplication);
+
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
+            caseDetails, caseDetails
+        );
+
+        assertThat(response.getData().getApplicant2().getEmail()).isEqualTo("oldEmail@test.com");
     }
 }
