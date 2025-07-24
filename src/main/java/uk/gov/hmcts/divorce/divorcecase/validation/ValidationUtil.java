@@ -8,10 +8,12 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
@@ -21,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -228,13 +231,24 @@ public final class ValidationUtil {
     public static List<String> validateJointApplicantOfflineStatus(CaseDetails<CaseData, State> details) {
         CaseData caseData = details.getData();
         boolean isJoint = !caseData.getApplicationType().isSole();
-        boolean applicantOfflineStatusMatches =
-            caseData.getApplicant1().isApplicantOffline() == caseData.getApplicant2().isApplicantOffline();
+        Applicant applicant1 = caseData.getApplicant1();
+        Applicant applicant2 = caseData.getApplicant2();
+        boolean applicantOfflineStatusMatches = applicant1.isApplicantOffline() == applicant2.isApplicantOffline();
 
-        return isJoint && !applicantOfflineStatusMatches
+        return isJoint && !applicantOfflineStatusMatches && jointlyRepresented(applicant1, applicant2)
             ? singletonList(String.format("Applicants have different offline status in a joint case."
             + " Both applicants needs to be either online or offline for caseID: %s", details.getId()))
             : emptyList();
+    }
+
+    public static boolean jointlyRepresented(Applicant applicant1, Applicant applicant2) {
+        Solicitor applicant1Solicitor = applicant1.getSolicitor();
+        Solicitor applicant2Solicitor = applicant2.getSolicitor();
+
+        return applicant1.isRepresented() && applicant2.isRepresented()
+            && applicant1Solicitor != null && applicant2Solicitor != null
+            && Objects.equals(applicant1Solicitor.getName(), applicant2Solicitor.getName())
+            && Objects.equals(applicant1Solicitor.getFirmName(), applicant2Solicitor.getFirmName());
     }
 
     @SafeVarargs
