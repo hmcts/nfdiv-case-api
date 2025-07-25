@@ -93,7 +93,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         data.setAlternativeService(newServiceApplication);
 
         if (InterimApplicationType.ALTERNATIVE_SERVICE.equals(userOptions.getInterimApplicationType())
-        && !AlternativeServiceMethod.DIFFERENT_WAY.equals(userOptions.getAlternativeServiceJourneyOptions().getAltServiceMethod())) {
+            && !AlternativeServiceMethod.DIFFERENT_WAY.equals(userOptions.getAlternativeServiceJourneyOptions().getAltServiceMethod())) {
             if (userOptions.getAlternativeServiceJourneyOptions().getAltServicePartnerEmail() != null) {
                 data.getApplicant2().setEmail(userOptions.getAlternativeServiceJourneyOptions().getAltServicePartnerEmail());
             }
