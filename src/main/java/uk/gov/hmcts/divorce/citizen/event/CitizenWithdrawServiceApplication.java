@@ -14,7 +14,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.EnumSet;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
@@ -39,12 +38,7 @@ public class CitizenWithdrawServiceApplication implements CCDConfig<CaseData, St
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CITIZEN_WITHDRAW_SERVICE_APPLICATION)
-            .forStateTransition(
-                EnumSet.of(
-                    AwaitingServicePayment
-                ),
-                AosOverdue
-            )
+            .forStateTransition(AwaitingServicePayment, AosOverdue)
             .name("Service Application Withdrawn")
             .description("Service Application Withdrawn")
             .showEventNotes()
