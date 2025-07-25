@@ -59,7 +59,12 @@ public class AosPackPrinter {
                     || (app2HasSolicitor ? YES.equals(app2.getSolicitor().getAddressOverseas()) : app2IsOverseas);
 
             var d10Needed = caseData.getApplicationType().isSole() && app2NeedsD10;
-            final UUID letterId = bulkPrintService.printAosRespondentPack(print, d10Needed);
+            var d84Needed = willD84BeNeeded(caseData);
+
+            final UUID letterId = d84Needed
+                ? bulkPrintService.printWithD84(print)
+                : bulkPrintService.printAosRespondentPack(print, d10Needed);
+
             log.info(LOG_LETTER_SERVICE_RESPONSE, letterId, caseId);
         } else {
             log.warn(
@@ -84,7 +89,12 @@ public class AosPackPrinter {
                 caseData.getApplicant1().getFullName(),
                 caseData.getApplicant1().getCorrespondenceAddressIsOverseas()
             );
-            final UUID letterId = bulkPrintService.print(print);
+
+            var d84Needed = willD84BeNeeded(caseData);
+
+            final UUID letterId = d84Needed
+                ? bulkPrintService.printWithD84(print)
+                : bulkPrintService.print(print);
 
             log.info(LOG_LETTER_SERVICE_RESPONSE, letterId, caseId);
         } else {
@@ -111,7 +121,12 @@ public class AosPackPrinter {
                 caseData.getApplicant1().getFullName(),
                 caseData.getApplicant1().getCorrespondenceAddressIsOverseas()
             );
-            final UUID letterId = bulkPrintService.printWithD10Form(print);
+
+            var d84Needed = willD84BeNeeded(caseData);
+
+            final UUID letterId = d84Needed
+                ? bulkPrintService.printWithD84(print)
+                : bulkPrintService.printWithD10Form(print);
 
             log.info(LOG_LETTER_SERVICE_RESPONSE, letterId, caseId);
         } else {
@@ -141,8 +156,6 @@ public class AosPackPrinter {
             currentAosLetters.add(divorceApplicationLetter);
         }
 
-        addD84ToPack(caseData, currentAosLetters);
-
         return currentAosLetters;
     }
 
@@ -163,8 +176,6 @@ public class AosPackPrinter {
         if (null != divorceApplicationLetter) {
             currentAosLetters.add(divorceApplicationLetter);
         }
-
-        addD84ToPack(caseData, currentAosLetters);
 
         return currentAosLetters;
     }
@@ -200,19 +211,10 @@ public class AosPackPrinter {
             currentAosLetters.add(divorceApplicationLetter);
         }
 
-        addD84ToPack(caseData, currentAosLetters);
-
         return currentAosLetters;
     }
 
-    private void addD84ToPack(final CaseData caseData, final List<Letter> currentAosLetters) {
-        var d84Needed = !caseData.getApplicationType().isSole() && caseData.isJudicialSeparationCase();
-        if (d84Needed) {
-            //Get the D84 form from generated documents
-            final Letter d84Letter = firstElement(getLettersBasedOnContactPrivacy(caseData, D84));
-            if (null != d84Letter) {
-                currentAosLetters.add(d84Letter);
-            }
-        }
+    private boolean willD84BeNeeded(final CaseData caseData) {
+        return !caseData.getApplicationType().isSole() && caseData.isJudicialSeparationCase();
     }
 }

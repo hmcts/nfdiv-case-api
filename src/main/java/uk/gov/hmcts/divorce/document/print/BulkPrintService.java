@@ -49,6 +49,15 @@ public class BulkPrintService {
         return triggerPrintRequest(print, authToken, documentRequestForPrint(print, authToken));
     }
 
+    public UUID printWithD84(final Print print) {
+        final String authToken = authTokenGenerator.generate();
+        final List<Document> documents = documentRequestForPrint(print, authToken);
+
+        addD84FormToDocuments(documents);
+
+        return triggerPrintRequest(print, authToken, documents);
+    }
+
     public UUID printWithD10Form(final Print print) {
         final String authToken = authTokenGenerator.generate();
         final List<Document> documents = documentRequestForPrint(print, authToken);
@@ -71,6 +80,11 @@ public class BulkPrintService {
 
     private void addD10FormTo(final List<Document> documents) {
         final Document d10Document = new Document(getEncoder().encodeToString(loadD10PdfBytes("/D10.pdf")), 1);
+        documents.add(d10Document);
+    }
+
+    private void addD84FormToDocuments(final List<Document> documents) {
+        final Document d10Document = new Document(getEncoder().encodeToString(loadD10PdfBytes("/D84.pdf")), 1);
         documents.add(d10Document);
     }
 
