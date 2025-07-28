@@ -84,8 +84,8 @@ public class BulkPrintService {
     }
 
     private void addD84FormToDocuments(final List<Document> documents) {
-        final Document d10Document = new Document(getEncoder().encodeToString(loadD10PdfBytes("/D84.pdf")), 1);
-        documents.add(d10Document);
+        final Document d84Document = new Document(getEncoder().encodeToString(loadD10PdfBytes("/D84.pdf")), 1);
+        documents.add(d84Document);
     }
 
     private List<Document> documentRequestForPrint(Print print, String serviceAuth) {
