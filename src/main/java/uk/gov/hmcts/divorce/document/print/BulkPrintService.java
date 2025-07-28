@@ -170,7 +170,7 @@ public class BulkPrintService {
         try {
             return IOUtils.resourceToByteArray(resourceName);
         } catch (IOException e) {
-            log.error("Error occurred while loading D10 document from classpath", e);
+            log.error("Error occurred while loading {} document from classpath",resourceName, e);
         }
         return new byte[0];
     }
