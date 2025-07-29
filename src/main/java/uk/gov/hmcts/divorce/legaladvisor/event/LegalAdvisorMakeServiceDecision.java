@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import java.time.Clock;
 import java.time.LocalDate;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.ALTERNATIVE_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
@@ -31,6 +32,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalRe
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -42,12 +44,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.ALTERNATIVE_SERVICE_REFUSED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_SERVICE_REFUSED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SERVICE_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SERVICE_REFUSAL_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.ALTERNATIVE_SERVICE_REFUSED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DEEMED_SERVICE_REFUSED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DISPENSE_WITH_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DISPENSE_WITH_SERVICE_REFUSED;
@@ -120,6 +124,8 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
             if (application.getIssueDate() == null) {
                 endState = Submitted;
+            } else if (ALTERNATIVE_SERVICE.equals(serviceApplication.getAlternativeServiceType())) {
+                endState = GeneralConsiderationComplete;
             } else if (caseDataCopy.getApplicationType().isSole()
                 && caseDataCopy.isJudicialSeparationCase()
                 && (DEEMED.equals(serviceApplication.getAlternativeServiceType())
@@ -167,6 +173,14 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                         DEEMED_SERVICE_REFUSED,
                         SERVICE_REFUSAL_TEMPLATE_ID);
                     endState = AwaitingAos;
+                } else if (ALTERNATIVE_SERVICE.equals(serviceApplication.getAlternativeServiceType())) {
+                    generateAndSetOrderToDeemedOrDispenseDocument(
+                        caseDataCopy,
+                        details.getId(),
+                        ALTERNATIVE_SERVICE_REFUSED_FILE_NAME,
+                        ALTERNATIVE_SERVICE_REFUSED,
+                        SERVICE_REFUSAL_TEMPLATE_ID);
+                    endState = AwaitingAos;
                 }
             }
         }
@@ -174,7 +188,8 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
         log.info("ServiceApplication decision. End State is {} Due date is {}", endState, caseDataCopy.getDueDate());
 
         log.info("Sending ServiceApplicationNotification case ID: {}", details.getId());
-        if (endState != ServiceAdminRefusal) {
+        if (endState != ServiceAdminRefusal
+            && !(ALTERNATIVE_SERVICE.equals(serviceApplication.getAlternativeServiceType()) && serviceApplication.isApplicationGranted())) {
             notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
         }
 
