@@ -120,10 +120,12 @@ public class BailiffServiceApplicationTemplateContent implements TemplateContent
         templateContent.put(BAILIFF_KNOW_PARTNERS_PHONE, applicationAnswers.getBailiffKnowPartnersPhone().toBoolean());
         templateContent.put(BAILIFF_PARTNERS_PHONE, applicationAnswers.getBailiffPartnersPhone());
         templateContent.put(BAILIFF_KNOW_PARTNERS_DATE_OF_BIRTH, applicationAnswers.getBailiffKnowPartnersDateOfBirth().toBoolean());
-        templateContent.put(
-            BAILIFF_PARTNERS_DATE_OF_BIRTH,
-            dateTimeFormatter.format(applicationAnswers.getBailiffPartnersDateOfBirth())
-        );
+        if (applicationAnswers.getBailiffPartnersDateOfBirth() != null) {
+            templateContent.put(
+                BAILIFF_PARTNERS_DATE_OF_BIRTH,
+                dateTimeFormatter.format(applicationAnswers.getBailiffPartnersDateOfBirth())
+            );
+        }
         templateContent.put(BAILIFF_PARTNERS_APPROXIMATE_AGE, applicationAnswers.getBailiffPartnersApproximateAge());
         templateContent.put(BAILIFF_PARTNERS_HEIGHT, applicationAnswers.getBailiffPartnersHeight());
         templateContent.put(BAILIFF_PARTNERS_HAIR_COLOUR, applicationAnswers.getBailiffPartnersHairColour());
