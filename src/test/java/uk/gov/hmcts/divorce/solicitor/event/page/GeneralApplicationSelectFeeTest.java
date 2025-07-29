@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
+import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,9 +16,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0228;
@@ -53,6 +57,10 @@ class GeneralApplicationSelectFeeTest {
 
         final OrderSummary orderSummary = OrderSummary.builder().build();
 
+        DynamicList pbaNumbers = mock(DynamicList.class);
+
+        when(pbaService.populatePbaDynamicList()).thenReturn(pbaNumbers);
+
         stubOrderSummaryCreation(orderSummary, KEYWORD_NOTICE);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
@@ -78,6 +86,10 @@ class GeneralApplicationSelectFeeTest {
         final OrderSummary orderSummary = OrderSummary.builder().build();
 
         stubOrderSummaryCreation(orderSummary, KEYWORD_WITHOUT_NOTICE);
+
+        DynamicList pbaNumbers = mock(DynamicList.class);
+
+        when(pbaService.populatePbaDynamicList()).thenReturn(pbaNumbers);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
@@ -110,6 +122,26 @@ class GeneralApplicationSelectFeeTest {
             response.getData().getGeneralApplication().getGeneralApplicationFee().getPbaNumbers(),
             pbaNumbers
         );
+    }
+
+
+    @Test
+    void shouldReturnValidationErrorWhenSolicitorPbaListIsEmpty() {
+        final CaseData caseData = caseData();
+        caseData.setGeneralApplication(GeneralApplication.builder()
+            .generalApplicationFeeType(FEE0228)
+            .build());
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        doThrow(FeignException.class).when(pbaService).populatePbaDynamicList();
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
+
+        assertThat(response.getErrors()).hasSize(1);
+        verifyNoInteractions(paymentService);
     }
 
     private void stubOrderSummaryCreation(OrderSummary orderSummary, String keyword) {
