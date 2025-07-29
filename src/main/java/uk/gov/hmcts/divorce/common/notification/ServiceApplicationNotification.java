@@ -44,7 +44,7 @@ public class ServiceApplicationNotification implements ApplicantNotification {
     private final CommonContent commonContent;
 
     private static final String LOGGER_MESSAGE = "Notifying applicant that service application for {} was {}";
-    private static final String IS_ALTERNATIVE_SERVICE = "isAlternativeService";
+    public static final String IS_ALTERNATIVE_SERVICE = "isAlternativeService";
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -91,6 +91,7 @@ public class ServiceApplicationNotification implements ApplicantNotification {
         templateVars.put(IS_DEEMED_SERVICE, DEEMED.equals(alternativeServiceType) ? YES : NO);
         templateVars.put(IS_DISPENSE_SERVICE, DISPENSED.equals(alternativeServiceType) ? YES : NO);
         templateVars.put(IS_BAILIFF_SERVICE, BAILIFF.equals(alternativeServiceType) ? YES : NO);
+        templateVars.put(IS_ALTERNATIVE_SERVICE, ALTERNATIVE_SERVICE.equals(alternativeServiceType) ? YES : NO);
         templateVars.put(IS_SOLE, caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
 
