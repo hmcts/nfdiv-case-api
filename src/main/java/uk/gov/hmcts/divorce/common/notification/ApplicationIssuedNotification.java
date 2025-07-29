@@ -231,9 +231,9 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         Application application = caseData.getApplication();
 
         return holdingPeriodService.getRespondByDateFor(
-            Objects.nonNull(application.getReissueDate()) ?
-                application.getReissueDate() :
-                application.getIssueDate()
+            Objects.nonNull(application.getReissueDate())
+                ? application.getReissueDate()
+                : application.getIssueDate()
         );
     }
 
