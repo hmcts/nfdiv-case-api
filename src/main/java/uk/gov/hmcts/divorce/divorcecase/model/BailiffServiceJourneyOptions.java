@@ -2,6 +2,8 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +20,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class BailiffServiceJourneyOptions {
     @CCD(label = "Enter your partner's name")
     private String bailiffPartnersName;
@@ -82,9 +85,20 @@ public class BailiffServiceJourneyOptions {
     @CCD(label = "Does your partner have access to a vehicle?")
     private YesOrNoOrNotKnown bailiffDoesPartnerHaveVehicle;
 
-    @JsonUnwrapped(prefix = "bailiffPartnerVehicle")
-    @CCD(label = "Partner vehicle details")
-    private Vehicle bailiffPartnerVehicle;
+    @CCD(label = "Vehicle Manufacturer and model")
+    private String bailiffPartnerVehicleModel;
+
+    @CCD(label = "Vehicle Colour")
+    private String bailiffPartnerVehicleColour;
+
+    @CCD(label = "Vehicle registration number")
+    private String bailiffPartnerVehicleRegistration;
+
+    @CCD(
+        label = "Other vehicle details",
+        typeOverride = TextArea
+    )
+    private String bailiffPartnerVehicleOtherDetails;
 
     @CCD(label = "Has your partner been violent in the past?")
     private YesOrNoOrNotKnown bailiffHasPartnerBeenViolent;

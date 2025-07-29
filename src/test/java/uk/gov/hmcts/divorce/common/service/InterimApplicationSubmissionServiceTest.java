@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.generator.BailiffServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.DeemedServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
@@ -35,6 +36,9 @@ class InterimApplicationSubmissionServiceTest {
 
     @Mock
     private BailiffServiceApplicationSubmittedNotification bailiffNotification;
+
+    @Mock
+    private BailiffServiceApplicationGenerator bailiffServiceApplicationGenerator;
 
     @InjectMocks
     private InterimApplicationSubmissionService interimApplicationSubmissionService;
@@ -59,6 +63,30 @@ class InterimApplicationSubmissionServiceTest {
         DivorceDocument result = interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
 
         verify(deemedServiceApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
+        assertThat(result).isEqualTo(generatedDocument);
+    }
+
+
+    @Test
+    void shouldDelegateToBailiffServiceApplicationGeneratorWhenApplicationTypeIsBailiff() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(InterimApplicationType.BAILIFF_SERVICE)
+                            .build())
+                    .build()
+            ).build();
+
+        DivorceDocument generatedDocument = DivorceDocument.builder().build();
+        when(bailiffServiceApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
+            .thenReturn(generatedDocument);
+
+        DivorceDocument result = interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
+
+        verify(bailiffServiceApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
         assertThat(result).isEqualTo(generatedDocument);
     }
 
