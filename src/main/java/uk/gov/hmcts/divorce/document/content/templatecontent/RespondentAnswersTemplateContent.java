@@ -6,7 +6,6 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
-import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +28,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.EN
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_A_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_DISPUTING;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
@@ -50,6 +50,7 @@ public class RespondentAnswersTemplateContent implements TemplateContent {
     private static final String RESP_LEGAL_PROCEEDINGS_EXIST = "respLegalProceedingsExist";
     private static final String RESP_LEGAL_PROCEEDINGS_DESCRIPTION = "respLegalProceedingsDescription";
     private static final String RESP_SOLICITOR_REPRESENTED = "respSolicitorRepresented";
+    private static final String INTEND_TO_DELAY = "intendToDelay";
 
     @Override
     public List<String> getSupportedTemplates() {
@@ -84,6 +85,8 @@ public class RespondentAnswersTemplateContent implements TemplateContent {
         templateContent.put(IN_WHICH_COUNTRY_IS_YOUR_LIFE_MAINLY_BASED, acknowledgementOfService.getInWhichCountryIsYourLifeMainlyBased());
         templateContent.put(RESP_LEGAL_PROCEEDINGS_EXIST, caseData.getApplicant2().getLegalProceedings().getValue());
         templateContent.put(RESP_LEGAL_PROCEEDINGS_DESCRIPTION, caseData.getApplicant2().getLegalProceedingsDetails());
+        templateContent.put(INTEND_TO_DELAY, YesOrNo.YES.equals(caseData.getAcknowledgementOfService().getIntendToDelay()));
+        templateContent.put(IS_DIVORCE, caseData.isDivorce());
 
         if (caseData.isDivorce()) {
 

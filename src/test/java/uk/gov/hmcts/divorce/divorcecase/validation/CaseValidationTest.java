@@ -1,8 +1,11 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
+import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
@@ -13,8 +16,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
+import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,6 +33,9 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -46,8 +54,11 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validat
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCasesAcceptedToListForHearing;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCitizenResendInvite;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateJointApplicantOfflineStatus;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateJurisdictionConnections;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateSolicitorPbaNumbers;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 
@@ -59,6 +70,8 @@ class CaseValidationTest {
     private static final String EMPTY = " cannot be empty or null";
     private static final String IN_THE_FUTURE = " can not be in the future.";
     private static final String MORE_THAN_ONE_HUNDRED_YEARS_AGO = " can not be more than 100 years ago.";
+    private static final String INVALID_JOINT_OFFLINE_STATUS = "Applicants have different offline status in a joint case."
+        + " Both applicants needs to be either online or offline for caseID: " +  TEST_CASE_ID;
 
     @Test
     void shouldValidateBasicCase() {
@@ -678,5 +691,119 @@ class CaseValidationTest {
         List<String> errors = validateChangeServiceRequest(caseData);
 
         assertThat(errors).isEmpty();
+    }
+
+    @Test
+    void shouldValidateApplicantsStatusForJointlyRepresentedJointCaseWhenOneOfTheApplicantsIsOnline() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(NO);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        Solicitor solicitor = Solicitor.builder().name("solicitor").firmName("firm").build();
+        caseData.getApplicant1().setSolicitor(solicitor);
+        caseData.getApplicant2().setSolicitor(solicitor);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        List<String> errors = validateJointApplicantOfflineStatus(caseDetails);
+        assertThat(errors).hasSize(1);
+        assertThat(errors).containsExactly(INVALID_JOINT_OFFLINE_STATUS);
+    }
+
+    @Test
+    void shouldNotValidateApplicantsStatusForSoleCaseWhenOneOfTheApplicantsIsOnline() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(NO);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        Solicitor solicitor = Solicitor.builder().name("solicitor").firmName("firm").build();
+        caseData.getApplicant1().setSolicitor(solicitor);
+        caseData.getApplicant2().setSolicitor(solicitor);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        List<String> errors = validateJointApplicantOfflineStatus(caseDetails);
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    void shouldNotValidateApplicantsStatusForSeparatelyRepresentedJointCaseWhenOneOfTheApplicantsIsOnline() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(NO);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        Solicitor app1Solicitor = Solicitor.builder().name("solicitor").firmName("firm").build();
+        Solicitor app2Solicitor = Solicitor.builder().name("solicitor2").firmName("firm2").build();
+        caseData.getApplicant1().setSolicitor(app1Solicitor);
+        caseData.getApplicant2().setSolicitor(app2Solicitor);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        List<String> errors = validateJointApplicantOfflineStatus(caseDetails);
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    void shouldValidateApplicantsStatusForJointCaseWhenBothApplicantsAreOffline() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(YES);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        List<String> errors = validateJointApplicantOfflineStatus(caseDetails);
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    void shouldValidateSolicitorPbaNumbersWhenPbaListIsNotEmpty() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+
+        PbaService pbaService = mock(PbaService.class);
+        DynamicList pbaNumbers = mock(DynamicList.class);
+
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+
+        when(pbaService.populatePbaDynamicList()).thenReturn(pbaNumbers);
+
+        SolicitorPbaValidation response = validateSolicitorPbaNumbers(caseData, pbaService, TEST_CASE_ID);
+
+        assertThat(response.getPbaNumbersList()).isNotNull();
+    }
+
+    @Test
+    void shouldThrowExceptionForSolicitorPbaNumbersWhenPbaListIsEmpty() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+
+        PbaService pbaService = mock(PbaService.class);
+
+        doThrow(FeignException.class).when(pbaService).populatePbaDynamicList();
+
+        SolicitorPbaValidation response = validateSolicitorPbaNumbers(caseData, pbaService, TEST_CASE_ID);
+
+        assertThat(response.getPbaNumbersList()).isNull();
+        assertThat(response.getErrorResponse()).isInstanceOf(AboutToStartOrSubmitResponse.class);
+        assertThat(response.getErrorResponse()).isNotNull();
+        assertThat(response.getErrorResponse().getErrors()).hasSize(1);
+        assertThat(response.getErrorResponse().getErrors().get(0)).isEqualTo("No PBA numbers associated with the provided email address");
+
     }
 }

@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -132,7 +133,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         boolean evidenceNotSubmitted = YesOrNo.NO.equals(userOptions.getInterimAppsCanUploadEvidence())
             && userOptions.getInterimAppsEvidenceDocs() != null;
 
-        if (evidenceNotSubmitted) {
+        if (evidenceNotSubmitted && !CollectionUtils.isEmpty(userOptions.getInterimAppsEvidenceDocs())) {
             documentRemovalService.deleteDocument(userOptions.getInterimAppsEvidenceDocs());
         }
 
