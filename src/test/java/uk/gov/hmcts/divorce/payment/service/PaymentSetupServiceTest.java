@@ -6,9 +6,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -19,6 +21,7 @@ import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_NOTICE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_WITHOUT_NOTICE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_DIVORCE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.payment.service.PaymentSetupService.getPaymentCallbackUrl;
@@ -169,6 +172,92 @@ class PaymentSetupServiceTest {
         String response = paymentSetupService.createFinalOrderFeeServiceRequest(caseData, TEST_CASE_ID, orderSummary);
 
         verify(paymentService).createServiceRequestReference(getPaymentCallbackUrl(), TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
+        assertThat(response).isEqualTo(TEST_SERVICE_REFERENCE);
+    }
+
+    @Test
+    void shouldNotCreateServiceFeeOrderSummaryIfItAlreadyExists() {
+        final CaseData caseData = new CaseData();
+        final OrderSummary orderSummary = OrderSummary.builder().build();
+        caseData.setAlternativeService(
+            AlternativeService.builder()
+                .servicePaymentFee(
+                    FeeDetails.builder()
+                        .orderSummary(orderSummary)
+                        .build()
+                )
+                .build()
+        );
+
+        OrderSummary response = paymentSetupService.createServiceApplicationOrderSummary(caseData.getAlternativeService(), TEST_CASE_ID);
+
+        verify(paymentService, never()).getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE);
+        assertThat(response).isEqualTo(orderSummary);
+    }
+
+    @Test
+    void shouldCreateServiceApplicationFeeOrderSummaryIfDoesNotAlreadyExist() {
+        final CaseData caseData = new CaseData();
+        final OrderSummary orderSummary = OrderSummary.builder().build();
+        caseData.setAlternativeService(AlternativeService.builder().build());
+
+        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE))
+            .thenReturn(orderSummary);
+
+        OrderSummary response = paymentSetupService.createServiceApplicationOrderSummary(
+            caseData.getAlternativeService(), TEST_CASE_ID
+        );
+
+        verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE);
+        assertThat(response).isEqualTo(orderSummary);
+    }
+
+    @Test
+    void shouldNotCreateServiceApplicationFeeServiceRequestIfItAlreadyExists() {
+        final CaseData caseData = new CaseData();
+        caseData.setApplicant1(Applicant.builder().firstName(TEST_FIRST_NAME).build());
+        final OrderSummary orderSummary = OrderSummary.builder().build();
+        caseData.setAlternativeService(
+            AlternativeService.builder()
+                .servicePaymentFee(
+                    FeeDetails.builder()
+                        .serviceRequestReference(TEST_SERVICE_REFERENCE)
+                        .build()
+                )
+                .build()
+        );
+
+        String response = paymentSetupService.createServiceApplicationPaymentServiceRequest(
+            caseData.getAlternativeService(), TEST_CASE_ID, TEST_FIRST_NAME
+        );
+
+        verify(paymentService, never()).createServiceRequestReference(getPaymentCallbackUrl(), TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
+        assertThat(response).isEqualTo(TEST_SERVICE_REFERENCE);
+    }
+
+    @Test
+    void shouldCreateServiceApplicationFeeServiceRequestIfDoesNotAlreadyExist() {
+        final CaseData caseData = new CaseData();
+        caseData.setApplicant1(Applicant.builder().firstName(TEST_FIRST_NAME).build());
+        final OrderSummary orderSummary = OrderSummary.builder().build();
+        caseData.setAlternativeService(
+            AlternativeService.builder()
+                .servicePaymentFee(
+                    FeeDetails.builder()
+                        .orderSummary(orderSummary)
+                        .build()
+                )
+                .build()
+        );
+
+        when(paymentService.createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary))
+            .thenReturn(TEST_SERVICE_REFERENCE);
+
+        String response = paymentSetupService.createServiceApplicationPaymentServiceRequest(
+            caseData.getAlternativeService(), TEST_CASE_ID, TEST_FIRST_NAME
+        );
+
+        verify(paymentService).createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
         assertThat(response).isEqualTo(TEST_SERVICE_REFERENCE);
     }
 }
