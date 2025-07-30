@@ -29,6 +29,7 @@ import java.util.Optional;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
+import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.TRY_SOMETHING_ELSE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -43,8 +44,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseData, State, UserRole> {
-    public static final String UPDATE_PARTNER_DETAILS_AND_REISSUE = "update-partner-details-and-reissue";
+public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseData, State, UserRole> {
+    public static final String UPDATE_PARTNER_DETAILS_OR_REISSUE = "update-partner-details-or-reissue";
 
     private final IdamService idamService;
 
@@ -55,11 +56,11 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
-            .event(UPDATE_PARTNER_DETAILS_AND_REISSUE)
+            .event(UPDATE_PARTNER_DETAILS_OR_REISSUE)
             .forStates(AwaitingAos, AosOverdue, AwaitingDocuments, AwaitingService)
             .showCondition(NEVER_SHOW)
-            .name("Update details and reissue")
-            .description("Update details and reissue")
+            .name("Update details or reissue")
+            .description("Update details or reissue")
             .grant(CREATE_READ_UPDATE, CREATOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE, LEGAL_ADVISOR)
             .retries(120, 120)
@@ -91,7 +92,18 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
         }
 
         try {
-            reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
+
+            boolean updateReissueOptionsForNewContactDetails = Optional.ofNullable(caseData.getApplicant1())
+                    .map(Applicant::getInterimApplicationOptions)
+                    .map(InterimApplicationOptions::getNoResponseJourneyOptions)
+                    .map(NoResponseJourneyOptions::getNoResponsePartnerNewEmailOrAddress)
+                    .isPresent();
+
+            if (updateReissueOptionsForNewContactDetails) {
+                reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
+            } else {
+                reIssueApplicationService.process(details);
+            }
         } catch (InvalidReissueOptionException ex) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .errors(List.of(String.format("Invalid update contact details option selected for CaseId: %s",
@@ -99,8 +111,9 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
                     .build();
         }
 
-        Optional.ofNullable(caseData.getApplicant1().getInterimApplicationOptions())
-            .ifPresent(options -> options.setNoResponseJourneyOptions(null));
+        if (processNoResponseJourneyOptions(getNoResponseJourneyOptions(caseData))) {
+            details.setState(AwaitingAos);
+        }       // Add logic for more options if required
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -109,14 +122,32 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_AND_REISSUE, details.getId());
 
-        final User user = idamService.retrieveSystemUpdateUserDetails();
-        final String serviceAuth = authTokenGenerator.generate();
+        NoResponseJourneyOptions noResponseJourneyOptions = getNoResponseJourneyOptions(details.getData());
 
-        ccdUpdateService
-            .submitEvent(details.getId(), CASEWORKER_REISSUE_APPLICATION, user, serviceAuth);
+        if (processNoResponseJourneyOptions(noResponseJourneyOptions)) {
+
+            log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_OR_REISSUE, details.getId());
+
+            final User user = idamService.retrieveSystemUpdateUserDetails();
+            final String serviceAuth = authTokenGenerator.generate();
+
+            ccdUpdateService
+                .submitEvent(details.getId(), CASEWORKER_REISSUE_APPLICATION, user, serviceAuth);
+        }
 
         return SubmittedCallbackResponse.builder().build();
     }
+
+    private NoResponseJourneyOptions getNoResponseJourneyOptions(CaseData caseData) {
+        return Optional.ofNullable(caseData.getApplicant1().getInterimApplicationOptions())
+            .map(InterimApplicationOptions::getNoResponseJourneyOptions)
+            .orElse(null);
+    }
+
+    private boolean processNoResponseJourneyOptions(NoResponseJourneyOptions options) {
+        return options != null
+            && !TRY_SOMETHING_ELSE.equals(options.getNoResponseSendPapersAgainOrTrySomethingElse());
+    }
+
 }
