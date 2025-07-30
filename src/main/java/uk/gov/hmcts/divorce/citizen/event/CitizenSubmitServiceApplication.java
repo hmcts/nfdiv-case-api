@@ -12,12 +12,10 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentRemovalService;
@@ -91,13 +89,6 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
         AlternativeService newServiceApplication = buildServiceApplication(userOptions);
         data.setAlternativeService(newServiceApplication);
-
-        if (InterimApplicationType.ALTERNATIVE_SERVICE.equals(userOptions.getInterimApplicationType())
-            && !AlternativeServiceMethod.DIFFERENT_WAY.equals(userOptions.getAlternativeServiceJourneyOptions().getAltServiceMethod())) {
-            if (userOptions.getAlternativeServiceJourneyOptions().getAltServicePartnerEmail() != null) {
-                data.getApplicant2().setEmail(userOptions.getAlternativeServiceJourneyOptions().getAltServicePartnerEmail());
-            }
-        }
 
         if (userOptions.willMakePayment()) {
             prepareCaseForServicePayment(newServiceApplication, applicant, caseId);
