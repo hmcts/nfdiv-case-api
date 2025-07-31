@@ -8,8 +8,11 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrPostalAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -23,8 +26,10 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
@@ -71,19 +76,32 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
 
         CaseData caseData = details.getData();
 
-        try {
-            reIssueApplicationService.updateReissueOptionForNewContactDetails(caseData, details.getId());
-        } catch (InvalidReissueOptionException ex) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(List.of(String.format("Invalid update contact details option selected for CaseId: %s",
-                    details.getId())))
-                .build();
-        }
+        var noResponseJourney = Optional.of(caseData.getApplicant1())
+                .map(Applicant::getInterimApplicationOptions)
+                .map(InterimApplicationOptions::getNoResponseJourneyOptions)
+                .orElseGet(() -> NoResponseJourneyOptions.builder().build());
 
-        var noResponseJourney = caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions();
         var newAddress = noResponseJourney.getNoResponsePartnerAddress();
         var newEmail = noResponseJourney.getNoResponsePartnerEmailAddress();
         var applicant2 = caseData.getApplicant2();
+
+        if (!isEmpty(newAddress)) {
+            applicant2.setAddress(newAddress);
+        }
+
+        if (!isEmpty(newEmail)) {
+            applicant2.setEmail(newEmail);
+            applicant2.setAddressOverseas(Objects.requireNonNullElse(applicant2.getAddressOverseas(), YesOrNo.NO));
+        }
+
+        try {
+            reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
+        } catch (InvalidReissueOptionException ex) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .errors(List.of(String.format("Invalid update contact details option selected for CaseId: %s",
+                            details.getId())))
+                    .build();
+        }
 
         if (!ObjectUtils.isEmpty(newAddress)) {
             applicant2.setAddress(newAddress);
@@ -114,7 +132,7 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
         final var applicant2 = caseData.getApplicant2();
 
         ccdUpdateService
-            .submitEvent(caseId, CASEWORKER_REISSUE_APPLICATION, user, serviceAuth);
+            .submitEvent(details.getId(), CASEWORKER_REISSUE_APPLICATION, user, serviceAuth);
 
         return SubmittedCallbackResponse.builder().build();
     }

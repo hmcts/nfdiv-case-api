@@ -53,6 +53,7 @@ class Applicant1UpdatePartnerDetailsAndReissueTest {
     @Mock
     private ReIssueApplicationService reIssueApplicationService;
 
+
     @InjectMocks
     private Applicant1UpdatePartnerDetailsAndReissue applicant1UpdatePartnerDetailsAndReissue;
 
@@ -77,7 +78,7 @@ class Applicant1UpdatePartnerDetailsAndReissueTest {
         caseDetails.setData(caseData);
 
         doThrow(new InvalidReissueOptionException("")).when(reIssueApplicationService)
-            .updateReissueOptionForNewContactDetails(caseData, caseDetails.getId());
+            .updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1UpdatePartnerDetailsAndReissue.aboutToSubmit(caseDetails, null);
@@ -109,7 +110,7 @@ class Applicant1UpdatePartnerDetailsAndReissueTest {
                 .getNoResponsePartnerNewEmailOrPostalAddress())
                 .isEqualTo(NoResponsePartnerNewEmailOrPostalAddress.CONTACT_DETAILS_UPDATED);
 
-        verify(reIssueApplicationService).updateReissueOptionForNewContactDetails(caseData, caseDetails.getId());
+        verify(reIssueApplicationService).updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
     }
 
     @Test

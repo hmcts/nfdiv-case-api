@@ -521,7 +521,7 @@ class ReIssueApplicationServiceTest {
 
         caseDetails.getData().getApplicant2().setAddressOverseas(YES);
 
-        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails.getData(), caseDetails.getId());
+        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
 
         assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(REISSUE_CASE);
     }
@@ -535,7 +535,7 @@ class ReIssueApplicationServiceTest {
         Applicant applicant2 = caseDetails.getData().getApplicant2();
         applicant2.setAddressOverseas(NO);
 
-        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails.getData(), caseDetails.getId());
+        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
 
         assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(DIGITAL_AOS);
     }
@@ -549,7 +549,7 @@ class ReIssueApplicationServiceTest {
         Applicant applicant2 = caseDetails.getData().getApplicant2();
         applicant2.setAddressOverseas(YES);
 
-        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails.getData(), caseDetails.getId());
+        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
 
         assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(REISSUE_CASE);
     }
@@ -561,7 +561,7 @@ class ReIssueApplicationServiceTest {
 
         setUpCaseDetails(caseDetails, NoResponsePartnerNewEmailOrPostalAddress.NEW_EMAIL_AND_POSTAL_ADDRESS, NO);
 
-        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails.getData(), caseDetails.getId());
+        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
 
         assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(DIGITAL_AOS);
     }
@@ -572,7 +572,7 @@ class ReIssueApplicationServiceTest {
 
         setUpCaseDetails(caseDetails, NoResponsePartnerNewEmailOrPostalAddress.NEW_EMAIL_AND_POSTAL_ADDRESS, NO);
 
-        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails.getData(), caseDetails.getId());
+        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
 
         assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(DIGITAL_AOS);
     }
@@ -584,7 +584,7 @@ class ReIssueApplicationServiceTest {
 
         setUpCaseDetails(caseDetails, NoResponsePartnerNewEmailOrPostalAddress.NEW_EMAIL_AND_POSTAL_ADDRESS, YES);
 
-        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails.getData(), caseDetails.getId());
+        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
 
         assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(REISSUE_CASE);
     }
@@ -600,7 +600,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         setUpCaseDetails(caseDetails, NoResponsePartnerNewEmailOrPostalAddress.NEW_POSTAL_ADDRESS, YES);
 
-        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails.getData(), caseDetails.getId());
+        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
 
         assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(REISSUE_CASE);
     }
@@ -616,25 +616,9 @@ class ReIssueApplicationServiceTest {
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         setUpCaseDetails(caseDetails, NoResponsePartnerNewEmailOrPostalAddress.NEW_POSTAL_ADDRESS, NO);
 
-        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails.getData(), caseDetails.getId());
+        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
 
         assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(OFFLINE_AOS);
-    }
-
-    private void setUpCaseDetails(CaseDetails<CaseData, State> caseDetails,
-                                  NoResponsePartnerNewEmailOrPostalAddress newEmailAndPostalAddress, YesOrNo addressOverseas) {
-        CaseData caseData = caseData();
-
-        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-        caseDetails.getData().getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
-            .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
-                .noResponsePartnerNewEmailOrPostalAddress(newEmailAndPostalAddress)
-                .noResponsePartnerAddressOverseas(addressOverseas)
-                .build())
-            .build());
     }
 
     @Test
@@ -650,5 +634,22 @@ class ReIssueApplicationServiceTest {
         assertThatThrownBy(() -> reIssueApplicationService.process(caseDetails))
             .isExactlyInstanceOf(InvalidReissueOptionException.class)
             .hasMessage("Invalid reissue option for CaseId: 1616591401473378");
+    }
+
+
+    private void setUpCaseDetails(CaseDetails<CaseData, State> caseDetails,
+                                  NoResponsePartnerNewEmailOrPostalAddress newEmailAndPostalAddress, YesOrNo addressOverseas) {
+        CaseData caseData = caseData();
+
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+        caseDetails.getData().getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
+            .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
+                .noResponsePartnerNewEmailOrPostalAddress(newEmailAndPostalAddress)
+                .noResponsePartnerAddressOverseas(addressOverseas)
+                .build())
+            .build());
     }
 }

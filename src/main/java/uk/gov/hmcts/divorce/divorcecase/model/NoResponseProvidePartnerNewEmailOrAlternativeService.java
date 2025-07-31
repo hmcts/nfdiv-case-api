@@ -15,7 +15,7 @@ public enum NoResponseProvidePartnerNewEmailOrAlternativeService implements HasL
     NEW_EMAIL_ADDRESS("I have a new email address"),
 
     @JsonProperty("applyForAlternativeService")
-    NEW_EMAIL_AND_POSTAL_ADDRESS("I want to apply for alternative service to serve by email only ");
+    APPLY_FOR_ALTERNATIVE_SERVICE("I want to apply for alternative service to serve by email only ");
 
     private final String label;
 }
