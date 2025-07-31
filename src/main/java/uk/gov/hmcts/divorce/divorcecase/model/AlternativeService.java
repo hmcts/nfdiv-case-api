@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
@@ -66,7 +67,8 @@ public class AlternativeService {
 
     @CCD(
         label = "Reason for refusal",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String serviceApplicationRefusalReason;
 
@@ -91,7 +93,8 @@ public class AlternativeService {
 
     @CCD(
         label = "Further details for Judge or Legal Advisor",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String alternativeServiceJudgeOrLegalAdvisorDetails;
 
@@ -99,6 +102,22 @@ public class AlternativeService {
         label = "Is fee payment required?"
     )
     private YesOrNo alternativeServiceFeeRequired;
+
+    @CCD(
+        label = "Documents uploaded before submission?"
+    )
+    private YesOrNo serviceApplicationDocsUploadedPreSubmission;
+
+    @CCD(
+        label = "Service application answers",
+        searchable = false
+    )
+    private DivorceDocument serviceApplicationAnswers;
+
+    @CCD(
+        label = "Service application submitted online"
+    )
+    private YesOrNo serviceApplicationSubmittedOnline;
 
     @JsonUnwrapped
     @Builder.Default
@@ -113,9 +132,19 @@ public class AlternativeService {
     @CCD(
         label = "Supporting Documents",
         typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument"
+        typeParameterOverride = "DivorceDocument",
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> serviceApplicationDocuments;
+
+    @CCD(
+        label = "Service Payments",
+        typeOverride = Collection,
+        typeParameterOverride = "Payment",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private List<ListValue<Payment>> servicePayments;
 
     @SuppressWarnings("PMD")
     @JsonIgnore
