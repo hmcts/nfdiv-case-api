@@ -139,14 +139,14 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             }
 
             if (DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {
-                generateAndSetOrderToDeemedOrDispenseDocument(
+                generateAndSetOrderDocumentForServiceApplication(
                     caseDataCopy,
                     details.getId(),
                     DISPENSED_AS_SERVICE_GRANTED,
                     DISPENSE_WITH_SERVICE_GRANTED,
                     SERVICE_ORDER_TEMPLATE_ID);
             } else if (DEEMED.equals(serviceApplication.getAlternativeServiceType())) {
-                generateAndSetOrderToDeemedOrDispenseDocument(
+                generateAndSetOrderDocumentForServiceApplication(
                     caseDataCopy,
                     details.getId(),
                     DEEMED_AS_SERVICE_GRANTED,
@@ -158,7 +158,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                 endState = ServiceAdminRefusal;
             } else {
                 if (DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {
-                    generateAndSetOrderToDeemedOrDispenseDocument(
+                    generateAndSetOrderDocumentForServiceApplication(
                         caseDataCopy,
                         details.getId(),
                         DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME,
@@ -166,7 +166,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                         SERVICE_REFUSAL_TEMPLATE_ID);
                     endState = caseDataCopy.getApplication().getIssueDate() != null ? AwaitingAos : ServiceAdminRefusal;
                 } else if (DEEMED.equals(serviceApplication.getAlternativeServiceType())) {
-                    generateAndSetOrderToDeemedOrDispenseDocument(
+                    generateAndSetOrderDocumentForServiceApplication(
                         caseDataCopy,
                         details.getId(),
                         DEEMED_SERVICE_REFUSED_FILE_NAME,
@@ -174,7 +174,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                         SERVICE_REFUSAL_TEMPLATE_ID);
                     endState = AwaitingAos;
                 } else if (ALTERNATIVE_SERVICE.equals(serviceApplication.getAlternativeServiceType())) {
-                    generateAndSetOrderToDeemedOrDispenseDocument(
+                    generateAndSetOrderDocumentForServiceApplication(
                         caseDataCopy,
                         details.getId(),
                         ALTERNATIVE_SERVICE_REFUSED_FILE_NAME,
@@ -201,10 +201,10 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .build();
     }
 
-    private void generateAndSetOrderToDeemedOrDispenseDocument(final CaseData caseDataCopy,
-                                                               final Long caseId,
-                                                               final String fileName,
-                                                               final DocumentType documentType, String templateId) {
+    private void generateAndSetOrderDocumentForServiceApplication(final CaseData caseDataCopy,
+                                                                  final Long caseId,
+                                                                  final String fileName,
+                                                                  final DocumentType documentType, String templateId) {
         log.info("Generating order to dispense document for templateId : {} caseId: {}", templateId, caseId);
 
         Document document = caseDataDocumentService.renderDocument(
@@ -215,7 +215,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             fileName
         );
 
-        var deemedOrDispensedDoc = DivorceDocument
+        var orderDocument = DivorceDocument
             .builder()
             .documentLink(document)
             .documentFileName(document.getFilename())
@@ -224,7 +224,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
         caseDataCopy.getDocuments().setDocumentsGenerated(addDocumentToTop(
             caseDataCopy.getDocuments().getDocumentsGenerated(),
-            deemedOrDispensedDoc
+            orderDocument
         ));
     }
 }
