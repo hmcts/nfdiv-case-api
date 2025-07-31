@@ -19,7 +19,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.*;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -81,12 +86,15 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
         }
 
         handleDeletionOfServiceApplicationDocuments(caseData.getAlternativeService());
-        caseData.setAlternativeService(null);
+        caseData.setAlternativeService(new AlternativeService());
 
-        boolean isAosDrafted = caseData.getAcknowledgementOfService().getAosIsDrafted().toBoolean();
-        State stateToTransition = caseData.getDueDate().isBefore(LocalDate.now()) ? AosOverdue
+        boolean isAosDrafted = Objects.nonNull(caseData.getAcknowledgementOfService().getAosIsDrafted())
+                && caseData.getAcknowledgementOfService().getAosIsDrafted().toBoolean();
+        final boolean isOverdue = caseData.getDueDate() != null && caseData.getDueDate().isBefore(LocalDate.now());
+
+        State stateToTransition = isOverdue ? AosOverdue
             : isAosDrafted ? AosDrafted
-            : AwaitingDocuments;
+            : AwaitingAos;
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
