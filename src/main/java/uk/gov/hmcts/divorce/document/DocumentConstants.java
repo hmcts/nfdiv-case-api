@@ -130,6 +130,7 @@ public final class DocumentConstants {
     public static final String SERVICE_REFUSAL_TEMPLATE_ID = "SERVICE_REFUSAL";
     public static final String DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME = "DispenseWithServiceRefused";
     public static final String DEEMED_SERVICE_REFUSED_FILE_NAME = "DeemedServiceRefused";
+    public static final String ALTERNATIVE_SERVICE_REFUSED_FILE_NAME = "AlternativeServiceRefused";
 
     public static final String BAILIFF_APPLICATION_APPROVED_ID = "BAILIFF_APPLICATION_APPROVED";
     public static final String BAILIFF_APPLICATION_APPROVED_FILE_NAME = "BailiffApplicationApproved";
