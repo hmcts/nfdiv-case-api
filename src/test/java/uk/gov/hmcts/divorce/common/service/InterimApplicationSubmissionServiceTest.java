@@ -5,12 +5,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.AlternativeServiceApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.generator.AlternativeServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.DeemedServiceApplicationGenerator;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertThrows;
@@ -22,6 +26,15 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 class InterimApplicationSubmissionServiceTest {
     @Mock
     private DeemedServiceApplicationGenerator deemedServiceApplicationGenerator;
+
+    @Mock
+    private AlternativeServiceApplicationGenerator alternativeServiceApplicationGenerator;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private AlternativeServiceApplicationSubmittedNotification alternativeServiceApplicationSubmittedNotification;
 
     @InjectMocks
     private InterimApplicationSubmissionService interimApplicationSubmissionService;
@@ -89,5 +102,45 @@ class InterimApplicationSubmissionServiceTest {
 
         verify(deemedServiceApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
         assertThat(result).isEqualTo(generatedDocument);
+    }
+
+    @Test
+    void shouldDelegateToAlternativeServiceApplicationGeneratorWhenApplicationTypeIsAlternativeService() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(InterimApplicationType.ALTERNATIVE_SERVICE)
+                            .build())
+                    .build()
+            ).build();
+
+        DivorceDocument generatedDocument = DivorceDocument.builder().build();
+        when(alternativeServiceApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
+            .thenReturn(generatedDocument);
+
+        DivorceDocument result = interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
+
+        assertThat(result).isEqualTo(generatedDocument);
+    }
+
+    @Test
+    void shouldDelegateToAlternativeServiceNotificationWhenApplicationTypeIsAlternativeService() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(InterimApplicationType.ALTERNATIVE_SERVICE)
+                            .build())
+                    .build()
+            ).build();
+
+        interimApplicationSubmissionService.sendNotifications(caseId, AlternativeServiceType.ALTERNATIVE_SERVICE, caseData);
+
+        verify(notificationDispatcher).send(alternativeServiceApplicationSubmittedNotification, caseData, caseId);
     }
 }
