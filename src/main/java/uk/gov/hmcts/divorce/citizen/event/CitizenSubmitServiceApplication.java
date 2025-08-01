@@ -145,7 +145,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .serviceApplicationDocsUploadedPreSubmission(userOptions.awaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
             .serviceApplicationDocuments(
-                evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs()
+                    evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs()
             )
             .build();
     }
