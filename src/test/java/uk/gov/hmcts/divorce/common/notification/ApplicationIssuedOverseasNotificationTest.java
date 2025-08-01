@@ -8,7 +8,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrPostalAddress;
 import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.LocalDate;
@@ -31,6 +35,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APP1_UPDATED_PARTNER_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_APPLICATION_ISSUED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
@@ -67,23 +72,29 @@ class ApplicationIssuedOverseasNotificationTest {
 
         applicationIssuedOverseasNotification.sendToApplicant1(data, TEST_CASE_ID);
 
-        verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(OVERSEAS_RESPONDENT_APPLICATION_ISSUED),
-            argThat(allOf(
-                hasEntry(IS_DIVORCE, YES),
-                hasEntry(IS_DISSOLUTION, NO),
-                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
-                hasEntry(FIRST_NAME, TEST_FIRST_NAME),
-                hasEntry(LAST_NAME, TEST_LAST_NAME),
-                hasEntry(PARTNER, "partner"),
-                hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().plusDays(28).format(DATE_TIME_FORMATTER)),
-                hasEntry(COURT_EMAIL, "courtEmail")
-            )),
-            eq(ENGLISH),
-            eq(TEST_CASE_ID)
-        );
-        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
+        verifyInteracation(data, OVERSEAS_RESPONDENT_APPLICATION_ISSUED);
+
+    }
+
+    @Test
+    void shouldNotifyApplicantOfServiceToOverseasRespondentWhenApplicantUpdateRespondentContactDetails() {
+        final CaseData data = validCaseDataForIssueApplication();
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+        data.setCaseInvite(new CaseInvite(null, null, null));
+        data.getApplicant2().setEmail(null);
+        data.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
+            .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
+                .noResponsePartnerNewEmailOrPostalAddress(NoResponsePartnerNewEmailOrPostalAddress.CONTACT_DETAILS_UPDATED)
+                .build())
+            .build());
+
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getMainTemplateVars());
+
+        applicationIssuedOverseasNotification.sendToApplicant1(data, TEST_CASE_ID);
+
+        verifyInteracation(data, APP1_UPDATED_PARTNER_CONTACT_DETAILS);
     }
 
     @Test
@@ -107,6 +118,27 @@ class ApplicationIssuedOverseasNotificationTest {
                 hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().plusDays(28).format(WELSH_DATE_TIME_FORMATTER))
             )),
             eq(WELSH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
+    }
+
+    private void verifyInteracation(CaseData data, EmailTemplateName emailTemplateName) {
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(emailTemplateName),
+            argThat(allOf(
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                hasEntry(FIRST_NAME, TEST_FIRST_NAME),
+                hasEntry(LAST_NAME, TEST_LAST_NAME),
+                hasEntry(PARTNER, "partner"),
+                hasEntry(REVIEW_DEADLINE_DATE, LocalDate.now().plusDays(28).format(DATE_TIME_FORMATTER)),
+                hasEntry(COURT_EMAIL, "courtEmail")
+            )),
+            eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());

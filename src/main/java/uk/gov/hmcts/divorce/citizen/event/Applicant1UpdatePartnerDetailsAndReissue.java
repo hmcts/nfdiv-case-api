@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -13,10 +14,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrPostalAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -51,6 +54,7 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
     private final AuthTokenGenerator authTokenGenerator;
     private final CcdUpdateService ccdUpdateService;
     private final ReIssueApplicationService reIssueApplicationService;
+    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -99,8 +103,18 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
                     .build();
         }
 
+        if (!ObjectUtils.isEmpty(newAddress)) {
+            applicant2.setAddress(newAddress);
+        }
+
+        if (!ObjectUtils.isEmpty(newEmail)) {
+            applicant2.setEmail(newEmail);
+        }
+
+
         Optional.ofNullable(caseData.getApplicant1().getInterimApplicationOptions())
-            .ifPresent(options -> options.setNoResponseJourneyOptions(null));
+            .ifPresent(options -> options.setNoResponseJourneyOptions(NoResponseJourneyOptions.builder()
+                .noResponsePartnerNewEmailOrPostalAddress(NoResponsePartnerNewEmailOrPostalAddress.CONTACT_DETAILS_UPDATED).build()));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -113,6 +127,9 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
+        final Long caseId = details.getId();
+        final CaseData caseData = details.getData();
+        final var applicant2 = caseData.getApplicant2();
 
         ccdUpdateService
             .submitEvent(details.getId(), CASEWORKER_REISSUE_APPLICATION, user, serviceAuth);
