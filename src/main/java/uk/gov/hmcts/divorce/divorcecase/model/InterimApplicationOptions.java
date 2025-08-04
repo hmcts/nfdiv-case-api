@@ -40,6 +40,14 @@ public class InterimApplicationOptions {
     )
     private DeemedServiceJourneyOptions deemedServiceJourneyOptions;
 
+    @JsonUnwrapped
+    @CCD(
+        label = "Alternative Service Journey Options",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private AlternativeServiceJourneyOptions alternativeServiceJourneyOptions;
+
     @CCD(
         label = "Active Interim Application Type",
         typeOverride = FixedList,

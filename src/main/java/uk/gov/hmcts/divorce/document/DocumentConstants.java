@@ -221,6 +221,8 @@ public final class DocumentConstants {
         = "REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER";
     public static final String DEEMED_SERVICE_APPLICATION_TEMPLATE_ID = "DEEMED_SERVICE_APPLICATION";
     public static final String DEEMED_SERVICE_APPLICATION_DOCUMENT_NAME = "DeemedServiceApplicationAnswers";
+    public static final String ALTERNATIVE_SERVICE_APPLICATION_TEMPLATE_ID = "ALTERNATIVE_SERVICE_APPLICATION";
+    public static final String ALTERNATIVE_SERVICE_APPLICATION_DOCUMENT_NAME = "AlternativeServiceApplicationAnswers";
 
     private DocumentConstants() {
     }
