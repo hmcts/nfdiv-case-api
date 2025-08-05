@@ -10,12 +10,12 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,8 +23,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -36,6 +34,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 @RequiredArgsConstructor
 public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, State, UserRole> {
+    private static final String ALWAYS_SHOW = "alternativeServiceType!=\"ALWAYS_SHOW\"";
     public static final String CASEWORKER_REJECT_SERVICE_APPLICATION = "caseworker-reject-service-application";
     private static final String REJECT_SERVICE_APPLICATION = "Reject Service Application";
 
@@ -60,9 +59,21 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
             .page("rejectServiceApplication")
             .pageLabel(REJECT_SERVICE_APPLICATION)
             .complex(CaseData::getAlternativeService)
-                .label("serviceApplicationTypeLabel", "##The following service application will be rejected")
+                .label("serviceApplicationTypeLabel", "## Note: The following service application will be rejected")
                 .readonly(AlternativeService::getAlternativeServiceType)
+            .done()
+            .complex(CaseData::getApplication)
+                .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "State to transition application to")
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        log.info("{} about to start callback invoked, Case Id: {}", CASEWORKER_REJECT_SERVICE_APPLICATION, details.getId());
+
+        details.getData().getApplication().setStateToTransitionApplicationTo(AwaitingAos);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder().data(details.getData()).build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -81,24 +92,17 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
         if (!YesOrNo.YES.equals(caseData.getAlternativeService().getServiceApplicationSubmittedOnline())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(List.of("Active service application cannot be rejected."))
+                .errors(List.of(
+                        "Active service application cannot be rejected since it hasn't been submitted online."))
                 .build();
         }
 
         handleDeletionOfServiceApplicationDocuments(caseData.getAlternativeService());
         caseData.setAlternativeService(new AlternativeService());
 
-        boolean isAosDrafted = Objects.nonNull(caseData.getAcknowledgementOfService().getAosIsDrafted())
-                && caseData.getAcknowledgementOfService().getAosIsDrafted().toBoolean();
-        final boolean isOverdue = caseData.getDueDate() != null && caseData.getDueDate().isBefore(LocalDate.now());
-
-        State stateToTransition = isOverdue ? AosOverdue
-            : isAosDrafted ? AosDrafted
-            : AwaitingAos;
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
-            .state(stateToTransition)
+            .state(caseData.getApplication().getStateToTransitionApplicationTo())
             .build();
     }
 

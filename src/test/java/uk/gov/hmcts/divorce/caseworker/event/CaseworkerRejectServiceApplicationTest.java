@@ -28,8 +28,6 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectServiceApplication.CASEWORKER_REJECT_SERVICE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -86,7 +84,8 @@ class CaseworkerRejectServiceApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRejectServiceApplication.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).contains("Active service application cannot be rejected.");
+        assertThat(response.getErrors()).contains(
+                "Active service application cannot be rejected since it hasn't been submitted online.");
     }
 
     @Test
@@ -152,8 +151,7 @@ class CaseworkerRejectServiceApplicationTest {
     }
 
     @Test
-    void shouldSetCaseStateToAosDrafted() {
-
+    void shouldSetCaseStateToThatWhichIsSelected() {
         final CaseData caseData = CaseData.builder().build();
         caseData.setAlternativeService(AlternativeService.builder()
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
@@ -161,51 +159,7 @@ class CaseworkerRejectServiceApplicationTest {
 
         caseData.getAcknowledgementOfService().setAosIsDrafted(YesOrNo.YES);
         caseData.setDueDate(LocalDate.now().plusDays(10));
-
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(TEST_CASE_ID)
-            .data(caseData)
-            .state(AwaitingServiceConsideration)
-            .build();
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRejectServiceApplication.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getState()).isEqualTo(AosDrafted);
-    }
-
-    @Test
-    void shouldSetCaseStateToAosOverdue() {
-
-        final CaseData caseData = CaseData.builder().build();
-        caseData.setAlternativeService(AlternativeService.builder()
-            .serviceApplicationSubmittedOnline(YesOrNo.YES)
-            .build());
-
-        caseData.getAcknowledgementOfService().setAosIsDrafted(YesOrNo.YES);
-        caseData.setDueDate(LocalDate.now().minusDays(10));
-
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(TEST_CASE_ID)
-            .data(caseData)
-            .state(AwaitingServiceConsideration)
-            .build();
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRejectServiceApplication.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getState()).isEqualTo(AosOverdue);
-    }
-
-    @Test
-    void shouldSetCaseStateToAosAwaiting() {
-
-        final CaseData caseData = CaseData.builder().build();
-        caseData.setAlternativeService(AlternativeService.builder()
-            .serviceApplicationSubmittedOnline(YesOrNo.YES)
-            .build());
-
-        caseData.setDueDate(LocalDate.now().plusDays(10));
+        caseData.getApplication().setStateToTransitionApplicationTo(AwaitingAos);
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
