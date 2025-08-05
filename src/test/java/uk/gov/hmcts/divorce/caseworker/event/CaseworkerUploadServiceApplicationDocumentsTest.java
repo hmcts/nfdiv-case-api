@@ -128,8 +128,7 @@ class CaseworkerUploadServiceApplicationDocumentsTest {
 
 
     @Test
-    void shouldUpdateStateToAwaitingServiceConsideration()
-    {
+    void shouldUpdateStateToAwaitingServiceConsideration() {
         CaseData caseData = CaseData.builder().build();
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -144,8 +143,7 @@ class CaseworkerUploadServiceApplicationDocumentsTest {
     }
 
     @Test
-    void shouldUpdateStateToAwaitingServicePayment()
-    {
+    void shouldUpdateStateToAwaitingServicePayment() {
         CaseData caseData = CaseData.builder().build();
         caseData.getAlternativeService().getServicePaymentFee().setHelpWithFeesReferenceNumber("HWF123456");
 
