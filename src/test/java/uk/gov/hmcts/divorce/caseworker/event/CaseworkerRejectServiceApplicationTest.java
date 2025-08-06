@@ -24,6 +24,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectServiceApplication.CASEWORKER_REJECT_SERVICE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
@@ -147,6 +148,26 @@ class CaseworkerRejectServiceApplicationTest {
 
         assertThat(response.getErrors()).isNull();
         verify(documentRemovalService).deleteDocument(divorceDocuments);
+    }
+
+    @Test
+    void shouldDeleteServiceApplicationWithoutAnySupportingDocuments() {
+        final CaseData caseData = CaseData.builder().build();
+        caseData.setAlternativeService(AlternativeService.builder()
+                .serviceApplicationSubmittedOnline(YesOrNo.YES)
+                .serviceApplicationDocuments(null)
+                .build());
+
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+                .id(TEST_CASE_ID)
+                .data(caseData)
+                .build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+                caseworkerRejectServiceApplication.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        verifyNoInteractions(documentRemovalService);
     }
 
     @Test

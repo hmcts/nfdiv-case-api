@@ -98,7 +98,9 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
     }
 
     private void handleDeletionOfServiceApplicationDocuments(AlternativeService alternativeService) {
-        documentRemovalService.deleteDocument(alternativeService.getServiceApplicationDocuments());
+        if (Objects.nonNull(alternativeService.getServiceApplicationDocuments())) {
+            documentRemovalService.deleteDocument(alternativeService.getServiceApplicationDocuments());
+        }
 
         if (Objects.nonNull(alternativeService.getServiceApplicationAnswers())
             && Objects.nonNull(alternativeService.getServiceApplicationAnswers().getDocumentLink())) {
