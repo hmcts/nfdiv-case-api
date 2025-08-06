@@ -58,7 +58,7 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String applicant2Name;
+    private String searchGovPartnerName;
 
     @CCD(
         label = "Do you know your partner's date of birth?",
