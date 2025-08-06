@@ -42,6 +42,14 @@ public class InterimApplicationOptions {
 
     @JsonUnwrapped
     @CCD(
+        label = "Bailiff Service Journey Options",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private BailiffServiceJourneyOptions bailiffServiceJourneyOptions;
+
+    @JsonUnwrapped
+    @CCD(
         label = "Alternative Service Journey Options",
         access = {DefaultAccess.class},
         searchable = false
