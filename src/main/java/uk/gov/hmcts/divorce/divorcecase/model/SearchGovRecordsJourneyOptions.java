@@ -36,7 +36,7 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String reason;
+    private String reasonForApplying;
 
     @CCD(
         label = "Why do you think these departments are most suited to getting the contact details of your partner?",
