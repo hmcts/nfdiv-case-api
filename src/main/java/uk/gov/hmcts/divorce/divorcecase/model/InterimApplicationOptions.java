@@ -101,7 +101,8 @@ public class InterimApplicationOptions {
     @JsonUnwrapped(prefix = "SearchGovRecords")
     @CCD(
         label = "Search gov records journey options",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private SearchGovRecordsJourneyOptions searchGovRecordsJourneyOptions;
 
