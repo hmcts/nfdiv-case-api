@@ -29,7 +29,9 @@ public class InterimApplicationSubmissionService {
             return deemedServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
         }
 
-        throw new UnsupportedOperationException();
+        //TODO Adjust this logic when needed
+        //  throw new UnsupportedOperationException();
+        return null;
     }
 
     public void sendNotifications(

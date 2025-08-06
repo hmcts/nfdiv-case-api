@@ -98,6 +98,13 @@ public class InterimApplicationOptions {
     )
     private YesOrNo interimAppsStatementOfTruth;
 
+    @JsonUnwrapped(prefix = "SearchGovRecords")
+    @CCD(
+        label = "Search gov records journey options",
+        access = {DefaultAccess.class}
+    )
+    private SearchGovRecordsJourneyOptions searchGovRecordsJourneyOptions;
+
     @JsonIgnore
     public ApplicationAnswers getApplicationAnswers() {
         if (interimApplicationType.equals(InterimApplicationType.DEEMED_SERVICE)) {
