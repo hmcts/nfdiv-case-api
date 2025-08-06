@@ -2,16 +2,16 @@ package uk.gov.hmcts.divorce.common.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.divorce.citizen.notification.interimapplications.BailiffServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.AlternativeServiceApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.BailiffServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DeemedServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.document.print.generator.BailiffServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.AlternativeServiceApplicationGenerator;
+import uk.gov.hmcts.divorce.document.print.generator.BailiffServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.DeemedServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
