@@ -20,7 +20,6 @@ import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -151,15 +150,11 @@ class CaseworkerRejectServiceApplicationTest {
     }
 
     @Test
-    void shouldSetCaseStateToThatWhichIsSelected() {
+    void shouldSetCaseStateToAwaitingAos() {
         final CaseData caseData = CaseData.builder().build();
         caseData.setAlternativeService(AlternativeService.builder()
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
             .build());
-
-        caseData.getAcknowledgementOfService().setAosIsDrafted(YesOrNo.YES);
-        caseData.setDueDate(LocalDate.now().plusDays(10));
-        caseData.getApplication().setStateToTransitionApplicationTo(AwaitingAos);
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
@@ -180,8 +175,6 @@ class CaseworkerRejectServiceApplicationTest {
         caseData.setAlternativeService(AlternativeService.builder()
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
             .build());
-
-        caseData.setDueDate(LocalDate.now().plusDays(10));
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)

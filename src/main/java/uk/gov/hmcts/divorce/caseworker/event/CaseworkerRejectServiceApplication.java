@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -35,6 +34,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @RequiredArgsConstructor
 public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, State, UserRole> {
     private static final String ALWAYS_SHOW = "alternativeServiceType!=\"ALWAYS_SHOW\"";
+    private static final String NEVER_SHOW = "alternativeServiceType=\"ALWAYS_SHOW\"";
     public static final String CASEWORKER_REJECT_SERVICE_APPLICATION = "caseworker-reject-service-application";
     private static final String REJECT_SERVICE_APPLICATION = "Reject Service Application";
 
@@ -48,6 +48,7 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
             .forStates(AwaitingServiceConsideration, AwaitingServicePayment, AwaitingDocuments)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .name(REJECT_SERVICE_APPLICATION)
+            .showCondition("serviceApplicationSubmittedOnline=\"Yes\"")
             .description(REJECT_SERVICE_APPLICATION)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
@@ -61,19 +62,9 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
             .complex(CaseData::getAlternativeService)
                 .label("serviceApplicationTypeLabel", "## Note: The following service application will be rejected")
                 .readonly(AlternativeService::getAlternativeServiceType)
-            .done()
-            .complex(CaseData::getApplication)
-                .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "State to transition application to")
+                .readonly(AlternativeService::getReceivedServiceApplicationDate)
+                .readonlyNoSummary(AlternativeService::getServiceApplicationSubmittedOnline, NEVER_SHOW)
             .done();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-
-        log.info("{} about to start callback invoked, Case Id: {}", CASEWORKER_REJECT_SERVICE_APPLICATION, details.getId());
-
-        details.getData().getApplication().setStateToTransitionApplicationTo(AwaitingAos);
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder().data(details.getData()).build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -102,7 +93,7 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
-            .state(caseData.getApplication().getStateToTransitionApplicationTo())
+            .state(AwaitingAos)
             .build();
     }
 
