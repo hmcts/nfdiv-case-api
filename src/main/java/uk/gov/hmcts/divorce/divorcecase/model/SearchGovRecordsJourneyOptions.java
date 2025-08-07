@@ -65,7 +65,7 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
         access = {DefaultAccess.class},
         searchable = false
     )
-    private YesOrNo knowApplicant2DateOfBirth;
+    private YesOrNo knowPartnerDateOfBirth;
 
     @CCD(
         label = "Enter your partner's date of birth",
@@ -73,75 +73,75 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
         searchable = false
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate applicant2DateOfBirth;
+    private LocalDate partnerDateOfBirth;
 
     @CCD(
         label = "Enter your partner's approximate age",
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String applicant2ApproximateAge;
+    private String partnerApproximateAge;
 
     @CCD(
         label = "Do you know your wife's National Insurance number?",
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String knowApplicant2NationalInsurance;
+    private String knowPartnerNationalInsurance;
 
     @CCD(
         label = "Enter your wife's National Insurance number",
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String applicant2NationalInsurance;
+    private String partnerNationalInsurance;
 
     @CCD(
         label = "What is your partner's last known address?",
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String applicant2LastKnownAddress;
+    private String partnerLastKnownAddress;
 
     @CCD(
         label = "Enter the dates they lived there",
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String applicant2LastKnownAddressDates;
+    private String partnerLastKnownAddressDates;
 
     @CCD(
         label = "Do you know of any other addresses related to your partner?",
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String knowApplicant2AdditionalAddresses;
+    private String knowPartnerAdditionalAddresses;
 
     @CCD(
         label = "Address 1",
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String applicant2AdditionalAddress1;
+    private String partnerAdditionalAddress1;
 
     @CCD(
         label = "Enter the dates they lived there",
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String applicant2AdditionalAddressDates1;
+    private String partnerAdditionalAddressDates1;
 
     @CCD(
         label = "Address 2 (optional)",
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String applicant2AdditionalAddress2;
+    private String partnerAdditionalAddress2;
 
     @CCD(
         label = "Enter the dates they lived there (optional)",
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String applicant2AdditionalAddressDates2;
+    private String partnerAdditionalAddressDates2;
 }
