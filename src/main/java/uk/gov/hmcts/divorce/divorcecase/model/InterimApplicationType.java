@@ -22,7 +22,10 @@ public enum InterimApplicationType implements HasLabel {
     BAILIFF_SERVICE("Bailiff service", AlternativeServiceType.BAILIFF),
 
     @JsonProperty("searchGovRecords")
-    SEARCH_GOV_RECORDS("Search government records", null);
+    SEARCH_GOV_RECORDS("Search government records", null),
+
+    @JsonProperty("processServerService")
+    PROCESS_SERVER_SERVICE("Process server service", null);
 
     private final String label;
     private final AlternativeServiceType serviceType;
