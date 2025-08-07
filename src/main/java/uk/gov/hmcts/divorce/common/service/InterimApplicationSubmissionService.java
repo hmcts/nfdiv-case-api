@@ -27,11 +27,11 @@ public class InterimApplicationSubmissionService {
 
         if (InterimApplicationType.DEEMED_SERVICE.equals(applicationType)) {
             return deemedServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
+        } else if (InterimApplicationType.SEARCH_GOV_RECORDS.equals(applicationType)) {
+            return DivorceDocument.builder().build();
         }
 
-        //TODO Adjust this logic when needed
-        //  throw new UnsupportedOperationException();
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     public void sendNotifications(
