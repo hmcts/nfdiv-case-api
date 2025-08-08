@@ -75,7 +75,7 @@ public class InterimApplicationSubmissionService {
         CaseData caseData
     ) {
         if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplication.getGeneralApplicationType())) {
-//            notificationDispatcher.send(deemedApplicationSubmittedNotification, caseData, caseId);
+            // notificationDispatcher.send(deemedApplicationSubmittedNotification, caseData, caseId);
             return;
         }
 
