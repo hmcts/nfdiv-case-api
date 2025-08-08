@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.caseworker.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
@@ -15,12 +16,19 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifica
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.JudicialSeparationReissueOption;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrPostalAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
+
+import java.util.Optional;
 
 import static java.lang.String.format;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -60,17 +68,23 @@ public class ReIssueApplicationService {
 
     private final GenerateD84Form generateD84Form;
 
+    private final SetServiceType setServiceType;
+
+
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
-        if (caseDetails.getData().isJudicialSeparationCase()) {
-            JudicialSeparationReissueOption jsReissueOption = caseDetails.getData().getApplication().getJudicialSeparationReissueOption();
+
+        CaseData caseData = caseDetails.getData();
+
+        if (caseData.isJudicialSeparationCase()) {
+            JudicialSeparationReissueOption jsReissueOption = caseData.getApplication().getJudicialSeparationReissueOption();
             switch (jsReissueOption) {
-                case OFFLINE_AOS -> caseDetails.getData().getApplication().setReissueOption(OFFLINE_AOS);
-                case REISSUE_CASE -> caseDetails.getData().getApplication().setReissueOption(REISSUE_CASE);
-                default -> caseDetails.getData().getApplication().setReissueOption(null);
+                case OFFLINE_AOS -> caseData.getApplication().setReissueOption(OFFLINE_AOS);
+                case REISSUE_CASE -> caseData.getApplication().setReissueOption(REISSUE_CASE);
+                default -> caseData.getApplication().setReissueOption(null);
             }
-            caseDetails.getData().getApplication().setJudicialSeparationReissueOption(null);
+            caseData.getApplication().setJudicialSeparationReissueOption(null);
         }
-        ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
+        ReissueOption reissueOption = caseData.getApplication().getReissueOption();
 
         log.info("For case id {} reissue option selected is {} ", caseDetails.getId(), reissueOption);
 
@@ -164,5 +178,42 @@ public class ReIssueApplicationService {
             );
         }
 
+    }
+
+    public void updateReissueOptionForNewContactDetails(CaseDetails<CaseData, State> caseDetails, Long caseId) {
+
+        CaseData caseData = caseDetails.getData();
+
+        NoResponsePartnerNewEmailOrPostalAddress noResponseOptions =
+            Optional.of(caseData.getApplicant1())
+                .map(Applicant::getInterimApplicationOptions)
+                .map(InterimApplicationOptions::getNoResponseJourneyOptions)
+                .map(NoResponseJourneyOptions::getNoResponsePartnerNewEmailOrPostalAddress)
+                .orElseThrow(() -> new InvalidReissueOptionException(
+                    String.format("Invalid update contact details option selected for CaseId: %s", caseId)));
+
+        var noResponseJourneyOptions = caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions();
+        boolean isNewAddressOverseas = YES.equals(noResponseJourneyOptions.getNoResponsePartnerAddressOverseas());
+        boolean isOldAddressOverseas = caseData.getApplicant2().isBasedOverseas()
+            || caseData.getApplicant2().getAddressOverseas() == YES;
+
+        ReissueOption reissueOption = null;
+
+        switch (noResponseOptions) {
+            case NEW_POSTAL_ADDRESS -> reissueOption = isNewAddressOverseas ? REISSUE_CASE :
+                StringUtils.isEmpty(caseData.getApplicant2().getEmail()) ? OFFLINE_AOS : DIGITAL_AOS;
+
+            case NEW_EMAIL_ADDRESS -> reissueOption =
+                isOldAddressOverseas ? REISSUE_CASE : DIGITAL_AOS;
+
+            case NEW_EMAIL_AND_POSTAL_ADDRESS -> reissueOption =
+                isNewAddressOverseas ? REISSUE_CASE : DIGITAL_AOS;
+
+            default -> reissueOption = REISSUE_CASE;
+        }
+
+        caseTasks(setServiceType).run(caseDetails);
+
+        caseData.getApplication().setReissueOption(reissueOption);
     }
 }
