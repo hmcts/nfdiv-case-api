@@ -7,7 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 
 import java.time.LocalDate;
 
@@ -34,6 +36,13 @@ public class GeneralReferral {
         typeParameterOverride = "GeneralParties"
     )
     private GeneralParties generalApplicationFrom;
+
+    @CCD(
+        label = "Select general application",
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
+    )
+    private DynamicList generalApplicationNames;
 
     @CCD(
         label = "Application or referral date"

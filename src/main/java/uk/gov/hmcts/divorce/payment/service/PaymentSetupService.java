@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 
 import static uk.gov.hmcts.divorce.controller.PaymentCallbackController.PAYMENT_UPDATE_PATH;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ENFORCEMENT;
@@ -74,6 +75,35 @@ public class PaymentSetupService {
         log.info("Final order fee order summary not found for case id: {}, creating order summary", caseId);
 
         return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
+    }
+
+    public OrderSummary createGeneralApplicationOrderSummary(GeneralApplication generalApplication, long caseId) {
+        var fee = generalApplication.getGeneralApplicationFee();
+        if (fee != null && fee.getOrderSummary() != null) {
+            return fee.getOrderSummary();
+        }
+
+        log.info("General application order summary not found for case id: {}, creating order summary", caseId);
+
+        return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE);
+    }
+
+    public String createGeneralApplicationPaymentServiceRequest(
+        GeneralApplication generalApplication, long caseId, String responsibleParty
+    ) {
+        var feeDetails = generalApplication.getGeneralApplicationFee();
+        if (feeDetails != null && feeDetails.getServiceRequestReference() != null) {
+            return feeDetails.getServiceRequestReference();
+        }
+
+        log.info("General Application payment service request not found for case id: {}, creating service request", caseId);
+
+        return paymentService.createServiceRequestReference(
+            null,
+            caseId,
+            responsibleParty,
+            feeDetails.getOrderSummary()
+        );
     }
 
     public OrderSummary createServiceApplicationOrderSummary(AlternativeService alternativeService, long caseId) {

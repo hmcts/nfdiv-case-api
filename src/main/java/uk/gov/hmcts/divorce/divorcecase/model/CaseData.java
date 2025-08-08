@@ -683,6 +683,13 @@ public class CaseData {
                 addDocumentToTop(this.getDocuments().getDocumentsUploaded(), divorceDocumentListValue.getValue()));
         });
 
+        updateCaseWithGeneralApplication(this.generalApplication);
+
+        generalApplication.setGeneralApplicationTypeOtherComments(null);
+    }
+
+    @JsonIgnore
+    public void updateCaseWithGeneralApplication(GeneralApplication generalApplication) {
         final ListValue<GeneralApplication> generalApplicationListValue = ListValue.<GeneralApplication>builder()
             .id(UUID.randomUUID().toString())
             .value(generalApplication.toBuilder().build())
@@ -693,7 +700,5 @@ public class CaseData {
         } else {
             this.getGeneralApplications().add(0, generalApplicationListValue);
         }
-
-        generalApplication.setGeneralApplicationTypeOtherComments(null);
     }
 }
