@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
@@ -31,6 +33,12 @@ public class GeneralApplication {
         typeParameterOverride = "GeneralApplicationType"
     )
     private GeneralApplicationType generalApplicationType;
+
+    @CCD(
+        label = "Application date"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate receivedGeneralApplicationDate;
 
     @CCD(
         label = "Please provide more information about general application type",
@@ -67,6 +75,21 @@ public class GeneralApplication {
         searchable = false
     )
     private String generalApplicationDocumentComments;
+
+    @CCD(
+        label = "All documents uploaded before submission?"
+    )
+    private YesOrNo generalApplicationDocsUploadedPreSubmission;
+
+    @CCD(
+        label = "Was the general application submitted digitally?"
+    )
+    private YesOrNo generalApplicationSubmittedOnline;
+
+    @CCD(
+        label = "Which party submitted the general application?"
+    )
+    private GeneralParties generalParties;
 
     @JsonUnwrapped(prefix = "generalApplicationFee")
     @Builder.Default
