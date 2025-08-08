@@ -7,18 +7,16 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 @Getter
 @AllArgsConstructor
-public enum AlternativeServiceMediumType implements HasLabel {
-    @JsonProperty("text")
-    TEXT("Text"),
+public enum AlternativeServiceDifferentWays implements HasLabel {
 
-    @JsonProperty("email")
-    EMAIL("Email"),
+    @JsonProperty("textMessage")
+    TEXT_MESSAGE("Text Message"),
+
+    @JsonProperty("whatsapp")
+    WHATSAPP("WhatsApp"),
 
     @JsonProperty("socialMedia")
-    SOCIAL_MEDIA("Social media"),
-
-    @JsonProperty("whatsApp")
-    WHATSAPP("WhatsApp"),
+    SOCIAL_MEDIA("Private message on social media"),
 
     @JsonProperty("other")
     OTHER("Other");
