@@ -113,7 +113,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
         generalApplication.getGeneralApplicationFee().setPaymentReference(paymentReference);
         details.setState(isAwaitingDocuments ? AwaitingDocuments : GeneralApplicationReceived);
-//      generalApplication.setDateOfPayment(LocalDate.now(clock));
+        // generalApplication.setDateOfPayment(LocalDate.now(clock));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
@@ -125,17 +125,17 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
                                             CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} submitted callback invoked for Case Id: {}", CITIZEN_GENERAL_APPLICATION_PAYMENT, details.getId());
 
+        CaseData beforeData = beforeDetails.getData();
         CaseData data = details.getData();
 
         boolean isApplicant1 = isApplicant1(details.getId());
         Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
-        Optional<GeneralApplication> generalAppOptional = findActiveGeneralApplication(data, applicant);
+        Optional<GeneralApplication> generalAppOptional = findActiveGeneralApplication(beforeData, applicant);
 
-        if (generalAppOptional.isPresent()) {
-            interimApplicationSubmissionService.sendNotifications(
+        generalAppOptional.ifPresent(generalApplication ->
+            interimApplicationSubmissionService.sendGeneralApplicationNotifications(
                 details.getId(), generalAppOptional.get(), data
-            );
-        }
+            ));
 
         return SubmittedCallbackResponse.builder().build();
     }
@@ -156,7 +156,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
             .filter(generalApplication ->
                 isActiveGeneralApplication(generalApplication, serviceRequest)
             ).findFirst();
-    };
+    }
 
     private boolean isActiveGeneralApplication(
         GeneralApplication generalApplication, String expectedServiceRequest

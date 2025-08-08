@@ -34,11 +34,7 @@ public class InterimApplicationSubmissionService {
     private final BailiffServiceApplicationSubmittedNotification bailiffApplicationSubmittedNotification;
     private final SearchGovRecordsApplicationSubmittedNotification searchGovRecordsApplicationNotifications;
 
-    public DivorceDocument generateAnswerDocument(
-        long caseId,
-        Applicant applicant,
-        CaseData caseData
-    ) {
+    public DivorceDocument generateAnswerDocument(long caseId, Applicant applicant, CaseData caseData) {
         InterimApplicationType applicationType = applicant.getInterimApplicationOptions().getInterimApplicationType();
 
         return switch (applicationType) {
@@ -52,11 +48,7 @@ public class InterimApplicationSubmissionService {
         };
     }
 
-    public void sendNotifications(
-        long caseId,
-        AlternativeServiceType serviceType,
-        CaseData caseData
-    ) {
+    public void sendNotifications(long caseId, AlternativeServiceType serviceType, CaseData caseData) {
         switch (serviceType) {
             case DEEMED -> notificationDispatcher.send(deemedApplicationSubmittedNotification, caseData, caseId);
             case BAILIFF -> notificationDispatcher.send(bailiffApplicationSubmittedNotification, caseData, caseId);
@@ -66,14 +58,11 @@ public class InterimApplicationSubmissionService {
         }
     }
 
-    public void sendGeneralApplicationNotifications(
-        long caseId,
-        GeneralApplication generalApplication,
-        CaseData caseData
-    ) {
-        return switch (generalApplication.getGeneralApplicationType()) {
-            case GeneralApplicationType.DISCLOSURE_VIA_DWP -> searchGovRecordsApplicationGenerator.generateDocument(caseId, applicant, caseData);
-            default -> throw new UnsupportedOperationException();
-        };
+    public void sendGeneralApplicationNotifications(long caseId, GeneralApplication generalApplication, CaseData caseData) {
+        if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplication.getGeneralApplicationType())) {
+            searchGovRecordsApplicationNotifications.sendToApplicant1(caseData, caseId, generalApplication);
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 }

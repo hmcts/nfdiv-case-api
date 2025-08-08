@@ -17,7 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentRemovalService;
@@ -89,36 +89,26 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
         Applicant applicant = data.getApplicant1();
         InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
+        AlternativeService newServiceApplication = buildServiceApplication(userOptions);
+        data.setAlternativeService(newServiceApplication);
 
-        if (InterimApplicationType.SEARCH_GOV_RECORDS.equals(userOptions.getInterimApplicationType())) {
-            DivorceDocument applicationDocument = interimApplicationSubmissionService.generateAnswerDocument(caseId, applicant, data);
-            userOptions.getSearchGovRecordsJourneyOptions().setApplicationAnswers(applicationDocument);
-            var searchGovRecordsOptions = userOptions.getSearchGovRecordsJourneyOptions();
+        FeeDetails serviceFee = newServiceApplication.getServicePaymentFee();
+        if (userOptions.willMakePayment()) {
+            serviceFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_CARD);
+            prepareCaseForServicePayment(newServiceApplication, applicant, caseId);
 
-            searchGovRecordsOptions.setApplicationAnswers(applicationDocument);
-            searchGovRecordsOptions.setApplicationSubmittedDate(LocalDate.now(clock));
             details.setState(AwaitingServicePayment);
         } else {
-            AlternativeService newServiceApplication = buildServiceApplication(userOptions);
-            data.setAlternativeService(newServiceApplication);
+            serviceFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF);
+            serviceFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
 
-            if (userOptions.willMakePayment()) {
-                prepareCaseForServicePayment(newServiceApplication, applicant, caseId);
-
-                details.setState(AwaitingServicePayment);
-            } else {
-                FeeDetails serviceFee = newServiceApplication.getServicePaymentFee();
-                serviceFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
-
-                details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServicePayment);
-            }
-
-            DivorceDocument applicationDocument = interimApplicationSubmissionService.generateAnswerDocument(
-                caseId, applicant, data
-            );
-
-            newServiceApplication.setServiceApplicationAnswers(applicationDocument);
+            details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServicePayment);
         }
+
+        DivorceDocument applicationDocument = interimApplicationSubmissionService.generateAnswerDocument(
+            caseId, applicant, data
+        );
+        newServiceApplication.setServiceApplicationAnswers(applicationDocument);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
@@ -132,11 +122,9 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
         CaseData data = details.getData();
         AlternativeService alternativeService = data.getAlternativeService();
+        ServicePaymentMethod paymentMethod = alternativeService.getServicePaymentFee().getPaymentMethod();
 
-        if (InterimApplicationType.SEARCH_GOV_RECORDS.equals(data.getApplicant1().getInterimApplicationOptions()
-            .getInterimApplicationType())) {
-            interimApplicationSubmissionService.sendNotifications(details.getId(), null, data);
-        } else if (!YesOrNo.YES.equals(alternativeService.getAlternativeServiceFeeRequired())) {
+        if (ServicePaymentMethod.FEE_PAY_BY_HWF.equals(paymentMethod)) {
             interimApplicationSubmissionService.sendNotifications(details.getId(), alternativeService.getAlternativeServiceType(), data);
         }
 
@@ -158,15 +146,12 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .alternativeServiceType(userOptions.getInterimApplicationType().getServiceType())
             .serviceApplicationDocsUploadedPreSubmission(userOptions.awaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
-            .serviceApplicationDocuments(
-                    evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs()
-            )
+            .serviceApplicationDocuments(evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs())
+            .alternativeServiceFeeRequired(YesOrNo.YES)
             .build();
     }
 
     private void prepareCaseForServicePayment(AlternativeService serviceApplication, Applicant applicant, long caseId) {
-        serviceApplication.setAlternativeServiceFeeRequired(YesOrNo.YES);
-
         FeeDetails serviceFee = serviceApplication.getServicePaymentFee();
         OrderSummary orderSummary = paymentSetupService.createServiceApplicationOrderSummary(
             serviceApplication, caseId

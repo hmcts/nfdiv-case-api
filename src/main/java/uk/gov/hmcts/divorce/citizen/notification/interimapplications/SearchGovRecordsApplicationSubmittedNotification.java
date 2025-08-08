@@ -4,13 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
@@ -29,31 +31,38 @@ public class SearchGovRecordsApplicationSubmittedNotification implements Applica
     private final NotificationService notificationService;
     private final CommonContent commonContent;
 
-    @Override
-    public void sendToApplicant1(final CaseData caseData, final Long caseId) {
+    public void sendToApplicant1(final CaseData caseData, final Long caseId, GeneralApplication generalApplication) {
         log.info("Sending search government records application submitted notification to applicant 1 on case id {}", caseId);
 
-        boolean searchGovRecordsHWF = YesOrNo.YES.equals(caseData.getApplicant1().getInterimApplicationOptions()
-            .getInterimAppsUseHelpWithFees());
+        boolean paidByHwf = ServicePaymentMethod.FEE_PAY_BY_HWF.equals(
+            generalApplication.getGeneralApplicationFee().getPaymentMethod()
+        );
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            searchGovRecordsHWF ? SEARCH_GOV_RECORDS_APPLICATION_SUBMITTED_HWF : SEARCH_GOV_RECORDS_APPLICATION_SUBMITTED,
-            templateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2(), searchGovRecordsHWF),
+            paidByHwf ? SEARCH_GOV_RECORDS_APPLICATION_SUBMITTED_HWF : SEARCH_GOV_RECORDS_APPLICATION_SUBMITTED,
+            templateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2(), generalApplication),
             caseData.getApplicant1().getLanguagePreference(),
             caseId
         );
     }
 
-    private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant,
-                                             Applicant partner, boolean searchGovRecordsHWF) {
+    private Map<String, String> templateVars(
+        CaseData caseData, Long id, Applicant applicant, Applicant partner,
+        GeneralApplication generalApplication
+    ) {
 
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, applicant, partner);
 
-        if (!searchGovRecordsHWF) {
+        boolean paidByCard = ServicePaymentMethod.FEE_PAY_BY_CARD.equals(
+            generalApplication.getGeneralApplicationFee().getPaymentMethod()
+        );
+
+        if (paidByCard) {
             DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
-            templateVars.put("date", applicant.getInterimApplicationOptions().getSearchGovRecordsJourneyOptions()
-                .getApplicationSubmittedDate().plusDays(interimApplicationResponseOffsetDays).format(dateTimeFormatter));
+            LocalDate responseDate = generalApplication.getReceivedGeneralApplicationDate().plusDays(interimApplicationResponseOffsetDays);
+
+            templateVars.put("date", responseDate.format(dateTimeFormatter));
         }
 
         return templateVars;

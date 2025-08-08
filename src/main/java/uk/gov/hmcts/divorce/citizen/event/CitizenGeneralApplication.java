@@ -9,9 +9,11 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.GeneralApplicationService;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -30,12 +32,16 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -61,6 +67,8 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
     private final InterimApplicationSubmissionService interimApplicationSubmissionService;
 
     private final DocumentRemovalService documentRemovalService;
+
+    private final GeneralApplicationService generalApplicationService;
 
     private final Clock clock;
 
@@ -103,13 +111,13 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         FeeDetails applicationFee = newGeneralApplication.getGeneralApplicationFee();
 
         if (userOptions.willMakePayment()) {
-            applicationFee.setPaymentMethod(ServicePaymentMethod.CARD);
+            applicationFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_CARD);
             prepareCaseForGeneralApplicationPayment(newGeneralApplication, applicant, caseId);
 
-            details.setState(AwaitingServicePayment);
+            details.setState(AwaitingGeneralApplicationPayment);
         } else {
-            applicationFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
             applicationFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF);
+            applicationFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
 
             details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : GeneralApplicationReceived);
         }
@@ -131,12 +139,13 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
                                             CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} submitted callback invoked for Case Id: {}", CITIZEN_GENERAL_APPLICATION, details.getId());
 
-        CaseData data = details.getData();
-        AlternativeService alternativeService = data.getAlternativeService();
+        var beforeGenApps = new ArrayList<>(beforeDetails.getData().getGeneralApplications());
+        var afterGenApps = new ArrayList<>(details.getData().getGeneralApplications());
 
-        if (!YesOrNo.YES.equals(alternativeService.getAlternativeServiceFeeRequired())) {
-            interimApplicationSubmissionService.sendNotifications(details.getId(), alternativeService.getAlternativeServiceType(), data);
-        }
+        findGeneralApplication(beforeGenApps, afterGenApps).ifPresent(
+            application -> interimApplicationSubmissionService.sendGeneralApplicationNotifications(
+                details.getId(), application, details.getData()
+        ));
 
         return SubmittedCallbackResponse.builder().build();
     }
@@ -170,6 +179,20 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         );
         serviceFee.setServiceRequestReference(serviceRequest);
 
+    }
+
+    private Optional<GeneralApplication> findGeneralApplication(
+        List<ListValue<GeneralApplication>> beforeGenApps,
+        List<ListValue<GeneralApplication>> afterGenApps
+    ) {
+        return afterGenApps.stream()
+            .filter(ga -> !beforeGenApps.contains(ga))
+            .map(ListValue::getValue)
+            .filter(Objects::nonNull)
+            .filter(ga -> ga.getGeneralApplicationFee() != null)
+            .filter(ga -> ServicePaymentMethod.FEE_PAY_BY_HWF
+                .equals(ga.getGeneralApplicationFee().getPaymentMethod()))
+            .findFirst();
     }
 
     private boolean generalAppAwaitingDecision(AlternativeService alternativeService) {
