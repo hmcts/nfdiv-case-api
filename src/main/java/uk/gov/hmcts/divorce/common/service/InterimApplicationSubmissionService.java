@@ -13,18 +13,20 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.generator.AlternativeServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.BailiffServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.DeemedServiceApplicationGenerator;
+import uk.gov.hmcts.divorce.document.print.generator.SearchGovRecordsApplicationGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 @Service
 @RequiredArgsConstructor
 public class InterimApplicationSubmissionService {
-    private final BailiffServiceApplicationGenerator bailiffServiceApplicationGenerator;
     private final NotificationDispatcher notificationDispatcher;
 
+    private final BailiffServiceApplicationGenerator bailiffServiceApplicationGenerator;
     private final DeemedServiceApplicationGenerator deemedServiceApplicationGenerator;
     private final DeemedServiceApplicationSubmittedNotification deemedApplicationSubmittedNotification;
     private final AlternativeServiceApplicationSubmittedNotification alternativeServiceApplicationSubmittedNotification;
     private final AlternativeServiceApplicationGenerator alternativeServiceApplicationGenerator;
+    private final SearchGovRecordsApplicationGenerator searchGovRecordsApplicationGenerator;
 
     private final BailiffServiceApplicationSubmittedNotification bailiffApplicationSubmittedNotification;
 
@@ -38,7 +40,7 @@ public class InterimApplicationSubmissionService {
         if (InterimApplicationType.DEEMED_SERVICE.equals(applicationType)) {
             return deemedServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
         } else if (InterimApplicationType.SEARCH_GOV_RECORDS.equals(applicationType)) {
-            return DivorceDocument.builder().build();
+            return searchGovRecordsApplicationGenerator.generateDocument(caseId, applicant, caseData);
         } else if (InterimApplicationType.BAILIFF_SERVICE.equals(applicationType)) {
             return bailiffServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
         } else if (InterimApplicationType.ALTERNATIVE_SERVICE.equals(applicationType)) {

@@ -24,6 +24,14 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
 
     @CCD(
+        label = "Search gov records application submitted date",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate applicationSubmittedDate;
+
+    @CCD(
         label = "Which government departments do you need us to search for your partner's details?",
         access = {DefaultAccess.class},
         searchable = false
@@ -115,7 +123,7 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String knowPartnerAdditionalAddresses;
+    private YesOrNo knowPartnerAdditionalAddresses;
 
     @CCD(
         label = "Address 1",
