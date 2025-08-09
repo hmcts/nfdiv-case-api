@@ -37,6 +37,8 @@ public class InterimApplicationSubmissionService {
 
         if (InterimApplicationType.DEEMED_SERVICE.equals(applicationType)) {
             return deemedServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
+        } else if (InterimApplicationType.SEARCH_GOV_RECORDS.equals(applicationType)) {
+            return DivorceDocument.builder().build();
         } else if (InterimApplicationType.BAILIFF_SERVICE.equals(applicationType)) {
             return bailiffServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
         } else if (InterimApplicationType.ALTERNATIVE_SERVICE.equals(applicationType)) {
