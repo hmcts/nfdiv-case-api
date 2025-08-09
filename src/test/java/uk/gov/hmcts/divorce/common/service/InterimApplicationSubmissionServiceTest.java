@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.generator.AlternativeServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.BailiffServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.DeemedServiceApplicationGenerator;
+import uk.gov.hmcts.divorce.document.print.generator.SearchGovRecordsApplicationGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -47,6 +48,9 @@ class InterimApplicationSubmissionServiceTest {
 
     @Mock
     private AlternativeServiceApplicationGenerator alternativeServiceApplicationGenerator;
+
+    @Mock
+    private SearchGovRecordsApplicationGenerator searchGovRecordsApplicationGenerator;
 
     @InjectMocks
     private InterimApplicationSubmissionService interimApplicationSubmissionService;
@@ -175,5 +179,28 @@ class InterimApplicationSubmissionServiceTest {
         interimApplicationSubmissionService.sendNotifications(caseId, AlternativeServiceType.ALTERNATIVE_SERVICE, caseData);
 
         verify(notificationDispatcher).send(alternativeServiceApplicationSubmittedNotification, caseData, caseId);
+    }
+
+    @Test
+    void shouldDelegateToSearchGovRecordsApplicationGeneratorWhenApplicationTypeIsSearchGovRecords() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(InterimApplicationType.SEARCH_GOV_RECORDS)
+                            .build())
+                    .build()
+            ).build();
+
+        DivorceDocument generatedDocument = DivorceDocument.builder().build();
+        when(searchGovRecordsApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
+            .thenReturn(generatedDocument);
+
+        DivorceDocument result = interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
+
+        verify(searchGovRecordsApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
+        assertThat(result).isEqualTo(generatedDocument);
     }
 }
