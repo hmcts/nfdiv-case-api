@@ -115,7 +115,7 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String knowPartnerAdditionalAddresses;
+    private YesOrNo knowPartnerAdditionalAddresses;
 
     @CCD(
         label = "Address 1",
