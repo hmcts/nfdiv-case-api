@@ -8,6 +8,8 @@ import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DeemedServi
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.generator.AlternativeServiceApplicationGenerator;
@@ -61,6 +63,19 @@ public class InterimApplicationSubmissionService {
             return;
         } else if (AlternativeServiceType.ALTERNATIVE_SERVICE.equals(serviceType)) {
             notificationDispatcher.send(alternativeServiceApplicationSubmittedNotification, caseData, caseId);
+            return;
+        }
+
+        throw new UnsupportedOperationException();
+    }
+
+    public void sendGeneralApplicationNotifications(
+        long caseId,
+        GeneralApplication generalApplication,
+        CaseData caseData
+    ) {
+        if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplication.getGeneralApplicationType())) {
+            // notificationDispatcher.send(deemedApplicationSubmittedNotification, caseData, caseId);
             return;
         }
 
