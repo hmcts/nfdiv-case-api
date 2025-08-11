@@ -95,10 +95,19 @@ public class SearchGovRecordsApplicationTemplateContent implements TemplateConte
         templateContent.put(PARTNER_NAME, applicationAnswers.getPartnerName());
         templateContent.put(REASON_WHY_SEARCH_THESE_DEPARTMENTS, applicationAnswers.getWhyTheseDepartments());
         templateContent.put(KNOW_PARTNER_DATE_OF_BIRTH, applicationAnswers.getKnowPartnerDateOfBirth());
-        templateContent.put(PARTNER_DATE_OF_BIRTH, dateTimeFormatter.format(applicationAnswers.getPartnerDateOfBirth()));
-        templateContent.put(PARTNER_APPROXIMATE_AGE, applicationAnswers.getPartnerApproximateAge());
+
+        if (YesOrNo.YES.equals(applicationAnswers.getKnowPartnerDateOfBirth())) {
+            templateContent.put(PARTNER_DATE_OF_BIRTH, dateTimeFormatter.format(applicationAnswers.getPartnerDateOfBirth()));
+        } else {
+            templateContent.put(PARTNER_APPROXIMATE_AGE, applicationAnswers.getPartnerApproximateAge());
+        }
+
         templateContent.put(KNOW_PARTNER_NATIONAL_INSURANCE, applicationAnswers.getKnowPartnerNationalInsurance());
-        templateContent.put(PARTNER_NATIONAL_INSURANCE, applicationAnswers.getPartnerNationalInsurance());
+
+        if (YesOrNo.YES.equals(applicationAnswers.getKnowPartnerNationalInsurance())) {
+            templateContent.put(PARTNER_NATIONAL_INSURANCE, applicationAnswers.getPartnerNationalInsurance());
+        }
+
         templateContent.put(PARTNER_LAST_KNOWN_ADDRESS, applicationAnswers.getPartnerLastKnownAddress());
         templateContent.put(DATES_PARTNER_LIVED_AT_LAST_KNOWN_ADDRESS, applicationAnswers.getPartnerLastKnownAddressDates());
         templateContent.put(KNOW_ADDITIONAL_ADDRESSES_FOR_PARTNER, applicationAnswers.getKnowPartnerAdditionalAddresses() == YesOrNo.YES);
