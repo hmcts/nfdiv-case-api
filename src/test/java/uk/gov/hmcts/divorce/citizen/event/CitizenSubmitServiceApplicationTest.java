@@ -168,6 +168,7 @@ class CitizenSubmitServiceApplicationTest {
 
     @Test
     void generateDocumentWhenInterimApplicationTypeIsSearchGovRecords() {
+        setMockClock(clock);
 
         CaseData caseData = CaseData.builder()
             .applicant1(
