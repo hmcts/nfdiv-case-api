@@ -106,4 +106,10 @@ public class GeneralApplication {
         searchable = false
     )
     private String generalApplicationUrgentCaseReason;
+
+    @CCD(
+        label = "Has the citizen or their representative completed online payment for the application?",
+        searchable = false
+    )
+    private YesOrNo hasCompletedOnlinePayment;
 }

@@ -18,6 +18,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralReason;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -25,6 +29,7 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -32,8 +37,8 @@ import java.util.Optional;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -64,7 +69,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CITIZEN_GENERAL_APPLICATION_PAYMENT)
-            .forStates(POST_SUBMISSION_STATES)
+            .forState(GeneralApplicationReceived)
             .name("Citizen gen app payment made")
             .description("Citizen gen app payment made")
             .showSummary()
@@ -99,8 +104,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
         GeneralApplication generalApplication = generalAppOptional.get();
 
-        List<ListValue<Payment>> payments = applicant.getGeneralApplicationPayments();
-
+        List<ListValue<Payment>> payments = applicant.getGenApplicationPayments();
         List<String> validationErrors = paymentValidatorService.validatePayments(payments, caseId);
         if (CollectionUtils.isNotEmpty(validationErrors)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -108,12 +112,16 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
                     .build();
         }
 
-        String paymentReference = paymentValidatorService.getLastPayment(payments).getReference();
-        boolean isAwaitingDocuments = YesOrNo.NO.equals(generalApplication.getGeneralApplicationDocsUploadedPreSubmission());
+        savePaymentDetails(payments, generalApplication, applicant);
 
-        generalApplication.getGeneralApplicationFee().setPaymentReference(paymentReference);
-        details.setState(isAwaitingDocuments ? AwaitingDocuments : GeneralApplicationReceived);
-        // generalApplication.setDateOfPayment(LocalDate.now(clock));
+        boolean isAwaitingDocuments = YesOrNo.NO.equals(generalApplication.getGeneralApplicationDocsUploadedPreSubmission());
+        boolean notReadyForAutomaticReferral = isGeneralReferralInProgress(data.getGeneralReferral()) || isAwaitingDocuments;
+        if (notReadyForAutomaticReferral) {
+            details.setState(isAwaitingDocuments ? AwaitingDocuments : GeneralApplicationReceived);
+        } else {
+            data.setGeneralReferral(buildGeneralReferral(generalApplication, isApplicant1));
+            details.setState(AwaitingGeneralConsideration);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
@@ -149,7 +157,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
             return Optional.empty();
         }
 
-        String serviceRequest = applicant.getGeneralApplicationServiceRequestReference();
+        String serviceRequest = applicant.getGeneralApplicationServiceRequest();
 
         return caseData.getGeneralApplications().stream()
             .map(ListValue::getValue)
@@ -165,5 +173,33 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
         return applicationFee != null && applicationFee.getServiceRequestReference() != null
             && expectedServiceRequest.equals(applicationFee.getServiceRequestReference());
+    }
+
+    private void savePaymentDetails(
+        List<ListValue<Payment>> payments,
+        GeneralApplication generalApplication,
+        Applicant applicant)
+    {
+        String paymentReference = paymentValidatorService.getLastPayment(payments).getReference();
+        generalApplication.getGeneralApplicationFee().setPaymentReference(paymentReference);
+        generalApplication.getGeneralApplicationFee().setDateOfPayment(LocalDate.now(clock));
+        applicant.setGenApplicationPayments(null);
+        applicant.setGeneralApplicationServiceRequest(null);
+        applicant.setGeneralApplicationOrderSummary(null);
+    }
+
+    private boolean isGeneralReferralInProgress(GeneralReferral generalReferral) {
+        return generalReferral != null && generalReferral.getGeneralReferralType() != null;
+    }
+
+    private GeneralReferral buildGeneralReferral(GeneralApplication generalApplication, boolean isApplicant1) {
+        return GeneralReferral.builder()
+            .generalReferralReason(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL)
+            .generalApplicationFrom(isApplicant1 ? GeneralParties.APPLICANT : GeneralParties.RESPONDENT)
+            .generalApplicationReferralDate(LocalDate.now(clock))
+            .generalApplicationAddedDate(generalApplication.getReceivedGeneralApplicationDate())
+            .generalReferralType(GeneralReferralType.DISCLOSURE_VIA_DWP)
+            .generalReferralFee(generalApplication.getGeneralApplicationFee())
+            .build();
     }
 }

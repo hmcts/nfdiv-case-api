@@ -13,6 +13,8 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 
+import java.time.LocalDate;
+
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
 
@@ -62,8 +64,17 @@ public class FeeDetails {
     @CCD(label = "Payment service request")
     private String serviceRequestReference;
 
-    @CCD(label = "Payment reference")
+    @CCD(
+        label = "Payment reference",
+        searchable = false
+    )
     private String paymentReference;
+
+    @CCD(
+        label = "Payment date",
+        searchable = false
+    )
+    private LocalDate dateOfPayment;
 
     @JsonIgnore
     public boolean isPaymentMethodPba() {

@@ -294,20 +294,19 @@ public class Applicant {
     private InterimApplicationOptions interimApplicationOptions;
 
     @CCD(
-        label = "General Application Payments",
         typeOverride = Collection,
         typeParameterOverride = "Payment",
         access = {DefaultAccess.class},
         searchable = false
     )
-    private List<ListValue<Payment>> generalApplicationPayments;
+    private List<ListValue<Payment>> genApplicationPayments;
 
     @CCD(
         label = "General Application Service Request",
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String generalApplicationServiceRequestReference;
+    private String generalApplicationServiceRequest;
 
     @CCD(
         label = "General application order summary",

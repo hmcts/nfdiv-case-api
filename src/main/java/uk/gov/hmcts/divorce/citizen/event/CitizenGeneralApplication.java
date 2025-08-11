@@ -98,13 +98,13 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         long caseId = details.getId();
         log.info("{} About to Submit callback invoked for Case Id: {}", CITIZEN_GENERAL_APPLICATION, details.getId());
 
-        if (generalAppAwaitingDecision(data.getAlternativeService())) {
+        Applicant applicant = isApplicant1(caseId) ? data.getApplicant1() : data.getApplicant2();
+        if (applicant.getGeneralApplicationServiceRequest() != null) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(Collections.singletonList(AWAITING_DECISION_ERROR))
                 .build();
         }
 
-        Applicant applicant = isApplicant1(caseId) ? data.getApplicant1() : data.getApplicant2();
         InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
         GeneralApplication newGeneralApplication = buildGeneralApplication(userOptions);
         data.updateCaseWithGeneralApplication(newGeneralApplication);
@@ -130,8 +130,8 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         applicant.setInterimApplicationOptions(new InterimApplicationOptions());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .state(details.getState())
+            .data(data)
+            .state(GeneralApplicationReceived)
             .build();
     }
 
@@ -173,12 +173,13 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
             generalApplication, caseId
         );
         serviceFee.setOrderSummary(orderSummary);
+        applicant.setGeneralApplicationOrderSummary(orderSummary);
 
         String serviceRequest = paymentSetupService.createGeneralApplicationPaymentServiceRequest(
             generalApplication, caseId, applicant.getFullName()
         );
         serviceFee.setServiceRequestReference(serviceRequest);
-
+        applicant.setGeneralApplicationServiceRequest(serviceRequest);
     }
 
     private Optional<GeneralApplication> findGeneralApplication(
