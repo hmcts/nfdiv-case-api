@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.SearchGovRecordsJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -166,18 +167,16 @@ class CitizenSubmitServiceApplicationTest {
     }
 
     @Test
-    void givenCitizenWillNotMakePaymentButDocsHaveNotBeenSubmittedThenChangeStateToAwaitingApplicant() {
-        setMockClock(clock);
+    void generateDocumentWhenInterimApplicationTypeIsSearchGovRecords() {
 
         CaseData caseData = CaseData.builder()
             .applicant1(
                 Applicant.builder()
                     .firstName(TEST_FIRST_NAME)
                     .interimApplicationOptions(InterimApplicationOptions.builder()
-                        .interimAppsUseHelpWithFees(YesOrNo.YES)
-                        .interimAppsCannotUploadDocs(YesOrNo.YES)
-                        .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
-                        .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
+                        .interimAppsUseHelpWithFees(YesOrNo.NO)
+                        .interimApplicationType(InterimApplicationType.SEARCH_GOV_RECORDS)
+                        .searchGovRecordsJourneyOptions(SearchGovRecordsJourneyOptions.builder().build())
                         .build())
                     .build()
             ).build();
@@ -194,15 +193,8 @@ class CitizenSubmitServiceApplicationTest {
             caseDetails, caseDetails
         );
 
-        AlternativeService alternativeService = response.getData().getAlternativeService();
-        assertThat(response.getState()).isEqualTo(State.AwaitingDocuments);
-        assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
-        assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isNull();
-        assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isNull();
-        assertThat(alternativeService.getAlternativeServiceFeeRequired()).isNotEqualTo(YesOrNo.YES);
-        assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
-        assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.NO);
-        assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
+        assertThat(caseData.getApplicant1().getInterimApplicationOptions().getSearchGovRecordsJourneyOptions()
+            .getApplicationAnswers()).isEqualTo(generatedApplication);
     }
 
     @Test
@@ -287,4 +279,45 @@ class CitizenSubmitServiceApplicationTest {
 
         verifyNoInteractions(interimApplicationSubmissionService);
     }
+
+    @Test
+    void givenCitizenWillNotMakePaymentButDocsHaveNotBeenSubmittedThenChangeStateToAwaitingApplicant() {
+        setMockClock(clock);
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .firstName(TEST_FIRST_NAME)
+                    .interimApplicationOptions(InterimApplicationOptions.builder()
+                        .interimAppsUseHelpWithFees(YesOrNo.YES)
+                        .interimAppsCannotUploadDocs(YesOrNo.YES)
+                        .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
+                        .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
+                        .build())
+                    .build()
+            ).build();
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        DivorceDocument generatedApplication = DivorceDocument.builder().build();
+        when(interimApplicationSubmissionService.generateAnswerDocument(
+            TEST_CASE_ID, caseData.getApplicant1(), caseData
+        )).thenReturn(generatedApplication);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
+            caseDetails, caseDetails
+        );
+
+        AlternativeService alternativeService = response.getData().getAlternativeService();
+        assertThat(response.getState()).isEqualTo(State.AwaitingDocuments);
+        assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
+        assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isNull();
+        assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isNull();
+        assertThat(alternativeService.getAlternativeServiceFeeRequired()).isNotEqualTo(YesOrNo.YES);
+        assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
+        assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.NO);
+        assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
+    }
+
 }
