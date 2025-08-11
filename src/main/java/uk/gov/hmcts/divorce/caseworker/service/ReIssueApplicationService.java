@@ -22,11 +22,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.JudicialSeparationReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
-<<<<<<< HEAD
-import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrPostalAddress;
-=======
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress;
->>>>>>> NFDIV-4736
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
@@ -188,19 +184,11 @@ public class ReIssueApplicationService {
 
         CaseData caseData = caseDetails.getData();
 
-<<<<<<< HEAD
-        NoResponsePartnerNewEmailOrPostalAddress noResponseOptions =
-            Optional.of(caseData.getApplicant1())
-                .map(Applicant::getInterimApplicationOptions)
-                .map(InterimApplicationOptions::getNoResponseJourneyOptions)
-                .map(NoResponseJourneyOptions::getNoResponsePartnerNewEmailOrPostalAddress)
-=======
         NoResponsePartnerNewEmailOrAddress noResponseOptions =
             Optional.of(caseData.getApplicant1())
                 .map(Applicant::getInterimApplicationOptions)
                 .map(InterimApplicationOptions::getNoResponseJourneyOptions)
                 .map(NoResponseJourneyOptions::getNoResponsePartnerNewEmailOrAddress)
->>>>>>> NFDIV-4736
                 .orElseThrow(() -> new InvalidReissueOptionException(
                     String.format("Invalid update contact details option selected for CaseId: %s", caseId)));
 
@@ -212,15 +200,6 @@ public class ReIssueApplicationService {
         ReissueOption reissueOption = null;
 
         switch (noResponseOptions) {
-<<<<<<< HEAD
-            case NEW_POSTAL_ADDRESS -> reissueOption = isNewAddressOverseas ? REISSUE_CASE :
-                StringUtils.isEmpty(caseData.getApplicant2().getEmail()) ? OFFLINE_AOS : DIGITAL_AOS;
-
-            case NEW_EMAIL_ADDRESS -> reissueOption =
-                isOldAddressOverseas ? REISSUE_CASE : DIGITAL_AOS;
-
-            case NEW_EMAIL_AND_POSTAL_ADDRESS -> reissueOption =
-=======
             case ADDRESS -> reissueOption = isNewAddressOverseas ? REISSUE_CASE :
                 StringUtils.isEmpty(caseData.getApplicant2().getEmail()) ? OFFLINE_AOS : DIGITAL_AOS;
 
@@ -228,7 +207,6 @@ public class ReIssueApplicationService {
                 isOldAddressOverseas ? REISSUE_CASE : DIGITAL_AOS;
 
             case EMAIL_AND_ADDRESS -> reissueOption =
->>>>>>> NFDIV-4736
                 isNewAddressOverseas ? REISSUE_CASE : DIGITAL_AOS;
 
             default -> reissueOption = REISSUE_CASE;
