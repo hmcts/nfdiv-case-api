@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -152,4 +153,11 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
         searchable = false
     )
     private String partnerAdditionalAddressDates2;
+
+    @CCD(
+        label = "Search gov records application answers",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private DivorceDocument applicationAnswers;
 }
