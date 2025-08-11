@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.AlternativeServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.BailiffServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DeemedServiceApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.SearchGovRecordsApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -33,6 +34,9 @@ class InterimApplicationSubmissionServiceTest {
 
     @Mock
     private DeemedServiceApplicationSubmittedNotification deemedNotification;
+
+    @Mock
+    private SearchGovRecordsApplicationSubmittedNotification searchGovRecordsApplicationSubmittedNotification;
 
     @Mock
     private BailiffServiceApplicationSubmittedNotification bailiffNotification;
@@ -207,10 +211,18 @@ class InterimApplicationSubmissionServiceTest {
     @Test
     void shouldDelegateToSearchGovRecordsNotificationWhenApplicationTypeIsSearchGovRecords() {
         long caseId = TEST_CASE_ID;
-        CaseData caseData = CaseData.builder().build();
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(InterimApplicationType.SEARCH_GOV_RECORDS)
+                            .build())
+                    .build()
+            ).build();
 
         interimApplicationSubmissionService.sendNotifications(caseId, null, caseData);
 
-        verify(notificationDispatcher).send(deemedNotification, caseData, caseId);
+        verify(notificationDispatcher).send(searchGovRecordsApplicationSubmittedNotification, caseData, caseId);
     }
 }

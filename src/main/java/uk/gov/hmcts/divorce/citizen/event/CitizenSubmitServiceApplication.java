@@ -88,10 +88,13 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         }
 
         Applicant applicant = data.getApplicant1();
+        InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
 
-        if (InterimApplicationType.SEARCH_GOV_RECORDS.equals(data.getApplicant1().getInterimApplicationOptions()
-            .getInterimApplicationType())) {
-            InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
+        if (InterimApplicationType.SEARCH_GOV_RECORDS.equals(userOptions.getInterimApplicationType())) {
+            DivorceDocument applicationDocument = interimApplicationSubmissionService.generateAnswerDocument(caseId, applicant, data);
+            userOptions.getSearchGovRecordsJourneyOptions().setApplicationAnswers(applicationDocument);
+            details.setState(AwaitingServicePayment);
+        } else {
             AlternativeService newServiceApplication = buildServiceApplication(userOptions);
             data.setAlternativeService(newServiceApplication);
 
@@ -109,9 +112,8 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             DivorceDocument applicationDocument = interimApplicationSubmissionService.generateAnswerDocument(
                 caseId, applicant, data
             );
+
             newServiceApplication.setServiceApplicationAnswers(applicationDocument);
-        } else {
-            details.setState(AwaitingServicePayment);
         }
 
         applicant.setInterimApplicationOptions(new InterimApplicationOptions());
@@ -129,8 +131,8 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         CaseData data = details.getData();
         AlternativeService alternativeService = data.getAlternativeService();
 
-        if (InterimApplicationType.SEARCH_GOV_RECORDS.getLabel().equals(data.getApplicant1().getInterimApplicationOptions()
-            .getInterimApplicationType().getLabel())) {
+        if (InterimApplicationType.SEARCH_GOV_RECORDS.equals(data.getApplicant1().getInterimApplicationOptions()
+            .getInterimApplicationType())) {
             interimApplicationSubmissionService.sendNotifications(details.getId(), null, data);
         } else if (!YesOrNo.YES.equals(alternativeService.getAlternativeServiceFeeRequired())) {
             interimApplicationSubmissionService.sendNotifications(details.getId(), alternativeService.getAlternativeServiceType(), data);

@@ -251,8 +251,9 @@ class CitizenSubmitServiceApplicationTest {
 
 
     @Test
-    void shouldTriggerNotificationsIfApplicationSubmittedWithHelpWithFees() {
-        CaseData caseData = CaseData.builder().build();
+    void shouldTriggerDeemedServiceNotificationsIfApplicationSubmittedWithHelpWithFees() {
+        CaseData caseData = buildCaseData(InterimApplicationType.DEEMED_SERVICE);
+
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setId(TEST_CASE_ID);
 
@@ -271,8 +272,9 @@ class CitizenSubmitServiceApplicationTest {
     }
 
     @Test
-    void shouldNotTriggerNotificationsIfApplicationRequiresPayment() {
-        CaseData caseData = CaseData.builder().build();
+    void shouldNotTriggerDeemedServiceNotificationsIfApplicationRequiresPayment() {
+        CaseData caseData = buildCaseData(InterimApplicationType.DEEMED_SERVICE);
+
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setId(TEST_CASE_ID);
 
@@ -286,5 +288,31 @@ class CitizenSubmitServiceApplicationTest {
         citizenSubmitServiceApplication.submitted(caseDetails, caseDetails);
 
         verifyNoInteractions(interimApplicationSubmissionService);
+    }
+
+    @Test
+    void shouldTriggerSearchGovRecordsApplicationNotificationsIfApplicationIsSearchGovRecords() {
+        CaseData caseData = buildCaseData(InterimApplicationType.SEARCH_GOV_RECORDS);
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        citizenSubmitServiceApplication.submitted(caseDetails, caseDetails);
+
+        verify(interimApplicationSubmissionService).sendNotifications(
+            TEST_CASE_ID, null, caseData
+        );
+    }
+
+    private CaseData buildCaseData(InterimApplicationType interimApplicationType) {
+        return CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(interimApplicationType)
+                            .build())
+                    .build()
+            ).build();
     }
 }
