@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.List;
 
 import static java.util.List.of;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.ALTERNATIVE_SERVICE_PAYMENT_METHOD;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.ALTERNATIVE_SERVICE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_EMAIL;
@@ -69,6 +70,10 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
         SearchField.<UserRole>builder().label("Fraud referral case").id(FRAUD_REFERRAL_CASE).build(),
         SearchField.<UserRole>builder().label("Solicitor firm name").id(APPLICANT_1_FIRM_NAME).build(),
         SearchField.<UserRole>builder().label("Type of service").id(ALTERNATIVE_SERVICE_TYPE).build(),
+        SearchField.<UserRole>builder().label("Service application payment method")
+            .id(ALTERNATIVE_SERVICE_PAYMENT_METHOD)
+            .userRole(UserRole.CASE_WORKER)
+            .build(),
         SearchField.<UserRole>builder().label("Applicant first name").id(APPLICANT_1_FIRST_NAME).build(),
         SearchField.<UserRole>builder().label("Applicant last name").id(APPLICANT_1_LAST_NAME).build(),
         SearchField.<UserRole>builder().label("Applicant email").id(APPLICANT_1_EMAIL).build(),
