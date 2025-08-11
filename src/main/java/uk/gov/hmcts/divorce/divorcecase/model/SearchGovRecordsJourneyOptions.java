@@ -96,7 +96,7 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String knowPartnerNationalInsurance;
+    private YesOrNo knowPartnerNationalInsurance;
 
     @CCD(
         label = "Enter your wife's National Insurance number",
