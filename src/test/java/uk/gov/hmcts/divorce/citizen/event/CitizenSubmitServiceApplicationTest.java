@@ -291,6 +291,27 @@ class CitizenSubmitServiceApplicationTest {
     }
 
     @Test
+    void generateDocumentWhenInterimApplicationTypeIsSearchGovRecords() {
+
+        CaseData caseData = buildCaseData(InterimApplicationType.SEARCH_GOV_RECORDS);
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        DivorceDocument generatedApplication = DivorceDocument.builder().build();
+        when(interimApplicationSubmissionService.generateAnswerDocument(
+            TEST_CASE_ID, caseData.getApplicant1(), caseData
+        )).thenReturn(generatedApplication);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
+            caseDetails, caseDetails
+        );
+
+        assertThat(caseData.getApplicant1().getInterimApplicationOptions().getSearchGovRecordsJourneyOptions()
+            .getApplicationAnswers()).isEqualTo(generatedApplication);
+    }
+
+    @Test
     void shouldTriggerSearchGovRecordsApplicationNotificationsIfApplicationIsSearchGovRecords() {
         CaseData caseData = buildCaseData(InterimApplicationType.SEARCH_GOV_RECORDS);
 
