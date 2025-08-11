@@ -36,7 +36,7 @@ public class NoResponseJourneyOptions {
     @CCD(
         label = "I have a new postal or email address for my partner",
         access = {DefaultAccess.class},
-        typeParameterOverride = "NoResponsePartnerNewEmailOrPostalAddress"
+        typeParameterOverride = "NoResponsePartnerNewEmailOrAddress"
     )
     private NoResponsePartnerNewEmailOrAddress noResponsePartnerNewEmailOrAddress;
 
