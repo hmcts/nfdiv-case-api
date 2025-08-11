@@ -64,7 +64,6 @@ public class SearchGovRecordsApplicationTemplateContent implements TemplateConte
 
         SearchGovRecordsJourneyOptions applicationAnswers = caseData.getApplicant1().getInterimApplicationOptions()
             .getSearchGovRecordsJourneyOptions();
-        InterimApplicationOptions applicationOptions = applicant.getInterimApplicationOptions();
         LanguagePreference languagePreference = applicant.getLanguagePreference();
         DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(languagePreference);
 
