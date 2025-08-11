@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.set;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -294,6 +295,7 @@ class CitizenSubmitServiceApplicationTest {
 
     @Test
     void generateDocumentAndSetStateToAwaitingServicePaymentWhenInterimApplicationTypeIsSearchGovRecords() {
+        setMockClock(clock);
 
         CaseData caseData = buildCaseData(InterimApplicationType.SEARCH_GOV_RECORDS);
 
