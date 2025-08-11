@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentRemovalService;
@@ -87,25 +88,31 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         }
 
         Applicant applicant = data.getApplicant1();
-        InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
-        AlternativeService newServiceApplication = buildServiceApplication(userOptions);
-        data.setAlternativeService(newServiceApplication);
 
-        if (userOptions.willMakePayment()) {
-            prepareCaseForServicePayment(newServiceApplication, applicant, caseId);
+        if (InterimApplicationType.SEARCH_GOV_RECORDS.equals(data.getApplicant1().getInterimApplicationOptions()
+            .getInterimApplicationType())) {
+            InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
+            AlternativeService newServiceApplication = buildServiceApplication(userOptions);
+            data.setAlternativeService(newServiceApplication);
 
-            details.setState(AwaitingServicePayment);
+            if (userOptions.willMakePayment()) {
+                prepareCaseForServicePayment(newServiceApplication, applicant, caseId);
+
+                details.setState(AwaitingServicePayment);
+            } else {
+                FeeDetails serviceFee = newServiceApplication.getServicePaymentFee();
+                serviceFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
+
+                details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServicePayment);
+            }
+
+            DivorceDocument applicationDocument = interimApplicationSubmissionService.generateAnswerDocument(
+                caseId, applicant, data
+            );
+            newServiceApplication.setServiceApplicationAnswers(applicationDocument);
         } else {
-            FeeDetails serviceFee = newServiceApplication.getServicePaymentFee();
-            serviceFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
-
-            details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServicePayment);
+            details.setState(AwaitingServicePayment);
         }
-
-        DivorceDocument applicationDocument = interimApplicationSubmissionService.generateAnswerDocument(
-            caseId, applicant, data
-        );
-        newServiceApplication.setServiceApplicationAnswers(applicationDocument);
 
         applicant.setInterimApplicationOptions(new InterimApplicationOptions());
 
@@ -122,7 +129,10 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         CaseData data = details.getData();
         AlternativeService alternativeService = data.getAlternativeService();
 
-        if (!YesOrNo.YES.equals(alternativeService.getAlternativeServiceFeeRequired())) {
+        if (InterimApplicationType.SEARCH_GOV_RECORDS.getLabel().equals(data.getApplicant1().getInterimApplicationOptions()
+            .getInterimApplicationType().getLabel())) {
+            interimApplicationSubmissionService.sendNotifications(details.getId(), null, data);
+        } else if (!YesOrNo.YES.equals(alternativeService.getAlternativeServiceFeeRequired())) {
             interimApplicationSubmissionService.sendNotifications(details.getId(), alternativeService.getAlternativeServiceType(), data);
         }
 

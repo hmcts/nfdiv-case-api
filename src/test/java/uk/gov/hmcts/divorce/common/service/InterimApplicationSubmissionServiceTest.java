@@ -203,4 +203,14 @@ class InterimApplicationSubmissionServiceTest {
         verify(searchGovRecordsApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
         assertThat(result).isEqualTo(generatedDocument);
     }
+
+    @Test
+    void shouldDelegateToSearchGovRecordsNotificationWhenApplicationTypeIsSearchGovRecords() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder().build();
+
+        interimApplicationSubmissionService.sendNotifications(caseId, null, caseData);
+
+        verify(notificationDispatcher).send(deemedNotification, caseData, caseId);
+    }
 }
