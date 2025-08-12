@@ -621,6 +621,22 @@ class ReIssueApplicationServiceTest {
         assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(OFFLINE_AOS);
     }
 
+    @Test
+    void shouldThrowInvalidReissueOptionExceptionWhenNoResponseUpdateContactDetailsIsNotSet() {
+
+        final CaseData caseData = caseData();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        assertThatThrownBy(() -> reIssueApplicationService.process(caseDetails))
+            .isExactlyInstanceOf(InvalidReissueOptionException.class)
+            .hasMessage("Invalid reissue option for CaseId: 1616591401473378");
+    }
+
+
     private void setUpCaseDetails(CaseDetails<CaseData, State> caseDetails,
                                   NoResponsePartnerNewEmailOrPostalAddress newEmailAndPostalAddress, YesOrNo addressOverseas) {
         CaseData caseData = caseData();
@@ -635,20 +651,5 @@ class ReIssueApplicationServiceTest {
                 .noResponsePartnerAddressOverseas(addressOverseas)
                 .build())
             .build());
-    }
-
-    @Test
-    void shouldThrowInvalidReissueOptionExceptionWhenNoResponseUpdateContactDetailsIsNotSet() {
-
-        final CaseData caseData = caseData();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-
-        assertThatThrownBy(() -> reIssueApplicationService.process(caseDetails))
-            .isExactlyInstanceOf(InvalidReissueOptionException.class)
-            .hasMessage("Invalid reissue option for CaseId: 1616591401473378");
     }
 }

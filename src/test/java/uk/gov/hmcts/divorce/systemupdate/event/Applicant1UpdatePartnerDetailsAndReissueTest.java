@@ -104,7 +104,11 @@ class Applicant1UpdatePartnerDetailsAndReissueTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1UpdatePartnerDetailsAndReissue.aboutToSubmit(caseDetails, null);
 
-        assertThat(response.getData().getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()).isNull();
+        assertThat(response.getData().getApplicant1().getInterimApplicationOptions()
+                .getNoResponseJourneyOptions()).isNotNull();
+        assertThat(response.getData().getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
+                .getNoResponsePartnerNewEmailOrPostalAddress())
+                .isEqualTo(NoResponsePartnerNewEmailOrPostalAddress.CONTACT_DETAILS_UPDATED);
 
         verify(reIssueApplicationService).updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
     }
