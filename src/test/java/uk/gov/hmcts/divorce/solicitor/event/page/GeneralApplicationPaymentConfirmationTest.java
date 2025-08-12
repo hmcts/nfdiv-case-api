@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
@@ -53,7 +54,7 @@ class GeneralApplicationPaymentConfirmationTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
         assertEquals(1, response.getErrors().size());
-        assert(response.getErrors()).contains(CARD_PAYMENT_ERROR);
+        assertThat(response.getErrors()).contains(CARD_PAYMENT_ERROR);
     }
 
     @Test
