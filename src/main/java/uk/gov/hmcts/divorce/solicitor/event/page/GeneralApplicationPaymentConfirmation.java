@@ -14,9 +14,11 @@ import java.util.List;
 
 public class GeneralApplicationPaymentConfirmation implements CcdPageConfiguration {
 
+    public static final String CARD_PAYMENT_ERROR = "General application fees must be paid by fee account, help with fees, or telephone.";
+
     @Override
     public void addTo(final PageBuilder pageBuilder) {
-        pageBuilder.page("generalApplicationPayment")
+        pageBuilder.page("generalApplicationPayment", this::midEvent)
             .pageLabel("Payment - general application payment")
             .complex(CaseData::getGeneralApplication)
                 .complex(GeneralApplication::getGeneralApplicationFee)
@@ -32,7 +34,8 @@ public class GeneralApplicationPaymentConfirmation implements CcdPageConfigurati
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
-        CaseDetails<CaseData, State> details
+        CaseDetails<CaseData, State> details,
+        CaseDetails<CaseData, State> detailsBefore
     ) {
 
         final CaseData caseData = details.getData();
@@ -42,7 +45,7 @@ public class GeneralApplicationPaymentConfirmation implements CcdPageConfigurati
         if (ServicePaymentMethod.CARD.equals(paymentMethod)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(List.of("General application fees must be paid by fee account, help with fees, or telephone."))
+                .errors(List.of(CARD_PAYMENT_ERROR))
                 .build();
         }
 

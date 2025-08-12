@@ -70,7 +70,7 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
         SearchField.<UserRole>builder().label("Fraud referral case").id(FRAUD_REFERRAL_CASE).build(),
         SearchField.<UserRole>builder().label("Solicitor firm name").id(APPLICANT_1_FIRM_NAME).build(),
         SearchField.<UserRole>builder().label("Type of service").id(ALTERNATIVE_SERVICE_TYPE).build(),
-        SearchField.<UserRole>builder().label("Service application payment method")
+        SearchField.<UserRole>builder().label("Service payment method")
             .id(ALTERNATIVE_SERVICE_PAYMENT_METHOD)
             .userRole(UserRole.CASE_WORKER)
             .build(),
