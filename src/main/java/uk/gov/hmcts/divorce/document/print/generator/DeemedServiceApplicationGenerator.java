@@ -10,6 +10,8 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.DeemedServiceApplicationTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.time.LocalDate;
+
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_SERVICE_APPLICATION_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_SERVICE_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DEEMED_SERVICE;
@@ -39,6 +41,7 @@ public class DeemedServiceApplicationGenerator {
           .documentLink(document)
           .documentFileName(document.getFilename())
           .documentType(DEEMED_SERVICE)
+          .documentDateAdded(LocalDate.now())
           .build();
     }
 }

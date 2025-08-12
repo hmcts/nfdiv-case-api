@@ -48,6 +48,22 @@ public class InterimApplicationOptions {
     )
     private DispenseWithServiceJourneyOptions dispenseWithServiceJourneyOptions;
 
+    @JsonUnwrapped
+    @CCD(
+        label = "Bailiff Service Journey Options",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private BailiffServiceJourneyOptions bailiffServiceJourneyOptions;
+
+    @JsonUnwrapped
+    @CCD(
+        label = "Alternative Service Journey Options",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private AlternativeServiceJourneyOptions alternativeServiceJourneyOptions;
+
     @CCD(
         label = "Active Interim Application Type",
         typeOverride = FixedList,

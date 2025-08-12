@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -16,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentRemovalService;
@@ -97,6 +99,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         } else {
             FeeDetails serviceFee = newServiceApplication.getServicePaymentFee();
             serviceFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
+            serviceFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF);
 
             details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServicePayment);
         }
@@ -132,7 +135,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         boolean evidenceNotSubmitted = YesOrNo.NO.equals(userOptions.getInterimAppsCanUploadEvidence())
             && userOptions.getInterimAppsEvidenceDocs() != null;
 
-        if (evidenceNotSubmitted) {
+        if (evidenceNotSubmitted && !CollectionUtils.isEmpty(userOptions.getInterimAppsEvidenceDocs())) {
             documentRemovalService.deleteDocument(userOptions.getInterimAppsEvidenceDocs());
         }
 
@@ -144,7 +147,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .serviceApplicationDocsUploadedPreSubmission(userOptions.awaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
             .serviceApplicationDocuments(
-                evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs()
+                    evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs()
             )
             .build();
     }
