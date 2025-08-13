@@ -11,7 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
-import uk.gov.hmcts.divorce.citizen.event.Applicant1UpdatePartnerDetailsAndReissue;
+import uk.gov.hmcts.divorce.citizen.event.Applicant1UpdatePartnerDetailsOrReissue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
-import static uk.gov.hmcts.divorce.citizen.event.Applicant1UpdatePartnerDetailsAndReissue.UPDATE_PARTNER_DETAILS_AND_REISSUE;
+import static uk.gov.hmcts.divorce.citizen.event.Applicant1UpdatePartnerDetailsOrReissue.UPDATE_PARTNER_DETAILS_OR_REISSUE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForReIssueApplication;
 
 @ExtendWith(MockitoExtension.class)
-class Applicant1UpdatePartnerDetailsAndReissueTest {
+class Applicant1UpdatePartnerDetailsOrReissueTest {
 
     @Mock
     private IdamService idamService;
@@ -55,40 +55,21 @@ class Applicant1UpdatePartnerDetailsAndReissueTest {
 
 
     @InjectMocks
-    private Applicant1UpdatePartnerDetailsAndReissue applicant1UpdatePartnerDetailsAndReissue;
+    private Applicant1UpdatePartnerDetailsOrReissue applicant1UpdatePartnerDetailsOrReissue;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        applicant1UpdatePartnerDetailsAndReissue.configure(configBuilder);
+        applicant1UpdatePartnerDetailsOrReissue.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(UPDATE_PARTNER_DETAILS_AND_REISSUE);
+            .contains(UPDATE_PARTNER_DETAILS_OR_REISSUE);
     }
 
     @Test
     void shouldReturnErrorForAboutToSubmitIfInvalidReissueOptionExceptionIsThrown() {
-
-        final CaseData caseData = validCaseDataForReIssueApplication();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setId(12345L);
-        caseDetails.setData(caseData);
-
-        doThrow(new InvalidReissueOptionException("")).when(reIssueApplicationService)
-            .updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            applicant1UpdatePartnerDetailsAndReissue.aboutToSubmit(caseDetails, null);
-
-        assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors().get(0)).isEqualTo("Invalid update contact details option selected for CaseId: 12345");
-    }
-
-    @Test
-    void shouldNotReturnErrorForAboutToSubmitWhenNoResponseUpdateContactDetailsIsSet() {
 
         final CaseData caseData = validCaseDataForReIssueApplication();
         caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
@@ -101,10 +82,32 @@ class Applicant1UpdatePartnerDetailsAndReissueTest {
         caseDetails.setId(12345L);
         caseDetails.setData(caseData);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            applicant1UpdatePartnerDetailsAndReissue.aboutToSubmit(caseDetails, null);
+        doThrow(InvalidReissueOptionException.class).when(reIssueApplicationService)
+            .updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
 
-        assertThat(response.getData().getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()).isNull();
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors().get(0)).isEqualTo("Invalid update contact details option selected for CaseId: 12345");
+    }
+
+    @Test
+    void shouldNotReturnErrorForAboutToSubmitWhenNoResponseUpdateContactDetailsIsSet() {
+
+        final CaseData caseData = validCaseDataForReIssueApplication();
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
+            .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
+                .noResponsePartnerNewEmailOrAddress(NoResponsePartnerNewEmailOrAddress.EMAIL)
+                .noResponsePartnerAddressOverseas(YesOrNo.NO)
+                .build())
+            .build());
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(12345L);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
 
         verify(reIssueApplicationService).updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
     }
@@ -113,7 +116,12 @@ class Applicant1UpdatePartnerDetailsAndReissueTest {
     void shouldTriggerEventForReissueApplicationWhenApplicantUpdateContactDetailsForPartner() {
 
         final CaseData caseData = caseData();
-
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
+            .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
+                .noResponsePartnerNewEmailOrAddress(NoResponsePartnerNewEmailOrAddress.EMAIL_AND_ADDRESS)
+                .noResponsePartnerAddressOverseas(YesOrNo.NO)
+                .build())
+            .build());
         final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -124,7 +132,7 @@ class Applicant1UpdatePartnerDetailsAndReissueTest {
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        applicant1UpdatePartnerDetailsAndReissue.submitted(caseDetails, beforeDetails);
+        applicant1UpdatePartnerDetailsOrReissue.submitted(caseDetails, beforeDetails);
 
         verify(ccdUpdateService).submitEvent(TEST_CASE_ID, CASEWORKER_REISSUE_APPLICATION, user, TEST_SERVICE_AUTH_TOKEN);
     }
