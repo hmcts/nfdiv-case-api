@@ -250,7 +250,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("documents", "Documents")
             .field("coCertificateOfEntitlementDocument")
             .field("documentsGenerated")
-            .field("applicant1DocumentsUploaded")
+            .field("applicant1DocumentsUploaded", APPLICANTS_CONTACT_DETAILS_PUBLIC)
             .field("applicant2DocumentsUploaded")
             .field("scannedDocuments", APPLICANTS_CONTACT_DETAILS_PUBLIC)
             .field(CaseData::getGeneralOrders)
@@ -385,6 +385,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .field("confidentialDocumentsGenerated")
             .field("confidentialDocumentsUploaded")
+            .field("applicant1DocumentsUploaded", APPLICANTS_CONTACT_DETAILS_PRIVATE)
             .field("scannedDocuments", APPLICANTS_CONTACT_DETAILS_PRIVATE)
             .field(CaseData::getConfidentialGeneralEmails)
             .field(CaseData::getGeneralLetters, APPLICANTS_CONTACT_DETAILS_PRIVATE);
