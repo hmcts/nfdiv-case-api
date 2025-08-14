@@ -147,13 +147,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .alternativeServiceType(userOptions.getInterimApplicationType().getServiceType())
             .serviceApplicationDocsUploadedPreSubmission(userOptions.awaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
-<<<<<<< HEAD
             .serviceApplicationDocuments(evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs())
-=======
-            .serviceApplicationDocuments(
-                    evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs()
-            )
->>>>>>> 38e4ff56f (Updates to general app payment case fields)
             .alternativeServiceFeeRequired(YesOrNo.YES)
             .build();
     }

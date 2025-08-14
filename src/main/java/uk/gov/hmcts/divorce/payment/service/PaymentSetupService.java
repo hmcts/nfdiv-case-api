@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 
 import static uk.gov.hmcts.divorce.controller.PaymentCallbackController.PAYMENT_UPDATE_PATH;
@@ -78,7 +79,7 @@ public class PaymentSetupService {
     }
 
     public OrderSummary createGeneralApplicationOrderSummary(GeneralApplication generalApplication, long caseId) {
-        var fee = generalApplication.getGeneralApplicationFee();
+        FeeDetails fee = generalApplication.getGeneralApplicationFee();
         if (fee != null && fee.getOrderSummary() != null) {
             return fee.getOrderSummary();
         }
@@ -91,7 +92,7 @@ public class PaymentSetupService {
     public String createGeneralApplicationPaymentServiceRequest(
         GeneralApplication generalApplication, long caseId, String responsibleParty
     ) {
-        var feeDetails = generalApplication.getGeneralApplicationFee();
+        FeeDetails feeDetails = generalApplication.getGeneralApplicationFee();
         if (feeDetails != null && feeDetails.getServiceRequestReference() != null) {
             return feeDetails.getServiceRequestReference();
         }

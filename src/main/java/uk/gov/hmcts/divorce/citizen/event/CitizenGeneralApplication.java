@@ -15,7 +15,6 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.GeneralApplicationService;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
@@ -195,10 +194,6 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
             .filter(ga -> ServicePaymentMethod.FEE_PAY_BY_HWF
                 .equals(ga.getGeneralApplicationFee().getPaymentMethod()))
             .findFirst();
-    }
-
-    private boolean generalAppAwaitingDecision(AlternativeService alternativeService) {
-        return alternativeService != null && alternativeService.getAlternativeServiceType() != null;
     }
 
     private boolean isApplicant1(Long caseId) {

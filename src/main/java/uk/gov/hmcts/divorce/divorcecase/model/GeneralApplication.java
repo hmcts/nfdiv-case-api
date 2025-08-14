@@ -35,7 +35,8 @@ public class GeneralApplication {
     private GeneralApplicationType generalApplicationType;
 
     @CCD(
-        label = "Application date"
+        label = "Application date",
+        searchable = false
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate receivedGeneralApplicationDate;
@@ -77,17 +78,20 @@ public class GeneralApplication {
     private String generalApplicationDocumentComments;
 
     @CCD(
-        label = "All documents uploaded before submission?"
+        label = "All documents uploaded before submission?",
+        searchable = false
     )
     private YesOrNo generalApplicationDocsUploadedPreSubmission;
 
     @CCD(
-        label = "Was the general application submitted digitally?"
+        label = "Was the general application submitted digitally?",
+        searchable = false
     )
     private YesOrNo generalApplicationSubmittedOnline;
 
     @CCD(
-        label = "Which party submitted the general application?"
+        label = "Which party submitted the general application?",
+        searchable = false
     )
     private GeneralParties generalParties;
 
