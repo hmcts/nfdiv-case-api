@@ -138,4 +138,70 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     )
     private YesOrNo dispenseTriedTracingAgent;
 
+    @CCD(
+        label = "Explain why you have not used a tracing agent",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispenseWhyNoTracingAgent;
+
+    @CCD(
+        label = "What were the results of your tracing agent's search?",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispenseTracingAgentResults;
+
+    @CCD(
+        label = "Have you tried tracing your partner online?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo dispenseTriedTracingOnline;
+
+    @CCD(
+        label = "Explain why you have not tried tracing your partner online",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispenseWhyNoTracingOnline;
+
+    @CCD(
+        label = "What were the results of your online searches?",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispenseTracingOnlineResults;
+
+    @CCD(
+        label = "Have you tried finding your partner's details online by searching the internet?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo dispenseTriedSearchingOnline;
+
+    @CCD(
+        label = "Explain why you have not tried searching for your partner online",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispenseWhyNoSearchingOnline;
+
+    @CCD(
+        label = "What were the results of your online searches?",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispenseSearchingOnlineResults;
+
+    @CCD(
+        label = "Have you tried contacting your partner's last known employer?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo dispenseTriedContactingEmployer;
+
+    @CCD(
+        label = "Explain why you have not tried contacting the last known employer",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispenseWhyNoContactingEmployer;
 }
