@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 
@@ -63,6 +64,9 @@ public class FeeDetails {
 
     @CCD(label = "Payment service request")
     private String serviceRequestReference;
+
+    @CCD(label = "Has the user completed their online card or PBA payment for this fee?")
+    private YesOrNo hasCompletedOnlinePayment;
 
     @CCD(
         label = "Payment reference",

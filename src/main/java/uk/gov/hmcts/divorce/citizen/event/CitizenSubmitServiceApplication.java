@@ -95,6 +95,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         FeeDetails serviceFee = newServiceApplication.getServicePaymentFee();
         if (userOptions.willMakePayment()) {
             serviceFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_CARD);
+            serviceFee.setHasCompletedOnlinePayment(YesOrNo.NO);
             prepareCaseForServicePayment(newServiceApplication, applicant, caseId);
 
             details.setState(AwaitingServicePayment);
@@ -146,7 +147,13 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .alternativeServiceType(userOptions.getInterimApplicationType().getServiceType())
             .serviceApplicationDocsUploadedPreSubmission(userOptions.awaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
+<<<<<<< HEAD
             .serviceApplicationDocuments(evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs())
+=======
+            .serviceApplicationDocuments(
+                    evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs()
+            )
+>>>>>>> 38e4ff56f (Updates to general app payment case fields)
             .alternativeServiceFeeRequired(YesOrNo.YES)
             .build();
     }

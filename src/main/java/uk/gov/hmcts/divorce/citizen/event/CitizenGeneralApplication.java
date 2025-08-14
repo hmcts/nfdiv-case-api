@@ -112,6 +112,7 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
 
         if (userOptions.willMakePayment()) {
             applicationFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_CARD);
+            applicationFee.setHasCompletedOnlinePayment(YesOrNo.NO);
             prepareCaseForGeneralApplicationPayment(newGeneralApplication, applicant, caseId);
 
             details.setState(AwaitingGeneralApplicationPayment);

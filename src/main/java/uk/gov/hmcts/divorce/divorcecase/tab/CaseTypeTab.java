@@ -221,6 +221,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2FoHWFReferenceNumber", RESPONDENT_APPLIED_FOR_FO_HWF)
             .field("generalApplicationFeeOrderSummary")
             .field("generalApplicationFeePaymentMethod")
+            .field("generalApplicationFeeHasCompletedOnlinePayment")
+            .field("generalApplicationFeePaymentReference")
             .field("generalApplicationFeeAccountNumber")
             .field("generalApplicationFeeAccountReferenceNumber")
             .field("generalApplicationFeeHelpWithFeesReferenceNumber")
@@ -404,6 +406,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("servicePaymentFeeOrderSummary")
             .field("servicePaymentFeePaymentReference")
             .field("servicePaymentFeePaymentMethod", "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\"")
+            .field("servicePaymentFeeHasCompletedOnlinePayment")
+            .field("servicePaymentFeePaymentReference")
             .field(
               "dateOfPayment",
               "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\" OR servicePaymentFeePaymentReference=\"*\"")

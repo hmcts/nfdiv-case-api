@@ -182,6 +182,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
     {
         String paymentReference = paymentValidatorService.getLastPayment(payments).getReference();
         generalApplication.getGeneralApplicationFee().setPaymentReference(paymentReference);
+        generalApplication.getGeneralApplicationFee().setHasCompletedOnlinePayment(YesOrNo.YES);
         generalApplication.getGeneralApplicationFee().setDateOfPayment(LocalDate.now(clock));
         applicant.setGenApplicationPayments(null);
         applicant.setGeneralApplicationServiceRequest(null);
