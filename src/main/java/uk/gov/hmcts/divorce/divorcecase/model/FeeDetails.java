@@ -10,8 +10,11 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
+
+import java.time.LocalDate;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
@@ -62,8 +65,20 @@ public class FeeDetails {
     @CCD(label = "Payment service request")
     private String serviceRequestReference;
 
-    @CCD(label = "Payment reference")
+    @CCD(label = "Has the user completed their online card or PBA payment for this fee?")
+    private YesOrNo hasCompletedOnlinePayment;
+
+    @CCD(
+        label = "Payment reference",
+        searchable = false
+    )
     private String paymentReference;
+
+    @CCD(
+        label = "Payment date",
+        searchable = false
+    )
+    private LocalDate dateOfPayment;
 
     @JsonIgnore
     public boolean isPaymentMethodPba() {

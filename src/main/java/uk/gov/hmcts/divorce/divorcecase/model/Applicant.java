@@ -12,8 +12,10 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant1DeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2DeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CitizenAccess;
@@ -290,6 +292,28 @@ public class Applicant {
         searchable = false
     )
     private InterimApplicationOptions interimApplicationOptions;
+
+    @CCD(
+        typeOverride = Collection,
+        typeParameterOverride = "Payment",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private List<ListValue<Payment>> genApplicationPayments;
+
+    @CCD(
+        label = "General Application Service Request",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private String generalApplicationServiceRequest;
+
+    @CCD(
+        label = "General application order summary",
+        access = {DefaultAccess.class, Applicant1DeleteAccess.class},
+        searchable = false
+    )
+    private OrderSummary generalApplicationOrderSummary;
 
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {

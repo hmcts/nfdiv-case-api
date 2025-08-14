@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
@@ -31,6 +33,13 @@ public class GeneralApplication {
         typeParameterOverride = "GeneralApplicationType"
     )
     private GeneralApplicationType generalApplicationType;
+
+    @CCD(
+        label = "Application date",
+        searchable = false
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate receivedGeneralApplicationDate;
 
     @CCD(
         label = "Please provide more information about general application type",
@@ -68,6 +77,24 @@ public class GeneralApplication {
     )
     private String generalApplicationDocumentComments;
 
+    @CCD(
+        label = "All documents uploaded before submission?",
+        searchable = false
+    )
+    private YesOrNo generalApplicationDocsUploadedPreSubmission;
+
+    @CCD(
+        label = "Was the general application submitted digitally?",
+        searchable = false
+    )
+    private YesOrNo generalApplicationSubmittedOnline;
+
+    @CCD(
+        label = "Which party submitted the general application?",
+        searchable = false
+    )
+    private GeneralParties generalParties;
+
     @JsonUnwrapped(prefix = "generalApplicationFee")
     @Builder.Default
     private FeeDetails generalApplicationFee = new FeeDetails();
@@ -83,4 +110,10 @@ public class GeneralApplication {
         searchable = false
     )
     private String generalApplicationUrgentCaseReason;
+
+    @CCD(
+        label = "Has the citizen or their representative completed online payment for the application?",
+        searchable = false
+    )
+    private YesOrNo hasCompletedOnlinePayment;
 }
