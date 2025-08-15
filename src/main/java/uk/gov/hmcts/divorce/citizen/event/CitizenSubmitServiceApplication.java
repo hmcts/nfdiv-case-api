@@ -127,16 +127,13 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
-                                            CaseDetails<CaseData, State> beforeDetails) {
+                                               CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} submitted callback invoked for Case Id: {}", CITIZEN_SERVICE_APPLICATION, details.getId());
 
         CaseData data = details.getData();
         AlternativeService alternativeService = data.getAlternativeService();
 
-        if (InterimApplicationType.SEARCH_GOV_RECORDS.equals(data.getApplicant1().getInterimApplicationOptions()
-            .getInterimApplicationType())) {
-            interimApplicationSubmissionService.sendNotifications(details.getId(), null, data);
-        } else if (!YesOrNo.YES.equals(alternativeService.getAlternativeServiceFeeRequired())) {
+        if (!YesOrNo.YES.equals(alternativeService.getAlternativeServiceFeeRequired())) {
             interimApplicationSubmissionService.sendNotifications(details.getId(), alternativeService.getAlternativeServiceType(), data);
         }
 
@@ -159,7 +156,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .serviceApplicationDocsUploadedPreSubmission(userOptions.awaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
             .serviceApplicationDocuments(
-                    evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs()
+                evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs()
             )
             .build();
     }
