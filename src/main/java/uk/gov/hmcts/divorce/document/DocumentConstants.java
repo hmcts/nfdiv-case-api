@@ -224,6 +224,9 @@ public final class DocumentConstants {
     public static final String ALTERNATIVE_SERVICE_APPLICATION_TEMPLATE_ID = "ALTERNATIVE_SERVICE_APPLICATION";
     public static final String ALTERNATIVE_SERVICE_APPLICATION_DOCUMENT_NAME = "AlternativeServiceApplicationAnswers";
 
+    public static final String BAILIFF_SERVICE_APPLICATION_TEMPLATE_ID = "BAILIFF_SERVICE_APPLICATION";
+    public static final String BAILIFF_SERVICE_APPLICATION_DOCUMENT_NAME = "BailiffServiceApplicationAnswers";
+
     private DocumentConstants() {
     }
 }
