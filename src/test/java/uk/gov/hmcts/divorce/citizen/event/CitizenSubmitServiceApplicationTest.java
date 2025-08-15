@@ -35,6 +35,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AWAITING_DECISION_ERROR;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -116,7 +117,7 @@ class CitizenSubmitServiceApplicationTest {
         );
 
         AlternativeService alternativeService = response.getData().getAlternativeService();
-        assertThat(response.getState()).isEqualTo(State.AwaitingServicePayment);
+        assertThat(response.getState()).isEqualTo(AwaitingServicePayment);
         assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
         assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isEqualTo(orderSummary);
         assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
@@ -156,7 +157,7 @@ class CitizenSubmitServiceApplicationTest {
         );
 
         AlternativeService alternativeService = response.getData().getAlternativeService();
-        assertThat(response.getState()).isEqualTo(State.AwaitingServicePayment);
+        assertThat(response.getState()).isEqualTo(AwaitingServicePayment);
         assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
         assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isNull();
         assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isNull();
@@ -167,7 +168,7 @@ class CitizenSubmitServiceApplicationTest {
     }
 
     @Test
-    void generateDocumentWhenInterimApplicationTypeIsSearchGovRecords() {
+    void givenCitizenWillNotMakePaymentButDocsHaveNotBeenSubmittedThenChangeStateToAwaitingApplicant() {
         setMockClock(clock);
 
         CaseData caseData = CaseData.builder()
@@ -175,9 +176,10 @@ class CitizenSubmitServiceApplicationTest {
                 Applicant.builder()
                     .firstName(TEST_FIRST_NAME)
                     .interimApplicationOptions(InterimApplicationOptions.builder()
-                        .interimAppsUseHelpWithFees(YesOrNo.NO)
-                        .interimApplicationType(InterimApplicationType.SEARCH_GOV_RECORDS)
-                        .searchGovRecordsJourneyOptions(SearchGovRecordsJourneyOptions.builder().build())
+                        .interimAppsUseHelpWithFees(YesOrNo.YES)
+                        .interimAppsCannotUploadDocs(YesOrNo.YES)
+                        .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
+                        .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
                         .build())
                     .build()
             ).build();
@@ -194,8 +196,15 @@ class CitizenSubmitServiceApplicationTest {
             caseDetails, caseDetails
         );
 
-        assertThat(caseData.getApplicant1().getInterimApplicationOptions().getSearchGovRecordsJourneyOptions()
-            .getApplicationAnswers()).isEqualTo(generatedApplication);
+        AlternativeService alternativeService = response.getData().getAlternativeService();
+        assertThat(response.getState()).isEqualTo(State.AwaitingDocuments);
+        assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
+        assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isNull();
+        assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isNull();
+        assertThat(alternativeService.getAlternativeServiceFeeRequired()).isNotEqualTo(YesOrNo.YES);
+        assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
+        assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.NO);
+        assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
     }
 
     @Test
@@ -244,8 +253,9 @@ class CitizenSubmitServiceApplicationTest {
 
 
     @Test
-    void shouldTriggerNotificationsIfApplicationSubmittedWithHelpWithFees() {
-        CaseData caseData = CaseData.builder().build();
+    void shouldTriggerDeemedServiceNotificationsIfApplicationSubmittedWithHelpWithFees() {
+        CaseData caseData = buildCaseData(InterimApplicationType.DEEMED_SERVICE);
+
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setId(TEST_CASE_ID);
 
@@ -264,8 +274,9 @@ class CitizenSubmitServiceApplicationTest {
     }
 
     @Test
-    void shouldNotTriggerNotificationsIfApplicationRequiresPayment() {
-        CaseData caseData = CaseData.builder().build();
+    void shouldNotTriggerDeemedServiceNotificationsIfApplicationRequiresPayment() {
+        CaseData caseData = buildCaseData(InterimApplicationType.DEEMED_SERVICE);
+
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setId(TEST_CASE_ID);
 
@@ -282,22 +293,13 @@ class CitizenSubmitServiceApplicationTest {
     }
 
     @Test
-    void givenCitizenWillNotMakePaymentButDocsHaveNotBeenSubmittedThenChangeStateToAwaitingApplicant() {
+    void generateDocumentAndSetStateToAwaitingServicePaymentWhenInterimApplicationTypeIsSearchGovRecords() {
         setMockClock(clock);
 
-        CaseData caseData = CaseData.builder()
-            .applicant1(
-                Applicant.builder()
-                    .firstName(TEST_FIRST_NAME)
-                    .interimApplicationOptions(InterimApplicationOptions.builder()
-                        .interimAppsUseHelpWithFees(YesOrNo.YES)
-                        .interimAppsCannotUploadDocs(YesOrNo.YES)
-                        .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
-                        .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
-                        .build())
-                    .build()
-            ).build();
+        CaseData caseData = buildCaseData(InterimApplicationType.SEARCH_GOV_RECORDS);
 
+        caseData.getApplicant1().getInterimApplicationOptions()
+            .setSearchGovRecordsJourneyOptions(SearchGovRecordsJourneyOptions.builder().build());
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setId(TEST_CASE_ID);
 
@@ -310,15 +312,34 @@ class CitizenSubmitServiceApplicationTest {
             caseDetails, caseDetails
         );
 
-        AlternativeService alternativeService = response.getData().getAlternativeService();
-        assertThat(response.getState()).isEqualTo(State.AwaitingDocuments);
-        assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
-        assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isNull();
-        assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isNull();
-        assertThat(alternativeService.getAlternativeServiceFeeRequired()).isNotEqualTo(YesOrNo.YES);
-        assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
-        assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.NO);
-        assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
+        assertThat(caseData.getApplicant1().getInterimApplicationOptions().getSearchGovRecordsJourneyOptions()
+            .getApplicationAnswers()).isEqualTo(generatedApplication);
+        assertThat(caseDetails.getState()).isEqualTo(AwaitingServicePayment);
     }
 
+    @Test
+    void shouldTriggerSearchGovRecordsApplicationNotificationsIfApplicationIsSearchGovRecords() {
+        CaseData caseData = buildCaseData(InterimApplicationType.SEARCH_GOV_RECORDS);
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        citizenSubmitServiceApplication.submitted(caseDetails, caseDetails);
+
+        verify(interimApplicationSubmissionService).sendNotifications(
+            TEST_CASE_ID, null, caseData
+        );
+    }
+
+    private CaseData buildCaseData(InterimApplicationType interimApplicationType) {
+        return CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(interimApplicationType)
+                            .build())
+                    .build()
+            ).build();
+    }
 }
