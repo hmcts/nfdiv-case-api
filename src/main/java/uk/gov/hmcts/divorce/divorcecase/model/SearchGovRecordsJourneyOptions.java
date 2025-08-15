@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -23,6 +24,14 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
+
+    @CCD(
+        label = "Search gov records application submitted date",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate applicationSubmittedDate;
 
     @CCD(
         label = "Which government departments do you need us to search for your partner's details?",
@@ -88,7 +97,7 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String knowPartnerNationalInsurance;
+    private YesOrNo knowPartnerNationalInsurance;
 
     @CCD(
         label = "Enter your wife's National Insurance number",
@@ -145,4 +154,11 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
         searchable = false
     )
     private String partnerAdditionalAddressDates2;
+
+    @CCD(
+        label = "Search gov records application answers",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private DivorceDocument applicationAnswers;
 }
