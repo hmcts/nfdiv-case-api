@@ -38,6 +38,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.ALTERNATIVE_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -47,10 +48,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalRe
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.ALTERNATIVE_SERVICE_REFUSED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_SERVICE_REFUSED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_AS_SERVICE_GRANTED;
@@ -168,6 +171,43 @@ class LegalAdvisorMakeServiceDecisionTest {
             .containsExactly(deemedOrDispensedDoc);
 
         verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
+    }
+
+    @Test
+    void shouldUpdateStateToGeneralConsiderationCompleteAndNotGeneratedOrderIfApplicationIsGrantedAndTypeIsAlternativeService() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .serviceApplicationGranted(YES)
+                    .alternativeServiceType(ALTERNATIVE_SERVICE)
+                    .build()
+            )
+            .build();
+
+        LocalDate issueDate = LocalDate.now();
+        caseData.getApplication().setIssueDate(issueDate);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            makeServiceDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
+        assertThat(listValue.getValue().getServiceApplicationDecisionDate())
+            .isEqualTo(getExpectedLocalDate());
+
+        assertThat(response.getState()).isEqualTo(GeneralConsiderationComplete);
+
+        assertThat(response.getData().getDocuments().getDocumentsGenerated()).isNull();
+        verifyNoInteractions(notificationDispatcher);
+        verifyNoInteractions(caseDataDocumentService);
     }
 
     @Test
@@ -595,6 +635,68 @@ class LegalAdvisorMakeServiceDecisionTest {
         assertThat(response.getData().getDocuments().getDocumentsGenerated())
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
+
+        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
+    }
+
+    @Test
+    void shouldUpdateStateToAwaitingAosAndGenerateAlternativeServiceRefusalOrderDocIfApplicationIsNotGrantedAndTypeIsAlternativeService() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .receivedServiceApplicationDate(LocalDate.now(clock))
+                    .serviceApplicationGranted(NO)
+                    .alternativeServiceType(ALTERNATIVE_SERVICE)
+                    .build()
+            ).application(Application.builder().issueDate(LocalDate.now(clock)).build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        var alternativeServiceRefusedDoc = new Document(
+            DOCUMENT_URL,
+            ALTERNATIVE_SERVICE_REFUSED_FILE_NAME,
+            DOCUMENT_URL + "/binary"
+        );
+
+        when(
+            caseDataDocumentService.renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                SERVICE_REFUSAL_TEMPLATE_ID,
+                ENGLISH,
+                ALTERNATIVE_SERVICE_REFUSED_FILE_NAME
+            ))
+            .thenReturn(alternativeServiceRefusedDoc);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            makeServiceDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
+        assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+            .isEqualTo(getExpectedLocalDate());
+
+        assertThat(response.getState()).isEqualTo(AwaitingAos);
+
+        var alternativeServiceDoc = DivorceDocument
+            .builder()
+            .documentLink(alternativeServiceRefusedDoc)
+            .documentFileName(alternativeServiceRefusedDoc.getFilename())
+            .documentType(DocumentType.ALTERNATIVE_SERVICE_REFUSED)
+            .build();
+
+        assertThat(response.getData().getDocuments().getDocumentsGenerated())
+            .extracting("value")
+            .containsExactly(alternativeServiceDoc);
 
         verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
     }
