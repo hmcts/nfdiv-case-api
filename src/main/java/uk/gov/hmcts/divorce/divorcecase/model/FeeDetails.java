@@ -66,7 +66,10 @@ public class FeeDetails {
     @CCD(label = "Payment service request")
     private String serviceRequestReference;
 
-    @CCD(label = "Has the user completed their online card or PBA payment for this application?")
+    @CCD(
+        label = "Has the user completed their online card or PBA payment for this application?",
+        searchable = false
+    )
     private YesOrNo hasCompletedOnlinePayment;
 
     @CCD(
