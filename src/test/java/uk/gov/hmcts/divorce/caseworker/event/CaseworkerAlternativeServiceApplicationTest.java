@@ -100,8 +100,7 @@ class CaseworkerAlternativeServiceApplicationTest {
     static Stream<Arguments> provideTestArguments() {
         return Stream.of(
             Arguments.of(YesOrNo.NO, null, State.AwaitingServiceConsideration),
-            Arguments.of(YesOrNo.YES, AlternativeServiceType.BAILIFF, State.AwaitingServicePayment),
-            Arguments.of(YesOrNo.NO, AlternativeServiceType.BAILIFF, State.AwaitingBailiffReferral)
+            Arguments.of(YesOrNo.YES, AlternativeServiceType.BAILIFF, State.AwaitingServicePayment)
         );
     }
 

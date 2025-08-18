@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -23,6 +24,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
@@ -70,15 +72,19 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
     private final HoldingPeriodService holdingPeriodService;
 
+    public static final String ERROR_MUST_MAKE_BAILIFF_DECISION = "Bailiff application decisions must be made with 'Make bailiff decision'";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(LEGAL_ADVISOR_SERVICE_DECISION)
             .forStates(AwaitingServiceConsideration)
             .name("Make service decision")
+            .showCondition("alternativeServiceType!=\"bailiff\"")
             .description("Make service decision")
             .showSummary()
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, SOLICITOR, CITIZEN, SYSTEMUPDATE, JUDGE))
@@ -97,6 +103,19 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                 .mandatory(AlternativeService::getRefusalReason)
                 .mandatory(AlternativeService::getServiceApplicationRefusalReason)
                 .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        AlternativeServiceType serviceType = details.getData().getAlternativeService().getAlternativeServiceType();
+        if (AlternativeServiceType.BAILIFF.equals(serviceType)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(ERROR_MUST_MAKE_BAILIFF_DECISION))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
