@@ -30,6 +30,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -89,7 +90,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
         Optional<GeneralApplication> generalAppOptional = findActiveGeneralApplication(data, applicant);
 
         if (generalAppOptional.isEmpty()) {
-            log.info("Failed to find ongoing {} general application for payment on Case Id: {}",
+            log.info("Failed to find active general application for payment, party: {}, case id: {}",
                 isApplicant1 ? "Applicant 1" : "Respondent/Applicant2", caseId);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -109,7 +110,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
         String paymentReference = paymentValidatorService.getLastPayment(payments).getReference();
         generalApplication.recordPayment(paymentReference, LocalDate.now(clock));
-        applicant.setOngoingGeneralApplication(null);
+        applicant.setActiveGeneralApplication(null);
 
         if (hasGeneralReferralInProgress(data.getGeneralReferral())) {
             details.setState(GeneralApplicationReceived);
@@ -158,6 +159,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
         return caseData.getGeneralApplications().stream()
             .map(ListValue::getValue)
+            .filter(Objects::nonNull)
             .filter(application -> isActiveGeneralApplication(application, serviceRequest))
             .findFirst();
     }

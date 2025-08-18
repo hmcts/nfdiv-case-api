@@ -14,7 +14,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplic
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -37,8 +36,7 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
                 AwaitingResponseToHWFDecision,
                 AwaitingServicePayment,
                 AwaitingFinalOrderPayment,
-                AwaitingGeneralApplicationPayment,
-                GeneralApplicationReceived)
+                AwaitingGeneralApplicationPayment)
             .showCondition(NEVER_SHOW)
             .name("Payment reference generated")
             .description("Payment reference generated")

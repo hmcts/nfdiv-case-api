@@ -389,7 +389,7 @@ public class Applicant {
     }
 
     @JsonIgnore
-    public void setOngoingGeneralApplication(String serviceRequest) {
+    public void setActiveGeneralApplication(String serviceRequest) {
         this.generalAppServiceRequest = serviceRequest;
         this.generalAppPayments = new ArrayList<>();
     }
