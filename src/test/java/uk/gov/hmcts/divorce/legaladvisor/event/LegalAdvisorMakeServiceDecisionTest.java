@@ -123,6 +123,22 @@ class LegalAdvisorMakeServiceDecisionTest {
     }
 
     @Test
+    void shouldNotReturnErrorIfTheServiceApplicationTypeIsNotBailiff() {
+        final CaseData caseData = caseData();
+        caseData.getAlternativeService().setServiceApplicationGranted(YES);
+        caseData.getAlternativeService().setAlternativeServiceType(AlternativeServiceType.DEEMED);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            makeServiceDecision.aboutToStart(details);
+
+        assertThat(response.getErrors()).isNullOrEmpty();
+    }
+
+    @Test
     void shouldUpdateStateToHoldingAndSetDecisionDateAndGenerateOrderToDispenseDocIfApplicationIsGrantedAndTypeIsDispensed() {
 
         setMockClock(clock);

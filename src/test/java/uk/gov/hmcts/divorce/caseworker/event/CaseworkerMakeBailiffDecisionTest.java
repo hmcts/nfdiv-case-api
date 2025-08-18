@@ -95,6 +95,22 @@ class CaseworkerMakeBailiffDecisionTest {
     }
 
     @Test
+    void shouldNotReturnErrorIfTheServiceApplicationTypeIsBailiff() {
+        final CaseData caseData = caseData();
+        caseData.getAlternativeService().setServiceApplicationGranted(YES);
+        caseData.getAlternativeService().setAlternativeServiceType(AlternativeServiceType.BAILIFF);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            makeBailiffDecision.aboutToStart(details);
+
+        assertThat(response.getErrors()).isNullOrEmpty();
+    }
+
+    @Test
     void shouldChangeCaseStateToAwaitingBailiffServiceAndSetDecisionDateWhenServiceApplicationIsGrantedAndServiceTypeIsBailiff() {
         setMockClock(clock);
 
