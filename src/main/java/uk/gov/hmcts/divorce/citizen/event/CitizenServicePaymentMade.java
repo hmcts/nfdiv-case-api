@@ -100,7 +100,7 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
 
         CaseData data = details.getData();
 
-        interimApplicationSubmissionService.sendNotifications(
+        interimApplicationSubmissionService.sendServiceApplicationNotifications(
             details.getId(), data.getAlternativeService().getAlternativeServiceType(), data
         );
 

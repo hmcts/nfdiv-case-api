@@ -34,7 +34,7 @@ public class InterimApplicationSubmissionService {
     private final BailiffServiceApplicationSubmittedNotification bailiffApplicationSubmittedNotification;
     private final SearchGovRecordsApplicationSubmittedNotification searchGovRecordsApplicationNotifications;
 
-    public DivorceDocument generateAnswerDocument(long caseId, Applicant applicant, CaseData caseData) {
+    public DivorceDocument generateServiceApplicationAnswerDocument(long caseId, Applicant applicant, CaseData caseData) {
         InterimApplicationType applicationType = applicant.getInterimApplicationOptions().getInterimApplicationType();
 
         return switch (applicationType) {
@@ -47,7 +47,7 @@ public class InterimApplicationSubmissionService {
         };
     }
 
-    public void sendNotifications(long caseId, AlternativeServiceType serviceType, CaseData caseData) {
+    public void sendServiceApplicationNotifications(long caseId, AlternativeServiceType serviceType, CaseData caseData) {
         switch (serviceType) {
             case DEEMED -> notificationDispatcher.send(deemedApplicationSubmittedNotification, caseData, caseId);
             case BAILIFF -> notificationDispatcher.send(bailiffApplicationSubmittedNotification, caseData, caseId);

@@ -106,7 +106,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServicePayment);
         }
 
-        DivorceDocument applicationDocument = interimApplicationSubmissionService.generateAnswerDocument(
+        DivorceDocument applicationDocument = interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
             caseId, applicant, data
         );
         newServiceApplication.setServiceApplicationAnswers(applicationDocument);
@@ -126,7 +126,9 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         ServicePaymentMethod paymentMethod = alternativeService.getServicePaymentFee().getPaymentMethod();
 
         if (ServicePaymentMethod.FEE_PAY_BY_HWF.equals(paymentMethod)) {
-            interimApplicationSubmissionService.sendNotifications(details.getId(), alternativeService.getAlternativeServiceType(), data);
+            interimApplicationSubmissionService.sendServiceApplicationNotifications(
+                details.getId(), alternativeService.getAlternativeServiceType(), data
+            );
         }
 
         return SubmittedCallbackResponse.builder().build();

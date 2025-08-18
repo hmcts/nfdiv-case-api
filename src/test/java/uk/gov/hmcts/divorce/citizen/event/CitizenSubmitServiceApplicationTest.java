@@ -108,7 +108,7 @@ class CitizenSubmitServiceApplicationTest {
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateAnswerDocument(
+        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -151,7 +151,7 @@ class CitizenSubmitServiceApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateAnswerDocument(
+        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -193,7 +193,7 @@ class CitizenSubmitServiceApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateAnswerDocument(
+        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -241,7 +241,7 @@ class CitizenSubmitServiceApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateAnswerDocument(
+        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -277,7 +277,7 @@ class CitizenSubmitServiceApplicationTest {
 
         citizenSubmitServiceApplication.submitted(caseDetails, caseDetails);
 
-        verify(interimApplicationSubmissionService).sendNotifications(
+        verify(interimApplicationSubmissionService).sendServiceApplicationNotifications(
             TEST_CASE_ID, AlternativeServiceType.DEEMED, caseData
         );
     }

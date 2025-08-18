@@ -81,7 +81,9 @@ class InterimApplicationSubmissionServiceTest {
         when(deemedServiceApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
             .thenReturn(generatedDocument);
 
-        DivorceDocument result = interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
+        DivorceDocument result = interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+            caseId, caseData.getApplicant1(), caseData
+        );
 
         verify(deemedServiceApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
         assertThat(result).isEqualTo(generatedDocument);
@@ -105,7 +107,9 @@ class InterimApplicationSubmissionServiceTest {
         when(bailiffServiceApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
             .thenReturn(generatedDocument);
 
-        DivorceDocument result = interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
+        DivorceDocument result = interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+            caseId, caseData.getApplicant1(), caseData
+        );
 
         verify(bailiffServiceApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
         assertThat(result).isEqualTo(generatedDocument);
@@ -126,7 +130,7 @@ class InterimApplicationSubmissionServiceTest {
 
         assertThrows(
             UnsupportedOperationException.class,
-            () -> interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData)
+            () -> interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(caseId, caseData.getApplicant1(), caseData)
         );
     }
 
@@ -135,7 +139,7 @@ class InterimApplicationSubmissionServiceTest {
         long caseId = TEST_CASE_ID;
         CaseData caseData = CaseData.builder().build();
 
-        interimApplicationSubmissionService.sendNotifications(caseId, AlternativeServiceType.DEEMED, caseData);
+        interimApplicationSubmissionService.sendServiceApplicationNotifications(caseId, AlternativeServiceType.DEEMED, caseData);
 
         verify(notificationDispatcher).send(deemedNotification, caseData, caseId);
     }
@@ -145,7 +149,7 @@ class InterimApplicationSubmissionServiceTest {
         long caseId = TEST_CASE_ID;
         CaseData caseData = CaseData.builder().build();
 
-        interimApplicationSubmissionService.sendNotifications(caseId, AlternativeServiceType.BAILIFF, caseData);
+        interimApplicationSubmissionService.sendServiceApplicationNotifications(caseId, AlternativeServiceType.BAILIFF, caseData);
 
         verify(notificationDispatcher).send(bailiffNotification, caseData, caseId);
     }
@@ -167,7 +171,9 @@ class InterimApplicationSubmissionServiceTest {
         when(alternativeServiceApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
             .thenReturn(generatedDocument);
 
-        DivorceDocument result = interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
+        DivorceDocument result = interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+            caseId, caseData.getApplicant1(), caseData
+        );
 
         assertThat(result).isEqualTo(generatedDocument);
     }
@@ -185,7 +191,9 @@ class InterimApplicationSubmissionServiceTest {
                     .build()
             ).build();
 
-        interimApplicationSubmissionService.sendNotifications(caseId, AlternativeServiceType.ALTERNATIVE_SERVICE, caseData);
+        interimApplicationSubmissionService.sendServiceApplicationNotifications(
+            caseId, AlternativeServiceType.ALTERNATIVE_SERVICE, caseData
+        );
 
         verify(notificationDispatcher).send(alternativeServiceApplicationSubmittedNotification, caseData, caseId);
     }
