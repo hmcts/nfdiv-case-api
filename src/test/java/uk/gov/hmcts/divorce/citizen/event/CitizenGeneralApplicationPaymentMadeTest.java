@@ -26,6 +26,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -172,6 +173,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
                 .paymentMethod(ServicePaymentMethod.FEE_PAY_BY_CARD)
                 .serviceRequestReference(TEST_SERVICE_REFERENCE)
                 .build())
+            .generalApplicationReceivedDate(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
             .build();
 
         return CaseData.builder()
