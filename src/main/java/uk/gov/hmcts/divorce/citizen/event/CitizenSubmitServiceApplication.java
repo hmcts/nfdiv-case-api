@@ -91,6 +91,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
 
         if (InterimApplicationType.SEARCH_GOV_RECORDS.equals(userOptions.getInterimApplicationType())) {
+            userOptions.getSearchGovRecordsJourneyOptions().setApplicationSubmittedDate(LocalDate.now(clock));
             DivorceDocument applicationDocument = interimApplicationSubmissionService.generateAnswerDocument(caseId, applicant, data);
             userOptions.getSearchGovRecordsJourneyOptions().setApplicationAnswers(applicationDocument);
             var searchGovRecordsOptions = userOptions.getSearchGovRecordsJourneyOptions();

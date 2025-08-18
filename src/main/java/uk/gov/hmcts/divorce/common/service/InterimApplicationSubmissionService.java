@@ -64,6 +64,9 @@ public class InterimApplicationSubmissionService {
         } else if (AlternativeServiceType.ALTERNATIVE_SERVICE.equals(serviceType)) {
             notificationDispatcher.send(alternativeServiceApplicationSubmittedNotification, caseData, caseId);
             return;
+        }  else if (InterimApplicationType.SEARCH_GOV_RECORDS.equals(caseData.getApplicant1()
+            .getInterimApplicationOptions().getInterimApplicationType())) {
+            return;
         }
 
         throw new UnsupportedOperationException();
