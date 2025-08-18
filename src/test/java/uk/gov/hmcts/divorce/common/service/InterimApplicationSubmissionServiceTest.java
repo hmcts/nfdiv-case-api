@@ -23,7 +23,7 @@ import uk.gov.hmcts.divorce.document.print.generator.DeemedServiceApplicationGen
 import uk.gov.hmcts.divorce.document.print.generator.SearchGovRecordsApplicationGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertThrows;
@@ -212,7 +212,7 @@ class InterimApplicationSubmissionServiceTest {
             ).build();
 
         GeneralApplication generalApplication = GeneralApplication.builder()
-            .generalApplicationReceivedDate(LocalDate.of(2020, 1, 1))
+            .generalApplicationReceivedDate(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
             .generalApplicationType(GeneralApplicationType.DISCLOSURE_VIA_DWP)
             .build();
 
@@ -243,7 +243,7 @@ class InterimApplicationSubmissionServiceTest {
             ).build();
 
         GeneralApplication generalApplication = GeneralApplication.builder()
-            .generalApplicationReceivedDate(LocalDate.of(2020, 1, 1))
+            .generalApplicationReceivedDate(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
             .generalApplicationType(GeneralApplicationType.DISCLOSURE_VIA_DWP)
             .build();
 

@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.SearchGovRecordsApplicationTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 
@@ -45,7 +45,7 @@ class SearchGovRecordsApplicationGeneratorTest {
             .applicant1(Applicant.builder().build()).build();
 
         GeneralApplication generalApplication = GeneralApplication.builder()
-            .generalApplicationReceivedDate(LocalDate.of(2020, 1, 1))
+            .generalApplicationReceivedDate(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
             .build();
 
         Map<String, Object> templateVariables = Collections.emptyMap();

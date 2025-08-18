@@ -69,7 +69,7 @@ public class SearchGovRecordsApplicationTemplateContent {
         templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
         templateContent.put(CCD_CASE_REFERENCE, formatId(caseId));
         templateContent.put(
-            APPLICATION_DATE, dateTimeFormatter.format(generalApplication.getGeneralApplicationReceivedDate())
+            APPLICATION_DATE, dateTimeFormatter.format(generalApplication.getGeneralApplicationReceivedDate().toLocalDate())
         );
 
         SearchGovRecordsJourneyOptions applicationAnswers = caseData.getApplicant1().getInterimApplicationOptions()

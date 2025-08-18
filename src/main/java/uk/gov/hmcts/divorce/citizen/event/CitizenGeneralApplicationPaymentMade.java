@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
@@ -178,11 +179,16 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
     private GeneralReferral buildGeneralReferral(GeneralApplication generalApplication) {
         return GeneralReferral.builder()
             .generalReferralReason(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL)
+            .generalReferralFraudCase(YesOrNo.NO)
+            .generalReferralUrgentCase(YesOrNo.NO)
             .generalApplicationFrom(generalApplication.getGeneralApplicationParty())
             .generalApplicationReferralDate(LocalDate.now(clock))
-            .generalApplicationAddedDate(generalApplication.getGeneralApplicationReceivedDate())
+            .generalApplicationAddedDate(generalApplication.getGeneralApplicationReceivedDate().toLocalDate())
             .generalReferralType(GeneralReferralType.DISCLOSURE_VIA_DWP)
             .generalReferralFee(generalApplication.getGeneralApplicationFee())
+            .generalReferralJudgeOrLegalAdvisorDetails(
+                "Please refer to the Search Government Records application in the general applications tab"
+            )
             .build();
     }
 }

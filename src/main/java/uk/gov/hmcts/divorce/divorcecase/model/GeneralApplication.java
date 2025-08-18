@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
@@ -45,8 +46,8 @@ public class GeneralApplication {
         label = "Application date",
         searchable = false
     )
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate generalApplicationReceivedDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime generalApplicationReceivedDate;
 
     @CCD(
         label = "Please provide more information about general application type",

@@ -359,6 +359,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("generalReferralJudgeOrLegalAdvisorDetails")
             .field("generalReferralFeeRequired")
             .field("generalReferralFeePaymentMethod")
+            .field("generalReferralFeeServiceRequestReference")
+            .field("generalReferralFeePaymentReference")
             .field("generalReferralDecisionDate")
             .field("generalReferralDecision")
             .field("generalReferralDecisionReason")

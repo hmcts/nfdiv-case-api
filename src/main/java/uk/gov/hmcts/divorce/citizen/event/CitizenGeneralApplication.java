@@ -27,7 +27,7 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -157,7 +157,7 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
     private GeneralApplication buildGeneralApplication(InterimApplicationOptions userOptions, boolean isApplicant1) {
         return GeneralApplication.builder()
             .generalApplicationParty(isApplicant1 ? GeneralParties.APPLICANT : GeneralParties.RESPONDENT)
-            .generalApplicationReceivedDate(LocalDate.now(clock))
+            .generalApplicationReceivedDate(LocalDateTime.now(clock))
             .generalApplicationType(userOptions.getInterimApplicationType().getGeneralApplicationType())
             .generalApplicationSubmittedOnline(YesOrNo.YES)
             .build();
