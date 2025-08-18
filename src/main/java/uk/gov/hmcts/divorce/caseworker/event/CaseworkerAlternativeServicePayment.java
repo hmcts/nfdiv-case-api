@@ -22,7 +22,6 @@ import uk.gov.hmcts.divorce.payment.service.PaymentService;
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -53,13 +52,12 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(CASEWORKER_SERVICE_PAYMENT)
-            .forState(AwaitingServicePayment)
+            .forStateTransition(AwaitingServicePayment, AwaitingServiceConsideration)
             .name("Confirm service payment")
             .description("Service payment made")
             .showSummary()
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
-            .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
@@ -93,26 +91,6 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
             .data(caseData)
             .errors(null)
             .warnings(null)
-            .build();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
-                                                                       CaseDetails<CaseData, State> beforeDetails) {
-
-        log.info("CaseWorkerAlternativeServicePayment aboutToSubmit callback invoked for Case Id: {}", details.getId());
-
-        final var caseData = details.getData();
-        final State state;
-
-        if (caseData.getAlternativeService().getAlternativeServiceType() == AlternativeServiceType.BAILIFF) {
-            state = AwaitingBailiffReferral;
-        } else {
-            state = AwaitingServiceConsideration;
-        }
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .state(state)
             .build();
     }
 }

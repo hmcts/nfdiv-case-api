@@ -117,7 +117,6 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
 
         CaseData caseData = details.getData();
         AlternativeService altService = caseData.getAlternativeService();
-        AlternativeServiceType altServiceType = altService.getAlternativeServiceType();
 
         if (isNotEmpty(altService.getServiceApplicationDocuments())) {
             altService.getServiceApplicationDocuments().forEach(divorceDocumentListValue -> {
@@ -126,16 +125,9 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
             });
         }
 
-        State state;
-        if (DEEMED.equals(altServiceType) || DISPENSED.equals(altServiceType)) {
-            state = AwaitingServiceConsideration;
-        } else {
-            state = AwaitingBailiffReferral;
-        }
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
-            .state(state)
+            .state(AwaitingServiceConsideration)
             .build();
     }
 }

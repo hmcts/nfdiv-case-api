@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceOutcome;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -58,12 +59,14 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_WITH_SER
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SERVICE_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SERVICE_REFUSAL_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DISPENSE_WITH_SERVICE_GRANTED;
+import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeServiceDecision.ERROR_MUST_MAKE_BAILIFF_DECISION;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeServiceDecision.LEGAL_ADVISOR_SERVICE_DECISION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 class LegalAdvisorMakeServiceDecisionTest {
@@ -100,6 +103,23 @@ class LegalAdvisorMakeServiceDecisionTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(LEGAL_ADVISOR_SERVICE_DECISION);
+    }
+
+    @Test
+    void shouldReturnErrorIfTheServiceApplicationTypeIsBailiff() {
+        final CaseData caseData = caseData();
+        caseData.getAlternativeService().setServiceApplicationGranted(YES);
+        caseData.getAlternativeService().setAlternativeServiceType(AlternativeServiceType.BAILIFF);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            makeServiceDecision.aboutToStart(details);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(ERROR_MUST_MAKE_BAILIFF_DECISION);
     }
 
     @Test
