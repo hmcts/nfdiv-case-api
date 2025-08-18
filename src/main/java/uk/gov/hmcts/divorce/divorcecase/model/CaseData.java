@@ -33,6 +33,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAcces
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerBulkScanAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CitizenAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.InternalCaseFlagsAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAccess;
@@ -187,7 +188,7 @@ public class CaseData {
         label = "General Applications",
         typeOverride = Collection,
         typeParameterOverride = "GeneralApplication",
-        access = {SolicitorAndSystemUpdateAccess.class},
+        access = {SolicitorAndSystemUpdateAccess.class, CitizenAccess.class},
         searchable = false
     )
     private List<ListValue<GeneralApplication>> generalApplications;

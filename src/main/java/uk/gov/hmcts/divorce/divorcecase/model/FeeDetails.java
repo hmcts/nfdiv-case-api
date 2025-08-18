@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -65,7 +66,7 @@ public class FeeDetails {
     @CCD(label = "Payment service request")
     private String serviceRequestReference;
 
-    @CCD(label = "Has the user completed their online card or PBA payment for this fee?")
+    @CCD(label = "Has the user completed their online card or PBA payment for this application?")
     private YesOrNo hasCompletedOnlinePayment;
 
     @CCD(
@@ -78,6 +79,7 @@ public class FeeDetails {
         label = "Payment date",
         searchable = false
     )
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfPayment;
 
     @JsonIgnore

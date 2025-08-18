@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.SearchGovRecordsApplicationTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -24,12 +25,13 @@ public class SearchGovRecordsApplicationGenerator {
     private final SearchGovRecordsApplicationTemplateContent templateContent;
 
     public DivorceDocument generateDocument(final long caseId,
-                                      final Applicant applicant,
-                                      final CaseData caseData) {
+                                            final Applicant applicant,
+                                            final CaseData caseData,
+                                            final GeneralApplication generalApplication) {
         log.info("Generating search gov records application document for {}", caseId);
 
         Document document = caseDataDocumentService.renderDocument(
-            templateContent.getTemplateContent(caseData, caseId, applicant),
+            templateContent.getTemplateContent(caseData, caseId, applicant, generalApplication),
             caseId,
             SEARCH_GOV_RECORDS_APPLICATION_TEMPLATE_ID,
             applicant.getLanguagePreference(),

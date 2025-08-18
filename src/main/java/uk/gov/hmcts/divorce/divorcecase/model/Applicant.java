@@ -12,10 +12,8 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant1DeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2DeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CitizenAccess;
@@ -23,6 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -299,21 +298,14 @@ public class Applicant {
         access = {DefaultAccess.class},
         searchable = false
     )
-    private List<ListValue<Payment>> genApplicationPayments;
+    private List<ListValue<Payment>> generalAppPayments;
 
     @CCD(
         label = "General Application Service Request",
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String generalApplicationServiceRequest;
-
-    @CCD(
-        label = "General application order summary",
-        access = {DefaultAccess.class, Applicant1DeleteAccess.class},
-        searchable = false
-    )
-    private OrderSummary generalApplicationOrderSummary;
+    private String generalAppServiceRequest;
 
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
@@ -394,6 +386,12 @@ public class Applicant {
             return getApplicantAddress();
         }
         return null;
+    }
+
+    @JsonIgnore
+    public void setOngoingGeneralApplication(String serviceRequest) {
+        this.generalAppServiceRequest = serviceRequest;
+        this.generalAppPayments = new ArrayList<>();
     }
 
     @JsonIgnore

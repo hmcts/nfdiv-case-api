@@ -12,6 +12,8 @@ import uk.gov.hmcts.divorce.citizen.notification.interimapplications.SearchGovRe
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -20,6 +22,8 @@ import uk.gov.hmcts.divorce.document.print.generator.BailiffServiceApplicationGe
 import uk.gov.hmcts.divorce.document.print.generator.DeemedServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.SearchGovRecordsApplicationGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+
+import java.time.LocalDate;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertThrows;
@@ -199,13 +203,21 @@ class InterimApplicationSubmissionServiceTest {
                     .build()
             ).build();
 
+        GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationReceivedDate(LocalDate.of(2020, 1, 1))
+            .generalApplicationType(GeneralApplicationType.DISCLOSURE_VIA_DWP)
+            .build();
+
         DivorceDocument generatedDocument = DivorceDocument.builder().build();
-        when(searchGovRecordsApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
-            .thenReturn(generatedDocument);
+        when(searchGovRecordsApplicationGenerator.generateDocument(
+            caseId, caseData.getApplicant1(), caseData, generalApplication
+        )).thenReturn(generatedDocument);
 
-        DivorceDocument result = interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
+        DivorceDocument result = interimApplicationSubmissionService
+            .generateGeneralApplicationAnswerDocument(caseId, caseData.getApplicant1(), caseData, generalApplication);
 
-        verify(searchGovRecordsApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
+        verify(searchGovRecordsApplicationGenerator)
+            .generateDocument(caseId, caseData.getApplicant1(), caseData, generalApplication);
         assertThat(result).isEqualTo(generatedDocument);
     }
 
@@ -222,8 +234,13 @@ class InterimApplicationSubmissionServiceTest {
                     .build()
             ).build();
 
-        interimApplicationSubmissionService.sendNotifications(caseId, null, caseData);
+        GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationReceivedDate(LocalDate.of(2020, 1, 1))
+            .generalApplicationType(GeneralApplicationType.DISCLOSURE_VIA_DWP)
+            .build();
 
-        verify(notificationDispatcher).send(searchGovRecordsApplicationSubmittedNotification, caseData, caseId);
+        interimApplicationSubmissionService.sendGeneralApplicationNotifications(caseId, generalApplication, caseData);
+
+        verify(searchGovRecordsApplicationSubmittedNotification).sendToApplicant1(caseData, caseId, generalApplication);
     }
 }

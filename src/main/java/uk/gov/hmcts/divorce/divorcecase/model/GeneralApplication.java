@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,11 +36,17 @@ public class GeneralApplication {
     private GeneralApplicationType generalApplicationType;
 
     @CCD(
+        label = "Which party submitted the general application?",
+        searchable = false
+    )
+    private GeneralParties generalApplicationParty;
+
+    @CCD(
         label = "Application date",
         searchable = false
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate receivedGeneralApplicationDate;
+    private LocalDate generalApplicationReceivedDate;
 
     @CCD(
         label = "Please provide more information about general application type",
@@ -56,7 +63,7 @@ public class GeneralApplication {
     private GeneralApplicationFee generalApplicationFeeType;
 
     @CCD(
-        label = "General Application Document",
+        label = "General application answers",
         searchable = false
     )
     private DivorceDocument generalApplicationDocument;
@@ -78,22 +85,16 @@ public class GeneralApplication {
     private String generalApplicationDocumentComments;
 
     @CCD(
-        label = "All documents uploaded before submission?",
+        label = "Were all supporting documents uploaded before submission?",
         searchable = false
     )
     private YesOrNo generalApplicationDocsUploadedPreSubmission;
 
     @CCD(
-        label = "Was the general application submitted digitally?",
+        label = "Was the general application submitted online?",
         searchable = false
     )
     private YesOrNo generalApplicationSubmittedOnline;
-
-    @CCD(
-        label = "Which party submitted the general application?",
-        searchable = false
-    )
-    private GeneralParties generalParties;
 
     @JsonUnwrapped(prefix = "generalApplicationFee")
     @Builder.Default
@@ -116,4 +117,13 @@ public class GeneralApplication {
         searchable = false
     )
     private YesOrNo hasCompletedOnlinePayment;
+
+    @JsonIgnore
+    public void recordPayment(String paymentReference, LocalDate dateOfPayment) {
+        FeeDetails feeDetails = generalApplicationFee;
+
+        feeDetails.setPaymentReference(paymentReference);
+        feeDetails.setHasCompletedOnlinePayment(YesOrNo.YES);
+        feeDetails.setDateOfPayment(dateOfPayment);
+    }
 }

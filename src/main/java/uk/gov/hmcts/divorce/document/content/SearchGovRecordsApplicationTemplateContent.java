@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.SearchGovRecordsJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.SearchGovRecordsWhichDepartment;
-import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -25,7 +25,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class SearchGovRecordsApplicationTemplateContent implements TemplateContent {
+public class SearchGovRecordsApplicationTemplateContent {
 
     private final DocmosisCommonContent docmosisCommonContent;
 
@@ -49,20 +49,19 @@ public class SearchGovRecordsApplicationTemplateContent implements TemplateConte
     public static final String ADDITIONAL_ADDRESS2 = "additionalAddress2";
     public static final String ADDITIONAL_ADDRESS_2_DATES_LIVED_THERE = "additionalAddress2DatesLivedThere";
 
-    @Override
     public List<String> getSupportedTemplates() {
         return List.of(
             SEARCH_GOV_RECORDS_APPLICATION_TEMPLATE_ID
         );
     }
 
-    @Override
-    public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
+    public Map<String, Object> getTemplateContent(
+        CaseData caseData, Long caseId,
+        Applicant applicant, GeneralApplication generalApplication
+    ) {
         Map<String, Object> templateContent = docmosisCommonContent
             .getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 
-        SearchGovRecordsJourneyOptions applicationAnswers = caseData.getApplicant1().getInterimApplicationOptions()
-            .getSearchGovRecordsJourneyOptions();
         LanguagePreference languagePreference = applicant.getLanguagePreference();
         DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(languagePreference);
 
@@ -70,9 +69,11 @@ public class SearchGovRecordsApplicationTemplateContent implements TemplateConte
         templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
         templateContent.put(CCD_CASE_REFERENCE, formatId(caseId));
         templateContent.put(
-            APPLICATION_DATE, dateTimeFormatter.format(applicationAnswers.getApplicationSubmittedDate())
+            APPLICATION_DATE, dateTimeFormatter.format(generalApplication.getGeneralApplicationReceivedDate())
         );
 
+        SearchGovRecordsJourneyOptions applicationAnswers = caseData.getApplicant1().getInterimApplicationOptions()
+            .getSearchGovRecordsJourneyOptions();
         return searchGovRecordsApplicationContent(templateContent, applicationAnswers, dateTimeFormatter);
     }
 

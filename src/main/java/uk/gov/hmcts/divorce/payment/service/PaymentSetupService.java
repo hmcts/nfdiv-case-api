@@ -7,7 +7,6 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 
 import static uk.gov.hmcts.divorce.controller.PaymentCallbackController.PAYMENT_UPDATE_PATH;
@@ -79,31 +78,21 @@ public class PaymentSetupService {
     }
 
     public OrderSummary createGeneralApplicationOrderSummary(GeneralApplication generalApplication, long caseId) {
-        FeeDetails fee = generalApplication.getGeneralApplicationFee();
-        if (fee != null && fee.getOrderSummary() != null) {
-            return fee.getOrderSummary();
-        }
-
-        log.info("General application order summary not found for case id: {}, creating order summary", caseId);
+        log.info("Creating general application order summary for case id: {}", caseId);
 
         return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE);
     }
 
     public String createGeneralApplicationPaymentServiceRequest(
-        GeneralApplication generalApplication, long caseId, String responsibleParty
+        OrderSummary orderSummary, long caseId, String responsibleParty
     ) {
-        FeeDetails feeDetails = generalApplication.getGeneralApplicationFee();
-        if (feeDetails != null && feeDetails.getServiceRequestReference() != null) {
-            return feeDetails.getServiceRequestReference();
-        }
-
-        log.info("General Application payment service request not found for case id: {}, creating service request", caseId);
+        log.info("Creating general application payment service request for case id: {}", caseId);
 
         return paymentService.createServiceRequestReference(
             null,
             caseId,
             responsibleParty,
-            feeDetails.getOrderSummary()
+            orderSummary
         );
     }
 

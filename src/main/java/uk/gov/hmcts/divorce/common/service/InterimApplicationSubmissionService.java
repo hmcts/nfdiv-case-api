@@ -41,7 +41,6 @@ public class InterimApplicationSubmissionService {
             case DEEMED_SERVICE -> deemedServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
             case BAILIFF_SERVICE -> bailiffServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
             case ALTERNATIVE_SERVICE -> alternativeServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
-            case SEARCH_GOV_RECORDS -> searchGovRecordsApplicationGenerator.generateDocument(caseId, applicant, caseData);
             case DISPENSE_WITH_SERVICE -> throw new UnsupportedOperationException("DISPENSE_WITH_SERVICE not yet implemented");
             case PROCESS_SERVER_SERVICE -> throw new UnsupportedOperationException("PROCESS_SERVER_SERVICE not yet implemented");
             default -> throw new UnsupportedOperationException();
@@ -56,6 +55,16 @@ public class InterimApplicationSubmissionService {
                 .send(alternativeServiceApplicationSubmittedNotification, caseData, caseId);
             default -> throw new UnsupportedOperationException();
         }
+    }
+
+    public DivorceDocument generateGeneralApplicationAnswerDocument(
+        long caseId, Applicant applicant, CaseData caseData, GeneralApplication generalApplication
+    ) {
+        if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplication.getGeneralApplicationType())) {
+            return searchGovRecordsApplicationGenerator.generateDocument(caseId, applicant, caseData, generalApplication);
+        }
+
+        throw new UnsupportedOperationException();
     }
 
     public void sendGeneralApplicationNotifications(long caseId, GeneralApplication generalApplication, CaseData caseData) {
