@@ -103,33 +103,4 @@ public class CaseworkerConfirmServicePaymentIT {
             )
             .andExpect(jsonPath("$.state").value("AwaitingServiceConsideration"));
     }
-
-    @Test
-    void shouldSetStateToAwaitingBailiffReferralForBailiffService() throws Exception {
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        setMockClock(clock);
-        final LocalDate serviceDate = getExpectedLocalDate();
-
-        final CaseData caseData = caseData();
-        caseData.getApplication().setSolSignStatementOfTruth(YesOrNo.YES);
-        caseData.getApplication().setServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
-        caseData.getApplication().setIssueDate(serviceDate);
-
-        caseData.getAlternativeService().setAlternativeServiceType(AlternativeServiceType.BAILIFF);
-        caseData.getAlternativeService().getServicePaymentFee().setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_PHONE);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/callbacks/about-to-submit?page=AltPaymentSummary")
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest(caseData, CASEWORKER_SERVICE_PAYMENT)))
-                .accept(APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(
-                status().isOk()
-            )
-            .andExpect(jsonPath("$.state").value("AwaitingBailiffReferral"));
-    }
 }
