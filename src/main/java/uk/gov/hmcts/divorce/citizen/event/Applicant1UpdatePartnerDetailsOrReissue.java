@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -93,14 +94,9 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
 
         try {
 
-            boolean updateReissueOptionsForNewContactDetails = Optional.ofNullable(caseData.getApplicant1())
-                    .map(Applicant::getInterimApplicationOptions)
-                    .map(InterimApplicationOptions::getNoResponseJourneyOptions)
-                    .map(NoResponseJourneyOptions::getNoResponsePartnerNewEmailOrAddress)
-                    .isPresent();
-
-            if (updateReissueOptionsForNewContactDetails) {
+            if (processNoResponseJourneyOptions(getNoResponseJourneyOptions(caseData))) {
                 reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
+                details.setState(AwaitingAos);
             } else {
                 reIssueApplicationService.process(details);
             }
@@ -110,10 +106,6 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
                             details.getId())))
                     .build();
         }
-
-        if (processNoResponseJourneyOptions(getNoResponseJourneyOptions(caseData))) {
-            details.setState(AwaitingAos);
-        }       // Add logic for more options if required
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
