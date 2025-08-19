@@ -14,11 +14,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
+import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
@@ -918,7 +920,13 @@ class CommonContentTest {
         CaseData data = validCaseDataForIssueApplication();
         data.setAlternativeService(AlternativeService.builder()
             .serviceApplicationDocsUploadedPreSubmission(YesOrNo.YES)
-            .alternativeServiceFeeRequired(YesOrNo.YES)
+            .servicePaymentFee(
+                FeeDetails.builder()
+                    .paymentMethod(ServicePaymentMethod.FEE_PAY_BY_CARD)
+                    .paymentReference("reference")
+                    .build()
+            )
+            .dateOfPayment(LocalDate.of(2020, 1, 1))
             .receivedServiceApplicationDate(LocalDate.of(2020, 1, 1))
             .build());
 
@@ -941,7 +949,11 @@ class CommonContentTest {
         CaseData data = validCaseDataForIssueApplication();
         data.setAlternativeService(AlternativeService.builder()
             .serviceApplicationDocsUploadedPreSubmission(YesOrNo.NO)
-            .alternativeServiceFeeRequired(YesOrNo.NO)
+            .servicePaymentFee(
+                FeeDetails.builder()
+                    .paymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF)
+                    .build()
+            )
             .receivedServiceApplicationDate(LocalDate.of(2020, 1, 1))
             .build());
 

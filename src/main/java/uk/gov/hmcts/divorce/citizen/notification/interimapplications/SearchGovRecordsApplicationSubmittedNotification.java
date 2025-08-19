@@ -60,8 +60,8 @@ public class SearchGovRecordsApplicationSubmittedNotification implements Applica
 
         if (paidByCard) {
             DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
-            LocalDate responseDate = generalApplication.getGeneralApplicationReceivedDate()
-                .toLocalDate().plusDays(interimApplicationResponseOffsetDays);
+            LocalDate submittedDate = generalApplication.getGeneralApplicationFee().getDateOfPayment();
+            LocalDate responseDate = submittedDate.plusDays(interimApplicationResponseOffsetDays);
 
             templateVars.put("date", responseDate.format(dateTimeFormatter));
         }

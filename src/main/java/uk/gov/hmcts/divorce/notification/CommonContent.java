@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.RefusalOption;
+import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
@@ -238,15 +239,15 @@ public class CommonContent {
         Map<String, String> templateVars = mainTemplateVars(data, id, applicant, data.getApplicant2());
 
         AlternativeService serviceApplication = data.getAlternativeService();
-        boolean madePayment = YesOrNo.YES.equals(serviceApplication.getAlternativeServiceFeeRequired());
+        boolean madePayment = ServicePaymentMethod.FEE_PAY_BY_CARD.equals(serviceApplication.getServicePaymentFee().getPaymentMethod());
         DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
 
-        String responseDate = serviceApplication.getReceivedServiceApplicationDate()
-            .plusDays(interimApplicationResponseOffsetDays)
-            .format(dateTimeFormatter);
         templateVars.put(MADE_PAYMENT, madePayment ? YES : NO);
         templateVars.put(USED_HELP_WITH_FEES, !madePayment ? YES : NO);
-        templateVars.put(SUBMISSION_RESPONSE_DATE, madePayment ? responseDate : "");
+        templateVars.put(SUBMISSION_RESPONSE_DATE,
+            madePayment
+                ? serviceApplication.getDateOfPayment().plusDays(interimApplicationResponseOffsetDays).format(dateTimeFormatter)
+                : "");
 
         return templateVars;
     }
