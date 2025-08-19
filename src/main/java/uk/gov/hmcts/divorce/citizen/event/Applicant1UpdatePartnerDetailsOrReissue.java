@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -30,7 +29,6 @@ import java.util.Optional;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
-import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.TRY_SOMETHING_ELSE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -94,18 +92,17 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
 
         try {
 
-            if (processNoResponseJourneyOptions(getNoResponseJourneyOptions(caseData))) {
-                reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
-                details.setState(AwaitingAos);
-            } else {
-                reIssueApplicationService.process(details);
-            }
+            reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
+            details.setState(AwaitingAos);
+
         } catch (InvalidReissueOptionException ex) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                    .errors(List.of(String.format("Invalid update contact details option selected for CaseId: %s",
-                            details.getId())))
-                    .build();
+                .errors(List.of(String.format("Invalid update contact details option selected for CaseId: %s",
+                    details.getId())))
+                .build();
         }
+
+        caseData.getApplicant1().getInterimApplicationOptions().setNoResponseJourneyOptions(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -115,18 +112,13 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
 
-        NoResponseJourneyOptions noResponseJourneyOptions = getNoResponseJourneyOptions(details.getData());
+        log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_OR_REISSUE, details.getId());
 
-        if (processNoResponseJourneyOptions(noResponseJourneyOptions)) {
+        final User user = idamService.retrieveSystemUpdateUserDetails();
+        final String serviceAuth = authTokenGenerator.generate();
 
-            log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_OR_REISSUE, details.getId());
-
-            final User user = idamService.retrieveSystemUpdateUserDetails();
-            final String serviceAuth = authTokenGenerator.generate();
-
-            ccdUpdateService
-                .submitEvent(details.getId(), CASEWORKER_REISSUE_APPLICATION, user, serviceAuth);
-        }
+        ccdUpdateService
+            .submitEvent(details.getId(), CASEWORKER_REISSUE_APPLICATION, user, serviceAuth);
 
         return SubmittedCallbackResponse.builder().build();
     }
@@ -136,10 +128,4 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
             .map(InterimApplicationOptions::getNoResponseJourneyOptions)
             .orElse(null);
     }
-
-    private boolean processNoResponseJourneyOptions(NoResponseJourneyOptions options) {
-        return options != null
-            && !TRY_SOMETHING_ELSE.equals(options.getNoResponseSendPapersAgainOrTrySomethingElse());
-    }
-
 }
