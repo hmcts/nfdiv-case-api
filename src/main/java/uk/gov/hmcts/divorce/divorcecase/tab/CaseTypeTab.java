@@ -409,7 +409,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("servicePaymentFeeHasCompletedOnlinePayment")
             .field("servicePaymentFeePaymentReference")
             .field(
-              "dateOfPayment",
+              "servicePaymentFeeDateOfPayment",
               "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\" OR servicePaymentFeePaymentReference=\"*\"")
             .field("servicePaymentFeeAccountNumber",
                 "servicePaymentFeePaymentMethod=\"feePayByAccount\" AND alternativeServiceFeeRequired=\"Yes\"")

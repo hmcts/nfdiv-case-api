@@ -246,7 +246,8 @@ public class CommonContent {
         templateVars.put(USED_HELP_WITH_FEES, !madePayment ? YES : NO);
         templateVars.put(SUBMISSION_RESPONSE_DATE,
             madePayment
-                ? serviceApplication.getDateOfPayment().plusDays(interimApplicationResponseOffsetDays).format(dateTimeFormatter)
+                ? serviceApplication.getServicePaymentFee().getDateOfPayment()
+                    .plusDays(interimApplicationResponseOffsetDays).format(dateTimeFormatter)
                 : "");
 
         return templateVars;

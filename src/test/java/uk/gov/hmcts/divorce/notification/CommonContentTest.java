@@ -924,9 +924,9 @@ class CommonContentTest {
                 FeeDetails.builder()
                     .paymentMethod(ServicePaymentMethod.FEE_PAY_BY_CARD)
                     .paymentReference("reference")
+                    .dateOfPayment(LocalDate.of(2020, 1, 1))
                     .build()
             )
-            .dateOfPayment(LocalDate.of(2020, 1, 1))
             .receivedServiceApplicationDate(LocalDate.of(2020, 1, 1))
             .build());
 

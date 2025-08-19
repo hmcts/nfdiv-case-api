@@ -86,7 +86,7 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
         servicePaymentFee.setHasCompletedOnlinePayment(YesOrNo.YES);
         alternativeService.getServicePaymentFee().setPaymentReference(paymentReference);
         details.setState(isAwaitingDocuments ? AwaitingDocuments : AwaitingServiceConsideration);
-        alternativeService.setDateOfPayment(LocalDate.now(clock));
+        servicePaymentFee.setDateOfPayment(LocalDate.now(clock));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
