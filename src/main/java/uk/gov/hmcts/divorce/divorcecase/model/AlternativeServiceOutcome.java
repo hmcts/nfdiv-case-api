@@ -49,12 +49,30 @@ public class AlternativeServiceOutcome {
     private AlternativeServiceType alternativeServiceType;
 
     @CCD(
+        label = "Service application answers",
+        searchable = false
+    )
+    private DivorceDocument serviceApplicationAnswers;
+
+    @CCD(
         label = "How was payment made?",
         typeOverride = FixedList,
         typeParameterOverride = "ServicePaymentMethod",
         displayOrder = 4
     )
     private ServicePaymentMethod paymentMethod;
+
+    @CCD(
+        label = "Were all supporting documents uploaded before submission?",
+        searchable = false
+    )
+    private YesOrNo serviceApplicationDocsUploadedPreSubmission;
+
+    @CCD(
+        label = "Service application submitted online",
+        searchable = false
+    )
+    private YesOrNo serviceApplicationSubmittedOnline;
 
     @CCD(
         label = "Outcome of service application",
