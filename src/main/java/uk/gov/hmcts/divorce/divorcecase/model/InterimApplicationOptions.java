@@ -42,6 +42,14 @@ public class InterimApplicationOptions {
 
     @JsonUnwrapped
     @CCD(
+        label = "Dispense With Service Journey Options",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private DispenseWithServiceJourneyOptions dispenseWithServiceJourneyOptions;
+
+    @JsonUnwrapped
+    @CCD(
         label = "Bailiff Service Journey Options",
         access = {DefaultAccess.class},
         searchable = false
@@ -118,6 +126,8 @@ public class InterimApplicationOptions {
     public ApplicationAnswers getApplicationAnswers() {
         if (interimApplicationType.equals(InterimApplicationType.DEEMED_SERVICE)) {
             return deemedServiceJourneyOptions;
+        } else if (interimApplicationType.equals(InterimApplicationType.DISPENSE_WITH_SERVICE)) {
+            return dispenseWithServiceJourneyOptions;
         }
 
         return null;
