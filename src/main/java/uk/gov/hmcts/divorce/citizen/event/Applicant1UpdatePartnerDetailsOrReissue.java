@@ -29,6 +29,8 @@ import java.util.Optional;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
+import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.PAPERS_ALREADY_SENT;
+import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.SEND_PAPERS_AGAIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -102,7 +104,10 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
                 .build();
         }
 
-        caseData.getApplicant1().getInterimApplicationOptions().setNoResponseJourneyOptions(null);
+        if (SEND_PAPERS_AGAIN.equals(noResponseJourney.getNoResponseSendPapersAgainOrTrySomethingElse())) {
+            caseData.getApplicant1().getInterimApplicationOptions().setNoResponseJourneyOptions(
+                NoResponseJourneyOptions.builder().noResponseSendPapersAgainOrTrySomethingElse(PAPERS_ALREADY_SENT).build());
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -121,11 +126,5 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
             .submitEvent(details.getId(), CASEWORKER_REISSUE_APPLICATION, user, serviceAuth);
 
         return SubmittedCallbackResponse.builder().build();
-    }
-
-    private NoResponseJourneyOptions getNoResponseJourneyOptions(CaseData caseData) {
-        return Optional.ofNullable(caseData.getApplicant1().getInterimApplicationOptions())
-            .map(InterimApplicationOptions::getNoResponseJourneyOptions)
-            .orElse(null);
     }
 }
