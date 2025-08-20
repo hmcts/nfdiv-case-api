@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -55,7 +56,7 @@ public class AlternativeServiceOutcome {
     private DivorceDocument serviceApplicationAnswers;
 
     @CCD(
-        label = "How was payment made?",
+        label = "How will payment be made?",
         typeOverride = FixedList,
         typeParameterOverride = "ServicePaymentMethod",
         displayOrder = 4
@@ -161,6 +162,11 @@ public class AlternativeServiceOutcome {
         searchable = false
     )
     private String reasonFailureToServeByBailiff;
+
+    @JsonUnwrapped(prefix = "servicePaymentFee")
+    @Builder.Default
+    @CCD(searchable = false)
+    private FeeDetails servicePaymentFee = new FeeDetails();
 
     public String getServiceApplicationOutcomeLabel() {
         return " ";

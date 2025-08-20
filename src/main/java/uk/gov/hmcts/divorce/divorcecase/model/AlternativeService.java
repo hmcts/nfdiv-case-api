@@ -168,6 +168,7 @@ public class AlternativeService {
             .certificateOfServiceDate(bailiff.getCertificateOfServiceDate())
             .successfulServedByBailiff(bailiff.getSuccessfulServedByBailiff())
             .reasonFailureToServeByBailiff(bailiff.getReasonFailureToServeByBailiff())
+            .servicePaymentFee(servicePaymentFee)
             .build();
     }
 
