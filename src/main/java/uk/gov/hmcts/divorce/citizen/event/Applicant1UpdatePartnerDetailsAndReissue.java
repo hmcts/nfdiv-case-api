@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrPostalAddress;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -114,7 +114,7 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
 
         Optional.ofNullable(caseData.getApplicant1().getInterimApplicationOptions())
             .ifPresent(options -> options.setNoResponseJourneyOptions(NoResponseJourneyOptions.builder()
-                .noResponsePartnerNewEmailOrPostalAddress(NoResponsePartnerNewEmailOrPostalAddress.CONTACT_DETAILS_UPDATED).build()));
+                .noResponsePartnerNewEmailOrAddress(NoResponsePartnerNewEmailOrAddress.CONTACT_DETAILS_UPDATED).build()));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

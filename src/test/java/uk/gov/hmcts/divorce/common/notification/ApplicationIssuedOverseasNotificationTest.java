@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrPostalAddress;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -85,7 +85,7 @@ class ApplicationIssuedOverseasNotificationTest {
         data.getApplicant2().setEmail(null);
         data.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
             .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
-                .noResponsePartnerNewEmailOrPostalAddress(NoResponsePartnerNewEmailOrPostalAddress.CONTACT_DETAILS_UPDATED)
+                .noResponsePartnerNewEmailOrAddress(NoResponsePartnerNewEmailOrAddress.CONTACT_DETAILS_UPDATED)
                 .build())
             .build());
 

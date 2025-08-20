@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.citizen.event.Applicant1UpdatePartnerDetailsAndReiss
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrPostalAddress;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -93,7 +93,7 @@ class Applicant1UpdatePartnerDetailsAndReissueTest {
         final CaseData caseData = validCaseDataForReIssueApplication();
         caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
             .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
-                .noResponsePartnerNewEmailOrPostalAddress(NoResponsePartnerNewEmailOrPostalAddress.NEW_EMAIL_ADDRESS)
+                .noResponsePartnerNewEmailOrAddress(NoResponsePartnerNewEmailOrAddress.EMAIL)
                 .noResponsePartnerAddressOverseas(YesOrNo.NO)
                 .build())
             .build());
@@ -107,8 +107,8 @@ class Applicant1UpdatePartnerDetailsAndReissueTest {
         assertThat(response.getData().getApplicant1().getInterimApplicationOptions()
                 .getNoResponseJourneyOptions()).isNotNull();
         assertThat(response.getData().getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
-                .getNoResponsePartnerNewEmailOrPostalAddress())
-                .isEqualTo(NoResponsePartnerNewEmailOrPostalAddress.CONTACT_DETAILS_UPDATED);
+                .getNoResponsePartnerNewEmailOrAddress())
+                .isEqualTo(NoResponsePartnerNewEmailOrAddress.CONTACT_DETAILS_UPDATED);
 
         verify(reIssueApplicationService).updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
     }
