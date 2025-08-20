@@ -75,7 +75,7 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
             .complex(CaseData::getGeneralReferral)
                 .mandatory(GeneralReferral::getGeneralReferralReason)
                 .mandatory(
-                    GeneralReferral::getReferredGeneralApplication,
+                    GeneralReferral::getSelectedGeneralApplication,
                     "generalReferralReason=\"generalApplicationReferral\""
                 )
                 .mandatory(GeneralReferral::getGeneralReferralUrgentCase)
@@ -106,7 +106,7 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
                 .build()
             ).toList();
 
-        caseData.getGeneralReferral().setReferredGeneralApplication(
+        caseData.getGeneralReferral().setSelectedGeneralApplication(
             DynamicList.builder()
                 .listItems(generalApplicationNames)
                 .build()
@@ -130,7 +130,7 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
         if (GeneralReferralReason.GENERAL_APPLICATION_REFERRAL.equals(referralReason)) {
             processSelectedGeneralApplication(caseData, details.getId());
         }
-        caseData.getGeneralReferral().setReferredGeneralApplication(null);
+        caseData.getGeneralReferral().setSelectedGeneralApplication(null);
 
         State endState = caseData.getGeneralReferral().getGeneralReferralFeeRequired().toBoolean()
             ? AwaitingGeneralReferralPayment
@@ -160,7 +160,7 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
     }
 
     private void processSelectedGeneralApplication(CaseData caseData, long caseId) {
-        var referredApplication = caseData.getGeneralReferral().getReferredGeneralApplication();
+        var referredApplication = caseData.getGeneralReferral().getSelectedGeneralApplication();
         if (referredApplication == null) {
             return;
         }

@@ -127,5 +127,5 @@ public class GeneralReferral {
         label = "Which general application will be referred?",
         searchable = false
     )
-    private DynamicList referredGeneralApplication;
+    private DynamicList selectedGeneralApplication;
 }

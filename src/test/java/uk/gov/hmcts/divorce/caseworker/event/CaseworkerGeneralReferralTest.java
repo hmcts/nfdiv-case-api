@@ -98,7 +98,7 @@ class CaseworkerGeneralReferralTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartResponse = generalReferral.aboutToStart(details);
         List<DynamicListElement> generalApplicationLabels = aboutToStartResponse.getData().getGeneralReferral()
-            .getReferredGeneralApplication().getListItems();
+            .getSelectedGeneralApplication().getListItems();
 
         assertThat(generalApplicationLabels).hasSize(2);
         assertThat(generalApplicationLabels.getFirst().getLabel()).isEqualTo(
@@ -115,7 +115,7 @@ class CaseworkerGeneralReferralTest {
         details.getData().setGeneralApplications(null);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartResponse = generalReferral.aboutToStart(details);
-        DynamicList generalApplicationLabels = aboutToStartResponse.getData().getGeneralReferral().getReferredGeneralApplication();
+        DynamicList generalApplicationLabels = aboutToStartResponse.getData().getGeneralReferral().getSelectedGeneralApplication();
 
         assertThat(generalApplicationLabels.getListItems()).isEmpty();
     }
@@ -126,7 +126,7 @@ class CaseworkerGeneralReferralTest {
         details.getData().setGeneralApplications(Collections.emptyList());
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartResponse = generalReferral.aboutToStart(details);
-        DynamicList generalApplicationLabels = aboutToStartResponse.getData().getGeneralReferral().getReferredGeneralApplication();
+        DynamicList generalApplicationLabels = aboutToStartResponse.getData().getGeneralReferral().getSelectedGeneralApplication();
 
         assertThat(generalApplicationLabels.getListItems()).isEmpty();
     }
@@ -175,7 +175,7 @@ class CaseworkerGeneralReferralTest {
 
         List<ListValue<GeneralApplication>> generalApplications = buildListOfGeneralApplications();
         final CaseDetails<CaseData, State> details = buildTestCaseDetails(generalApplications);
-        details.getData().getGeneralReferral().setReferredGeneralApplication(DynamicList
+        details.getData().getGeneralReferral().setSelectedGeneralApplication(DynamicList
             .builder()
             .value(DynamicListElement.builder().label(
                 generalApplications.getLast().getValue().getLabel(0, formatter)
@@ -289,7 +289,7 @@ class CaseworkerGeneralReferralTest {
         caseData.setGeneralReferral(generalReferral(NO));
         caseData.getGeneralReferral().setGeneralReferralReason(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL);
         if (CollectionUtils.isNotEmpty(generalApplications)) {
-            caseData.getGeneralReferral().setReferredGeneralApplication(DynamicList
+            caseData.getGeneralReferral().setSelectedGeneralApplication(DynamicList
                 .builder()
                 .value(DynamicListElement.builder().label(generalApplications.getLast().getValue().getLabel(1, formatter)).build()
                 ).build()
