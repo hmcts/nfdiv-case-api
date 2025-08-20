@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CitizenAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
 
 import java.time.LocalDate;
 
@@ -204,4 +206,76 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
         access = {DefaultAccess.class}
     )
     private String dispenseWhyNoContactingEmployer;
+
+    @CCD(
+        label = "Employer Name",
+        access = {DefaultAccess.class}
+    )
+    private String dispenseEmployerName;
+
+    @CCD(
+        label = "Address",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispenseEmployerAddress;
+
+    @CCD(
+        label = "Partner's Occupation",
+        access = {DefaultAccess.class}
+    )
+    private String dispensePartnerOccupation;
+
+    @CCD(
+        label = "What were the results of your contact with your partner's last known employer?",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispenseContactingEmployerResults;
+
+    @CCD(
+        label = "Are there any children of the family?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo dispenseChildrenOfFamily;
+
+    @CCD(
+        label = "Does your partner have any contact with them?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo dispensePartnerContactWithChildren;
+
+    @CCD(
+        label = "When and how does your partner have contact with them?",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispenseHowPartnerContactChildren;
+
+    @CCD(
+        label = "To the best of your knowledge, when did your partner last have contact with them?",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispensePartnerLastContactChildren;
+
+    @CCD(
+        label = "Is there a court order or a child Maintenance Service calculation in place for child maintenance?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo dispenseChildMaintenanceOrder;
+
+    @CCD(
+        label = "Explain the results of any enquiries made to the Child Maintenance service",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispenseChildMaintenanceResults;
+
+    @CCD(
+        label = "Have you been able to contact any of your partner's friends or relatives?",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispenseContactFriendsOrRelativesDetails;
 }
