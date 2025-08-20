@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 import com.google.common.collect.SetMultimap;
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,6 +34,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -65,6 +67,8 @@ class CaseworkerGeneralReferralTest {
     @InjectMocks
     private CaseworkerGeneralReferral generalReferral;
 
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, h:mm:ss a");
+
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = ConfigTestUtil.createCaseDataConfigBuilder();
@@ -89,96 +93,63 @@ class CaseworkerGeneralReferralTest {
 
     @Test
     void shouldSetGeneralApplicationLabelsForEventSelectInput() {
-        final CaseData caseData = caseData();
-        caseData.setGeneralReferral(generalReferral(NO));
-        caseData.setGeneralApplications(buildListOfGeneralApplications());
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
+        List<ListValue<GeneralApplication>> generalApplications = buildListOfGeneralApplications();
+        final CaseDetails<CaseData, State> details = buildTestCaseDetails(generalApplications);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartResponse = generalReferral.aboutToStart(details);
-        DynamicList referredApplicationOptions = aboutToStartResponse.getData().getGeneralReferral().getReferredGeneralApplication();
+        List<DynamicListElement> generalApplicationLabels = aboutToStartResponse.getData().getGeneralReferral()
+            .getReferredGeneralApplication().getListItems();
 
-        assertThat(referredApplicationOptions.getListItems()).hasSize(2);
-        assertThat(referredApplicationOptions.getListItems().get(0).getLabel()).isEqualTo(
-            "General applications 1, %s", GeneralApplicationType.DEEMED_SERVICE.getLabel()
+        assertThat(generalApplicationLabels).hasSize(2);
+        assertThat(generalApplicationLabels.getFirst().getLabel()).isEqualTo(
+            generalApplications.getFirst().getValue().getLabel(0, formatter)
         );
-        assertThat(referredApplicationOptions.getListItems().get(1).getLabel()).isEqualTo(
-            "General applications 2, %s, %s",
-            GeneralApplicationType.DISCLOSURE_VIA_DWP.getLabel(),
-            "01 Jan 2022, 1:01:01 am"
+        assertThat(generalApplicationLabels.getLast().getLabel()).isEqualTo(
+            generalApplications.getLast().getValue().getLabel(1, formatter)
         );
     }
 
     @Test
     void shouldHandleNullGeneralApplicationsWhenSettingLabels() {
-        final CaseData caseData = caseData();
-        caseData.setGeneralReferral(generalReferral(NO));
-        caseData.setGeneralApplications(null);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
+        final CaseDetails<CaseData, State> details = buildTestCaseDetails(null);
+        details.getData().setGeneralApplications(null);
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartResponse = generalReferral.aboutToStart(details);
-        DynamicList referredApplicationOptions = aboutToStartResponse.getData().getGeneralReferral().getReferredGeneralApplication();
+        DynamicList generalApplicationLabels = aboutToStartResponse.getData().getGeneralReferral().getReferredGeneralApplication();
 
-        assertThat(referredApplicationOptions.getListItems()).isEmpty();
+        assertThat(generalApplicationLabels.getListItems()).isEmpty();
     }
 
     @Test
     void shouldHandleEmptyGeneralApplicationsWhenSettingLabels() {
-        final CaseData caseData = caseData();
-        caseData.setGeneralReferral(generalReferral(NO));
-        caseData.setGeneralApplications(Collections.emptyList());
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
+        final CaseDetails<CaseData, State> details = buildTestCaseDetails(null);
+        details.getData().setGeneralApplications(Collections.emptyList());
 
         AboutToStartOrSubmitResponse<CaseData, State> aboutToStartResponse = generalReferral.aboutToStart(details);
-        DynamicList referredApplicationOptions = aboutToStartResponse.getData().getGeneralReferral().getReferredGeneralApplication();
+        DynamicList generalApplicationLabels = aboutToStartResponse.getData().getGeneralReferral().getReferredGeneralApplication();
 
-        assertThat(referredApplicationOptions.getListItems()).isEmpty();
+        assertThat(generalApplicationLabels.getListItems()).isEmpty();
     }
 
     @Test
     void shouldProcessSelectedGeneralApplication() {
         setClock();
 
-        final CaseData caseData = caseData();
-        caseData.getApplicant1().setGeneralAppServiceRequest(TEST_SERVICE_REFERENCE);
-        caseData.getApplicant1().setGeneralAppPayments(List.of(
-            ListValue.<Payment>builder().value(
-                Payment.builder().amount(10).build()
-            ).build()
-        ));
-        caseData.setGeneralApplications(buildListOfGeneralApplications());
-        caseData.setGeneralReferral(generalReferral(NO));
-        caseData.getGeneralReferral().setGeneralReferralReason(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL);
-        caseData.getGeneralReferral().setReferredGeneralApplication(DynamicList
-            .builder()
-            .value(DynamicListElement.builder().label(
-                String.format(
-                    "General applications 2, %s, %s",
-                    GeneralApplicationType.DISCLOSURE_VIA_DWP.getLabel(),
-                    "01 Jan 2022, 1:01:01 am"
-                )).build()
-            ).build()
-        );
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setId(TEST_CASE_ID);
+        List<ListValue<GeneralApplication>> generalApplications = buildListOfGeneralApplications();
+        final CaseDetails<CaseData, State> details = buildTestCaseDetails(generalApplications);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalReferral.aboutToSubmit(details, details);
-        Applicant applicant = response.getData().getApplicant1();
-        List<ListValue<GeneralApplication>> generalApplications = response.getData().getGeneralApplications();
-        GeneralApplication searchGovApplication = generalApplications.get(1).getValue();
 
-        assertThat(applicant.getGeneralAppServiceRequest()).isNull();
-        assertThat(applicant.getGeneralAppPayments()).isEmpty();
-        assertThat(generalApplications).hasSize(2);
-        assertThat(generalApplications.getFirst()).isEqualTo(buildListOfGeneralApplications().getFirst());
-        assertThat(generalApplications.getLast()).isNotEqualTo(buildListOfGeneralApplications().getLast());
-        assertThat(searchGovApplication.getGeneralApplicationFee().getServiceRequestReference())
+        Applicant afterApplicant = response.getData().getApplicant1();
+        List<ListValue<GeneralApplication>> afterGeneralApplications = response.getData().getGeneralApplications();
+        GeneralApplication afterSearchGovApplication = afterGeneralApplications.get(1).getValue();
+
+        assertThat(afterApplicant.getGeneralAppServiceRequest()).isNull();
+        assertThat(afterApplicant.getGeneralAppPayments()).isEmpty();
+        assertThat(afterGeneralApplications).hasSize(2);
+        assertThat(afterGeneralApplications.getFirst()).isEqualTo(buildListOfGeneralApplications().getFirst());
+        assertThat(afterGeneralApplications.getLast()).isNotEqualTo(buildListOfGeneralApplications().getLast());
+        assertThat(afterSearchGovApplication.getGeneralApplicationFee().getServiceRequestReference())
             .isNull();
     }
 
@@ -186,68 +157,38 @@ class CaseworkerGeneralReferralTest {
     void shouldNotProcessApplicationIfDifferentReferralReasonSelected() {
         setClock();
 
-        final CaseData caseData = caseData();
-        caseData.getApplicant1().setGeneralAppServiceRequest(TEST_SERVICE_REFERENCE);
-        caseData.setGeneralApplications(buildListOfGeneralApplications());
-        caseData.setGeneralReferral(generalReferral(NO));
-        caseData.getGeneralReferral().setGeneralReferralReason(GeneralReferralReason.CASEWORKER_REFERRAL);
-        caseData.getGeneralReferral().setReferredGeneralApplication(DynamicList
-            .builder()
-            .value(DynamicListElement.builder().label(
-                String.format(
-                    "General applications 2, %s, %s",
-                    GeneralApplicationType.DISCLOSURE_VIA_DWP.getLabel(),
-                    "01 Jan 2022, 1:01:01 am"
-                )).build()
-            ).build()
-        );
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setId(TEST_CASE_ID);
+        List<ListValue<GeneralApplication>> generalApplications = buildListOfGeneralApplications();
+        final CaseDetails<CaseData, State> details = buildTestCaseDetails(generalApplications);
+
+        details.getData().getGeneralReferral().setGeneralReferralReason(GeneralReferralReason.CASEWORKER_REFERRAL);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalReferral.aboutToSubmit(details, details);
-        Applicant applicant = response.getData().getApplicant1();
+        List<ListValue<GeneralApplication>> afterGeneralApplications = response.getData().getGeneralApplications();
 
-        List<ListValue<GeneralApplication>> generalApplications = response.getData().getGeneralApplications();
-        assertThat(generalApplications).hasSize(2);
-        assertThat(generalApplications.getFirst()).isEqualTo(buildListOfGeneralApplications().getFirst());
-        assertThat(generalApplications.getLast()).isEqualTo(buildListOfGeneralApplications().getLast());
-        assertThat(applicant.getGeneralAppServiceRequest()).isEqualTo(TEST_SERVICE_REFERENCE);
+        assertThat(afterGeneralApplications).isEqualTo(generalApplications);
+        assertThat(response.getData().getApplicant1().getGeneralAppServiceRequest()).isEqualTo(TEST_SERVICE_REFERENCE);
     }
 
     @Test
     void shouldNotRemovePaymentDetailsFromPaidApplications() {
         setClock();
 
-        final CaseData caseData = caseData();
-        caseData.getApplicant1().setGeneralAppServiceRequest(TEST_SERVICE_REFERENCE);
-        caseData.setGeneralApplications(buildListOfGeneralApplications());
-        caseData.setGeneralReferral(generalReferral(NO));
-        caseData.getGeneralReferral().setGeneralReferralReason(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL);
-        caseData.getGeneralReferral().setReferredGeneralApplication(DynamicList
+        List<ListValue<GeneralApplication>> generalApplications = buildListOfGeneralApplications();
+        final CaseDetails<CaseData, State> details = buildTestCaseDetails(generalApplications);
+        details.getData().getGeneralReferral().setReferredGeneralApplication(DynamicList
             .builder()
             .value(DynamicListElement.builder().label(
-                String.format(
-                    "General applications 1, %s",
-                    GeneralApplicationType.DEEMED_SERVICE.getLabel()
-                )).build()
+                generalApplications.getLast().getValue().getLabel(0, formatter)
+                ).build()
             ).build()
         );
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalReferral.aboutToSubmit(details, details);
-        Applicant applicant = response.getData().getApplicant1();
-        List<ListValue<GeneralApplication>> generalApplications = response.getData().getGeneralApplications();
-        GeneralApplication searchGovApplication = generalApplications.get(1).getValue();
 
-        assertThat(generalApplications).hasSize(2);
-        assertThat(generalApplications.getFirst()).isEqualTo(buildListOfGeneralApplications().getFirst());
-        assertThat(generalApplications.getLast()).isEqualTo(buildListOfGeneralApplications().getLast());
-        assertThat(searchGovApplication.getGeneralApplicationFee().getServiceRequestReference())
-            .isEqualTo(TEST_SERVICE_REFERENCE);
-        assertThat(applicant.getGeneralAppServiceRequest()).isEqualTo(TEST_SERVICE_REFERENCE);
+        List<ListValue<GeneralApplication>> afterGeneralApplications = response.getData().getGeneralApplications();
+
+        assertThat(afterGeneralApplications).isEqualTo(generalApplications);
+        assertThat(response.getData().getApplicant1().getGeneralAppServiceRequest()).isEqualTo(TEST_SERVICE_REFERENCE);
     }
 
     @Test
@@ -334,5 +275,30 @@ class CaseworkerGeneralReferralTest {
                     .build()
             ).build()
         );
+    }
+
+    private CaseDetails<CaseData, State> buildTestCaseDetails(List<ListValue<GeneralApplication>> generalApplications) {
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setGeneralAppServiceRequest(TEST_SERVICE_REFERENCE);
+        caseData.getApplicant1().setGeneralAppPayments(List.of(
+            ListValue.<Payment>builder().value(
+                Payment.builder().amount(10).build()
+            ).build()
+        ));
+        caseData.setGeneralApplications(generalApplications);
+        caseData.setGeneralReferral(generalReferral(NO));
+        caseData.getGeneralReferral().setGeneralReferralReason(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL);
+        if (CollectionUtils.isNotEmpty(generalApplications)) {
+            caseData.getGeneralReferral().setReferredGeneralApplication(DynamicList
+                .builder()
+                .value(DynamicListElement.builder().label(generalApplications.getLast().getValue().getLabel(1, formatter)).build()
+                ).build()
+            );
+        }
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        return details;
     }
 }

@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
@@ -126,5 +127,15 @@ public class GeneralApplication {
         feeDetails.setPaymentReference(paymentReference);
         feeDetails.setHasCompletedOnlinePayment(YesOrNo.YES);
         feeDetails.setDateOfPayment(dateOfPayment);
+    }
+
+    @JsonIgnore
+    public String getLabel(int idx, DateTimeFormatter formatter) {
+        return String.format(
+            "General applications %d, %s, %s",
+            idx + 1,
+            GeneralApplicationType.DISCLOSURE_VIA_DWP.getLabel(),
+            generalApplicationReceivedDate == null ? "" : ", " + generalApplicationReceivedDate.format(formatter)
+        );
     }
 }

@@ -56,7 +56,6 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
     private final Clock clock;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, h:mm:ss a");
-    private static final String GEN_APP_LABEL_FORMAT = "General applications %s, %s%s";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -118,26 +117,6 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
             .build();
     }
 
-    private Map<Integer, String> generalApplicationLabels(CaseData data) {
-        List<ListValue<GeneralApplication>> generalApplications = data.getGeneralApplications();
-
-        if (CollectionUtils.isEmpty(generalApplications)) {
-            return Collections.emptyMap();
-        }
-
-        return IntStream.range(0, generalApplications.size())
-            .filter(idx -> generalApplications.get(idx).getValue() != null)
-            .boxed()
-            .collect(Collectors.toMap(idx -> idx, idx -> {
-                GeneralApplication application = generalApplications.get(idx).getValue();
-                String applicationType = application.getGeneralApplicationType().getLabel();
-                String applicationDate = application.getGeneralApplicationReceivedDate() == null ? ""
-                    : ", " + application.getGeneralApplicationReceivedDate().format(formatter);
-
-                return String.format(GEN_APP_LABEL_FORMAT, idx + 1, applicationType, applicationDate);
-            }));
-    }
-
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
@@ -163,6 +142,21 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
             .data(caseData)
             .state(endState)
             .build();
+    }
+
+    private Map<Integer, String> generalApplicationLabels(CaseData data) {
+        List<ListValue<GeneralApplication>> generalApplications = data.getGeneralApplications();
+
+        if (CollectionUtils.isEmpty(generalApplications)) {
+            return Collections.emptyMap();
+        }
+
+        return IntStream.range(0, generalApplications.size())
+            .filter(idx -> generalApplications.get(idx).getValue() != null)
+            .boxed()
+            .collect(Collectors.toMap(
+                idx -> idx, idx -> generalApplications.get(idx).getValue().getLabel(idx, formatter)
+            ));
     }
 
     private void processSelectedGeneralApplication(CaseData caseData, long caseId) {
