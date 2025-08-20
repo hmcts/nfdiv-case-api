@@ -43,7 +43,7 @@ public class GeneralApplication {
     private GeneralParties generalApplicationParty;
 
     @CCD(
-        label = "Application date",
+        label = "Application received date",
         searchable = false
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
