@@ -21,7 +21,7 @@ public enum InterimApplicationType implements HasLabel {
     @JsonProperty("bailiffService")
     BAILIFF_SERVICE("Bailiff service", AlternativeServiceType.BAILIFF, null),
 
-    @JsonProperty("searchGovRecords")
+    @JsonProperty("disclosureViaDwp")
     SEARCH_GOV_RECORDS("Search government records", null, GeneralApplicationType.DISCLOSURE_VIA_DWP),
 
     @JsonProperty("processServerService")
