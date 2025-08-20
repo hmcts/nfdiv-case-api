@@ -134,8 +134,8 @@ public class GeneralApplication {
         return String.format(
             "General applications %d, %s, %s",
             idx + 1,
-            GeneralApplicationType.DISCLOSURE_VIA_DWP.getLabel(),
-            generalApplicationReceivedDate == null ? "" : ", " + generalApplicationReceivedDate.format(formatter)
+            generalApplicationType == null ? "" : generalApplicationType.getLabel(),
+            generalApplicationReceivedDate == null ? "" : generalApplicationReceivedDate.format(formatter)
         );
     }
 }
