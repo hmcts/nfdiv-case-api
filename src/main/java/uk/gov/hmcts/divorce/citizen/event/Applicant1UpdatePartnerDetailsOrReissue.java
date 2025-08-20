@@ -123,7 +123,7 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_AND_REISSUE, details.getId());
+        log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_OR_REISSUE, details.getId());
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
