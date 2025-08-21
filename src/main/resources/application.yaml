@@ -371,7 +371,7 @@ uk:
             REQUEST_FOR_INFORMATION_SOLS_RESPONSE: '41f247c7-8692-45b7-8ffd-28cf6aff55de'
             RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: '6b3000f3-deb6-49a8-8021-93f6f96e5f25'
             RESPONDENT_DRAFT_AOS_STARTED_APPLICATION_OVERDUE: '5b577659-b9de-4146-8e62-d1d4121d7760'
-            APP1_UPDATED_PARTNER_CONTACT_DETAILS: '3322403c-408c-4590-ae92-93c516912fbd' #TODO - Welsh translation required
+            APP1_UPDATED_PARTNER_CONTACT_DETAILS: '871a6a70-078b-4241-9289-657edad8493f'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator,payment_app}
