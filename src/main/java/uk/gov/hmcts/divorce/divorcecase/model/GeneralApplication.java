@@ -16,10 +16,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-<<<<<<< HEAD
 import java.time.format.DateTimeFormatter;
-=======
->>>>>>> NFDIV-4744
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
