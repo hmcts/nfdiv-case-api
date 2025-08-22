@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.never;
@@ -279,6 +280,43 @@ class PaymentSetupServiceTest {
 
         String response = paymentSetupService.createServiceApplicationPaymentServiceRequest(
             caseData.getAlternativeService(), TEST_CASE_ID, TEST_FIRST_NAME
+        );
+
+        verify(paymentService).createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
+        assertThat(response).isEqualTo(TEST_SERVICE_REFERENCE);
+    }
+
+    @Test
+    void shouldCreateGeneralApplicationFeeOrderSummary() {
+        final CaseData caseData = new CaseData();
+        final OrderSummary orderSummary = OrderSummary.builder().build();
+        caseData.setAlternativeService(AlternativeService.builder().build());
+        final GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationFee(FeeDetails.builder().orderSummary(orderSummary).build())
+            .build();
+
+        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE))
+            .thenReturn(orderSummary);
+
+        OrderSummary response = paymentSetupService.createGeneralApplicationOrderSummary(
+            generalApplication, TEST_CASE_ID
+        );
+
+        verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE);
+        assertThat(response).isEqualTo(orderSummary);
+    }
+
+    @Test
+    void shouldCreateGeneralApplicationFeeServiceRequest() {
+        final CaseData caseData = new CaseData();
+        caseData.setApplicant1(Applicant.builder().firstName(TEST_FIRST_NAME).build());
+        final OrderSummary orderSummary = OrderSummary.builder().build();
+
+        when(paymentService.createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary))
+            .thenReturn(TEST_SERVICE_REFERENCE);
+
+        String response = paymentSetupService.createGeneralApplicationPaymentServiceRequest(
+            orderSummary, TEST_CASE_ID, TEST_FIRST_NAME
         );
 
         verify(paymentService).createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);

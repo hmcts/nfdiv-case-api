@@ -82,9 +82,11 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
         String paymentReference = paymentValidatorService.getLastPayment(servicePayments).getReference();
         boolean isAwaitingDocuments = YesOrNo.NO.equals(alternativeService.getServiceApplicationDocsUploadedPreSubmission());
 
+        var servicePaymentFee = alternativeService.getServicePaymentFee();
+        servicePaymentFee.setHasCompletedOnlinePayment(YesOrNo.YES);
         alternativeService.getServicePaymentFee().setPaymentReference(paymentReference);
         details.setState(isAwaitingDocuments ? AwaitingDocuments : AwaitingServiceConsideration);
-        alternativeService.setDateOfPayment(LocalDate.now(clock));
+        servicePaymentFee.setDateOfPayment(LocalDate.now(clock));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
@@ -98,7 +100,7 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
 
         CaseData data = details.getData();
 
-        interimApplicationSubmissionService.sendNotifications(
+        interimApplicationSubmissionService.sendServiceApplicationNotifications(
             details.getId(), data.getAlternativeService().getAlternativeServiceType(), data
         );
 
