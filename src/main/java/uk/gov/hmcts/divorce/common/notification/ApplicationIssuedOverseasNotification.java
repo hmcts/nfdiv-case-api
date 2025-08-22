@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 import java.util.Optional;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrPostalAddress.CONTACT_DETAILS_UPDATED;
+import static uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress.CONTACT_DETAILS_UPDATED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.REVIEW_DEADLINE_DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APP1_UPDATED_PARTNER_CONTACT_DETAILS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OVERSEAS_RESPONDENT_APPLICATION_ISSUED;
@@ -37,7 +37,7 @@ public class ApplicationIssuedOverseasNotification implements ApplicantNotificat
         boolean isContactDetailsUpdated = Optional.of(caseData.getApplicant1())
             .map(Applicant::getInterimApplicationOptions)
             .map(InterimApplicationOptions::getNoResponseJourneyOptions)
-            .map(NoResponseJourneyOptions::getNoResponsePartnerNewEmailOrPostalAddress)
+            .map(NoResponseJourneyOptions::getNoResponsePartnerNewEmailOrAddress)
             .map(CONTACT_DETAILS_UPDATED::equals)
             .orElse(false);
 
