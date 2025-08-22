@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -291,6 +292,21 @@ public class Applicant {
     )
     private InterimApplicationOptions interimApplicationOptions;
 
+    @CCD(
+        typeOverride = Collection,
+        typeParameterOverride = "Payment",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private List<ListValue<Payment>> generalAppPayments;
+
+    @CCD(
+        label = "General Application Service Request",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private String generalAppServiceRequest;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(NO)
@@ -370,6 +386,12 @@ public class Applicant {
             return getApplicantAddress();
         }
         return null;
+    }
+
+    @JsonIgnore
+    public void setActiveGeneralApplication(String serviceRequest) {
+        this.generalAppServiceRequest = serviceRequest;
+        this.generalAppPayments = new ArrayList<>();
     }
 
     @JsonIgnore

@@ -9,10 +9,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.SearchGovRecordsApplicationTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 
@@ -42,10 +44,15 @@ class SearchGovRecordsApplicationGeneratorTest {
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().build()).build();
 
+        GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationReceivedDate(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+            .build();
+
         Map<String, Object> templateVariables = Collections.emptyMap();
 
-        when(templateContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1()))
-            .thenReturn(templateVariables);
+        when(templateContent.getTemplateContent(
+            caseData, TEST_CASE_ID, caseData.getApplicant1(), generalApplication
+        )).thenReturn(templateVariables);
 
         Document generatedDocument = Document.builder().filename(TEST_REFERENCE).build();
         when(caseDataDocumentService.renderDocument(
@@ -57,7 +64,7 @@ class SearchGovRecordsApplicationGeneratorTest {
         )).thenReturn(generatedDocument);
 
         DivorceDocument result = searchGovRecordsApplicationGenerator.generateDocument(
-            caseId, caseData.getApplicant1(), caseData
+            caseId, caseData.getApplicant1(), caseData, generalApplication
         );
 
         verify(caseDataDocumentService).renderDocument(

@@ -5,9 +5,12 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.AlternativeServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.BailiffServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DeemedServiceApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.SearchGovRecordsApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.generator.AlternativeServiceApplicationGenerator;
@@ -29,46 +32,46 @@ public class InterimApplicationSubmissionService {
     private final SearchGovRecordsApplicationGenerator searchGovRecordsApplicationGenerator;
 
     private final BailiffServiceApplicationSubmittedNotification bailiffApplicationSubmittedNotification;
+    private final SearchGovRecordsApplicationSubmittedNotification searchGovRecordsApplicationNotifications;
 
-    public DivorceDocument generateAnswerDocument(
-        long caseId,
-        Applicant applicant,
-        CaseData caseData
-    ) {
+    public DivorceDocument generateServiceApplicationAnswerDocument(long caseId, Applicant applicant, CaseData caseData) {
         InterimApplicationType applicationType = applicant.getInterimApplicationOptions().getInterimApplicationType();
 
-        if (InterimApplicationType.DEEMED_SERVICE.equals(applicationType)) {
-            return deemedServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
-        } else if (InterimApplicationType.SEARCH_GOV_RECORDS.equals(applicationType)) {
-            return searchGovRecordsApplicationGenerator.generateDocument(caseId, applicant, caseData);
-        } else if (InterimApplicationType.BAILIFF_SERVICE.equals(applicationType)) {
-            return bailiffServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
-        } else if (InterimApplicationType.ALTERNATIVE_SERVICE.equals(applicationType)) {
-            return alternativeServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
+        return switch (applicationType) {
+            case DEEMED_SERVICE -> deemedServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
+            case BAILIFF_SERVICE -> bailiffServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
+            case ALTERNATIVE_SERVICE -> alternativeServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
+            case DISPENSE_WITH_SERVICE -> throw new UnsupportedOperationException("DISPENSE_WITH_SERVICE not yet implemented");
+            case PROCESS_SERVER_SERVICE -> throw new UnsupportedOperationException("PROCESS_SERVER_SERVICE not yet implemented");
+            default -> throw new UnsupportedOperationException();
+        };
+    }
+
+    public void sendServiceApplicationNotifications(long caseId, AlternativeServiceType serviceType, CaseData caseData) {
+        switch (serviceType) {
+            case DEEMED -> notificationDispatcher.send(deemedApplicationSubmittedNotification, caseData, caseId);
+            case BAILIFF -> notificationDispatcher.send(bailiffApplicationSubmittedNotification, caseData, caseId);
+            case ALTERNATIVE_SERVICE -> notificationDispatcher
+                .send(alternativeServiceApplicationSubmittedNotification, caseData, caseId);
+            default -> throw new UnsupportedOperationException();
+        }
+    }
+
+    public DivorceDocument generateGeneralApplicationAnswerDocument(
+        long caseId, Applicant applicant, CaseData caseData, GeneralApplication generalApplication
+    ) {
+        if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplication.getGeneralApplicationType())) {
+            return searchGovRecordsApplicationGenerator.generateDocument(caseId, applicant, caseData, generalApplication);
         }
 
         throw new UnsupportedOperationException();
     }
 
-    public void sendNotifications(
-        long caseId,
-        AlternativeServiceType serviceType,
-        CaseData caseData
-    ) {
-        if (AlternativeServiceType.DEEMED.equals(serviceType)) {
-            notificationDispatcher.send(deemedApplicationSubmittedNotification, caseData, caseId);
-            return;
-        } else if (AlternativeServiceType.BAILIFF.equals(serviceType)) {
-            notificationDispatcher.send(bailiffApplicationSubmittedNotification, caseData, caseId);
-            return;
-        } else if (AlternativeServiceType.ALTERNATIVE_SERVICE.equals(serviceType)) {
-            notificationDispatcher.send(alternativeServiceApplicationSubmittedNotification, caseData, caseId);
-            return;
-        }  else if (InterimApplicationType.SEARCH_GOV_RECORDS.equals(caseData.getApplicant1()
-            .getInterimApplicationOptions().getInterimApplicationType())) {
-            return;
+    public void sendGeneralApplicationNotifications(long caseId, GeneralApplication generalApplication, CaseData caseData) {
+        if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplication.getGeneralApplicationType())) {
+            searchGovRecordsApplicationNotifications.sendToApplicant1(caseData, caseId, generalApplication);
+        } else {
+            throw new UnsupportedOperationException();
         }
-
-        throw new UnsupportedOperationException();
     }
 }

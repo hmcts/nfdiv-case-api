@@ -8,9 +8,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.AlternativeServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.BailiffServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DeemedServiceApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.SearchGovRecordsApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -19,6 +22,8 @@ import uk.gov.hmcts.divorce.document.print.generator.BailiffServiceApplicationGe
 import uk.gov.hmcts.divorce.document.print.generator.DeemedServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.SearchGovRecordsApplicationGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertThrows;
@@ -34,6 +39,9 @@ class InterimApplicationSubmissionServiceTest {
 
     @Mock
     private DeemedServiceApplicationSubmittedNotification deemedNotification;
+
+    @Mock
+    private SearchGovRecordsApplicationSubmittedNotification searchGovRecordsApplicationSubmittedNotification;
 
     @Mock
     private BailiffServiceApplicationSubmittedNotification bailiffNotification;
@@ -73,7 +81,9 @@ class InterimApplicationSubmissionServiceTest {
         when(deemedServiceApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
             .thenReturn(generatedDocument);
 
-        DivorceDocument result = interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
+        DivorceDocument result = interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+            caseId, caseData.getApplicant1(), caseData
+        );
 
         verify(deemedServiceApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
         assertThat(result).isEqualTo(generatedDocument);
@@ -97,7 +107,9 @@ class InterimApplicationSubmissionServiceTest {
         when(bailiffServiceApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
             .thenReturn(generatedDocument);
 
-        DivorceDocument result = interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
+        DivorceDocument result = interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+            caseId, caseData.getApplicant1(), caseData
+        );
 
         verify(bailiffServiceApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
         assertThat(result).isEqualTo(generatedDocument);
@@ -118,7 +130,7 @@ class InterimApplicationSubmissionServiceTest {
 
         assertThrows(
             UnsupportedOperationException.class,
-            () -> interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData)
+            () -> interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(caseId, caseData.getApplicant1(), caseData)
         );
     }
 
@@ -127,7 +139,7 @@ class InterimApplicationSubmissionServiceTest {
         long caseId = TEST_CASE_ID;
         CaseData caseData = CaseData.builder().build();
 
-        interimApplicationSubmissionService.sendNotifications(caseId, AlternativeServiceType.DEEMED, caseData);
+        interimApplicationSubmissionService.sendServiceApplicationNotifications(caseId, AlternativeServiceType.DEEMED, caseData);
 
         verify(notificationDispatcher).send(deemedNotification, caseData, caseId);
     }
@@ -137,7 +149,7 @@ class InterimApplicationSubmissionServiceTest {
         long caseId = TEST_CASE_ID;
         CaseData caseData = CaseData.builder().build();
 
-        interimApplicationSubmissionService.sendNotifications(caseId, AlternativeServiceType.BAILIFF, caseData);
+        interimApplicationSubmissionService.sendServiceApplicationNotifications(caseId, AlternativeServiceType.BAILIFF, caseData);
 
         verify(notificationDispatcher).send(bailiffNotification, caseData, caseId);
     }
@@ -159,7 +171,9 @@ class InterimApplicationSubmissionServiceTest {
         when(alternativeServiceApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
             .thenReturn(generatedDocument);
 
-        DivorceDocument result = interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
+        DivorceDocument result = interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+            caseId, caseData.getApplicant1(), caseData
+        );
 
         assertThat(result).isEqualTo(generatedDocument);
     }
@@ -177,7 +191,9 @@ class InterimApplicationSubmissionServiceTest {
                     .build()
             ).build();
 
-        interimApplicationSubmissionService.sendNotifications(caseId, AlternativeServiceType.ALTERNATIVE_SERVICE, caseData);
+        interimApplicationSubmissionService.sendServiceApplicationNotifications(
+            caseId, AlternativeServiceType.ALTERNATIVE_SERVICE, caseData
+        );
 
         verify(notificationDispatcher).send(alternativeServiceApplicationSubmittedNotification, caseData, caseId);
     }
@@ -195,13 +211,44 @@ class InterimApplicationSubmissionServiceTest {
                     .build()
             ).build();
 
+        GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationReceivedDate(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+            .generalApplicationType(GeneralApplicationType.DISCLOSURE_VIA_DWP)
+            .build();
+
         DivorceDocument generatedDocument = DivorceDocument.builder().build();
-        when(searchGovRecordsApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
-            .thenReturn(generatedDocument);
+        when(searchGovRecordsApplicationGenerator.generateDocument(
+            caseId, caseData.getApplicant1(), caseData, generalApplication
+        )).thenReturn(generatedDocument);
 
-        DivorceDocument result = interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData);
+        DivorceDocument result = interimApplicationSubmissionService
+            .generateGeneralApplicationAnswerDocument(caseId, caseData.getApplicant1(), caseData, generalApplication);
 
-        verify(searchGovRecordsApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
+        verify(searchGovRecordsApplicationGenerator)
+            .generateDocument(caseId, caseData.getApplicant1(), caseData, generalApplication);
         assertThat(result).isEqualTo(generatedDocument);
+    }
+
+    @Test
+    void shouldDelegateToSearchGovRecordsNotificationWhenApplicationTypeIsSearchGovRecords() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(InterimApplicationType.SEARCH_GOV_RECORDS)
+                            .build())
+                    .build()
+            ).build();
+
+        GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationReceivedDate(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+            .generalApplicationType(GeneralApplicationType.DISCLOSURE_VIA_DWP)
+            .build();
+
+        interimApplicationSubmissionService.sendGeneralApplicationNotifications(caseId, generalApplication, caseData);
+
+        verify(searchGovRecordsApplicationSubmittedNotification).sendToApplicant1(caseData, caseId, generalApplication);
     }
 }
