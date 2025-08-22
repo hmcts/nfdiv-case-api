@@ -403,7 +403,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("servicePaymentFeeServiceRequestReference")
             .field("servicePaymentFeeOrderSummary")
             .field("servicePaymentFeePaymentReference")
-            .field("servicePaymentFeePaymentMethod", "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\"")
+            .field("servicePaymentFeePaymentMethod", "servicePaymentFeePaymentMethod=\"*\"")
+            .field("servicePaymentFeeHelpWithFeesReferenceNumber")
             .field(
               "dateOfPayment",
               "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\" OR servicePaymentFeePaymentReference=\"*\"")
@@ -412,7 +413,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("servicePaymentFeeAccountReferenceNumber",
                 "servicePaymentFeePaymentMethod=\"feePayByAccount\" AND alternativeServiceFeeRequired=\"Yes\"")
             .field("servicePaymentFeeHelpWithFeesReferenceNumber",
-                "servicePaymentFeePaymentMethod=\"feePayByHelp\" AND alternativeServiceFeeRequired=\"Yes\"")
+                "servicePaymentFeePaymentMethod=\"feePayByHelp\"")
             .label("bailiffLocalCourtDetailsLabel",
                 "localCourtName=\"*\" OR localCourtEmail=\"*\"", "### Bailiff local court details")
             .field("localCourtName")
