@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -13,10 +14,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -43,23 +46,24 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseData, State, UserRole> {
-    public static final String UPDATE_PARTNER_DETAILS_AND_REISSUE = "update-partner-details-and-reissue";
+public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseData, State, UserRole> {
+    public static final String UPDATE_PARTNER_DETAILS_OR_REISSUE = "update-partner-details-or-reissue";
 
     private final IdamService idamService;
 
     private final AuthTokenGenerator authTokenGenerator;
     private final CcdUpdateService ccdUpdateService;
     private final ReIssueApplicationService reIssueApplicationService;
+    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
-            .event(UPDATE_PARTNER_DETAILS_AND_REISSUE)
+            .event(UPDATE_PARTNER_DETAILS_OR_REISSUE)
             .forStates(AwaitingAos, AosOverdue, AwaitingDocuments, AwaitingService)
             .showCondition(NEVER_SHOW)
-            .name("Update details and reissue")
-            .description("Update details and reissue")
+            .name("Update details or reissue")
+            .description("Update details or reissue")
             .grant(CREATE_READ_UPDATE, CREATOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE, LEGAL_ADVISOR)
             .retries(120, 120)
@@ -99,8 +103,18 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
                     .build();
         }
 
+        if (!ObjectUtils.isEmpty(newAddress)) {
+            applicant2.setAddress(newAddress);
+        }
+
+        if (!ObjectUtils.isEmpty(newEmail)) {
+            applicant2.setEmail(newEmail);
+        }
+
+
         Optional.ofNullable(caseData.getApplicant1().getInterimApplicationOptions())
-            .ifPresent(options -> options.setNoResponseJourneyOptions(null));
+            .ifPresent(options -> options.setNoResponseJourneyOptions(NoResponseJourneyOptions.builder()
+                .noResponsePartnerNewEmailOrAddress(NoResponsePartnerNewEmailOrAddress.CONTACT_DETAILS_UPDATED).build()));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -109,10 +123,13 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_AND_REISSUE, details.getId());
+        log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_OR_REISSUE, details.getId());
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
+        final Long caseId = details.getId();
+        final CaseData caseData = details.getData();
+        final var applicant2 = caseData.getApplicant2();
 
         ccdUpdateService
             .submitEvent(details.getId(), CASEWORKER_REISSUE_APPLICATION, user, serviceAuth);
