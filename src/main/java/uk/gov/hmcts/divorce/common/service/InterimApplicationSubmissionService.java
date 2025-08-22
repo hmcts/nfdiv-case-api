@@ -68,10 +68,9 @@ public class InterimApplicationSubmissionService {
     }
 
     public void sendGeneralApplicationNotifications(long caseId, GeneralApplication generalApplication, CaseData caseData) {
-        if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplication.getGeneralApplicationType())) {
-            searchGovRecordsApplicationNotifications.sendToApplicant1(caseData, caseId, generalApplication);
-        } else {
-            throw new UnsupportedOperationException();
+        switch (generalApplication.getGeneralApplicationType()) {
+            case DISCLOSURE_VIA_DWP -> searchGovRecordsApplicationNotifications.sendToApplicant1(caseData, caseId, generalApplication);
+            default -> throw new UnsupportedOperationException();
         }
     }
 }
