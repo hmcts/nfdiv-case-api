@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrPostalAddress;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -46,8 +46,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseData, State, UserRole> {
-    public static final String UPDATE_PARTNER_DETAILS_AND_REISSUE = "update-partner-details-and-reissue";
+public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseData, State, UserRole> {
+    public static final String UPDATE_PARTNER_DETAILS_OR_REISSUE = "update-partner-details-or-reissue";
 
     private final IdamService idamService;
 
@@ -59,11 +59,11 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
-            .event(UPDATE_PARTNER_DETAILS_AND_REISSUE)
+            .event(UPDATE_PARTNER_DETAILS_OR_REISSUE)
             .forStates(AwaitingAos, AosOverdue, AwaitingDocuments, AwaitingService)
             .showCondition(NEVER_SHOW)
-            .name("Update details and reissue")
-            .description("Update details and reissue")
+            .name("Update details or reissue")
+            .description("Update details or reissue")
             .grant(CREATE_READ_UPDATE, CREATOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE, LEGAL_ADVISOR)
             .retries(120, 120)
@@ -114,7 +114,7 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
 
         Optional.ofNullable(caseData.getApplicant1().getInterimApplicationOptions())
             .ifPresent(options -> options.setNoResponseJourneyOptions(NoResponseJourneyOptions.builder()
-                .noResponsePartnerNewEmailOrPostalAddress(NoResponsePartnerNewEmailOrPostalAddress.CONTACT_DETAILS_UPDATED).build()));
+                .noResponsePartnerNewEmailOrAddress(NoResponsePartnerNewEmailOrAddress.CONTACT_DETAILS_UPDATED).build()));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -123,7 +123,7 @@ public class Applicant1UpdatePartnerDetailsAndReissue implements CCDConfig<CaseD
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
                                                CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_AND_REISSUE, details.getId());
+        log.info("{} submitted callback invoked for case id: {}", UPDATE_PARTNER_DETAILS_OR_REISSUE, details.getId());
 
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();

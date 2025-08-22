@@ -102,6 +102,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         } else {
             serviceFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF);
             serviceFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
+            serviceFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF);
 
             details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServicePayment);
         }
