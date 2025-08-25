@@ -92,4 +92,50 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
         access = {DefaultAccess.class}
     )
     private String dispensePartnerLastSeenDescription;
+
+    @CCD(
+        label = "Do you have any email addresses for your partner?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo dispenseHavePartnerEmailAddresses;
+
+    @CCD(
+        label = "Have you searched for a decree absolute or final order?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo dispenseHaveSearchedFinalOrder;
+
+    @CCD(
+        label = "Explain why you have not requested a search",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispenseWhyNoFinalOrderSearch;
+
+    @CCD(
+        label = "Tell us the email addresses you have for your partner",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispensePartnerEmailAddresses;
+
+    @CCD(
+        label = "Do you have any phone numbers for your partner?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo dispenseHavePartnerPhoneNumbers;
+
+    @CCD(
+        label = "Tell us the phone numbers you have for your partner",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispensePartnerPhoneNumbers;
+
+    @CCD(
+        label = "Have you tried using a tracing agent to find your partner?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo dispenseTriedTracingAgent;
+
 }
