@@ -167,8 +167,8 @@ uk:
             POST_INFORMATION_TO_COURT: 'ee9e3661-4b9a-459a-9e22-3aac41b5edd8'
             GENERAL_APPLICATION_RECEIVED: '80f4ee70-1269-46e1-9460-51786a980fc1'
             GENERAL_APPLICATION_SUCCESSFUL: '67af4496-44f5-41fa-a6ea-408017516cb8'
-            SERVICE_APPLICATION_REJECTED: 'bbdfd770-4f43-40dc-a3af-5dffdacdf0d3'
-            SERVICE_APPLICATION_GRANTED: '5e545da8-8c68-4a21-99e5-5c44a51b2085'
+            SERVICE_APPLICATION_REJECTED: '73784400-9a62-4615-affe-92223b7eec9e'
+            SERVICE_APPLICATION_GRANTED: '5b96345c-5fb6-442a-becd-a1b15d9ead09'
             SERVICE_APPLICATION_REJECTED_SOLICITOR: 'ba1c3408-4413-4f18-9685-6aacf161f293'
             SERVICE_APPLICATION_GRANTED_SOLICITOR: '88cce629-73e8-43df-83a1-468b00201cd4'
             RESPONDENT_SOLICITOR_HAS_NOT_RESPONDED: '074fe108-7ed8-4f03-93c2-4e53d35281ea'
@@ -315,8 +315,8 @@ uk:
             POST_INFORMATION_TO_COURT: 'c6152a5f-c62c-460c-ac4a-6456910cd6a8'
             GENERAL_APPLICATION_RECEIVED: '4040e4b4-3354-4002-8831-78e0b1fd24aa'
             GENERAL_APPLICATION_SUCCESSFUL: '67af4496-44f5-41fa-a6ea-408017516cb8' # TODO: Welsh translation
-            SERVICE_APPLICATION_REJECTED: '635fa93c-fdf2-4251-af8b-fd1fdc1238b2'
-            SERVICE_APPLICATION_GRANTED: '92eb5bda-7921-4d06-a852-ba33bbbc3df5'
+            SERVICE_APPLICATION_REJECTED: '5c60c88b-2067-4e71-a478-d553eb4e26bf'
+            SERVICE_APPLICATION_GRANTED: '3b45d1c8-0c6c-4c53-b9a6-369a9043ae91'
             SERVICE_APPLICATION_REJECTED_SOLICITOR: 'c8675e71-ff1e-4dff-9780-4db3c3d12bcf'
             SERVICE_APPLICATION_GRANTED_SOLICITOR: '860accd8-e153-4df2-a076-f5322b65448e'
             RESPONDENT_SOLICITOR_HAS_NOT_RESPONDED: '064bcd1e-3073-40d4-bc8b-5e629528be36'
@@ -439,7 +439,7 @@ docmosis:
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: FL-NFD-GOR-ENG-Sole-Applicant-1-Answers_V5.docx
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-1-Answers_V1.docx
       DIVORCE_JOINT_APPLICANT_2_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers_V1.docx
-      SERVICE_REFUSAL: FL-NFD-GOR-ENG-Refusal-Order-Deemed-Dispensed-Service-V3.docx
+      SERVICE_REFUSAL: FL-NFD-GOR-ENG-Refusal-Order-Deemed-Dispensed-Service-V4.docx
       BAILIFF_APPLICATION_APPROVED: FL-NFD-GOR-ENG-Bailiff-Application-Approved-V1.docx
       BAILIFF_APPLICATION_NOT_APPROVED: FL-NFD-GOR-ENG-Bailiff-Application-Not-Approved-V1.docx
       CONDITIONAL_ORDER_ANSWERS: FL-NFD-GOR-ENG-Conditional_Order_Answers_V1.docx
@@ -531,7 +531,7 @@ docmosis:
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: FL-NFD-GOR-ENG-Sole-Applicant-1-Answers_V5.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-1-Answers_V1.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_2_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers_V1.docx #TODO: update content
-      SERVICE_REFUSAL: FL-NFD-GOR-WEL-Refusal-Order-Deemed-Dispensed-Service-V3-Cy.docx
+      SERVICE_REFUSAL: FL-NFD-GOR-WEL-Refusal-Order-Deemed-Dispensed-Service-V4-Cy.docx
       BAILIFF_APPLICATION_APPROVED: FL-NFD-GOR-WEL-Bailiff-Application-Approved-V1-Cy.docx
       BAILIFF_APPLICATION_NOT_APPROVED: FL-NFD-GOR-WEL-Bailiff-Application-Not-Approved-V1-Cy.docx
       CONDITIONAL_ORDER_ANSWERS: FL-NFD-GOR-WEL-Conditional_Order_Answers_V1.docx
