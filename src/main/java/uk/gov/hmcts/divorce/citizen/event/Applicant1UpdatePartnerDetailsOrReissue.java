@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -29,7 +30,7 @@ import java.util.Optional;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
-import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.PAPERS_ALREADY_SENT;
+import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.PAPERS_SENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.SEND_PAPERS_AGAIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -82,14 +83,28 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
         var newAddress = noResponseJourney.getNoResponsePartnerAddress();
         var newEmail = noResponseJourney.getNoResponsePartnerEmailAddress();
         var applicant2 = caseData.getApplicant2();
-
+//        var updateNewEmailOrAddress= noResponseJourney.getNoResponsePartnerNewEmailOrAddress();
+//
+//        if (updateNewEmailOrAddress != null) {
+//            switch (noResponseJourney.getNoResponsePartnerNewEmailOrAddress()) {
+//                case ADDRESS -> updateAddress(applicant2, newAddress, noResponseJourney);
+//
+//                case EMAIL ->  applicant2.setEmail(newEmail);
+//
+//                case EMAIL_AND_ADDRESS -> {
+//                    applicant2.setEmail(newEmail);
+//                    updateAddress(applicant2, newAddress, noResponseJourney);
+//                }
+//            }
+//        }
+//
         if (!isEmpty(newAddress)) {
             applicant2.setAddress(newAddress);
+            applicant2.setAddressOverseas(noResponseJourney.getNoResponsePartnerAddressOverseas());
         }
 
         if (!isEmpty(newEmail)) {
             applicant2.setEmail(newEmail);
-            applicant2.setAddressOverseas(Objects.requireNonNullElse(applicant2.getAddressOverseas(), YesOrNo.NO));
         }
 
         try {
@@ -106,7 +121,7 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
 
         if (SEND_PAPERS_AGAIN.equals(noResponseJourney.getNoResponseSendPapersAgainOrTrySomethingElse())) {
             caseData.getApplicant1().getInterimApplicationOptions().setNoResponseJourneyOptions(
-                NoResponseJourneyOptions.builder().noResponseSendPapersAgainOrTrySomethingElse(PAPERS_ALREADY_SENT).build());
+                NoResponseJourneyOptions.builder().noResponseSendPapersAgainOrTrySomethingElse(PAPERS_SENT).build());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -126,5 +141,10 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
             .submitEvent(details.getId(), CASEWORKER_REISSUE_APPLICATION, user, serviceAuth);
 
         return SubmittedCallbackResponse.builder().build();
+    }
+
+    private void updateAddress(Applicant applicant2, AddressGlobalUK newAddress, NoResponseJourneyOptions noResponseJourney) {
+        applicant2.setAddress(newAddress);
+        applicant2.setAddressOverseas(noResponseJourney.getNoResponsePartnerAddressOverseas());
     }
 }

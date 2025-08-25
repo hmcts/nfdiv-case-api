@@ -14,7 +14,7 @@ public enum NoResponseSendPapersAgainOrTrySomethingElse implements HasLabel {
     @JsonProperty("trySomethingElse")
     TRY_SOMETHING_ELSE("I want to try something else"),
 
-    @JsonProperty("papersAlreadySent")
-    PAPERS_ALREADY_SENT("Papers already sent");
+    @JsonProperty("papersSent")
+    PAPERS_SENT("Papers sent");
     private final String label;
 }

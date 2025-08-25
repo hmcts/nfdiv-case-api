@@ -33,10 +33,12 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress.EMAIL;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.SEND_PAPERS_AGAIN;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
@@ -197,26 +199,41 @@ public class ReIssueApplicationService {
 
         ReissueOption reissueOption = null;
 
-        if (SEND_PAPERS_AGAIN.equals(noResponseOptions.getNoResponseSendPapersAgainOrTrySomethingElse())) {
-            reissueOption = isCurrentAddressOverseas ? REISSUE_CASE : StringUtils.isEmpty(caseData.getApplicant2().getEmail())
-                ? OFFLINE_AOS
-                : DIGITAL_AOS;;
-        } else {
-            switch (noResponseOptions.getNoResponsePartnerNewEmailOrAddress()) {
-                case ADDRESS -> reissueOption = isNewAddressOverseas ? REISSUE_CASE :
-                    StringUtils.isEmpty(caseData.getApplicant2().getEmail()) ? OFFLINE_AOS : DIGITAL_AOS;
+        // Option 1
+//
+//        var isCourtService = caseData.getApplication().isCourtServiceMethod();
+//        var emailPresent = !StringUtils.isEmpty(caseData.getApplicant2().getEmail());
 
-                case EMAIL -> reissueOption =
-                    isCurrentAddressOverseas ? REISSUE_CASE : DIGITAL_AOS;
+//        if (SEND_PAPERS_AGAIN.equals(noResponseOptions.getNoResponseSendPapersAgainOrTrySomethingElse())) {
+//            reissueOption = isCourtService && emailPresent ? OFFLINE_AOS : !emailPresent ? REISSUE_CASE : DIGITAL_AOS;;
+//        } else {
+//            switch (noResponseOptions.getNoResponsePartnerNewEmailOrAddress()) {
+//                case ADDRESS -> reissueOption = isCourtService && emailPresent ? OFFLINE_AOS :
+//                    emailPresent ? DIGITAL_AOS : REISSUE_CASE;
+//
+//                case EMAIL -> reissueOption =
+//                    isCourtService ? DIGITAL_AOS : REISSUE_CASE;
+//
+//                case EMAIL_AND_ADDRESS -> reissueOption =
+//                    isCourtService ? OFFLINE_AOS : REISSUE_CASE;
+//
+//                default -> reissueOption = REISSUE_CASE;
+//            }
+//        }
 
-                case EMAIL_AND_ADDRESS -> reissueOption =
-                    isNewAddressOverseas ? REISSUE_CASE : DIGITAL_AOS;
+        // Option 2
 
-                default -> reissueOption = REISSUE_CASE;
-            }
-        }
+//        if (noResponseOptions.getNoResponsePartnerNewEmailOrAddress() != null && !EMAIL.equals(noResponseOptions.getNoResponsePartnerNewEmailOrAddress())) {
+//            caseTasks(setServiceType).run(caseDetails);
+//        }
 
-        caseTasks(setServiceType).run(caseDetails);
+//        if (isCourtService && emailPresent) {
+//            reissueOption = OFFLINE_AOS;
+//        } else if (emailPresent) {
+//            reissueOption = DIGITAL_AOS;
+//        } else {
+//            reissueOption = REISSUE_CASE;
+//        }
 
         caseData.getApplication().setReissueOption(reissueOption);
     }
