@@ -212,7 +212,7 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispenseEmployerName;
 
     @CCD(
-        label = "Address",
+        label = "Employer Address",
         typeOverride = TextArea,
         access = {DefaultAccess.class}
     )
