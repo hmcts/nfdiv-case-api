@@ -22,7 +22,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.JudicialSeparationReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
@@ -33,6 +32,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress.EMAIL;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
@@ -184,35 +184,29 @@ public class ReIssueApplicationService {
 
         CaseData caseData = caseDetails.getData();
 
-        NoResponsePartnerNewEmailOrAddress noResponseOptions =
+        var noResponseOptions =
             Optional.of(caseData.getApplicant1())
                 .map(Applicant::getInterimApplicationOptions)
                 .map(InterimApplicationOptions::getNoResponseJourneyOptions)
-                .map(NoResponseJourneyOptions::getNoResponsePartnerNewEmailOrAddress)
-                .orElseThrow(() -> new InvalidReissueOptionException(
-                    String.format("Invalid update contact details option selected for CaseId: %s", caseId)));
-
-        var noResponseJourneyOptions = caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions();
-        boolean isNewAddressOverseas = YES.equals(noResponseJourneyOptions.getNoResponsePartnerAddressOverseas());
-        boolean isOldAddressOverseas = caseData.getApplicant2().isBasedOverseas()
-            || caseData.getApplicant2().getAddressOverseas() == YES;
+                .orElse(new NoResponseJourneyOptions());
 
         ReissueOption reissueOption = null;
 
-        switch (noResponseOptions) {
-            case ADDRESS -> reissueOption = isNewAddressOverseas ? REISSUE_CASE :
-                StringUtils.isEmpty(caseData.getApplicant2().getEmail()) ? OFFLINE_AOS : DIGITAL_AOS;
+        var isCourtService = caseData.getApplication().isCourtServiceMethod();
+        var emailPresent = !StringUtils.isEmpty(caseData.getApplicant2().getEmail());
 
-            case EMAIL -> reissueOption =
-                isOldAddressOverseas ? REISSUE_CASE : DIGITAL_AOS;
-
-            case EMAIL_AND_ADDRESS -> reissueOption =
-                isNewAddressOverseas ? REISSUE_CASE : DIGITAL_AOS;
-
-            default -> reissueOption = REISSUE_CASE;
+        if (noResponseOptions.getNoResponsePartnerNewEmailOrAddress() != null
+            && !EMAIL.equals(noResponseOptions.getNoResponsePartnerNewEmailOrAddress())) {
+            caseTasks(setServiceType).run(caseDetails);
         }
 
-        caseTasks(setServiceType).run(caseDetails);
+        if (isCourtService && emailPresent) {
+            reissueOption = OFFLINE_AOS;
+        } else if (emailPresent) {
+            reissueOption = DIGITAL_AOS;
+        } else {
+            reissueOption = REISSUE_CASE;
+        }
 
         caseData.getApplication().setReissueOption(reissueOption);
     }
