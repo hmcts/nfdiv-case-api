@@ -276,4 +276,11 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
         access = {DefaultAccess.class}
     )
     private String dispenseContactFriendsOrRelativesDetails;
+
+    @CCD(
+        label = "What other enquiries have you made, or information do you have concerning the whereabouts of your partner?",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class}
+    )
+    private String dispenseOtherEnquiries;
 }
