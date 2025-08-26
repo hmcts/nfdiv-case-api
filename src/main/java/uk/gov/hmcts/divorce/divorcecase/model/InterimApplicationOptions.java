@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -38,6 +39,30 @@ public class InterimApplicationOptions {
         access = {DefaultAccess.class}
     )
     private DeemedServiceJourneyOptions deemedServiceJourneyOptions;
+
+    @JsonUnwrapped
+    @CCD(
+        label = "Dispense With Service Journey Options",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private DispenseWithServiceJourneyOptions dispenseWithServiceJourneyOptions;
+
+    @JsonUnwrapped
+    @CCD(
+        label = "Bailiff Service Journey Options",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private BailiffServiceJourneyOptions bailiffServiceJourneyOptions;
+
+    @JsonUnwrapped
+    @CCD(
+        label = "Alternative Service Journey Options",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private AlternativeServiceJourneyOptions alternativeServiceJourneyOptions;
 
     @CCD(
         label = "Active Interim Application Type",
@@ -96,4 +121,25 @@ public class InterimApplicationOptions {
         access = {DefaultAccess.class}
     )
     private YesOrNo interimAppsStatementOfTruth;
+
+    @JsonIgnore
+    public ApplicationAnswers getApplicationAnswers() {
+        if (interimApplicationType.equals(InterimApplicationType.DEEMED_SERVICE)) {
+            return deemedServiceJourneyOptions;
+        } else if (interimApplicationType.equals(InterimApplicationType.DISPENSE_WITH_SERVICE)) {
+            return dispenseWithServiceJourneyOptions;
+        }
+
+        return null;
+    }
+
+    @JsonIgnore
+    public boolean awaitingDocuments() {
+        return YesOrNo.YES.equals(interimAppsCannotUploadDocs);
+    }
+
+    @JsonIgnore
+    public boolean willMakePayment() {
+        return !YesOrNo.YES.equals(interimAppsUseHelpWithFees);
+    }
 }

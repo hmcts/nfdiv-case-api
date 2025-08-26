@@ -36,9 +36,9 @@ public class NoResponseJourneyOptions {
     @CCD(
         label = "I have a new postal or email address for my partner",
         access = {DefaultAccess.class},
-        typeParameterOverride = "NoResponsePartnerNewEmailOrPostalAddress"
+        typeParameterOverride = "NoResponsePartnerNewEmailOrAddress"
     )
-    private NoResponsePartnerNewEmailOrPostalAddress noResponsePartnerNewEmailOrPostalAddress;
+    private NoResponsePartnerNewEmailOrAddress noResponsePartnerNewEmailOrAddress;
 
     @CCD(
         label = "Provide new email address or apply for alternative service",
@@ -61,4 +61,47 @@ public class NoResponseJourneyOptions {
 
     @CCD(label = "Is your partner's new address international?")
     private YesOrNo noResponsePartnerAddressOverseas;
+
+    @CCD(
+        label = "Send papers again or try something else",
+        access = {DefaultAccess.class},
+        typeParameterOverride = "NoResponseSendPapersAgainOrTrySomethingElse"
+    )
+    private NoResponseSendPapersAgainOrTrySomethingElse noResponseSendPapersAgainOrTrySomethingElse;
+
+    @CCD(
+        label = "Do you want to apply for in person service, alternative service, or try something else?",
+        access = {DefaultAccess.class}
+    )
+    private NoResponseNoNewAddressDetails noResponseNoNewAddressDetails;
+
+    @CCD(
+        label = "In person service by process server or court bailiff?",
+        access = {DefaultAccess.class}
+    )
+    private NoResponseProcessServerOrBailiff noResponseProcessServerOrBailiff;
+
+    @CCD(
+        label = "I confirm that my partner's address is within England and Wales",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo noResponseRespondentAddressInEnglandWales;
+
+    @CCD(
+        label = "Have you already tried to find your partner's contact details?",
+        access = {DefaultAccess.class}
+    )
+    private NoResponseOwnSearches noResponseOwnSearches;
+
+    @CCD(
+        label = "Do you think your partner is still in the UK or is receiving UK benefits?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo noResponsePartnerInUkOrReceivingBenefits;
+
+    @CCD(
+        label = "Search gov records or apply to dispense with service?",
+        access = {DefaultAccess.class}
+    )
+    private NoResponseSearchOrDispense noResponseSearchOrDispense;
 }
