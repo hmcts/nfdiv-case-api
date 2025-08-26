@@ -193,47 +193,22 @@ public class ReIssueApplicationService {
                 .map(InterimApplicationOptions::getNoResponseJourneyOptions)
                 .orElse(new NoResponseJourneyOptions());
 
-        boolean isNewAddressOverseas = YES.equals(noResponseOptions.getNoResponsePartnerAddressOverseas());
-        boolean isCurrentAddressOverseas = caseData.getApplicant2().isBasedOverseas()
-            || caseData.getApplicant2().getAddressOverseas() == YES;
-
         ReissueOption reissueOption = null;
 
-        // Option 1
-//
-//        var isCourtService = caseData.getApplication().isCourtServiceMethod();
-//        var emailPresent = !StringUtils.isEmpty(caseData.getApplicant2().getEmail());
+        var isCourtService = caseData.getApplication().isCourtServiceMethod();
+        var emailPresent = !StringUtils.isEmpty(caseData.getApplicant2().getEmail());
 
-//        if (SEND_PAPERS_AGAIN.equals(noResponseOptions.getNoResponseSendPapersAgainOrTrySomethingElse())) {
-//            reissueOption = isCourtService && emailPresent ? OFFLINE_AOS : !emailPresent ? REISSUE_CASE : DIGITAL_AOS;;
-//        } else {
-//            switch (noResponseOptions.getNoResponsePartnerNewEmailOrAddress()) {
-//                case ADDRESS -> reissueOption = isCourtService && emailPresent ? OFFLINE_AOS :
-//                    emailPresent ? DIGITAL_AOS : REISSUE_CASE;
-//
-//                case EMAIL -> reissueOption =
-//                    isCourtService ? DIGITAL_AOS : REISSUE_CASE;
-//
-//                case EMAIL_AND_ADDRESS -> reissueOption =
-//                    isCourtService ? OFFLINE_AOS : REISSUE_CASE;
-//
-//                default -> reissueOption = REISSUE_CASE;
-//            }
-//        }
+        if (noResponseOptions.getNoResponsePartnerNewEmailOrAddress() != null && !EMAIL.equals(noResponseOptions.getNoResponsePartnerNewEmailOrAddress())) {
+            caseTasks(setServiceType).run(caseDetails);
+        }
 
-        // Option 2
-
-//        if (noResponseOptions.getNoResponsePartnerNewEmailOrAddress() != null && !EMAIL.equals(noResponseOptions.getNoResponsePartnerNewEmailOrAddress())) {
-//            caseTasks(setServiceType).run(caseDetails);
-//        }
-
-//        if (isCourtService && emailPresent) {
-//            reissueOption = OFFLINE_AOS;
-//        } else if (emailPresent) {
-//            reissueOption = DIGITAL_AOS;
-//        } else {
-//            reissueOption = REISSUE_CASE;
-//        }
+        if (isCourtService && emailPresent) {
+            reissueOption = OFFLINE_AOS;
+        } else if (emailPresent) {
+            reissueOption = DIGITAL_AOS;
+        } else {
+            reissueOption = REISSUE_CASE;
+        }
 
         caseData.getApplication().setReissueOption(reissueOption);
     }
