@@ -41,6 +41,9 @@ public enum DocumentType implements HasLabel {
     @JsonAlias({"serviceBaliff"})
     BAILIFF_SERVICE("Bailiff Service", false),
 
+    @JsonProperty("alternativeServiceRefused")
+    ALTERNATIVE_SERVICE_REFUSED("Alternative Service Refused", false),
+
     @JsonProperty("bailiffServiceRefused")
     BAILIFF_SERVICE_REFUSED("Bailiff Service Refused", false),
 

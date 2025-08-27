@@ -90,7 +90,9 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_2_SOLICITOR_ADDRESS = "applicant2SolicitorAddress";
     public static final String SERVICE_APPLICATION_RECEIVED_DATE = "serviceApplicationReceivedDate";
     public static final String SERVICE_APPLICATION_DECISION_DATE = "serviceApplicationDecisionDate";
+    public static final String IS_SERVICE_ORDER_TYPE_ALTERNATIVE = "isServiceOrderTypeAlternative";
     public static final String IS_SERVICE_ORDER_TYPE_DEEMED = "isServiceOrderTypeDeemed";
+    public static final String IS_SERVICE_ORDER_TYPE_DISPENSED = "isServiceOrderTypeDispensed";
     public static final String ORDER_TYPE = "orderType";
     public static final String CONDITIONAL_ORDER = "conditional order";
     public static final String SEPARATION_ORDER = "separation order";
