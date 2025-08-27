@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -83,18 +84,6 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
         var applicant2 = caseData.getApplicant2();
         var updateNewEmailOrAddress= noResponseJourney.getNoResponsePartnerNewEmailOrAddress();
 
-        try {
-
-            reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
-            details.setState(AwaitingAos);
-
-        } catch (InvalidReissueOptionException ex) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(List.of(String.format("Invalid update contact details option selected for CaseId: %s",
-                    details.getId())))
-                .build();
-        }
-
         if (SEND_PAPERS_AGAIN.equals(noResponseJourney.getNoResponseSendPapersAgainOrTrySomethingElse())) {
             caseData.getApplicant1().getInterimApplicationOptions().setNoResponseJourneyOptions(
                 NoResponseJourneyOptions.builder().noResponseSendPapersAgainOrTrySomethingElse(PAPERS_SENT).build());
@@ -111,6 +100,9 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
             }
             noResponseJourney.setNoResponsePartnerNewEmailOrAddress(CONTACT_DETAILS_UPDATED);
         }
+
+        caseData.getApplication().setReissueOption(ReissueOption.REISSUE_CASE);
+        details.setState(AwaitingAos);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
