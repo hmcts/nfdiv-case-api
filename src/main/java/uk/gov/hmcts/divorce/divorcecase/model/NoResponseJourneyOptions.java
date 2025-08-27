@@ -63,6 +63,13 @@ public class NoResponseJourneyOptions {
     private YesOrNo noResponsePartnerAddressOverseas;
 
     @CCD(
+        label = "Send papers again or try something else",
+        access = {DefaultAccess.class},
+        typeParameterOverride = "NoResponseSendPapersAgainOrTrySomethingElse"
+    )
+    private NoResponseSendPapersAgainOrTrySomethingElse noResponseSendPapersAgainOrTrySomethingElse;
+
+    @CCD(
         label = "Do you want to apply for in person service, alternative service, or try something else?",
         access = {DefaultAccess.class}
     )
