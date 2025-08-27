@@ -154,6 +154,7 @@ public class AlternativeService {
             .receivedServiceApplicationDate(receivedServiceApplicationDate)
             .receivedServiceAddedDate(receivedServiceAddedDate)
             .serviceApplicationAnswers(serviceApplicationAnswers)
+            .serviceApplicationDocuments(serviceApplicationDocuments)
             .serviceApplicationSubmittedOnline(serviceApplicationSubmittedOnline)
             .serviceApplicationDocsUploadedPreSubmission(serviceApplicationDocsUploadedPreSubmission)
             .paymentMethod(servicePaymentFee.getPaymentMethod())

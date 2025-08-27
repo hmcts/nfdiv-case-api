@@ -9,13 +9,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
@@ -54,6 +57,14 @@ public class AlternativeServiceOutcome {
         searchable = false
     )
     private DivorceDocument serviceApplicationAnswers;
+
+    @CCD(
+        label = "Supporting Documents",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
+        searchable = false
+    )
+    private List<ListValue<DivorceDocument>> serviceApplicationDocuments;
 
     @CCD(
         label = "How will payment be made?",
