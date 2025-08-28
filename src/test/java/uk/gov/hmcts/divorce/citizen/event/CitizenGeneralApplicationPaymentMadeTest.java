@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -24,6 +25,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -32,6 +34,7 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.common.service.PaymentValidatorService.ERROR_PAYMENT_INCOMPLETE;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.DECLINED;
@@ -53,10 +56,13 @@ class CitizenGeneralApplicationPaymentMadeTest {
     private Clock clock;
 
     @Mock
-    CcdAccessService ccdAccessService;
+    private CcdAccessService ccdAccessService;
 
     @Mock
-    HttpServletRequest request;
+    private InterimApplicationSubmissionService interimApplicationSubmissionService;
+
+    @Mock
+    private HttpServletRequest request;
 
     @InjectMocks
     private CitizenGeneralApplicationPaymentMade citizenGeneralApplicationPayment;
@@ -163,6 +169,26 @@ class CitizenGeneralApplicationPaymentMadeTest {
         assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
         assertThat(generalApplication.getGeneralApplicationFee().getPaymentReference()).isEqualTo(TEST_REFERENCE);
         assertThat(generalReferral.getGeneralReferralType()).isEqualTo(GeneralReferralType.CASEWORKER_REFERRAL);
+    }
+
+    @Test
+    void shouldTriggerNotificationsByDelegatingToDispatcher() {
+        final var caseData = CaseData.builder().build();
+        final var details = CaseDetails.<CaseData, State>builder()
+            .data(caseData)
+            .id(TEST_CASE_ID)
+            .build();
+        final var beforeData = buildTestData();
+        final var beforeDetails = CaseDetails.<CaseData, State>builder()
+            .data(buildTestData())
+            .id(TEST_CASE_ID)
+            .build();
+
+        final SubmittedCallbackResponse response = citizenGeneralApplicationPayment.submitted(details, beforeDetails);
+
+        verify(interimApplicationSubmissionService).sendGeneralApplicationNotifications(
+            TEST_CASE_ID, beforeData.getGeneralApplications().getFirst().getValue(), caseData
+        );
     }
 
     private CaseData buildTestData() {
