@@ -2,16 +2,13 @@ package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.DynamicList;
-import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -25,14 +22,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
+import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.generalApplicationLabels;
+import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.populateGeneralApplicationList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
@@ -54,8 +47,8 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
     private static final String GENERAL_REFERRAL = "General referral";
 
     private final Clock clock;
+    private final GeneralApplicationUtils generalApplicationUtils;
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, h:mm:ss a");
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -98,19 +91,7 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
 
         final CaseData caseData = details.getData();
 
-        List<DynamicListElement> generalApplicationNames = generalApplicationLabels(caseData)
-            .values().stream().map(label -> DynamicListElement
-                .builder()
-                .label(label)
-                .code(UUID.randomUUID())
-                .build()
-            ).toList();
-
-        caseData.getGeneralReferral().setSelectedGeneralApplication(
-            DynamicList.builder()
-                .listItems(generalApplicationNames)
-                .build()
-        );
+        populateGeneralApplicationList(caseData);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -142,21 +123,6 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
             .data(caseData)
             .state(endState)
             .build();
-    }
-
-    private Map<Integer, String> generalApplicationLabels(CaseData data) {
-        List<ListValue<GeneralApplication>> generalApplications = data.getGeneralApplications();
-
-        if (CollectionUtils.isEmpty(generalApplications)) {
-            return Collections.emptyMap();
-        }
-
-        return IntStream.range(0, generalApplications.size())
-            .filter(idx -> generalApplications.get(idx).getValue() != null)
-            .boxed()
-            .collect(Collectors.toMap(
-                idx -> idx, idx -> generalApplications.get(idx).getValue().getLabel(idx, formatter)
-            ));
     }
 
     private void processSelectedGeneralApplication(CaseData caseData, long caseId) {
