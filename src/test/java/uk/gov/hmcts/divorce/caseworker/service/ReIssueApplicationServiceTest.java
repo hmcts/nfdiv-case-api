@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
@@ -18,13 +17,8 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifica
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.JudicialSeparationReissueOption;
-import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
@@ -86,9 +80,6 @@ class ReIssueApplicationServiceTest {
 
     @Mock
     private ResetAosFields resetAosFields;
-
-    @Mock
-    private SetServiceType setServiceType;
 
     @InjectMocks
     private ReIssueApplicationService reIssueApplicationService;
@@ -510,145 +501,5 @@ class ReIssueApplicationServiceTest {
         assertThatThrownBy(() -> reIssueApplicationService.sendNotifications(caseDetails, null))
             .isExactlyInstanceOf(InvalidReissueOptionException.class)
             .hasMessage("Exception occurred while sending reissue application notifications for case id 1616591401473378");
-    }
-
-    @Test
-    void shouldSetReissueOptionToReissueCaseWhenNoResponseUpdateContactDetailsIsSetToNewEmailAddressAndApplicant2AddressOverseas() {
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-
-        setUpCaseDetails(caseDetails, NoResponsePartnerNewEmailOrAddress.EMAIL, YES);
-
-        caseDetails.getData().getApplicant2().setAddressOverseas(YES);
-
-        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
-
-        assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(REISSUE_CASE);
-    }
-
-    @Test
-    void shouldSetReissueOptionToDigitalAosWhenUpdateContactDetailsIsSetToNewEmailAddressAndApplicant2UKBased() {
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-
-        setUpCaseDetails(caseDetails, NoResponsePartnerNewEmailOrAddress.EMAIL, YES);
-
-        Applicant applicant2 = caseDetails.getData().getApplicant2();
-        applicant2.setAddressOverseas(NO);
-
-        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
-
-        assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(DIGITAL_AOS);
-    }
-
-    @Test
-    void shouldSetReissueOptionToReissueCaseWhenUpdateContactDetailsIsSetToNewEmailAddressAndApplicant2Overseas() {
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-
-        setUpCaseDetails(caseDetails, NoResponsePartnerNewEmailOrAddress.EMAIL, YES);
-
-        Applicant applicant2 = caseDetails.getData().getApplicant2();
-        applicant2.setAddressOverseas(YES);
-
-        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
-
-        assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(REISSUE_CASE);
-    }
-
-
-    @Test
-    void shouldSetReissueOptionToReissueCaseWhenUpdateContactDetailsIsSetToNewEmailAndPostalAddressAndApplicant2UKBased() {
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-
-        setUpCaseDetails(caseDetails, NoResponsePartnerNewEmailOrAddress.EMAIL_AND_ADDRESS, NO);
-
-        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
-
-        assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(DIGITAL_AOS);
-    }
-
-    @Test
-    void shouldSetReissueOptionToDigitalAosWhenUpdateContactDetailsIsSetToNewEmailAndPostalAddressAndApplicant2UKBased() {
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-
-        setUpCaseDetails(caseDetails, NoResponsePartnerNewEmailOrAddress.EMAIL_AND_ADDRESS, NO);
-
-        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
-
-        assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(DIGITAL_AOS);
-    }
-
-    @Test
-    void shouldSetReissueOptionToReissueCaseWhenUpdateContactDetailsIsSetToNewEmailAndPostalAddressAndApplicant2Overseas() {
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-
-        setUpCaseDetails(caseDetails, NoResponsePartnerNewEmailOrAddress.EMAIL_AND_ADDRESS, YES);
-
-        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
-
-        assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(REISSUE_CASE);
-    }
-
-    @Test
-    void shouldSetReissueOptionToReissueCaseWhenNoResponseUpdateContactDetailsIsSetToNewPostalAddressAndApplicant2Overseas() {
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        CaseData caseData = caseData();
-
-        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-        setUpCaseDetails(caseDetails, NoResponsePartnerNewEmailOrAddress.ADDRESS, YES);
-
-        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
-
-        assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(REISSUE_CASE);
-    }
-
-    @Test
-    void shouldSetReissueOptionToOfflineAosWhenNoResponseUpdateContactDetailsIsSetToNewPostalAddressAndApplicant2UKBased() {
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        CaseData caseData = caseData();
-
-        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-        setUpCaseDetails(caseDetails, NoResponsePartnerNewEmailOrAddress.ADDRESS, NO);
-
-        reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId());
-
-        assertThat(caseDetails.getData().getApplication().getReissueOption()).isEqualTo(OFFLINE_AOS);
-    }
-
-    private void setUpCaseDetails(CaseDetails<CaseData, State> caseDetails,
-                                  NoResponsePartnerNewEmailOrAddress newEmailAndPostalAddress, YesOrNo addressOverseas) {
-        CaseData caseData = caseData();
-
-        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-        caseDetails.getData().getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
-            .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
-                .noResponsePartnerNewEmailOrAddress(newEmailAndPostalAddress)
-                .noResponsePartnerAddressOverseas(addressOverseas)
-                .build())
-            .build());
-    }
-
-    @Test
-    void shouldThrowInvalidReissueOptionExceptionWhenNoResponseUpdateContactDetailsIsNotSet() {
-
-        final CaseData caseData = caseData();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-
-        assertThatThrownBy(() -> reIssueApplicationService.updateReissueOptionForNewContactDetails(caseDetails, caseDetails.getId()))
-            .isExactlyInstanceOf(InvalidReissueOptionException.class)
-            .hasMessage("Invalid update contact details option selected for CaseId: 1616591401473378");
     }
 }
