@@ -84,10 +84,8 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
         var updateNewEmailOrAddress = noResponseJourney.getNoResponsePartnerNewEmailOrAddress();
 
         try {
-
             reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
             details.setState(AwaitingAos);
-
         } catch (InvalidReissueOptionException ex) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(List.of(String.format("Invalid update contact details option selected for CaseId: %s",
@@ -101,9 +99,7 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
         } else if (updateNewEmailOrAddress != null) {
             switch (updateNewEmailOrAddress) {
                 case ADDRESS -> updateAddress(applicant2, newAddress, noResponseJourney);
-
                 case EMAIL ->  applicant2.setEmail(newEmail);
-
                 case EMAIL_AND_ADDRESS -> {
                     applicant2.setEmail(newEmail);
                     updateAddress(applicant2, newAddress, noResponseJourney);

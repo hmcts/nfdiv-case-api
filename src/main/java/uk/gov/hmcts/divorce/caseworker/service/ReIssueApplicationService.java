@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
@@ -192,14 +193,28 @@ public class ReIssueApplicationService {
 
         ReissueOption reissueOption = null;
 
-        var isCourtService = caseData.getApplication().isCourtServiceMethod();
-        var emailPresent = !StringUtils.isEmpty(caseData.getApplicant2().getEmail());
+        boolean addressUpdated = noResponseOptions.getNoResponsePartnerNewEmailOrAddress() != null
+            && !EMAIL.equals(noResponseOptions.getNoResponsePartnerNewEmailOrAddress());
+        if (addressUpdated) {
+            boolean addressInEnglandAndWales = YesOrNo.YES.equals(noResponseOptions.getNoResponseRespondentAddressInEnglandWales());
 
-        if (noResponseOptions.getNoResponsePartnerNewEmailOrAddress() != null
-            && !EMAIL.equals(noResponseOptions.getNoResponsePartnerNewEmailOrAddress())) {
-            caseTasks(setServiceType).run(caseDetails);
+            if (!addressInEnglandAndWales) {
+                caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+            } else {
+                caseTasks(setServiceType).run(caseDetails);
+            }
         }
 
+        var isCourtService = caseData.getApplication().isCourtServiceMethod();
+        boolean respondentIsConfidential = caseData.getApplicant2().isConfidentialContactDetails();
+        if (!isCourtService && respondentIsConfidential) {
+            log.info("For case id {} invalid reissue - not court service and respondent is confidential", caseDetails.getId());
+            throw new InvalidReissueOptionException(
+                "Exception occurred while sending reissue application notifications for case id " + caseDetails.getId()
+            );
+        }
+
+        var emailPresent = !StringUtils.isEmpty(caseData.getApplicant1().getEmail());
         if (isCourtService && emailPresent) {
             reissueOption = OFFLINE_AOS;
         } else if (emailPresent) {
