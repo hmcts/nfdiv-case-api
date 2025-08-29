@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.caseworker.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
@@ -16,23 +15,16 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifica
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.JudicialSeparationReissueOption;
-import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
-import java.util.Optional;
-
 import static java.lang.String.format;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress.EMAIL;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
@@ -67,9 +59,6 @@ public class ReIssueApplicationService {
     private final GenerateD10Form generateD10Form;
 
     private final GenerateD84Form generateD84Form;
-
-    private final SetServiceType setServiceType;
-
 
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
 
@@ -177,37 +166,5 @@ public class ReIssueApplicationService {
                 "Exception occurred while sending reissue application notifications for case id " + caseDetails.getId()
             );
         }
-
-    }
-
-    public void updateReissueOptionForNewContactDetails(CaseDetails<CaseData, State> caseDetails, Long caseId) {
-
-        CaseData caseData = caseDetails.getData();
-
-        var noResponseOptions =
-            Optional.of(caseData.getApplicant1())
-                .map(Applicant::getInterimApplicationOptions)
-                .map(InterimApplicationOptions::getNoResponseJourneyOptions)
-                .orElse(new NoResponseJourneyOptions());
-
-        ReissueOption reissueOption = null;
-
-        var isCourtService = caseData.getApplication().isCourtServiceMethod();
-        var emailPresent = !StringUtils.isEmpty(caseData.getApplicant2().getEmail());
-
-        if (noResponseOptions.getNoResponsePartnerNewEmailOrAddress() != null
-            && !EMAIL.equals(noResponseOptions.getNoResponsePartnerNewEmailOrAddress())) {
-            caseTasks(setServiceType).run(caseDetails);
-        }
-
-        if (isCourtService && emailPresent) {
-            reissueOption = OFFLINE_AOS;
-        } else if (emailPresent) {
-            reissueOption = DIGITAL_AOS;
-        } else {
-            reissueOption = REISSUE_CASE;
-        }
-
-        caseData.getApplication().setReissueOption(reissueOption);
     }
 }
