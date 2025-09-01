@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.AlternativeServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.BailiffServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DeemedServiceApplicationSubmittedNotification;
-import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DispenseWithServiceApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DispenseServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -27,10 +27,10 @@ public class InterimApplicationSubmissionService {
     private final DeemedServiceApplicationSubmittedNotification deemedApplicationSubmittedNotification;
     private final AlternativeServiceApplicationSubmittedNotification alternativeServiceApplicationSubmittedNotification;
     private final AlternativeServiceApplicationGenerator alternativeServiceApplicationGenerator;
+    private final DispenseServiceApplicationSubmittedNotification dispenseServiceApplicationSubmittedNotification;
 
     private final BailiffServiceApplicationSubmittedNotification bailiffApplicationSubmittedNotification;
     private final DispenseWithServiceApplicationGenerator dispenseWithServiceApplicationGenerator;
-    private final DispenseWithServiceApplicationSubmittedNotification dispenseWithServiceApplicationSubmittedNotification;
 
     public DivorceDocument generateAnswerDocument(
         long caseId,
@@ -67,7 +67,7 @@ public class InterimApplicationSubmissionService {
             notificationDispatcher.send(alternativeServiceApplicationSubmittedNotification, caseData, caseId);
             return;
         } else if (AlternativeServiceType.DISPENSED.equals(serviceType)) {
-            notificationDispatcher.send(dispenseWithServiceApplicationSubmittedNotification, caseData, caseId);
+            notificationDispatcher.send(dispenseServiceApplicationSubmittedNotification, caseData, caseId);
             return;
         }
 
