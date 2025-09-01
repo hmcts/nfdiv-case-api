@@ -33,7 +33,7 @@ public class GeneralApplicationUtils {
                 .build()
             ).toList();
 
-        caseData.getGeneralApplication().setGeneralApplicationToReject(
+        caseData.getGeneralReferral().setSelectedGeneralApplication(
             DynamicList.builder()
                 .listItems(generalApplicationNames)
                 .build()
