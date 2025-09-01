@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.AlternativeServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.BailiffServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DeemedServiceApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DispenseServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -35,6 +36,9 @@ class InterimApplicationSubmissionServiceTest {
 
     @Mock
     private BailiffServiceApplicationSubmittedNotification bailiffNotification;
+
+    @Mock
+    private DispenseServiceApplicationSubmittedNotification dispenseNotification;
 
     @Mock
     private AlternativeServiceApplicationSubmittedNotification alternativeServiceApplicationSubmittedNotification;
@@ -175,5 +179,23 @@ class InterimApplicationSubmissionServiceTest {
         interimApplicationSubmissionService.sendNotifications(caseId, AlternativeServiceType.ALTERNATIVE_SERVICE, caseData);
 
         verify(notificationDispatcher).send(alternativeServiceApplicationSubmittedNotification, caseData, caseId);
+    }
+
+    @Test
+    void shouldDelegateToDispenseServiceNotificationWhenApplicationTypeIsDispenseService() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(InterimApplicationType.DISPENSE_WITH_SERVICE)
+                            .build())
+                    .build()
+            ).build();
+
+        interimApplicationSubmissionService.sendNotifications(caseId, AlternativeServiceType.DISPENSED, caseData);
+
+        verify(notificationDispatcher).send(dispenseNotification, caseData, caseId);
     }
 }
