@@ -32,6 +32,7 @@ public final class CaseFieldsConstants {
     public static final String APPLICANT_1_FIRM_NAME = "applicant1SolicitorFirmName";
     public static final String EVIDENCE_HANDLED = "evidenceHandled";
     public static final String ALTERNATIVE_SERVICE_TYPE = "alternativeServiceType";
+    public static final String ALTERNATIVE_SERVICE_PAYMENT_METHOD = "servicePaymentFeePaymentMethod";
     public static final String APPLICANT_1_ADDRESS = "applicant1Address";
     public static final String APPLICANT_2_ADDRESS = "applicant2Address";
     public static final String APPLICANT_1_IN_REFUGE = "applicant1InRefuge";
