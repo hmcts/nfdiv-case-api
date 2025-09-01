@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
