@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -45,8 +44,6 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
         = "You cannot move this case into a post-issue state as it has not been issued";
     public static final String CASE_ALREADY_ISSUED_ERROR
         = "You cannot move this case into a pre-issue state as it has already been issued";
-
-    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, h:mm:ss a");
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -110,6 +107,7 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
         log.info("Caseworker rejected about to submit callback invoked: {}, Case Id: {}", details.getState(), details.getId());
         var caseData = details.getData();
         String generalApplicationSelected = caseData.getGeneralReferral().getSelectedGeneralApplication().getValue().getLabel();
+        details.setState(caseData.getApplication().getStateToTransitionApplicationTo());
 
         generalApplicationLabels(caseData)
             .entrySet()
@@ -122,10 +120,8 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
                 resetApplicationFields(caseData, details);
             });
 
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
-            .state(caseData.getApplication().getStateToTransitionApplicationTo())
             .build();
     }
 
@@ -153,7 +149,7 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
     }
 
     private void resetApplicationFields(CaseData caseData, CaseDetails<CaseData, State> details) {
-        caseData.setGeneralApplication(null);
+        caseData.getGeneralReferral().setSelectedGeneralApplication(null);
         if (YesOrNo.YES.equals(caseData.getGeneralReferral().getRejectGeneralReferral())) {
             caseData.setGeneralReferral(null);
         }

@@ -136,11 +136,4 @@ public class GeneralReferral {
         searchable = false
     )
     private YesOrNo rejectGeneralReferral;
-
-    @CCD(
-        label = "General referral that will be rejected?",
-        access = {DefaultAccess.class},
-        searchable = false
-    )
-    private String generalReferralToReject;
 }

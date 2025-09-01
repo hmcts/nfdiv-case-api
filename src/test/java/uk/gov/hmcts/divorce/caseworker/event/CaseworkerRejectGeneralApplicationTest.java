@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralAppli
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.CASE_ALREADY_ISSUED_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.CASE_MUST_BE_ISSUED_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.INVALID_STATE_ERROR;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.formatter;
+import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.formatter;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;

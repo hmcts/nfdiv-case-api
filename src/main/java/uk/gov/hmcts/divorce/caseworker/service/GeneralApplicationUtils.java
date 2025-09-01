@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class GeneralApplicationUtils {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, h:mm:ss a");
+    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, h:mm:ss a");
 
     private GeneralApplicationUtils() {
         throw new UnsupportedOperationException("Utility class");
