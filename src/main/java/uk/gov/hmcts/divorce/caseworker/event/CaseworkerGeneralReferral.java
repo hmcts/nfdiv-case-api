@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -47,8 +46,6 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
     private static final String GENERAL_REFERRAL = "General referral";
 
     private final Clock clock;
-    private final GeneralApplicationUtils generalApplicationUtils;
-
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
