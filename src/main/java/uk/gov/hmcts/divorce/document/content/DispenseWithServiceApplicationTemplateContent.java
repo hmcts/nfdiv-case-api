@@ -4,7 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.*;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DispenseWithServiceJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 
 import java.time.LocalDate;
@@ -13,7 +17,15 @@ import java.util.List;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSE_WITH_SERVICE_APPLICATION_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.*;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_RECEIVED_DATE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
@@ -90,7 +102,8 @@ public class DispenseWithServiceApplicationTemplateContent implements TemplateCo
 
         templateContent.put(DIVORCE_OR_DISSOLUTION, getApplicationType(languagePreference, caseData));
 
-        DispenseWithServiceJourneyOptions applicationAnswers = applicant.getInterimApplicationOptions().getDispenseWithServiceJourneyOptions();
+        DispenseWithServiceJourneyOptions applicationAnswers =
+            applicant.getInterimApplicationOptions().getDispenseWithServiceJourneyOptions();
         return dispenseWithServiceApplicationContent(templateContent, applicationAnswers, dateTimeFormatter);
     }
 
@@ -121,7 +134,8 @@ public class DispenseWithServiceApplicationTemplateContent implements TemplateCo
         }
         templateContent.put(DISPENSE_PARTNER_LAST_SEEN_DESCRIPTION, applicationAnswers.getDispensePartnerLastSeenDescription());
 
-        if (applicationAnswers.getDispensePartnerLastSeenDate() != null && applicationAnswers.getDispensePartnerLastSeenDate().isBefore(LocalDate.now().minusYears(2))) {
+        if (applicationAnswers.getDispensePartnerLastSeenDate() != null
+            && applicationAnswers.getDispensePartnerLastSeenDate().isBefore(LocalDate.now().minusYears(2))) {
             templateContent.put(DISPENSE_PARTNER_LAST_SEEN_OVER_TWO_YEARS_AGO, YesOrNo.YES);
             templateContent.put(DISPENSE_HAVE_SEARCHED_FINAL_ORDER, applicationAnswers.getDispenseHaveSearchedFinalOrder());
             if (YesOrNo.NO.equals(applicationAnswers.getDispenseHaveSearchedFinalOrder())) {
@@ -187,7 +201,8 @@ public class DispenseWithServiceApplicationTemplateContent implements TemplateCo
             }
         }
 
-        templateContent.put(DISPENSE_CONTACT_FRIENDS_OR_RELATIVES_DETAILS, applicationAnswers.getDispenseContactFriendsOrRelativesDetails());
+        templateContent.put(DISPENSE_CONTACT_FRIENDS_OR_RELATIVES_DETAILS,
+            applicationAnswers.getDispenseContactFriendsOrRelativesDetails());
         templateContent.put(DISPENSE_OTHER_ENQUIRIES, applicationAnswers.getDispenseOtherEnquiries());
 
         return templateContent;
