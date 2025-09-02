@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
-import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SAVE_SIGN_OUT;
 
@@ -35,7 +34,6 @@ public class SaveAndSignOutNotificationHandler {
 
         final var emailTemplate = State.InformationRequested.equals(state) ? REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT : SAVE_SIGN_OUT;
         final var templateContent = commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
-        templateContent.put(SMART_SURVEY, commonContent.getSmartSurvey());
 
         notificationService.sendEmail(
             user.getUserDetails().getSub(),

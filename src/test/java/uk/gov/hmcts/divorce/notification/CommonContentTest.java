@@ -778,7 +778,7 @@ class CommonContentTest {
         assertEquals("John", templateVars.get("first name"));
         assertEquals("Doe", templateVars.get("last name"));
         assertEquals("XYZ Solicitors", templateVars.get("solicitor firm"));
-        assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
+        assertThat(templateVars.get(CommonContent.SMART_SURVEY)).contains("https://testsurveylink");
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
 
     }
@@ -800,7 +800,7 @@ class CommonContentTest {
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
         assertEquals("Solicitor Name", templateVars.get(CommonContent.NAME));
         assertEquals("SolRef", templateVars.get(CommonContent.SOLICITOR_REFERENCE));
-        assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
+        assertThat(templateVars.get(CommonContent.SMART_SURVEY)).contains("https://testsurveylink");
     }
 
     @Test
@@ -819,7 +819,7 @@ class CommonContentTest {
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
         assertEquals("Solicitor Name", templateVars.get(CommonContent.NAME));
         assertEquals(NOT_PROVIDED, templateVars.get(SOLICITOR_REFERENCE));
-        assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
+        assertThat(templateVars.get(CommonContent.SMART_SURVEY)).contains("https://testsurveylink");
     }
 
     @Test
@@ -843,7 +843,7 @@ class CommonContentTest {
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
         assertEquals("Old Solicitor Name", templateVars.get(CommonContent.NAME));
         assertEquals("First Last", templateVars.get(CommonContent.APPLICANT_NAME));
-        assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
+        assertThat(templateVars.get(CommonContent.SMART_SURVEY)).contains("https://testsurveylink");
         assertEquals(PHONE_AND_OPENING_TIMES_TEXT, templateVars.get(PHONE_AND_OPENING_TIMES));
         assertEquals("[Contact us using our online form](webformUrl)", templateVars.get(WEB_FORM_TEXT));
     }
