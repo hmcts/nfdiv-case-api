@@ -10,12 +10,14 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse;
+import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -52,6 +54,9 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
 
     @Mock
     private SetServiceType setServiceType;
+
+    @Mock
+    private SetPostIssueState setPostIssueState;
 
     @InjectMocks
     private Applicant1UpdatePartnerDetailsOrReissue applicant1UpdatePartnerDetailsOrReissue;
@@ -105,12 +110,42 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         caseDetails.setData(caseData);
 
         when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
+        when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
 
 
         assertThat(response.getErrors()).isNull();
+        assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
+            .getNoResponsePartnerNewEmailOrAddress()).isEqualTo(CONTACT_DETAILS_UPDATED);
+    }
+
+    @Test
+    void shouldSetServiceTypeToPersonalServiceWhenPartnerAddressIsOutsideEnglandAndWales() {
+
+        final CaseData caseData = validCaseDataForReIssueApplication();
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
+            .noResponseJourneyOptions(
+                NoResponseJourneyOptions.builder()
+                .noResponsePartnerNewEmailOrAddress(NoResponsePartnerNewEmailOrAddress.ADDRESS)
+                .noResponsePartnerAddressOverseas(YesOrNo.NO)
+                .noResponseRespondentAddressInEnglandWales(YesOrNo.NO)
+                .build())
+            .build());
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(12345L);
+        caseDetails.setData(caseData);
+
+        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
+        when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
+
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(caseData.getApplication().getServiceMethod()).isEqualTo(ServiceMethod.PERSONAL_SERVICE);
         assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
             .getNoResponsePartnerNewEmailOrAddress()).isEqualTo(CONTACT_DETAILS_UPDATED);
     }
