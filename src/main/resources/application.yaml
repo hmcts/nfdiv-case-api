@@ -220,7 +220,7 @@ uk:
           welsh:
             REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT: '6fed53fd-8558-4f9a-8804-8b1004221083'
             SAVE_SIGN_OUT: '01202704-dfb7-48a3-91bd-1bbbbd4ee511'
-            INTERIM_APPLICATION_SAVE_SIGN_OUT: '6b7537ed-b234-4aac-a16a-6f32489f1fdc' #TODO: Welsh translation needed
+            INTERIM_APPLICATION_SAVE_SIGN_OUT: 'a8db64b7-7cfd-45ba-86e8-1783420a56f9'
             OUTSTANDING_ACTIONS: '474d5778-8886-4df7-b0ea-006ca28eab8e'
             APPLICATION_SUBMITTED: 'b7a78a0c-b163-4293-86d0-41d773275a8f'
             SOLICITOR_JOINT_APPLICATION_SUBMITTED: '12795f00-f656-4df2-bd8b-0921ebd18080' #TODO: Welsh translation needed

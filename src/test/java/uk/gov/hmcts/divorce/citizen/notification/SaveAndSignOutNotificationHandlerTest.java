@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -134,7 +136,7 @@ class SaveAndSignOutNotificationHandlerTest {
 
 
     @Test
-    void shouldCallSendEmailToApp1WhenNotifyApplicantIsInvokedForGivenCaseDataWhenInterimApplicationTypeIsDispensedWithService() {
+    void shouldCallSendEmailToApp1WhenNotifyApplicantIsInvokedForGivenCaseDataWhenInterimApplicationTypeIsDeemedService() {
         CaseData caseData = validApplicant1CaseData();
         caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions
             .builder().interimApplicationType(InterimApplicationType.DEEMED_SERVICE).build());
@@ -152,6 +154,30 @@ class SaveAndSignOutNotificationHandlerTest {
                 hasEntry("interimApplicationType", "deemed service")
             )),
             eq(ENGLISH),
+            eq(CASE_ID)
+        );
+    }
+
+    @Test
+    void shouldCallSendEmailToApp1WhenNotifyApplicantIsInvokedForGivenCaseDataWhenInterimApplicationTypeIsDeemedServiceWelsh() {
+        CaseData caseData = validApplicant1CaseData();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions
+            .builder().interimApplicationType(InterimApplicationType.DEEMED_SERVICE).build());
+        User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).build());
+        when(idamService.retrieveUser(eq(USER_TOKEN))).thenReturn(user);
+        when(ccdAccessService.isApplicant1(eq(USER_TOKEN), eq(CASE_ID))).thenReturn(true);
+
+
+        saveAndSignOutNotificationHandler.notifyApplicant(AosOverdue, caseData, CASE_ID, USER_TOKEN);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(INTERIM_APPLICATION_SAVE_SIGN_OUT),
+            argThat(allOf(
+                hasEntry("interimApplicationType", "cyflwyno tybiedig")
+            )),
+            eq(WELSH),
             eq(CASE_ID)
         );
     }

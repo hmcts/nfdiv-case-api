@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.INTERIM_APPLICATION_SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT;
@@ -50,7 +51,8 @@ public class SaveAndSignOutNotificationHandler {
 
         if (isInterimApplication) {
             templateContent.put(
-                INTERIM_APPLICATION_TYPE, applicant1.getInterimApplicationOptions().getInterimApplicationType().getLabel().toLowerCase());
+                INTERIM_APPLICATION_TYPE, applicant1.getInterimApplicationOptions().getInterimApplicationType()
+                    .getLocalizedLabel(WELSH.equals(applicant1.getLanguagePreference())).toLowerCase());
         }
 
         notificationService.sendEmail(
