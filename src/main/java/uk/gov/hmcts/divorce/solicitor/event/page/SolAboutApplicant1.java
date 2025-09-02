@@ -58,9 +58,9 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
                 .done()
             .label("contactDetails", "# ${labelContentApplicantsOrApplicant1s} contact details")
             .complex(CaseData::getApplicant1)
-                .mandatoryWithLabel(Applicant::getEmail,
+                .mandatoryWithLabel(Applicant::getNonConfidentialEmail,
                     "${labelContentApplicantsOrApplicant1s} email address")
-                .optionalWithLabel(Applicant::getPhoneNumber,
+                .optionalWithLabel(Applicant::getNonConfidentialPhoneNumber,
                     "${labelContentApplicantsOrApplicant1s} phone number")
                 .optionalWithLabel(Applicant::getAddressOverseas, "Is ${labelContentApplicantsOrApplicant1s} address international?")
                 .mandatoryWithLabel(Applicant::getNonConfidentialAddress,
@@ -77,7 +77,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
         CaseData caseData = details.getData();
         Applicant applicant1 = caseData.getApplicant1();
 
-        boolean validEmail = EmailValidator.getInstance().isValid(applicant1.getEmail());
+        boolean validEmail = EmailValidator.getInstance().isValid(applicant1.getNonConfidentialEmail());
         if (!validEmail) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(List.of(INVALID_EMAIL_ERROR))
