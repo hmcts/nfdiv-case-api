@@ -84,10 +84,6 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
             .id(APPLICANT_1_EMAIL)
             .userRole(UserRole.JUDGE)
             .build(),
-        SearchField.<UserRole>builder().label("Applicant email")
-            .id(APPLICANT_1_EMAIL)
-            .userRole(UserRole.APPLICANT_1_SOLICITOR)
-            .build(),
         SearchField.<UserRole>builder().label("Applicant postcode")
             .id(APPLICANT_1_ADDRESS)
             .userRole(UserRole.CASE_WORKER)
@@ -105,10 +101,6 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
         SearchField.<UserRole>builder().label("Respondent email")
             .id(APPLICANT_2_EMAIL)
             .userRole(UserRole.JUDGE)
-            .build(),
-        SearchField.<UserRole>builder().label("Respondent email")
-            .id(APPLICANT_2_EMAIL)
-            .userRole(UserRole.APPLICANT_2_SOLICITOR)
             .build(),
         SearchField.<UserRole>builder().label("Respondent postcode")
             .id(APPLICANT_2_ADDRESS)
