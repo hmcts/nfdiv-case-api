@@ -13,16 +13,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
-import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.util.List;
 import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
@@ -83,18 +82,6 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
         var applicant2 = caseData.getApplicant2();
         var updateNewEmailOrAddress = noResponseJourney.getNoResponsePartnerNewEmailOrAddress();
 
-        try {
-
-            reIssueApplicationService.updateReissueOptionForNewContactDetails(details, details.getId());
-            details.setState(AwaitingAos);
-
-        } catch (InvalidReissueOptionException ex) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(List.of(String.format("Invalid update contact details option selected for CaseId: %s",
-                    details.getId())))
-                .build();
-        }
-
         if (SEND_PAPERS_AGAIN.equals(noResponseJourney.getNoResponseSendPapersAgainOrTrySomethingElse())) {
             caseData.getApplicant1().getInterimApplicationOptions().setNoResponseJourneyOptions(
                 NoResponseJourneyOptions.builder().noResponseSendPapersAgainOrTrySomethingElse(PAPERS_SENT).build());
@@ -102,19 +89,22 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
             switch (updateNewEmailOrAddress) {
                 case ADDRESS -> updateAddress(applicant2, newAddress, noResponseJourney);
 
-                case EMAIL ->  applicant2.setEmail(newEmail);
+                case EMAIL -> applicant2.setEmail(newEmail);
 
                 case EMAIL_AND_ADDRESS -> {
                     applicant2.setEmail(newEmail);
                     updateAddress(applicant2, newAddress, noResponseJourney);
                 }
-                default -> noResponseJourney.setNoResponsePartnerNewEmailOrAddress(CONTACT_DETAILS_UPDATED);
+                default -> log.info("Contact details updated");
             }
+            noResponseJourney.setNoResponsePartnerNewEmailOrAddress(CONTACT_DETAILS_UPDATED);
         }
+
+        caseData.getApplication().setReissueOption(ReissueOption.REISSUE_CASE);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
-            .state(details.getState())
+            .state(caseData.getApplication().isPersonalServiceMethod() ? AwaitingService : AwaitingAos)
             .build();
     }
 

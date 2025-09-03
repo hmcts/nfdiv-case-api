@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.SearchGovRecordsWhichDepartment;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SEARCH_GOV_RECORDS_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
@@ -83,7 +84,8 @@ public class SearchGovRecordsApplicationTemplateContent {
         DateTimeFormatter dateTimeFormatter
     ) {
         templateContent.put(WHY_SEARCH_GOV_RECORDS, applicationAnswers.getReasonForApplying());
-        templateContent.put(DEPARTMENTS_TO_SEARCH, applicationAnswers.getWhichDepartments());
+        templateContent.put(DEPARTMENTS_TO_SEARCH, applicationAnswers.getWhichDepartments().stream()
+                .map(SearchGovRecordsWhichDepartment::getLabel).toList().toString());
 
         if (applicationAnswers.getWhichDepartments()
             .contains(SearchGovRecordsWhichDepartment.OTHER)) {
@@ -107,7 +109,7 @@ public class SearchGovRecordsApplicationTemplateContent {
             templateContent.put(PARTNER_NATIONAL_INSURANCE, applicationAnswers.getPartnerNationalInsurance());
         }
 
-        templateContent.put(PARTNER_LAST_KNOWN_ADDRESS, applicationAnswers.getPartnerLastKnownAddress());
+        templateContent.put(PARTNER_LAST_KNOWN_ADDRESS, applicationAnswers.getLastKnownAddress());
         templateContent.put(DATES_PARTNER_LIVED_AT_LAST_KNOWN_ADDRESS, applicationAnswers.getPartnerLastKnownAddressDates());
         templateContent.put(KNOW_ADDITIONAL_ADDRESSES_FOR_PARTNER, applicationAnswers.getKnowPartnerAdditionalAddresses() == YesOrNo.YES);
         templateContent.put(ADDITIONAL_ADDRESS1, applicationAnswers.getPartnerAdditionalAddress1());

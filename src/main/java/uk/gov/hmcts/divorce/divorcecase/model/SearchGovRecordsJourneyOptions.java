@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -10,12 +11,17 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CitizenAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
 
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.joining;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
 @Data
 @Builder
@@ -98,8 +104,7 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
 
     @CCD(
         label = "What is your partner's last known address?",
-        access = {DefaultAccess.class},
-        searchable = false
+        access = {DefaultAccess.class}
     )
     private AddressGlobalUK partnerLastKnownAddress;
 
@@ -144,4 +149,21 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
         searchable = false
     )
     private String partnerAdditionalAddressDates2;
+
+    @JsonIgnore
+    public String getLastKnownAddress() {
+      return Stream.of(
+              partnerLastKnownAddress.getAddressLine1(),
+              partnerLastKnownAddress.getAddressLine2(),
+              partnerLastKnownAddress.getAddressLine3(),
+              partnerLastKnownAddress.getPostTown(),
+              partnerLastKnownAddress.getCounty(),
+              partnerLastKnownAddress.getCountry(),
+              partnerLastKnownAddress.getPostCode()
+                )
+                .filter(value -> value != null && !value.isEmpty())
+                .collect(joining("\n"));
+    }
+
+
 }
