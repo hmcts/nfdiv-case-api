@@ -156,7 +156,7 @@ public class Applicant {
         regex = "^[0-9 +().-]{9,}$",
         searchable = false
     )
-    private String nonConfidentialPhoneNumber;
+    private String nonConfidentialPhone;
 
     @CCD(
         label = "Non-Confidential Email address",

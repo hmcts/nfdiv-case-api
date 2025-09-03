@@ -48,7 +48,7 @@ public class Applicant1SolicitorViewApplicant2ContactDetails implements CCDConfi
             .pageLabel("Respondent Contact Details")
             .complex(CaseData::getApplicant2)
                 .readonly(Applicant::getNonConfidentialAddress)
-                .readonly(Applicant::getNonConfidentialPhoneNumber)
+                .readonly(Applicant::getNonConfidentialPhone)
                 .readonly(Applicant::getNonConfidentialEmail)
             .done();
     }
@@ -67,7 +67,7 @@ public class Applicant1SolicitorViewApplicant2ContactDetails implements CCDConfi
 
         var applicant2 = details.getData().getApplicant2();
         applicant2.setNonConfidentialAddress(applicant2.getAddress());
-        applicant2.setNonConfidentialPhoneNumber(applicant2.getPhoneNumber());
+        applicant2.setNonConfidentialPhone(applicant2.getPhoneNumber());
         applicant2.setNonConfidentialEmail(applicant2.getEmail());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

@@ -102,7 +102,7 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
     private void setContactDetails(Applicant applicant) {
         applicant.setNonConfidentialAddress(applicant.getAddress());
         applicant.setNonConfidentialEmail(applicant.getEmail());
-        applicant.setNonConfidentialPhoneNumber(applicant.getPhoneNumber());
+        applicant.setNonConfidentialPhone(applicant.getPhoneNumber());
     }
 
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

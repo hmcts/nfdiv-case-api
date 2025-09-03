@@ -28,10 +28,10 @@ public class SetApplicantContactDetails implements CaseTask {
     private void saveContactDetails(Applicant applicant) {
         applicant.setAddress(applicant.getNonConfidentialAddress());
         applicant.setEmail(applicant.getNonConfidentialEmail());
-        applicant.setPhoneNumber(applicant.getNonConfidentialPhoneNumber());
+        applicant.setPhoneNumber(applicant.getNonConfidentialPhone());
 
         applicant.setNonConfidentialAddress(null);
         applicant.setNonConfidentialEmail(null);
-        applicant.setNonConfidentialPhoneNumber(null);
+        applicant.setNonConfidentialPhone(null);
     }
 }

@@ -60,7 +60,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
             .complex(CaseData::getApplicant1)
                 .mandatoryWithLabel(Applicant::getNonConfidentialEmail,
                     "${labelContentApplicantsOrApplicant1s} email address")
-                .optionalWithLabel(Applicant::getNonConfidentialPhoneNumber,
+                .optionalWithLabel(Applicant::getNonConfidentialPhone,
                     "${labelContentApplicantsOrApplicant1s} phone number")
                 .optionalWithLabel(Applicant::getAddressOverseas, "Is ${labelContentApplicantsOrApplicant1s} address international?")
                 .mandatoryWithLabel(Applicant::getNonConfidentialAddress,
