@@ -68,7 +68,9 @@ public class Applicant {
 
     @CCD(
         label = "Email address",
-        typeOverride = Email
+        typeOverride = Email,
+        access = {DefaultAccessExcludingSolicitor.class, CitizenAccess.class},
+        inheritAccessFromParent = false
     )
     private String email;
 
@@ -170,7 +172,9 @@ public class Applicant {
 
     @CCD(
         label = "Phone number",
-        regex = "^[0-9 +().-]{9,}$"
+        regex = "^[0-9 +().-]{9,}$",
+        access = {DefaultAccessExcludingSolicitor.class, CitizenAccess.class},
+        inheritAccessFromParent = false
     )
     private String phoneNumber;
 
