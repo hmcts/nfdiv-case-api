@@ -11,9 +11,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.access.CitizenAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -21,7 +19,6 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
 @Data
 @Builder
@@ -152,17 +149,17 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
 
     @JsonIgnore
     public String getLastKnownAddress() {
-      return Stream.of(
-              partnerLastKnownAddress.getAddressLine1(),
-              partnerLastKnownAddress.getAddressLine2(),
-              partnerLastKnownAddress.getAddressLine3(),
-              partnerLastKnownAddress.getPostTown(),
-              partnerLastKnownAddress.getCounty(),
-              partnerLastKnownAddress.getCountry(),
-              partnerLastKnownAddress.getPostCode()
-                )
-                .filter(value -> value != null && !value.isEmpty())
-                .collect(joining("\n"));
+        return Stream.of(
+                partnerLastKnownAddress.getAddressLine1(),
+                partnerLastKnownAddress.getAddressLine2(),
+                partnerLastKnownAddress.getAddressLine3(),
+                partnerLastKnownAddress.getPostTown(),
+                partnerLastKnownAddress.getCounty(),
+                partnerLastKnownAddress.getCountry(),
+                partnerLastKnownAddress.getPostCode()
+            )
+            .filter(value -> value != null && !value.isEmpty())
+            .collect(joining("\n"));
     }
 
 

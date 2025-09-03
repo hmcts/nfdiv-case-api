@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.SearchGovRecordsWhichDepartment;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SEARCH_GOV_RECORDS_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
@@ -84,7 +84,7 @@ public class SearchGovRecordsApplicationTemplateContent {
         DateTimeFormatter dateTimeFormatter
     ) {
         templateContent.put(WHY_SEARCH_GOV_RECORDS, applicationAnswers.getReasonForApplying());
-        templateContent.put(DEPARTMENTS_TO_SEARCH, applicationAnswers.getWhichDepartments().stream()
+        templateContent.put(DEPARTMENTS_TO_SEARCH, applicationAnswers.getWhichDepartments().stream().filter(Predicate.not(SearchGovRecordsWhichDepartment.OTHER::equals))
                 .map(SearchGovRecordsWhichDepartment::getLabel).toList().toString());
 
         if (applicationAnswers.getWhichDepartments()
