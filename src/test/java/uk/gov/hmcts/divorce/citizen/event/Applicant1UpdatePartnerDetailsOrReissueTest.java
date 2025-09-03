@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.citizen.event.Applicant1UpdatePartnerDetailsOrReissue.UPDATE_PARTNER_DETAILS_OR_REISSUE;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress.CONTACT_DETAILS_UPDATED;
+import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.PAPERS_SENT;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -66,26 +68,6 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
     }
 
     @Test
-    void shouldTriggerEventForReissueApplicationWhenApplicantUpdateContactDetailsForPartner() {
-
-        final CaseData caseData = caseData();
-
-        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        var user = mock(User.class);
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
-
-        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        applicant1UpdatePartnerDetailsOrReissue.submitted(caseDetails, beforeDetails);
-
-        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, CASEWORKER_REISSUE_APPLICATION, user, TEST_SERVICE_AUTH_TOKEN);
-    }
-
-    @Test
     void shouldSetNewEmailForRespondentAboutToSubmitWhenNoResponsePartnerNewEmailOrAddressIsEmail() {
 
         final CaseData caseData = validCaseDataForReIssueApplication();
@@ -114,6 +96,32 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
             .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
                 .noResponsePartnerNewEmailOrAddress(NoResponsePartnerNewEmailOrAddress.ADDRESS)
+                .noResponsePartnerNewEmailOrAddress(NoResponsePartnerNewEmailOrAddress.ADDRESS)
+                .noResponsePartnerAddressOverseas(YesOrNo.NO)
+                .build())
+            .build());
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(12345L);
+        caseDetails.setData(caseData);
+
+        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
+
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
+            .getNoResponsePartnerNewEmailOrAddress()).isEqualTo(CONTACT_DETAILS_UPDATED);
+    }
+
+    @Test
+    void shouldSendPapersAgainToRespondentAboutToSubmitWhenNoResponsePartnerNewEmailOrAddressIsAddress() {
+
+        final CaseData caseData = validCaseDataForReIssueApplication();
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
+            .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
+                .noResponseSendPapersAgainOrTrySomethingElse(NoResponseSendPapersAgainOrTrySomethingElse.SEND_PAPERS_AGAIN)
                 .noResponsePartnerAddressOverseas(YesOrNo.NO)
                 .build())
             .build());
@@ -129,5 +137,34 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         assertThat(response.getErrors()).isNull();
         assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
             .getNoResponsePartnerNewEmailOrAddress()).isEqualTo(CONTACT_DETAILS_UPDATED);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
+            .getNoResponseSendPapersAgainOrTrySomethingElse()).isEqualTo(PAPERS_SENT);
+    }
+
+    @Test
+    void shouldTriggerEventForReissueApplicationWhenApplicantUpdateContactDetailsForPartner() {
+
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
+            .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
+                .noResponsePartnerNewEmailOrAddress(NoResponsePartnerNewEmailOrAddress.EMAIL_AND_ADDRESS)
+                .noResponsePartnerAddressOverseas(YesOrNo.NO)
+                .build())
+            .build());
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        var user = mock(User.class);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        applicant1UpdatePartnerDetailsOrReissue.submitted(caseDetails, beforeDetails);
+
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, CASEWORKER_REISSUE_APPLICATION, user, TEST_SERVICE_AUTH_TOKEN);
     }
 }

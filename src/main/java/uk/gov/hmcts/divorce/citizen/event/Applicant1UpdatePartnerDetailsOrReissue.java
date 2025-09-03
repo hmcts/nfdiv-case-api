@@ -8,7 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
-import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
@@ -39,6 +39,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Component
 @RequiredArgsConstructor
@@ -47,10 +48,10 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
     public static final String UPDATE_PARTNER_DETAILS_OR_REISSUE = "update-partner-details-or-reissue";
 
     private final IdamService idamService;
+    private final SetServiceType setServiceType;
 
     private final AuthTokenGenerator authTokenGenerator;
     private final CcdUpdateService ccdUpdateService;
-    private final ReIssueApplicationService reIssueApplicationService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -87,15 +88,17 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
                 NoResponseJourneyOptions.builder().noResponseSendPapersAgainOrTrySomethingElse(PAPERS_SENT).build());
         } else if (updateNewEmailOrAddress != null) {
             switch (updateNewEmailOrAddress) {
-                case ADDRESS -> updateAddress(applicant2, newAddress, noResponseJourney);
+                case ADDRESS -> updateAddress(details, newAddress, noResponseJourney);
 
                 case EMAIL -> applicant2.setEmail(newEmail);
 
                 case EMAIL_AND_ADDRESS -> {
                     applicant2.setEmail(newEmail);
-                    updateAddress(applicant2, newAddress, noResponseJourney);
+                    updateAddress(details, newAddress, noResponseJourney);
                 }
+
                 default -> log.info("Contact details updated");
+
             }
             noResponseJourney.setNoResponsePartnerNewEmailOrAddress(CONTACT_DETAILS_UPDATED);
         }
@@ -122,8 +125,13 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
         return SubmittedCallbackResponse.builder().build();
     }
 
-    private void updateAddress(Applicant applicant2, AddressGlobalUK newAddress, NoResponseJourneyOptions noResponseJourney) {
+    private void updateAddress(CaseDetails<CaseData, State> caseDetails,
+                               AddressGlobalUK newAddress, NoResponseJourneyOptions noResponseJourney) {
+        Applicant applicant2 = caseDetails.getData().getApplicant2();
         applicant2.setAddress(newAddress);
         applicant2.setAddressOverseas(noResponseJourney.getNoResponsePartnerAddressOverseas());
+        caseTasks(
+            setServiceType
+        ).run(caseDetails);
     }
 }

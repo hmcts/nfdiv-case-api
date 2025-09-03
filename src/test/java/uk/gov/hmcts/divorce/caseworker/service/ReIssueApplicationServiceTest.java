@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
@@ -18,12 +17,8 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifica
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.JudicialSeparationReissueOption;
-import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
@@ -85,9 +80,6 @@ class ReIssueApplicationServiceTest {
 
     @Mock
     private ResetAosFields resetAosFields;
-
-    @Mock
-    private SetServiceType setServiceType;
 
     @InjectMocks
     private ReIssueApplicationService reIssueApplicationService;
@@ -524,22 +516,5 @@ class ReIssueApplicationServiceTest {
         assertThatThrownBy(() -> reIssueApplicationService.process(caseDetails))
             .isExactlyInstanceOf(InvalidReissueOptionException.class)
             .hasMessage("Invalid reissue option for CaseId: 1616591401473378");
-    }
-
-
-    private void setUpCaseDetails(CaseDetails<CaseData, State> caseDetails,
-                                  NoResponsePartnerNewEmailOrAddress newEmailAndPostalAddress, YesOrNo addressOverseas) {
-        CaseData caseData = caseData();
-
-        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-        caseDetails.getData().getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
-            .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
-                .noResponsePartnerNewEmailOrAddress(newEmailAndPostalAddress)
-                .noResponsePartnerAddressOverseas(addressOverseas)
-                .build())
-            .build());
     }
 }

@@ -61,9 +61,6 @@ public class ReIssueApplicationService {
 
     private final GenerateD84Form generateD84Form;
 
-    private final SetServiceType setServiceType;
-
-
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
 
         CaseData caseData = caseDetails.getData();
@@ -170,6 +167,5 @@ public class ReIssueApplicationService {
                 "Exception occurred while sending reissue application notifications for case id " + caseDetails.getId()
             );
         }
-
     }
 }
