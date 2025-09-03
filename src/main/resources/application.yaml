@@ -68,6 +68,12 @@ uk:
             SOLICITOR_JOINT_APPLICATION_SUBMITTED: '12795f00-f656-4df2-bd8b-0921ebd18080'
             DEEMED_SERVICE_APPLICATION_SUBMITTED: 'e69eca1f-57b7-438e-a498-b1581c17ae35'
             DEEMED_SERVICE_APPLICATION_AWAITING_DOCUMENTS: 'ac11d55c-5723-4731-93b2-90597f2cbc1e'
+            DISPENSE_SERVICE_APPLICATION_SUBMITTED: 'f54bff42-0a79-40e6-80cc-8a84eed5c04f'
+            DISPENSE_SERVICE_APPLICATION_AWAITING_DOCUMENTS: '74a91352-09ec-408f-851b-26c6f5ba8787'
+            BAILIFF_SERVICE_APPLICATION_SUBMITTED: '1a4ea900-5e1a-4772-af6c-3cc374246fe4'
+            BAILIFF_SERVICE_APPLICATION_AWAITING_DOCUMENTS: '02690174-c165-443b-a870-a7f1f398d3f8'
+            ALTERNATIVE_SERVICE_APPLICATION_SUBMITTED: '4e2ab8ce-e0c0-4da2-a0c8-68d75dde92e8'
+            ALTERNATIVE_SERVICE_APPLICATION_AWAITING_DOCUMENTS: 'aeea0b6f-b9fe-4e8c-bef0-21982f823e18'
             JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW: 'd15a318f-404b-4c29-8a01-1febee5bf2d5'
             JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW: 'fb0c2168-1861-452e-af4b-34e718643635'
             JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_APPLICANT1_REPRESENTED: '2cba9d42-5ef5-4ba1-8daf-334a465f0515'
@@ -163,8 +169,8 @@ uk:
             POST_INFORMATION_TO_COURT: 'ee9e3661-4b9a-459a-9e22-3aac41b5edd8'
             GENERAL_APPLICATION_RECEIVED: '80f4ee70-1269-46e1-9460-51786a980fc1'
             GENERAL_APPLICATION_SUCCESSFUL: '67af4496-44f5-41fa-a6ea-408017516cb8'
-            SERVICE_APPLICATION_REJECTED: 'bbdfd770-4f43-40dc-a3af-5dffdacdf0d3'
-            SERVICE_APPLICATION_GRANTED: '5e545da8-8c68-4a21-99e5-5c44a51b2085'
+            SERVICE_APPLICATION_REJECTED: '73784400-9a62-4615-affe-92223b7eec9e'
+            SERVICE_APPLICATION_GRANTED: '5b96345c-5fb6-442a-becd-a1b15d9ead09'
             SERVICE_APPLICATION_REJECTED_SOLICITOR: 'ba1c3408-4413-4f18-9685-6aacf161f293'
             SERVICE_APPLICATION_GRANTED_SOLICITOR: '88cce629-73e8-43df-83a1-468b00201cd4'
             RESPONDENT_SOLICITOR_HAS_NOT_RESPONDED: '074fe108-7ed8-4f03-93c2-4e53d35281ea'
@@ -219,6 +225,12 @@ uk:
             SOLICITOR_JOINT_APPLICATION_SUBMITTED: '12795f00-f656-4df2-bd8b-0921ebd18080' #TODO: Welsh translation needed
             DEEMED_SERVICE_APPLICATION_SUBMITTED: 'af85112a-824e-4572-94de-3312ca9cfef2'
             DEEMED_SERVICE_APPLICATION_AWAITING_DOCUMENTS: 'd5d850ee-b250-449f-91bb-609c02cd1974'
+            DISPENSE_SERVICE_APPLICATION_SUBMITTED: 'f54bff42-0a79-40e6-80cc-8a84eed5c04f' #TODO: Welsh translation
+            DISPENSE_SERVICE_APPLICATION_AWAITING_DOCUMENTS: '74a91352-09ec-408f-851b-26c6f5ba8787' #TODO: Welsh translation
+            BAILIFF_SERVICE_APPLICATION_SUBMITTED: '1a4ea900-5e1a-4772-af6c-3cc374246fe4' #TODO: Welsh translation needed
+            BAILIFF_SERVICE_APPLICATION_AWAITING_DOCUMENTS: '02690174-c165-443b-a870-a7f1f398d3f8' #TODO: Welsh translation needed
+            ALTERNATIVE_SERVICE_APPLICATION_SUBMITTED: '4e2ab8ce-e0c0-4da2-a0c8-68d75dde92e8' #TODO: Welsh translation needed
+            ALTERNATIVE_SERVICE_APPLICATION_AWAITING_DOCUMENTS: 'aeea0b6f-b9fe-4e8c-bef0-21982f823e18' #TODO: Welsh translation needed
             JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW: '7e72dfe4-d414-4597-9d72-9ae5d91e8376'
             JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW: 'fb0c2168-1861-452e-af4b-34e718643635'   #TODO: Welsh translation needed
             JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_APPLICANT1_REPRESENTED: '2cba9d42-5ef5-4ba1-8daf-334a465f0515' #TODO: Welsh translation needed
@@ -307,8 +319,8 @@ uk:
             POST_INFORMATION_TO_COURT: 'c6152a5f-c62c-460c-ac4a-6456910cd6a8'
             GENERAL_APPLICATION_RECEIVED: '4040e4b4-3354-4002-8831-78e0b1fd24aa'
             GENERAL_APPLICATION_SUCCESSFUL: '67af4496-44f5-41fa-a6ea-408017516cb8' # TODO: Welsh translation
-            SERVICE_APPLICATION_REJECTED: '635fa93c-fdf2-4251-af8b-fd1fdc1238b2'
-            SERVICE_APPLICATION_GRANTED: '92eb5bda-7921-4d06-a852-ba33bbbc3df5'
+            SERVICE_APPLICATION_REJECTED: '5c60c88b-2067-4e71-a478-d553eb4e26bf'
+            SERVICE_APPLICATION_GRANTED: '3b45d1c8-0c6c-4c53-b9a6-369a9043ae91'
             SERVICE_APPLICATION_REJECTED_SOLICITOR: 'c8675e71-ff1e-4dff-9780-4db3c3d12bcf'
             SERVICE_APPLICATION_GRANTED_SOLICITOR: '860accd8-e153-4df2-a076-f5322b65448e'
             RESPONDENT_SOLICITOR_HAS_NOT_RESPONDED: '064bcd1e-3073-40d4-bc8b-5e629528be36'
@@ -431,7 +443,7 @@ docmosis:
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: FL-NFD-GOR-ENG-Sole-Applicant-1-Answers_V5.docx
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-1-Answers_V1.docx
       DIVORCE_JOINT_APPLICANT_2_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers_V1.docx
-      SERVICE_REFUSAL: FL-NFD-GOR-ENG-Refusal-Order-Deemed-Dispensed-Service-V3.docx
+      SERVICE_REFUSAL: FL-NFD-GOR-ENG-Refusal-Order-Deemed-Dispensed-Service-V4.docx
       BAILIFF_APPLICATION_APPROVED: FL-NFD-GOR-ENG-Bailiff-Application-Approved-V1.docx
       BAILIFF_APPLICATION_NOT_APPROVED: FL-NFD-GOR-ENG-Bailiff-Application-Not-Approved-V1.docx
       CONDITIONAL_ORDER_ANSWERS: FL-NFD-GOR-ENG-Conditional_Order_Answers_V1.docx
@@ -498,6 +510,8 @@ docmosis:
       REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER: FL-NFD-GOR-ENG-Request-For-Information-Partner-Solicitor-Response.docx
       RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-ENG-Respondent-Started-Drafting-AoS-Application.docx
       DEEMED_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Deemed-Service-Application_V1.docx
+      BAILIFF_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Bailiff-Service-Application_V1.docx
+      ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Alternative-Service-Application_V1.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V1.docx
@@ -521,7 +535,7 @@ docmosis:
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: FL-NFD-GOR-ENG-Sole-Applicant-1-Answers_V5.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-1-Answers_V1.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_2_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers_V1.docx #TODO: update content
-      SERVICE_REFUSAL: FL-NFD-GOR-WEL-Refusal-Order-Deemed-Dispensed-Service-V3-Cy.docx
+      SERVICE_REFUSAL: FL-NFD-GOR-WEL-Refusal-Order-Deemed-Dispensed-Service-V4-Cy.docx
       BAILIFF_APPLICATION_APPROVED: FL-NFD-GOR-WEL-Bailiff-Application-Approved-V1-Cy.docx
       BAILIFF_APPLICATION_NOT_APPROVED: FL-NFD-GOR-WEL-Bailiff-Application-Not-Approved-V1-Cy.docx
       CONDITIONAL_ORDER_ANSWERS: FL-NFD-GOR-WEL-Conditional_Order_Answers_V1.docx
@@ -591,6 +605,8 @@ docmosis:
       REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Partner-Solicitor-Response.docx
       RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-WEL-Respondent-Started-Drafting-AoS-Application-Cy.docx
       DEEMED_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Deemed-Service-Application_V1.docx
+      BAILIFF_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Bailiff-Service-Application_V1.docx
+      ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Alternative-Service-Application_V1.docx #TODO: add Welsh translation
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}

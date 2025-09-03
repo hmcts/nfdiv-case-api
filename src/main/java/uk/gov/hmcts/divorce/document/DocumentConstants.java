@@ -130,6 +130,7 @@ public final class DocumentConstants {
     public static final String SERVICE_REFUSAL_TEMPLATE_ID = "SERVICE_REFUSAL";
     public static final String DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME = "DispenseWithServiceRefused";
     public static final String DEEMED_SERVICE_REFUSED_FILE_NAME = "DeemedServiceRefused";
+    public static final String ALTERNATIVE_SERVICE_REFUSED_FILE_NAME = "AlternativeServiceRefused";
 
     public static final String BAILIFF_APPLICATION_APPROVED_ID = "BAILIFF_APPLICATION_APPROVED";
     public static final String BAILIFF_APPLICATION_APPROVED_FILE_NAME = "BailiffApplicationApproved";
@@ -221,6 +222,11 @@ public final class DocumentConstants {
         = "REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER";
     public static final String DEEMED_SERVICE_APPLICATION_TEMPLATE_ID = "DEEMED_SERVICE_APPLICATION";
     public static final String DEEMED_SERVICE_APPLICATION_DOCUMENT_NAME = "DeemedServiceApplicationAnswers";
+    public static final String ALTERNATIVE_SERVICE_APPLICATION_TEMPLATE_ID = "ALTERNATIVE_SERVICE_APPLICATION";
+    public static final String ALTERNATIVE_SERVICE_APPLICATION_DOCUMENT_NAME = "AlternativeServiceApplicationAnswers";
+
+    public static final String BAILIFF_SERVICE_APPLICATION_TEMPLATE_ID = "BAILIFF_SERVICE_APPLICATION";
+    public static final String BAILIFF_SERVICE_APPLICATION_DOCUMENT_NAME = "BailiffServiceApplicationAnswers";
 
     private DocumentConstants() {
     }

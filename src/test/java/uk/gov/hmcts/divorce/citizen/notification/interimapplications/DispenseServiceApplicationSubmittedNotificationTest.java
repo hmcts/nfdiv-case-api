@@ -19,15 +19,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.DEEMED_SERVICE_APPLICATION_AWAITING_DOCUMENTS;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.DEEMED_SERVICE_APPLICATION_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.DISPENSE_SERVICE_APPLICATION_AWAITING_DOCUMENTS;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.DISPENSE_SERVICE_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 
 @ExtendWith(SpringExtension.class)
-class DeemedServiceApplicationSubmittedNotificationTest {
+class DispenseServiceApplicationSubmittedNotificationTest {
 
     @Mock
     private NotificationService notificationService;
@@ -36,7 +36,7 @@ class DeemedServiceApplicationSubmittedNotificationTest {
     private CommonContent commonContent;
 
     @InjectMocks
-    private DeemedServiceApplicationSubmittedNotification notification;
+    private DispenseServiceApplicationSubmittedNotification notification;
 
     @Test
     void shouldSendAwaitingDocumentsNotificationIfSomeDocsWereNotUploaded() {
@@ -55,7 +55,7 @@ class DeemedServiceApplicationSubmittedNotificationTest {
 
         verify(notificationService).sendEmail(
             TEST_USER_EMAIL,
-            DEEMED_SERVICE_APPLICATION_AWAITING_DOCUMENTS,
+            DISPENSE_SERVICE_APPLICATION_AWAITING_DOCUMENTS,
             templateVars,
             ENGLISH,
             TEST_CASE_ID
@@ -79,7 +79,7 @@ class DeemedServiceApplicationSubmittedNotificationTest {
 
         verify(notificationService).sendEmail(
             TEST_USER_EMAIL,
-            DEEMED_SERVICE_APPLICATION_SUBMITTED,
+            DISPENSE_SERVICE_APPLICATION_SUBMITTED,
             templateVars,
             ENGLISH,
             TEST_CASE_ID
@@ -105,7 +105,7 @@ class DeemedServiceApplicationSubmittedNotificationTest {
 
         verify(notificationService).sendEmail(
             TEST_USER_EMAIL,
-            DEEMED_SERVICE_APPLICATION_SUBMITTED,
+            DISPENSE_SERVICE_APPLICATION_SUBMITTED,
             templateVars,
             WELSH,
             TEST_CASE_ID
