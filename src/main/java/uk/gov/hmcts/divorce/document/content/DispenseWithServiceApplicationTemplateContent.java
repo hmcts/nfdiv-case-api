@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.DispenseWithServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -133,16 +132,13 @@ public class DispenseWithServiceApplicationTemplateContent implements TemplateCo
             );
         }
         templateContent.put(DISPENSE_PARTNER_LAST_SEEN_DESCRIPTION, applicationAnswers.getDispensePartnerLastSeenDescription());
+        templateContent.put(DISPENSE_PARTNER_LAST_SEEN_OVER_TWO_YEARS_AGO, applicationAnswers.getDispensePartnerLastSeenOver2YearsAgo());
 
-        if (applicationAnswers.getDispensePartnerLastSeenDate() != null
-            && applicationAnswers.getDispensePartnerLastSeenDate().isBefore(LocalDate.now().minusYears(2))) {
-            templateContent.put(DISPENSE_PARTNER_LAST_SEEN_OVER_TWO_YEARS_AGO, YesOrNo.YES);
+        if (YesOrNo.YES.equals(applicationAnswers.getDispensePartnerLastSeenOver2YearsAgo())) {
             templateContent.put(DISPENSE_HAVE_SEARCHED_FINAL_ORDER, applicationAnswers.getDispenseHaveSearchedFinalOrder());
             if (YesOrNo.NO.equals(applicationAnswers.getDispenseHaveSearchedFinalOrder())) {
                 templateContent.put(DISPENSE_WHY_NO_FINAL_ORDER_SEARCH, applicationAnswers.getDispenseWhyNoFinalOrderSearch());
             }
-        } else {
-            templateContent.put(DISPENSE_PARTNER_LAST_SEEN_OVER_TWO_YEARS_AGO, YesOrNo.NO);
         }
 
         templateContent.put(DISPENSE_HAVE_PARTNER_EMAIL_ADDRESSES, applicationAnswers.getDispenseHavePartnerEmailAddresses());

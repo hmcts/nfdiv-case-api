@@ -94,6 +94,12 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispensePartnerLastSeenDescription;
 
     @CCD(
+        label = "Is the last seen date more than 2 years in the past at the point that it was provided?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo dispensePartnerLastSeenOver2YearsAgo;
+
+    @CCD(
         label = "Do you have any email addresses for your partner?",
         access = {DefaultAccess.class}
     )
