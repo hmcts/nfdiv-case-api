@@ -6,6 +6,7 @@ import uk.gov.hmcts.divorce.citizen.notification.interimapplications.Alternative
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.BailiffServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DeemedServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.SearchGovRecordsApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DispenseServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -30,19 +31,18 @@ public class InterimApplicationSubmissionService {
     private final AlternativeServiceApplicationSubmittedNotification alternativeServiceApplicationSubmittedNotification;
     private final AlternativeServiceApplicationGenerator alternativeServiceApplicationGenerator;
     private final SearchGovRecordsApplicationGenerator searchGovRecordsApplicationGenerator;
-
+    private final SearchGovRecordsApplicationSubmittedNotification searchGovApplicationSubmittedNotification;
     private final BailiffServiceApplicationSubmittedNotification bailiffApplicationSubmittedNotification;
-    private final SearchGovRecordsApplicationSubmittedNotification searchGovRecordsApplicationNotifications;
+    private final DispenseServiceApplicationSubmittedNotification dispenseServiceApplicationSubmittedNotification;
 
     public DivorceDocument generateServiceApplicationAnswerDocument(long caseId, Applicant applicant, CaseData caseData) {
         InterimApplicationType applicationType = applicant.getInterimApplicationOptions().getInterimApplicationType();
 
         return switch (applicationType) {
             case DEEMED_SERVICE -> deemedServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
-            case BAILIFF_SERVICE -> bailiffServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
             case ALTERNATIVE_SERVICE -> alternativeServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
-            case DISPENSE_WITH_SERVICE -> throw new UnsupportedOperationException("DISPENSE_WITH_SERVICE not yet implemented");
-            case PROCESS_SERVER_SERVICE -> throw new UnsupportedOperationException("PROCESS_SERVER_SERVICE not yet implemented");
+            case DISPENSE_WITH_SERVICE -> throw new UnsupportedOperationException();
+            case BAILIFF_SERVICE -> bailiffServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
             default -> throw new UnsupportedOperationException();
         };
     }
@@ -53,6 +53,8 @@ public class InterimApplicationSubmissionService {
             case BAILIFF -> notificationDispatcher.send(bailiffApplicationSubmittedNotification, caseData, caseId);
             case ALTERNATIVE_SERVICE -> notificationDispatcher
                 .send(alternativeServiceApplicationSubmittedNotification, caseData, caseId);
+            case DISPENSED -> notificationDispatcher
+                .send(dispenseServiceApplicationSubmittedNotification, caseData, caseId);
             default -> throw new UnsupportedOperationException();
         }
     }
@@ -62,15 +64,16 @@ public class InterimApplicationSubmissionService {
     ) {
         if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplication.getGeneralApplicationType())) {
             return searchGovRecordsApplicationGenerator.generateDocument(caseId, applicant, caseData, generalApplication);
+        } else {
+            throw new UnsupportedOperationException();
         }
-
-        throw new UnsupportedOperationException();
     }
 
     public void sendGeneralApplicationNotifications(long caseId, GeneralApplication generalApplication, CaseData caseData) {
-        switch (generalApplication.getGeneralApplicationType()) {
-            case DISCLOSURE_VIA_DWP -> searchGovRecordsApplicationNotifications.sendToApplicant1(caseData, caseId, generalApplication);
-            default -> throw new UnsupportedOperationException();
+        if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplication.getGeneralApplicationType())) {
+            searchGovApplicationSubmittedNotification.sendToApplicant1(caseData, caseId, generalApplication);
+        } else {
+            throw new UnsupportedOperationException();
         }
     }
 }
