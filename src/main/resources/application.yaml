@@ -229,8 +229,8 @@ uk:
             DISPENSE_SERVICE_APPLICATION_AWAITING_DOCUMENTS: '74a91352-09ec-408f-851b-26c6f5ba8787' #TODO: Welsh translation
             BAILIFF_SERVICE_APPLICATION_SUBMITTED: '1a4ea900-5e1a-4772-af6c-3cc374246fe4' #TODO: Welsh translation needed
             BAILIFF_SERVICE_APPLICATION_AWAITING_DOCUMENTS: '02690174-c165-443b-a870-a7f1f398d3f8' #TODO: Welsh translation needed
-            ALTERNATIVE_SERVICE_APPLICATION_SUBMITTED: '4e2ab8ce-e0c0-4da2-a0c8-68d75dde92e8' #TODO: Welsh translation needed
-            ALTERNATIVE_SERVICE_APPLICATION_AWAITING_DOCUMENTS: 'aeea0b6f-b9fe-4e8c-bef0-21982f823e18' #TODO: Welsh translation needed
+            ALTERNATIVE_SERVICE_APPLICATION_SUBMITTED: '596fc1fe-a5cc-48dd-b4d3-61ed260ea283'
+            ALTERNATIVE_SERVICE_APPLICATION_AWAITING_DOCUMENTS: '49dd7ba1-6c5e-4d04-b460-f233e43b087e'
             JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW: '7e72dfe4-d414-4597-9d72-9ae5d91e8376'
             JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW: 'fb0c2168-1861-452e-af4b-34e718643635'   #TODO: Welsh translation needed
             JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_APPLICANT1_REPRESENTED: '2cba9d42-5ef5-4ba1-8daf-334a465f0515' #TODO: Welsh translation needed
@@ -606,7 +606,7 @@ docmosis:
       RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-WEL-Respondent-Started-Drafting-AoS-Application-Cy.docx
       DEEMED_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Deemed-Service-Application_V1.docx
       BAILIFF_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Bailiff-Service-Application_V1.docx
-      ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Alternative-Service-Application_V1.docx #TODO: add Welsh translation
+      ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Alternative-Service-Application_V1.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}
