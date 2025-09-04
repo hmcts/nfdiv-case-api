@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.AlternativeServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.BailiffServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DeemedServiceApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DispenseServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.SearchGovRecordsApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -45,6 +46,9 @@ class InterimApplicationSubmissionServiceTest {
 
     @Mock
     private BailiffServiceApplicationSubmittedNotification bailiffNotification;
+
+    @Mock
+    private DispenseServiceApplicationSubmittedNotification dispenseNotification;
 
     @Mock
     private AlternativeServiceApplicationSubmittedNotification alternativeServiceApplicationSubmittedNotification;

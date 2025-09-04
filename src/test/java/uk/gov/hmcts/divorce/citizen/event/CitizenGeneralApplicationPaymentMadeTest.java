@@ -25,7 +25,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -173,21 +172,21 @@ class CitizenGeneralApplicationPaymentMadeTest {
 
     @Test
     void shouldTriggerNotificationsByDelegatingToDispatcher() {
-        final var caseData = CaseData.builder().build();
+        final var caseData = buildTestData();
         final var details = CaseDetails.<CaseData, State>builder()
             .data(caseData)
             .id(TEST_CASE_ID)
             .build();
         final var beforeData = buildTestData();
         final var beforeDetails = CaseDetails.<CaseData, State>builder()
-            .data(buildTestData())
+            .data(beforeData)
             .id(TEST_CASE_ID)
             .build();
 
-        final SubmittedCallbackResponse response = citizenGeneralApplicationPayment.submitted(details, beforeDetails);
+        citizenGeneralApplicationPayment.submitted(details, beforeDetails);
 
         verify(interimApplicationSubmissionService).sendGeneralApplicationNotifications(
-            TEST_CASE_ID, beforeData.getGeneralApplications().getFirst().getValue(), caseData
+            TEST_CASE_ID, caseData.getGeneralApplications().getFirst().getValue(), caseData
         );
     }
 

@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
@@ -43,7 +44,7 @@ public class GeneralApplication {
     private GeneralParties generalApplicationParty;
 
     @CCD(
-        label = "Application date",
+        label = "Application received date",
         searchable = false
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
@@ -121,10 +122,19 @@ public class GeneralApplication {
 
     @JsonIgnore
     public void recordPayment(String paymentReference, LocalDate dateOfPayment) {
-        FeeDetails feeDetails = generalApplicationFee;
 
-        feeDetails.setPaymentReference(paymentReference);
-        feeDetails.setHasCompletedOnlinePayment(YesOrNo.YES);
-        feeDetails.setDateOfPayment(dateOfPayment);
+        generalApplicationFee.setPaymentReference(paymentReference);
+        generalApplicationFee.setHasCompletedOnlinePayment(YesOrNo.YES);
+        generalApplicationFee.setDateOfPayment(dateOfPayment);
+    }
+
+    @JsonIgnore
+    public String getLabel(int idx, DateTimeFormatter formatter) {
+        return String.format(
+            "General applications %d, %s, %s",
+            idx + 1,
+            generalApplicationType == null ? "" : generalApplicationType.getLabel(),
+            generalApplicationReceivedDate == null ? "" : generalApplicationReceivedDate.format(formatter)
+        );
     }
 }

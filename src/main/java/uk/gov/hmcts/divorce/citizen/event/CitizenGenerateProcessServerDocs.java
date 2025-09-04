@@ -59,6 +59,7 @@ public class CitizenGenerateProcessServerDocs implements CCDConfig<CaseData, Sta
         AwaitingHWFEvidence,
         AwaitingHWFPartPayment,
         AwaitingDocuments,
+        AwaitingService,
         NewPaperCase,
         Submitted,
         Withdrawn,
