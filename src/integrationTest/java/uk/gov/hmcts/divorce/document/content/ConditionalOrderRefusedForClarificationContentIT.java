@@ -29,6 +29,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_JURISDICTION_DETAILS;
+import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_LEGAL_NAME_DIFFERENT;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_MARRIAGE_CERT_TRANSLATION;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_PREVIOUS_PROCEEDINGS_DETAILS;
@@ -120,6 +121,8 @@ public class ConditionalOrderRefusedForClarificationContentIT {
             clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE));
         expectedEntries.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS,
             clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
+        expectedEntries.put(REASON_LEGAL_NAME_DIFFERENT,
+            clarificationReasons.contains(ClarificationReason.LEGAL_NAME_DIFFERENT_TO_CERTIFICATE));
 
         expectedEntries.put("legalAdvisorComments", emptyList());
         expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
@@ -188,6 +191,8 @@ public class ConditionalOrderRefusedForClarificationContentIT {
             clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE));
         expectedEntries.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS,
             clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
+        expectedEntries.put(REASON_LEGAL_NAME_DIFFERENT,
+            clarificationReasons.contains(ClarificationReason.LEGAL_NAME_DIFFERENT_TO_CERTIFICATE));
 
         expectedEntries.put("legalAdvisorComments", emptyList());
 
