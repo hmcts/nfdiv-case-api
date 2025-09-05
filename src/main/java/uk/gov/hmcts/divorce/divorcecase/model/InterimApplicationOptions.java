@@ -29,14 +29,16 @@ public class InterimApplicationOptions {
     @JsonUnwrapped
     @CCD(
         label = "No Response Journey Options",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private NoResponseJourneyOptions noResponseJourneyOptions;
 
     @JsonUnwrapped
     @CCD(
         label = "Deemed Service Journey Options",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private DeemedServiceJourneyOptions deemedServiceJourneyOptions;
 
@@ -68,57 +70,66 @@ public class InterimApplicationOptions {
         label = "Active Interim Application Type",
         typeOverride = FixedList,
         typeParameterOverride = "InterimApplicationType",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private InterimApplicationType interimApplicationType;
 
     @CCD(
         label = "You're about to apply for service",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private YesOrNo interimAppsIUnderstand;
 
     @CCD(
         label = "Will you be using Help with Fees for this application?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private YesOrNo interimAppsUseHelpWithFees;
 
     @CCD(
         label = "Do you have a help with fees reference number?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private YesOrNo interimAppsHaveHwfReference;
 
     @CCD(
         label = "Are you able to upload evidence?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private YesOrNo interimAppsCanUploadEvidence;
 
     @CCD(
         label = "Help with fees reference",
         regex = "([Hh][Ww][Ff]-?)?[0-9a-zA-Z]{3}-?[0-9a-zA-Z]{3}$",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private String interimAppsHwfRefNumber;
 
     @CCD(
         label = "Upload documents",
         typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument"
+        typeParameterOverride = "DivorceDocument",
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> interimAppsEvidenceDocs;
 
     @CCD(
         label = "Cannot upload some or all of my documents",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private YesOrNo interimAppsCannotUploadDocs;
 
     @CCD(
         label = "Statement of Truth",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private YesOrNo interimAppsStatementOfTruth;
 
