@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.Collections;
 import java.util.EnumSet;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
@@ -51,6 +52,8 @@ public class CitizenGenerateProcessServerDocs implements CCDConfig<CaseData, Sta
     private final GenerateD10Form generateD10Form;
     private final SetNoticeOfProceedingDetailsForRespondent setNoticeOfProceedingDetailsForRespondent;
 
+    public static final String CONFIDENTIAL_RESPONDENT_ERROR = "Unable to generate process server docs, the respondent is confidential";
+
     private static final EnumSet<State> CITIZEN_UPDATE_STATES = EnumSet.complementOf(EnumSet.of(
         AwaitingApplicant2Response,
         Applicant2Approved,
@@ -83,7 +86,19 @@ public class CitizenGenerateProcessServerDocs implements CCDConfig<CaseData, Sta
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} aboutToSubmit callback invoked for Case Id: {}", CITIZEN_GENERATE_PROCESS_SERVER_DOCS, details.getId());
+        long caseId = details.getId();
+
+        log.info("{} aboutToSubmit callback invoked for Case Id: {}", CITIZEN_GENERATE_PROCESS_SERVER_DOCS, caseId);
+
+        boolean respondentIsConfidential = details.getData().getApplicant2().isConfidentialContactDetails();
+        if (respondentIsConfidential) {
+            log.info("Rejected request to generate process server documents, respondent is confidential, Case Id: {}", caseId);
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(CONFIDENTIAL_RESPONDENT_ERROR))
+                .build();
+        }
+
 
         details.getData().getApplication().setServiceMethod(PERSONAL_SERVICE);
         CaseData data = caseTasks(

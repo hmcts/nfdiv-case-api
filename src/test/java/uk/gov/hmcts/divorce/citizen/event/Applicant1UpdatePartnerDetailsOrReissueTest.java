@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
+import static uk.gov.hmcts.divorce.citizen.event.Applicant1UpdatePartnerDetailsOrReissue.CONFIDENTIAL_RESPONDENT_ERROR;
 import static uk.gov.hmcts.divorce.citizen.event.Applicant1UpdatePartnerDetailsOrReissue.UPDATE_PARTNER_DETAILS_OR_REISSUE;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress.CONTACT_DETAILS_UPDATED;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.PAPERS_SENT;
@@ -70,6 +72,28 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(UPDATE_PARTNER_DETAILS_OR_REISSUE);
+    }
+
+    @Test
+    void shouldRejectTheUpdateIfRespondentIsConfidentialAndPersonalServiceIsRequired() {
+        final CaseData caseData = validCaseDataForReIssueApplication();
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
+            .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
+                .noResponsePartnerNewEmailOrAddress(NoResponsePartnerNewEmailOrAddress.EMAIL_AND_ADDRESS)
+                .noResponsePartnerAddressOverseas(YesOrNo.YES)
+                .build())
+            .build());
+        caseData.getApplicant2().setContactDetailsType(ContactDetailsType.PRIVATE);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(12345L);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
+
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(CONFIDENTIAL_RESPONDENT_ERROR);
     }
 
     @Test

@@ -25,6 +25,7 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
@@ -56,6 +57,8 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
 
     private final AuthTokenGenerator authTokenGenerator;
     private final CcdUpdateService ccdUpdateService;
+
+    public static final String CONFIDENTIAL_RESPONDENT_ERROR = "Unable to reissue with personal service, the respondent is confidential";
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -109,6 +112,16 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
         caseData.getApplication().setReissueOption(ReissueOption.REISSUE_CASE);
 
         caseTasks(setPostIssueState).run(details);
+
+        boolean isPersonalService = ServiceMethod.PERSONAL_SERVICE.equals(caseData.getApplication().getServiceMethod());
+        boolean respondentIsConfidential = details.getData().getApplicant2().isConfidentialContactDetails();
+        if (respondentIsConfidential && isPersonalService) {
+            log.info("Rejected contact details update and reissue, the respondent is confidential, Case Id: {}", details.getId());
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(CONFIDENTIAL_RESPONDENT_ERROR))
+                .build();
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
