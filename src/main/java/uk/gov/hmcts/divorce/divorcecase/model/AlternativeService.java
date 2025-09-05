@@ -115,7 +115,8 @@ public class AlternativeService {
     private DivorceDocument serviceApplicationAnswers;
 
     @CCD(
-        label = "Service application submitted online"
+        label = "Service application submitted online",
+        searchable = false
     )
     private YesOrNo serviceApplicationSubmittedOnline;
 
