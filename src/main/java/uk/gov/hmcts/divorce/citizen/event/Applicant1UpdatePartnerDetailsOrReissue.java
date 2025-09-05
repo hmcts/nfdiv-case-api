@@ -8,12 +8,15 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
+import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -49,6 +52,7 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
 
     private final IdamService idamService;
     private final SetServiceType setServiceType;
+    private final SetPostIssueState setPostIssueState;
 
     private final AuthTokenGenerator authTokenGenerator;
     private final CcdUpdateService ccdUpdateService;
@@ -98,7 +102,6 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
                 }
 
                 default -> log.info("Contact details updated");
-
             }
             noResponseJourney.setNoResponsePartnerNewEmailOrAddress(CONTACT_DETAILS_UPDATED);
         }
@@ -130,8 +133,12 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
         Applicant applicant2 = caseDetails.getData().getApplicant2();
         applicant2.setAddress(newAddress);
         applicant2.setAddressOverseas(noResponseJourney.getNoResponsePartnerAddressOverseas());
-        caseTasks(
-            setServiceType
-        ).run(caseDetails);
+        boolean partnerAddressOverseas = YesOrNo.YES.equals(noResponseJourney.getNoResponsePartnerAddressOverseas());
+        boolean partnerAddressOutsideEnglandOrWales = YesOrNo.NO.equals(noResponseJourney.getNoResponseRespondentAddressInEnglandWales());
+        if (partnerAddressOverseas || partnerAddressOutsideEnglandOrWales) {
+            caseDetails.getData().getApplication().setServiceMethod(ServiceMethod.PERSONAL_SERVICE);
+        }
+
+        caseTasks(setServiceType).run(caseDetails);
     }
 }
