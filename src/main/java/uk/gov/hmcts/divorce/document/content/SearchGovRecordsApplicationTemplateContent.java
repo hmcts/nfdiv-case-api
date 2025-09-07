@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SEARCH_GOV_RECORDS_APPLICATION_TEMPLATE_ID;
@@ -77,7 +78,10 @@ public class SearchGovRecordsApplicationTemplateContent {
 
         SearchGovRecordsJourneyOptions applicationAnswers = caseData.getApplicant1().getInterimApplicationOptions()
             .getSearchGovRecordsJourneyOptions();
-        return searchGovRecordsApplicationContent(templateContent, applicationAnswers, dateTimeFormatter, applicant);
+
+        templateContent.putAll(searchGovRecordsApplicationContent(templateContent, applicationAnswers, dateTimeFormatter, applicant));
+
+        return templateContent;
     }
 
     private Map<String, Object> searchGovRecordsApplicationContent(
@@ -86,11 +90,10 @@ public class SearchGovRecordsApplicationTemplateContent {
         DateTimeFormatter dateTimeFormatter,
         Applicant applicant
     ) {
-        LanguagePreference languagePreference = applicant.getLanguagePreference();
-
         templateContent.put(WHY_SEARCH_GOV_RECORDS, applicationAnswers.getReasonForApplying());
-        templateContent.put(DEPARTMENTS_TO_SEARCH, applicationAnswers.getWhichDepartments().stream().filter(Predicate.not(SearchGovRecordsWhichDepartment.OTHER::equals))
-                .map(SearchGovRecordsWhichDepartment::getLabel).toList().toString());
+        templateContent.put(DEPARTMENTS_TO_SEARCH, applicationAnswers.getWhichDepartments().stream()
+            .filter(Predicate.not(SearchGovRecordsWhichDepartment.OTHER::equals))
+                .map(SearchGovRecordsWhichDepartment::getLabel).collect(Collectors.toSet()).toString());
 
         if (applicationAnswers.getWhichDepartments()
             .contains(SearchGovRecordsWhichDepartment.OTHER)) {
@@ -101,8 +104,11 @@ public class SearchGovRecordsApplicationTemplateContent {
         templateContent.put(PARTNER_NAME, applicationAnswers.getPartnerName());
         templateContent.put(REASON_WHY_SEARCH_THESE_DEPARTMENTS, applicationAnswers.getWhyTheseDepartments());
 
+        LanguagePreference languagePreference = applicant.getLanguagePreference();
+
         String knowPartnerDateOfBirth = applicationAnswers.getKnowPartnerDateOfBirth().getValue();
-        templateContent.put(KNOW_PARTNER_DATE_OF_BIRTH, WELSH.equals(languagePreference) ? knowPartnerDateOfBirth : getWelshText(knowPartnerDateOfBirth));
+        templateContent.put(KNOW_PARTNER_DATE_OF_BIRTH, WELSH.equals(languagePreference)
+            ? getWelshText(knowPartnerDateOfBirth) : knowPartnerDateOfBirth);
 
         if (YesOrNo.YES.equals(applicationAnswers.getKnowPartnerDateOfBirth())) {
             templateContent.put(PARTNER_DATE_OF_BIRTH, dateTimeFormatter.format(applicationAnswers.getPartnerDateOfBirth()));
@@ -111,7 +117,8 @@ public class SearchGovRecordsApplicationTemplateContent {
         }
 
         String knowPartnerNationalInsurance = applicationAnswers.getKnowPartnerNationalInsurance().getValue();
-        templateContent.put(KNOW_PARTNER_NATIONAL_INSURANCE, WELSH.equals(languagePreference) ? knowPartnerNationalInsurance : getWelshText(knowPartnerNationalInsurance));
+        templateContent.put(KNOW_PARTNER_NATIONAL_INSURANCE, WELSH.equals(languagePreference)
+            ? getWelshText(knowPartnerNationalInsurance) : knowPartnerNationalInsurance);
 
         if (YesOrNo.YES.equals(applicationAnswers.getKnowPartnerNationalInsurance())) {
             templateContent.put(PARTNER_NATIONAL_INSURANCE, applicationAnswers.getPartnerNationalInsurance());
@@ -119,7 +126,10 @@ public class SearchGovRecordsApplicationTemplateContent {
 
         templateContent.put(PARTNER_LAST_KNOWN_ADDRESS, applicationAnswers.getLastKnownAddress());
         templateContent.put(DATES_PARTNER_LIVED_AT_LAST_KNOWN_ADDRESS, applicationAnswers.getPartnerLastKnownAddressDates());
-        templateContent.put(KNOW_ADDITIONAL_ADDRESSES_FOR_PARTNER, applicationAnswers.getKnowPartnerAdditionalAddresses() == YesOrNo.YES);
+
+        String knownAdditionalAddresses = applicationAnswers.getKnowPartnerAdditionalAddresses().getValue();
+        templateContent.put(KNOW_ADDITIONAL_ADDRESSES_FOR_PARTNER, WELSH.equals(languagePreference)
+            ? getWelshText(knownAdditionalAddresses) : knownAdditionalAddresses);
         templateContent.put(ADDITIONAL_ADDRESS1, applicationAnswers.getPartnerAdditionalAddress1());
         templateContent.put(ADDITIONAL_ADDRESS_1_DATES_LIVED_THERE, applicationAnswers.getPartnerAdditionalAddressDates1());
         templateContent.put(ADDITIONAL_ADDRESS2, applicationAnswers.getPartnerAdditionalAddress2());
