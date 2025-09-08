@@ -133,6 +133,8 @@ class CaseworkerRejectGeneralApplicationTest {
 
         caseData.setGeneralApplications(generalApplicationList);
 
+        caseData.getApplicant1().setGeneralAppServiceRequest(TEST_SERVICE_REFERENCE);
+
         caseData.getGeneralReferral().setSelectedGeneralApplication(DynamicList
             .builder()
             .value(DynamicListElement.builder().label(generalApplications.getLast().getValue().getLabel(1, formatter)).build()
@@ -145,6 +147,7 @@ class CaseworkerRejectGeneralApplicationTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRejectGeneralApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getGeneralApplications().size()).isEqualTo(1);
+        assertThat(response.getData().getApplicant1().getGeneralAppServiceRequest()).isNull();
     }
 
     private List<ListValue<GeneralApplication>> buildListOfGeneralApplications() {

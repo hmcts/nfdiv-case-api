@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.generalApplicationLabels;
 import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.populateGeneralApplicationList;
@@ -116,7 +119,17 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
             .map(Map.Entry::getKey)
             .findFirst()
             .ifPresent(index -> {
+
+                GeneralApplication generalApplication = caseData.getGeneralApplications().get(index).getValue();
+                String serviceRequestReference = generalApplication.getGeneralApplicationFee().getServiceRequestReference();
+
+                Stream.of(caseData.getApplicant1(), caseData.getApplicant2())
+                    .filter(applicant -> Objects.equals(applicant.getGeneralAppServiceRequest(), serviceRequestReference))
+                    .findFirst()
+                    .ifPresent(applicant -> applicant.setActiveGeneralApplication(null));
+
                 caseData.getGeneralApplications().remove(index.intValue());
+                details.setState(caseData.getApplication().getStateToTransitionApplicationTo());
                 resetApplicationFields(caseData, details);
             });
 
@@ -156,5 +169,4 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
         caseData.getApplication().setPreviousState(details.getState());
         caseData.getApplication().setStateToTransitionApplicationTo(null);
     }
-
 }
