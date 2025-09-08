@@ -41,7 +41,7 @@ class ValidateIssueTest {
                 validateIssue.apply(caseDetails);
             });
 
-            assert(thrown.getErrors().contains(TEST_VALIDATION_ERROR));
+            assert thrown.getErrors().contains(TEST_VALIDATION_ERROR);
         }
     }
 
