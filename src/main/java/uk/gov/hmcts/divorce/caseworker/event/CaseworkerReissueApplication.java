@@ -141,12 +141,12 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
                 .errors(List.of("Invalid reissue option, browser page refresh may have occurred. "
                     + "Please use 'Previous' button and select a reissue option"))
                 .build();
-        } catch (InvalidDataException exception) {
-            log.info("Data not valid for application reissue, case id: {}", details.getId(), exception);
+        } catch (final InvalidDataException e) {
+            log.info("Data not valid for application reissue, case id: {}", details.getId(), e);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(exception.getErrors())
+                .errors(e.getErrors())
                 .build();
         }
     }

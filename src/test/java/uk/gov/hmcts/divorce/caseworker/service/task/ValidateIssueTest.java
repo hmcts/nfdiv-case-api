@@ -47,7 +47,6 @@ class ValidateIssueTest {
 
     @Test
     void shouldNotThrowExceptionWhenThereAreNoValidationErrors() {
-
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
