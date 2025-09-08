@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.exception.InvalidDataException;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
@@ -20,7 +21,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -40,7 +40,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateIssue;
 
 @Component
 @Slf4j
@@ -130,16 +129,6 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
 
         log.info("Caseworker reissue application about to submit callback invoked for case id: {}", details.getId());
 
-        log.info("Validating Issue for Case Id: {}", details.getId());
-        final List<String> caseValidationErrors = validateIssue(details.getData());
-
-        if (!isEmpty(caseValidationErrors)) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(caseValidationErrors)
-                .build();
-        }
-
         try {
             final CaseDetails<CaseData, State> result = reIssueApplicationService.process(details);
 
@@ -151,6 +140,13 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(List.of("Invalid reissue option, browser page refresh may have occurred. "
                     + "Please use 'Previous' button and select a reissue option"))
+                .build();
+        } catch (InvalidDataException exception) {
+            log.info("Data not valid for application reissue, case id: {}", details.getId(), exception);
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(exception.getErrors())
                 .build();
         }
     }
