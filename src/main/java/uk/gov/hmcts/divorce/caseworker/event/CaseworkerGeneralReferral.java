@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.generalApplicationLabels;
@@ -46,6 +47,8 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
     private static final String GENERAL_REFERRAL = "General referral";
 
     private final Clock clock;
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, h:mm:ss a");
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

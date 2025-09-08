@@ -137,7 +137,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
         boolean isApplicant1 = isApplicant1(details.getId());
         Applicant beforeApplicant = isApplicant1 ? beforeData.getApplicant1() : beforeData.getApplicant2();
-        Optional<GeneralApplication> generalAppOptional = findActiveGeneralApplication(beforeData, beforeApplicant);
+        Optional<GeneralApplication> generalAppOptional = findActiveGeneralApplication(data, beforeApplicant);
 
         generalAppOptional.ifPresent(generalApplication ->
             interimApplicationSubmissionService.sendGeneralApplicationNotifications(

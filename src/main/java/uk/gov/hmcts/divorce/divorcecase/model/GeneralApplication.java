@@ -122,11 +122,10 @@ public class GeneralApplication {
 
     @JsonIgnore
     public void recordPayment(String paymentReference, LocalDate dateOfPayment) {
-        FeeDetails feeDetails = generalApplicationFee;
 
-        feeDetails.setPaymentReference(paymentReference);
-        feeDetails.setHasCompletedOnlinePayment(YesOrNo.YES);
-        feeDetails.setDateOfPayment(dateOfPayment);
+        generalApplicationFee.setPaymentReference(paymentReference);
+        generalApplicationFee.setHasCompletedOnlinePayment(YesOrNo.YES);
+        generalApplicationFee.setDateOfPayment(dateOfPayment);
     }
 
     @JsonIgnore

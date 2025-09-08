@@ -115,7 +115,8 @@ public class AlternativeService {
     private DivorceDocument serviceApplicationAnswers;
 
     @CCD(
-        label = "Service application submitted online"
+        label = "Service application submitted online",
+        searchable = false
     )
     private YesOrNo serviceApplicationSubmittedOnline;
 
@@ -153,6 +154,10 @@ public class AlternativeService {
             .alternativeServiceType(alternativeServiceType)
             .receivedServiceApplicationDate(receivedServiceApplicationDate)
             .receivedServiceAddedDate(receivedServiceAddedDate)
+            .serviceApplicationAnswers(serviceApplicationAnswers)
+            .serviceApplicationDocuments(serviceApplicationDocuments)
+            .serviceApplicationSubmittedOnline(serviceApplicationSubmittedOnline)
+            .serviceApplicationDocsUploadedPreSubmission(serviceApplicationDocsUploadedPreSubmission)
             .paymentMethod(servicePaymentFee.getPaymentMethod())
             .serviceApplicationGranted(serviceApplicationGranted)
             .refusalReason(refusalReason)
@@ -165,6 +170,7 @@ public class AlternativeService {
             .certificateOfServiceDate(bailiff.getCertificateOfServiceDate())
             .successfulServedByBailiff(bailiff.getSuccessfulServedByBailiff())
             .reasonFailureToServeByBailiff(bailiff.getReasonFailureToServeByBailiff())
+            .servicePaymentFee(servicePaymentFee)
             .build();
     }
 
