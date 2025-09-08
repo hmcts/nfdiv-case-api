@@ -16,6 +16,7 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertThrows;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_VALIDATION_ERROR;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,11 +35,13 @@ class ValidateIssueTest {
 
         try (MockedStatic<ApplicationValidation> classMock = Mockito.mockStatic(ApplicationValidation.class)) {
             classMock.when(() -> ApplicationValidation.validateIssue(caseDetails.getData()))
-                .thenReturn(Collections.singletonList("Dummy Error"));
+                .thenReturn(Collections.singletonList(TEST_VALIDATION_ERROR));
 
-            assertThrows(InvalidDataException.class, () -> {
+            InvalidDataException thrown = assertThrows(InvalidDataException.class, () -> {
                 validateIssue.apply(caseDetails);
             });
+
+            assert(thrown.getErrors().contains(TEST_VALIDATION_ERROR));
         }
     }
 
