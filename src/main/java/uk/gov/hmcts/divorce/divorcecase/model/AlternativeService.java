@@ -104,7 +104,8 @@ public class AlternativeService {
     private YesOrNo alternativeServiceFeeRequired;
 
     @CCD(
-        label = "Documents uploaded before submission?"
+        label = "Documents uploaded before submission?",
+        searchable = false
     )
     private YesOrNo serviceApplicationDocsUploadedPreSubmission;
 
@@ -115,7 +116,8 @@ public class AlternativeService {
     private DivorceDocument serviceApplicationAnswers;
 
     @CCD(
-        label = "Service application submitted online"
+        label = "Service application submitted online",
+        searchable = false
     )
     private YesOrNo serviceApplicationSubmittedOnline;
 
