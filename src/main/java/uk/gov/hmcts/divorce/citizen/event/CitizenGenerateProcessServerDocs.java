@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -15,9 +16,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.Collections;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
@@ -39,6 +43,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateServiceDate;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
 
 @Slf4j
 @Component
@@ -46,13 +52,15 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 public class CitizenGenerateProcessServerDocs implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CITIZEN_GENERATE_PROCESS_SERVER_DOCS = "citizen-generate-process-server-docs";
+    public static final String CONFIDENTIAL_RESPONDENT_ERROR = "Unable to generate process server docs, the respondent is confidential";
 
     private final GenerateApplication generateApplication;
     private final GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
     private final GenerateD10Form generateD10Form;
     private final SetNoticeOfProceedingDetailsForRespondent setNoticeOfProceedingDetailsForRespondent;
 
-    public static final String CONFIDENTIAL_RESPONDENT_ERROR = "Unable to generate process server docs, the respondent is confidential";
+    @Value("${applicant.response_offset_days}")
+    private int docsRegeneratedOffsetDays;
 
     private static final EnumSet<State> CITIZEN_UPDATE_STATES = EnumSet.complementOf(EnumSet.of(
         AwaitingApplicant2Response,
@@ -79,28 +87,44 @@ public class CitizenGenerateProcessServerDocs implements CCDConfig<CaseData, Sta
             .showCondition(NEVER_SHOW)
             .name("Generate Process Server Docs")
             .description("Citizen event to generate docs for process server")
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CREATOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR);
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
-                                                                       final CaseDetails<CaseData, State> beforeDetails) {
-        long caseId = details.getId();
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("{} aboutToStart callback invoked for Case Id: {}", CITIZEN_GENERATE_PROCESS_SERVER_DOCS, details.getId());
 
-        log.info("{} aboutToSubmit callback invoked for Case Id: {}", CITIZEN_GENERATE_PROCESS_SERVER_DOCS, caseId);
+        CaseData caseData = details.getData();
 
-        boolean respondentIsConfidential = details.getData().getApplicant2().isConfidentialContactDetails();
-        if (respondentIsConfidential) {
-            log.info("Rejected request to generate process server documents, respondent is confidential, Case Id: {}", caseId);
+        List<String> validationErrors = flattenLists(
+            validateRespondentConfidentiality(caseData),
+            validateServiceDate(caseData, docsRegeneratedOffsetDays)
+        );
+
+        if (isNotEmpty(validationErrors)) {
+            log.info("Rejected citizen request to generate process server documents, Case Id: {}", details.getId());
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(Collections.singletonList(CONFIDENTIAL_RESPONDENT_ERROR))
+                .errors(validationErrors)
                 .build();
         }
 
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
+    }
 
-        details.getData().getApplication().setServiceMethod(PERSONAL_SERVICE);
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
+        log.info("{} aboutToSubmit callback invoked for Case Id: {}", CITIZEN_GENERATE_PROCESS_SERVER_DOCS, details.getId());
+
+        CaseData caseData = details.getData();
+
+        caseData.getApplication().setServiceDocumentsRegeneratedDate(LocalDate.now());
+
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         CaseData data = caseTasks(
             setNoticeOfProceedingDetailsForRespondent,
             generateApplicant2NoticeOfProceedings,
@@ -112,5 +136,16 @@ public class CitizenGenerateProcessServerDocs implements CCDConfig<CaseData, Sta
             .data(data)
             .state(AwaitingService)
             .build();
+    }
+
+    private List<String> validateRespondentConfidentiality(CaseData caseData) {
+        List<String> validationErrors = new ArrayList<>();
+
+        boolean respondentIsConfidential = caseData.getApplicant2().isConfidentialContactDetails();
+        if (respondentIsConfidential) {
+            validationErrors.add(CONFIDENTIAL_RESPONDENT_ERROR);
+        }
+
+        return validationErrors;
     }
 }
