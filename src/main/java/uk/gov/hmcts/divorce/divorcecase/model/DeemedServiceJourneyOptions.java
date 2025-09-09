@@ -21,14 +21,16 @@ public class DeemedServiceJourneyOptions implements ApplicationAnswers {
     @CCD(
         label = "Provide a statement",
         typeOverride = TextArea,
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private String deemedNoEvidenceStatement;
 
     @CCD(
         label = "Tell us about your evidence",
         typeOverride = TextArea,
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private String deemedEvidenceDetails;
 }
