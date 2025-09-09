@@ -13,10 +13,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InterimApplication {
-    @JsonUnwrapped(prefix = "answers")
+    @JsonUnwrapped(prefix = "options")
     @CCD(
-        label = "No Response Journey Options and Answers",
+        label = "Service and General Application Options",
         access = {DefaultAccess.class}
     )
-    private InterimApplicationOptions answers;
+    private InterimApplicationOptions options;
 }

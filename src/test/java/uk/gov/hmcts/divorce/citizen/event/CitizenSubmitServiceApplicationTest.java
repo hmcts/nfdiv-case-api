@@ -199,7 +199,7 @@ class CitizenSubmitServiceApplicationTest {
         Applicant applicant = response.getData().getApplicant1();
         assertThat(applicant.getInterimApplicationOptions()).isEqualTo(new InterimApplicationOptions());
         assertThat(applicant.getInterimApplications().size()).isEqualTo(1);
-        assertThat(applicant.getInterimApplications().getFirst().getValue().getAnswers()).isEqualTo(applicationOptions);
+        assertThat(applicant.getInterimApplications().getFirst().getValue().getOptions()).isEqualTo(applicationOptions);
     }
 
     @Test

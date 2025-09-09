@@ -116,7 +116,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         applicant.setInterimApplications(List.of(
             ListValue.<InterimApplication>builder().value(
                 InterimApplication.builder()
-                    .answers(userOptions)
+                    .options(userOptions)
                     .build()
             ).build()
         ));
