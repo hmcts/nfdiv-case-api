@@ -291,6 +291,15 @@ public class Applicant {
     )
     private InterimApplicationOptions interimApplicationOptions;
 
+    @CCD(
+        label = "Interim Applications",
+        typeOverride = Collection,
+        typeParameterOverride = "InterimApplication",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private List<ListValue<InterimApplication>> interimApplications;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(NO)
