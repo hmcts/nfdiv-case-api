@@ -66,7 +66,7 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
     private final CcdUpdateService ccdUpdateService;
     private final ReIssueApplicationService reIssueApplicationService;
 
-    @Value("${applicant.response_offset_days}")
+    @Value("${interim_application.response_offset_days}")
     private int docsRegeneratedOffsetDays;
 
     public static final String CONFIDENTIAL_RESPONDENT_ERROR = "Unable to reissue with personal service, the respondent is confidential";
