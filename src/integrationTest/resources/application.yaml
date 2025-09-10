@@ -283,19 +283,10 @@ respondent_solicitor:
 judicial_separation_answer_overdue:
   offset_days: ${JS_ANSWER_OVERDUE_BY_OFFSET_DAYS:14}
 
-<<<<<<< Updated upstream
-interim_application:
-  response_offset_days: ${INTERIM_APPLICATION_RESPONSE_OFFSET_DAYS:28}
-
-=======
-<<<<<<< Updated upstream
-=======
 interim_application:
   response_offset_days: ${INTERIM_APPLICATION_RESPONSE_OFFSET_DAYS:28}
   repeat_service_offset_days: ${INTERIM_APPLICATION_REPEAT_SERVICE_OFFSET_DAYS:14}
 
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 court:
   locations:
     serviceCentre:

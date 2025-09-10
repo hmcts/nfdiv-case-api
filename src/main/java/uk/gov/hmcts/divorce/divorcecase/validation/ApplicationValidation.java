@@ -21,7 +21,7 @@ public final class ApplicationValidation {
     }
 
     public static final String SERVICE_DOCUMENTS_ALREADY_REGENERATED =
-        "Service Documents have already been regenerated";
+        "Service Documents have been regenerated too recently.";
 
     public static List<String> validateReadyForPayment(CaseData caseData) {
         List<String> errors = validateBasicCase(caseData);
