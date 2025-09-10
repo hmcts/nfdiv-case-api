@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -64,9 +63,8 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
 
     private final AuthTokenGenerator authTokenGenerator;
     private final CcdUpdateService ccdUpdateService;
-    private final ReIssueApplicationService reIssueApplicationService;
 
-    @Value("${interim_application.response_offset_days}")
+    @Value("${interim_application.repeat_service_offset_days}")
     private int docsRegeneratedOffsetDays;
 
     public static final String CONFIDENTIAL_RESPONDENT_ERROR = "Unable to reissue with personal service, the respondent is confidential";

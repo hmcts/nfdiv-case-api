@@ -59,7 +59,7 @@ public class CitizenGenerateProcessServerDocs implements CCDConfig<CaseData, Sta
     private final GenerateD10Form generateD10Form;
     private final SetNoticeOfProceedingDetailsForRespondent setNoticeOfProceedingDetailsForRespondent;
 
-    @Value("${applicant.response_offset_days}")
+    @Value("${interim_application.repeat_service_offset_days}")
     private int docsRegeneratedOffsetDays;
 
     private static final EnumSet<State> CITIZEN_UPDATE_STATES = EnumSet.complementOf(EnumSet.of(
