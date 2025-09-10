@@ -14,7 +14,6 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validat
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForPersonalAndSolicitorService;
 
-
 public final class ApplicationValidation {
     private ApplicationValidation() {
 
