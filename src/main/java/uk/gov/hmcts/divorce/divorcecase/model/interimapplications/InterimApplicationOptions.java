@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.divorcecase.model;
+package uk.gov.hmcts.divorce.divorcecase.model.interimapplications;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;

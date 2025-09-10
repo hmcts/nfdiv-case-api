@@ -12,8 +12,8 @@ import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DispenseSer
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.interimapplications.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.interimapplications.InterimApplicationType;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.generator.AlternativeServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.BailiffServiceApplicationGenerator;

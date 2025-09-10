@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.divorcecase.model;
+package uk.gov.hmcts.divorce.divorcecase.model.interimapplications;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.YesOrNoOrNotKnown;
 
 import java.time.LocalDate;
 

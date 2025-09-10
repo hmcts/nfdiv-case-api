@@ -1,9 +1,10 @@
-package uk.gov.hmcts.divorce.divorcecase.model;
+package uk.gov.hmcts.divorce.divorcecase.model.interimapplications;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 
 @Getter
 @AllArgsConstructor

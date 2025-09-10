@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CitizenAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.interimapplications.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.List;
