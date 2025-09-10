@@ -75,7 +75,7 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
     private static final int REISSUE_OFFSET_DAYS = 14;
 
     @BeforeEach
-    void setPageSize() {
+    void setOffsetDays() {
         ReflectionTestUtils.setField(
             applicant1UpdatePartnerDetailsOrReissue,
             "docsRegeneratedOffsetDays",

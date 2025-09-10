@@ -37,7 +37,7 @@ class CitizenGenerateProcessServerDocsTest {
     private static final int REISSUE_OFFSET_DAYS = 14;
 
     @BeforeEach
-    void setPageSize() {
+    void setOffsetDays() {
         ReflectionTestUtils.setField(
             generateProcessServerDocs,
             "docsRegeneratedOffsetDays",
