@@ -113,7 +113,10 @@ public class DispenseWithServiceApplicationTemplateContent implements TemplateCo
     ) {
         templateContent.put(DISPENSE_LIVE_TOGETHER, applicationAnswers.getDispenseLiveTogether());
         if (YesOrNo.YES.equals(applicationAnswers.getDispenseLiveTogether())) {
-            templateContent.put(DISPENSE_LIVED_TOGETHER_DATE, applicationAnswers.getDispenseLivedTogetherDate());
+            templateContent.put(
+                DISPENSE_LIVED_TOGETHER_DATE,
+                dateTimeFormatter.format(applicationAnswers.getDispenseLivedTogetherDate())
+            );
             templateContent.put(DISPENSE_LIVED_TOGETHER_ADDRESS, applicationAnswers.getDispenseLivedTogetherAddress());
         }
 
