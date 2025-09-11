@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
@@ -43,9 +44,13 @@ public class SaveAndSignOutNotificationHandler {
         final var isInterimApplication = State.AosOverdue.equals(state)
             && !isEmpty(applicant1.getInterimApplicationOptions().getInterimApplicationType());
 
-        final var emailTemplate = State.InformationRequested.equals(state)
-            ? REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT
-            : isApplicant1 && isInterimApplication ? INTERIM_APPLICATION_SAVE_SIGN_OUT : SAVE_SIGN_OUT;
+        final EmailTemplateName emailTemplate;
+        if (State.InformationRequested.equals(state)) {
+            emailTemplate = REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT;
+        } else {
+            emailTemplate = isApplicant1 && isInterimApplication ? INTERIM_APPLICATION_SAVE_SIGN_OUT : SAVE_SIGN_OUT;
+        }
+
         final var templateContent = commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
         templateContent.put(SMART_SURVEY, commonContent.getSmartSurvey());
 

@@ -20,11 +20,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_SERVICE_AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_RECEIVED_DATE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -107,7 +103,7 @@ public class BailiffServiceApplicationTemplateContent implements TemplateContent
                 ? getConfidentialAddressPlaceholder(languagePreference)
                 : caseData.getApplicant2().getCorrespondenceAddress()
         );
-        templateContent.put(DIVORCE_OR_DISSOLUTION, getApplicationType(languagePreference, caseData));
+        templateContent.put(DIVORCE_OR_DISSOLUTION, docmosisCommonContent.getApplicationType(languagePreference, caseData));
 
         BailiffServiceJourneyOptions applicationAnswers = applicant.getInterimApplicationOptions().getBailiffServiceJourneyOptions();
         return bailiffApplicationContent(templateContent, applicationAnswers, dateTimeFormatter);
@@ -185,12 +181,6 @@ public class BailiffServiceApplicationTemplateContent implements TemplateContent
         templateContent.put(BAILIFF_PARTNER_FIREARMS_LICENSE_DETAILS, applicationAnswers.getBailiffPartnerFirearmsLicenseDetails());
 
         return templateContent;
-    }
-
-    private String getApplicationType(LanguagePreference languagePreference, CaseData caseData) {
-        return LanguagePreference.WELSH.equals(languagePreference)
-            ? caseData.isDivorce() ? DIVORCE_APPLICATION_CY : END_CIVIL_PARTNERSHIP_CY
-            : caseData.isDivorce() ? DIVORCE_APPLICATION : END_CIVIL_PARTNERSHIP;
     }
 
     private String getConfidentialAddressPlaceholder(LanguagePreference languagePreference) {

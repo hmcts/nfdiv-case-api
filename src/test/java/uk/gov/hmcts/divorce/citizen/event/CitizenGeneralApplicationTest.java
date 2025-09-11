@@ -114,7 +114,7 @@ class CitizenGeneralApplicationTest {
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(AUTHORIZATION);
         when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
-        when(paymentSetupService.createGeneralApplicationOrderSummary(any(GeneralApplication.class), eq(TEST_CASE_ID)))
+        when(paymentSetupService.createGeneralApplicationOrderSummary(TEST_CASE_ID))
             .thenReturn(orderSummary);
         when(paymentSetupService.createGeneralApplicationPaymentServiceRequest(
             orderSummary, TEST_CASE_ID, TEST_FIRST_NAME

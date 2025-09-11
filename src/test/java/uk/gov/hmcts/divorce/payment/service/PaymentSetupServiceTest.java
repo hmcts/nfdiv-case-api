@@ -298,9 +298,7 @@ class PaymentSetupServiceTest {
         when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE))
             .thenReturn(orderSummary);
 
-        OrderSummary response = paymentSetupService.createGeneralApplicationOrderSummary(
-            generalApplication, TEST_CASE_ID
-        );
+        OrderSummary response = paymentSetupService.createGeneralApplicationOrderSummary(TEST_CASE_ID);
 
         verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE);
         assertThat(response).isEqualTo(orderSummary);
