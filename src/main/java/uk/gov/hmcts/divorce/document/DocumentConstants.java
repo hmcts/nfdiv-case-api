@@ -230,6 +230,9 @@ public final class DocumentConstants {
     public static final String SEARCH_GOV_RECORDS_APPLICATION_TEMPLATE_ID = "SEARCH_GOV_RECORDS_APPLICATION";
     public static final String SEARCH_GOV_RECORDS_APPLICATION_DOCUMENT_NAME = "SearchGovRecordsApplicationAnswers";
 
+    public static final String DISPENSE_WITH_SERVICE_APPLICATION_TEMPLATE_ID = "DISPENSE_WITH_SERVICE_APPLICATION";
+    public static final String DISPENSE_WITH_SERVICE_APPLICATION_DOCUMENT_NAME = "DispenseWithServiceApplicationAnswers";
+
     private DocumentConstants() {
     }
 }
