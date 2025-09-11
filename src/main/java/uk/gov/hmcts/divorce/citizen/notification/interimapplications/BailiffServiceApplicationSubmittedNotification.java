@@ -34,13 +34,13 @@ public class BailiffServiceApplicationSubmittedNotification implements Applicant
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
             awaitingDocuments ? BAILIFF_SERVICE_APPLICATION_AWAITING_DOCUMENTS : BAILIFF_SERVICE_APPLICATION_SUBMITTED,
-            templateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
+            templateVars(caseData, caseId, caseData.getApplicant1()),
             caseData.getApplicant1().getLanguagePreference(),
             caseId
         );
     }
 
-    private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner) {
+    private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant) {
         return commonContent.serviceApplicationTemplateVars(caseData, id, applicant);
     }
 }

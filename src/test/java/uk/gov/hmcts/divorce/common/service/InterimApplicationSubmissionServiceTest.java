@@ -78,7 +78,6 @@ class InterimApplicationSubmissionServiceTest {
         assertThat(result).isEqualTo(generatedDocument);
     }
 
-
     @Test
     void shouldDelegateToBailiffServiceApplicationGeneratorWhenApplicationTypeIsBailiff() {
         long caseId = TEST_CASE_ID;
@@ -115,9 +114,11 @@ class InterimApplicationSubmissionServiceTest {
                     .build()
             ).build();
 
+        Applicant applicant1 = caseData.getApplicant1();
+
         assertThrows(
             UnsupportedOperationException.class,
-            () -> interimApplicationSubmissionService.generateAnswerDocument(caseId, caseData.getApplicant1(), caseData)
+            () -> interimApplicationSubmissionService.generateAnswerDocument(caseId, applicant1, caseData)
         );
     }
 

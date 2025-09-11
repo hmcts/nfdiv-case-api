@@ -7,8 +7,8 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.interimapplications.DispenseWithServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.divorcecase.model.interimapplications.DispenseWithServiceJourneyOptions;
 import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 
 import java.time.format.DateTimeFormatter;
@@ -19,11 +19,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSE_WITH_SERV
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_RECEIVED_DATE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
@@ -99,7 +95,7 @@ public class DispenseWithServiceApplicationTemplateContent implements TemplateCo
             SERVICE_APPLICATION_RECEIVED_DATE, dateTimeFormatter.format(alternativeService.getReceivedServiceApplicationDate())
         );
 
-        templateContent.put(DIVORCE_OR_DISSOLUTION, getApplicationType(languagePreference, caseData));
+        templateContent.put(DIVORCE_OR_DISSOLUTION, docmosisCommonContent.getApplicationType(languagePreference, caseData));
 
         DispenseWithServiceJourneyOptions applicationAnswers =
             applicant.getInterimApplicationOptions().getDispenseWithServiceJourneyOptions();
@@ -205,11 +201,5 @@ public class DispenseWithServiceApplicationTemplateContent implements TemplateCo
         templateContent.put(DISPENSE_OTHER_ENQUIRIES, applicationAnswers.getDispenseOtherEnquiries());
 
         return templateContent;
-    }
-
-    private String getApplicationType(LanguagePreference languagePreference, CaseData caseData) {
-        return LanguagePreference.WELSH.equals(languagePreference)
-            ? caseData.isDivorce() ? DIVORCE_APPLICATION_CY : END_CIVIL_PARTNERSHIP_CY
-            : caseData.isDivorce() ? DIVORCE_APPLICATION : END_CIVIL_PARTNERSHIP;
     }
 }

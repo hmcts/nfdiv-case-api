@@ -6,9 +6,9 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.interimapplications.DeemedServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.interimapplications.InterimApplicationOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 
 import java.time.format.DateTimeFormatter;
@@ -22,11 +22,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CC
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DEEMED_EVIDENCE_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DEEMED_EVIDENCE_UPLOADED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DEEMED_NO_EVIDENCE_STATEMENT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_RECEIVED_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.STATEMENT_OF_TRUTH;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -65,15 +61,9 @@ public class DeemedServiceApplicationTemplateContent implements TemplateContent 
         templateContent.put(DEEMED_EVIDENCE_UPLOADED, YesOrNo.YES.equals(interimApplicationOptions.getInterimAppsCanUploadEvidence()));
         templateContent.put(DEEMED_EVIDENCE_DETAILS, applicationAnswers.getDeemedEvidenceDetails());
         templateContent.put(DEEMED_NO_EVIDENCE_STATEMENT, applicationAnswers.getDeemedNoEvidenceStatement());
-        templateContent.put(DIVORCE_OR_DISSOLUTION, getApplicationType(languagePreference, caseData));
+        templateContent.put(DIVORCE_OR_DISSOLUTION, docmosisCommonContent.getApplicationType(languagePreference, caseData));
         templateContent.put(STATEMENT_OF_TRUTH, LanguagePreference.WELSH.equals(languagePreference) ? "Ydw" : "Yes");
 
         return templateContent;
-    }
-
-    private String getApplicationType(LanguagePreference languagePreference, CaseData caseData) {
-        return LanguagePreference.WELSH.equals(languagePreference)
-            ? caseData.isDivorce() ? DIVORCE_APPLICATION_CY : END_CIVIL_PARTNERSHIP_CY
-            : caseData.isDivorce() ? DIVORCE_APPLICATION : END_CIVIL_PARTNERSHIP;
     }
 }
