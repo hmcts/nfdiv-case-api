@@ -75,6 +75,8 @@ uk:
             BAILIFF_SERVICE_APPLICATION_AWAITING_DOCUMENTS: '02690174-c165-443b-a870-a7f1f398d3f8'
             ALTERNATIVE_SERVICE_APPLICATION_SUBMITTED: '4e2ab8ce-e0c0-4da2-a0c8-68d75dde92e8'
             ALTERNATIVE_SERVICE_APPLICATION_AWAITING_DOCUMENTS: 'aeea0b6f-b9fe-4e8c-bef0-21982f823e18'
+            SEARCH_GOV_RECORDS_APPLICATION_SUBMITTED: '6746b04d-9f73-4cca-b453-dd040704b98f'
+            SEARCH_GOV_RECORDS_APPLICATION_SUBMITTED_HWF: '9bc23e25-b6f0-4eb3-905d-dc042566f4e5'
             JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW: 'd15a318f-404b-4c29-8a01-1febee5bf2d5'
             JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW: 'fb0c2168-1861-452e-af4b-34e718643635'
             JOINT_APPLICANT2_ANSWERS_SENT_FOR_REVIEW_APPLICANT1_REPRESENTED: '2cba9d42-5ef5-4ba1-8daf-334a465f0515'
@@ -232,6 +234,8 @@ uk:
             BAILIFF_SERVICE_APPLICATION_AWAITING_DOCUMENTS: 'ab7fb11a-117d-4a65-bbca-d17abdc2d888'
             DISPENSE_SERVICE_APPLICATION_SUBMITTED: 'f54bff42-0a79-40e6-80cc-8a84eed5c04f' #TODO: Welsh translation
             DISPENSE_SERVICE_APPLICATION_AWAITING_DOCUMENTS: '74a91352-09ec-408f-851b-26c6f5ba8787' #TODO: Welsh translation
+            SEARCH_GOV_RECORDS_APPLICATION_SUBMITTED: '6746b04d-9f73-4cca-b453-dd040704b98f' #TODO: Welsh translation needed
+            SEARCH_GOV_RECORDS_APPLICATION_SUBMITTED_HWF: '9bc23e25-b6f0-4eb3-905d-dc042566f4e5' #TODO: Welsh translation needed
             ALTERNATIVE_SERVICE_APPLICATION_SUBMITTED: '596fc1fe-a5cc-48dd-b4d3-61ed260ea283'
             ALTERNATIVE_SERVICE_APPLICATION_AWAITING_DOCUMENTS: '49dd7ba1-6c5e-4d04-b460-f233e43b087e'
             JOINT_APPLICANT1_ANSWERS_SENT_FOR_REVIEW: '7e72dfe4-d414-4597-9d72-9ae5d91e8376'
@@ -517,6 +521,7 @@ docmosis:
       BAILIFF_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Bailiff-Service-Application_V1.docx
       ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Alternative-Service-Application_V1.docx
       DISPENSE_WITH_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Dispense-With-Service-Application_V1.docx
+      SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-ENG-Search-Government-Records-Application_V1.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V1.docx
@@ -611,8 +616,10 @@ docmosis:
       RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-WEL-Respondent-Started-Drafting-AoS-Application-Cy.docx
       DEEMED_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Deemed-Service-Application_V1.docx
       BAILIFF_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Bailiff-Service-Application_V1.docx
-      ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Alternative-Service-Application_V1.docx #TODO: add Welsh translation
+      ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Alternative-Service-Application_V1.docx
+      SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-WEL-Search-Government-Records-Application_V1.docx
       DISPENSE_WITH_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Dispense-With-Service-Application_V1.docx #TODO: add Welsh translation
+
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}
