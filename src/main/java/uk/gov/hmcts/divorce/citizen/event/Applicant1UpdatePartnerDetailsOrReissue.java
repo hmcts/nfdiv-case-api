@@ -108,9 +108,11 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
 
         caseData.getApplication().setReissueOption(ReissueOption.REISSUE_CASE);
 
+        caseTasks(setPostIssueState).run(details);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
-            .state(caseData.getApplication().isPersonalServiceMethod() ? AwaitingService : AwaitingAos)
+            .state(details.getState())
             .build();
     }
 
