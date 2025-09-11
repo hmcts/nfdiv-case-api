@@ -293,6 +293,16 @@ public class Applicant {
     private InterimApplicationOptions interimApplicationOptions;
 
     @CCD(
+        label = "Interim Applications",
+        typeOverride = Collection,
+        typeParameterOverride = "InterimApplication",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private List<ListValue<InterimApplication>> interimApplications;
+
+    @CCD(
+        label = "General Application Payments",
         typeOverride = Collection,
         typeParameterOverride = "Payment",
         access = {DefaultAccess.class},
@@ -407,5 +417,18 @@ public class Applicant {
     @JsonIgnore
     public String getFullName() {
         return Stream.of(firstName, middleName, lastName).filter(Objects::nonNull).collect(joining(" "));
+    }
+
+    @JsonIgnore
+    public void archiveInterimApplicationOptions() {
+        setInterimApplications(List.of(
+            ListValue.<InterimApplication>builder().value(
+                InterimApplication.builder()
+                    .options(interimApplicationOptions)
+                    .build()
+            ).build()
+        ));
+
+        setInterimApplicationOptions(new InterimApplicationOptions());
     }
 }
