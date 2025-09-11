@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.generator.AlternativeServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.BailiffServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.DeemedServiceApplicationGenerator;
+import uk.gov.hmcts.divorce.document.print.generator.DispenseWithServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 @Service
@@ -29,6 +30,7 @@ public class InterimApplicationSubmissionService {
     private final DispenseServiceApplicationSubmittedNotification dispenseServiceApplicationSubmittedNotification;
 
     private final BailiffServiceApplicationSubmittedNotification bailiffApplicationSubmittedNotification;
+    private final DispenseWithServiceApplicationGenerator dispenseWithServiceApplicationGenerator;
 
     public DivorceDocument generateAnswerDocument(
         long caseId,
@@ -44,7 +46,7 @@ public class InterimApplicationSubmissionService {
         } else if (InterimApplicationType.ALTERNATIVE_SERVICE.equals(applicationType)) {
             return alternativeServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
         } else if (InterimApplicationType.DISPENSE_WITH_SERVICE.equals(applicationType)) {
-            return DivorceDocument.builder().build();
+            return dispenseWithServiceApplicationGenerator.generateDocument(caseId, applicant, caseData);
         }
 
         throw new UnsupportedOperationException();
