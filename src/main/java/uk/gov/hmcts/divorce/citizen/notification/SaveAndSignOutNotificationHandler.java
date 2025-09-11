@@ -34,9 +34,9 @@ public class SaveAndSignOutNotificationHandler {
     private final CommonContent commonContent;
 
     public void notifyApplicant(State state, CaseData caseData, Long caseId, String userToken) {
-        User user = idamService.retrieveUser(userToken);
         boolean isApplicant1 = ccdAccessService.isApplicant1(userToken, caseId);
 
+        final User user = idamService.retrieveUser(userToken);
         Applicant applicant1 =  caseData.getApplicant1();
         Applicant applicant2 =  caseData.getApplicant2();
         final var applicant = isApplicant1 ? applicant1 : applicant2;

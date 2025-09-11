@@ -11,12 +11,16 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.powermock.api.mockito.PowerMockito.when;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -40,6 +44,8 @@ class DeemedServiceApplicationTemplateContentTest {
     void shouldReturnTemplateContentForEnglish() {
         final CaseData caseData = buildTestData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
+        when(docmosisCommonContent.getApplicationType(LanguagePreference.ENGLISH, caseData))
+            .thenReturn(DIVORCE_APPLICATION);
 
         final Map<String, Object> result = templateContent.getTemplateContent(
             caseData, TEST_CASE_ID, caseData.getApplicant1()
@@ -63,6 +69,8 @@ class DeemedServiceApplicationTemplateContentTest {
     void shouldReturnTemplateContentForWelsh() {
         final CaseData caseData = buildTestData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        when(docmosisCommonContent.getApplicationType(LanguagePreference.WELSH, caseData))
+            .thenReturn(DIVORCE_APPLICATION_CY);
 
         final Map<String, Object> result = templateContent.getTemplateContent(
             caseData, TEST_CASE_ID, caseData.getApplicant1()

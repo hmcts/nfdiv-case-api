@@ -11,12 +11,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DispenseWithServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.document.content.DispenseWithServiceApplicationTemplateContent.DISPENSE_AWARE_PARTNER_LIVED;
 import static uk.gov.hmcts.divorce.document.content.DispenseWithServiceApplicationTemplateContent.DISPENSE_CHILDREN_OF_FAMILY;
 import static uk.gov.hmcts.divorce.document.content.DispenseWithServiceApplicationTemplateContent.DISPENSE_CHILD_MAINTENANCE_ORDER;
@@ -57,6 +59,7 @@ import static uk.gov.hmcts.divorce.document.content.DispenseWithServiceApplicati
 import static uk.gov.hmcts.divorce.document.content.DispenseWithServiceApplicationTemplateContent.DISPENSE_WHY_NO_SEARCHING_ONLINE;
 import static uk.gov.hmcts.divorce.document.content.DispenseWithServiceApplicationTemplateContent.DISPENSE_WHY_NO_TRACING_AGENT;
 import static uk.gov.hmcts.divorce.document.content.DispenseWithServiceApplicationTemplateContent.DISPENSE_WHY_NO_TRACING_ONLINE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -180,6 +183,9 @@ class DispenseWithServiceApplicationTemplateContentTest {
         final CaseData caseData = buildYesTestData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
 
+        when(docmosisCommonContent.getApplicationType(LanguagePreference.ENGLISH, caseData))
+            .thenReturn(DIVORCE_APPLICATION);
+
         final Map<String, Object> result = templateContent.getTemplateContent(
             caseData, TEST_CASE_ID, caseData.getApplicant1()
         );
@@ -194,6 +200,9 @@ class DispenseWithServiceApplicationTemplateContentTest {
         final CaseData caseData = buildPartialNoTestData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
 
+        when(docmosisCommonContent.getApplicationType(LanguagePreference.ENGLISH, caseData))
+            .thenReturn(DIVORCE_APPLICATION);
+
         final Map<String, Object> result = templateContent.getTemplateContent(
             caseData, TEST_CASE_ID, caseData.getApplicant1()
         );
@@ -207,6 +216,9 @@ class DispenseWithServiceApplicationTemplateContentTest {
     void shouldReturnNoTemplateContentForEnglish() {
         final CaseData caseData = buildNoTestData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
+
+        when(docmosisCommonContent.getApplicationType(LanguagePreference.ENGLISH, caseData))
+            .thenReturn(DIVORCE_APPLICATION);
 
         final Map<String, Object> result = templateContent.getTemplateContent(
             caseData, TEST_CASE_ID, caseData.getApplicant1()

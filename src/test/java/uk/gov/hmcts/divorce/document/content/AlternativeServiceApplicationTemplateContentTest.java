@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -20,6 +21,9 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -44,6 +48,8 @@ class AlternativeServiceApplicationTemplateContentTest {
     void shouldReturnTemplateContentForEnglish() {
         final CaseData caseData = buildTestData(AlternativeServiceMethod.EMAIL, null);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
+        when(docmosisCommonContent.getApplicationType(LanguagePreference.ENGLISH, caseData))
+            .thenReturn(DIVORCE_APPLICATION);
 
         final Map<String, Object> result = templateContent.getTemplateContent(
             caseData, TEST_CASE_ID, caseData.getApplicant1()
@@ -77,8 +83,9 @@ class AlternativeServiceApplicationTemplateContentTest {
     @Test
     void shouldReturnTemplateContentForWelsh() {
         final CaseData caseData = buildTestData(AlternativeServiceMethod.EMAIL, null);
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        when(docmosisCommonContent.getApplicationType(LanguagePreference.WELSH, caseData))
+            .thenReturn(DIVORCE_APPLICATION_CY);
 
         final Map<String, Object> result = templateContent.getTemplateContent(
             caseData, TEST_CASE_ID, caseData.getApplicant1()
@@ -114,6 +121,8 @@ class AlternativeServiceApplicationTemplateContentTest {
         final CaseData caseData = buildTestData(AlternativeServiceMethod.EMAIL_AND_DIFFERENT,
             Set.of(AlternativeServiceDifferentWays.TEXT_MESSAGE));
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
+        when(docmosisCommonContent.getApplicationType(LanguagePreference.ENGLISH, caseData))
+            .thenReturn(DIVORCE_APPLICATION);
 
         final Map<String, Object> result = templateContent.getTemplateContent(
             caseData, TEST_CASE_ID, caseData.getApplicant1()
