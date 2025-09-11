@@ -610,7 +610,7 @@ docmosis:
       REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Partner-Solicitor-Response.docx
       RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-WEL-Respondent-Started-Drafting-AoS-Application-Cy.docx
       DEEMED_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Deemed-Service-Application_V1.docx
-      BAILIFF_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Bailiff-Service-Application_V1.docx
+      BAILIFF_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Bailiff-Service-Application_V1.docx
       ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Alternative-Service-Application_V1.docx #TODO: add Welsh translation
       DISPENSE_WITH_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Dispense-With-Service-Application_V1.docx #TODO: add Welsh translation
   templateVars:
