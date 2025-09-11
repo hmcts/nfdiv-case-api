@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
@@ -54,9 +53,6 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
 
     @Mock
     private SetServiceType setServiceType;
-
-    @Mock
-    private SetPostIssueState setPostIssueState;
 
     @InjectMocks
     private Applicant1UpdatePartnerDetailsOrReissue applicant1UpdatePartnerDetailsOrReissue;
@@ -118,7 +114,6 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         caseDetails.setData(caseData);
 
         when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
-        when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
@@ -146,7 +141,6 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         caseDetails.setData(caseData);
 
         when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
-        when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
