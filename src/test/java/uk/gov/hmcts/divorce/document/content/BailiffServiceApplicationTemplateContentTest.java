@@ -25,6 +25,7 @@ import static java.util.Map.entry;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static uk.gov.hmcts.divorce.document.content.BailiffServiceApplicationTemplateContent.CONFIDENTIAL_ADDRESS_EN;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_1_ADDRESS_LINE_1;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -68,6 +69,8 @@ class BailiffServiceApplicationTemplateContentTest {
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(LanguagePreference.ENGLISH))
             .thenReturn(new HashMap<>());
+        when(docmosisCommonContent.getApplicationType(LanguagePreference.ENGLISH, caseData))
+            .thenReturn(DIVORCE_APPLICATION);
 
         Map<String, Object> result = templateContent.getTemplateContent(caseData, TEST_CASE_ID, applicant);
 

@@ -60,8 +60,8 @@ class SaveAndSignOutNotificationHandlerTest {
     void shouldCallSendEmailToApp1WhenNotifyApplicantIsInvokedForGivenCaseData() {
         CaseData caseData = validApplicant2CaseData();
         User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).build());
-        when(idamService.retrieveUser(eq(USER_TOKEN))).thenReturn(user);
-        when(ccdAccessService.isApplicant1(eq(USER_TOKEN), eq(CASE_ID))).thenReturn(true);
+        when(idamService.retrieveUser(USER_TOKEN)).thenReturn(user);
+        when(ccdAccessService.isApplicant1(USER_TOKEN, CASE_ID)).thenReturn(true);
 
         saveAndSignOutNotificationHandler.notifyApplicant(Submitted, caseData, CASE_ID, USER_TOKEN);
 
@@ -79,8 +79,8 @@ class SaveAndSignOutNotificationHandlerTest {
     void shouldCallSendEmailToApp1WhenNotifyApplicantIsInvokedForGivenCaseDataWhenInformationRequested() {
         CaseData caseData = validApplicant2CaseData();
         User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).build());
-        when(idamService.retrieveUser(eq(USER_TOKEN))).thenReturn(user);
-        when(ccdAccessService.isApplicant1(eq(USER_TOKEN), eq(CASE_ID))).thenReturn(true);
+        when(idamService.retrieveUser(USER_TOKEN)).thenReturn(user);
+        when(ccdAccessService.isApplicant1(USER_TOKEN, CASE_ID)).thenReturn(true);
 
         saveAndSignOutNotificationHandler.notifyApplicant(InformationRequested, caseData, CASE_ID, USER_TOKEN);
 
@@ -98,8 +98,8 @@ class SaveAndSignOutNotificationHandlerTest {
     void shouldCallSendEmailToApp2WhenNotifyApplicantIsInvokedForGivenCaseData() {
         CaseData caseData = validApplicant2CaseData();
         User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).build());
-        when(idamService.retrieveUser(eq(USER_TOKEN))).thenReturn(user);
-        when(ccdAccessService.isApplicant1(eq(USER_TOKEN), eq(CASE_ID))).thenReturn(false);
+        when(idamService.retrieveUser(USER_TOKEN)).thenReturn(user);
+        when(ccdAccessService.isApplicant1(USER_TOKEN, CASE_ID)).thenReturn(false);
 
 
         saveAndSignOutNotificationHandler.notifyApplicant(Submitted, caseData, CASE_ID, USER_TOKEN);
@@ -118,8 +118,8 @@ class SaveAndSignOutNotificationHandlerTest {
     void shouldCallSendEmailToApp2WhenNotifyApplicantIsInvokedForGivenCaseDataWhenInformationRequested() {
         CaseData caseData = validApplicant2CaseData();
         User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).build());
-        when(idamService.retrieveUser(eq(USER_TOKEN))).thenReturn(user);
-        when(ccdAccessService.isApplicant1(eq(USER_TOKEN), eq(CASE_ID))).thenReturn(false);
+        when(idamService.retrieveUser(USER_TOKEN)).thenReturn(user);
+        when(ccdAccessService.isApplicant1(USER_TOKEN, CASE_ID)).thenReturn(false);
 
 
         saveAndSignOutNotificationHandler.notifyApplicant(InformationRequested, caseData, CASE_ID, USER_TOKEN);
@@ -141,8 +141,8 @@ class SaveAndSignOutNotificationHandlerTest {
         caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions
             .builder().interimApplicationType(InterimApplicationType.DEEMED_SERVICE).build());
         User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).build());
-        when(idamService.retrieveUser(eq(USER_TOKEN))).thenReturn(user);
-        when(ccdAccessService.isApplicant1(eq(USER_TOKEN), eq(CASE_ID))).thenReturn(true);
+        when(idamService.retrieveUser(USER_TOKEN)).thenReturn(user);
+        when(ccdAccessService.isApplicant1(USER_TOKEN, CASE_ID)).thenReturn(true);
 
 
         saveAndSignOutNotificationHandler.notifyApplicant(AosOverdue, caseData, CASE_ID, USER_TOKEN);
@@ -165,8 +165,8 @@ class SaveAndSignOutNotificationHandlerTest {
         caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions
             .builder().interimApplicationType(InterimApplicationType.DEEMED_SERVICE).build());
         User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).build());
-        when(idamService.retrieveUser(eq(USER_TOKEN))).thenReturn(user);
-        when(ccdAccessService.isApplicant1(eq(USER_TOKEN), eq(CASE_ID))).thenReturn(true);
+        when(idamService.retrieveUser(USER_TOKEN)).thenReturn(user);
+        when(ccdAccessService.isApplicant1(USER_TOKEN, CASE_ID)).thenReturn(true);
 
 
         saveAndSignOutNotificationHandler.notifyApplicant(AosOverdue, caseData, CASE_ID, USER_TOKEN);

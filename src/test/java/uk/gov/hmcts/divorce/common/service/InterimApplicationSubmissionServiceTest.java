@@ -130,9 +130,11 @@ class InterimApplicationSubmissionServiceTest {
                     .build()
             ).build();
 
+        Applicant applicant1 = caseData.getApplicant1();
+
         assertThrows(
             UnsupportedOperationException.class,
-            () -> interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(caseId, caseData.getApplicant1(), caseData)
+            () -> interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(caseId, applicant1, caseData)
         );
     }
 
