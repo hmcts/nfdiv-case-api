@@ -2,19 +2,23 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
@@ -49,12 +53,38 @@ public class AlternativeServiceOutcome {
     private AlternativeServiceType alternativeServiceType;
 
     @CCD(
-        label = "How was payment made?",
+        label = "Service application answers",
+        searchable = false
+    )
+    private DivorceDocument serviceApplicationAnswers;
+
+    @CCD(
+        label = "Supporting Documents",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
+        searchable = false
+    )
+    private List<ListValue<DivorceDocument>> serviceApplicationDocuments;
+
+    @CCD(
+        label = "How will payment be made?",
         typeOverride = FixedList,
         typeParameterOverride = "ServicePaymentMethod",
         displayOrder = 4
     )
     private ServicePaymentMethod paymentMethod;
+
+    @CCD(
+        label = "Were all supporting documents uploaded before submission?",
+        searchable = false
+    )
+    private YesOrNo serviceApplicationDocsUploadedPreSubmission;
+
+    @CCD(
+        label = "Service application submitted online",
+        searchable = false
+    )
+    private YesOrNo serviceApplicationSubmittedOnline;
 
     @CCD(
         label = "Outcome of service application",
@@ -143,6 +173,11 @@ public class AlternativeServiceOutcome {
         searchable = false
     )
     private String reasonFailureToServeByBailiff;
+
+    @JsonUnwrapped(prefix = "servicePaymentFee")
+    @Builder.Default
+    @CCD(searchable = false)
+    private FeeDetails servicePaymentFee = new FeeDetails();
 
     public String getServiceApplicationOutcomeLabel() {
         return " ";

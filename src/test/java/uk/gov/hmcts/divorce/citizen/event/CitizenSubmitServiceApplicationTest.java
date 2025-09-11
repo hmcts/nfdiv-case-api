@@ -16,8 +16,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -34,6 +36,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AWAITING_DECISION_ERROR;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -105,7 +108,7 @@ class CitizenSubmitServiceApplicationTest {
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateAnswerDocument(
+        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -115,11 +118,13 @@ class CitizenSubmitServiceApplicationTest {
         );
 
         AlternativeService alternativeService = response.getData().getAlternativeService();
-        assertThat(response.getState()).isEqualTo(State.AwaitingServicePayment);
+        assertThat(response.getState()).isEqualTo(AwaitingServicePayment);
         assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
         assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isEqualTo(orderSummary);
         assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
         assertThat(alternativeService.getAlternativeServiceFeeRequired()).isEqualTo(YesOrNo.YES);
+        assertThat(alternativeService.getServicePaymentFee().getPaymentMethod())
+            .isEqualTo(ServicePaymentMethod.FEE_PAY_BY_CARD);
         assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
         assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.NO);
         assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
@@ -146,7 +151,7 @@ class CitizenSubmitServiceApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateAnswerDocument(
+        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -155,11 +160,13 @@ class CitizenSubmitServiceApplicationTest {
         );
 
         AlternativeService alternativeService = response.getData().getAlternativeService();
-        assertThat(response.getState()).isEqualTo(State.AwaitingServicePayment);
+        assertThat(response.getState()).isEqualTo(AwaitingServicePayment);
         assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
         assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isNull();
         assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isNull();
-        assertThat(alternativeService.getAlternativeServiceFeeRequired()).isNotEqualTo(YesOrNo.YES);
+        assertThat(alternativeService.getAlternativeServiceFeeRequired()).isEqualTo(YesOrNo.YES);
+        assertThat(alternativeService.getServicePaymentFee().getPaymentMethod())
+            .isEqualTo(ServicePaymentMethod.FEE_PAY_BY_HWF);
         assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
         assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.YES);
         assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
@@ -223,7 +230,7 @@ class CitizenSubmitServiceApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateAnswerDocument(
+        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -236,7 +243,7 @@ class CitizenSubmitServiceApplicationTest {
         assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
         assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isNull();
         assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isNull();
-        assertThat(alternativeService.getAlternativeServiceFeeRequired()).isNotEqualTo(YesOrNo.YES);
+        assertThat(alternativeService.getAlternativeServiceFeeRequired()).isEqualTo(YesOrNo.YES);
         assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
         assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.NO);
         assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
@@ -271,7 +278,7 @@ class CitizenSubmitServiceApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateAnswerDocument(
+        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -288,33 +295,44 @@ class CitizenSubmitServiceApplicationTest {
 
 
     @Test
-    void shouldTriggerNotificationsIfApplicationSubmittedWithHelpWithFees() {
-        CaseData caseData = CaseData.builder().build();
+    void shouldTriggerDeemedServiceNotificationsIfApplicationSubmittedWithHelpWithFees() {
+        CaseData caseData = buildCaseData(InterimApplicationType.DEEMED_SERVICE);
+
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setId(TEST_CASE_ID);
 
         caseData.setAlternativeService(
             AlternativeService.builder()
-                .alternativeServiceFeeRequired(YesOrNo.NO)
+                .servicePaymentFee(
+                    FeeDetails.builder()
+                        .paymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF)
+                        .build()
+                )
                 .alternativeServiceType(AlternativeServiceType.DEEMED)
                 .build()
         );
 
         citizenSubmitServiceApplication.submitted(caseDetails, caseDetails);
 
-        verify(interimApplicationSubmissionService).sendNotifications(
+        verify(interimApplicationSubmissionService).sendServiceApplicationNotifications(
             TEST_CASE_ID, AlternativeServiceType.DEEMED, caseData
         );
     }
 
     @Test
-    void shouldNotTriggerNotificationsIfApplicationRequiresPayment() {
-        CaseData caseData = CaseData.builder().build();
+    void shouldNotTriggerDeemedServiceNotificationsIfApplicationRequiresPayment() {
+        CaseData caseData = buildCaseData(InterimApplicationType.DEEMED_SERVICE);
+
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setId(TEST_CASE_ID);
 
         caseData.setAlternativeService(
             AlternativeService.builder()
+                .servicePaymentFee(
+                    FeeDetails.builder()
+                        .paymentMethod(ServicePaymentMethod.FEE_PAY_BY_CARD)
+                        .build()
+                )
                 .alternativeServiceFeeRequired(YesOrNo.YES)
                 .alternativeServiceType(AlternativeServiceType.DEEMED)
                 .build()
@@ -323,5 +341,17 @@ class CitizenSubmitServiceApplicationTest {
         citizenSubmitServiceApplication.submitted(caseDetails, caseDetails);
 
         verifyNoInteractions(interimApplicationSubmissionService);
+    }
+
+    private CaseData buildCaseData(InterimApplicationType interimApplicationType) {
+        return CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(interimApplicationType)
+                            .build())
+                    .build()
+            ).build();
     }
 }

@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
@@ -30,7 +31,12 @@ public class CitizenAddPayment implements CCDConfig<CaseData, State, UserRole> {
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
             .event(CITIZEN_ADD_PAYMENT)
-            .forStates(AwaitingPayment, AwaitingResponseToHWFDecision, AwaitingServicePayment, AwaitingFinalOrderPayment)
+            .forStates(
+                AwaitingPayment,
+                AwaitingResponseToHWFDecision,
+                AwaitingServicePayment,
+                AwaitingFinalOrderPayment,
+                AwaitingGeneralApplicationPayment)
             .showCondition(NEVER_SHOW)
             .name("Payment reference generated")
             .description("Payment reference generated")

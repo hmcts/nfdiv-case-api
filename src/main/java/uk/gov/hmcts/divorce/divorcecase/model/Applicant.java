@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
+import io.cucumber.java.lu.a;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +23,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -300,6 +303,22 @@ public class Applicant {
     )
     private List<ListValue<InterimApplication>> interimApplications;
 
+    @CCD(
+        label = "General Application Payments",
+        typeOverride = Collection,
+        typeParameterOverride = "Payment",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private List<ListValue<Payment>> generalAppPayments;
+
+    @CCD(
+        label = "General Application Service Request",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private String generalAppServiceRequest;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(NO)
@@ -382,6 +401,12 @@ public class Applicant {
     }
 
     @JsonIgnore
+    public void setActiveGeneralApplication(String serviceRequest) {
+        this.generalAppServiceRequest = serviceRequest;
+        this.generalAppPayments = new ArrayList<>();
+    }
+
+    @JsonIgnore
     public boolean appliedForFinancialOrder() {
         return nonNull(financialOrder) && financialOrder.toBoolean();
     }
@@ -394,5 +419,18 @@ public class Applicant {
     @JsonIgnore
     public String getFullName() {
         return Stream.of(firstName, middleName, lastName).filter(Objects::nonNull).collect(joining(" "));
+    }
+
+    @JsonIgnore
+    public void archiveInterimApplicationOptions() {
+        setInterimApplications(List.of(
+            ListValue.<InterimApplication>builder().value(
+                InterimApplication.builder()
+                    .options(interimApplicationOptions)
+                    .build()
+            ).build()
+        ));
+
+        setInterimApplicationOptions(new InterimApplicationOptions());
     }
 }
