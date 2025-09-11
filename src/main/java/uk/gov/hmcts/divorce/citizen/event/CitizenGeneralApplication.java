@@ -119,7 +119,7 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
 
         data.updateCaseWithGeneralApplication(newGeneralApplication);
 
-        applicant.setInterimApplicationOptions(new InterimApplicationOptions());
+        applicant.archiveInterimApplicationOptions();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

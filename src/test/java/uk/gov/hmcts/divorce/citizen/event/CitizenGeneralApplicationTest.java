@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
@@ -91,6 +92,47 @@ class CitizenGeneralApplicationTest {
 
         assertThat(response.getErrors()).isEqualTo(Collections.singletonList(AWAITING_PAYMENT_ERROR));
     }
+
+    @Test
+    void shouldArchiveApplicationOptions() {
+        setMockClock(clock);
+
+        InterimApplicationOptions applicationOptions = InterimApplicationOptions.builder()
+            .interimAppsUseHelpWithFees(YesOrNo.YES)
+            .interimAppsCannotUploadDocs(YesOrNo.NO)
+            .interimApplicationType(InterimApplicationType.SEARCH_GOV_RECORDS)
+            .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
+            .build();
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(AUTHORIZATION);
+        when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .firstName(TEST_FIRST_NAME)
+                    .interimApplicationOptions(applicationOptions)
+                    .build()
+            ).build();
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        DivorceDocument generatedApplication = DivorceDocument.builder().build();
+        when(interimApplicationSubmissionService.generateGeneralApplicationAnswerDocument(
+            eq(TEST_CASE_ID), eq(caseData.getApplicant1()), eq(caseData), any(GeneralApplication.class)
+        )).thenReturn(generatedApplication);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplication.aboutToSubmit(
+            caseDetails, caseDetails
+        );
+
+        Applicant applicant = response.getData().getApplicant1();
+        assertThat(applicant.getInterimApplicationOptions()).isEqualTo(new InterimApplicationOptions());
+        assertThat(applicant.getInterimApplications().size()).isEqualTo(1);
+        assertThat(applicant.getInterimApplications().getFirst().getValue().getOptions()).isEqualTo(applicationOptions);
+    }
+
 
     @Test
     void givenCitizenWillMakePaymentThenChangeStateToAwaitingGeneralApplicationPaymentAndSetOrderSummary() {

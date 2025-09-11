@@ -195,7 +195,7 @@ class CitizenSubmitServiceApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateAnswerDocument(
+        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 

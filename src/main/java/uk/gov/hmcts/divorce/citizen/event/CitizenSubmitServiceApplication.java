@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -17,7 +16,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -30,7 +28,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -115,14 +112,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         );
         newServiceApplication.setServiceApplicationAnswers(applicationDocument);
 
-        applicant.setInterimApplications(List.of(
-            ListValue.<InterimApplication>builder().value(
-                InterimApplication.builder()
-                    .options(userOptions)
-                    .build()
-            ).build()
-        ));
-        applicant.setInterimApplicationOptions(new InterimApplicationOptions());
+        applicant.archiveInterimApplicationOptions();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

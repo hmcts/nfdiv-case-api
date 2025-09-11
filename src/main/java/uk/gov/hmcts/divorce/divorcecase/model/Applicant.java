@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-
-import io.cucumber.java.lu.a;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
