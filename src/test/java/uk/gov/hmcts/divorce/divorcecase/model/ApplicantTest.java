@@ -2,6 +2,10 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -355,5 +359,42 @@ class ApplicantTest {
 
         assertThat(applicant.getCorrespondenceAddressWithoutConfidentialCheck())
             .isEqualTo("Correspondence Address\nLine 2\nLine 3\nPost Town\nCounty\nUK\nPost Code");
+    }
+
+    @Test
+    void shouldSetGeneralAppServiceRequest() {
+        final Applicant applicant = Applicant.builder()
+            .generalAppPayments(List.of(
+                ListValue.<Payment>builder()
+                    .value(Payment.builder().amount(10).build())
+                    .build()
+            ))
+            .build();
+
+        applicant.setActiveGeneralApplication("service-request");
+
+        assertThat(applicant.getGeneralAppServiceRequest())
+            .isEqualTo("service-request");
+        assertThat(applicant.getGeneralAppPayments()).isEmpty();
+    }
+
+    @Test
+    void shouldArchiveInterimApplicationOptions() {
+        InterimApplicationOptions applicationOptions = InterimApplicationOptions.builder()
+            .interimAppsUseHelpWithFees(YesOrNo.YES)
+            .interimAppsCannotUploadDocs(YesOrNo.NO)
+            .interimApplicationType(InterimApplicationType.SEARCH_GOV_RECORDS)
+            .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
+            .build();
+
+        final Applicant applicant = Applicant.builder()
+            .interimApplicationOptions(applicationOptions)
+            .build();
+
+        applicant.archiveInterimApplicationOptions();
+
+        assertThat(applicant.getInterimApplicationOptions()).isEqualTo(new InterimApplicationOptions());
+        assertThat(applicant.getInterimApplications().size()).isEqualTo(1);
+        assertThat(applicant.getInterimApplications().getFirst().getValue().getOptions()).isEqualTo(applicationOptions);
     }
 }
