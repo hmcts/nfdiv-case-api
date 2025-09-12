@@ -101,7 +101,8 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
 
     @CCD(
         label = "What is your partner's last known address?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private AddressGlobalUK partnerLastKnownAddress;
 

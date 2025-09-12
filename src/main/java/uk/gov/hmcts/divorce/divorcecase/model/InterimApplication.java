@@ -16,7 +16,8 @@ public class InterimApplication {
     @JsonUnwrapped(prefix = "options")
     @CCD(
         label = "Service and General Application Options",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private InterimApplicationOptions options;
 }
