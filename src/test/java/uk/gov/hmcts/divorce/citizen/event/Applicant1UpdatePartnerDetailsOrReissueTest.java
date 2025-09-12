@@ -95,11 +95,6 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
             .getNoResponsePartnerNewEmailOrAddress()).isEqualTo(CONTACT_DETAILS_UPDATED);
         assertThat(response.getErrors()).isNull();
-        assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
-            .getNoResponsePartnerNewEmailOrAddress()).isEqualTo(CONTACT_DETAILS_UPDATED);
-        assertThat(response.getErrors()).isNull();
-        assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
-            .getNoResponsePartnerNewEmailOrAddress()).isEqualTo(CONTACT_DETAILS_UPDATED);
     }
 
     @Test
@@ -118,7 +113,6 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         caseDetails.setData(caseData);
 
         when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
-        when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
@@ -145,7 +139,6 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         caseDetails.setData(caseData);
 
         when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
-        when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
