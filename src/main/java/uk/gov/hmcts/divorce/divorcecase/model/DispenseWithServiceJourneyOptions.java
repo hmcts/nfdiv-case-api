@@ -108,7 +108,8 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
 
     @CCD(
         label = "Is the last seen date more than 2 years in the past at the point that it was provided?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private YesOrNo dispensePartnerLastSeenOver2YearsAgo;
 
@@ -327,7 +328,8 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     @CCD(
         label = "What other enquiries have you made, or information do you have concerning the whereabouts of your partner?",
         typeOverride = TextArea,
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private String dispenseOtherEnquiries;
 }

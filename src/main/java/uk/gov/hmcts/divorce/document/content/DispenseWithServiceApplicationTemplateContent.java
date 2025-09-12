@@ -19,11 +19,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSE_WITH_SERV
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_RECEIVED_DATE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
@@ -88,8 +84,8 @@ public class DispenseWithServiceApplicationTemplateContent implements TemplateCo
         Map<String, Object> templateContent = docmosisCommonContent
             .getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 
-        AlternativeService alternativeService = caseData.getAlternativeService();
         LanguagePreference languagePreference = applicant.getLanguagePreference();
+        AlternativeService alternativeService = caseData.getAlternativeService();
         DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(languagePreference);
 
         templateContent.put(APPLICANT_1_FULL_NAME, applicant.getFullName());
@@ -99,7 +95,7 @@ public class DispenseWithServiceApplicationTemplateContent implements TemplateCo
             SERVICE_APPLICATION_RECEIVED_DATE, dateTimeFormatter.format(alternativeService.getReceivedServiceApplicationDate())
         );
 
-        templateContent.put(DIVORCE_OR_DISSOLUTION, getApplicationType(languagePreference, caseData));
+        templateContent.put(DIVORCE_OR_DISSOLUTION, docmosisCommonContent.getApplicationType(languagePreference, caseData));
 
         DispenseWithServiceJourneyOptions applicationAnswers =
             applicant.getInterimApplicationOptions().getDispenseWithServiceJourneyOptions();
@@ -107,6 +103,17 @@ public class DispenseWithServiceApplicationTemplateContent implements TemplateCo
     }
 
     private Map<String, Object> dispenseWithServiceApplicationContent(
+        Map<String, Object> templateContent,
+        DispenseWithServiceJourneyOptions applicationAnswers,
+        DateTimeFormatter dateTimeFormatter
+    ) {
+        putDispensePartnerDetails(templateContent, applicationAnswers, dateTimeFormatter);
+        putDispenseTracingDetails(templateContent, applicationAnswers);
+        
+        return templateContent;
+    }
+
+    private void putDispensePartnerDetails(
         Map<String, Object> templateContent,
         DispenseWithServiceJourneyOptions applicationAnswers,
         DateTimeFormatter dateTimeFormatter
@@ -153,7 +160,12 @@ public class DispenseWithServiceApplicationTemplateContent implements TemplateCo
         if (YesOrNo.YES.equals(applicationAnswers.getDispenseHavePartnerPhoneNumbers())) {
             templateContent.put(DISPENSE_PARTNER_PHONE_NUMBERS, applicationAnswers.getDispensePartnerPhoneNumbers());
         }
+    }
 
+    private void putDispenseTracingDetails(
+        Map<String, Object> templateContent,
+        DispenseWithServiceJourneyOptions applicationAnswers
+    ) {
         templateContent.put(DISPENSE_TRIED_TRACING_AGENT, applicationAnswers.getDispenseTriedTracingAgent());
         if (YesOrNo.YES.equals(applicationAnswers.getDispenseTriedTracingAgent())) {
             templateContent.put(DISPENSE_TRACING_AGENT_RESULTS, applicationAnswers.getDispenseTracingAgentResults());
@@ -203,13 +215,5 @@ public class DispenseWithServiceApplicationTemplateContent implements TemplateCo
         templateContent.put(DISPENSE_CONTACT_FRIENDS_OR_RELATIVES_DETAILS,
             applicationAnswers.getDispenseContactFriendsOrRelativesDetails());
         templateContent.put(DISPENSE_OTHER_ENQUIRIES, applicationAnswers.getDispenseOtherEnquiries());
-
-        return templateContent;
-    }
-
-    private String getApplicationType(LanguagePreference languagePreference, CaseData caseData) {
-        return LanguagePreference.WELSH.equals(languagePreference)
-            ? caseData.isDivorce() ? DIVORCE_APPLICATION_CY : END_CIVIL_PARTNERSHIP_CY
-            : caseData.isDivorce() ? DIVORCE_APPLICATION : END_CIVIL_PARTNERSHIP;
     }
 }

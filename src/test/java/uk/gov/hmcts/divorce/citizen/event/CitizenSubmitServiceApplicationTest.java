@@ -290,7 +290,7 @@ class CitizenSubmitServiceApplicationTest {
 
         AlternativeService alternativeService = response.getData().getAlternativeService();
         assertThat(response.getState()).isEqualTo(State.AwaitingDocuments);
-        assertThat(alternativeService.getServiceApplicationDocuments()).isEqualTo(null);
+        assertThat(alternativeService.getServiceApplicationDocuments()).isNull();
     }
 
 

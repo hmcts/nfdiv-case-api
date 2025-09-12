@@ -7,7 +7,6 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 
 import static uk.gov.hmcts.divorce.controller.PaymentCallbackController.PAYMENT_UPDATE_PATH;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ENFORCEMENT;
@@ -77,7 +76,7 @@ public class PaymentSetupService {
         return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
     }
 
-    public OrderSummary createGeneralApplicationOrderSummary(GeneralApplication generalApplication, long caseId) {
+    public OrderSummary createGeneralApplicationOrderSummary(long caseId) {
         log.info("Creating general application order summary for case id: {}", caseId);
 
         return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE);
