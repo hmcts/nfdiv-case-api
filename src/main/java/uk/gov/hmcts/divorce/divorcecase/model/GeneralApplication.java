@@ -114,12 +114,6 @@ public class GeneralApplication {
     )
     private String generalApplicationUrgentCaseReason;
 
-    @CCD(
-        label = "Has the citizen or their representative completed online payment for the application?",
-        searchable = false
-    )
-    private YesOrNo hasCompletedOnlinePayment;
-
     @JsonIgnore
     public void recordPayment(String paymentReference, LocalDate dateOfPayment) {
 
