@@ -104,7 +104,8 @@ public class AlternativeService {
     private YesOrNo alternativeServiceFeeRequired;
 
     @CCD(
-        label = "Were all supporting documents uploaded before submission?"
+        label = "Were all supporting documents uploaded before submission?",
+        searchable = false
     )
     private YesOrNo serviceApplicationDocsUploadedPreSubmission;
 

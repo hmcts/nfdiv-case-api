@@ -24,7 +24,8 @@ import java.util.Map;
 import static java.util.Map.entry;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.powermock.api.mockito.PowerMockito.when;
-import static uk.gov.hmcts.divorce.document.content.BailiffServiceApplicationTemplateContent.CONFIDENTIAL_ADDRESS_PLACEHOLDER;
+import static uk.gov.hmcts.divorce.document.content.BailiffServiceApplicationTemplateContent.CONFIDENTIAL_ADDRESS_EN;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_1_ADDRESS_LINE_1;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -68,6 +69,8 @@ class BailiffServiceApplicationTemplateContentTest {
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(LanguagePreference.ENGLISH))
             .thenReturn(new HashMap<>());
+        when(docmosisCommonContent.getApplicationType(LanguagePreference.ENGLISH, caseData))
+            .thenReturn(DIVORCE_APPLICATION);
 
         Map<String, Object> result = templateContent.getTemplateContent(caseData, TEST_CASE_ID, applicant);
 
@@ -78,7 +81,7 @@ class BailiffServiceApplicationTemplateContentTest {
             entry("divorceOrDissolution", "divorce application"),
             entry("serviceApplicationReceivedDate", "1 January 2023"),
             entry("evidenceUploaded", YesOrNo.YES),
-            entry("recipientAddress", CONFIDENTIAL_ADDRESS_PLACEHOLDER),
+            entry("recipientAddress", CONFIDENTIAL_ADDRESS_EN),
             entry("bailiffKnowPartnersPhone", true),
             entry("bailiffPartnersPhone", TEST_PHONE),
             entry("bailiffKnowPartnersDateOfBirth", true),
@@ -90,25 +93,25 @@ class BailiffServiceApplicationTemplateContentTest {
             entry("bailiffPartnersEthnicGroup", TEST_PARTNER_ETHNICITY),
             entry("bailiffPartnersDistinguishingFeatures", TEST_PARTNER_FEATURES),
             entry("bailiffBestTimeToServe", TEST_BEST_TIME_TO_SERVE),
-            entry("bailiffPartnerInARefuge", YesOrNoOrNotKnown.NO),
-            entry("bailiffDoesPartnerHaveVehicle", YesOrNoOrNotKnown.YES),
+            entry("bailiffPartnerInARefuge", YesOrNoOrNotKnown.NO.getValue()),
+            entry("bailiffDoesPartnerHaveVehicle", YesOrNoOrNotKnown.YES.getValue()),
             entry("bailiffPartnerVehicleModel", TEST_VEHICLE_MODEL),
             entry("bailiffPartnerVehicleColour", TEST_VEHICLE_COLOUR),
             entry("bailiffPartnerVehicleRegistration", TEST_VEHICLE_REG),
             entry("bailiffPartnerVehicleOtherDetails", TEST_VEHICLE_OTHER),
-            entry("bailiffHasPartnerBeenViolent", YesOrNoOrNotKnown.YES),
+            entry("bailiffHasPartnerBeenViolent", YesOrNoOrNotKnown.YES.getValue()),
             entry("bailiffPartnerViolenceDetails", TEST_VIOLENCE_DETAILS),
-            entry("bailiffHasPartnerMadeThreats", YesOrNoOrNotKnown.YES),
+            entry("bailiffHasPartnerMadeThreats", YesOrNoOrNotKnown.YES.getValue()),
             entry("bailiffPartnerThreatsDetails", TEST_THREATS_DETAILS),
-            entry("bailiffHavePoliceBeenInvolved", YesOrNoOrNotKnown.YES),
+            entry("bailiffHavePoliceBeenInvolved", YesOrNoOrNotKnown.YES.getValue()),
             entry("bailiffPoliceInvolvedDetails", TEST_POLICE_DETAILS),
-            entry("bailiffHaveSocialServicesBeenInvolved", YesOrNoOrNotKnown.YES),
+            entry("bailiffHaveSocialServicesBeenInvolved", YesOrNoOrNotKnown.YES.getValue()),
             entry("bailiffSocialServicesInvolvedDetails", TEST_SOCIAL_DETAILS),
-            entry("bailiffAreThereDangerousAnimals", YesOrNoOrNotKnown.YES),
+            entry("bailiffAreThereDangerousAnimals", YesOrNoOrNotKnown.YES.getValue()),
             entry("bailiffDangerousAnimalsDetails", TEST_ANIMAL_DETAILS),
-            entry("bailiffDoesPartnerHaveMentalIssues", YesOrNoOrNotKnown.YES),
+            entry("bailiffDoesPartnerHaveMentalIssues", YesOrNoOrNotKnown.YES.getValue()),
             entry("bailiffPartnerMentalIssuesDetails", TEST_MENTAL_DETAILS),
-            entry("bailiffDoesPartnerHoldFirearmsLicense", YesOrNoOrNotKnown.YES),
+            entry("bailiffDoesPartnerHoldFirearmsLicense", YesOrNoOrNotKnown.YES.getValue()),
             entry("bailiffPartnerFirearmsLicenseDetails", TEST_FIREARMS_DETAILS)
         );
 

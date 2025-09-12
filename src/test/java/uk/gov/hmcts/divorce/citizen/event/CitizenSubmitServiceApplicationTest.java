@@ -173,6 +173,43 @@ class CitizenSubmitServiceApplicationTest {
     }
 
     @Test
+    void shouldArchiveApplicationOptions() {
+        setMockClock(clock);
+
+        InterimApplicationOptions applicationOptions = InterimApplicationOptions.builder()
+            .interimAppsUseHelpWithFees(YesOrNo.YES)
+            .interimAppsCannotUploadDocs(YesOrNo.NO)
+            .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
+            .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
+            .build();
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .firstName(TEST_FIRST_NAME)
+                    .interimApplicationOptions(applicationOptions)
+                    .build()
+            ).build();
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        DivorceDocument generatedApplication = DivorceDocument.builder().build();
+        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+            TEST_CASE_ID, caseData.getApplicant1(), caseData
+        )).thenReturn(generatedApplication);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
+            caseDetails, caseDetails
+        );
+
+        Applicant applicant = response.getData().getApplicant1();
+        assertThat(applicant.getInterimApplicationOptions()).isEqualTo(new InterimApplicationOptions());
+        assertThat(applicant.getInterimApplications().size()).isEqualTo(1);
+        assertThat(applicant.getInterimApplications().getFirst().getValue().getOptions()).isEqualTo(applicationOptions);
+    }
+
+    @Test
     void givenCitizenWillNotMakePaymentButDocsHaveNotBeenSubmittedThenChangeStateToAwaitingApplicant() {
         setMockClock(clock);
 
@@ -253,7 +290,7 @@ class CitizenSubmitServiceApplicationTest {
 
         AlternativeService alternativeService = response.getData().getAlternativeService();
         assertThat(response.getState()).isEqualTo(State.AwaitingDocuments);
-        assertThat(alternativeService.getServiceApplicationDocuments()).isEqualTo(null);
+        assertThat(alternativeService.getServiceApplicationDocuments()).isNull();
     }
 
 

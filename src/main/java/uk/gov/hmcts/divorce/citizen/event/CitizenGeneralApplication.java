@@ -119,6 +119,7 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
 
         data.updateCaseWithGeneralApplication(newGeneralApplication);
 
+        applicant.archiveInterimApplicationOptions();
         applicant.setInterimApplicationOptions(new InterimApplicationOptions());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -164,9 +165,7 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
     }
 
     private String prepareGeneralApplicationForPayment(GeneralApplication generalApplication, Applicant applicant, long caseId) {
-        OrderSummary orderSummary = paymentSetupService.createGeneralApplicationOrderSummary(
-            generalApplication, caseId
-        );
+        OrderSummary orderSummary = paymentSetupService.createGeneralApplicationOrderSummary(caseId);
         String serviceRequest = paymentSetupService.createGeneralApplicationPaymentServiceRequest(
             orderSummary, caseId, applicant.getFullName()
         );

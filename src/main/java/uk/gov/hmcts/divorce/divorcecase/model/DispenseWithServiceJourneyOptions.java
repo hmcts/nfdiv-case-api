@@ -107,6 +107,13 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispensePartnerLastSeenDescription;
 
     @CCD(
+        label = "Is the last seen date more than 2 years in the past at the point that it was provided?",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private YesOrNo dispensePartnerLastSeenOver2YearsAgo;
+
+    @CCD(
         label = "Do you have any email addresses for your partner?",
         access = {DefaultAccess.class},
         searchable = false
@@ -243,7 +250,7 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispenseEmployerName;
 
     @CCD(
-        label = "Address",
+        label = "Employer Address",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -317,4 +324,12 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
         searchable = false
     )
     private String dispenseContactFriendsOrRelativesDetails;
+
+    @CCD(
+        label = "What other enquiries have you made, or information do you have concerning the whereabouts of your partner?",
+        typeOverride = TextArea,
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private String dispenseOtherEnquiries;
 }

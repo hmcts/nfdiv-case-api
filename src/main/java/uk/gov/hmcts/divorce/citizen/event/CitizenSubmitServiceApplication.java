@@ -112,6 +112,8 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         );
         newServiceApplication.setServiceApplicationAnswers(applicationDocument);
 
+        applicant.archiveInterimApplicationOptions();
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .state(details.getState())

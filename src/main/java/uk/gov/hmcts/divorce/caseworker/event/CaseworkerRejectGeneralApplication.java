@@ -110,7 +110,7 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
         log.info("Caseworker rejected about to submit callback invoked: {}, Case Id: {}", details.getState(), details.getId());
         var caseData = details.getData();
         String generalApplicationSelected = caseData.getGeneralReferral().getSelectedGeneralApplication().getValue().getLabel();
-       State state =  caseData.getApplication().getStateToTransitionApplicationTo();
+        State state =  caseData.getApplication().getStateToTransitionApplicationTo();
 
         generalApplicationLabels(caseData)
             .entrySet()
@@ -128,7 +128,8 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
                     .findFirst()
                     .ifPresent(applicant -> applicant.setActiveGeneralApplication(null));
 
-                log.info("General application with service request reference {} rejected for case id {}", serviceRequestReference, details.getId());
+                log.info("General application with service request reference {} rejected for case id {}",
+                    serviceRequestReference, details.getId());
 
                 caseData.getGeneralApplications().remove(index.intValue());
                 resetApplicationFields(caseData, details);

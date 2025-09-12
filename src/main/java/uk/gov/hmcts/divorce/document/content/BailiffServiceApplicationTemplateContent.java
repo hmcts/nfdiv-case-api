@@ -20,11 +20,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_SERVICE_AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_RECEIVED_DATE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -70,7 +66,8 @@ public class BailiffServiceApplicationTemplateContent implements TemplateContent
     public static final String BAILIFF_DOES_PARTNER_HOLD_FIREARMS_LICENSE = "bailiffDoesPartnerHoldFirearmsLicense";
     public static final String BAILIFF_PARTNER_FIREARMS_LICENSE_DETAILS = "bailiffPartnerFirearmsLicenseDetails";
 
-    public static final String CONFIDENTIAL_ADDRESS_PLACEHOLDER = "Respondent’s address is confidential";
+    public static final String CONFIDENTIAL_ADDRESS_EN = "Respondent’s address is confidential";
+    public static final String CONFIDENTIAL_ADDRESS_CY = "Mae cyfeiriad yr Atebydd yn gyfrinachol";
 
     @Override
     public List<String> getSupportedTemplates() {
@@ -103,10 +100,10 @@ public class BailiffServiceApplicationTemplateContent implements TemplateContent
         templateContent.put(
             RECIPIENT_ADDRESS,
             applicant2.isConfidentialContactDetails()
-                ? CONFIDENTIAL_ADDRESS_PLACEHOLDER
+                ? getConfidentialAddressPlaceholder(languagePreference)
                 : caseData.getApplicant2().getCorrespondenceAddress()
         );
-        templateContent.put(DIVORCE_OR_DISSOLUTION, getApplicationType(languagePreference, caseData));
+        templateContent.put(DIVORCE_OR_DISSOLUTION, docmosisCommonContent.getApplicationType(languagePreference, caseData));
 
         BailiffServiceJourneyOptions applicationAnswers = applicant.getInterimApplicationOptions().getBailiffServiceJourneyOptions();
         return bailiffApplicationContent(templateContent, applicationAnswers, dateTimeFormatter);
@@ -133,35 +130,62 @@ public class BailiffServiceApplicationTemplateContent implements TemplateContent
         templateContent.put(BAILIFF_PARTNERS_ETHNIC_GROUP, applicationAnswers.getBailiffPartnersEthnicGroup());
         templateContent.put(BAILIFF_PARTNERS_DISTINGUISHING_FEATURES, applicationAnswers.getBailiffPartnersDistinguishingFeatures());
         templateContent.put(BAILIFF_BEST_TIME_TO_SERVE, applicationAnswers.getBailiffBestTimeToServe());
-        templateContent.put(BAILIFF_PARTNER_IN_A_REFUGE, applicationAnswers.getBailiffPartnerInARefuge());
-        templateContent.put(BAILIFF_DOES_PARTNER_HAVE_VEHICLE, applicationAnswers.getBailiffDoesPartnerHaveVehicle());
+        templateContent.put(
+            BAILIFF_PARTNER_IN_A_REFUGE,
+            applicationAnswers.getBailiffPartnerInARefuge().getValue()
+        );
+        templateContent.put(
+            BAILIFF_DOES_PARTNER_HAVE_VEHICLE,
+            applicationAnswers.getBailiffDoesPartnerHaveVehicle().getValue()
+        );
         if (applicationAnswers.getBailiffDoesPartnerHaveVehicle().toBoolean()) {
             templateContent.put(BAILIFF_PARTNER_VEHICLE_MODEL, applicationAnswers.getBailiffPartnerVehicleModel());
             templateContent.put(BAILIFF_PARTNER_VEHICLE_COLOUR, applicationAnswers.getBailiffPartnerVehicleColour());
             templateContent.put(BAILIFF_PARTNER_VEHICLE_REGISTRATION, applicationAnswers.getBailiffPartnerVehicleRegistration());
             templateContent.put(BAILIFF_PARTNER_VEHICLE_OTHER_DETAILS, applicationAnswers.getBailiffPartnerVehicleOtherDetails());
         }
-        templateContent.put(BAILIFF_HAS_PARTNER_BEEN_VIOLENT, applicationAnswers.getBailiffHasPartnerBeenViolent());
+        templateContent.put(
+            BAILIFF_HAS_PARTNER_BEEN_VIOLENT,
+            applicationAnswers.getBailiffHasPartnerBeenViolent().getValue()
+        );
         templateContent.put(BAILIFF_PARTNER_VIOLENCE_DETAILS, applicationAnswers.getBailiffPartnerViolenceDetails());
-        templateContent.put(BAILIFF_HAS_PARTNER_MADE_THREATS, applicationAnswers.getBailiffHasPartnerMadeThreats());
+        templateContent.put(
+            BAILIFF_HAS_PARTNER_MADE_THREATS,
+            applicationAnswers.getBailiffHasPartnerMadeThreats().getValue()
+        );
         templateContent.put(BAILIFF_PARTNER_THREATS_DETAILS, applicationAnswers.getBailiffPartnerThreatsDetails());
-        templateContent.put(BAILIFF_HAVE_POLICE_BEEN_INVOLVED, applicationAnswers.getBailiffHavePoliceBeenInvolved());
+        templateContent.put(
+            BAILIFF_HAVE_POLICE_BEEN_INVOLVED,
+            applicationAnswers.getBailiffHavePoliceBeenInvolved().getValue()
+        );
         templateContent.put(BAILIFF_POLICE_INVOLVED_DETAILS, applicationAnswers.getBailiffPoliceInvolvedDetails());
-        templateContent.put(BAILIFF_HAVE_SOCIAL_SERVICES_BEEN_INVOLVED, applicationAnswers.getBailiffHaveSocialServicesBeenInvolved());
+        templateContent.put(
+            BAILIFF_HAVE_SOCIAL_SERVICES_BEEN_INVOLVED,
+            applicationAnswers.getBailiffHaveSocialServicesBeenInvolved().getValue()
+        );
         templateContent.put(BAILIFF_SOCIAL_SERVICES_INVOLVED_DETAILS, applicationAnswers.getBailiffSocialServicesInvolvedDetails());
-        templateContent.put(BAILIFF_ARE_THERE_DANGEROUS_ANIMALS, applicationAnswers.getBailiffAreThereDangerousAnimals());
+        templateContent.put(
+            BAILIFF_ARE_THERE_DANGEROUS_ANIMALS,
+            applicationAnswers.getBailiffAreThereDangerousAnimals().getValue()
+        );
         templateContent.put(BAILIFF_DANGEROUS_ANIMALS_DETAILS, applicationAnswers.getBailiffDangerousAnimalsDetails());
-        templateContent.put(BAILIFF_DOES_PARTNER_HAVE_MENTAL_ISSUES, applicationAnswers.getBailiffDoesPartnerHaveMentalIssues());
+        templateContent.put(
+            BAILIFF_DOES_PARTNER_HAVE_MENTAL_ISSUES,
+            applicationAnswers.getBailiffDoesPartnerHaveMentalIssues().getValue()
+        );
         templateContent.put(BAILIFF_PARTNER_MENTAL_ISSUES_DETAILS, applicationAnswers.getBailiffPartnerMentalIssuesDetails());
-        templateContent.put(BAILIFF_DOES_PARTNER_HOLD_FIREARMS_LICENSE, applicationAnswers.getBailiffDoesPartnerHoldFirearmsLicense());
+        templateContent.put(
+            BAILIFF_DOES_PARTNER_HOLD_FIREARMS_LICENSE,
+            applicationAnswers.getBailiffDoesPartnerHoldFirearmsLicense().getValue()
+        );
         templateContent.put(BAILIFF_PARTNER_FIREARMS_LICENSE_DETAILS, applicationAnswers.getBailiffPartnerFirearmsLicenseDetails());
 
         return templateContent;
     }
 
-    private String getApplicationType(LanguagePreference languagePreference, CaseData caseData) {
+    private String getConfidentialAddressPlaceholder(LanguagePreference languagePreference) {
         return LanguagePreference.WELSH.equals(languagePreference)
-            ? caseData.isDivorce() ? DIVORCE_APPLICATION_CY : END_CIVIL_PARTNERSHIP_CY
-            : caseData.isDivorce() ? DIVORCE_APPLICATION : END_CIVIL_PARTNERSHIP;
+            ? CONFIDENTIAL_ADDRESS_CY
+            : CONFIDENTIAL_ADDRESS_EN;
     }
 }

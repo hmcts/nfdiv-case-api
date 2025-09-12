@@ -30,7 +30,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.DISPENSE_WITH_SERVICE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
@@ -127,14 +126,15 @@ class InterimApplicationSubmissionServiceTest {
                 Applicant.builder()
                     .interimApplicationOptions(
                         InterimApplicationOptions.builder()
-                            .interimApplicationType(DISPENSE_WITH_SERVICE)  // Update this when DISPENSE_WITH_SERVICE is implemented
                             .build())
                     .build()
             ).build();
 
+        Applicant applicant1 = caseData.getApplicant1();
+
         assertThrows(
             UnsupportedOperationException.class,
-            () -> interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(caseId, caseData.getApplicant1(), caseData)
+            () -> interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(caseId, applicant1, caseData)
         );
     }
 
