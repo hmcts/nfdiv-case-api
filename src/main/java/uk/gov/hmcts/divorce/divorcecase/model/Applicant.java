@@ -376,6 +376,8 @@ public class Applicant {
 
     @JsonIgnore
     public String getFullName() {
-        return Stream.of(firstName, middleName, lastName).filter(Objects::nonNull).collect(joining(" "));
+        return Stream.of(firstName, middleName, lastName)
+            .filter(s -> s != null && !s.isEmpty())
+            .collect(joining(" "));
     }
 }
