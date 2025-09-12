@@ -95,14 +95,6 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
             .getNoResponsePartnerNewEmailOrAddress()).isEqualTo(CONTACT_DETAILS_UPDATED);
         assertThat(response.getErrors()).isNull();
-        assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
-            .getNoResponsePartnerNewEmailOrAddress()).isEqualTo(CONTACT_DETAILS_UPDATED);
-        assertThat(response.getErrors()).isNull();
-        assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
-            .getNoResponsePartnerNewEmailOrAddress()).isEqualTo(CONTACT_DETAILS_UPDATED);
-        assertThat(response.getErrors()).isNull();
-        assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
-            .getNoResponsePartnerNewEmailOrAddress()).isEqualTo(CONTACT_DETAILS_UPDATED);
     }
 
     @Test
