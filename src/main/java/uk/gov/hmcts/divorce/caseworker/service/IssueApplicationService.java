@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SetIssueDate;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
+import uk.gov.hmcts.divorce.caseworker.service.task.ValidateIssue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
@@ -56,9 +57,12 @@ public class IssueApplicationService {
 
     private final SetIssueDate setIssueDate;
 
+    private final ValidateIssue validateIssue;
+
     public CaseDetails<CaseData, State> issueApplication(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
             setServiceType,
+            validateIssue,
             setIssueDate,
             setPostIssueState,
             setDueDateAfterIssue,
@@ -66,7 +70,7 @@ public class IssueApplicationService {
             generateApplicant1NoticeOfProceeding,
             generateApplicant2NoticeOfProceedings,
             divorceApplicationRemover,
-                generateApplication,
+            generateApplication,
             generateD10Form,
             generateD84Form
         ).run(caseDetails);

@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifica
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
+import uk.gov.hmcts.divorce.caseworker.service.task.ValidateIssue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.JudicialSeparationReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
@@ -44,6 +45,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
 class ReIssueApplicationServiceTest {
+
+    @Mock
+    private ValidateIssue validateIssue;
 
     @Mock
     private SetPostIssueState setPostIssueState;
@@ -96,6 +100,7 @@ class ReIssueApplicationServiceTest {
         caseData.getApplication().setReissueOption(DIGITAL_AOS);
         caseData.getApplicant2().setOffline(NO);
 
+        when(validateIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
@@ -127,6 +132,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         caseData.getApplication().setReissueOption(OFFLINE_AOS);
 
+        when(validateIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
@@ -162,7 +168,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-
+        when(validateIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
@@ -198,6 +204,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
         caseData.getApplication().setReissueOption(REISSUE_CASE);
 
+        when(validateIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
@@ -232,6 +239,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
+        when(validateIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
@@ -276,6 +284,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
+        when(validateIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
@@ -320,6 +329,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
+        when(validateIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
@@ -367,6 +377,7 @@ class ReIssueApplicationServiceTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
+        when(validateIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
