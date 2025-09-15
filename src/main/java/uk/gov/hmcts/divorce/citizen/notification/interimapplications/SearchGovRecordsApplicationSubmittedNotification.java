@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SEARCH_GOV_RECORDS_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SEARCH_GOV_RECORDS_APPLICATION_SUBMITTED_HWF;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
@@ -63,7 +64,7 @@ public class SearchGovRecordsApplicationSubmittedNotification implements Applica
             LocalDate submittedDate = generalApplication.getGeneralApplicationFee().getDateOfPayment();
             LocalDate responseDate = submittedDate.plusDays(interimApplicationResponseOffsetDays);
 
-            templateVars.put("date", responseDate.format(dateTimeFormatter));
+            templateVars.put(DATE, responseDate.format(dateTimeFormatter));
         }
 
         return templateVars;
