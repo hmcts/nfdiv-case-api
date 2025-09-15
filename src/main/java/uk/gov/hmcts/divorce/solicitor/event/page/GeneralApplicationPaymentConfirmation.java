@@ -42,7 +42,7 @@ public class GeneralApplicationPaymentConfirmation implements CcdPageConfigurati
         var generalApplication = caseData.getGeneralApplication();
 
         var paymentMethod = generalApplication.getGeneralApplicationFee().getPaymentMethod();
-        if (ServicePaymentMethod.CARD.equals(paymentMethod)) {
+        if (ServicePaymentMethod.FEE_PAY_BY_CARD.equals(paymentMethod)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(List.of(CARD_PAYMENT_ERROR))

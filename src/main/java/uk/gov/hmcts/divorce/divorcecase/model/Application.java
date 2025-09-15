@@ -486,7 +486,7 @@ public class Application {
         label = "What would you like to reissue?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "ReissueOption",
-        access = {SystemUpdateAndSuperUserAccess.class}
+        access = {DefaultAccess.class, SystemUpdateAndSuperUserAccess.class}
     )
     private ReissueOption reissueOption;
 
