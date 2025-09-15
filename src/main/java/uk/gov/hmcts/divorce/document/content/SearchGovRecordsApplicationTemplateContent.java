@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SEARCH_GOV_RECORDS_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
@@ -107,8 +106,7 @@ public class SearchGovRecordsApplicationTemplateContent {
         LanguagePreference languagePreference = applicant.getLanguagePreference();
 
         String knowPartnerDateOfBirth = applicationAnswers.getKnowPartnerDateOfBirth().getValue();
-        templateContent.put(KNOW_PARTNER_DATE_OF_BIRTH, WELSH.equals(languagePreference)
-            ? getWelshText(knowPartnerDateOfBirth) : knowPartnerDateOfBirth);
+        templateContent.put(KNOW_PARTNER_DATE_OF_BIRTH, knowPartnerDateOfBirth);
 
         if (YesOrNo.YES.equals(applicationAnswers.getKnowPartnerDateOfBirth())) {
             templateContent.put(PARTNER_DATE_OF_BIRTH, dateTimeFormatter.format(applicationAnswers.getPartnerDateOfBirth()));
@@ -117,8 +115,7 @@ public class SearchGovRecordsApplicationTemplateContent {
         }
 
         String knowPartnerNationalInsurance = applicationAnswers.getKnowPartnerNationalInsurance().getValue();
-        templateContent.put(KNOW_PARTNER_NATIONAL_INSURANCE, WELSH.equals(languagePreference)
-            ? getWelshText(knowPartnerNationalInsurance) : knowPartnerNationalInsurance);
+        templateContent.put(KNOW_PARTNER_NATIONAL_INSURANCE, knowPartnerNationalInsurance);
 
         if (YesOrNo.YES.equals(applicationAnswers.getKnowPartnerNationalInsurance())) {
             templateContent.put(PARTNER_NATIONAL_INSURANCE, applicationAnswers.getPartnerNationalInsurance());
@@ -128,17 +125,12 @@ public class SearchGovRecordsApplicationTemplateContent {
         templateContent.put(DATES_PARTNER_LIVED_AT_LAST_KNOWN_ADDRESS, applicationAnswers.getPartnerLastKnownAddressDates());
 
         String knownAdditionalAddresses = applicationAnswers.getKnowPartnerAdditionalAddresses().getValue();
-        templateContent.put(KNOW_ADDITIONAL_ADDRESSES_FOR_PARTNER, WELSH.equals(languagePreference)
-            ? getWelshText(knownAdditionalAddresses) : knownAdditionalAddresses);
+        templateContent.put(KNOW_ADDITIONAL_ADDRESSES_FOR_PARTNER, knownAdditionalAddresses);
         templateContent.put(ADDITIONAL_ADDRESS1, applicationAnswers.getPartnerAdditionalAddress1());
         templateContent.put(ADDITIONAL_ADDRESS_1_DATES_LIVED_THERE, applicationAnswers.getPartnerAdditionalAddressDates1());
         templateContent.put(ADDITIONAL_ADDRESS2, applicationAnswers.getPartnerAdditionalAddress2());
         templateContent.put(ADDITIONAL_ADDRESS_2_DATES_LIVED_THERE, applicationAnswers.getPartnerAdditionalAddressDates2());
 
         return templateContent;
-    }
-
-    private String getWelshText(String text) {
-        return "Yes".equalsIgnoreCase(text) ? "Ydy" : "Nac ydy";
     }
 }
