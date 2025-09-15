@@ -65,7 +65,7 @@ public class GeneralApplication {
     private GeneralApplicationFee generalApplicationFeeType;
 
     @CCD(
-        label = "General application answers",
+        label = "General Application Document",
         searchable = false
     )
     private DivorceDocument generalApplicationDocument;
