@@ -22,7 +22,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolic
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
