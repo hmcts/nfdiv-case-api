@@ -19,7 +19,7 @@ public enum ServicePaymentMethod implements HasLabel {
     FEE_PAY_BY_PHONE("Telephone"),
 
     @JsonProperty("feePayByCard")
-    CARD("Card");
+    FEE_PAY_BY_CARD("Card");
 
     private final String label;
 }

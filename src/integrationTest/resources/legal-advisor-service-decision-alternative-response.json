@@ -1,0 +1,29 @@
+{
+  "data": {
+    "changeOfRepresentatives": [],
+    "divorceOrDissolution": "divorce",
+    "supplementaryCaseType": "notApplicable",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
+    "alternativeServiceOutcomes": [
+      {
+        "id": "1",
+        "value": {
+          "receivedServiceApplicationDate": "2021-06-18",
+          "alternativeServiceType": "alternativeService",
+          "receivedServiceAddedDate": "${json-unit.any-string}",
+          "serviceApplicationGranted": "Yes",
+          "serviceApplicationDecisionDate": "${json-unit.any-string}",
+          "deemedServiceDate": "${json-unit.any-string}",
+          "serviceApplicationOutcomeLabel": "${json-unit.any-string}"
+        }
+      }
+    ],
+    "dataVersion": "${json-unit.any-number}",
+    "issueDate": "2021-07-01",
+    "applicationType": "soleApplication",
+    "warnings": []
+  },
+  "state": "GeneralConsiderationComplete"
+}

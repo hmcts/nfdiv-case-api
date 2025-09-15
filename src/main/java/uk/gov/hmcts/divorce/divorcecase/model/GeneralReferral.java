@@ -7,7 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.time.LocalDate;
 
@@ -121,4 +123,17 @@ public class GeneralReferral {
         searchable = false
     )
     private String generalReferralFraudCaseReason;
+
+    @CCD(
+        label = "Which general application will be referred?",
+        searchable = false
+    )
+    private DynamicList selectedGeneralApplication;
+
+    @CCD(
+        label = "Would you like to reject the case general referral?",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private YesOrNo rejectGeneralReferral;
 }
