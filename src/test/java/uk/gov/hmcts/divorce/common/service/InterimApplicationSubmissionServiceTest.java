@@ -1,0 +1,258 @@
+package uk.gov.hmcts.divorce.common.service;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.AlternativeServiceApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.BailiffServiceApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DeemedServiceApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DispenseServiceApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.SearchGovRecordsApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.generator.AlternativeServiceApplicationGenerator;
+import uk.gov.hmcts.divorce.document.print.generator.BailiffServiceApplicationGenerator;
+import uk.gov.hmcts.divorce.document.print.generator.DeemedServiceApplicationGenerator;
+import uk.gov.hmcts.divorce.document.print.generator.SearchGovRecordsApplicationGenerator;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+
+import java.time.LocalDateTime;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+
+@ExtendWith(MockitoExtension.class)
+class InterimApplicationSubmissionServiceTest {
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private DeemedServiceApplicationSubmittedNotification deemedNotification;
+
+    @Mock
+    private SearchGovRecordsApplicationSubmittedNotification searchGovRecordsApplicationSubmittedNotification;
+
+    @Mock
+    private BailiffServiceApplicationSubmittedNotification bailiffNotification;
+
+    @Mock
+    private DispenseServiceApplicationSubmittedNotification dispenseNotification;
+
+    @Mock
+    private AlternativeServiceApplicationSubmittedNotification alternativeServiceApplicationSubmittedNotification;
+
+    @Mock
+    private DeemedServiceApplicationGenerator deemedServiceApplicationGenerator;
+
+    @Mock
+    private BailiffServiceApplicationGenerator bailiffServiceApplicationGenerator;
+
+    @Mock
+    private AlternativeServiceApplicationGenerator alternativeServiceApplicationGenerator;
+
+    @Mock
+    private SearchGovRecordsApplicationGenerator searchGovRecordsApplicationGenerator;
+
+    @InjectMocks
+    private InterimApplicationSubmissionService interimApplicationSubmissionService;
+
+    @Test
+    void shouldDelegateToDeemedServiceApplicationGeneratorWhenApplicationTypeIsDeemed() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+                .applicant1(
+                    Applicant.builder()
+                        .interimApplicationOptions(
+                            InterimApplicationOptions.builder()
+                                .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
+                                .build())
+                        .build()
+                ).build();
+
+        DivorceDocument generatedDocument = DivorceDocument.builder().build();
+        when(deemedServiceApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
+            .thenReturn(generatedDocument);
+
+        DivorceDocument result = interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+            caseId, caseData.getApplicant1(), caseData
+        );
+
+        verify(deemedServiceApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
+        assertThat(result).isEqualTo(generatedDocument);
+    }
+
+
+    @Test
+    void shouldDelegateToBailiffServiceApplicationGeneratorWhenApplicationTypeIsBailiff() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(InterimApplicationType.BAILIFF_SERVICE)
+                            .build())
+                    .build()
+            ).build();
+
+        DivorceDocument generatedDocument = DivorceDocument.builder().build();
+        when(bailiffServiceApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
+            .thenReturn(generatedDocument);
+
+        DivorceDocument result = interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+            caseId, caseData.getApplicant1(), caseData
+        );
+
+        verify(bailiffServiceApplicationGenerator).generateDocument(caseId, caseData.getApplicant1(), caseData);
+        assertThat(result).isEqualTo(generatedDocument);
+    }
+
+    @Test
+    void shouldThrowUnsupportedOperationExceptionWhenApplicationTypeIsNotRecognised() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .build())
+                    .build()
+            ).build();
+
+        Applicant applicant1 = caseData.getApplicant1();
+
+        assertThrows(
+            UnsupportedOperationException.class,
+            () -> interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(caseId, applicant1, caseData)
+        );
+    }
+
+    @Test
+    void shouldDelegateToDeemedServiceNotificationWhenApplicationTypeIsDeemed() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder().build();
+
+        interimApplicationSubmissionService.sendServiceApplicationNotifications(caseId, AlternativeServiceType.DEEMED, caseData);
+
+        verify(notificationDispatcher).send(deemedNotification, caseData, caseId);
+    }
+
+    @Test
+    void shouldDelegateToBailiffServiceNotificationWhenApplicationTypeIsBailiff() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder().build();
+
+        interimApplicationSubmissionService.sendServiceApplicationNotifications(caseId, AlternativeServiceType.BAILIFF, caseData);
+
+        verify(notificationDispatcher).send(bailiffNotification, caseData, caseId);
+    }
+
+    @Test
+    void shouldDelegateToAlternativeServiceApplicationGeneratorWhenApplicationTypeIsAlternativeService() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(InterimApplicationType.ALTERNATIVE_SERVICE)
+                            .build())
+                    .build()
+            ).build();
+
+        DivorceDocument generatedDocument = DivorceDocument.builder().build();
+        when(alternativeServiceApplicationGenerator.generateDocument(caseId, caseData.getApplicant1(), caseData))
+            .thenReturn(generatedDocument);
+
+        DivorceDocument result = interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+            caseId, caseData.getApplicant1(), caseData
+        );
+
+        assertThat(result).isEqualTo(generatedDocument);
+    }
+
+    @Test
+    void shouldDelegateToAlternativeServiceNotificationWhenApplicationTypeIsAlternativeService() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(InterimApplicationType.ALTERNATIVE_SERVICE)
+                            .build())
+                    .build()
+            ).build();
+
+        interimApplicationSubmissionService.sendServiceApplicationNotifications(
+            caseId, AlternativeServiceType.ALTERNATIVE_SERVICE, caseData
+        );
+
+        verify(notificationDispatcher).send(alternativeServiceApplicationSubmittedNotification, caseData, caseId);
+    }
+
+    @Test
+    void shouldDelegateToSearchGovRecordsApplicationGeneratorWhenApplicationTypeIsSearchGovRecords() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(InterimApplicationType.SEARCH_GOV_RECORDS)
+                            .build())
+                    .build()
+            ).build();
+
+        GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationReceivedDate(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+            .generalApplicationType(GeneralApplicationType.DISCLOSURE_VIA_DWP)
+            .build();
+
+        DivorceDocument generatedDocument = DivorceDocument.builder().build();
+        when(searchGovRecordsApplicationGenerator.generateDocument(
+            caseId, caseData.getApplicant1(), caseData, generalApplication
+        )).thenReturn(generatedDocument);
+
+        DivorceDocument result = interimApplicationSubmissionService
+            .generateGeneralApplicationAnswerDocument(caseId, caseData.getApplicant1(), caseData, generalApplication);
+
+        verify(searchGovRecordsApplicationGenerator)
+            .generateDocument(caseId, caseData.getApplicant1(), caseData, generalApplication);
+        assertThat(result).isEqualTo(generatedDocument);
+    }
+
+    @Test
+    void shouldDelegateToSearchGovRecordsNotificationWhenApplicationTypeIsSearchGovRecords() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(InterimApplicationType.SEARCH_GOV_RECORDS)
+                            .build())
+                    .build()
+            ).build();
+
+        GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationReceivedDate(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+            .generalApplicationType(GeneralApplicationType.DISCLOSURE_VIA_DWP)
+            .build();
+
+        interimApplicationSubmissionService.sendGeneralApplicationNotifications(caseId, generalApplication, caseData);
+
+        verify(searchGovRecordsApplicationSubmittedNotification).sendToApplicant1(caseData, caseId, generalApplication);
+    }
+}
