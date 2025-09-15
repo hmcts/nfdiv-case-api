@@ -79,9 +79,7 @@ public class SearchGovRecordsApplicationTemplateContent {
         SearchGovRecordsJourneyOptions applicationAnswers = caseData.getApplicant1().getInterimApplicationOptions()
             .getSearchGovRecordsJourneyOptions();
 
-        templateContent.putAll(searchGovRecordsApplicationContent(templateContent, applicationAnswers, dateTimeFormatter, applicant));
-
-        return templateContent;
+        return searchGovRecordsApplicationContent(templateContent, applicationAnswers, dateTimeFormatter, applicant);
     }
 
     private Map<String, Object> searchGovRecordsApplicationContent(
