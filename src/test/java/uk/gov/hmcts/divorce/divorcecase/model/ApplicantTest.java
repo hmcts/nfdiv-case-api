@@ -362,6 +362,42 @@ class ApplicantTest {
     }
 
     @Test
+    void shouldReturnFullNameByCombiningNameFields() {
+        final Applicant applicant = Applicant.builder()
+            .firstName("first")
+            .middleName("middle")
+            .lastName("last")
+            .build();
+
+        assertThat(applicant.getFullName())
+            .isEqualTo("first middle last");
+    }
+
+    @Test
+    void shouldHandleNullNames() {
+        final Applicant applicant = Applicant.builder()
+            .firstName("first")
+            .middleName(null)
+            .lastName("last")
+            .build();
+
+        assertThat(applicant.getFullName())
+            .isEqualTo("first last");
+    }
+
+    @Test
+    void shouldHandleEmptyNames() {
+        final Applicant applicant = Applicant.builder()
+            .firstName("first")
+            .middleName("")
+            .lastName("last")
+            .build();
+
+        assertThat(applicant.getFullName())
+            .isEqualTo("first last");
+    }
+
+    @Test
     void shouldSetGeneralAppServiceRequest() {
         final Applicant applicant = Applicant.builder()
             .generalAppPayments(List.of(
