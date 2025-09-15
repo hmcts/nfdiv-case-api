@@ -23,7 +23,6 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -416,7 +415,9 @@ public class Applicant {
 
     @JsonIgnore
     public String getFullName() {
-        return Stream.of(firstName, middleName, lastName).filter(Objects::nonNull).collect(joining(" "));
+        return Stream.of(firstName, middleName, lastName)
+            .filter(s -> s != null && !s.isEmpty())
+            .collect(joining(" "));
     }
 
     @JsonIgnore
