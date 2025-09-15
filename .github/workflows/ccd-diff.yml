@@ -3,7 +3,7 @@ name: Diff CCD definition
 on:
   pull_request:
     branches:
-      - none
+      - master
 
 jobs:
 
