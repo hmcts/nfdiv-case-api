@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DispenseWithServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 
 import java.time.format.DateTimeFormatter;
@@ -109,7 +110,7 @@ public class DispenseWithServiceApplicationTemplateContent implements TemplateCo
     ) {
         putDispensePartnerDetails(templateContent, applicationAnswers, dateTimeFormatter);
         putDispenseTracingDetails(templateContent, applicationAnswers);
-        
+
         return templateContent;
     }
 
@@ -124,7 +125,8 @@ public class DispenseWithServiceApplicationTemplateContent implements TemplateCo
                 DISPENSE_LIVED_TOGETHER_DATE,
                 dateTimeFormatter.format(applicationAnswers.getDispenseLivedTogetherDate())
             );
-            templateContent.put(DISPENSE_LIVED_TOGETHER_ADDRESS, applicationAnswers.getDispenseLivedTogetherAddress());
+            templateContent.put(DISPENSE_LIVED_TOGETHER_ADDRESS,
+                AddressUtil.getPostalAddress(applicationAnswers.getDispenseLivedTogetherAddress()));
         }
 
         templateContent.put(DISPENSE_AWARE_PARTNER_LIVED, applicationAnswers.getDispenseAwarePartnerLived());
