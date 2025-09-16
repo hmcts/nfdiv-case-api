@@ -45,7 +45,9 @@ public class PaymentValidatorService {
     }
 
     private PaymentStatus lastPaymentStatus(List<ListValue<Payment>> payments) {
-        return getLastPayment(payments).getStatus();
+        Payment lastPayment = getLastPayment(payments);
+        
+        return lastPayment != null ? lastPayment.getStatus() : null;
     }
 }
 

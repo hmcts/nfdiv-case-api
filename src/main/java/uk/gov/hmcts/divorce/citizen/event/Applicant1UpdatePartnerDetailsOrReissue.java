@@ -131,7 +131,7 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
         } else if (updateNewEmailOrAddress != null) {
             switch (updateNewEmailOrAddress) {
                 case ADDRESS -> updateAddress(details, newAddress, noResponseJourney);
-                case EMAIL ->  applicant2.setEmail(newEmail);
+                case EMAIL -> applicant2.setEmail(newEmail);
                 case EMAIL_AND_ADDRESS -> {
                     applicant2.setEmail(newEmail);
                     updateAddress(details, newAddress, noResponseJourney);

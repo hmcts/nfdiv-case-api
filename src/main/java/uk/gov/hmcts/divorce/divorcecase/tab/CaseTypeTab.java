@@ -359,6 +359,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("generalReferralJudgeOrLegalAdvisorDetails")
             .field("generalReferralFeeRequired")
             .field("generalReferralFeePaymentMethod")
+            .field("generalReferralFeeServiceRequestReference")
+            .field("generalReferralFeePaymentReference")
             .field("generalReferralDecisionDate")
             .field("generalReferralDecision")
             .field("generalReferralDecisionReason")
@@ -403,17 +405,18 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("servicePaymentFeeServiceRequestReference")
             .field("servicePaymentFeeOrderSummary")
             .field("servicePaymentFeePaymentReference")
-            .field("servicePaymentFeePaymentMethod", "servicePaymentFeePaymentMethod=\"*\"")
-            .field("servicePaymentFeeHelpWithFeesReferenceNumber")
+            .field("servicePaymentFeePaymentMethod", "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\"")
+            .field("servicePaymentFeeHasCompletedOnlinePayment")
+            .field("servicePaymentFeePaymentReference")
             .field(
-              "dateOfPayment",
+              "servicePaymentFeeDateOfPayment",
               "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\" OR servicePaymentFeePaymentReference=\"*\"")
             .field("servicePaymentFeeAccountNumber",
                 "servicePaymentFeePaymentMethod=\"feePayByAccount\" AND alternativeServiceFeeRequired=\"Yes\"")
             .field("servicePaymentFeeAccountReferenceNumber",
                 "servicePaymentFeePaymentMethod=\"feePayByAccount\" AND alternativeServiceFeeRequired=\"Yes\"")
             .field("servicePaymentFeeHelpWithFeesReferenceNumber",
-                "servicePaymentFeePaymentMethod=\"feePayByHelp\"")
+                "servicePaymentFeePaymentMethod=\"feePayByHelp\" AND alternativeServiceFeeRequired=\"Yes\"")
             .label("bailiffLocalCourtDetailsLabel",
                 "localCourtName=\"*\" OR localCourtEmail=\"*\"", "### Bailiff local court details")
             .field("localCourtName")

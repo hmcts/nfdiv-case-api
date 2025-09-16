@@ -76,6 +76,25 @@ public class PaymentSetupService {
         return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE);
     }
 
+    public OrderSummary createGeneralApplicationOrderSummary(long caseId) {
+        log.info("Creating general application order summary for case id: {}", caseId);
+
+        return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE);
+    }
+
+    public String createGeneralApplicationPaymentServiceRequest(
+        OrderSummary orderSummary, long caseId, String responsibleParty
+    ) {
+        log.info("Creating general application payment service request for case id: {}", caseId);
+
+        return paymentService.createServiceRequestReference(
+            null,
+            caseId,
+            responsibleParty,
+            orderSummary
+        );
+    }
+
     public OrderSummary createServiceApplicationOrderSummary(AlternativeService alternativeService, long caseId) {
         var serviceApplicationFee = alternativeService.getServicePaymentFee();
         if (serviceApplicationFee != null && serviceApplicationFee.getOrderSummary() != null) {

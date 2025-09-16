@@ -21,8 +21,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -291,6 +291,31 @@ public class Applicant {
     )
     private InterimApplicationOptions interimApplicationOptions;
 
+    @CCD(
+        label = "Interim Applications",
+        typeOverride = Collection,
+        typeParameterOverride = "InterimApplication",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private List<ListValue<InterimApplication>> interimApplications;
+
+    @CCD(
+        label = "General Application Payments",
+        typeOverride = Collection,
+        typeParameterOverride = "Payment",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private List<ListValue<Payment>> generalAppPayments;
+
+    @CCD(
+        label = "General Application Service Request",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private String generalAppServiceRequest;
+
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
         return languagePreferenceWelsh == null || languagePreferenceWelsh.equals(NO)
@@ -373,6 +398,12 @@ public class Applicant {
     }
 
     @JsonIgnore
+    public void setActiveGeneralApplication(String serviceRequest) {
+        this.generalAppServiceRequest = serviceRequest;
+        this.generalAppPayments = new ArrayList<>();
+    }
+
+    @JsonIgnore
     public boolean appliedForFinancialOrder() {
         return nonNull(financialOrder) && financialOrder.toBoolean();
     }
@@ -384,6 +415,21 @@ public class Applicant {
 
     @JsonIgnore
     public String getFullName() {
-        return Stream.of(firstName, middleName, lastName).filter(Objects::nonNull).collect(joining(" "));
+        return Stream.of(firstName, middleName, lastName)
+            .filter(s -> s != null && !s.isEmpty())
+            .collect(joining(" "));
+    }
+
+    @JsonIgnore
+    public void archiveInterimApplicationOptions() {
+        setInterimApplications(List.of(
+            ListValue.<InterimApplication>builder().value(
+                InterimApplication.builder()
+                    .options(interimApplicationOptions)
+                    .build()
+            ).build()
+        ));
+
+        setInterimApplicationOptions(new InterimApplicationOptions());
     }
 }

@@ -170,10 +170,12 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
 
-
+        assertThat(response.getData().getApplicant1().getInterimApplicationOptions()
+                .getNoResponseJourneyOptions()).isNotNull();
         assertThat(response.getErrors()).isNull();
         assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
             .getNoResponsePartnerNewEmailOrAddress()).isEqualTo(CONTACT_DETAILS_UPDATED);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -183,6 +185,7 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
             .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
                 .noResponsePartnerNewEmailOrAddress(NoResponsePartnerNewEmailOrAddress.ADDRESS)
+                .noResponsePartnerNewEmailOrAddress(NoResponsePartnerNewEmailOrAddress.ADDRESS)
                 .noResponsePartnerAddressOverseas(YesOrNo.NO)
                 .build())
             .build());
@@ -191,11 +194,9 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         caseDetails.setData(caseData);
 
         when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
-        when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
-
 
         assertThat(response.getErrors()).isNull();
         assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
@@ -219,7 +220,6 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         caseDetails.setData(caseData);
 
         when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
-        when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
@@ -247,7 +247,6 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
-
 
         assertThat(response.getErrors()).isNull();
         assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
