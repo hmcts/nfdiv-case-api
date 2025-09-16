@@ -181,4 +181,26 @@ class SaveAndSignOutNotificationHandlerTest {
             eq(CASE_ID)
         );
     }
+
+    @Test
+    void shouldNotSendInterimApplicationNotificationForProcessServer() {
+        CaseData caseData = validApplicant1CaseData();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions
+            .builder().interimApplicationType(InterimApplicationType.PROCESS_SERVER_SERVICE).build());
+        User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).build());
+        when(idamService.retrieveUser(USER_TOKEN)).thenReturn(user);
+        when(ccdAccessService.isApplicant1(USER_TOKEN, CASE_ID)).thenReturn(true);
+
+
+        saveAndSignOutNotificationHandler.notifyApplicant(AosOverdue, caseData, CASE_ID, USER_TOKEN);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(SAVE_SIGN_OUT),
+            any(),
+            eq(ENGLISH),
+            eq(CASE_ID)
+        );
+    }
 }
