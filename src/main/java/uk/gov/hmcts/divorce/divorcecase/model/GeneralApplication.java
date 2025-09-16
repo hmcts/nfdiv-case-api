@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +14,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
@@ -31,6 +36,19 @@ public class GeneralApplication {
         typeParameterOverride = "GeneralApplicationType"
     )
     private GeneralApplicationType generalApplicationType;
+
+    @CCD(
+        label = "Which party submitted the general application?",
+        searchable = false
+    )
+    private GeneralParties generalApplicationParty;
+
+    @CCD(
+        label = "Application received date",
+        searchable = false
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime generalApplicationReceivedDate;
 
     @CCD(
         label = "Please provide more information about general application type",
@@ -68,6 +86,18 @@ public class GeneralApplication {
     )
     private String generalApplicationDocumentComments;
 
+    @CCD(
+        label = "Were all supporting documents uploaded before submission?",
+        searchable = false
+    )
+    private YesOrNo generalApplicationDocsUploadedPreSubmission;
+
+    @CCD(
+        label = "Was the general application submitted online?",
+        searchable = false
+    )
+    private YesOrNo generalApplicationSubmittedOnline;
+
     @JsonUnwrapped(prefix = "generalApplicationFee")
     @Builder.Default
     private FeeDetails generalApplicationFee = new FeeDetails();
@@ -83,4 +113,22 @@ public class GeneralApplication {
         searchable = false
     )
     private String generalApplicationUrgentCaseReason;
+
+    @JsonIgnore
+    public void recordPayment(String paymentReference, LocalDate dateOfPayment) {
+
+        generalApplicationFee.setPaymentReference(paymentReference);
+        generalApplicationFee.setHasCompletedOnlinePayment(YesOrNo.YES);
+        generalApplicationFee.setDateOfPayment(dateOfPayment);
+    }
+
+    @JsonIgnore
+    public String getLabel(int idx, DateTimeFormatter formatter) {
+        return String.format(
+            "General applications %d, %s, %s",
+            idx + 1,
+            generalApplicationType == null ? "" : generalApplicationType.getLabel(),
+            generalApplicationReceivedDate == null ? "" : generalApplicationReceivedDate.format(formatter)
+        );
+    }
 }
