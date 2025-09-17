@@ -20,6 +20,7 @@ import java.util.List;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
+import static org.springframework.util.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Pronounced;
@@ -30,6 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBulkListErroredCases;
 
 @Component
 @Slf4j
@@ -52,6 +54,7 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .aboutToStartCallback(this::aboutToStart)
             .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN, JUDGE))
@@ -59,6 +62,25 @@ public class CaseworkerPronounceList implements CCDConfig<BulkActionCaseData, Bu
             .pageLabel("Pronounce List")
             .readonlyNoSummary(BulkActionCaseData::getPronouncementJudge)
             .mandatory(BulkActionCaseData::getHasJudgePronounced);
+    }
+
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToStart(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails) {
+
+        log.info("{} aboutToStart-callback invoked for case id: {}", CASEWORKER_PRONOUNCE_LIST, bulkCaseDetails.getId());
+
+        List<String> validationErrors = validateBulkListErroredCases(bulkCaseDetails);
+
+        if (!isEmpty(validationErrors)) {
+            return AboutToStartOrSubmitResponse
+                .<BulkActionCaseData, BulkActionState>builder()
+                .errors(validationErrors)
+                .data(bulkCaseDetails.getData())
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkCaseDetails.getData())
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> midEvent(
