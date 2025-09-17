@@ -58,6 +58,7 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
             .showSummary()
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
@@ -89,6 +90,20 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
+            .errors(null)
+            .warnings(null)
+            .build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
+        final CaseDetails<CaseData, State> details, final CaseDetails<CaseData, State> beforeDetails
+    ) {
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_SERVICE_PAYMENT, details.getId());
+
+        details.getData().getAlternativeService().getServicePaymentFee().setHasCompletedOnlinePayment(null);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
             .errors(null)
             .warnings(null)
             .build();
