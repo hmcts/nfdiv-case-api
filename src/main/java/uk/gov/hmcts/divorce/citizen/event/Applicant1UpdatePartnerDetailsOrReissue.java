@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
@@ -183,10 +184,12 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
         applicant2.setAddressOverseas(noResponseJourney.getNoResponsePartnerAddressOverseas());
         boolean partnerAddressOverseas = YesOrNo.YES.equals(noResponseJourney.getNoResponsePartnerAddressOverseas());
         boolean partnerAddressOutsideEnglandOrWales = YesOrNo.NO.equals(noResponseJourney.getNoResponseRespondentAddressInEnglandWales());
-        if (partnerAddressOverseas || partnerAddressOutsideEnglandOrWales) {
-            caseDetails.getData().getApplication().setServiceMethod(ServiceMethod.PERSONAL_SERVICE);
-        }
 
-        caseTasks(setServiceType).run(caseDetails);
+        Application application = caseDetails.getData().getApplication();
+        if (applicant2.mustBeServedOverseas() || partnerAddressOverseas || partnerAddressOutsideEnglandOrWales) {
+            application.setServiceMethod(ServiceMethod.PERSONAL_SERVICE);
+        } else {
+            application.setServiceMethod(ServiceMethod.COURT_SERVICE);
+        }
     }
 }
