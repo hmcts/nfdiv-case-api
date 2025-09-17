@@ -15,7 +15,6 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
@@ -61,13 +60,10 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
     private AuthTokenGenerator authTokenGenerator;
 
     @Mock
-    private CcdUpdateService ccdUpdateService;
-
-    @Mock
-    private SetServiceType setServiceType;
-
-    @Mock
     private SetPostIssueState setPostIssueState;
+
+    @Mock
+    private CcdUpdateService ccdUpdateService;
 
     @InjectMocks
     private Applicant1UpdatePartnerDetailsOrReissue applicant1UpdatePartnerDetailsOrReissue;
@@ -155,7 +151,6 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
 
     @Test
     void shouldSetNewEmailForRespondentAboutToSubmitWhenNoResponsePartnerNewEmailOrAddressIsEmail() {
-
         final CaseData caseData = validCaseDataForReIssueApplication();
         caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
             .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
@@ -180,7 +175,6 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
 
     @Test
     void shouldSetNewAddressForRespondentAboutToSubmitWhenNoResponsePartnerNewEmailOrAddressIsAddress() {
-
         final CaseData caseData = validCaseDataForReIssueApplication();
         caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
             .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
@@ -192,8 +186,6 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(12345L);
         caseDetails.setData(caseData);
-
-        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
@@ -219,14 +211,35 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         caseDetails.setId(12345L);
         caseDetails.setData(caseData);
 
-        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(caseData.getApplication().getServiceMethod()).isEqualTo(ServiceMethod.PERSONAL_SERVICE);
+        assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
+            .getNoResponsePartnerNewEmailOrAddress()).isEqualTo(CONTACT_DETAILS_UPDATED);
+    }
+
+    @Test
+    void shouldSetServiceTypeToCourtServiceWhenPartnerAddressIsInEnglandAndWales() {
+
+        final CaseData caseData = validCaseDataForReIssueApplication();
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
+            .noResponseJourneyOptions(
+                NoResponseJourneyOptions.builder()
+                    .noResponsePartnerNewEmailOrAddress(NoResponsePartnerNewEmailOrAddress.ADDRESS)
+                    .noResponsePartnerAddressOverseas(YesOrNo.NO)
+                    .build())
+            .build());
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(12345L);
+        caseDetails.setData(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
 
-
         assertThat(response.getErrors()).isNull();
-        assertThat(caseData.getApplication().getServiceMethod()).isEqualTo(ServiceMethod.PERSONAL_SERVICE);
+        assertThat(caseData.getApplication().getServiceMethod()).isEqualTo(ServiceMethod.COURT_SERVICE);
         assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
             .getNoResponsePartnerNewEmailOrAddress()).isEqualTo(CONTACT_DETAILS_UPDATED);
     }
