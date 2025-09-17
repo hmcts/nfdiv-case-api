@@ -23,7 +23,6 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectServiceApplication.CASEWORKER_REJECT_SERVICE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -89,7 +88,7 @@ class CaseworkerRejectServiceApplicationTest {
     }
 
     @Test
-    void shouldDeleteServiceApplicationAnswersDocumentIfPresent() {
+    void shouldNotDeleteServiceApplicationAnswersDocumentIfPresent() {
         Document doc = Document.builder()
             .binaryUrl("test.pdf")
             .build();
@@ -113,11 +112,11 @@ class CaseworkerRejectServiceApplicationTest {
             caseworkerRejectServiceApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).isNull();
-        verify(documentRemovalService).deleteDocument(doc);
+        verifyNoInteractions(documentRemovalService);
     }
 
     @Test
-    void shouldDeleteServiceApplicationDocuments() {
+    void shouldNotDeleteServiceApplicationDocuments() {
         final ListValue<DivorceDocument> doc1 = getDivorceDocumentListValue(
             "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
             "test.pdf",
@@ -147,7 +146,7 @@ class CaseworkerRejectServiceApplicationTest {
             caseworkerRejectServiceApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).isNull();
-        verify(documentRemovalService).deleteDocument(divorceDocuments);
+        verifyNoInteractions(documentRemovalService);
     }
 
     @Test

@@ -88,23 +88,11 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
                 .build();
         }
 
-        handleDeletionOfServiceApplicationDocuments(caseData.getAlternativeService());
         caseData.setAlternativeService(new AlternativeService());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .state(AwaitingAos)
             .build();
-    }
-
-    private void handleDeletionOfServiceApplicationDocuments(AlternativeService alternativeService) {
-        if (Objects.nonNull(alternativeService.getServiceApplicationDocuments())) {
-            documentRemovalService.deleteDocument(alternativeService.getServiceApplicationDocuments());
-        }
-
-        if (Objects.nonNull(alternativeService.getServiceApplicationAnswers())
-            && Objects.nonNull(alternativeService.getServiceApplicationAnswers().getDocumentLink())) {
-            documentRemovalService.deleteDocument(alternativeService.getServiceApplicationAnswers().getDocumentLink());
-        }
     }
 }
