@@ -88,7 +88,7 @@ class CaseworkerRejectServiceApplicationTest {
     }
 
     @Test
-    void shouldDeleteServiceApplicationAnswersDocumentIfPresent() {
+    void shouldNotDeleteServiceApplicationAnswersDocumentIfPresent() {
         Document doc = Document.builder()
             .binaryUrl("test.pdf")
             .build();
@@ -150,7 +150,7 @@ class CaseworkerRejectServiceApplicationTest {
     }
 
     @Test
-    void shouldNotDeleteServiceApplicationWithoutAnySupportingDocuments() {
+    void shouldDeleteServiceApplicationWithoutAnySupportingDocuments() {
         final CaseData caseData = CaseData.builder().build();
         caseData.setAlternativeService(AlternativeService.builder()
                 .serviceApplicationSubmittedOnline(YesOrNo.YES)
