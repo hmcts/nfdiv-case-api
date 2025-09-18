@@ -17,6 +17,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress;
+import uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -123,12 +125,12 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
 
         var newAddress = noResponseJourney.getNoResponsePartnerAddress();
         var newEmail = noResponseJourney.getNoResponsePartnerEmailAddress();
+        var applicant1 = caseData.getApplicant1();
         var applicant2 = caseData.getApplicant2();
         var updateNewEmailOrAddress = noResponseJourney.getNoResponsePartnerNewEmailOrAddress();
 
         if (SEND_PAPERS_AGAIN.equals(noResponseJourney.getNoResponseSendPapersAgainOrTrySomethingElse())) {
-            caseData.getApplicant1().getInterimApplicationOptions().setNoResponseJourneyOptions(
-                NoResponseJourneyOptions.builder().noResponseSendPapersAgainOrTrySomethingElse(PAPERS_SENT).build());
+            applicant1.setInterimApplicationOptions(buildApplicationReissuedOptions(PAPERS_SENT, null));
         } else if (updateNewEmailOrAddress != null) {
             switch (updateNewEmailOrAddress) {
                 case ADDRESS -> updateAddress(details, newAddress, noResponseJourney);
@@ -141,8 +143,7 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
                 default -> log.info("Contact details updated");
             }
 
-            caseData.getApplicant1().getInterimApplicationOptions().setNoResponseJourneyOptions(
-                NoResponseJourneyOptions.builder().noResponsePartnerNewEmailOrAddress(CONTACT_DETAILS_UPDATED).build());
+            applicant1.setInterimApplicationOptions(buildApplicationReissuedOptions(null, CONTACT_DETAILS_UPDATED));
         }
 
         caseData.getApplication().setReissueOption(ReissueOption.REISSUE_CASE);
@@ -193,5 +194,18 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
         } else {
             application.setServiceMethod(ServiceMethod.COURT_SERVICE);
         }
+    }
+
+    private InterimApplicationOptions buildApplicationReissuedOptions(
+        NoResponseSendPapersAgainOrTrySomethingElse sendPapersAgainOrTrySomethingElse,
+        NoResponsePartnerNewEmailOrAddress noResponsePartnerNewEmailOrAddress
+    ) {
+        return InterimApplicationOptions.builder()
+            .noResponseJourneyOptions(NoResponseJourneyOptions
+                .builder()
+                .noResponseSendPapersAgainOrTrySomethingElse(sendPapersAgainOrTrySomethingElse)
+                .noResponsePartnerNewEmailOrAddress(noResponsePartnerNewEmailOrAddress)
+                .build()
+            ).build();
     }
 }

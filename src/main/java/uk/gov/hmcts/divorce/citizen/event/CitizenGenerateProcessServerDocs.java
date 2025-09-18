@@ -13,6 +13,8 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -132,6 +134,10 @@ public class CitizenGenerateProcessServerDocs implements CCDConfig<CaseData, Sta
             generateD10Form
         ).run(details).getData();
 
+        caseData.getApplicant1().setInterimApplicationOptions(
+            buildProcessServerOptions()
+        );
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .state(AwaitingService)
@@ -147,5 +153,11 @@ public class CitizenGenerateProcessServerDocs implements CCDConfig<CaseData, Sta
         }
 
         return validationErrors;
+    }
+
+    private InterimApplicationOptions buildProcessServerOptions() {
+        return InterimApplicationOptions.builder()
+            .interimApplicationType(InterimApplicationType.PROCESS_SERVER_SERVICE)
+            .build();
     }
 }
