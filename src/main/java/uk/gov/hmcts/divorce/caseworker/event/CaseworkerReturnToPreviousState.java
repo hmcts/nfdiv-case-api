@@ -35,7 +35,7 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
     private static final String CASE_MUST_BE_ISSUED_ERROR
         = "You cannot move this case into a post-issue state as it has not been issued";
     private static final String CANNOT_MOVE_TO_AWAITING_SERVICE_CONSIDERATION_ERROR
-        = "This event cannot be used to move the case to Awaiting Service Consideration state";
+        = "Return to previous state cannot be used to transfer the case to Awaiting service consideration. Please use the response to service application event.";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
