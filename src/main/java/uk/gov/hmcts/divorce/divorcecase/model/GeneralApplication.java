@@ -125,10 +125,10 @@ public class GeneralApplication {
     @JsonIgnore
     public String getLabel(int idx, DateTimeFormatter formatter) {
         return String.format(
-            "General applications %d, %s, %s",
+            "General applications %d,%s,%s",
             idx + 1,
-            generalApplicationType == null ? "" : generalApplicationType.getLabel(),
-            generalApplicationReceivedDate == null ? "" : generalApplicationReceivedDate.format(formatter)
+            generalApplicationType == null ? "" : " " + generalApplicationType.getLabel(),
+            generalApplicationReceivedDate == null ? "" : " " + generalApplicationReceivedDate.format(formatter)
         );
     }
 }
