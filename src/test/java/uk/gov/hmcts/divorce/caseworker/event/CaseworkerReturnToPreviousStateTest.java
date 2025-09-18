@@ -33,7 +33,8 @@ class CaseworkerReturnToPreviousStateTest {
     private static final String CASE_MUST_BE_ISSUED_ERROR
         = "You cannot move this case into a post-issue state as it has not been issued";
     private static final String CANNOT_MOVE_TO_AWAITING_SERVICE_CONSIDERATION_ERROR
-        = "Return to previous state cannot be used to transfer the case to Awaiting service consideration. Please use the response to service application event.";
+        = "Return to previous state cannot be used to transfer the case to Awaiting service consideration. "
+        + "Please use the response to service application event.";
 
     @InjectMocks
     private CaseworkerReturnToPreviousState caseworkerReturnToPreviousState;
