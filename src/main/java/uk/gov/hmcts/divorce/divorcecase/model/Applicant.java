@@ -23,6 +23,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -431,5 +432,17 @@ public class Applicant {
         ));
 
         setInterimApplicationOptions(new InterimApplicationOptions());
+    }
+
+    @JsonIgnore
+    public boolean mustBeServedOverseas() {
+        boolean unrepresentedBasedOverseas = !isRepresented() && isBasedOverseas();
+        boolean solicitorBasedOverseas = isRepresented() && YesOrNo.YES.equals(
+            Optional.ofNullable(getSolicitor())
+                .map(Solicitor::getAddressOverseas)
+                .orElse(null)
+        );
+
+        return unrepresentedBasedOverseas || solicitorBasedOverseas;
     }
 }
