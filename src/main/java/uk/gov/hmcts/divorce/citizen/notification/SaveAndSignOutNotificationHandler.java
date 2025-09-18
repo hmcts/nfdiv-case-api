@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
@@ -41,9 +42,8 @@ public class SaveAndSignOutNotificationHandler {
         Applicant applicant2 =  caseData.getApplicant2();
         final var applicant = isApplicant1 ? applicant1 : applicant2;
         final var partner = isApplicant1 ? applicant2 : applicant1;
-        final var interimApplicationOptions = applicant1.getInterimApplicationOptions();
-        final var isInterimApplication = State.AosOverdue.equals(state)
-            && !isEmpty(interimApplicationOptions) && !isEmpty(interimApplicationOptions.getInterimApplicationType());
+
+        boolean isInterimApplication = hasInterimApplicationInProgress(applicant, state);
 
         final EmailTemplateName emailTemplate;
         if (State.InformationRequested.equals(state)) {
@@ -68,5 +68,18 @@ public class SaveAndSignOutNotificationHandler {
             applicant.getLanguagePreference(),
             caseId
         );
+    }
+
+    private boolean hasInterimApplicationInProgress(Applicant applicant1, State state) {
+        final var interimApplicationOptions = applicant1.getInterimApplicationOptions();
+        if (isEmpty(interimApplicationOptions)) {
+            return false;
+        }
+
+        InterimApplicationType interimApplicationType = interimApplicationOptions.getInterimApplicationType();
+
+        return State.AosOverdue.equals(state)
+            && interimApplicationType != null
+            && !InterimApplicationType.PROCESS_SERVER_SERVICE.equals(interimApplicationOptions.getInterimApplicationType());
     }
 }

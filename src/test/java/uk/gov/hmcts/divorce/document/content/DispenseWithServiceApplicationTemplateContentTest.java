@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DispenseWithServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -92,7 +93,7 @@ class DispenseWithServiceApplicationTemplateContentTest {
         Map<String, Object> expectedEntries = getBaseEntries();
         expectedEntries.put(DISPENSE_LIVE_TOGETHER, YesOrNo.YES);
         expectedEntries.put(DISPENSE_LIVED_TOGETHER_DATE, "1 January 2022");
-        expectedEntries.put(DISPENSE_LIVED_TOGETHER_ADDRESS, getApplicantWithAddress().getAddress());
+        expectedEntries.put(DISPENSE_LIVED_TOGETHER_ADDRESS, AddressUtil.getPostalAddress(getApplicantWithAddress().getAddress()));
         expectedEntries.put(DISPENSE_AWARE_PARTNER_LIVED, YesOrNo.YES);
         expectedEntries.put(DISPENSE_PARTNER_PAST_ADDRESS_1, "Past address 1");
         expectedEntries.put(DISPENSE_PARTNER_PAST_ADDRESS_ENQUIRIES_1, "Enquiries 1");
