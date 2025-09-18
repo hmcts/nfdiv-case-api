@@ -13,12 +13,15 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner;
@@ -140,10 +143,16 @@ class CitizenGenerateProcessServerDocsTest {
     }
 
     @Test
-    void shouldSetAwaitingServiceState() {
+    void shouldSetAwaitingServiceStateAndBlankOutInterimApplicationOptions() {
         final long caseId = 2L;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = validApplicant1CaseData();
+        caseData.getApplicant1().setInterimApplicationOptions(
+            InterimApplicationOptions
+                .builder()
+                .interimAppsCanUploadEvidence(YesOrNo.YES)
+                .build()
+        );
 
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
@@ -157,7 +166,11 @@ class CitizenGenerateProcessServerDocsTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             generateProcessServerDocs.aboutToSubmit(caseDetails, caseDetails);
+        final var interimApplicationOptions = response.getData().getApplicant1().getInterimApplicationOptions();
 
         assertThat(response.getState()).isEqualTo(State.AwaitingService);
+        assertThat(interimApplicationOptions.getInterimApplicationType())
+            .isEqualTo(InterimApplicationType.PROCESS_SERVER_SERVICE);
+        assertThat(interimApplicationOptions.getInterimAppsEvidenceDocs()).isNull();
     }
 }

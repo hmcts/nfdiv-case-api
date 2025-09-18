@@ -130,7 +130,7 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
         var updateNewEmailOrAddress = noResponseJourney.getNoResponsePartnerNewEmailOrAddress();
 
         if (SEND_PAPERS_AGAIN.equals(noResponseJourney.getNoResponseSendPapersAgainOrTrySomethingElse())) {
-            applicant1.setInterimApplicationOptions(buildNoResponseReissueOptions(PAPERS_SENT, null));
+            applicant1.setInterimApplicationOptions(buildApplicationReissuedOptions(PAPERS_SENT, null));
         } else if (updateNewEmailOrAddress != null) {
             switch (updateNewEmailOrAddress) {
                 case ADDRESS -> updateAddress(details, newAddress, noResponseJourney);
@@ -143,7 +143,7 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
                 default -> log.info("Contact details updated");
             }
 
-            applicant1.setInterimApplicationOptions(buildNoResponseReissueOptions(null, CONTACT_DETAILS_UPDATED));
+            applicant1.setInterimApplicationOptions(buildApplicationReissuedOptions(null, CONTACT_DETAILS_UPDATED));
         }
 
         caseData.getApplication().setReissueOption(ReissueOption.REISSUE_CASE);
@@ -196,7 +196,7 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
         }
     }
 
-    private InterimApplicationOptions buildNoResponseReissueOptions(
+    private InterimApplicationOptions buildApplicationReissuedOptions(
         NoResponseSendPapersAgainOrTrySomethingElse sendPapersAgainOrTrySomethingElse,
         NoResponsePartnerNewEmailOrAddress noResponsePartnerNewEmailOrAddress
     ) {

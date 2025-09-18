@@ -134,7 +134,9 @@ public class CitizenGenerateProcessServerDocs implements CCDConfig<CaseData, Sta
             generateD10Form
         ).run(details).getData();
 
-        caseData.getApplicant1().setInterimApplicationOptions(buildNoResponseProcessServerOptions());
+        caseData.getApplicant1().setInterimApplicationOptions(
+            buildProcessServerOptions()
+        );
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
@@ -153,7 +155,7 @@ public class CitizenGenerateProcessServerDocs implements CCDConfig<CaseData, Sta
         return validationErrors;
     }
 
-    private InterimApplicationOptions buildNoResponseProcessServerOptions() {
+    private InterimApplicationOptions buildProcessServerOptions() {
         return InterimApplicationOptions.builder()
             .interimApplicationType(InterimApplicationType.PROCESS_SERVER_SERVICE)
             .build();

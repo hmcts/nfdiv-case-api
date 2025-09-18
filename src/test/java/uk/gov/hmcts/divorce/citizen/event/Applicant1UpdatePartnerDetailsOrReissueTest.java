@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse;
@@ -246,7 +247,6 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
 
     @Test
     void shouldSendPapersAgainToRespondentAboutToSubmitWhenNoResponsePartnerNewEmailOrAddressIsAddress() {
-
         final CaseData caseData = validCaseDataForReIssueApplication();
         caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
             .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
@@ -264,6 +264,28 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
         assertThat(response.getErrors()).isNull();
         assertThat(caseData.getApplicant1().getInterimApplicationOptions().getNoResponseJourneyOptions()
             .getNoResponseSendPapersAgainOrTrySomethingElse()).isEqualTo(PAPERS_SENT);
+    }
+
+    @Test
+    void shouldBlankOutInterimApplicationOptions() {
+        final CaseData caseData = validCaseDataForReIssueApplication();
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
+            .interimApplicationType(InterimApplicationType.PROCESS_SERVER_SERVICE)
+            .noResponseJourneyOptions(NoResponseJourneyOptions.builder()
+                .noResponseSendPapersAgainOrTrySomethingElse(NoResponseSendPapersAgainOrTrySomethingElse.SEND_PAPERS_AGAIN)
+                .noResponsePartnerAddressOverseas(YesOrNo.NO)
+                .build())
+            .build());
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(12345L);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant1UpdatePartnerDetailsOrReissue.aboutToSubmit(caseDetails, null);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(caseData.getApplicant1().getInterimApplicationOptions().getInterimApplicationType())
+            .isNull();
     }
 
     @Test
