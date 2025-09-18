@@ -103,7 +103,9 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
 
                 default -> log.info("Contact details updated");
             }
-            noResponseJourney.setNoResponsePartnerNewEmailOrAddress(CONTACT_DETAILS_UPDATED);
+
+            caseData.getApplicant1().getInterimApplicationOptions().setNoResponseJourneyOptions(
+                NoResponseJourneyOptions.builder().noResponsePartnerNewEmailOrAddress(CONTACT_DETAILS_UPDATED).build());
         }
 
         caseData.getApplication().setReissueOption(ReissueOption.REISSUE_CASE);
