@@ -30,7 +30,7 @@ class GeneralApplicationTest {
             .generalApplicationReceivedDate(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
             .build()
             .getLabel(0, formatter))
-            .isEqualTo("General applications 1, , 01 Jan 2020");
+            .isEqualTo("General applications 1,, 01 Jan 2020");
     }
 
     @Test
@@ -41,7 +41,7 @@ class GeneralApplicationTest {
             .build()
             .getLabel(0, formatter))
             .isEqualTo(
-                "General applications 1, %s, ", GeneralApplicationType.DEEMED_SERVICE.getLabel()
+                "General applications 1, %s,", GeneralApplicationType.DEEMED_SERVICE.getLabel()
             );
     }
 }
