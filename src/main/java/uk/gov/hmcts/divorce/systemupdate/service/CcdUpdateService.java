@@ -44,6 +44,7 @@ public class CcdUpdateService {
     private static final String SUPPLEMENTARY_DATA_UPDATES = "supplementary_data_updates";
     private static final String FORMATTED_SUBMIT_EVENT = "Submit event for Case ID: {}, Event ID: {}";
     private static final String FORMATTED_SUBMIT_EVENT_FAILED = "Submit Event Failed for Case ID: %s, Event ID: %s";
+    public static final String CASE_ALREADY_PROCESSED_ERROR = "The case has already been processed by this cron.";
 
     private final CoreCaseDataApi coreCaseDataApi;
 
