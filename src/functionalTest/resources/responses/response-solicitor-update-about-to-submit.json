@@ -3,7 +3,6 @@
     "divorceOrDissolution": "divorce",
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
-    "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "divorceWho": "wife",
     "marriageFormationType": "oppositeSexCouple",
     "applicant1Gender": "male",
@@ -13,6 +12,10 @@
     "divorceUnit": "serviceCentre",
     "applicant1Address": { "AddressLine1": "line1 applicant1" },
     "applicant2Address": { "AddressLine1": "line1 applicant2" },
+    "applicant1PhoneNumber": "0000",
+    "applicant2PhoneNumber": "1111",
+    "applicant1Email": "test@test.com",
+    "applicant2Email": "test_other@test.com",
     "documentsGenerated": [
       {
         "id": "${json-unit.ignore}",
