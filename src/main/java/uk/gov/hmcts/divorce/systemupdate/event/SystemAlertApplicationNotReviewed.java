@@ -48,7 +48,7 @@ public class SystemAlertApplicationNotReviewed implements CCDConfig<CaseData, St
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         CaseData data = details.getData();
         Application application = data.getApplication();
-        if (application != null && YesOrNo.YES.equals(application.getOverdueNotificationSent())) {
+        if (YesOrNo.YES.equals(application.getOverdueNotificationSent())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(List.of(CASE_ALREADY_PROCESSED_ERROR))
                 .build();
