@@ -22,7 +22,6 @@ import uk.gov.hmcts.divorce.payment.service.PaymentService;
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -53,7 +52,7 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(CASEWORKER_SERVICE_PAYMENT)
-            .forState(AwaitingServicePayment)
+            .forStateTransition(AwaitingServicePayment, AwaitingServiceConsideration)
             .name("Confirm service payment")
             .description("Service payment made")
             .showSummary()
@@ -96,23 +95,17 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
             .build();
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
-                                                                       CaseDetails<CaseData, State> beforeDetails) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
+        final CaseDetails<CaseData, State> details, final CaseDetails<CaseData, State> beforeDetails
+    ) {
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_SERVICE_PAYMENT, details.getId());
 
-        log.info("CaseWorkerAlternativeServicePayment aboutToSubmit callback invoked for Case Id: {}", details.getId());
-
-        final var caseData = details.getData();
-        final State state;
-
-        if (caseData.getAlternativeService().getAlternativeServiceType() == AlternativeServiceType.BAILIFF) {
-            state = AwaitingBailiffReferral;
-        } else {
-            state = AwaitingServiceConsideration;
-        }
+        details.getData().getAlternativeService().getServicePaymentFee().setHasCompletedOnlinePayment(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .state(state)
+            .data(details.getData())
+            .errors(null)
+            .warnings(null)
             .build();
     }
 }
