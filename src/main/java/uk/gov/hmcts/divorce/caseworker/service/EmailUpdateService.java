@@ -2,12 +2,14 @@ package uk.gov.hmcts.divorce.caseworker.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.InviteApplicantToCaseNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
@@ -39,6 +41,8 @@ public class EmailUpdateService {
         final Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
         final Applicant partner = isApplicant1 ? data.getApplicant2() : data.getApplicant1();
 
+        final Application application = caseDetails.getData().getApplication();
+
         if (willApplicantBeMadeOffline(caseDetails, beforeCaseDetails, isApplicant1)) {
             log.info("Party will be made offline and any case access removed for Case Id: {}", caseDetails.getId());
             final var roles = (data.getApplicationType() == ApplicationType.SOLE_APPLICATION)
@@ -57,17 +61,39 @@ public class EmailUpdateService {
                 return caseDetails;
             }
 
-            boolean isRespondentAndSoleCaseNotIssued = data.getApplicationType().isSole()
-                && data.getApplication().getIssueDate() == null
-                && !isApplicant1;
-
-            if (isRespondentAndSoleCaseNotIssued) {
+            if (isJointPaperCase(data)
+                || isSoleApplicantOnPaperCase(data, isApplicant1)
+                || isRespondentAndSoleCaseNotIssued(data, isApplicant1)
+                || isRespondentAndOfflineAosForPaperCase(data, applicant, isApplicant1)) {
                 return caseDetails;
             }
+
             createCaseInvite(data, isApplicant1);
             sendInviteToApplicantEmail(data, caseDetails.getId(), isApplicant1);
         }
         return caseDetails;
+    }
+
+    private boolean isJointPaperCase(CaseData data) {
+        return data.getApplicationType() == ApplicationType.JOINT_APPLICATION && data.getApplication().isPaperCase();
+    }
+
+    private boolean isSoleApplicantOnPaperCase(CaseData data, boolean isApplicant1) {
+        return data.getApplicationType().isSole() && data.getApplication().isPaperCase() && isApplicant1;
+    }
+
+    private boolean isRespondentAndSoleCaseNotIssued(CaseData data, boolean isApplicant1) {
+        return data.getApplicationType().isSole() && data.getApplication().getIssueDate() == null && !isApplicant1;
+    }
+
+    private boolean isRespondentAndOfflineAosForPaperCase(CaseData data, Applicant applicant, boolean isApplicant1) {
+        return data.getApplicationType().isSole()
+            && data.getApplication().isPaperCase()
+            && !isApplicant1
+            && data.getAcknowledgementOfService() != null
+            && !ObjectUtils.isEmpty(data.getAcknowledgementOfService().getDateAosSubmitted())
+            && ObjectUtils.isEmpty(data.getAcknowledgementOfService().getConfirmReadPetition())
+            && applicant.isApplicantOffline();
     }
 
     public void createCaseInvite(final CaseData data, boolean isApplicant1) {
