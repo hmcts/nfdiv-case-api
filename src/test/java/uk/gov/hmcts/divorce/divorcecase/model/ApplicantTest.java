@@ -14,6 +14,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
 class ApplicantTest {
@@ -432,5 +433,56 @@ class ApplicantTest {
         assertThat(applicant.getInterimApplicationOptions()).isEqualTo(new InterimApplicationOptions());
         assertThat(applicant.getInterimApplications().size()).isEqualTo(1);
         assertThat(applicant.getInterimApplications().getFirst().getValue().getOptions()).isEqualTo(applicationOptions);
+    }
+
+    @Test
+    void shouldSuggestOverseasServiceIfRepresentedByOverseasSolicitor() {
+        Applicant applicant = caseData().getApplicant2();
+        applicant.setSolicitorRepresented(YES);
+        applicant.setSolicitor(
+            Solicitor.builder().addressOverseas(YesOrNo.YES).build()
+        );
+        applicant.setAddress(AddressGlobalUK.builder().country("France").build());
+
+        assertThat(applicant.mustBeServedOverseas()).isTrue();
+    }
+
+    @Test
+    void shouldSuggestNoOverseasServiceIfRepresentedByUKSolicitor() {
+        Applicant applicant = caseData().getApplicant2();
+        applicant.setSolicitorRepresented(YES);
+        applicant.setSolicitor(
+            Solicitor.builder().addressOverseas(YesOrNo.NO).build()
+        );
+
+        assertThat(applicant.mustBeServedOverseas()).isFalse();
+    }
+
+    @Test
+    void shouldSuggestOverseasServiceIfUnrepresentedApplicantIsOverseas() {
+        Applicant applicant = caseData().getApplicant2();
+        applicant.setAddress(
+            AddressGlobalUK.builder()
+                .country("Scotland")
+                .postCode("111111")
+                .build()
+        );
+        applicant.setSolicitorRepresented(NO);
+
+        assertThat(applicant.mustBeServedOverseas()).isTrue();
+    }
+
+    @Test
+    void shouldSuggestNoOverseasServiceIfUnrepresentedApplicantIsInEngland() {
+        Applicant applicant = caseData().getApplicant2();
+        applicant.setAddress(
+            AddressGlobalUK.builder()
+                .country("UK")
+                .postCode("en1111")
+                .build()
+        );
+        applicant.setSolicitorRepresented(NO);
+
+        assertThat(applicant.mustBeServedOverseas()).isFalse();
     }
 }
