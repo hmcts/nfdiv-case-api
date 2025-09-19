@@ -110,7 +110,7 @@ public class AlternativeService {
     private YesOrNo serviceApplicationDocsUploadedPreSubmission;
 
     @CCD(
-        label = "Service application answers",
+        label = "Service Application",
         searchable = false
     )
     private DivorceDocument serviceApplicationAnswers;
