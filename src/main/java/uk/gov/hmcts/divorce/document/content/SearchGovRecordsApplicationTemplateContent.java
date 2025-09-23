@@ -137,6 +137,6 @@ public class SearchGovRecordsApplicationTemplateContent {
     }
 
     private String getWelshText(String text) {
-        return "Yes".equalsIgnoreCase(text) ? "Ydy" : "Nac ydy";
+        return "Yes".equalsIgnoreCase(text) ? "Ydw" : "Nac ydw";
     }
 }

@@ -22,6 +22,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemAlertApplicationNotReviewed.SYSTEM_APPLICATION_NOT_REVIEWED;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService.CASE_ALREADY_PROCESSED_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -51,6 +52,22 @@ class SystemAlertApplicationNotReviewedTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(SYSTEM_APPLICATION_NOT_REVIEWED);
+    }
+
+    @Test
+    void shouldErrorWhenTheCaseHasAlreadyBeenProcessed() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+        caseData.getApplication().setOverdueNotificationSent(YesOrNo.YES);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION))
+            .thenReturn("auth header");
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = systemAlertApplicationNotReviewed.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).containsExactly(CASE_ALREADY_PROCESSED_ERROR);
     }
 
     @Test
