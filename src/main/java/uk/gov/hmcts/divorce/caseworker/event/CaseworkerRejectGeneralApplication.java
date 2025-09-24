@@ -94,6 +94,7 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
         log.info("Retrieving active general applications for Case Id: {}", details.getId());
         final CaseData caseData = details.getData();
 
+        caseData.getApplication().setCurrentState(details.getState());
         populateGeneralApplicationList(caseData);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
