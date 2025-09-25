@@ -64,7 +64,11 @@ public class CitizenStartInterimApplication implements CCDConfig<CaseData, State
         final InterimApplicationOptions beforeOptions = beforeApplicant.getInterimApplicationOptions();
         final InterimApplicationOptions afterOptions = afterApplicant.getInterimApplicationOptions();
 
-        return beforeOptions != null && !Objects.equal(
+        if (beforeOptions == null || afterOptions == null) {
+            return false;
+        }
+
+        return !Objects.equal(
             beforeOptions.getInterimApplicationType(),
             afterOptions.getInterimApplicationType()
         );
