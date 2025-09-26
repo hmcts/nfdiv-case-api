@@ -106,7 +106,7 @@ public class SearchGovRecordsApplicationTemplateContent {
 
         String knowPartnerDateOfBirth = applicationAnswers.getKnowPartnerDateOfBirth().getValue();
         templateContent.put(KNOW_PARTNER_DATE_OF_BIRTH, WELSH.equals(languagePreference)
-            ? getWelshText(knowPartnerDateOfBirth) : knowPartnerDateOfBirth);
+            ? getWelshText(knowPartnerDateOfBirth, KNOW_PARTNER_DATE_OF_BIRTH) : knowPartnerDateOfBirth);
 
         if (YesOrNo.YES.equals(applicationAnswers.getKnowPartnerDateOfBirth())) {
             templateContent.put(PARTNER_DATE_OF_BIRTH, dateTimeFormatter.format(applicationAnswers.getPartnerDateOfBirth()));
@@ -116,7 +116,7 @@ public class SearchGovRecordsApplicationTemplateContent {
 
         String knowPartnerNationalInsurance = applicationAnswers.getKnowPartnerNationalInsurance().getValue();
         templateContent.put(KNOW_PARTNER_NATIONAL_INSURANCE, WELSH.equals(languagePreference)
-            ? getWelshText(knowPartnerNationalInsurance) : knowPartnerNationalInsurance);
+            ? getWelshText(knowPartnerNationalInsurance, KNOW_ADDITIONAL_ADDRESSES_FOR_PARTNER) : knowPartnerNationalInsurance);
 
         if (YesOrNo.YES.equals(applicationAnswers.getKnowPartnerNationalInsurance())) {
             templateContent.put(PARTNER_NATIONAL_INSURANCE, applicationAnswers.getPartnerNationalInsurance());
@@ -127,7 +127,7 @@ public class SearchGovRecordsApplicationTemplateContent {
 
         String knownAdditionalAddresses = applicationAnswers.getKnowPartnerAdditionalAddresses().getValue();
         templateContent.put(KNOW_ADDITIONAL_ADDRESSES_FOR_PARTNER, WELSH.equals(languagePreference)
-            ? getWelshText(knownAdditionalAddresses) : knownAdditionalAddresses);
+            ? getWelshText(knownAdditionalAddresses, KNOW_ADDITIONAL_ADDRESSES_FOR_PARTNER) : knownAdditionalAddresses);
         templateContent.put(ADDITIONAL_ADDRESS1, applicationAnswers.getPartnerAdditionalAddress1());
         templateContent.put(ADDITIONAL_ADDRESS_1_DATES_LIVED_THERE, applicationAnswers.getPartnerAdditionalAddressDates1());
         templateContent.put(ADDITIONAL_ADDRESS2, applicationAnswers.getPartnerAdditionalAddress2());
@@ -136,7 +136,10 @@ public class SearchGovRecordsApplicationTemplateContent {
         return templateContent;
     }
 
-    private String getWelshText(String text) {
-        return "Yes".equalsIgnoreCase(text) ? "Ydw" : "Nac ydw";
+    private String getWelshText(String text, String questionLabel) {
+        if (questionLabel.equals(KNOW_ADDITIONAL_ADDRESSES_FOR_PARTNER)) {
+            return "Yes".equalsIgnoreCase(text) ? "Oes" : "Nac oes";
+        }
+            return "Yes".equalsIgnoreCase(text) ? "Ydy" : "Nac ydy";
     }
 }
