@@ -430,6 +430,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "### Outcome of Service Application")
             .field("serviceApplicationGranted")
             .field("serviceApplicationDecisionDate")
+            .field("serviceApplicationFurtherDetails", "serviceApplicationGranted=\"Yes\"")
             .field("refusalReason", "serviceApplicationGranted=\"No\"")
             .field("serviceApplicationRefusalReason", "serviceApplicationGranted=\"No\"")
             .field("deemedServiceDate")

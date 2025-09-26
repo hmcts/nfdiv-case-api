@@ -66,6 +66,14 @@ public class AlternativeService {
     private ServiceApplicationRefusalReason refusalReason;
 
     @CCD(
+        label = "Please provide further details",
+        typeOverride = TextArea,
+        searchable = false,
+        displayOrder = 7
+    )
+    private String serviceApplicationFurtherDetails;
+
+    @CCD(
         label = "Reason for refusal",
         typeOverride = TextArea,
         searchable = false
@@ -161,6 +169,7 @@ public class AlternativeService {
             .serviceApplicationDocsUploadedPreSubmission(serviceApplicationDocsUploadedPreSubmission)
             .paymentMethod(servicePaymentFee.getPaymentMethod())
             .serviceApplicationGranted(serviceApplicationGranted)
+            .furtherDetails(serviceApplicationFurtherDetails)
             .refusalReason(refusalReason)
             .serviceApplicationRefusalReason(serviceApplicationRefusalReason)
             .serviceApplicationDecisionDate(serviceApplicationDecisionDate)
