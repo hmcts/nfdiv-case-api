@@ -33,6 +33,7 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralAppli
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.INVALID_STATE_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.formatter;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -64,6 +65,7 @@ class CaseworkerRejectGeneralApplicationTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
+        caseDetails.setState(GeneralApplicationReceived);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRejectGeneralApplication.aboutToStart(caseDetails);
 
@@ -71,6 +73,7 @@ class CaseworkerRejectGeneralApplicationTest {
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getData().getGeneralApplications()).isNotNull();
         assertThat(response.getData().getGeneralApplications()).hasSize(2);
+        assertThat(response.getData().getApplication().getCurrentState()).isEqualTo(GeneralApplicationReceived);
     }
 
     @Test

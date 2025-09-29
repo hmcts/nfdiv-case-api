@@ -114,13 +114,13 @@ class SearchGovRecordsApplicationTemplateContentTest {
         expectedEntries.put("otherDepartments", "Test department");
         expectedEntries.put("reasonWhySearchTheseDepartments", "Test reason");
         expectedEntries.put("partnerName", "Partner name");
-        expectedEntries.put("knowPartnerDateOfBirth", "Nac ydy");
+        expectedEntries.put("knowPartnerDateOfBirth", "Nac ydw");
         expectedEntries.put("partnerApproximateAge", "30");
-        expectedEntries.put("knowPartnerNationalInsurance", "Ydy");
+        expectedEntries.put("knowPartnerNationalInsurance", "Ydw");
         expectedEntries.put("partnerNationalInsurance", "12345678");
         expectedEntries.put("partnerLastKnownAddress", "address1\nUK");
         expectedEntries.put("datesPartnerLivedAtLastKnownAddress", "Test date1");
-        expectedEntries.put("knowAdditionalAddressesForPartner", "Ydy");
+        expectedEntries.put("knowAdditionalAddressesForPartner", "Ydw");
         expectedEntries.put("additionalAddress1", "Test address1");
         expectedEntries.put("additionalAddress1DatesLivedThere", "1 Jan 2023");
         expectedEntries.put("additionalAddress2", "Test address2");
