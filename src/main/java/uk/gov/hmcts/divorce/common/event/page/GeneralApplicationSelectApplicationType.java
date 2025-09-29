@@ -7,6 +7,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 
 public class GeneralApplicationSelectApplicationType implements CcdPageConfiguration {
 
+    private static final String GENERAL_APPLICATION_SOL_GUIDE = "Refer to the <a href=\"https://www.gov.uk/government/publications/myhmcts"
+            + "-how-to-make-follow-up-applications-for-a-divorce-or-dissolution/general-applications-alternative-service-and-deemed-"
+            + "and-dispensed\" target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>";
+
     @Override
     public void addTo(final PageBuilder pageBuilder) {
         pageBuilder.page("generalApplicationSelectType")
@@ -17,6 +21,7 @@ public class GeneralApplicationSelectApplicationType implements CcdPageConfigura
                     "generalApplicationType=\"other\"")
                 .mandatory(GeneralApplication::getGeneralApplicationUrgentCase)
                 .mandatory(GeneralApplication::getGeneralApplicationUrgentCaseReason, "generalApplicationUrgentCase=\"Yes\"")
-                .done();
+                .done()
+            .label("generalApplicationSolGuide", GENERAL_APPLICATION_SOL_GUIDE);
     }
 }

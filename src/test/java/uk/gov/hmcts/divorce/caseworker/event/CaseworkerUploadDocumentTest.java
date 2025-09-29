@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerUploadDocumentTest {
+class CaseworkerUploadDocumentTest {
 
     @InjectMocks
     private CaseworkerUploadDocument caseworkerUploadDocument;
@@ -68,7 +68,7 @@ public class CaseworkerUploadDocumentTest {
             caseworkerUploadDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
         List<ListValue<DivorceDocument>> actualDocuments = response.getData().getDocuments().getDocumentsUploaded();
-        assertThat(actualDocuments.size()).isEqualTo(2);
+        assertThat(actualDocuments).hasSize(2);
         assertThat(actualDocuments.get(0).getValue()).isSameAs(doc1.getValue());
         assertThat(actualDocuments.get(1).getValue()).isSameAs(doc2.getValue());
     }
@@ -101,7 +101,7 @@ public class CaseworkerUploadDocumentTest {
             caseworkerUploadDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
         List<ListValue<DivorceDocument>> actualDocuments = response.getData().getDocuments().getDocumentsUploaded();
-        assertThat(actualDocuments.size()).isEqualTo(3);
+        assertThat(actualDocuments).hasSize(3);
         assertThat(actualDocuments.get(0).getValue()).isSameAs(doc3.getValue());
         assertThat(actualDocuments.get(1).getValue()).isSameAs(doc1.getValue());
         assertThat(actualDocuments.get(2).getValue()).isSameAs(doc2.getValue());
@@ -131,7 +131,7 @@ public class CaseworkerUploadDocumentTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerUploadDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).contains(ERROR_REMOVE_DOCUMENTS);
     }
 

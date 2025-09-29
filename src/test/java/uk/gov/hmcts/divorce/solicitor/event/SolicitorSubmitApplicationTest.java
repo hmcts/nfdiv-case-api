@@ -25,9 +25,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.PaymentService;
-import uk.gov.hmcts.divorce.payment.PaymentSetupService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
 import uk.gov.hmcts.divorce.testutil.TestConstants;
 
@@ -61,7 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getFeeListValue;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class SolicitorSubmitApplicationTest {
+class SolicitorSubmitApplicationTest {
 
     private static final String STATEMENT_OF_TRUTH_ERROR_MESSAGE =
         "Statement of truth must be accepted by the person making the application";
@@ -109,6 +109,29 @@ public class SolicitorSubmitApplicationTest {
 
         assertThat(response.getData().getApplication().getApplicationFeeOrderSummary())
             .isEqualTo(orderSummary);
+    }
+
+    @Test
+    void shouldDeleteStagnantServiceRequestDataWhenAboutToStartIsInvoked() {
+
+        final long caseId = TEST_CASE_ID;
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.getApplicant1().setAddress(AddressGlobalUK.builder().addressLine1("test").build());
+        caseDetails.setData(caseData);
+        caseData.getApplication().setApplicationFeeOrderSummary(OrderSummary.builder().build());
+        caseData.getApplication().setApplicationFeeServiceRequestReference(TEST_SERVICE_REFERENCE);
+        caseDetails.setId(caseId);
+
+        when(paymentSetupService.createApplicationFeeOrderSummary(caseData, TEST_CASE_ID))
+            .thenReturn(orderSummary);
+
+        var response = solicitorSubmitApplication.aboutToStart(caseDetails);
+
+        assertThat(response.getData().getApplication().getApplicationFeeOrderSummary())
+            .isEqualTo(orderSummary);
+        assertThat(response.getData().getApplication().getApplicationFeeServiceRequestReference())
+            .isNull();
     }
 
     @Test

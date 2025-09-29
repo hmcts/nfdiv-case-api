@@ -150,7 +150,7 @@ public class NotificationDispatcher {
     public void sendRequestForInformationNotification(ApplicantNotification applicantNotification, CaseData caseData, Long caseId)
         throws NotificationTemplateException {
 
-        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getRequestForInformation();
+        RequestForInformation requestForInformation = caseData.getRequestForInformationList().getLatestRequest();
         if (APPLICANT.equals(requestForInformation.getRequestForInformationSoleParties())
             || APPLICANT1.equals(requestForInformation.getRequestForInformationJointParties())) {
             requestForInformationSendToApplicant1(applicantNotification, caseData, caseId);
@@ -161,7 +161,6 @@ public class NotificationDispatcher {
             requestForInformationSendToApplicant2(applicantNotification, caseData, caseId);
         } else if (OTHER.equals(requestForInformation.getRequestForInformationSoleParties())
             || RequestForInformationJointParties.OTHER.equals(requestForInformation.getRequestForInformationJointParties())) {
-
             applicantNotification.sendToOtherRecipient(caseData, caseId);
         } else {
             throw new NotificationTemplateException(
@@ -175,10 +174,12 @@ public class NotificationDispatcher {
         RequestForInformationResponseParties requestForInformationResponseParties =
             caseData.getRequestForInformationList().getLatestRequest().getLatestResponse().getRequestForInformationResponseParties();
 
-        if (RequestForInformationResponseParties.APPLICANT1.equals(requestForInformationResponseParties)) {
-            applicantNotification.sendToApplicant1(caseData, caseId);
-        } else if (RequestForInformationResponseParties.APPLICANT2.equals(requestForInformationResponseParties)) {
-            applicantNotification.sendToApplicant2(caseData, caseId);
+        if (RequestForInformationResponseParties.APPLICANT1.equals(requestForInformationResponseParties)
+            || RequestForInformationResponseParties.APPLICANT1SOLICITOR.equals(requestForInformationResponseParties)) {
+            requestForInformationSendToApplicant1(applicantNotification, caseData, caseId);
+        } else if (RequestForInformationResponseParties.APPLICANT2.equals(requestForInformationResponseParties)
+            || RequestForInformationResponseParties.APPLICANT2SOLICITOR.equals(requestForInformationResponseParties)) {
+            requestForInformationSendToApplicant2(applicantNotification, caseData, caseId);
         } else {
             throw new NotificationTemplateException(
                 "Unable to send Request For Information Response Notification for Case Id "
@@ -214,17 +215,33 @@ public class NotificationDispatcher {
 
     private void requestForInformationSendToApplicant1(ApplicantNotification applicantNotification, CaseData caseData, Long caseId) {
         if (caseData.getApplicant1().isRepresented()) {
-            applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
+            if (caseData.getApplicant1().isApplicantOffline()) {
+                applicantNotification.sendToApplicant1SolicitorOffline(caseData, caseId);
+            } else {
+                applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
+            }
         } else {
-            applicantNotification.sendToApplicant1(caseData, caseId);
+            if (caseData.getApplicant1().isApplicantOffline()) {
+                applicantNotification.sendToApplicant1Offline(caseData, caseId);
+            } else {
+                applicantNotification.sendToApplicant1(caseData, caseId);
+            }
         }
     }
 
     private void requestForInformationSendToApplicant2(ApplicantNotification applicantNotification, CaseData caseData, Long caseId) {
         if (caseData.getApplicant2().isRepresented()) {
-            applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
+            if (caseData.getApplicant2().isApplicantOffline()) {
+                applicantNotification.sendToApplicant2SolicitorOffline(caseData, caseId);
+            } else {
+                applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
+            }
         } else {
-            applicantNotification.sendToApplicant2(caseData, caseId);
+            if (caseData.getApplicant2().isApplicantOffline()) {
+                applicantNotification.sendToApplicant2Offline(caseData, caseId);
+            } else {
+                applicantNotification.sendToApplicant2(caseData, caseId);
+            }
         }
     }
 }

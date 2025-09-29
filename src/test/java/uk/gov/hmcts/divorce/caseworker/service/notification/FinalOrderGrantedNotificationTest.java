@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
@@ -16,9 +17,10 @@ import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.documentpack.FinalOrderGrantedDocumentPack;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -38,6 +40,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FO_GRANTED_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
@@ -56,9 +59,9 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_GR
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_COPIES;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_COPIES;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_COPIES;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_COPIES;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -68,12 +71,14 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 
 @ExtendWith(MockitoExtension.class)
-public class FinalOrderGrantedNotificationTest {
+class FinalOrderGrantedNotificationTest {
 
     private static final DocumentPackInfo TEST_DOCUMENT_PACK_INFO = new DocumentPackInfo(
         ImmutableMap.of(DocumentType.FINAL_ORDER_GRANTED, Optional.of(FINAL_ORDER_TEMPLATE_ID)),
         ImmutableMap.of(FINAL_ORDER_TEMPLATE_ID, FINAL_ORDER_DOCUMENT_NAME)
     );
+
+    private static final LocalDateTime FINAL_ORDER_GRANTED_DATE = LocalDateTime.of(2025, 1, 1, 0, 0);
     public static final String THE_LETTER_ID = "the-letter-id";
 
     @Mock
@@ -99,6 +104,7 @@ public class FinalOrderGrantedNotificationTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+        caseData.setFinalOrder(FinalOrder.builder().grantedDate(FINAL_ORDER_GRANTED_DATE).build());
 
         final Applicant applicant2 = getApplicant();
         caseData.setApplicant2(applicant2);
@@ -112,6 +118,7 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(PARTNER, "partner");
         templateContent.put(COURT_EMAIL, "courtEmail");
         templateContent.put(DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE, "£11.00");
+        templateContent.put(FO_GRANTED_DATE, "1 January 2025");
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
@@ -134,6 +141,7 @@ public class FinalOrderGrantedNotificationTest {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+        caseData.setFinalOrder(FinalOrder.builder().grantedDate(FINAL_ORDER_GRANTED_DATE).build());
 
         final Applicant applicant2 = getApplicant();
         caseData.setApplicant2(applicant2);
@@ -149,6 +157,7 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(PARTNER, "partner");
         templateContent.put(COURT_EMAIL, "courtEmail");
         templateContent.put(DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE, "£11.00");
+        templateContent.put(FO_GRANTED_DATE, "1 January 2025");
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
@@ -178,6 +187,7 @@ public class FinalOrderGrantedNotificationTest {
                 .reference("App1 Sol Ref")
                 .build()
         );
+        caseData.setFinalOrder(FinalOrder.builder().grantedDate(FINAL_ORDER_GRANTED_DATE).build());
 
         final Applicant applicant2 = getApplicant();
         caseData.setApplicant2(applicant2);
@@ -198,6 +208,7 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(DATE_OF_ISSUE, LocalDate.of(2021, 4, 28).format(DATE_TIME_FORMATTER));
         templateContent.put(SOLICITOR_REFERENCE, "App1 Sol Ref");
         templateContent.put(SIGN_IN_URL, "signin_url");
+        templateContent.put(FO_GRANTED_DATE, "1 January 2025");
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
@@ -225,6 +236,7 @@ public class FinalOrderGrantedNotificationTest {
         final Applicant applicant2 = getApplicant();
         applicant2.setSolicitorRepresented(YesOrNo.NO);
         caseData.setApplicant2(applicant2);
+        caseData.setFinalOrder(FinalOrder.builder().grantedDate(FINAL_ORDER_GRANTED_DATE).build());
 
         Map<String, String> templateContent = new HashMap<>();
         templateContent.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
@@ -235,6 +247,7 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(PARTNER, "partner");
         templateContent.put(COURT_EMAIL, "courtEmail");
         templateContent.put(DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE, "£11.00");
+        templateContent.put(FO_GRANTED_DATE, "1 January 2025");
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
@@ -261,8 +274,7 @@ public class FinalOrderGrantedNotificationTest {
         final Applicant applicant2 = getApplicant();
         applicant2.setSolicitorRepresented(YesOrNo.NO);
         caseData.setApplicant2(applicant2);
-
-        caseData.getFinalOrder().setFinalOrderSwitchedToSole(YesOrNo.YES);
+        caseData.setFinalOrder(FinalOrder.builder().grantedDate(FINAL_ORDER_GRANTED_DATE).finalOrderSwitchedToSole(YesOrNo.YES).build());
 
         Map<String, String> templateContent = new HashMap<>();
         templateContent.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
@@ -273,6 +285,7 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(PARTNER, "partner");
         templateContent.put(COURT_EMAIL, "courtEmail");
         templateContent.put(DIGITAL_FINAL_ORDER_CERTIFICATE_COPY_FEE, "£11.00");
+        templateContent.put(FO_GRANTED_DATE, "1 January 2025");
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
@@ -295,6 +308,7 @@ public class FinalOrderGrantedNotificationTest {
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
+        caseData.setFinalOrder(FinalOrder.builder().grantedDate(FINAL_ORDER_GRANTED_DATE).build());
 
         final Applicant applicant2 = getApplicant();
         caseData.setApplicant2(applicant2);
@@ -321,6 +335,7 @@ public class FinalOrderGrantedNotificationTest {
         templateContent.put(DATE_OF_ISSUE, LocalDate.of(2021, 4, 28).format(DATE_TIME_FORMATTER));
         templateContent.put(SOLICITOR_REFERENCE, "not provided");
         templateContent.put(SIGN_IN_URL, "signin_url");
+        templateContent.put(FO_GRANTED_DATE, "1 January 2025");
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());

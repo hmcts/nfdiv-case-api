@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.fasterxml.jackson.core.JsonGenerator.Feature.AUTO_CLOSE_JSON_CONTENT;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toMap;
 
@@ -167,7 +168,7 @@ public class OcrDataFields {
     private String chequeOrPostalOrderPayment;
 
     public static OcrDataFields transformData(List<OcrDataField> ocrDataFields) {
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createOcrMapper();
         final Map<String, String> map =
             Optional.ofNullable(ocrDataFields)
                 .orElse(emptyList())
@@ -182,7 +183,7 @@ public class OcrDataFields {
     }
 
     public static OcrDataFields transformOcrMapToObject(List<OcrDataField> ocrDataFields) {
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createOcrMapper();
         final Map<String, String> map =
             Optional.ofNullable(ocrDataFields)
                 .orElse(emptyList())
@@ -194,5 +195,9 @@ public class OcrDataFields {
                     )
                 );
         return mapper.convertValue(map, OcrDataFields.class);
+    }
+
+    private static ObjectMapper createOcrMapper() {
+        return new ObjectMapper().disable(AUTO_CLOSE_JSON_CONTENT);
     }
 }

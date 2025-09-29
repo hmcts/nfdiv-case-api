@@ -56,6 +56,10 @@ import static uk.gov.hmcts.divorce.noticeofchange.event.SystemApplyNoticeOfChang
 @Slf4j
 public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_NOTICE_OF_CHANGE = "caseworker-notice-of-change";
+    private static final String APPLICANT1_NOT_REPRESENTED = "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"";
+    private static final String APPLICANT1_REPRESENTED = "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"";
+    private static final String APPLICANT2_NOT_REPRESENTED = "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"";
+    private static final String APPLICANT2_REPRESENTED = "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"";
     private static final String NEVER_SHOW = "nocWhichApplicant=\"never\"";
 
     private final NoticeOfChangeService noticeOfChangeService;
@@ -89,9 +93,9 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                 .done()
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getSolicitor)
-                    .mandatory(Solicitor::getName, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"", true)
-                    .mandatory(Solicitor::getPhone, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"", true)
-                    .mandatory(Solicitor::getEmail, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\"", true)
+                    .mandatory(Solicitor::getName, APPLICANT1_REPRESENTED, true)
+                    .mandatory(Solicitor::getPhone, APPLICANT1_REPRESENTED, true)
+                    .mandatory(Solicitor::getEmail, APPLICANT1_REPRESENTED, true)
                     .mandatory(Solicitor::getAddress,
                         "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"", true)
                     .mandatory(Solicitor::getAddressOverseas,
@@ -105,15 +109,15 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                         .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW, true)
                         .done()
                     .done()
-                .optional(Applicant::getEmail, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"", true)
-                .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"", true)
-                .mandatory(Applicant::getAddressOverseas, "nocWhichApplicant=\"applicant1\" AND nocAreTheyRepresented=\"No\"", true)
+                .optional(Applicant::getEmail, APPLICANT1_NOT_REPRESENTED, true)
+                .mandatory(Applicant::getAddress, APPLICANT1_NOT_REPRESENTED, true)
+                .mandatory(Applicant::getAddressOverseas, APPLICANT1_NOT_REPRESENTED, true)
                 .done()
             .complex(CaseData::getApplicant2)
                 .complex(Applicant::getSolicitor)
-                    .mandatory(Solicitor::getName, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"", true)
-                    .mandatory(Solicitor::getPhone, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"", true)
-                    .mandatory(Solicitor::getEmail, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\"", true)
+                    .mandatory(Solicitor::getName, APPLICANT2_REPRESENTED, true)
+                    .mandatory(Solicitor::getPhone, APPLICANT2_REPRESENTED, true)
+                    .mandatory(Solicitor::getEmail, APPLICANT2_REPRESENTED, true)
                     .mandatory(Solicitor::getAddress,
                         "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"Yes\" AND nocAreTheyDigital=\"No\"", true)
                     .mandatory(Solicitor::getAddressOverseas,
@@ -127,9 +131,9 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                         .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW, true)
                         .done()
                     .done()
-                .optional(Applicant::getEmail, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"", true)
-                .mandatory(Applicant::getAddress, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"", true)
-                .mandatory(Applicant::getAddressOverseas, "nocWhichApplicant=\"applicant2\" AND nocAreTheyRepresented=\"No\"", true)
+                .optional(Applicant::getEmail, APPLICANT2_NOT_REPRESENTED, true)
+                .mandatory(Applicant::getAddress, APPLICANT2_NOT_REPRESENTED, true)
+                .mandatory(Applicant::getAddressOverseas, APPLICANT2_NOT_REPRESENTED, true)
                 .done();
     }
 

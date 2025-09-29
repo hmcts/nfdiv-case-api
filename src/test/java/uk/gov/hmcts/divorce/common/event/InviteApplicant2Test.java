@@ -30,7 +30,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(SpringExtension.class)
-public class InviteApplicant2Test {
+class InviteApplicant2Test {
 
     @Mock
     private ApplicationSentForReviewNotification applicationSentForReviewNotification;
@@ -53,7 +53,7 @@ public class InviteApplicant2Test {
     }
 
     @Test
-    public void givenEventStartedWithEmptyCaseThenGiveValidationErrors() {
+    void givenEventStartedWithEmptyCaseThenGiveValidationErrors() {
         final long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
@@ -63,7 +63,7 @@ public class InviteApplicant2Test {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = inviteApplicant2.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(8);
+        assertThat(response.getErrors()).hasSize(8);
         assertThat(response.getErrors().get(0)).isEqualTo("Applicant1FirstName cannot be empty or null");
     }
 
@@ -80,7 +80,7 @@ public class InviteApplicant2Test {
 
         verifyNoInteractions(notificationDispatcher);
 
-        assertThat(response.getErrors().size()).isEqualTo(5);
+        assertThat(response.getErrors()).hasSize(5);
         assertThat(response.getErrors()).containsExactlyInAnyOrder(
             "Applicant1FinancialOrder cannot be empty or null",
             "Applicant2Gender cannot be empty or null",
@@ -103,7 +103,7 @@ public class InviteApplicant2Test {
     }
 
     @Test
-    public void givenValidCaseDataWhenCallbackIsInvokedThenGenerateAccessCodeAndSendEmailToApplicant1AndApplicant2() {
+    void givenValidCaseDataWhenCallbackIsInvokedThenGenerateAccessCodeAndSendEmailToApplicant1AndApplicant2() {
         final CaseData caseData = validApplicant1CaseData();
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();

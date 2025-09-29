@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.payment.PaymentSetupService;
+import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -24,7 +24,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 
 @ExtendWith(MockitoExtension.class)
-public class RespondentApplyForFinalOrderTest {
+class RespondentApplyForFinalOrderTest {
     @Mock
     private ApplyForFinalOrderService applyForFinalOrderService;
 
@@ -37,7 +37,7 @@ public class RespondentApplyForFinalOrderTest {
     private OrderSummary orderSummary;
 
     @Test
-    public void givenRespondentDoesNotNeedHwfThenChangeStateToAwaitingPaymentAndSetOrderSummary() {
+    void givenRespondentDoesNotNeedHwfThenChangeStateToAwaitingPaymentAndSetOrderSummary() {
         CaseData caseData = CaseData.builder()
             .finalOrder(
                 FinalOrder.builder()
@@ -56,7 +56,7 @@ public class RespondentApplyForFinalOrderTest {
             .thenReturn(orderSummary);
 
         when(paymentSetupService.createFinalOrderFeeServiceRequest(
-            caseData, caseId, null, orderSummary
+            caseData, caseId, orderSummary
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
 
@@ -70,7 +70,7 @@ public class RespondentApplyForFinalOrderTest {
     }
 
     @Test
-    public void givenRespondentDoesNeedHwfThenDelegateToApplyForFinalOrderService() {
+    void givenRespondentDoesNeedHwfThenDelegateToApplyForFinalOrderService() {
         CaseData caseData = CaseData.builder().finalOrder(
             FinalOrder.builder()
                 .applicant2FinalOrderHelpWithFees(HelpWithFees.builder().needHelp(YesOrNo.YES).build())
@@ -83,7 +83,7 @@ public class RespondentApplyForFinalOrderTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = respondentApplyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         verify(applyForFinalOrderService).applyForFinalOrderAsApplicant2(caseDetails);
-        assertThat(response.getData().getFinalOrder().getApplicant2FinalOrderFeeOrderSummary()).isEqualTo(null);
+        assertThat(response.getData().getFinalOrder().getApplicant2FinalOrderFeeOrderSummary()).isNull();
         assertThat(response.getState()).isEqualTo(caseDetails.getState());
     }
 

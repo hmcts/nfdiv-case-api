@@ -16,7 +16,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.SWITCH_TO_SOLE_CO_
 import static uk.gov.hmcts.divorce.document.model.DocumentType.SWITCH_TO_SOLE_CO_LETTER;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
-public class SwitchToSoleCODocumentPackTest {
+class SwitchToSoleCODocumentPackTest {
 
     private static final String LETTER_TYPE_SWITCH_TO_SOLE_CO = "switch-to-sole-co-letter";
 
@@ -50,7 +50,7 @@ public class SwitchToSoleCODocumentPackTest {
     private final SwitchToSoleCODocumentPack switchToSoleCODocumentPack = new SwitchToSoleCODocumentPack();
 
     @Test
-    public void shouldReturnSwitchToSoleCoDocumentPack() {
+    void shouldReturnSwitchToSoleCoDocumentPack() {
         CaseData data = validApplicant1CaseData();
         var documentPack = switchToSoleCODocumentPack.getDocumentPack(data, data.getApplicant1());
 
@@ -58,7 +58,7 @@ public class SwitchToSoleCODocumentPackTest {
     }
 
     @Test
-    public void shouldReturnSwitchToSoleCoJsDocumentPack() {
+    void shouldReturnSwitchToSoleCoJsDocumentPack() {
         CaseData data = validApplicant1CaseData();
         data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         var documentPack = switchToSoleCODocumentPack.getDocumentPack(data, data.getApplicant1());
@@ -67,7 +67,7 @@ public class SwitchToSoleCODocumentPackTest {
     }
 
     @Test
-    public void shouldReturnJsSwitchToSoleSolicitorCoDocumentPack() {
+    void shouldReturnJsSwitchToSoleSolicitorCoDocumentPack() {
         CaseData data = validApplicant1CaseData();
         data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
@@ -77,7 +77,7 @@ public class SwitchToSoleCODocumentPackTest {
     }
 
     @Test
-    public void shouldReturnCorrectLetterId() {
+    void shouldReturnCorrectLetterId() {
         assertThat(switchToSoleCODocumentPack.getLetterId()).isEqualTo(LETTER_TYPE_SWITCH_TO_SOLE_CO);
     }
 

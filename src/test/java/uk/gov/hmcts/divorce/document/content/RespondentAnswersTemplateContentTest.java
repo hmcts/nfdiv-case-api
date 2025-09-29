@@ -46,13 +46,13 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class RespondentAnswersTemplateContentTest {
+class RespondentAnswersTemplateContentTest {
 
     @InjectMocks
     private RespondentAnswersTemplateContent respondentAnswersTemplateContent;
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForRespondentAnswers() {
+    void shouldSuccessfullyApplyContentFromCaseDataForRespondentAnswers() {
 
         final var caseData = caseData();
         caseData.getApplication().setIssueDate(LOCAL_DATE);
@@ -82,7 +82,9 @@ public class RespondentAnswersTemplateContentTest {
             entry("inWhichCountryIsYourLifeMainlyBased", "Country"),
             entry("respLegalProceedingsExist", YES.getValue()),
             entry("respLegalProceedingsDescription", "some description"),
-            entry("respSolicitorRepresented", YES.getValue())
+            entry("respSolicitorRepresented", YES.getValue()),
+            entry("isDivorce", true),
+            entry("intendToDelay", false)
         );
     }
 

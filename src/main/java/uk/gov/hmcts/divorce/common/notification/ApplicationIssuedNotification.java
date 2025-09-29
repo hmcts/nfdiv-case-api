@@ -1,18 +1,21 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.time.LocalDate;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -46,6 +49,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ApplicationIssuedNotification implements ApplicantNotification {
 
     private static final String RESPONDENT_SIGN_IN_DIVORCE_URL = "respondentSignInDivorceUrl";
@@ -53,17 +57,13 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     private static final String CASE_ID = "case id";
     private static final String UNION_TYPE = "union type";
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private EmailTemplatesConfig config;
+    private final EmailTemplatesConfig config;
 
-    @Autowired
-    private HoldingPeriodService holdingPeriodService;
+    private final HoldingPeriodService holdingPeriodService;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long caseId) {
@@ -200,10 +200,11 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
     private Map<String, String> soleApplicant1TemplateVars(final CaseData caseData, Long id, LanguagePreference languagePreference) {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+
         templateVars.put(
             REVIEW_DEADLINE_DATE,
-            holdingPeriodService.getRespondByDateFor(caseData.getApplication().getIssueDate())
-                    .format(getDateTimeFormatterForPreferredLanguage(languagePreference))
+            respondByDate(caseData)
+                .format(getDateTimeFormatterForPreferredLanguage(languagePreference))
         );
 
         return templateVars;
@@ -213,8 +214,10 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         final Map<String, String> templateVars = commonTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.put(IS_REMINDER, NO);
         templateVars.put(
-            REVIEW_DEADLINE_DATE, holdingPeriodService.getRespondByDateFor(caseData.getApplication().getIssueDate())
-                    .format(getDateTimeFormatterForPreferredLanguage(caseData.getApplicant2().getLanguagePreference())));
+            REVIEW_DEADLINE_DATE,
+            respondByDate(caseData)
+                .format(getDateTimeFormatterForPreferredLanguage(caseData.getApplicant2().getLanguagePreference()))
+        );
         templateVars.put(
             CREATE_ACCOUNT_LINK,
             config.getTemplateVars()
@@ -222,6 +225,16 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         );
         templateVars.put(ACCESS_CODE, caseData.getCaseInvite().accessCode());
         return templateVars;
+    }
+
+    private LocalDate respondByDate(CaseData caseData) {
+        Application application = caseData.getApplication();
+
+        return holdingPeriodService.getRespondByDateFor(
+            Objects.nonNull(application.getReissueDate())
+                ? application.getReissueDate()
+                : application.getIssueDate()
+        );
     }
 
     private Map<String, String> commonTemplateVars(final CaseData caseData, Long id, Applicant applicant, Applicant partner) {

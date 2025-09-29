@@ -6,8 +6,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
@@ -17,10 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class UpdateContactDetailsTest {
+class UpdateContactDetailsTest {
 
     @InjectMocks
     private UpdateContactDetails updateContactDetails;
@@ -351,34 +346,6 @@ public class UpdateContactDetailsTest {
             = updateContactDetails.midEvent(detailsAfter, detailsBefore);
 
         assertThat(response.getErrors()).isNull();
-    }
-
-    @Test
-    void shouldReturnErrorsWhenApplicantNamesInMarriageDetailsHaveInvalidCharacters() {
-        final CaseData caseData = CaseData.builder().build();
-        caseData.getApplicant1().setGender(MALE);
-        caseData.getApplicant2().setGender(FEMALE);
-        caseData.getApplication().setDivorceWho(WIFE);
-        caseData.getApplication().getMarriageDetails().setFormationType(OPPOSITE_SEX_COUPLE);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-
-        List<String> errors = new ArrayList<>();
-        errors.add("Error");
-
-        MockedStatic<ValidationUtil> validationUtilMockedStatic = Mockito.mockStatic(ValidationUtil.class);
-        validationUtilMockedStatic.when(() -> ValidationUtil.validateAllNamesForAllowedCharacters(caseData)).thenReturn(errors);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response
-            = updateContactDetails.midEvent(details, details);
-
-        assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors().size()).isEqualTo(1);
-        assertThat(response.getErrors().get(0)).isEqualTo("Error");
-
-        validationUtilMockedStatic.close();
     }
 
     private Applicant applicantAndSolicitorWithContactDetails(String name, String email, String address, String phone) {

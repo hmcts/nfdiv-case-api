@@ -52,7 +52,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
-public class GenerateCoRefusedCoverLetterTest {
+class GenerateCoRefusedCoverLetterTest {
 
     @Mock
     private ConditionalOrderCommonContent conditionalOrderCommonContent;

@@ -30,12 +30,19 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("appliedForCoLetter")
     APPLIED_FOR_CO_LETTER("Applied for Conditional Order Letter", true),
 
+    @JsonProperty("alternativeService")
+    @JsonAlias({"serviceAlternative"})
+    ALTERNATIVE_SERVICE("Alternative service", false),
+
     @JsonProperty("bailiffCertificateOfService")
     BAILIFF_CERTIFICATE_OF_SERVICE("Bailiff certificate of service", false),
 
     @JsonProperty("bailiffService")
     @JsonAlias({"serviceBaliff"})
     BAILIFF_SERVICE("Bailiff Service", false),
+
+    @JsonProperty("alternativeServiceRefused")
+    ALTERNATIVE_SERVICE_REFUSED("Alternative Service Refused", false),
 
     @JsonProperty("bailiffServiceRefused")
     BAILIFF_SERVICE_REFUSED("Bailiff Service Refused", false),
@@ -257,6 +264,12 @@ public enum DocumentType implements HasLabel {
 
     @JsonProperty("grantOfRepresentation")
     GRANT_OF_REPRESENTATION("NoC grant of representation letter", true),
+
+    @JsonProperty("requestForInformation")
+    REQUEST_FOR_INFORMATION("Request for information", true),
+
+    @JsonProperty("requestForInformationResponse")
+    REQUEST_FOR_INFORMATION_RESPONSE("Request for information response", true),
 
     @JsonProperty("requestForInformationResponseDoc")
     REQUEST_FOR_INFORMATION_RESPONSE_DOC("RFI response document", true),

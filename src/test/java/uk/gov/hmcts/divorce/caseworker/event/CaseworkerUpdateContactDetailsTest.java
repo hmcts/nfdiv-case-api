@@ -44,7 +44,7 @@ class CaseworkerUpdateContactDetailsTest {
     private CaseworkerUpdateContactDetails caseworkerUpdateContactDetails;
 
     @Test
-    public void shouldAddConfigurationToConfigBuilder() {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerUpdateContactDetails.configure(configBuilder);
@@ -57,7 +57,7 @@ class CaseworkerUpdateContactDetailsTest {
     }
 
     @Test
-    public void aboutToSubmitShouldCallProcessConfidentialDocuments() {
+    void aboutToSubmitShouldCallProcessConfidentialDocuments() {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setState(Submitted);
         final CaseData caseData = CaseData.builder().build();
@@ -70,7 +70,7 @@ class CaseworkerUpdateContactDetailsTest {
     }
 
     @Test
-    public void shouldCallCaseFlagsServiceWhenApplicant1NameIsChanged() {
+    void shouldCallCaseFlagsServiceWhenApplicant1NameIsChanged() {
         final CaseData beforeCaseData = CaseData.builder().build();
         final CaseData afterCaseData = CaseData.builder().build();
 
@@ -94,7 +94,7 @@ class CaseworkerUpdateContactDetailsTest {
     }
 
     @Test
-    public void shouldCallCaseFlagsServiceWhenApplicant2NameIsChanged() {
+    void shouldCallCaseFlagsServiceWhenApplicant2NameIsChanged() {
         final CaseData beforeCaseData = CaseData.builder().build();
         final CaseData afterCaseData = CaseData.builder().build();
 
@@ -118,7 +118,7 @@ class CaseworkerUpdateContactDetailsTest {
     }
 
     @Test
-    public void shouldCallCaseFlagsServiceWhenApplicant1SolicitorNameIsChanged() {
+    void shouldCallCaseFlagsServiceWhenApplicant1SolicitorNameIsChanged() {
         final CaseData beforeCaseData = CaseData.builder().build();
         final CaseData afterCaseData = CaseData.builder().build();
 
@@ -147,7 +147,7 @@ class CaseworkerUpdateContactDetailsTest {
     }
 
     @Test
-    public void shouldCallCaseFlagsServiceWhenApplicant2SolicitorNameIsChanged() {
+    void shouldCallCaseFlagsServiceWhenApplicant2SolicitorNameIsChanged() {
         final CaseData beforeCaseData = CaseData.builder().build();
         final CaseData afterCaseData = CaseData.builder().build();
 

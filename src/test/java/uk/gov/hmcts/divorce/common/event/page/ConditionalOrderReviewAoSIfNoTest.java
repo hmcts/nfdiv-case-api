@@ -19,14 +19,14 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class ConditionalOrderReviewAoSIfNoTest {
+class ConditionalOrderReviewAoSIfNoTest {
 
     private final ConditionalOrderReviewAoSIfNo page = new ConditionalOrderReviewAoSIfNo();
 
     private static final String APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP1 = "Applicant must select yes to apply for a conditional order";
 
     @Test
-    public void shouldPreventProgressIfNoIsSelectedForJointApplicationOnApplyForConditionalOrderQuestion() {
+    void shouldPreventProgressIfNoIsSelectedForJointApplicationOnApplyForConditionalOrderQuestion() {
 
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
@@ -44,15 +44,15 @@ public class ConditionalOrderReviewAoSIfNoTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
-        assertEquals(response.getErrors().size(), 1);
+        assertEquals(1, response.getErrors().size());
         assertEquals(
-            response.getErrors().get(0),
-            APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP1
+            APPLY_FOR_CONDITIONAL_ORDER_NO_ERROR_APP1,
+            response.getErrors().get(0)
         );
     }
 
     @Test
-    public void shouldAllowProgressIfYesIsSelectedOnApplyForConditionalOrderQuestion() {
+    void shouldAllowProgressIfYesIsSelectedOnApplyForConditionalOrderQuestion() {
 
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
@@ -70,6 +70,6 @@ public class ConditionalOrderReviewAoSIfNoTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
-        assertEquals(response.getErrors().size(), 0);
+        assertEquals(0, response.getErrors().size());
     }
 }

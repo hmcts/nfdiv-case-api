@@ -38,7 +38,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -64,7 +63,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceGeneralOrderListValue;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerGeneralEmailTest {
+class CaseworkerGeneralEmailTest {
 
     private static final String NO_VALID_EMAIL_ERROR
         = "You cannot send an email because no email address has been provided for this party.";
@@ -89,7 +88,6 @@ public class CaseworkerGeneralEmailTest {
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-        final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = ConfigTestUtil.createCaseDataConfigBuilder();
 
         generalEmail.configure(configBuilder);
@@ -100,7 +98,7 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldRemoveStaleEmailTextAndRecipientDataInAboutToStart() throws Exception {
+    void shouldRemoveStaleEmailTextAndRecipientDataInAboutToStart() {
         final CaseData caseData = caseData();
 
         caseData.setGeneralEmail(
@@ -126,7 +124,7 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldRemoveEmailAttachmentsInAboutToStartIfTheyHaveAlreadyBeenDelivered() throws Exception {
+    void shouldRemoveEmailAttachmentsInAboutToStartIfTheyHaveAlreadyBeenDelivered() {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
@@ -168,7 +166,7 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldRemoveEmailAttachmentsInAboutToStartIfTheyHaveAlreadyBeenDeliveredConfidential() throws Exception {
+    void shouldRemoveEmailAttachmentsInAboutToStartIfTheyHaveAlreadyBeenDeliveredConfidential() {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
@@ -210,7 +208,7 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldNotRemoveGeneralEmailAttachmentsInAboutToStartIfPreviousEmailsHadDifferentAttachments() throws Exception {
+    void shouldNotRemoveGeneralEmailAttachmentsInAboutToStartIfPreviousEmailsHadDifferentAttachments() {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
@@ -259,7 +257,7 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldNotRemoveGeneralEmailAttachmentsInAboutToStartIfPreviousEmailsHadDifferentContent() throws Exception {
+    void shouldNotRemoveGeneralEmailAttachmentsInAboutToStartIfPreviousEmailsHadDifferentContent() {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
@@ -309,7 +307,7 @@ public class CaseworkerGeneralEmailTest {
 
 
     @Test
-    void shouldNotRemoveGeneralEmailAttachmentsInAboutToStartIfNoEmailsHaveBeenDelivered() throws Exception {
+    void shouldNotRemoveGeneralEmailAttachmentsInAboutToStartIfNoEmailsHaveBeenDelivered() {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
@@ -340,7 +338,7 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldNotRemoveGeneralEmailAttachmentsIfDeliveredEmailsWentToDifferentParties() throws Exception {
+    void shouldNotRemoveGeneralEmailAttachmentsIfDeliveredEmailsWentToDifferentParties() {
         final CaseData caseData = caseData();
 
         List<ListValue<DivorceDocument>> docs = getListOfDivorceDocument(2);
@@ -402,7 +400,7 @@ public class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(NO_VALID_EMAIL_ERROR);
     }
 
@@ -427,7 +425,7 @@ public class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(NO_VALID_EMAIL_ERROR);
     }
 
@@ -450,7 +448,7 @@ public class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors()).isEqualTo(null);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -474,7 +472,7 @@ public class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors()).isEqualTo(null);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -497,7 +495,7 @@ public class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(NO_VALID_EMAIL_ERROR);
     }
 
@@ -522,7 +520,7 @@ public class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(NO_VALID_EMAIL_ERROR);
     }
 
@@ -547,7 +545,7 @@ public class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors()).isEqualTo(null);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -571,7 +569,7 @@ public class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors()).isEqualTo(null);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -593,7 +591,7 @@ public class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(NO_VALID_EMAIL_ERROR);
     }
 
@@ -617,11 +615,11 @@ public class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.midEvent(details, null);
 
-        assertThat(response.getErrors()).isEqualTo(null);
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
-    void shouldSetGeneralEmailDetailsWhenExistingGeneralEmailsIsNull() throws Exception {
+    void shouldSetGeneralEmailDetailsWhenExistingGeneralEmailsIsNull() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -658,7 +656,7 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldAddToTopOfExistingGeneralEmailsWhenThereIsExistingGeneralEmail() throws Exception {
+    void shouldAddToTopOfExistingGeneralEmailsWhenThereIsExistingGeneralEmail() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -716,7 +714,7 @@ public class CaseworkerGeneralEmailTest {
 
 
     @Test
-    void shouldSetConfidentialGeneralEmailDetails() throws Exception {
+    void shouldSetConfidentialGeneralEmailDetails() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -756,7 +754,7 @@ public class CaseworkerGeneralEmailTest {
     }
 
     @Test
-    void shouldAddSelectedUploadedDocsToAttachmentsListInAboutToSubmit() throws Exception {
+    void shouldAddSelectedUploadedDocsToAttachmentsListInAboutToSubmit() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -799,11 +797,11 @@ public class CaseworkerGeneralEmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
 
         assertThat(response.getData().getGeneralEmails().get(0).getValue()
-            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+            .getGeneralEmailAttachmentLinks()).hasSize(3);
     }
 
     @Test
-    void shouldAddSelectedGeneratedDocsToAttachmentsListInAboutToSubmit() throws Exception {
+    void shouldAddSelectedGeneratedDocsToAttachmentsListInAboutToSubmit() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -845,11 +843,11 @@ public class CaseworkerGeneralEmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
 
         assertThat(response.getData().getGeneralEmails().get(0).getValue()
-            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+            .getGeneralEmailAttachmentLinks()).hasSize(3);
     }
 
     @Test
-    void shouldAddSelectedApp1DocsToAttachmentsListInAboutToSubmit() throws Exception {
+    void shouldAddSelectedApp1DocsToAttachmentsListInAboutToSubmit() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -891,11 +889,11 @@ public class CaseworkerGeneralEmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
 
         assertThat(response.getData().getGeneralEmails().get(0).getValue()
-            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+            .getGeneralEmailAttachmentLinks()).hasSize(3);
     }
 
     @Test
-    void shouldAddSelectedApp2DocsToAttachmentsListInAboutToSubmit() throws Exception {
+    void shouldAddSelectedApp2DocsToAttachmentsListInAboutToSubmit() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -937,11 +935,11 @@ public class CaseworkerGeneralEmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
 
         assertThat(response.getData().getGeneralEmails().get(0).getValue()
-            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+            .getGeneralEmailAttachmentLinks()).hasSize(3);
     }
 
     @Test
-    void shouldAddSelectedScannedDocsToAttachmentsListInAboutToSubmit() throws Exception {
+    void shouldAddSelectedScannedDocsToAttachmentsListInAboutToSubmit() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -983,11 +981,11 @@ public class CaseworkerGeneralEmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
 
         assertThat(response.getData().getGeneralEmails().get(0).getValue()
-            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+            .getGeneralEmailAttachmentLinks()).hasSize(3);
     }
 
     @Test
-    void shouldAddSelectedGenOrderDocsToAttachmentsListInAboutToSubmit() throws Exception {
+    void shouldAddSelectedGenOrderDocsToAttachmentsListInAboutToSubmit() {
         setMockClock(clock);
 
         final CaseData caseData = caseData();
@@ -1037,8 +1035,8 @@ public class CaseworkerGeneralEmailTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getGeneralEmails().get(0).getValue()
-            .getGeneralEmailAttachmentLinks().size()).isEqualTo(3);
+        assertThat(response.getData().getGeneralEmails().getFirst().getValue()
+            .getGeneralEmailAttachmentLinks()).hasSize(3);
     }
 
     @Test
@@ -1080,7 +1078,7 @@ public class CaseworkerGeneralEmailTest {
 
         var caseDataCopy = caseData.toBuilder().build();
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = generalEmail.aboutToSubmit(details, details);
+        generalEmail.aboutToSubmit(details, details);
 
         verify(generalEmailNotification).send(caseDataCopy,TEST_CASE_ID);
     }

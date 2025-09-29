@@ -12,9 +12,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.Document;
@@ -26,6 +26,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -100,28 +101,28 @@ public class CaseworkerRegenerateCourtOrdersIT {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private BulkPrintService bulkPrintService;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private RequestInterceptor requestInterceptor;
 
-    @MockBean
+    @MockitoBean
     private NotificationService notificationService;
 
-    @MockBean
+    @MockitoBean
     private WebMvcConfig webMvcConfig;
 
-    @MockBean
+    @MockitoBean
     private AuthTokenGenerator serviceTokenGenerator;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
 
-    @MockBean
+    @MockitoBean
     private Clock clock;
 
     @BeforeAll
@@ -221,7 +222,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
                     .builder()
                     .documentsGenerated(documentsGenerated)
                     .build()
-            )
+            ).finalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build())
             .build();
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -296,7 +297,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
                         divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
                     )
                     .build()
-            )
+            ).finalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build())
             .documents(
                 CaseDocuments
                     .builder()
@@ -370,7 +371,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
                         divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
                     )
                     .build()
-            )
+            ).finalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build())
             .documents(
                 CaseDocuments
                     .builder()
@@ -459,7 +460,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
                         divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
                     )
                     .build()
-            )
+            ).finalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build())
             .documents(
                 CaseDocuments
                     .builder()
@@ -556,7 +557,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
                         divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
                     )
                     .build()
-            )
+            ).finalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build())
             .documents(
                 CaseDocuments
                     .builder()

@@ -7,7 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.time.LocalDate;
 
@@ -63,7 +65,8 @@ public class GeneralReferral {
 
     @CCD(
         label = "Further details for Judge or Legal Advisor",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String generalReferralJudgeOrLegalAdvisorDetails;
 
@@ -92,7 +95,8 @@ public class GeneralReferral {
     @CCD(
         label = "Please provide further details",
         hint = "Provide direction for any general orders or general letters to be created by caseworkers.",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String generalReferralDecisionReason;
 
@@ -103,7 +107,8 @@ public class GeneralReferral {
 
     @CCD(
         label = "Urgent referral reason",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String generalReferralUrgentCaseReason;
 
@@ -114,7 +119,21 @@ public class GeneralReferral {
 
     @CCD(
         label = "Fraud referral reason",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String generalReferralFraudCaseReason;
+
+    @CCD(
+        label = "Which general application will be referred?",
+        searchable = false
+    )
+    private DynamicList selectedGeneralApplication;
+
+    @CCD(
+        label = "Would you like to reject the case general referral?",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private YesOrNo rejectGeneralReferral;
 }

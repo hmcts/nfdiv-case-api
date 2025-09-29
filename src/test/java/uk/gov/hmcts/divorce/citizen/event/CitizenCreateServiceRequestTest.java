@@ -12,7 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.PaymentSetupService;
+import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -45,7 +45,7 @@ class CitizenCreateServiceRequestTest {
     }
 
     @Test
-    public void shouldSetServiceRequestForApplicationPaymentIfCaseIsInAwaitingPayment() {
+    void shouldSetServiceRequestForApplicationPaymentIfCaseIsInAwaitingPayment() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = new CaseData();
         final OrderSummary orderSummary = new OrderSummary();
@@ -58,7 +58,7 @@ class CitizenCreateServiceRequestTest {
 
         when(paymentSetupService.createApplicationFeeOrderSummary(caseData, caseId))
             .thenReturn(orderSummary);
-        when(paymentSetupService.createApplicationFeeServiceRequest(caseData, caseId, TEST_PAYMENT_CALLBACK_URL))
+        when(paymentSetupService.createApplicationFeeServiceRequest(caseData, caseId))
             .thenReturn(TEST_SERVICE_REFERENCE);
 
         var response = citizenCreateServiceRequest.aboutToSubmit(caseDetails, caseDetails);
@@ -70,7 +70,7 @@ class CitizenCreateServiceRequestTest {
     }
 
     @Test
-    public void shouldSetServiceRequestForFinalOrderPaymentIfCaseIsInAwaitingFinalOrderPayment() {
+    void shouldSetServiceRequestForFinalOrderPaymentIfCaseIsInAwaitingFinalOrderPayment() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = new CaseData();
         final OrderSummary orderSummary = OrderSummary.builder().build();
@@ -83,7 +83,7 @@ class CitizenCreateServiceRequestTest {
 
         when(paymentSetupService.createFinalOrderFeeOrderSummary(caseData, TEST_CASE_ID))
                 .thenReturn(orderSummary);
-        when(paymentSetupService.createFinalOrderFeeServiceRequest(caseData, TEST_CASE_ID, TEST_PAYMENT_CALLBACK_URL, orderSummary))
+        when(paymentSetupService.createFinalOrderFeeServiceRequest(caseData, TEST_CASE_ID, orderSummary))
             .thenReturn(TEST_SERVICE_REFERENCE);
 
         var response = citizenCreateServiceRequest.aboutToSubmit(caseDetails, caseDetails);

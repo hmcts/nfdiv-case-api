@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerGeneralLetterTest {
+class CaseworkerGeneralLetterTest {
 
     @Mock
     private GenerateGeneralLetter generateGeneralLetter;
@@ -130,7 +130,7 @@ public class CaseworkerGeneralLetterTest {
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = generalLetter.aboutToSubmit(details, details);
+        generalLetter.aboutToSubmit(details, details);
         verify(generateGeneralLetter).apply(details);
     }
 

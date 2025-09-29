@@ -36,6 +36,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkscan.endpoint.data.FormType.D8;
@@ -46,7 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.scannedDocuments;
 
 @ExtendWith(MockitoExtension.class)
-public class DocumentRemovalServiceTest {
+class DocumentRemovalServiceTest {
 
     @Mock
     private CaseDocumentAccessManagement documentManagementClient;
@@ -61,7 +62,7 @@ public class DocumentRemovalServiceTest {
     private DocumentRemovalService documentRemovalService;
 
     @Test
-    public void shouldDeleteDivorceDocumentFromDocManagement() {
+    void shouldDeleteDivorceDocumentFromDocManagement() {
         final List<String> systemRoles = List.of("caseworker-divorce");
         final ListValue<DivorceDocument> divorceDocumentListValue = documentWithType(APPLICATION);
         final String userId = UUID.randomUUID().toString();
@@ -92,7 +93,41 @@ public class DocumentRemovalServiceTest {
     }
 
     @Test
-    public void shouldDeleteScannedDocumentFromDocManagement() {
+    void shouldNotCallDocumentManagementClientWhenNoDocumentIsAttachedToDivorceDocument() {
+        final List<String> systemRoles = List.of("caseworker-divorce");
+        final ListValue<DivorceDocument> divorceDocumentListValue1 = documentWithType(APPLICATION);
+        final ListValue<DivorceDocument> divorceDocumentListValue2 = documentWithType(APPLICATION);
+        divorceDocumentListValue2.getValue().setDocumentLink(null);
+
+        final String userId = UUID.randomUUID().toString();
+        final User systemUser = systemUser(systemRoles, userId);
+
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        doNothing().when(documentManagementClient).deleteDocument(
+            SYSTEM_USER_USER_ID,
+            TEST_SERVICE_AUTH_TOKEN,
+            divorceDocumentListValue1.getValue().getDocumentLink(),
+            true
+        );
+
+        documentRemovalService.deleteDocument(List.of(divorceDocumentListValue1, divorceDocumentListValue2));
+
+        verify(idamService).retrieveSystemUpdateUserDetails();
+        verify(authTokenGenerator).generate();
+        verify(documentManagementClient).deleteDocument(
+            SYSTEM_USER_USER_ID,
+            TEST_SERVICE_AUTH_TOKEN,
+            divorceDocumentListValue1.getValue().getDocumentLink(),
+            true
+        );
+
+        verifyNoMoreInteractions(idamService, authTokenGenerator, documentManagementClient);
+    }
+
+    @Test
+    void shouldDeleteScannedDocumentFromDocManagement() {
         final List<String> systemRoles = List.of("caseworker-divorce");
         final String userId = UUID.randomUUID().toString();
         final User systemUser = systemUser(systemRoles, userId);
@@ -104,7 +139,7 @@ public class DocumentRemovalServiceTest {
             SYSTEM_USER_USER_ID,
             TEST_SERVICE_AUTH_TOKEN,
             scannedDocumentList.get(0).getValue().getUrl(),
-            true
+            false
         );
 
         CaseData beforeData = CaseData.builder()
@@ -122,14 +157,56 @@ public class DocumentRemovalServiceTest {
             SYSTEM_USER_USER_ID,
             TEST_SERVICE_AUTH_TOKEN,
             scannedDocumentList.get(0).getValue().getUrl(),
-            true
+            false
         );
 
         verifyNoMoreInteractions(idamService, authTokenGenerator, documentManagementClient);
     }
 
     @Test
-    public void shouldThrow403ForbiddenWhenServiceIsNotWhitelistedInDocManagement() {
+    void shouldNotDeleteScannedDocumentIfSubtypeChanges() {
+        final List<String> systemRoles = List.of("caseworker-divorce");
+        final String userId = UUID.randomUUID().toString();
+        final List<ListValue<ScannedDocument>> scannedDocumentList = scannedDocuments(D8);
+        scannedDocumentList.getFirst().getValue().setSubtype("DummyBefore");
+        final List<ListValue<ScannedDocument>> afterScannedDocumentList = scannedDocuments(D8);
+        afterScannedDocumentList.getFirst().getValue().setSubtype("DummyAfter");
+
+        CaseData beforeData = CaseData.builder()
+            .documents(CaseDocuments.builder().scannedDocuments(scannedDocumentList).build())
+            .build();
+        CaseData afterData = CaseData.builder()
+            .documents(CaseDocuments.builder().scannedDocuments(afterScannedDocumentList).build())
+            .build();
+
+        documentRemovalService.handleDeletionOfScannedDocuments(beforeData, afterData);
+
+        verifyNoInteractions(documentManagementClient);
+        verifyNoMoreInteractions(idamService, authTokenGenerator, documentManagementClient);
+    }
+
+    @Test
+    void shouldNotCallDocumentManagementClientWhenNoDocumentIsAttachedToScannedDocument() {
+        final List<String> systemRoles = List.of("caseworker-divorce");
+        final String userId = UUID.randomUUID().toString();
+        final List<ListValue<ScannedDocument>> scannedDocumentList = scannedDocuments(D8);
+
+        scannedDocumentList.getFirst().getValue().setUrl(null);
+
+        CaseData beforeData = CaseData.builder()
+            .documents(CaseDocuments.builder().scannedDocuments(scannedDocumentList).build())
+            .build();
+        CaseData afterData = CaseData.builder()
+            .documents(CaseDocuments.builder().scannedDocuments(Collections.emptyList()).build())
+            .build();
+
+        documentRemovalService.handleDeletionOfScannedDocuments(beforeData, afterData);
+
+        verifyNoMoreInteractions(idamService, authTokenGenerator, documentManagementClient);
+    }
+
+    @Test
+    void shouldThrow403ForbiddenWhenServiceIsNotWhitelistedInDocManagement() {
         final List<String> systemRoles = List.of("caseworker-divorce");
         final String userId = UUID.randomUUID().toString();
         final User systemUser = systemUser(systemRoles, userId);
@@ -171,7 +248,7 @@ public class DocumentRemovalServiceTest {
     }
 
     @Test
-    public void shouldThrow401UnAuthorizedWhenServiceAuthTokenGenerationFails() {
+    void shouldThrow401UnAuthorizedWhenServiceAuthTokenGenerationFails() {
         final List<String> systemRoles = List.of("caseworker-divorce");
         final String userId = UUID.randomUUID().toString();
         final User systemUser = systemUser(systemRoles, userId);

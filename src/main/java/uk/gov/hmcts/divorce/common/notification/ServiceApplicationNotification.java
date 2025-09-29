@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
@@ -21,6 +21,7 @@ import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceiv
 import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_DEEMED_SERVICE;
 import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_DISPENSE_SERVICE;
 import static uk.gov.hmcts.divorce.common.notification.ConditionalOrderPronouncedNotification.MISSING_FIELD_MESSAGE;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.ALTERNATIVE_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
@@ -35,15 +36,15 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLIC
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ServiceApplicationNotification implements ApplicantNotification {
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
     private static final String LOGGER_MESSAGE = "Notifying applicant that service application for {} was {}";
+    public static final String IS_ALTERNATIVE_SERVICE = "isAlternativeService";
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -75,6 +76,7 @@ public class ServiceApplicationNotification implements ApplicantNotification {
         templateVars.put(IS_DEEMED_SERVICE, DEEMED.equals(alternativeServiceType) ? YES : NO);
         templateVars.put(IS_DISPENSE_SERVICE, DISPENSED.equals(alternativeServiceType) ? YES : NO);
         templateVars.put(IS_BAILIFF_SERVICE, BAILIFF.equals(alternativeServiceType) ? YES : NO);
+        templateVars.put(IS_ALTERNATIVE_SERVICE, ALTERNATIVE_SERVICE.equals(alternativeServiceType) ? YES : NO);
 
         return templateVars;
     }
@@ -89,6 +91,7 @@ public class ServiceApplicationNotification implements ApplicantNotification {
         templateVars.put(IS_DEEMED_SERVICE, DEEMED.equals(alternativeServiceType) ? YES : NO);
         templateVars.put(IS_DISPENSE_SERVICE, DISPENSED.equals(alternativeServiceType) ? YES : NO);
         templateVars.put(IS_BAILIFF_SERVICE, BAILIFF.equals(alternativeServiceType) ? YES : NO);
+        templateVars.put(IS_ALTERNATIVE_SERVICE, ALTERNATIVE_SERVICE.equals(alternativeServiceType) ? YES : NO);
         templateVars.put(IS_SOLE, caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
 

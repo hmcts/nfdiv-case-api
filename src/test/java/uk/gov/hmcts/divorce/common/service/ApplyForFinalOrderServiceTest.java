@@ -130,7 +130,7 @@ class ApplyForFinalOrderServiceTest {
 
         List<String> errors = applyForFinalOrderService.validateApplyForFinalOrder(caseData, false);
 
-        assertThat(errors).hasSize(0);
+        assertThat(errors).isEmpty();
     }
 
     @Test

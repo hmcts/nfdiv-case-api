@@ -40,11 +40,8 @@ public final class DocumentConstants {
     public static final String JOINT_DIVORCE_APPLICANT_1_ANSWERS_DOCUMENT_NAME = "joint-divorce-application-applicant-1-answers-";
     public static final String JOINT_DIVORCE_APPLICANT_2_ANSWERS_DOCUMENT_NAME = "draft-joint-application-";
 
-    public static final String NFD_NOP_R1_SOLE_APP2_CIT_ONLINE = "NFD_NOP_R1_SOLE_APP2_CIT_ONLINE";
-    public static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE = "NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE";
-    public static final String NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE = "NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE";
-
-    public static final String NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES = "NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES";
+    public static final String NFD_NOP_SOLE_RESPONDENT_CITIZEN =
+            "NFD_NOP_SOLE_RESPONDENT_CITIZEN";
     public static final String AMENDED_APPLICATION_COVERSHEET_DOCUMENT_NAME = "amendedApplicationCoversheet";
     public static final String CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "conditionalOrderGrantedCoversheet";
     public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
@@ -133,6 +130,7 @@ public final class DocumentConstants {
     public static final String SERVICE_REFUSAL_TEMPLATE_ID = "SERVICE_REFUSAL";
     public static final String DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME = "DispenseWithServiceRefused";
     public static final String DEEMED_SERVICE_REFUSED_FILE_NAME = "DeemedServiceRefused";
+    public static final String ALTERNATIVE_SERVICE_REFUSED_FILE_NAME = "AlternativeServiceRefused";
 
     public static final String BAILIFF_APPLICATION_APPROVED_ID = "BAILIFF_APPLICATION_APPROVED";
     public static final String BAILIFF_APPLICATION_APPROVED_FILE_NAME = "BailiffApplicationApproved";
@@ -204,6 +202,34 @@ public final class DocumentConstants {
 
     public static final String APPLICANT1 = "applicant1";
     public static final String APPLICANT2 = "applicant2";
+
+    public static final String REQUEST_FOR_INFORMATION_LETTER_DOCUMENT_NAME = "RequestForInformationLetter";
+    public static final String REQUEST_FOR_INFORMATION_LETTER_TEMPLATE_ID = "REQUEST_FOR_INFORMATION_LETTER";
+    public static final String REQUEST_FOR_INFORMATION_RESPONSE_LETTER_DOCUMENT_NAME = "RequestForInformationResponseLetter";
+    public static final String REQUEST_FOR_INFORMATION_RESPONSE_LETTER_TEMPLATE_ID = "REQUEST_FOR_INFORMATION_RESPONSE_LETTER";
+    public static final String REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER_DOCUMENT_NAME = "RequestForInformationPartnerResponseLetter";
+    public static final String REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER_TEMPLATE_ID
+        = "REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER";
+    public static final String REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_DOCUMENT_NAME = "RequestForInformationSolicitorLetter";
+    public static final String REQUEST_FOR_INFORMATION_SOLICITOR_LETTER_TEMPLATE_ID = "REQUEST_FOR_INFORMATION_SOLICITOR_LETTER";
+    public static final String REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER_DOCUMENT_NAME
+        = "RequestForInformationSolicitorResponseLetter";
+    public static final String REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER_TEMPLATE_ID
+        = "REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER";
+    public static final String REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER_DOCUMENT_NAME
+        = "RequestForInformationPartnerSolicitorResponseLetter";
+    public static final String REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER_TEMPLATE_ID
+        = "REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER";
+    public static final String DEEMED_SERVICE_APPLICATION_TEMPLATE_ID = "DEEMED_SERVICE_APPLICATION";
+    public static final String DEEMED_SERVICE_APPLICATION_DOCUMENT_NAME = "DeemedServiceApplication";
+    public static final String ALTERNATIVE_SERVICE_APPLICATION_TEMPLATE_ID = "ALTERNATIVE_SERVICE_APPLICATION";
+    public static final String ALTERNATIVE_SERVICE_APPLICATION_DOCUMENT_NAME = "AlternativeServiceApplication";
+    public static final String BAILIFF_SERVICE_APPLICATION_TEMPLATE_ID = "BAILIFF_SERVICE_APPLICATION";
+    public static final String BAILIFF_SERVICE_APPLICATION_DOCUMENT_NAME = "BailiffServiceApplication";
+    public static final String SEARCH_GOV_RECORDS_APPLICATION_TEMPLATE_ID = "SEARCH_GOV_RECORDS_APPLICATION";
+    public static final String SEARCH_GOV_RECORDS_APPLICATION_DOCUMENT_NAME = "SearchGovRecordsApplication";
+    public static final String DISPENSE_WITH_SERVICE_APPLICATION_TEMPLATE_ID = "DISPENSE_WITH_SERVICE_APPLICATION";
+    public static final String DISPENSE_WITH_SERVICE_APPLICATION_DOCUMENT_NAME = "DispenseWithServiceApplication";
 
     private DocumentConstants() {
     }

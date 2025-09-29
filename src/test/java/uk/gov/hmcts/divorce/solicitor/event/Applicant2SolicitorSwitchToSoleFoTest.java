@@ -10,10 +10,12 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -26,10 +28,13 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant2SolicitorSwitchToSoleFoTest {
+class Applicant2SolicitorSwitchToSoleFoTest {
 
     @Mock
     private SwitchToSoleService switchToSoleService;
+
+    @Mock
+    private GeneralReferralService generalReferralService;
 
     @InjectMocks
     private Applicant2SolicitorSwitchToSoleFo applicant2SolicitorSwitchToSoleFo;
@@ -108,5 +113,18 @@ public class Applicant2SolicitorSwitchToSoleFoTest {
 
         verify(switchToSoleService).switchUserRoles(caseData, TEST_CASE_ID);
         verify(switchToSoleService).switchApplicantData(caseData);
+    }
+
+    @Test
+    void shouldInvokeGeneralReferralServiceInSubmittedCallback() {
+        CaseData caseData = CaseData.builder().build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        SubmittedCallbackResponse response = applicant2SolicitorSwitchToSoleFo.submitted(caseDetails, caseDetails);
+
+        verify(generalReferralService).caseWorkerGeneralReferral(caseDetails);
     }
 }

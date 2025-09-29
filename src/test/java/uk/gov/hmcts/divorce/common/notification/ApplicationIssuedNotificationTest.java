@@ -87,7 +87,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssue
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class ApplicationIssuedNotificationTest {
+class ApplicationIssuedNotificationTest {
 
     private static final String CASE_ID = "case id";
 
@@ -118,6 +118,39 @@ public class ApplicationIssuedNotificationTest {
             .thenReturn(divorceTemplateVars);
         when(holdingPeriodService.getRespondByDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(16));
+        when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
+            .thenReturn(data.getApplication().getIssueDate().plusDays(141));
+
+        notification.sendToApplicant1(data, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO)
+            )),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldUseReissueDateInCalculationsWhenCaseHasBeenReissued() {
+        CaseData data = validCaseDataForIssueApplication();
+        data.getApplication().setReissueDate(LocalDate.of(2022, 1, 1));
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+
+        Map<String, String> divorceTemplateVars = new HashMap<>();
+        divorceTemplateVars.putAll(getMainTemplateVars());
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(divorceTemplateVars);
+        when(holdingPeriodService.getRespondByDateFor(data.getApplication().getReissueDate()))
+            .thenReturn(data.getApplication().getReissueDate().plusDays(16));
         when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(141));
 

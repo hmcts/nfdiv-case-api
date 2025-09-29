@@ -2,17 +2,11 @@ package uk.gov.hmcts.divorce.caseworker.event.page;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -23,12 +17,12 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SOT_REQ
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class CorrectPaperCaseTest {
+class CorrectPaperCaseTest {
 
     private final CorrectPaperCase page = new CorrectPaperCase();
 
     @Test
-    public void shouldSuccessfullyValidateValuesPassedByUser() {
+    void shouldSuccessfullyValidateValuesPassedByUser() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
@@ -42,7 +36,7 @@ public class CorrectPaperCaseTest {
     }
 
     @Test
-    public void shouldReturnErrorsIfScreenHasMarriageBrokenIsNo() {
+    void shouldReturnErrorsIfScreenHasMarriageBrokenIsNo() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(NO);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
@@ -60,7 +54,7 @@ public class CorrectPaperCaseTest {
     }
 
     @Test
-    public void shouldReturnErrorsIfStatementOfTruthNotAcceptedForSoleApplication() {
+    void shouldReturnErrorsIfStatementOfTruthNotAcceptedForSoleApplication() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
@@ -79,7 +73,7 @@ public class CorrectPaperCaseTest {
     }
 
     @Test
-    public void shouldReturnErrorsIfStatementOfTruthNotAccepted() {
+    void shouldReturnErrorsIfStatementOfTruthNotAccepted() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
@@ -99,7 +93,7 @@ public class CorrectPaperCaseTest {
     }
 
     @Test
-    public void shouldNotReturnErrorsIfMarriageBrokenNotAcceptedByApplicant2ForSoleApplication() {
+    void shouldNotReturnErrorsIfMarriageBrokenNotAcceptedByApplicant2ForSoleApplication() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
@@ -116,7 +110,7 @@ public class CorrectPaperCaseTest {
     }
 
     @Test
-    public void shouldReturnErrorsIfMarriageBrokenNotAcceptedByApplicant2ForJointApplication() {
+    void shouldReturnErrorsIfMarriageBrokenNotAcceptedByApplicant2ForJointApplication() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
@@ -132,32 +126,5 @@ public class CorrectPaperCaseTest {
         assertThat(response.getErrors()).isNotEmpty();
         assertThat(response.getErrors())
             .contains("To continue, applicant 2 must believe and declare that their marriage has irrevocably broken");
-    }
-
-    @Test
-    public void shouldCallValidationUtilMethodToValidateAllNames() {
-        final CaseData caseData = validApplicant2CaseData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
-        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
-        caseData.getApplication().setApplicant1StatementOfTruth(YES);
-        caseData.getApplication().setApplicant2StatementOfTruth(YES);
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-
-        List<String> errors = new ArrayList<>();
-        errors.add("Error");
-
-        MockedStatic<ValidationUtil> validationUtilMockedStatic = Mockito.mockStatic(ValidationUtil.class);
-        validationUtilMockedStatic.when(() -> ValidationUtil.validateAllNamesForAllowedCharacters(caseData)).thenReturn(errors);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
-
-        assertThat(response.getErrors()).isNotNull();
-        assertThat(response.getErrors().size()).isEqualTo(1);
-        assertThat(response.getErrors().get(0)).isEqualTo("Error");
-
-        validationUtilMockedStatic.close();
     }
 }

@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerUpdateApplicant2EmailTest {
+class CaseworkerUpdateApplicant2EmailTest {
 
     @Mock
     private EmailUpdateService emailUpdateService;
@@ -34,7 +34,7 @@ public class CaseworkerUpdateApplicant2EmailTest {
     private CaseworkerUpdateApplicant2Email caseworkerUpdateApplicant2Email;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerUpdateApplicant2Email.configure(configBuilder);
@@ -62,7 +62,7 @@ public class CaseworkerUpdateApplicant2EmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.midEvent(details, details);
 
         verify(emailUpdateService).willApplicantBeMadeOffline(details, details, false);
-        assertThat(response.getWarnings().size()).isEqualTo(1);
+        assertThat(response.getWarnings()).hasSize(1);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class CaseworkerUpdateApplicant2EmailTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.midEvent(details, details);
 
         verify(emailUpdateService).willApplicantBeMadeOffline(details, details, false);
-        assertThat(response.getWarnings().size()).isEqualTo(0);
+        assertThat(response.getWarnings()).isEmpty();
     }
 
     @Test
@@ -101,7 +101,7 @@ public class CaseworkerUpdateApplicant2EmailTest {
 
         when(emailUpdateService.processEmailUpdate(details, details, false)).thenReturn(details);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
+        caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
 
         verify(emailUpdateService).processEmailUpdate(details, details, false);
     }

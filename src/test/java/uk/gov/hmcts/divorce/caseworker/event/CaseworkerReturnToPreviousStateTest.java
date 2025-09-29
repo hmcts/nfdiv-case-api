@@ -17,11 +17,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReturnToPreviousState.CASEWORKER_RETURN_TO_PREVIOUS_STATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.NewPaperCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerReturnToPreviousStateTest {
@@ -30,12 +32,15 @@ class CaseworkerReturnToPreviousStateTest {
         = "You cannot move this case into a pre-submission state. Select another state before continuing.";
     private static final String CASE_MUST_BE_ISSUED_ERROR
         = "You cannot move this case into a post-issue state as it has not been issued";
+    private static final String CANNOT_MOVE_TO_AWAITING_SERVICE_CONSIDERATION_ERROR
+        = "Return to previous state cannot be used to transfer the case to Awaiting service consideration. "
+        + "Please use the response to service application event.";
 
     @InjectMocks
     private CaseworkerReturnToPreviousState caseworkerReturnToPreviousState;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerReturnToPreviousState.configure(configBuilder);
@@ -105,7 +110,7 @@ class CaseworkerReturnToPreviousStateTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerReturnToPreviousState.midEvent(details, null);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(INVALID_STATE_ERROR);
     }
 
@@ -122,7 +127,25 @@ class CaseworkerReturnToPreviousStateTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerReturnToPreviousState.midEvent(details, null);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(CASE_MUST_BE_ISSUED_ERROR);
+    }
+
+    @Test
+    void shouldReturnValidationErrorWhenMovingToAwaitingServiceConsideration() {
+        CaseData caseData = CaseData.builder()
+            .application(Application.builder()
+                .stateToTransitionApplicationTo(AwaitingServiceConsideration)
+                .build()
+            ).build();
+        caseData.getApplication().setIssueDate(LOCAL_DATE);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerReturnToPreviousState.midEvent(details, null);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors().get(0)).isEqualTo(CANNOT_MOVE_TO_AWAITING_SERVICE_CONSIDERATION_ERROR);
     }
 }

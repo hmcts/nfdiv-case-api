@@ -22,6 +22,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.common.notification.SoleApplicationNotDisputedNotification.DOC_UPLOADED;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
@@ -60,7 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForAosSubmitted;
 
 @ExtendWith(SpringExtension.class)
-public class SoleApplicationNotDisputedNotificationTest {
+class SoleApplicationNotDisputedNotificationTest {
 
     private static final String ISSUE_DATE_PLUS_37_DAYS = "issue date plus 37 days";
     private static final String ISSUE_DATE_PLUS_141_DAYS = "issue date plus 141 days";
@@ -213,6 +214,38 @@ public class SoleApplicationNotDisputedNotificationTest {
                 hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO)
+            )),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendAosNotDisputedEmailToSoleRespondentWithDivorceContentAndCantUploadDocs() {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplicant2().setEmail(null);
+        data.getApplicant2().setUnableToUploadEvidence(YesOrNo.YES);
+        CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(data);
+        details.setId(TEST_CASE_ID);
+        details.setState(Holding);
+
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+
+        soleApplicationNotDisputedNotification.sendToApplicant2(details);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(SOLE_RESPONDENT_AOS_SUBMITTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(DOC_UPLOADED, NO)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)

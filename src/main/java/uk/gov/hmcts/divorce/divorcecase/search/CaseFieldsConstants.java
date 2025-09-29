@@ -11,6 +11,16 @@ public final class CaseFieldsConstants {
     public static final String APPLICANT_2_EMAIL = "applicant2Email";
     public static final String FINANCIAL_ORDER = "applicant1FinancialOrder";
     public static final String APPLICANT_1_ORGANISATION_POLICY = "applicant1SolicitorOrganisationPolicy";
+    public static final String ORGANISATION_NAME = "Organisation.OrganisationName";
+    public static final String APPLICANT_1_SOLICITOR_NAME = "applicant1SolicitorName";
+    public static final String APPLICANT_1_SOLICITOR_EMAIL = "applicant1SolicitorEmail";
+    public static final String APPLICANT_1_SOLICITOR_PHONE = "applicant1SolicitorPhone";
+    public static final String APPLICANT_1_SOLICITOR_ADDRESS = "applicant1SolicitorAddress";
+    public static final String APPLICANT_2_ORGANISATION_POLICY = "applicant2SolicitorOrganisationPolicy";
+    public static final String APPLICANT_2_SOLICITOR_NAME = "applicant2SolicitorName";
+    public static final String APPLICANT_2_SOLICITOR_EMAIL = "applicant2SolicitorEmail";
+    public static final String APPLICANT_2_SOLICITOR_PHONE = "applicant2SolicitorPhone";
+    public static final String APPLICANT_2_SOLICITOR_ADDRESS = "applicant2SolicitorAddress";
     public static final String MARRIAGE_DATE = "marriageDate";
     public static final String APPLICANT_1_HWF = "applicant1HWFReferenceNumber";
     public static final String APPLICANT_2_HWF = "applicant2HWFReferenceNumber";
@@ -22,6 +32,7 @@ public final class CaseFieldsConstants {
     public static final String APPLICANT_1_FIRM_NAME = "applicant1SolicitorFirmName";
     public static final String EVIDENCE_HANDLED = "evidenceHandled";
     public static final String ALTERNATIVE_SERVICE_TYPE = "alternativeServiceType";
+    public static final String ALTERNATIVE_SERVICE_PAYMENT_METHOD = "servicePaymentFeePaymentMethod";
     public static final String APPLICANT_1_ADDRESS = "applicant1Address";
     public static final String APPLICANT_2_ADDRESS = "applicant2Address";
     public static final String APPLICANT_1_IN_REFUGE = "applicant1InRefuge";

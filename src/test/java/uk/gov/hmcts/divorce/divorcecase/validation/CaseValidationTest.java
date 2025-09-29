@@ -1,11 +1,11 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
+import feign.FeignException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
@@ -16,15 +16,16 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
+import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.YEARS;
@@ -32,6 +33,9 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -44,21 +48,21 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERV
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateChangeServiceRequest;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SUBMITTED_DATE_IS_NULL;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.isNameValid;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validName;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateAllNamesForAllowedCharacters;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCasesAcceptedToListForHearing;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCitizenResendInvite;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateJointApplicantOfflineStatus;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateJurisdictionConnections;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateMarriageDate;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateSolicitorPbaNumbers;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 
-public class CaseValidationTest {
+class CaseValidationTest {
 
     private static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year and one day ago.";
     private static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION =
@@ -66,9 +70,11 @@ public class CaseValidationTest {
     private static final String EMPTY = " cannot be empty or null";
     private static final String IN_THE_FUTURE = " can not be in the future.";
     private static final String MORE_THAN_ONE_HUNDRED_YEARS_AGO = " can not be more than 100 years ago.";
+    private static final String INVALID_JOINT_OFFLINE_STATUS = "Applicants have different offline status in a joint case."
+        + " Both applicants needs to be either online or offline for caseID: " +  TEST_CASE_ID;
 
     @Test
-    public void shouldValidateBasicCase() {
+    void shouldValidateBasicCase() {
         CaseData caseData = new CaseData();
         caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
         caseData.setDivorceOrDissolution(DIVORCE);
@@ -77,7 +83,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateBasicOfflineCase() {
+    void shouldValidateBasicOfflineCase() {
         CaseData caseData = new CaseData();
         caseData.setDivorceOrDissolution(DIVORCE);
         Applicant applicant1 = Applicant.builder().offline(YES).build();
@@ -88,7 +94,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateApplicant1BasicCase() {
+    void shouldValidateApplicant1BasicCase() {
         CaseData caseData = new CaseData();
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
@@ -97,7 +103,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateApplicant1BasicOfflineCase() {
+    void shouldValidateApplicant1BasicOfflineCase() {
         CaseData caseData = new CaseData();
         caseData.setDivorceOrDissolution(DIVORCE);
         Applicant applicant1 = Applicant.builder().offline(YES).build();
@@ -108,13 +114,13 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenStringIsNull() {
+    void shouldReturnErrorWhenStringIsNull() {
         List<String> response = notNull(null, "field");
         assertThat(response).isEqualTo(List.of("field" + EMPTY));
     }
 
     @Test
-    public void shouldReturnErrorWhenDateIsInTheFuture() {
+    void shouldReturnErrorWhenDateIsInTheFuture() {
         CaseData caseData = CaseData.builder()
             .application(
                 Application.builder()
@@ -130,7 +136,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenDateIsLessThanOneYearAgo() {
+    void shouldReturnErrorWhenDateIsLessThanOneYearAgo() {
 
         CaseData caseData = CaseData.builder()
             .application(
@@ -148,7 +154,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldNotReturnErrorWhenDateIsMoreThanOneYearAgo() {
+    void shouldNotReturnErrorWhenDateIsMoreThanOneYearAgo() {
 
         CaseData caseData = CaseData.builder()
             .application(
@@ -166,7 +172,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenApplicationSubmissionDateIsNullAndCurrentDateWithin1YearAnd1DayOfMarriageDate() {
+    void shouldReturnErrorWhenApplicationSubmissionDateIsNullAndCurrentDateWithin1YearAnd1DayOfMarriageDate() {
 
         CaseData caseData = CaseData.builder()
             .application(
@@ -184,7 +190,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldNotReturnErrorWhenApplicationSubmissionDateIsNullAndMarriageDateMoreThan1YearAnd1DayFromCurrentDate() {
+    void shouldNotReturnErrorWhenApplicationSubmissionDateIsNullAndMarriageDateMoreThan1YearAnd1DayFromCurrentDate() {
 
         CaseData caseData = CaseData.builder()
             .application(
@@ -202,7 +208,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenDateIsLessThanOneYearSinceApplicationSubmission() {
+    void shouldReturnErrorWhenDateIsLessThanOneYearSinceApplicationSubmission() {
 
         CaseData caseData = CaseData.builder()
             .application(
@@ -221,7 +227,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldNotReturnErrorsWhenDateIsMoreThanOneYearSinceApplicationSubmission() {
+    void shouldNotReturnErrorsWhenDateIsMoreThanOneYearSinceApplicationSubmission() {
 
         CaseData caseData = CaseData.builder()
             .application(
@@ -240,7 +246,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldReturnNoErrorsWhenDateIsLessThanOneYearAgoAndJudicialSeparationCase() {
+    void shouldReturnNoErrorsWhenDateIsLessThanOneYearAgoAndJudicialSeparationCase() {
 
         CaseData caseData = CaseData.builder()
             .supplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION)
@@ -260,7 +266,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldReturnTrueWhenCaseHasAwaitingDocuments() {
+    void shouldReturnTrueWhenCaseHasAwaitingDocuments() {
         CaseData caseData = new CaseData();
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
@@ -268,14 +274,14 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldReturnFalseWhenCaseDoesNotHaveAwaitingDocuments() {
+    void shouldReturnFalseWhenCaseDoesNotHaveAwaitingDocuments() {
         CaseData caseData = new CaseData();
         caseData.setDivorceOrDissolution(DIVORCE);
         assertFalse(caseData.getApplication().hasAwaitingApplicant1Documents());
     }
 
     @Test
-    public void shouldReturnErrorWhenApp2MarriageCertNameAndPlaceOfMarriageAreMissing() {
+    void shouldReturnErrorWhenApp2MarriageCertNameAndPlaceOfMarriageAreMissing() {
         CaseData caseData = new CaseData();
         caseData.setDivorceOrDissolution(DIVORCE);
         List<String> errors = validateCaseFieldsForIssueApplication(caseData.getApplication().getMarriageDetails());
@@ -287,7 +293,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldReturnErrorWhenApp2MarriageCertNameIsMissing() {
+    void shouldReturnErrorWhenApp2MarriageCertNameIsMissing() {
         MarriageDetails marriageDetails = new MarriageDetails();
         marriageDetails.setPlaceOfMarriage("London");
         List<String> errors = validateCaseFieldsForIssueApplication(marriageDetails);
@@ -298,7 +304,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldNotReturnErrorWhenBothWhenApp2MarriageCertNameAndPlaceOfMarriageArePresent() {
+    void shouldNotReturnErrorWhenBothWhenApp2MarriageCertNameAndPlaceOfMarriageArePresent() {
         MarriageDetails marriageDetails = new MarriageDetails();
         marriageDetails.setPlaceOfMarriage("London");
         marriageDetails.setApplicant2Name("TestFname TestMname  TestLname");
@@ -308,7 +314,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateJurisdictionConnectionsForCitizenApplication() {
+    void shouldValidateJurisdictionConnectionsForCitizenApplication() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setApplication(Application.builder()
@@ -323,7 +329,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldOnlyValidateEmptyJurisdictionConnectionsWhenApplicant1Represented() {
+    void shouldOnlyValidateEmptyJurisdictionConnectionsWhenApplicant1Represented() {
         final CaseData caseData = caseData();
         caseData.setApplicant1(Applicant.builder()
             .solicitorRepresented(YES)
@@ -337,7 +343,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldReturnEmptyListForNonEmptyJurisdictionConnectionsWhenApplicant1Represented() {
+    void shouldReturnEmptyListForNonEmptyJurisdictionConnectionsWhenApplicant1Represented() {
         final CaseData caseData = caseData();
         caseData.setApplicant1(Applicant.builder()
             .solicitorRepresented(YES)
@@ -351,7 +357,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateJurisdictionConnectionsWhenApplicant1IsNotRepresented() {
+    void shouldValidateJurisdictionConnectionsWhenApplicant1IsNotRepresented() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setApplicant1(Applicant.builder()
@@ -366,7 +372,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldNotReturnErrorsWhenJurisdictionConnectionsIsNotEmptyAndIsPaperCase() {
+    void shouldNotReturnErrorsWhenJurisdictionConnectionsIsNotEmptyAndIsPaperCase() {
         final CaseData caseData = caseData();
         caseData.getApplication().setNewPaperCase(YES);
 
@@ -378,7 +384,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldReturnErrorsWhenJurisdictionConnectionsIsEmptyAndIsPaperCase() {
+    void shouldReturnErrorsWhenJurisdictionConnectionsIsEmptyAndIsPaperCase() {
         final CaseData caseData = caseData();
         caseData.getApplication().setNewPaperCase(YES);
 
@@ -389,7 +395,7 @@ public class CaseValidationTest {
 
 
     @Test
-    public void shouldValidateNoCasesAdded() {
+    void shouldValidateNoCasesAdded() {
         final BulkActionCaseData caseData = bulkActionCaseData();
         final CaseLink caseLink1 = CaseLink.builder()
             .caseReference("12345")
@@ -421,7 +427,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateNoDuplicateCases() {
+    void shouldValidateNoDuplicateCases() {
         final BulkActionCaseData caseData = bulkActionCaseData();
         final CaseLink caseLink1 = CaseLink.builder()
             .caseReference("12345")
@@ -445,7 +451,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateBasicPaperCaseAndReturnNoErrorWhenApplicant2GenderIsNotSet() {
+    void shouldValidateBasicPaperCaseAndReturnNoErrorWhenApplicant2GenderIsNotSet() {
         CaseData caseData = new CaseData();
         Applicant applicant1 = Applicant.builder().offline(YES).build();
         caseData.setApplicant1(applicant1);
@@ -473,7 +479,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateBasicDigitalCaseAndReturnErrorWhenApplicant2GenderIsNotSet() {
+    void shouldValidateBasicDigitalCaseAndReturnErrorWhenApplicant2GenderIsNotSet() {
         CaseData caseData = new CaseData();
         Applicant applicant1 = Applicant.builder().offline(YES).build();
         caseData.setApplicant1(applicant1);
@@ -501,7 +507,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void validateCitizenResendInviteSuccess() {
+    void validateCitizenResendInviteSuccess() {
         CaseData caseData = CaseData.builder()
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .caseInvite(CaseInvite.builder().accessCode("12345").build()).build();
@@ -512,11 +518,11 @@ public class CaseValidationTest {
         caseDetails.setState(State.AwaitingApplicant2Response);
 
         List<String> errors = validateCitizenResendInvite(caseDetails);
-        assertThat(errors).hasSize(0);
+        assertThat(errors).isEmpty();
     }
 
     @Test
-    public void validateCitizenResendInviteFailsWhenStateIsWrong() {
+    void validateCitizenResendInviteFailsWhenStateIsWrong() {
         CaseData caseData = CaseData.builder()
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .caseInvite(CaseInvite.builder().accessCode("12345").build()).build();
@@ -532,7 +538,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void validateCitizenResendInviteFailsWhenApplicationTypeIsWrong() {
+    void validateCitizenResendInviteFailsWhenApplicationTypeIsWrong() {
         CaseData caseData = CaseData.builder()
             .applicationType(ApplicationType.SOLE_APPLICATION)
             .caseInvite(CaseInvite.builder().accessCode("12345").build()).build();
@@ -548,7 +554,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void validateCitizenResendInviteFailsWhenAccessCodeIsWrong() {
+    void validateCitizenResendInviteFailsWhenAccessCodeIsWrong() {
         CaseData caseData = CaseData.builder()
             .applicationType(ApplicationType.JOINT_APPLICATION)
             .caseInvite(CaseInvite.builder().accessCode(null).build()).build();
@@ -591,7 +597,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateChangeServiceRequestWhenRespondentConfidentialAndPersonalService() {
+    void shouldValidateChangeServiceRequestWhenRespondentConfidentialAndPersonalService() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         final Applicant applicant2 = caseData.getApplicant2();
         applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
@@ -604,7 +610,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateChangeServiceRequestWhenRespondentConfidentialAndSolicitorService() {
+    void shouldValidateChangeServiceRequestWhenRespondentConfidentialAndSolicitorService() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         final Applicant applicant2 = caseData.getApplicant2();
         applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
@@ -618,7 +624,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateChangeServiceRequestWhenRespondentNotConfidentialOverseasAndCourtServiceSoleApp() {
+    void shouldValidateChangeServiceRequestWhenRespondentNotConfidentialOverseasAndCourtServiceSoleApp() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         final Applicant applicant2 = caseData.getApplicant2();
@@ -633,7 +639,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateChangeServiceRequestWhenRespondentNotConfidentialOverseasAndCourtServiceJointApp() {
+    void shouldValidateChangeServiceRequestWhenRespondentNotConfidentialOverseasAndCourtServiceJointApp() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         final Applicant applicant2 = caseData.getApplicant2();
@@ -648,7 +654,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateChangeServiceRequestWhenRespondentConfidentialOverseasAndCourtService() {
+    void shouldValidateChangeServiceRequestWhenRespondentConfidentialOverseasAndCourtService() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         final Applicant applicant2 = caseData.getApplicant2();
         applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
@@ -662,7 +668,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateChangeServiceRequestWhenRespondentNotAndPersonalService() {
+    void shouldValidateChangeServiceRequestWhenRespondentNotAndPersonalService() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         final Applicant applicant2 = caseData.getApplicant2();
         applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
@@ -675,7 +681,7 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateChangeServiceRequestWhenRespondentNotConfidentialAndSolicitorService() {
+    void shouldValidateChangeServiceRequestWhenRespondentNotConfidentialAndSolicitorService() {
         final CaseData caseData = caseDataWithStatementOfTruth();
         final Applicant applicant2 = caseData.getApplicant2();
         applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
@@ -688,79 +694,116 @@ public class CaseValidationTest {
     }
 
     @Test
-    public void shouldValidateNamesWithInvalidCharacters() {
-        final CaseData caseData = caseDataWithStatementOfTruth();
-        caseData.getApplication().getMarriageDetails().setApplicant1Name("Inva{id App1Name");
-        caseData.getApplication().getMarriageDetails().setApplicant2Name("Inva{id App2Name");
-        caseData.getApplicant1().setFirstName("Inva{id");
-        caseData.getApplicant1().setMiddleName("Inva1id");
-        caseData.getApplicant1().setLastName("Inva$id");
-        caseData.getApplicant2().setFirstName("Inva{id");
-        caseData.getApplicant2().setMiddleName("Inva1id");
-        caseData.getApplicant2().setLastName("Inva$id");
+    void shouldValidateApplicantsStatusForJointlyRepresentedJointCaseWhenOneOfTheApplicantsIsOnline() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(NO);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        Solicitor solicitor = Solicitor.builder().name("solicitor").firmName("firm").build();
+        caseData.getApplicant1().setSolicitor(solicitor);
+        caseData.getApplicant2().setSolicitor(solicitor);
 
-        List<String> errors = validateAllNamesForAllowedCharacters(caseData);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
 
-        assertThat(errors).isNotNull();
-        assertThat(errors).containsExactlyInAnyOrder(
-            "Applicant or Applicant 1 first name has invalid characters",
-            "Applicant or Applicant 1 middle name has invalid characters",
-            "Applicant or Applicant 1 last name has invalid characters",
-            "Respondent or Applicant 2 first name has invalid characters",
-            "Respondent or Applicant 2 middle name has invalid characters",
-            "Respondent or Applicant 2 last name has invalid characters",
-            "Applicant or Applicant 1 name on marriage certificate has invalid characters",
-            "Respondent or Applicant 2 name on marriage certificate has invalid characters"
-        );
+        List<String> errors = validateJointApplicantOfflineStatus(caseDetails);
+        assertThat(errors).hasSize(1);
+        assertThat(errors).containsExactly(INVALID_JOINT_OFFLINE_STATUS);
     }
 
     @Test
-    public void shouldReturnNoErrorsWhenAllNamesAreValid() {
-        final CaseData caseData = caseDataWithStatementOfTruth();
-        caseData.getApplication().getMarriageDetails().setApplicant1Name("Valid app_licant-namé");
-        caseData.getApplication().getMarriageDetails().setApplicant2Name("Valid respondent-namé");
-        caseData.getApplicant1().setFirstName("Valid");
-        caseData.getApplicant1().setLastName("Valid");
-        caseData.getApplicant2().setFirstName("Valid");
-        caseData.getApplicant2().setLastName("Valid");
+    void shouldNotValidateApplicantsStatusForSoleCaseWhenOneOfTheApplicantsIsOnline() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(NO);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        Solicitor solicitor = Solicitor.builder().name("solicitor").firmName("firm").build();
+        caseData.getApplicant1().setSolicitor(solicitor);
+        caseData.getApplicant2().setSolicitor(solicitor);
 
-        List<String> errors = validateAllNamesForAllowedCharacters(caseData);
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
 
+        List<String> errors = validateJointApplicantOfflineStatus(caseDetails);
         assertThat(errors).isEmpty();
     }
 
     @Test
-    void shouldReturnEmptyListWhenArgumentIsNull() {
-        List<String> response = validName(null, "test");
-        assertThat(response).isEmpty();
+    void shouldNotValidateApplicantsStatusForSeparatelyRepresentedJointCaseWhenOneOfTheApplicantsIsOnline() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(NO);
+        caseData.getApplicant1().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        Solicitor app1Solicitor = Solicitor.builder().name("solicitor").firmName("firm").build();
+        Solicitor app2Solicitor = Solicitor.builder().name("solicitor2").firmName("firm2").build();
+        caseData.getApplicant1().setSolicitor(app1Solicitor);
+        caseData.getApplicant2().setSolicitor(app2Solicitor);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        List<String> errors = validateJointApplicantOfflineStatus(caseDetails);
+        assertThat(errors).isEmpty();
     }
 
     @Test
-    void shouldReturnEmptyListWhenArgumentIsEmpty() {
-        List<String> response = validName("", "test");
-        assertThat(response).isEmpty();
+    void shouldValidateApplicantsStatusForJointCaseWhenBothApplicantsAreOffline() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant2().setOffline(YES);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        List<String> errors = validateJointApplicantOfflineStatus(caseDetails);
+        assertThat(errors).isEmpty();
     }
 
-    @ParameterizedTest
-    @MethodSource("provideNameData")
-    void testNameForValidCharacters(String value,
-                                    boolean expectedOutcome) {
-        boolean result = isNameValid(value);
-        assertThat(result).isEqualTo(expectedOutcome);
+    @Test
+    void shouldValidateSolicitorPbaNumbersWhenPbaListIsNotEmpty() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+
+        PbaService pbaService = mock(PbaService.class);
+        DynamicList pbaNumbers = mock(DynamicList.class);
+
+        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
+
+        when(pbaService.populatePbaDynamicList()).thenReturn(pbaNumbers);
+
+        SolicitorPbaValidation response = validateSolicitorPbaNumbers(caseData, pbaService, TEST_CASE_ID);
+
+        assertThat(response.getPbaNumbersList()).isNotNull();
     }
 
-    static Stream<Arguments> provideNameData() {
-        return Stream.of(
-            Arguments.of("Test User", true),
-            Arguments.of("test_first_name test_last_name", true),
-            Arguments.of("Test_User", true),
-            Arguments.of("Test'User", true),
-            Arguments.of("Test’User", true),
-            Arguments.of("Test-User", true),
-            Arguments.of("Tést User", true),
-            Arguments.of("Test1 User", false),
-            Arguments.of("Test$ User", false),
-            Arguments.of("Test Useς", false)
-        );
+    @Test
+    void shouldThrowExceptionForSolicitorPbaNumbersWhenPbaListIsEmpty() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+
+        PbaService pbaService = mock(PbaService.class);
+
+        doThrow(FeignException.class).when(pbaService).populatePbaDynamicList();
+
+        SolicitorPbaValidation response = validateSolicitorPbaNumbers(caseData, pbaService, TEST_CASE_ID);
+
+        assertThat(response.getPbaNumbersList()).isNull();
+        assertThat(response.getErrorResponse()).isInstanceOf(AboutToStartOrSubmitResponse.class);
+        assertThat(response.getErrorResponse()).isNotNull();
+        assertThat(response.getErrorResponse().getErrors()).hasSize(1);
+        assertThat(response.getErrorResponse().getErrors().get(0)).isEqualTo("No PBA numbers associated with the provided email address");
+
     }
 }

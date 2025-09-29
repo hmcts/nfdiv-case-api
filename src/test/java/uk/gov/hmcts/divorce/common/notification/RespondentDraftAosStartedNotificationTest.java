@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -35,6 +36,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CA
 import static uk.gov.hmcts.divorce.notification.CommonContent.NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -80,6 +83,30 @@ class RespondentDraftAosStartedNotificationTest {
                 anyMap(),
                 eq(caseData.getApplicant1().getLanguagePreference()),
                 eq(id)
+        );
+
+        verify(commonContent).mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
+    }
+
+    @Test
+    void testSendToApplicant1AosOverdue() {
+        CaseData caseData = caseData();
+        caseData.setDueDate(LocalDate.parse("2000-01-01"));
+        Long id = 1L;
+
+        var templateVars = getTemplateVars(caseData, caseData.getApplicant1());
+        templateVars.put(SUBMISSION_RESPONSE_DATE, caseData.getDueDate().format(DATE_TIME_FORMATTER));
+        when(commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2()
+        )).thenReturn(templateVars);
+
+        notificationHandler.sendToApplicant1(caseData, id);
+
+        verify(notificationService).sendEmail(
+            eq(caseData.getApplicant1().getEmail()),
+            eq(EmailTemplateName.RESPONDENT_DRAFT_AOS_STARTED_APPLICATION_OVERDUE),
+            anyMap(),
+            eq(caseData.getApplicant1().getLanguagePreference()),
+            eq(id)
         );
 
         verify(commonContent).mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());

@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -23,10 +24,12 @@ import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingsWithAddressContent;
 import uk.gov.hmcts.divorce.document.content.templatecontent.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.content.templatecontent.CoversheetSolicitorTemplateContent;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.time.LocalDateTime.now;
@@ -44,8 +47,10 @@ import static uk.gov.hmcts.divorce.caseworker.service.task.util.FileNameUtil.for
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.DIGITAL_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
@@ -57,21 +62,18 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_AS1_SOLEJO
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_JS_SUBMITTED_RESPONDENT_SOLICITOR_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R1_SOLE_APP2_CIT_ONLINE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class GenerateApplicant2NoticeOfProceedingsTest {
+class GenerateApplicant2NoticeOfProceedingsTest {
 
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
@@ -211,14 +213,14 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
     }
 
     @Test
-    void shouldGenerateR2WhenSoleWithAppNotRepresentedAndOffline() {
+    void shouldGenerateNoPWhenSoleWithAppNotRepresentedAndAddressSelectedAsOverseas() {
         setMockClock(clock);
         MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
         classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
-        caseData.getApplication().setServiceMethod(COURT_SERVICE);
-        caseData.getApplicant2().setEmail(null);
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
+        caseData.getApplicant2().setAddressOverseas(YES);
 
         final Map<String, Object> templateContent = new HashMap<>();
 
@@ -226,7 +228,7 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContent, NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE);
+        verifyInteractions(caseData, templateContent, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
         verify(generateCoversheet)
             .generateCoversheet(
                 caseData,
@@ -235,127 +237,6 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
                 templateContent,
                 ENGLISH
             );
-        assertThat(result.getData()).isEqualTo(caseData);
-        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
-        classMock.close();
-    }
-
-    @Test
-    void shouldGenerateR2WhenSoleAndRespondentIsOverseas() {
-        setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
-
-        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
-        caseData.getApplicant2().setAddress(
-            AddressGlobalUK
-                .builder()
-                .addressLine1("line 1")
-                .postTown("town")
-                .postCode("postcode")
-                .country("France")
-                .build()
-        );
-        caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
-
-        final Map<String, Object> templateContent = new HashMap<>();
-
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
-
-        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
-
-        verifyInteractions(caseData, templateContent, NFD_NOP_R2_SOLE_APP2_OUTSIDE_ENGLAND_WALES);
-        verify(generateCoversheet)
-            .generateCoversheet(
-                caseData,
-                TEST_CASE_ID,
-                COVERSHEET_APPLICANT,
-                templateContent,
-                ENGLISH
-            );
-        assertThat(result.getData()).isEqualTo(caseData);
-        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
-        classMock.close();
-    }
-
-    @Test
-    void shouldGenerateR2WhenSoleWithAppNotRepresentedAndReissuedAsOfflineAos() {
-        setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
-
-        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
-        caseData.getApplication().setServiceMethod(COURT_SERVICE);
-
-        LocalDate issueDate = LocalDate.now().minusDays(5);
-        caseData.getApplication().setIssueDate(issueDate);
-        caseData.getApplication().setReissueDate(issueDate.plusDays(5));
-        caseData.getApplication().setReissueOption(ReissueOption.OFFLINE_AOS);
-
-        caseData.getApplicant2().setEmail("respondent@email.com");
-
-        final Map<String, Object> templateContent = new HashMap<>();
-
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
-
-        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
-
-        verifyInteractions(caseData, templateContent, NFD_NOP_R2_SOLE_APP2_CIT_OFFLINE_REISSUE);
-        verify(generateCoversheet)
-            .generateCoversheet(
-                caseData,
-                TEST_CASE_ID,
-                COVERSHEET_APPLICANT,
-                templateContent,
-                ENGLISH
-            );
-        assertThat(result.getData()).isEqualTo(caseData);
-        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
-        classMock.close();
-    }
-
-    @Test
-    void shouldGenerateR1WhenSoleWithAppNotRepresentedAndOfflineButHasEmail() {
-        setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
-
-        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
-        caseData.getApplication().setServiceMethod(COURT_SERVICE);
-        caseData.getApplicant2().setOffline(YES);
-        caseData.getApplicant2().setEmail("notnull@something.com");
-
-        final Map<String, Object> templateContent = new HashMap<>();
-
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
-
-        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
-
-        verifyInteractions(caseData, templateContent, NFD_NOP_R1_SOLE_APP2_CIT_ONLINE);
-
-        assertThat(result.getData()).isEqualTo(caseData);
-        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
-        classMock.close();
-    }
-
-    @Test
-    void shouldGenerateR1WhenSoleWithAppNotRepresentedAndOnline() {
-        setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
-
-        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
-        caseData.getApplication().setServiceMethod(COURT_SERVICE);
-        caseData.getApplicant2().setEmail("notnull@something.com");
-
-        final Map<String, Object> templateContent = new HashMap<>();
-
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
-
-        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
-
-        verifyInteractions(caseData, templateContent, NFD_NOP_R1_SOLE_APP2_CIT_ONLINE);
-
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
         classMock.close();
@@ -421,8 +302,6 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
         caseData.getApplicant2().setEmail("notnull@something.com");
         caseData.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         caseData.getApplication().setReissueOption(DIGITAL_AOS);
-
-        final Map<String, Object> templateContent = new HashMap<>();
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
@@ -566,10 +445,212 @@ public class GenerateApplicant2NoticeOfProceedingsTest {
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
-        verifyInteractions(caseData, templateContent, NFD_NOP_R1_SOLE_APP2_CIT_ONLINE);
+        verifyInteractions(caseData, templateContent, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo("ABCD2234");
+        classMock.close();
+    }
+
+    @Test
+    void shouldGenerateNoPWhenSoleAndRespondentIsOverseas() {
+        setMockClock(clock);
+        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
+        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
+
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
+        caseData.getApplicant2().setAddress(
+                AddressGlobalUK
+                        .builder()
+                        .addressLine1("line 1")
+                        .postTown("town")
+                        .postCode("postcode")
+                        .country("France")
+                        .build()
+        );
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), WELSH)).thenReturn(templateContent);
+
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
+        verify(generateCoversheet)
+                .generateCoversheet(
+                        caseData,
+                        TEST_CASE_ID,
+                        COVERSHEET_APPLICANT,
+                        templateContent,
+                        WELSH
+            );
+        assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
+        classMock.close();
+    }
+
+    @Test
+    void shouldGenerateR2WhenSoleWithAppNotRepresentedAndReissuedAsOfflineAos() {
+        setMockClock(clock);
+        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
+        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
+
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+
+        LocalDate issueDate = LocalDate.now().minusDays(5);
+        caseData.getApplication().setIssueDate(issueDate);
+        caseData.getApplication().setReissueDate(issueDate.plusDays(5));
+        caseData.getApplication().setReissueOption(ReissueOption.OFFLINE_AOS);
+
+        caseData.getApplicant2().setEmail("respondent@email.com");
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
+
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
+        verify(generateCoversheet)
+                .generateCoversheet(
+                        caseData,
+                        TEST_CASE_ID,
+                        COVERSHEET_APPLICANT,
+                        templateContent,
+                        ENGLISH
+            );
+        assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
+        classMock.close();
+    }
+
+    @Test
+    void shouldGenerateNoPWhenSoleWithAppNotRepresentedAndNotCourtService() {
+        setMockClock(clock);
+        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
+        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
+
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplicant2().setOffline(YES);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
+
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
+        verify(generateCoversheet)
+                .generateCoversheet(
+                        caseData,
+                        TEST_CASE_ID,
+                        COVERSHEET_APPLICANT,
+                        templateContent,
+                        ENGLISH
+            );
+
+        assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
+        classMock.close();
+    }
+
+    @Test
+    void shouldGenerateNoPWithCoversheetWhenSoleUnrepresentedRespondentIsOffline() {
+        setMockClock(clock);
+        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
+        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
+
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplicant2().setOffline(YES);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
+
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
+        verify(generateCoversheet)
+            .generateCoversheet(
+                caseData,
+                TEST_CASE_ID,
+                COVERSHEET_APPLICANT,
+                templateContent,
+                ENGLISH
+            );
+
+        assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
+        classMock.close();
+    }
+
+    @Test
+    void shouldGenerateNoPWithCoversheetIfThereAreOutdatedCoversheetsFromPreviousIssues() {
+        setMockClock(clock);
+        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
+        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
+
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
+        caseData.getDocuments().setDocumentsGenerated(
+            List.of(
+                ListValue.<DivorceDocument>builder().value(
+                    DivorceDocument.builder()
+                        .documentType(COVERSHEET)
+                        .build()
+                ).build()
+            )
+        );
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplicant2().setOffline(NO);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
+
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
+        verify(generateCoversheet)
+            .generateCoversheet(
+                caseData,
+                TEST_CASE_ID,
+                COVERSHEET_APPLICANT,
+                templateContent,
+                ENGLISH
+            );
+
+        assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
+        classMock.close();
+    }
+
+    @Test
+    void shouldGenerateNoPWithoutCoversheetWhenSoleWithAppNotRepresentedAndOnline() {
+        setMockClock(clock);
+        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
+        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
+
+        final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+        caseData.getApplicant2().setOffline(NO);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
+
+        final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
+
+        verifyInteractions(caseData, templateContent, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
+        verifyNoInteractions(generateCoversheet);
+        verifyNoInteractions(coversheetApplicantTemplateContent);
+
+        assertThat(result.getData()).isEqualTo(caseData);
+        assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
         classMock.close();
     }
 

@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -32,7 +31,7 @@ class CaseworkerCreateCaseFlagTest {
     private CaseworkerCreateCaseFlag caseworkerCreateCaseFlag;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerCreateCaseFlag.configure(configBuilder);
@@ -44,14 +43,12 @@ class CaseworkerCreateCaseFlagTest {
 
     @Test
     void shouldInitialisePartyFlagsInAboutToStartEvent() {
-        Long caseId = TEST_CASE_ID;
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = validApplicant1CaseData();
         caseDetails.setData(caseData);
-        caseDetails.setId(caseId);
+        caseDetails.setId(TEST_CASE_ID);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerCreateCaseFlag.aboutToStart(caseDetails);
+        caseworkerCreateCaseFlag.aboutToStart(caseDetails);
 
         verify(caseFlagsService).initialiseAllInternalPartyFlags(caseData);
     }

@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
+import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.divorce.document.print.documentpack.RequestForInformationPartnerResponseDocumentPack;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
@@ -38,12 +40,24 @@ public class CitizenRequestForInformationResponsePartnerNotification implements 
     public static final String REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_TO_FOR_CASE_ID =
         "Sending Request For Information Response Partner Notification to {} for case id: {}";
 
+    public static final String REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID =
+        "Sending Request For Information Response Partner Offline Notification to {} for case id: {}";
+
+    public static final String SKIP_REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID =
+        "Skipping Request For Information Response Partner Offline Notification to {} for case id: {}. Requested Documents Not Provided.";
+    private static final String APPLICANT_1 = "applicant 1";
+    private static final String APPLICANT_1_SOLICITOR = "applicant 1 solicitor";
+    private static final String APPLICANT_2 = "applicant 2";
+    private static final String APPLICANT_2_SOLICITOR = "applicant 2 solicitor";
+
     private final NotificationService notificationService;
     private final CommonContent commonContent;
+    private final RequestForInformationPartnerResponseDocumentPack requestForInformationPartnerResponseDocumentPack;
+    private final LetterPrinter letterPrinter;
 
     @Override
     public void sendToApplicant1(CaseData caseData, Long caseId) {
-        log.info(REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_TO_FOR_CASE_ID, "applicant 1", caseId);
+        log.info(REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_TO_FOR_CASE_ID, APPLICANT_1, caseId);
 
         RequestForInformationResponse latestResponse =
             caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
@@ -64,7 +78,7 @@ public class CitizenRequestForInformationResponsePartnerNotification implements 
 
     @Override
     public void sendToApplicant1Solicitor(CaseData caseData, Long caseId) {
-        log.info(REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_TO_FOR_CASE_ID, "applicant 1 solicitor", caseId);
+        log.info(REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_TO_FOR_CASE_ID, APPLICANT_1_SOLICITOR, caseId);
 
         RequestForInformationResponse latestResponse =
             caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
@@ -84,8 +98,44 @@ public class CitizenRequestForInformationResponsePartnerNotification implements 
     }
 
     @Override
+    public void sendToApplicant1Offline(final CaseData caseData, final Long caseId) {
+        if (allDocsProvided(caseData, caseId, caseData.getApplicationType().isSole() ? "applicant" : APPLICANT_1)) {
+            log.info(REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID,
+                caseData.getApplicationType().isSole() ? "applicant" : APPLICANT_1, caseId);
+
+            Applicant applicant1 = caseData.getApplicant1();
+            var documentPackInfo = requestForInformationPartnerResponseDocumentPack.getDocumentPack(caseData, applicant1);
+            letterPrinter.sendLetters(
+                caseData,
+                caseId,
+                applicant1,
+                documentPackInfo,
+                requestForInformationPartnerResponseDocumentPack.getLetterId()
+            );
+        }
+    }
+
+    @Override
+    public void sendToApplicant1SolicitorOffline(final CaseData caseData, final Long caseId) {
+        if (allDocsProvided(caseData, caseId, caseData.getApplicationType().isSole() ? "applicant solicitor" : APPLICANT_1_SOLICITOR)) {
+            log.info(REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID,
+                caseData.getApplicationType().isSole() ? "applicant solicitor" : APPLICANT_1_SOLICITOR, caseId);
+
+            Applicant applicant1 = caseData.getApplicant1();
+            var documentPackInfo = requestForInformationPartnerResponseDocumentPack.getDocumentPack(caseData, applicant1);
+            letterPrinter.sendLetters(
+                caseData,
+                caseId,
+                applicant1,
+                documentPackInfo,
+                requestForInformationPartnerResponseDocumentPack.getLetterId()
+            );
+        }
+    }
+
+    @Override
     public void sendToApplicant2(CaseData caseData, Long caseId) {
-        log.info(REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_TO_FOR_CASE_ID, "applicant 2", caseId);
+        log.info(REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_TO_FOR_CASE_ID, APPLICANT_2, caseId);
 
         RequestForInformationResponse latestResponse =
             caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
@@ -106,7 +156,7 @@ public class CitizenRequestForInformationResponsePartnerNotification implements 
 
     @Override
     public void sendToApplicant2Solicitor(CaseData caseData, Long caseId) {
-        log.info(REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_TO_FOR_CASE_ID, "applicant 2 solicitor", caseId);
+        log.info(REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_TO_FOR_CASE_ID, APPLICANT_2_SOLICITOR, caseId);
 
         RequestForInformationResponse latestResponse =
             caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
@@ -123,6 +173,40 @@ public class CitizenRequestForInformationResponsePartnerNotification implements 
             caseData.getApplicant2().getLanguagePreference(),
             caseId
         );
+    }
+
+    @Override
+    public void sendToApplicant2Offline(final CaseData caseData, final Long caseId) {
+        if (allDocsProvided(caseData, caseId, APPLICANT_2)) {
+            log.info(REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID, APPLICANT_2, caseId);
+
+            Applicant applicant2 = caseData.getApplicant2();
+            var documentPackInfo = requestForInformationPartnerResponseDocumentPack.getDocumentPack(caseData, applicant2);
+            letterPrinter.sendLetters(
+                caseData,
+                caseId,
+                applicant2,
+                documentPackInfo,
+                requestForInformationPartnerResponseDocumentPack.getLetterId()
+            );
+        }
+    }
+
+    @Override
+    public void sendToApplicant2SolicitorOffline(final CaseData caseData, final Long caseId) {
+        if (allDocsProvided(caseData, caseId, APPLICANT_2_SOLICITOR)) {
+            log.info(REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID, APPLICANT_2_SOLICITOR, caseId);
+
+            Applicant applicant2 = caseData.getApplicant2();
+            var documentPackInfo = requestForInformationPartnerResponseDocumentPack.getDocumentPack(caseData, applicant2);
+            letterPrinter.sendLetters(
+                caseData,
+                caseId,
+                applicant2,
+                documentPackInfo,
+                requestForInformationPartnerResponseDocumentPack.getLetterId()
+            );
+        }
     }
 
     private Map<String, String> applicantTemplateContent(final CaseData caseData,
@@ -180,5 +264,14 @@ public class CitizenRequestForInformationResponsePartnerNotification implements 
                 ? REQUEST_FOR_INFORMATION_SOLICITOR_OTHER_PARTY_COULD_NOT_UPLOAD
                 : REQUEST_FOR_INFORMATION_SOLICITOR_OTHER_PARTY;
         }
+    }
+
+    private boolean allDocsProvided(final CaseData caseData, final Long caseId, final String errorText) {
+        RequestForInformationResponse latestResponse = caseData.getRequestForInformationList().getLatestRequest().getLatestResponse();
+        if (latestResponse.areAllDocsUploaded()) {
+            return true;
+        }
+        log.info(SKIP_REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_OFFLINE_NOTIFICATION_TO_FOR_CASE_ID, errorText, caseId);
+        return false;
     }
 }

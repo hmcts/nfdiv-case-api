@@ -48,7 +48,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class SubmitJointConditionalOrderTest {
+class SubmitJointConditionalOrderTest {
 
     @Mock
     private Clock clock;

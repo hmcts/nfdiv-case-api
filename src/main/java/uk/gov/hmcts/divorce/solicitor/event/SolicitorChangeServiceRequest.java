@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -46,41 +46,33 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServic
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_CHANGE_SERVICE_REQUEST = "solicitor-change-service-request";
 
     public static final String NOT_ISSUED_ERROR = "The application must have been issued before you can change the service request.";
+    private static final String CHANGE_SERVICE_REQUEST = "Change service request";
 
-    @Autowired
-    private ApplicationIssuedNotification applicationIssuedNotification;
+    private final ApplicationIssuedNotification applicationIssuedNotification;
 
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
+    private final CcdUpdateService ccdUpdateService;
 
-    @Autowired
-    private SetNoticeOfProceedingDetailsForRespondent setNoticeOfProceedingDetailsForRespondent;
+    private final SetNoticeOfProceedingDetailsForRespondent setNoticeOfProceedingDetailsForRespondent;
 
-    @Autowired
-    private GenerateApplicant1NoticeOfProceeding generateApplicant1NoticeOfProceeding;
+    private final GenerateApplicant1NoticeOfProceeding generateApplicant1NoticeOfProceeding;
 
-    @Autowired
-    private GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
+    private final GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
 
-    @Autowired
-    private GenerateD10Form generateD10Form;
+    private final GenerateD10Form generateD10Form;
 
-    @Autowired
-    private GenerateD84Form generateD84Form;
+    private final GenerateD84Form generateD84Form;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private ReIssueApplicationService reIssueApplicationService;
+    private final ReIssueApplicationService reIssueApplicationService;
 
     @Value("${aos_pack.due_date_offset_days}")
     private long dueDateOffsetDays;
@@ -91,8 +83,8 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
             .event(SOLICITOR_CHANGE_SERVICE_REQUEST)
             .forStates(POST_SUBMISSION_PRE_AWAITING_CO_STATES)
             .showCondition("issueDate=\"*\" AND applicationType=\"soleApplication\"")
-            .name("Change service request")
-            .description("Change service request")
+            .name(CHANGE_SERVICE_REQUEST)
+            .description(CHANGE_SERVICE_REQUEST)
             .showSummary()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
@@ -100,7 +92,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
             .grant(CREATE_READ_UPDATE, SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE))
             .page("changeServiceRequest")
-            .pageLabel("Change service request")
+            .pageLabel(CHANGE_SERVICE_REQUEST)
             .complex(CaseData::getApplication)
             .mandatory(Application::getServiceMethod);
     }

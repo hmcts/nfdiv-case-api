@@ -55,7 +55,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerRescindConditionalOrderTest {
+class CaseworkerRescindConditionalOrderTest {
 
     private static final String BULK_CASE_REFERENCE = "1234123412341234";
 
@@ -81,7 +81,7 @@ public class CaseworkerRescindConditionalOrderTest {
     private CaseworkerRescindConditionalOrder caseworkerRescindConditionalOrder;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerRescindConditionalOrder.configure(configBuilder);

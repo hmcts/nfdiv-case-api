@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.PaymentSetupService;
+import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
@@ -69,7 +69,7 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
         application.setApplicationFeeOrderSummary(orderSummary);
 
         String serviceRequest = paymentSetupService.createApplicationFeeServiceRequest(
-            data, caseId, data.getCitizenPaymentCallbackUrl()
+            data, caseId
         );
         application.setApplicationFeeServiceRequestReference(serviceRequest);
     }
@@ -82,7 +82,7 @@ public class CitizenCreateServiceRequest implements CCDConfig<CaseData, State, U
         finalOrder.setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
 
         String serviceRequest = paymentSetupService.createFinalOrderFeeServiceRequest(
-            data, caseId, data.getCitizenPaymentCallbackUrl(), finalOrder.getApplicant2FinalOrderFeeOrderSummary()
+            data, caseId, finalOrder.getApplicant2FinalOrderFeeOrderSummary()
         );
         finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequest);
     }

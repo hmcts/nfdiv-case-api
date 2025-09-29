@@ -37,7 +37,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerProgressPaperCaseTest {
+class CaseworkerProgressPaperCaseTest {
 
     @Mock
     private SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
@@ -179,7 +179,7 @@ public class CaseworkerProgressPaperCaseTest {
         caseDetails.setData(caseData);
         caseDetails.setId(caseId);
 
-        var response = caseworkerProgressPaperCase.aboutToSubmit(caseDetails, caseDetails);
+        caseworkerProgressPaperCase.aboutToSubmit(caseDetails, caseDetails);
 
         verify(caseFlagsService).initialiseCaseFlags(caseData);
     }

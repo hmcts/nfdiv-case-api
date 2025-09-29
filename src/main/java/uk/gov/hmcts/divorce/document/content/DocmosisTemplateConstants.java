@@ -21,6 +21,8 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_2_FULL_NAME = "applicant2FullName";
     public static final String FIRST_NAME = "firstName";
     public static final String LAST_NAME = "lastName";
+    public static final String APPLICANT_OR_APPLICANT1 = "applicantOrApplicant1";
+    public static final String RESPONDENT_OR_APPLICANT2 = "respondentOrApplicant2";
     public static final String APPLICANT_1_MARRIAGE_NAME = "applicant1MarriageName";
     public static final String APPLICANT_2_MARRIAGE_NAME = "applicant2MarriageName";
     public static final String MARRIAGE_DATE = "marriageDate";
@@ -88,7 +90,9 @@ public final class DocmosisTemplateConstants {
     public static final String APPLICANT_2_SOLICITOR_ADDRESS = "applicant2SolicitorAddress";
     public static final String SERVICE_APPLICATION_RECEIVED_DATE = "serviceApplicationReceivedDate";
     public static final String SERVICE_APPLICATION_DECISION_DATE = "serviceApplicationDecisionDate";
+    public static final String IS_SERVICE_ORDER_TYPE_ALTERNATIVE = "isServiceOrderTypeAlternative";
     public static final String IS_SERVICE_ORDER_TYPE_DEEMED = "isServiceOrderTypeDeemed";
+    public static final String IS_SERVICE_ORDER_TYPE_DISPENSED = "isServiceOrderTypeDispensed";
     public static final String ORDER_TYPE = "orderType";
     public static final String CONDITIONAL_ORDER = "conditional order";
     public static final String SEPARATION_ORDER = "separation order";
@@ -115,7 +119,9 @@ public final class DocmosisTemplateConstants {
     public static final String RESPOND_BY_DATE = "respondByDate";
     public static final String RESPONDENT_SOLICITOR_REGISTERED = "respSolicitorRegistered";
     public static final String NOT_PROVIDED = "Not provided";
+    public static final String NOT_PROVIDED_CY = "Heb ei ddarparu";
     public static final String NOT_REPRESENTED = "Not represented";
+    public static final String NOT_REPRESENTED_CY = "Heb ei gynrychioli";
 
     public static final String PRONOUNCEMENT_JUDGE = "pronouncementJudge";
     public static final String COURT_NAME = "courtName";
@@ -145,6 +151,24 @@ public final class DocmosisTemplateConstants {
     public static final String SERVE_BY_EMAIL_COST = "serveTheApplicationByEmailCost";
     public static final String BAILIFF_SERVICE_COST = "bailiffServiceCost";
     public static final String DEEMED_SERVICE_COST = "deemedServiceCost";
+    public static final String DEEMED_EVIDENCE_UPLOADED = "deemedEvidenceUploaded";
+    public static final String DEEMED_EVIDENCE_DETAILS = "deemedEvidenceDetails";
+    public static final String DEEMED_NO_EVIDENCE_STATEMENT = "deemedNoEvidenceStatement";
+    public static final String ALTERNATIVE_SERVICE_REASON_FOR_APPLYING = "altServiceReasonForApplying";
+    public static final String ALTERNATIVE_SERVICE_METHOD_EMAIL = "byEmail";
+    public static final String ALTERNATIVE_SERVICE_METHOD_EMAIL_AND_DIFFERENT = "emailAndDifferent";
+    public static final String ALTERNATIVE_SERVICE_EVIDENCE_UPLOADED = "altServiceEvidenceUploaded";
+    public static final String ALTERNATIVE_SERVICE_BY_TEXT = "byTextMessage";
+    public static final String ALTERNATIVE_SERVICE_BY_WHATSAPP = "byWhatsApp";
+    public static final String ALTERNATIVE_SERVICE_BY_SOCIAL_MEDIA = "bySocialMedia";
+    public static final String ALTERNATIVE_SERVICE_BY_OTHER = "byOther";
+    public static final String ALTERNATIVE_SERVICE_PARTNER_EMAIL = "altServicePartnerEmail";
+    public static final String ALTERNATIVE_SERVICE_PARTNER_PHONE = "altServicePartnerPhone";
+    public static final String ALTERNATIVE_SERVICE_PARTNER_WA_NUM = "altServicePartnerWANum";
+    public static final String ALTERNATIVE_SERVICE_PARTNER_SOCIAL_DETAILS = "altServicePartnerSocialDetails";
+    public static final String ALTERNATIVE_SERVICE_PARTNER_OTHER_DETAILS = "altServicePartnerOtherDetails";
+    public static final String ALTERNATIVE_SERVICE_EVIDENCE_DETAILS = "altServiceEvidenceDetails";
+    public static final String STATEMENT_OF_TRUTH = "statementOfTruth";
     public static final String DISPENSED_SERVICE_COST = "dispensedServiceCost";
     public static final String ARRANGE_SERVICE_BY_DATE = "arrangeServiceBeforeDate";
     public static final String SOLICITOR_ORGANISATION_NAME = "organisationName";
@@ -169,6 +193,8 @@ public final class DocmosisTemplateConstants {
     public static final String PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP = "process to end your civil partnership";
     public static final String PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY = "broses o ddod â’ch partneriaeth sifil i ben";
     public static final String JUDICIAL_SEPARATION_PROCESS = "judicial separation process";
+    public static final String JUDICIAL_SEPARATION_APPLICATION = "judicial separation application";
+    public static final String JUDICIAL_SEPARATION_APPLICATION_CY = "cais am ymwahaniad cyfreithiol";
     public static final String SEPARATION_PROCESS = "separation process";
     public static final String DUE_DATE = "dueDate";
     public static final String APPLICANT_SOLICITOR_REGISTERED = "isApplicantSolicitorRegistered";
@@ -185,6 +211,7 @@ public final class DocmosisTemplateConstants {
     public static final String IS_SOLE = "isSole";
     public static final String JUDGE_NAME = "judgeName";
     public static final String CO_PRONOUNCED_DATE = "coPronouncedDate";
+    public static final String FO_GRANTED_DATE = "finalOrderGrantedDate";
     public static final String DATE_FO_ELIGIBLE_FROM = "dateFinalOrderEligibleFrom";
 
     public static final String FINANCIAL_ORDER_POLICY_HEADER_TEXT = "The applicant wants to apply for a financial order.";
@@ -214,6 +241,16 @@ public final class DocmosisTemplateConstants {
     public static final String RESPONSE_DUE_DATE = "responseDueDate";
     public static final String CO_OR_FO = "coOrFo";
     public static final String ADDRESS_BASED_OVERSEAS = "isBasedOverseas";
+    public static final String APPLICANT = "Applicant:";
+    public static final String APPLICANT_CY = "Ceisydd:";
+    public static final String APPLICANT_1 = "Applicant 1:";
+    public static final String APPLICANT_1_CY = "Ceisydd 1:";
+    public static final String RESPONDENT = "Respondent:";
+    public static final String RESPONDENT_CY = "Atebydd:";
+    public static final String APPLICANT_2 = "Applicant 2:";
+    public static final String APPLICANT_2_CY = "Ceisydd 2:";
+
+    public static final String REQUEST_FOR_INFORMATION_DETAILS = "requestForInformationDetails";
 
     private DocmosisTemplateConstants() {
     }

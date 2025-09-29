@@ -13,11 +13,12 @@ import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 
@@ -55,14 +56,18 @@ public class BulkCaseProcessingService {
 
         if (isEmpty(bulkActionCaseData.getProcessedCaseDetails())) {
             log.info("Processed cases list is empty hence processing all cases in bulk case with id {} ", bulkCaseId);
-            return bulkActionCaseData.getBulkListCaseDetails().stream()
+            return Optional.ofNullable(bulkActionCaseData.getBulkListCaseDetails())
+                .orElse(Collections.emptyList())
+                .stream()
                 .filter(erroredCase -> !casesToBeRemoved.contains(erroredCase))
-                .collect(toList());
+                .toList();
         }
 
         log.info("Processed cases with errors in bulk case with id {} ", bulkCaseId);
-        return bulkActionCaseData.getErroredCaseDetails().stream()
+        return Optional.ofNullable(bulkActionCaseData.getErroredCaseDetails())
+            .orElse(Collections.emptyList())
+            .stream()
             .filter(erroredCase -> !casesToBeRemoved.contains(erroredCase))
-            .collect(toList());
+            .toList();
     }
 }

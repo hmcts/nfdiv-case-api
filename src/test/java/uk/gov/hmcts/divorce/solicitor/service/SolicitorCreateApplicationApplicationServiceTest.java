@@ -20,7 +20,6 @@ import uk.gov.hmcts.divorce.solicitor.service.task.InitialiseSolicitorCreatedApp
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicant1SolicitorAddress;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicantAddresses;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicantGender;
-import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicationFeeServiceRequest;
 import uk.gov.hmcts.divorce.solicitor.service.task.SolicitorCourtDetails;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -74,9 +73,6 @@ class SolicitorCreateApplicationApplicationServiceTest {
     @Mock
     private SetApplicantAddresses setApplicantAddresses;
 
-    @Mock
-    private SetApplicationFeeServiceRequest setApplicationFeeServiceRequest;
-
     @InjectMocks
     private SolicitorCreateApplicationService solicitorCreateApplicationService;
 
@@ -95,7 +91,6 @@ class SolicitorCreateApplicationApplicationServiceTest {
         when(divorceApplicationDraft.apply(caseDetails)).thenReturn(caseDetails);
         when(setApplicantGender.apply(caseDetails)).thenReturn(caseDetails);
         when(setApplicantAddresses.apply(caseDetails)).thenReturn(caseDetails);
-        when(setApplicationFeeServiceRequest.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> result = solicitorCreateApplicationService.aboutToSubmit(caseDetails);
 
@@ -105,11 +100,10 @@ class SolicitorCreateApplicationApplicationServiceTest {
         verify(solicitorCourtDetails).apply(caseDetails);
         verify(divorceApplicationDraft).apply(caseDetails);
         verify(setApplicantAddresses).apply(caseDetails);
-        verify(setApplicationFeeServiceRequest).apply(caseDetails);
     }
 
     @Test
-    public void shouldValidateApplicant1SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() {
+    void shouldValidateApplicant1SolicitorOrgAndReturnNoErrorsWhenSolicitorBelongsToSelectedOrg() {
         Solicitor solicitor = Solicitor.builder()
             .organisationPolicy(organisationPolicy())
             .email(TEST_SOLICITOR_EMAIL)
@@ -141,7 +135,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
     }
 
     @Test
-    public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() {
+    void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorDoesNotBelongsToSelectedOrg() {
         Solicitor solicitor = Solicitor.builder()
             .organisationPolicy(organisationPolicy())
             .email(TEST_SOLICITOR_EMAIL)
@@ -173,7 +167,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
     }
 
     @Test
-    public void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorOrgIsNotPopulated() {
+    void shouldValidateApplicant1SolicitorOrgAndReturnErrorWhenSolicitorOrgIsNotPopulated() {
         Solicitor solicitor = Solicitor.builder().email(TEST_SOLICITOR_EMAIL).build();
 
         final CaseInfo caseInfo = solicitorCreateApplicationService.validateSolicitorOrganisationAndEmail(
@@ -189,7 +183,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
     }
 
     @Test
-    public void shouldThrow403ForbiddenExceptionWhenServiceIsNotWhitelistedInReferenceData() {
+    void shouldThrow403ForbiddenExceptionWhenServiceIsNotWhitelistedInReferenceData() {
         byte[] emptyBody = {};
         Request request = Request.create(GET, EMPTY, Map.of(), emptyBody, UTF_8, null);
 
@@ -221,7 +215,7 @@ class SolicitorCreateApplicationApplicationServiceTest {
     }
 
     @Test
-    public void shouldValidateApplicant1SolicitorEmailAndReturnErrorsWhenInValid() {
+    void shouldValidateApplicant1SolicitorEmailAndReturnErrorsWhenInValid() {
         Solicitor solicitor = Solicitor.builder()
             .organisationPolicy(organisationPolicy())
             .email("invalidEmail")

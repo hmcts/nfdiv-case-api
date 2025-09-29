@@ -1,17 +1,21 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -38,7 +43,6 @@ public final class ValidationUtil {
     public static final String CONNECTION = "Connection ";
     public static final String CANNOT_EXIST = " cannot exist";
     public static final String SOT_REQUIRED = "Statement of truth must be accepted by the person making the application";
-    public static final String NAME_REGEX = "^[\\p{Script=Latin}'’_\\-\\s.()\"]*$";
 
     private ValidationUtil() {
     }
@@ -164,7 +168,7 @@ public final class ValidationUtil {
         final List<ListValue<CaseLink>> casesAcceptedToListForHearing = caseData.getCasesAcceptedToListForHearing();
         final List<String> caseReferences = caseData.getBulkListCaseDetails().stream()
             .map(c -> c.getValue().getCaseReference().getCaseReference())
-            .collect(toList());
+            .toList();
 
         final boolean anyDuplicateCases = !casesAcceptedToListForHearing.stream().allMatch(new HashSet<>()::add);
         final boolean anyNewCasesAdded =
@@ -224,52 +228,43 @@ public final class ValidationUtil {
             : singletonList("Not possible to update applicant 2 invite email address");
     }
 
-    public static List<String> validateAllNamesForAllowedCharacters(final CaseData data) {
-        return flattenLists(
-            validateApplicant1NameForAllowedCharacters(data),
-            validateApplicant2NameForAllowedCharacters(data),
-            validateMarriageCertificateNames(data)
-        );
+    public static List<String> validateJointApplicantOfflineStatus(CaseDetails<CaseData, State> details) {
+        CaseData caseData = details.getData();
+        boolean isJoint = !caseData.getApplicationType().isSole();
+        Applicant applicant1 = caseData.getApplicant1();
+        Applicant applicant2 = caseData.getApplicant2();
+        boolean applicantOfflineStatusMatches = applicant1.isApplicantOffline() == applicant2.isApplicantOffline();
+
+        return isJoint && !applicantOfflineStatusMatches && jointlyRepresented(applicant1, applicant2)
+            ? singletonList(String.format("Applicants have different offline status in a joint case."
+            + " Both applicants needs to be either online or offline for caseID: %s", details.getId()))
+            : emptyList();
     }
 
-    public static List<String> validateApplicant1NameForAllowedCharacters(final CaseData data) {
-        return flattenLists(
-            validName(data.getApplicant1().getFirstName(), "Applicant or Applicant 1 first name"),
-            validName(data.getApplicant1().getMiddleName(), "Applicant or Applicant 1 middle name"),
-            validName(data.getApplicant1().getLastName(), "Applicant or Applicant 1 last name")
-        );
-    }
+    public static boolean jointlyRepresented(Applicant applicant1, Applicant applicant2) {
+        Solicitor applicant1Solicitor = applicant1.getSolicitor();
+        Solicitor applicant2Solicitor = applicant2.getSolicitor();
 
-    public static List<String> validateApplicant2NameForAllowedCharacters(final CaseData data) {
-        return flattenLists(
-            validName(data.getApplicant2().getFirstName(), "Respondent or Applicant 2 first name"),
-            validName(data.getApplicant2().getMiddleName(), "Respondent or Applicant 2 middle name"),
-            validName(data.getApplicant2().getLastName(), "Respondent or Applicant 2 last name")
-        );
-    }
-
-    public static List<String> validateMarriageCertificateNames(final CaseData data) {
-        return flattenLists(
-            validName(data.getApplication().getMarriageDetails().getApplicant1Name(),
-                "Applicant or Applicant 1 name on marriage certificate"),
-            validName(data.getApplication().getMarriageDetails().getApplicant2Name(),
-                "Respondent or Applicant 2 name on marriage certificate")
-        );
-    }
-
-    public static List<String> validName(String value, String field) {
-        if (StringUtils.isEmpty(value)) {
-            return emptyList();
-        }
-        return  isNameValid(value) ? emptyList() : List.of(field + " has invalid characters");
-    }
-
-    public static boolean isNameValid(final String value) {
-        return value.matches(NAME_REGEX);
+        return applicant1.isRepresented() && applicant2.isRepresented()
+            && applicant1Solicitor != null && applicant2Solicitor != null
+            && Objects.equals(applicant1Solicitor.getName(), applicant2Solicitor.getName())
+            && Objects.equals(applicant1Solicitor.getFirmName(), applicant2Solicitor.getFirmName());
     }
 
     @SafeVarargs
     public static <E> List<E> flattenLists(List<E>... lists) {
         return Arrays.stream(lists).flatMap(Collection::stream).collect(toList());
+    }
+
+    public static SolicitorPbaValidation validateSolicitorPbaNumbers(CaseData caseData, PbaService pbaService, Long caseId) {
+        try {
+            final DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
+            log.info("Successfully retrieved PBA numbers for Case Id: {}", caseId);
+            return SolicitorPbaValidation.success(pbaNumbersDynamicList);
+        } catch (FeignException e) {
+            log.error("Failed to retrieve PBA numbers for Case Id: {}", caseId);
+            return SolicitorPbaValidation.error(caseData,
+                "No PBA numbers associated with the provided email address");
+        }
     }
 }

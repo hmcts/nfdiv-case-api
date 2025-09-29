@@ -21,7 +21,7 @@ class MarriageIrretrievablyBrokenTest {
     private final MarriageIrretrievablyBroken page = new MarriageIrretrievablyBroken();
 
     @Test
-    public void shouldPreventProgressIfMarriageNotBroken() {
+    void shouldPreventProgressIfMarriageNotBroken() {
         final CaseData caseData = caseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(NO);
 
@@ -32,15 +32,15 @@ class MarriageIrretrievablyBrokenTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
-        assertEquals(response.getErrors().size(), 1);
+        assertEquals(1, response.getErrors().size());
         assertEquals(
-            response.getErrors().get(0),
-            "To continue, applicant 1 must believe and declare that their marriage has irrevocably broken"
+            "To continue, applicant 1 must believe and declare that their marriage has irrevocably broken",
+            response.getErrors().get(0)
         );
     }
 
     @Test
-    public void shouldPreventProgressIfMarriageNotBrokenForBothApplicants() {
+    void shouldPreventProgressIfMarriageNotBrokenForBothApplicants() {
         final CaseData caseData = caseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(NO);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
@@ -52,19 +52,19 @@ class MarriageIrretrievablyBrokenTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
-        assertEquals(response.getErrors().size(), 2);
+        assertEquals(2, response.getErrors().size());
         assertEquals(
-            response.getErrors().get(0),
-            "To continue, applicant 1 must believe and declare that their marriage has irrevocably broken"
+            "To continue, applicant 1 must believe and declare that their marriage has irrevocably broken",
+            response.getErrors().get(0)
         );
         assertEquals(
-            response.getErrors().get(1),
-            "To continue, applicant 2 must believe and declare that their marriage has irrevocably broken"
+            "To continue, applicant 2 must believe and declare that their marriage has irrevocably broken",
+            response.getErrors().get(1)
         );
     }
 
     @Test
-    public void shouldAllowProgressIfMarriageIsBroken() {
+    void shouldAllowProgressIfMarriageIsBroken() {
         final CaseData caseData = caseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
 
@@ -75,11 +75,11 @@ class MarriageIrretrievablyBrokenTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
-        assertEquals(response.getErrors().size(), 0);
+        assertEquals(0, response.getErrors().size());
     }
 
     @Test
-    public void shouldAllowProgressIfMarriageIsBrokenForBothApplicants() {
+    void shouldAllowProgressIfMarriageIsBrokenForBothApplicants() {
         final CaseData caseData = caseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
@@ -91,6 +91,6 @@ class MarriageIrretrievablyBrokenTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
-        assertEquals(response.getErrors().size(), 0);
+        assertEquals(0, response.getErrors().size());
     }
 }

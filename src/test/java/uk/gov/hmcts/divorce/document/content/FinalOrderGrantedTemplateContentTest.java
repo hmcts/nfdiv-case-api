@@ -26,6 +26,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_PRONOUNCED_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FO_GRANTED_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SOLE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
@@ -46,12 +47,13 @@ import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGr
 import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.SPOUSE_OR_CP;
 import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.THE_MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.templatecontent.FinalOrderGrantedTemplateContent.THE_MARRIAGE_OR_CP;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.buildCaseDataForGrantFinalOrder;
 
 @ExtendWith(MockitoExtension.class)
-public class FinalOrderGrantedTemplateContentTest {
+class FinalOrderGrantedTemplateContentTest {
 
     @Mock
     private DocmosisCommonContent docmosisCommonContent;
@@ -60,7 +62,7 @@ public class FinalOrderGrantedTemplateContentTest {
     private FinalOrderGrantedTemplateContent finalOrderGrantedTemplateContent;
 
     @Test
-    public void shouldMapTemplateContentWhenDivorceCase() {
+    void shouldMapTemplateContentWhenDivorceCase() {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.SOLE_APPLICATION, DivorceOrDissolution.DIVORCE);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
 
@@ -70,7 +72,7 @@ public class FinalOrderGrantedTemplateContentTest {
 
         assertThat(templateContent).contains(
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
-            entry(DATE, "16 March 2022"),
+            entry(DATE, LocalDateTime.now().format(DATE_TIME_FORMATTER)),
             entry(IS_SOLE, true),
             entry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
             entry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name"),
@@ -82,12 +84,13 @@ public class FinalOrderGrantedTemplateContentTest {
             entry(DIVORCE_OR_DISSOLUTION, DIVORCE),
             entry(THE_MARRIAGE_OR_CP, THE_MARRIAGE),
             entry(SECTION, SECTION_18A),
-            entry(SPOUSE_OR_CP, SPOUSE)
+            entry(SPOUSE_OR_CP, SPOUSE),
+            entry(FO_GRANTED_DATE, "16 March 2022")
         );
     }
 
     @Test
-    public void shouldMapTemplateContentWhenDissolutionCase() {
+    void shouldMapTemplateContentWhenDissolutionCase() {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.JOINT_APPLICATION, DivorceOrDissolution.DISSOLUTION);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
 
@@ -97,7 +100,7 @@ public class FinalOrderGrantedTemplateContentTest {
 
         assertThat(templateContent).contains(
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
-            entry(DATE, "16 March 2022"),
+            entry(DATE, LocalDateTime.now().format(DATE_TIME_FORMATTER)),
             entry(IS_SOLE, false),
             entry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
             entry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name"),
@@ -109,12 +112,13 @@ public class FinalOrderGrantedTemplateContentTest {
             entry(DIVORCE_OR_DISSOLUTION, DISSOLUTION_OF_A_CIVIL_PARTNERSHIP),
             entry(THE_MARRIAGE_OR_CP, A_CIVIL_PARTNERSHIP),
             entry(SECTION, SECTION_18C),
-            entry(SPOUSE_OR_CP, CIVIL_PARTNER)
+            entry(SPOUSE_OR_CP, CIVIL_PARTNER),
+            entry(FO_GRANTED_DATE, "16 March 2022")
         );
     }
 
     @Test
-    public void shouldMapTemplateContentInWelshWhenDivorceCase() {
+    void shouldMapTemplateContentInWelshWhenDivorceCase() {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.SOLE_APPLICATION, DivorceOrDissolution.DIVORCE);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
@@ -125,7 +129,7 @@ public class FinalOrderGrantedTemplateContentTest {
 
         assertThat(templateContent).contains(
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
-            entry(DATE, "16 March 2022"),
+            entry(DATE, LocalDateTime.now().format(DATE_TIME_FORMATTER)),
             entry(IS_SOLE, true),
             entry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
             entry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name"),
@@ -137,12 +141,13 @@ public class FinalOrderGrantedTemplateContentTest {
             entry(DIVORCE_OR_DISSOLUTION, DIVORCE_CY),
             entry(THE_MARRIAGE_OR_CP, MARRIAGE_CY),
             entry(SECTION, SECTION_18A),
-            entry(SPOUSE_OR_CP, SPOUSE_CY)
+            entry(SPOUSE_OR_CP, SPOUSE_CY),
+            entry(FO_GRANTED_DATE, "16 March 2022")
         );
     }
 
     @Test
-    public void shouldMapTemplateContentInWelshWhenDissolutionCase() {
+    void shouldMapTemplateContentInWelshWhenDissolutionCase() {
         var caseData = buildCaseDataForGrantFinalOrder(ApplicationType.JOINT_APPLICATION, DivorceOrDissolution.DISSOLUTION);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.of(2022, 3, 16, 0, 0));
@@ -153,7 +158,7 @@ public class FinalOrderGrantedTemplateContentTest {
 
         assertThat(templateContent).contains(
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
-            entry(DATE, "16 March 2022"),
+            entry(DATE, LocalDateTime.now().format(DATE_TIME_FORMATTER)),
             entry(IS_SOLE, false),
             entry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
             entry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name"),
@@ -165,12 +170,13 @@ public class FinalOrderGrantedTemplateContentTest {
             entry(DIVORCE_OR_DISSOLUTION, DISSOLUTION_OF_A_CIVIL_PARTNERSHIP_CY),
             entry(THE_MARRIAGE_OR_CP, CIVIL_PARTNERSHIP_CY),
             entry(SECTION, SECTION_18C),
-            entry(SPOUSE_OR_CP, FORMER_CIVIL_PARTNER_CY)
+            entry(SPOUSE_OR_CP, FORMER_CIVIL_PARTNER_CY),
+            entry(FO_GRANTED_DATE, "16 March 2022")
         );
     }
 
     @Test
-    public void shouldGetSupportedTemplates() {
+    void shouldGetSupportedTemplates() {
         assertThat(finalOrderGrantedTemplateContent.getSupportedTemplates()).containsOnly(FINAL_ORDER_TEMPLATE_ID);
     }
 }
