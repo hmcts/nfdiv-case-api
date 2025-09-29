@@ -69,25 +69,6 @@ class CaseworkerRejectServiceApplicationTest {
     }
 
     @Test
-    void shouldReturnErrorWhenRejectingServiceApplicationNotInitiatedByCitizen() {
-        final CaseData caseData = CaseData.builder().build();
-        caseData.setAlternativeService(AlternativeService.builder()
-            .serviceApplicationSubmittedOnline(YesOrNo.NO)
-            .build());
-
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
-            .id(TEST_CASE_ID)
-            .data(caseData)
-            .build();
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRejectServiceApplication.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getErrors()).contains(
-                "Active service application cannot be rejected since it hasn't been submitted online.");
-    }
-
-    @Test
     void shouldNotDeleteServiceApplicationAnswersDocumentIfPresent() {
         Document doc = Document.builder()
             .binaryUrl("test.pdf")

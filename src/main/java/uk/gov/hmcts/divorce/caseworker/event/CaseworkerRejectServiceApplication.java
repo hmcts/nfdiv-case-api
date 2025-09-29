@@ -7,7 +7,6 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -19,9 +18,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -45,16 +42,15 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
 
         new PageBuilder(configBuilder
             .event(CASEWORKER_REJECT_SERVICE_APPLICATION)
-            .forStates(AwaitingServiceConsideration, AwaitingServicePayment, AwaitingDocuments)
+            .forStates(POST_SUBMISSION_STATES)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .name(REJECT_SERVICE_APPLICATION)
-            .showCondition("serviceApplicationSubmittedOnline=\"Yes\"")
             .description(REJECT_SERVICE_APPLICATION)
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE, CASE_WORKER)
+            .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(
                 SOLICITOR,
-                SUPER_USER,
+                CASE_WORKER,
                 LEGAL_ADVISOR,
                 JUDGE))
             .page("rejectServiceApplication")
@@ -77,14 +73,6 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
         if (Objects.isNull(caseData.getAlternativeService())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(List.of("No service application to reject."))
-                .build();
-        }
-
-        if (!YesOrNo.YES.equals(caseData.getAlternativeService().getServiceApplicationSubmittedOnline())) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(List.of(
-                        "Active service application cannot be rejected since it hasn't been submitted online."))
                 .build();
         }
 
