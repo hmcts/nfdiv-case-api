@@ -138,7 +138,7 @@ task highLevelDataSetup(type: JavaExec) {
 checkstyle {
   maxWarnings = 0
   toolVersion = '10.14.0'
-  getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
+  getConfigDirectory().set(new File(projectDir, 'config/checkstyle'))
 }
 
 pmd {
@@ -147,7 +147,7 @@ pmd {
   reportsDir = file("$project.buildDir/reports/pmd")
   // https://github.com/pmd/pmd/issues/876
   ruleSets = []
-  ruleSetFiles = files("${rootDir}/config/pmd/ruleset.xml")
+  ruleSetFiles = files("${projectDir}/config/pmd/ruleset.xml")
 }
 
 jacocoTestReport {
@@ -492,4 +492,3 @@ task fortifyScan(type: JavaExec) {
     classpath += sourceSets.test.runtimeClasspath
     jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
-
