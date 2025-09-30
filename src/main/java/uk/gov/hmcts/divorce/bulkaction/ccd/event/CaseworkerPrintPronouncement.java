@@ -15,16 +15,12 @@ import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.util.List;
-
-import static org.springframework.util.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBulkListErroredCases;
 
 @Component
 @Slf4j
@@ -86,16 +82,6 @@ public class CaseworkerPrintPronouncement implements CCDConfig<BulkActionCaseDat
 
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_PRINT_PRONOUNCEMENT, bulkCaseDetails.getId());
 
-        List<String> validationErrors = validateBulkListErroredCases(bulkCaseDetails);
-
-        if (!isEmpty(validationErrors)) {
-            return AboutToStartOrSubmitResponse
-                .<BulkActionCaseData, BulkActionState>builder()
-                .errors(validationErrors)
-                .data(bulkCaseDetails.getData())
-                .build();
-        }
-
         final BulkActionCaseData caseData = bulkCaseDetails.getData();
 
         if (null == caseData.getPronouncementJudge()) {
@@ -107,5 +93,3 @@ public class CaseworkerPrintPronouncement implements CCDConfig<BulkActionCaseDat
             .build();
     }
 }
-
-
