@@ -275,8 +275,7 @@ public final class ValidationUtil {
         var erroredCaseDetails = bulkCaseDetails.getData().getErroredCaseDetails();
 
         return !ObjectUtils.isEmpty(erroredCaseDetails)
-            ? singletonList(String.format("There %s with error on the bulk list. Please resolve errors before continuing",
-            erroredCaseDetails.size() > 1 ? "are cases" : "is a case"))
+            ? singletonList("There are errors on the bulk list. Please resolve errors before continuing")
             : emptyList();
     }
 
