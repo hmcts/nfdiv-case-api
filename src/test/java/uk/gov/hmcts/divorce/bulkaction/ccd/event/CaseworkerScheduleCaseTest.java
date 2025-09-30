@@ -10,8 +10,10 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
 import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
@@ -156,6 +158,21 @@ class CaseworkerScheduleCaseTest {
         verify(failedBulkCaseRemover).removeFailedCasesFromBulkListCaseDetails(
             any(), eq(details), eq(systemUser), eq(TEST_SERVICE_AUTH_TOKEN)
         );
+    }
+
+    @Test
+    void shouldValidateAndErrorIfCasesHaveErrorInBulkList() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
+        details.setData(BulkActionCaseData.builder().erroredCaseDetails(
+            List.of(ListValue.<BulkListCaseDetails>builder().build())).build());
+        details.setId(TEST_CASE_ID);
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response =
+            scheduleCase.aboutToStart(details);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getErrors()).isNotEmpty();
+        assertThat(response.getErrors()).hasSize(1);
     }
 
     private User setUpUser(String userRole) {
