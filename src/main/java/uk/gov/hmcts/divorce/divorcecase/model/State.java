@@ -569,7 +569,7 @@ public enum State {
         Holding, AwaitingConditionalOrder, IssuedToBailiff, AwaitingBailiffService, AwaitingBailiffReferral, BailiffRefused,
         AwaitingServiceConsideration, AwaitingServicePayment, AwaitingAlternativeService, AwaitingDwpResponse,
         AwaitingJudgeClarification, GeneralConsiderationComplete, AwaitingGeneralReferralPayment, AwaitingGeneralConsideration,
-        GeneralApplicationReceived, PendingHearingOutcome, PendingHearingDate, AwaitingGeneralApplicationPayment
+        GeneralApplicationReceived, PendingHearingOutcome, PendingHearingDate, AwaitingGeneralApplicationPayment, AwaitingDocuments
     };
 
     public static final State[] POST_SUBMISSION_PRE_AWAITING_CO_STATES = {

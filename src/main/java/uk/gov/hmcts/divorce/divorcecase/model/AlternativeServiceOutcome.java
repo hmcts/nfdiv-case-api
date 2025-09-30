@@ -98,6 +98,14 @@ public class AlternativeServiceOutcome {
     )
     private YesOrNo serviceApplicationGranted;
 
+    @CCD(
+        label = "Please provide further details",
+        typeOverride = TextArea,
+        searchable = false,
+        displayOrder = 7
+    )
+    private String furtherDetails;
+
     /*
     Deemed or Dispensed Fields
      */
