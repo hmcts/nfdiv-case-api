@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionPageBuilder;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
@@ -17,8 +16,6 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
 import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
@@ -27,7 +24,6 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
@@ -38,9 +34,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBulkListErroredCases;
-import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
-import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DEF;
-import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 
 @Component
@@ -78,7 +71,8 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .mandatoryNoSummary(BulkActionCaseData::getBulkListCaseDetails);
     }
 
-    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToStart(final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails) {
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToStart(final CaseDetails<BulkActionCaseData,
+        BulkActionState> bulkCaseDetails) {
 
         log.info("{} aboutToStart-callback invoked for case id: {}", CASEWORKER_SCHEDULE_CASE, bulkCaseDetails.getId());
 

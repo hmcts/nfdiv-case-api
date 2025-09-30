@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.legaladvisor.event;
 
-import io.cucumber.java.ja.但し;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -153,8 +152,8 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             endState = AwaitingPronouncement;
             Applicant applicant2 = caseData.getApplicant2();
 
-            if (!applicant2.isApplicantOffline() && caseData.getApplicationType().isSole() &&
-                !applicant2.isRepresented() && isEmpty(applicant2.getEmail())) {
+            if (!applicant2.isApplicantOffline() && caseData.getApplicationType().isSole()
+                && !applicant2.isRepresented() && isEmpty(applicant2.getEmail())) {
                 applicant2.setOffline(YesOrNo.YES);
             }
 
