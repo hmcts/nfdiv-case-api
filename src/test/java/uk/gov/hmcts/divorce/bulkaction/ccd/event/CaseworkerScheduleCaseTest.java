@@ -173,6 +173,21 @@ class CaseworkerScheduleCaseTest {
         assertThat(response).isNotNull();
         assertThat(response.getErrors()).isNotEmpty();
         assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors().getFirst()).isEqualTo(
+            "There is a case with error on the bulk list. Please resolve errors before continuing");
+    }
+
+    @Test
+    void shouldNotReturnValidationErrorsIfNoErroredCasesInBulkList() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
+        details.setData(BulkActionCaseData.builder().build());
+        details.setId(TEST_CASE_ID);
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response =
+            scheduleCase.aboutToStart(details);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getErrors()).isNull();
     }
 
     private User setUpUser(String userRole) {

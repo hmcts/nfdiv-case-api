@@ -758,4 +758,27 @@ class LegalAdvisorMakeDecisionTest {
 
         assertThat(caseData.getApplicant2().getOffline()).isEqualTo(NO);
     }
+
+    @Test
+    void shouldDoNothingIfApplicant2AlreadyOffline() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().offline(YES).solicitorRepresented(NO).email(TEST_USER_EMAIL).build())
+            .applicationType(ApplicationType.SOLE_APPLICATION)
+            .conditionalOrder(ConditionalOrder.builder()
+                .granted(YES)
+                .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(caseData.getApplicant2().getOffline()).isEqualTo(YES);
+    }
 }
