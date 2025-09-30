@@ -152,7 +152,7 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             endState = AwaitingPronouncement;
             Applicant applicant2 = caseData.getApplicant2();
 
-            if (!applicant2.isApplicantOffline() && caseData.getApplicationType().isSole()
+            if (caseData.getApplicationType().isSole()
                 && !applicant2.isRepresented() && isEmpty(applicant2.getEmail())) {
                 applicant2.setOffline(YesOrNo.YES);
             }
