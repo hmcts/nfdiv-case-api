@@ -5,6 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
@@ -36,6 +37,9 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
 public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
+
+    @Value("${idam.s2s-auth.microservice}")
+    private String s2sName;
 
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-legal-advisor-make-decision.json";
     private static final String JOINT_WELSH_REQUEST =
@@ -293,7 +297,7 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     private uk.gov.hmcts.ccd.sdk.type.Document uploadDocument() throws IOException {
         var document = caseDocumentAccessManagement.upload(
             idamTokenGenerator.generateIdamTokenForSystem(),
-            serviceAuthenticationGenerator.generate("nfdiv_case_api"),
+            serviceAuthenticationGenerator.generate(s2sName),
             "",
             "draft-divorce-application-1234567890123456.pdf",
             "/Test.pdf"
