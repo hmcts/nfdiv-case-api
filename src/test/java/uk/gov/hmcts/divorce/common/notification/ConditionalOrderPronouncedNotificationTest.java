@@ -19,16 +19,15 @@ import uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderPronounc
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -44,9 +43,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_2;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT1_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT2_LABEL;
-import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
@@ -55,9 +51,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_CONDITIONAL_ORDER_PRONOUNCED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_CONDITIONAL_ORDER_PRONOUNCED;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -72,7 +65,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseDa
 class ConditionalOrderPronouncedNotificationTest {
 
     private static final int FINAL_ORDER_OFFSET_DAYS = 43;
-    private static final int FINAL_ORDER_RESPONDENT_OFFSET_MONTHS = 3;
 
     @Mock
     private NotificationService notificationService;
@@ -122,7 +114,7 @@ class ConditionalOrderPronouncedNotificationTest {
             .grantedDate(now.toLocalDate())
             .build()
         );
-        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
         notification.sendToApplicant1(data, TEST_CASE_ID);
@@ -130,16 +122,11 @@ class ConditionalOrderPronouncedNotificationTest {
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_PRONOUNCED),
-            argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
-                hasEntry(IS_DIVORCE, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER))
-            )),
+            any(),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -157,7 +144,7 @@ class ConditionalOrderPronouncedNotificationTest {
 
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
 
         notification.sendToApplicant1(data, TEST_CASE_ID);
@@ -165,22 +152,16 @@ class ConditionalOrderPronouncedNotificationTest {
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_PRONOUNCED),
-            argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
-                hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(DATE_TIME_FORMATTER))
-            )),
+            any(),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
     void shouldSendEmailToApplicant2WithDivorceContentForSoleApplication() {
         ReflectionTestUtils.setField(notification, "finalOrderOffsetDays", FINAL_ORDER_OFFSET_DAYS);
-        ReflectionTestUtils.setField(notification, "finalOrderRespondentOffsetMonth", FINAL_ORDER_RESPONDENT_OFFSET_MONTHS);
 
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
@@ -192,7 +173,7 @@ class ConditionalOrderPronouncedNotificationTest {
             .grantedDate(now.toLocalDate())
             .build()
         );
-        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
         notification.sendToApplicant2(data, TEST_CASE_ID);
@@ -200,21 +181,16 @@ class ConditionalOrderPronouncedNotificationTest {
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED),
-            argThat(allOf(
-                hasEntry(IS_DIVORCE, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER))
-            )),
+            any(),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
     void shouldSendEmailToApplicant2WithDissolutionContentForSoleApplication() {
         ReflectionTestUtils.setField(notification, "finalOrderOffsetDays", FINAL_ORDER_OFFSET_DAYS);
-        ReflectionTestUtils.setField(notification, "finalOrderRespondentOffsetMonth", FINAL_ORDER_RESPONDENT_OFFSET_MONTHS);
 
         LocalDateTime now = LocalDateTime.now();
         CaseData data = caseData();
@@ -229,7 +205,7 @@ class ConditionalOrderPronouncedNotificationTest {
 
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(templateVars);
 
         notification.sendToApplicant2(data, TEST_CASE_ID);
@@ -237,15 +213,11 @@ class ConditionalOrderPronouncedNotificationTest {
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(SOLE_RESPONDENT_CONDITIONAL_ORDER_PRONOUNCED),
-            argThat(allOf(
-                hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER))
-            )),
+            any(),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -262,7 +234,7 @@ class ConditionalOrderPronouncedNotificationTest {
             .grantedDate(now.toLocalDate())
             .build()
         );
-        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
         notification.sendToApplicant2(data, TEST_CASE_ID);
@@ -270,15 +242,11 @@ class ConditionalOrderPronouncedNotificationTest {
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_PRONOUNCED),
-            argThat(allOf(
-                hasEntry(IS_DIVORCE, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER))
-            )),
+            any(),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -298,7 +266,7 @@ class ConditionalOrderPronouncedNotificationTest {
 
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(templateVars);
 
         notification.sendToApplicant2(data, TEST_CASE_ID);
@@ -306,63 +274,11 @@ class ConditionalOrderPronouncedNotificationTest {
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_PRONOUNCED),
-            argThat(allOf(
-                hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, now.format(DATE_TIME_FORMATTER))
-            )),
+            any(),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
-    }
-
-    @Test
-    void shouldThrowNotificationTemplateExceptionIfCourtIsNotSet() {
-
-        final LocalDateTime now = LocalDateTime.now();
-        final CaseData data = caseData();
-        data.setConditionalOrder(ConditionalOrder.builder()
-            .dateAndTimeOfHearing(now)
-            .grantedDate(now.toLocalDate())
-            .build()
-        );
-
-        assertThatExceptionOfType(NotificationTemplateException.class)
-            .isThrownBy(() -> notification.sendToApplicant1(data, TEST_CASE_ID))
-            .withMessage("Notification failed with missing field 'coCourt' for Case Id: 1616591401473378");
-    }
-
-    @Test
-    void shouldThrowNotificationTemplateExceptionIfDateAndTimeOfHearingIsNotSet() {
-
-        final LocalDateTime now = LocalDateTime.now();
-        final CaseData data = caseData();
-        data.setConditionalOrder(ConditionalOrder.builder()
-            .court(ConditionalOrderCourt.BIRMINGHAM)
-            .grantedDate(now.toLocalDate())
-            .build()
-        );
-
-        assertThatExceptionOfType(NotificationTemplateException.class)
-            .isThrownBy(() -> notification.sendToApplicant1(data, TEST_CASE_ID))
-            .withMessage("Notification failed with missing field 'coDateAndTimeOfHearing' for Case Id: 1616591401473378");
-    }
-
-    @Test
-    void shouldThrowNotificationTemplateExceptionIfGrantedDateIsNotSet() {
-
-        final LocalDateTime now = LocalDateTime.now();
-        final CaseData data = caseData();
-        data.setConditionalOrder(ConditionalOrder.builder()
-            .court(ConditionalOrderCourt.BIRMINGHAM)
-            .dateAndTimeOfHearing(now)
-            .build()
-        );
-
-        assertThatExceptionOfType(NotificationTemplateException.class)
-            .isThrownBy(() -> notification.sendToApplicant1(data, TEST_CASE_ID))
-            .withMessage("Notification failed with missing field 'coGrantedDate' for Case Id: 1616591401473378");
+        verify(commonContent).coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
@@ -380,7 +296,7 @@ class ConditionalOrderPronouncedNotificationTest {
 
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
         notification.sendToApplicant1(data, TEST_CASE_ID);
@@ -388,17 +304,12 @@ class ConditionalOrderPronouncedNotificationTest {
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_PRONOUNCED),
-            argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
-                hasEntry(IS_DIVORCE, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, data.getConditionalOrder().getDateAndTimeOfHearing().format(WELSH_DATE_TIME_FORMATTER))
-            )),
+            any(),
             eq(WELSH),
             eq(TEST_CASE_ID)
         );
 
-        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
@@ -421,7 +332,7 @@ class ConditionalOrderPronouncedNotificationTest {
 
         final Map<String, String> templateVars = getMainTemplateVars();
         templateVars.putAll(Map.of(IS_DIVORCE, NO, IS_DISSOLUTION, YES));
-        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
+        when(commonContent.coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(templateVars);
 
         notification.sendToApplicant2(data, TEST_CASE_ID);
@@ -429,15 +340,11 @@ class ConditionalOrderPronouncedNotificationTest {
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(CITIZEN_CONDITIONAL_ORDER_PRONOUNCED),
-            argThat(allOf(
-                hasEntry(IS_DISSOLUTION, YES),
-                hasEntry(COURT_NAME, ConditionalOrderCourt.BIRMINGHAM.getLabel()),
-                hasEntry(DATE_OF_HEARING, now.format(WELSH_DATE_TIME_FORMATTER))
-            )),
+            any(),
             eq(WELSH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
     @Test
