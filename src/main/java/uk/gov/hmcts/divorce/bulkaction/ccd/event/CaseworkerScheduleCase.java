@@ -27,11 +27,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.util.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBulkListErroredCases;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 
 @Component
@@ -58,6 +60,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .aboutToStartCallback(this::aboutToStart)
             .submittedCallback(this::submitted)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
@@ -66,6 +69,26 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .mandatory(BulkActionCaseData::getCourt)
             .mandatory(BulkActionCaseData::getDateAndTimeOfHearing)
             .mandatoryNoSummary(BulkActionCaseData::getBulkListCaseDetails);
+    }
+
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToStart(final CaseDetails<BulkActionCaseData,
+        BulkActionState> bulkCaseDetails) {
+
+        log.info("{} aboutToStart-callback invoked for case id: {}", CASEWORKER_SCHEDULE_CASE, bulkCaseDetails.getId());
+
+        List<String> validationErrors = validateBulkListErroredCases(bulkCaseDetails);
+
+        if (!isEmpty(validationErrors)) {
+            return AboutToStartOrSubmitResponse
+                .<BulkActionCaseData, BulkActionState>builder()
+                .errors(validationErrors)
+                .data(bulkCaseDetails.getData())
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkCaseDetails.getData())
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(
