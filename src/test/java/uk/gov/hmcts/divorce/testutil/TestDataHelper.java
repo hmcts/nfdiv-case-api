@@ -291,7 +291,7 @@ public class TestDataHelper {
             .firstName(TEST_FIRST_NAME)
             .middleName(TEST_MIDDLE_NAME)
             .lastName(TEST_LAST_NAME)
-            .email(TEST_USER_EMAIL)
+            .nonConfidentialEmail(TEST_USER_EMAIL)
             .gender(MALE)
             .languagePreferenceWelsh(NO)
             .nonConfidentialAddress(AddressGlobalUK.builder()
