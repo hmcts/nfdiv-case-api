@@ -1,17 +1,16 @@
 package uk.gov.hmcts.divorce.solicitor;
 
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
-import uk.gov.hmcts.divorce.testutil.IdamTokenGenerator;
-import uk.gov.hmcts.divorce.testutil.ServiceAuthenticationGenerator;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,20 +40,19 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @SpringBootTest
 public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
 
+    @Value("${idam.s2s-auth.microservice}")
+    private String s2sName;
+
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-solicitor-update.json";
 
     @Autowired
-    private IdamTokenGenerator idamTokenGenerator;
-
-    @Autowired
-    private ServiceAuthenticationGenerator serviceAuthenticationGenerator;
+    private IdamService idamService;
 
     @Autowired
     private CaseDocumentAccessManagement caseDocumentAccessManagement;
 
 
     @Test
-    @Disabled("CDAM requires the case to exist")
     public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
 
         final Map<String, Object> caseData = caseData(REQUEST);
@@ -98,11 +96,11 @@ public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
 
     private uk.gov.hmcts.ccd.sdk.type.Document uploadDocument() throws IOException {
         var document = caseDocumentAccessManagement.upload(
-            idamTokenGenerator.generateIdamTokenForSystem(),
-            serviceAuthenticationGenerator.generate(),
+            idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
+            serviceAuthenticationGenerator.generate(s2sName),
             "",
             "draft-divorce-application-1234567890123456.pdf",
-            "classpath:Test.pdf"
+            "/Test.pdf"
         ).getDocuments().get(0);
         return new uk.gov.hmcts.ccd.sdk.type.Document(
             document.links.self.href,
