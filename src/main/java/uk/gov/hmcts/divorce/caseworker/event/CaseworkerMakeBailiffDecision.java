@@ -26,6 +26,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferr
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffRefused;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.LAServiceReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -59,7 +60,7 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_BAILIFF_DECISION)
-            .forStates(AwaitingBailiffReferral, AwaitingServiceConsideration)
+            .forStates(AwaitingBailiffReferral, AwaitingServiceConsideration, LAServiceReview)
             .showCondition("alternativeServiceType=\"bailiff\"")
             .name("Make bailiff decision")
             .description("Make bailiff decision")

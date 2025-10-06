@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.LAServiceReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -82,7 +83,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(LEGAL_ADVISOR_SERVICE_DECISION)
-            .forStates(AwaitingServiceConsideration)
+            .forStates(AwaitingServiceConsideration, LAServiceReview)
             .name("Make service decision")
             .showCondition("alternativeServiceType!=\"bailiff\"")
             .description("Make service decision")
