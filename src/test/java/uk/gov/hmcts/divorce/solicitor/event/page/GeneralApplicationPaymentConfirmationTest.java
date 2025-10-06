@@ -42,7 +42,7 @@ class GeneralApplicationPaymentConfirmationTest {
             .generalApplicationFeeType(FEE0227)
                 .generalApplicationFee(
                     FeeDetails.builder()
-                        .paymentMethod(ServicePaymentMethod.CARD)
+                        .paymentMethod(ServicePaymentMethod.FEE_PAY_BY_CARD)
                         .build()
                 )
             .build());

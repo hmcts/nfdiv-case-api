@@ -51,6 +51,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueAosUnDisputed.S
 public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SUBMIT_AOS = "submit-aos";
+    public static final String AOS_ALREADY_SUBMITTED_ERROR = "The Acknowledgement Of Service has already been submitted";
 
     private final List<CcdPageConfiguration> pages = List.of(
         new Applicant2SolStatementOfTruth(),
@@ -76,9 +77,10 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
         if (null != acknowledgementOfService && null != acknowledgementOfService.getDateAosSubmitted()) {
+            log.info(AOS_ALREADY_SUBMITTED_ERROR + "for Case Id: {}", details.getId());
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(Collections.singletonList("The Acknowledgement Of Service has already been submitted."))
+                .errors(Collections.singletonList(AOS_ALREADY_SUBMITTED_ERROR))
                 .build();
         }
 
