@@ -77,7 +77,7 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
                 .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "State to transfer case to")
             .done()
             .page("rejectGenReferral")
-            .showCondition("generalReferralType=\"*\"")
+            .showCondition("generalReferralReason=\"*\"")
             .pageLabel("Reject general referral")
             .complex(CaseData::getGeneralReferral)
                 .readonly(GeneralReferral::getGeneralReferralType)

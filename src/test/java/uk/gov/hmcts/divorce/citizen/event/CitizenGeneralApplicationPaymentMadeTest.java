@@ -150,7 +150,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
         caseData.getApplicant1().setGeneralAppPayments(payments);
         caseData.setGeneralReferral(
             GeneralReferral.builder()
-                .generalReferralType(GeneralReferralType.CASEWORKER_REFERRAL)
+                .generalReferralReason(GeneralReferralReason.CASEWORKER_REFERRAL)
                 .build()
         );
         details.setId(TEST_CASE_ID);
@@ -167,7 +167,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
 
         assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
         assertThat(generalApplication.getGeneralApplicationFee().getPaymentReference()).isEqualTo(TEST_REFERENCE);
-        assertThat(generalReferral.getGeneralReferralType()).isEqualTo(GeneralReferralType.CASEWORKER_REFERRAL);
+        assertThat(generalReferral.getGeneralReferralReason()).isEqualTo(GeneralReferralReason.CASEWORKER_REFERRAL);
     }
 
     @Test
