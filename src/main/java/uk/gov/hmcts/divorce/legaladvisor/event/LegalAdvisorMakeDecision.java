@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -29,6 +30,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
@@ -148,6 +150,12 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             log.info("Legal advisor conditional order granted for case id: {}", details.getId());
             conditionalOrder.setDecisionDate(LocalDate.now(clock));
             endState = AwaitingPronouncement;
+            Applicant applicant2 = caseData.getApplicant2();
+
+            if (caseData.getApplicationType().isSole()
+                && !applicant2.isRepresented() && isEmpty(applicant2.getEmail())) {
+                applicant2.setOffline(YesOrNo.YES);
+            }
 
         } else if (REJECT.equals(conditionalOrder.getRefusalDecision())) {
             generateAndSetConditionalOrderRefusedDocument(

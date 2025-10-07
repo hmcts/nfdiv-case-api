@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -60,6 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 
 @ExtendWith(MockitoExtension.class)
@@ -105,7 +107,7 @@ class LegalAdvisorMakeDecisionTest {
 
         setMockClock(clock);
 
-        final CaseData caseData = CaseData.builder()
+        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.SOLE_APPLICATION)
             .conditionalOrder(ConditionalOrder.builder().granted(YES).build())
             .build();
 
@@ -663,5 +665,97 @@ class LegalAdvisorMakeDecisionTest {
 
         verify(notificationDispatcher).send(moreInfoDecisionNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldMakeRespondentOfflineWhenRespondentIsNotRepresentedAndEmailIsMissingForSoleCase() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().offline(NO).solicitorRepresented(NO).build())
+            .applicationType(ApplicationType.SOLE_APPLICATION)
+            .conditionalOrder(ConditionalOrder.builder()
+                .granted(YES)
+                .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(caseData.getApplicant2().getOffline()).isEqualTo(YES);
+    }
+
+    @Test
+    void shouldNotMakeApplicant2OfflineWhenApplicant2IsNotRepresentedAndEmailIsMissingForJointCase() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().offline(NO).solicitorRepresented(NO).build())
+            .applicationType(ApplicationType.JOINT_APPLICATION)
+            .conditionalOrder(ConditionalOrder.builder()
+                .granted(YES)
+                .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(caseData.getApplicant2().getOffline()).isEqualTo(NO);
+    }
+
+    @Test
+    void shouldNotMakeApplicant2OfflineWhenApplicant2IsSolicitorRepresentedAndEmailIsMissingForSoleCase() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().offline(NO).solicitorRepresented(YES).build())
+            .applicationType(ApplicationType.SOLE_APPLICATION)
+            .conditionalOrder(ConditionalOrder.builder()
+                .granted(YES)
+                .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(caseData.getApplicant2().getOffline()).isEqualTo(NO);
+    }
+
+    @Test
+    void shouldNotMakeApplicant2OfflineWhenApplicant2IsProvidedForSoleCase() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().offline(NO).solicitorRepresented(NO).email(TEST_USER_EMAIL).build())
+            .applicationType(ApplicationType.SOLE_APPLICATION)
+            .conditionalOrder(ConditionalOrder.builder()
+                .granted(YES)
+                .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(caseData.getApplicant2().getOffline()).isEqualTo(NO);
     }
 }
