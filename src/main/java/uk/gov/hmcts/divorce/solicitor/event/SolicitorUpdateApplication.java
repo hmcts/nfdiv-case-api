@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -71,8 +72,9 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
         log.info("Solicitor update application about to start callback invoked for Case Id: {}", details.getId());
 
         CaseData data = details.getData();
-        data.getApplicant1().setNonConfidentialAddress(data.getApplicant1().getAddress());
-        data.getApplicant2().setNonConfidentialAddress(data.getApplicant2().getAddress());
+
+        setContactDetails(data.getApplicant1());
+        setContactDetails(data.getApplicant2());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
@@ -95,6 +97,12 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(result.getData())
             .build();
+    }
+
+    private void setContactDetails(Applicant applicant) {
+        applicant.setNonConfidentialAddress(applicant.getAddress());
+        applicant.setNonConfidentialEmail(applicant.getEmail());
+        applicant.setNonConfidentialPhone(applicant.getPhoneNumber());
     }
 
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
