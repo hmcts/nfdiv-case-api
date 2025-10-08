@@ -98,6 +98,7 @@ class CitizenServicePaymentMadeTest {
         );
 
         CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
             .alternativeService(AlternativeService.builder()
                 .alternativeServiceType(AlternativeServiceType.ALTERNATIVE_SERVICE)
                 .serviceApplicationDocsUploadedPreSubmission(YES)
@@ -161,6 +162,7 @@ class CitizenServicePaymentMadeTest {
         );
 
         CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
             .alternativeService(AlternativeService.builder()
                 .alternativeServiceType(AlternativeServiceType.ALTERNATIVE_SERVICE)
                 .serviceApplicationDocsUploadedPreSubmission(YesOrNo.NO)
