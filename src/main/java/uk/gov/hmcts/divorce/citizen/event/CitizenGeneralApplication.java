@@ -112,6 +112,13 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
             applicationFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
 
             details.setState(GeneralApplicationReceived);
+
+            if (data.isWelshApplication()) {
+                data.getApplication().setWelshPreviousState(details.getState());
+                details.setState(WelshTranslationReview);
+                log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
+                    data.getApplication().getWelshPreviousState(), details.getId());
+            }
         }
 
         DivorceDocument applicationDocument = interimApplicationSubmissionService
@@ -121,13 +128,6 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         data.updateCaseWithGeneralApplication(newGeneralApplication);
 
         applicant.archiveInterimApplicationOptions();
-
-        if (data.isWelshApplication()) {
-            data.getApplication().setWelshPreviousState(details.getState());
-            details.setState(WelshTranslationReview);
-            log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
-                data.getApplication().getWelshPreviousState(), details.getId());
-        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
