@@ -49,6 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.ALTERNATIVE_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -176,6 +177,58 @@ public class LegalAdvisorMakeServiceDecisionIT {
     }
 
     @Test
+    public void shouldUpdateStateToGeneralConsiderationCompleteAndSetDecisionDateIfApplicationIsGrantedAndTypeIsAlternativeService()
+        throws Exception {
+        setMockClock(clock);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(UUID, SERVICE_ORDER_TEMPLATE_FILE);
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .deemedServiceDate(LocalDate.now(clock))
+                    .alternativeServiceType(ALTERNATIVE_SERVICE)
+                    .serviceApplicationGranted(YES)
+                    .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
+                    .build()
+            )
+            .build();
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 7, 1));
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_SERVICE_DECISION)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(response)
+            .when(TREATING_NULL_AS_ABSENT)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(
+                "classpath:legal-advisor-service-decision-alternative-response.json"
+            )));
+
+        verify(notificationService, never()).sendEmail(anyString(), any(EmailTemplateName.class), anyMap(), eq(ENGLISH), anyLong());
+    }
+
+    @Test
     public void shouldUpdateStateToHoldingAndSetDecisionDateAndGenerateDeemedServiceOrderDocIfApplicationIsGrantedAndTypeIsDeemed()
         throws Exception {
         setMockClock(clock);
@@ -275,6 +328,58 @@ public class LegalAdvisorMakeServiceDecisionIT {
             .when(IGNORING_ARRAY_ORDER)
             .isEqualTo(json(expectedResponse(
                 "classpath:legal-advisor-service-decision-deemed-not-granted-response.json"
+            )));
+
+        verify(notificationService).sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_REJECTED), anyMap(), eq(ENGLISH), anyLong());
+    }
+
+    @Test
+    public void shouldUpdateStateToAwaitingAoSAndSetDecisionDateIfApplicationIsNotGrantedAndTypeIsAlternative()
+        throws Exception {
+        setMockClock(clock);
+
+        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith(UUID, SERVICE_ORDER_REFUSAL_TEMPLATE_FILE);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant1(getApplicant())
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .alternativeServiceType(ALTERNATIVE_SERVICE)
+                    .serviceApplicationGranted(NO)
+                    .serviceApplicationRefusalReason("refusal reasons")
+                    .receivedServiceApplicationDate(LocalDate.of(2021, 6, 18))
+                    .build()
+            ).application(Application.builder().issueDate(LocalDate.now(clock)).build())
+            .dueDate(LocalDate.of(2021, 6, 20))
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .build();
+
+        String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
+                .contentType(APPLICATION_JSON)
+                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+                .content(objectMapper.writeValueAsString(
+                        callbackRequest(
+                            caseData,
+                            LEGAL_ADVISOR_SERVICE_DECISION)
+                    )
+                )
+                .accept(APPLICATION_JSON))
+            .andDo(print())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        assertThatJson(response)
+            .when(TREATING_NULL_AS_ABSENT)
+            .when(IGNORING_ARRAY_ORDER)
+            .isEqualTo(json(expectedResponse(
+                "classpath:legal-advisor-service-decision-alternative-not-granted-response.json"
             )));
 
         verify(notificationService).sendEmail(eq(TEST_USER_EMAIL), eq(SERVICE_APPLICATION_REJECTED), anyMap(), eq(ENGLISH), anyLong());
