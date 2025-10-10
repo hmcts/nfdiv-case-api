@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -10,8 +11,11 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
+
+import java.time.LocalDate;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
@@ -59,8 +63,27 @@ public class FeeDetails {
     )
     private String helpWithFeesReferenceNumber;
 
-    @CCD(label = "Service request reference")
+    @CCD(label = "Payment service request")
     private String serviceRequestReference;
+
+    @CCD(
+        label = "Has the user completed their online card or PBA payment for this application?",
+        searchable = false
+    )
+    private YesOrNo hasCompletedOnlinePayment;
+
+    @CCD(
+        label = "Payment reference",
+        searchable = false
+    )
+    private String paymentReference;
+
+    @CCD(
+        label = "Payment date",
+        searchable = false
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateOfPayment;
 
     @JsonIgnore
     public boolean isPaymentMethodPba() {

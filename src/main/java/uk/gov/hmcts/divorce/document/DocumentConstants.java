@@ -130,6 +130,7 @@ public final class DocumentConstants {
     public static final String SERVICE_REFUSAL_TEMPLATE_ID = "SERVICE_REFUSAL";
     public static final String DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME = "DispenseWithServiceRefused";
     public static final String DEEMED_SERVICE_REFUSED_FILE_NAME = "DeemedServiceRefused";
+    public static final String ALTERNATIVE_SERVICE_REFUSED_FILE_NAME = "AlternativeServiceRefused";
 
     public static final String BAILIFF_APPLICATION_APPROVED_ID = "BAILIFF_APPLICATION_APPROVED";
     public static final String BAILIFF_APPLICATION_APPROVED_FILE_NAME = "BailiffApplicationApproved";
@@ -219,6 +220,16 @@ public final class DocumentConstants {
         = "RequestForInformationPartnerSolicitorResponseLetter";
     public static final String REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER_TEMPLATE_ID
         = "REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER";
+    public static final String DEEMED_SERVICE_APPLICATION_TEMPLATE_ID = "DEEMED_SERVICE_APPLICATION";
+    public static final String DEEMED_SERVICE_APPLICATION_DOCUMENT_NAME = "DeemedServiceApplication";
+    public static final String ALTERNATIVE_SERVICE_APPLICATION_TEMPLATE_ID = "ALTERNATIVE_SERVICE_APPLICATION";
+    public static final String ALTERNATIVE_SERVICE_APPLICATION_DOCUMENT_NAME = "AlternativeServiceApplication";
+    public static final String BAILIFF_SERVICE_APPLICATION_TEMPLATE_ID = "BAILIFF_SERVICE_APPLICATION";
+    public static final String BAILIFF_SERVICE_APPLICATION_DOCUMENT_NAME = "BailiffServiceApplication";
+    public static final String SEARCH_GOV_RECORDS_APPLICATION_TEMPLATE_ID = "SEARCH_GOV_RECORDS_APPLICATION";
+    public static final String SEARCH_GOV_RECORDS_APPLICATION_DOCUMENT_NAME = "SearchGovRecordsApplication";
+    public static final String DISPENSE_WITH_SERVICE_APPLICATION_TEMPLATE_ID = "DISPENSE_WITH_SERVICE_APPLICATION";
+    public static final String DISPENSE_WITH_SERVICE_APPLICATION_DOCUMENT_NAME = "DispenseWithServiceApplication";
 
     private DocumentConstants() {
     }
