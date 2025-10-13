@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
@@ -65,6 +66,14 @@ public class AlternativeService {
     private ServiceApplicationRefusalReason refusalReason;
 
     @CCD(
+        label = "Please provide further details",
+        typeOverride = TextArea,
+        searchable = false,
+        displayOrder = 7
+    )
+    private String serviceApplicationFurtherDetails;
+
+    @CCD(
         label = "Reason for refusal",
         typeOverride = TextArea,
         searchable = false
@@ -102,6 +111,24 @@ public class AlternativeService {
     )
     private YesOrNo alternativeServiceFeeRequired;
 
+    @CCD(
+        label = "Were all supporting documents uploaded before submission?",
+        searchable = false
+    )
+    private YesOrNo serviceApplicationDocsUploadedPreSubmission;
+
+    @CCD(
+        label = "Service Application",
+        searchable = false
+    )
+    private DivorceDocument serviceApplicationAnswers;
+
+    @CCD(
+        label = "Service application submitted online",
+        searchable = false
+    )
+    private YesOrNo serviceApplicationSubmittedOnline;
+
     @JsonUnwrapped
     @Builder.Default
     @CCD(access = {CaseworkerAccessOnlyAccess.class})
@@ -120,6 +147,15 @@ public class AlternativeService {
     )
     private List<ListValue<DivorceDocument>> serviceApplicationDocuments;
 
+    @CCD(
+        label = "Service Payments",
+        typeOverride = Collection,
+        typeParameterOverride = "Payment",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private List<ListValue<Payment>> servicePayments;
+
     @SuppressWarnings("PMD")
     @JsonIgnore
     public AlternativeServiceOutcome getOutcome() {
@@ -127,8 +163,13 @@ public class AlternativeService {
             .alternativeServiceType(alternativeServiceType)
             .receivedServiceApplicationDate(receivedServiceApplicationDate)
             .receivedServiceAddedDate(receivedServiceAddedDate)
+            .serviceApplicationAnswers(serviceApplicationAnswers)
+            .serviceApplicationDocuments(serviceApplicationDocuments)
+            .serviceApplicationSubmittedOnline(serviceApplicationSubmittedOnline)
+            .serviceApplicationDocsUploadedPreSubmission(serviceApplicationDocsUploadedPreSubmission)
             .paymentMethod(servicePaymentFee.getPaymentMethod())
             .serviceApplicationGranted(serviceApplicationGranted)
+            .furtherDetails(serviceApplicationFurtherDetails)
             .refusalReason(refusalReason)
             .serviceApplicationRefusalReason(serviceApplicationRefusalReason)
             .serviceApplicationDecisionDate(serviceApplicationDecisionDate)
@@ -139,6 +180,7 @@ public class AlternativeService {
             .certificateOfServiceDate(bailiff.getCertificateOfServiceDate())
             .successfulServedByBailiff(bailiff.getSuccessfulServedByBailiff())
             .reasonFailureToServeByBailiff(bailiff.getReasonFailureToServeByBailiff())
+            .servicePaymentFee(servicePaymentFee)
             .build();
     }
 

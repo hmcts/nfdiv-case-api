@@ -30,12 +30,19 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("appliedForCoLetter")
     APPLIED_FOR_CO_LETTER("Applied for Conditional Order Letter", true),
 
+    @JsonProperty("alternativeService")
+    @JsonAlias({"serviceAlternative"})
+    ALTERNATIVE_SERVICE("Alternative service", false),
+
     @JsonProperty("bailiffCertificateOfService")
     BAILIFF_CERTIFICATE_OF_SERVICE("Bailiff certificate of service", false),
 
     @JsonProperty("bailiffService")
     @JsonAlias({"serviceBaliff"})
     BAILIFF_SERVICE("Bailiff Service", false),
+
+    @JsonProperty("alternativeServiceRefused")
+    ALTERNATIVE_SERVICE_REFUSED("Alternative Service Refused", false),
 
     @JsonProperty("bailiffServiceRefused")
     BAILIFF_SERVICE_REFUSED("Bailiff Service Refused", false),
