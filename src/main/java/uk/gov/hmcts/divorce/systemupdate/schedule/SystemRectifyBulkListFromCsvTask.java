@@ -3,8 +3,12 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -57,10 +61,11 @@ public class SystemRectifyBulkListFromCsvTask implements Runnable {
             final BoolQueryBuilder query = boolQuery()
                 .filter(QueryBuilders.termsQuery("reference", bulkIds));
 
-            final List<CaseDetails> bulkCases = ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth);
+            final List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState>>
+                bulkCases = ccdSearchService.searchForBulkCases(user, serviceAuth, query);
 
-            for (CaseDetails bulk : bulkCases) {
-                submitRectifyBulkList(bulk, user, serviceAuth);
+            for (uk.gov.hmcts.ccd.sdk.api.CaseDetails<BulkActionCaseData, BulkActionState> bulkCase : bulkCases) {
+                submitRectifyBulkList(bulkCase.getId(), user, serviceAuth);
             }
             log.info("SystemRectifyBulkListFromCsvTask completed.");
         } catch (final CcdSearchCaseException e) {
@@ -72,18 +77,18 @@ public class SystemRectifyBulkListFromCsvTask implements Runnable {
         }
     }
 
-    private void submitRectifyBulkList(CaseDetails bulk, User user, String serviceAuth) {
+    private void submitRectifyBulkList(Long caseId, User user, String serviceAuth) {
         try {
-            log.info("Submitting {} for Bulk {}", SYSTEM_RECTIFY_BULK_LIST, bulk.getId());
+            log.info("Submitting {} for Bulk {}", SYSTEM_RECTIFY_BULK_LIST, caseId);
             // No payload needed: the event itself reads CSV and removes the right cases for THIS bulk
             ccdUpdateService.submitEvent(
-                bulk.getId(),
+                caseId,
                 SYSTEM_RECTIFY_BULK_LIST,
                 user,
                 serviceAuth
             );
         } catch (final CcdManagementException | IllegalArgumentException e) {
-            taskHelper.logError(SUBMIT_EVENT_ERROR, bulk.getId(), e);
+            taskHelper.logError(SUBMIT_EVENT_ERROR, caseId, e);
         }
     }
 }
