@@ -105,7 +105,10 @@ class SystemRectifyBulkListFromCsvTaskTest {
 
     @Test
     void run_logsErrorOnCcdSearchCaseException() throws Exception {
-        when(taskHelper.loadRectifyBatches(anyString())).thenReturn(List.of());
+        when(taskHelper.loadRectifyBatches("rectify-bulk.csv")).thenReturn(List.of(
+            new TaskHelper.BulkRectifySpec(1L, List.of(10L)),
+            new TaskHelper.BulkRectifySpec(2L, List.of(20L))
+        ));
         when(ccdSearchService.searchForBulkCases(any(), any(), any()))
             .thenThrow(new CcdSearchCaseException("search error", mock(FeignException.class)));
 
