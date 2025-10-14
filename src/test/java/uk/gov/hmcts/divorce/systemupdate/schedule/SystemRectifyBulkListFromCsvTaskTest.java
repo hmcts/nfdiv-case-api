@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -64,11 +65,12 @@ class SystemRectifyBulkListFromCsvTaskTest {
         task.run();
 
         // Both bulks submitted
-        verify(ccdUpdateService,
-            times(1)).submitEvent(eq(1758254429226124L), eq(SYSTEM_RECTIFY_BULK_LIST), any(), any());
-        verify(ccdUpdateService,
-            times(1)).submitEvent(eq(1758261653985127L), eq(SYSTEM_RECTIFY_BULK_LIST), any(), any());
-    }
+        verify(ccdUpdateService, times(1))
+            .submitEvent(eq(1758254429226124L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
+
+        verify(ccdUpdateService, times(1))
+            .submitEvent(eq(1758261653985127L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
+}
 
     @Test
     void run_continuesWhenOneSubmitFails() throws IOException, CcdConflictException {
@@ -88,12 +90,15 @@ class SystemRectifyBulkListFromCsvTaskTest {
 
         doThrow(new CcdManagementException(NOT_FOUND.value(), "Failed processing of case", mock(FeignException.class)))
             .when(ccdUpdateService)
-            .submitEvent(1L, SYSTEM_RECTIFY_BULK_LIST, any(), any());
+            .submitEvent(eq(1L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
 
         task.run();
 
         // First failed, second still submitted
-        verify(ccdUpdateService, times(1)).submitEvent(1L, SYSTEM_RECTIFY_BULK_LIST, any(), any());
-        verify(ccdUpdateService, times(1)).submitEvent(2L, SYSTEM_RECTIFY_BULK_LIST, any(), any());
+        verify(ccdUpdateService, times(1))
+            .submitEvent(eq(1L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
+
+        verify(ccdUpdateService, times(1))
+            .submitEvent(eq(2L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
     }
 }
