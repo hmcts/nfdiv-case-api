@@ -6,16 +6,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.systemupdate.schedule.TaskHelper;
+import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -44,6 +48,17 @@ class SystemRectifyBulkListTest {
         details.setId(1758254429226124L); // bulk id under test
         details.setData(data);
         details.setState(BulkActionState.Created);
+    }
+
+    @Test
+    void configure_executesWithoutError() {
+        ConfigBuilderImpl<BulkActionCaseData, BulkActionState, UserRole> builder =
+            ConfigTestUtil.createBulkActionConfigBuilder();
+
+        SystemRectifyBulkList event1 = new SystemRectifyBulkList(new TaskHelper());
+
+        assertDoesNotThrow(() -> event1.configure(builder));
+
     }
 
     @Test
@@ -99,4 +114,23 @@ class SystemRectifyBulkListTest {
     private static CaseLink caseRef(String hyphenated) {
         return CaseLink.builder().caseReference(hyphenated).build();
     }
+
+    @Test
+    void aboutToSubmit_handlesCsvReadFailure_gracefully() throws Exception {
+        when(taskHelper.loadRectifyBatches("rectify-bulk.csv"))
+            .thenThrow(new RuntimeException("Broken CSV file"));
+
+       List<String> originalRefs = data.getBulkListCaseDetails().stream()
+            .map(lv -> lv.getValue().getCaseReference().getCaseReference())
+            .toList();
+
+        var resp = event.aboutToSubmit(details, null);
+
+        List<String> afterRefs = resp.getData().getBulkListCaseDetails().stream()
+            .map(lv -> lv.getValue().getCaseReference().getCaseReference())
+            .toList();
+
+        assertEquals(originalRefs, afterRefs);
+    }
+
 }

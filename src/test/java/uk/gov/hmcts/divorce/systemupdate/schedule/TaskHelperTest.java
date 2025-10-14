@@ -13,6 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.isNull;
 import static org.mockito.Mockito.verify;
@@ -57,5 +58,11 @@ class TaskHelperTest {
         assertEquals(List.of(1743669242986927L, 1743669242986928L), second.caseRefs());
     }
 
+    @Test
+    void loadRectifyBatches_returnsEmptyListForEmptyFile() throws IOException {
+        List<TaskHelper.BulkRectifySpec> specs = task.loadRectifyBatches("TaskHelperTest_empty.csv");
+        assertNotNull(specs);
+        assertTrue(specs.isEmpty());
+    }
 }
 
