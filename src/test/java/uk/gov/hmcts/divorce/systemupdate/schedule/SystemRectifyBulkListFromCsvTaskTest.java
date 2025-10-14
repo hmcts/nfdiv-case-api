@@ -5,9 +5,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
-import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -22,7 +22,6 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
