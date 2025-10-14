@@ -97,7 +97,7 @@ public class SystemRectifyBulkList implements CCDConfig<BulkActionCaseData, Bulk
             }
             throw e; // rethrow if needed
         }
-        log.info("Rectify: removed {} case(s) from bulk {}: {} ", toRemove.size(), bulkId, toRemove);
+        log.info("Rectify: tried to remove {} case(s) from bulk {}: {} ", toRemove.size(), bulkId, toRemove);
 
 
         return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
