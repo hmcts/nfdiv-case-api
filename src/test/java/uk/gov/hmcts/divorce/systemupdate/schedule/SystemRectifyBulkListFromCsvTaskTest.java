@@ -70,7 +70,7 @@ class SystemRectifyBulkListFromCsvTaskTest {
 
         verify(ccdUpdateService, times(1))
             .submitEvent(eq(1758261653985127L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
-}
+    }
 
     @Test
     void run_continuesWhenOneSubmitFails() throws IOException, CcdConflictException {
