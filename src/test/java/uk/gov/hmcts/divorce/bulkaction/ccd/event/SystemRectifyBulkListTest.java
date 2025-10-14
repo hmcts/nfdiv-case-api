@@ -120,7 +120,7 @@ class SystemRectifyBulkListTest {
         when(taskHelper.loadRectifyBatches("rectify-bulk.csv"))
             .thenThrow(new RuntimeException("Broken CSV file"));
 
-       List<String> originalRefs = data.getBulkListCaseDetails().stream()
+        List<String> originalRefs = data.getBulkListCaseDetails().stream()
             .map(lv -> lv.getValue().getCaseReference().getCaseReference())
             .toList();
 
