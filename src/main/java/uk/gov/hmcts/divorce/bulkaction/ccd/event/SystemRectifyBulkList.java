@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.systemupdate.schedule.TaskHelper;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -83,8 +84,19 @@ public class SystemRectifyBulkList implements CCDConfig<BulkActionCaseData, Bulk
             })
             .toList();
 
-        data.setBulkListCaseDetails(filtered);
-
+        try {
+            data.setBulkListCaseDetails(filtered);
+        } catch (Exception e) {
+            log.error("Failed to set bulkListCaseDetails: {}", e.getMessage(), e);
+            if (e.getCause() != null) {
+                log.error("Cause: {}", e.getCause().getMessage(), e.getCause());
+            }
+            // If the exception has a response or details, log them
+            if (e instanceof CcdManagementException ccdEx && ccdEx.getCause() != null) {
+                log.error("CCD response: {}", ccdEx.getCause().getMessage());
+            }
+            throw e; // rethrow if needed
+        }
         log.info("Rectify: removed {} case(s) from bulk {}: {} ", toRemove.size(), bulkId, toRemove);
 
 
