@@ -65,12 +65,8 @@ public class SystemRectifyBulkListFromCsvTask implements Runnable {
                 submitRectifyBulkList(bulkCase.getId(), user, serviceAuth);
             }
             log.info("SystemRectifyBulkListFromCsvTask completed.");
-        } catch (final CcdSearchCaseException e) {
-            taskHelper.logError(SEARCH_ERROR, null, e);
-        } catch (final CcdConflictException e) {
-            taskHelper.logError(CONFLICT_ERROR, null, e);
-        } catch (final IOException e) {
-            taskHelper.logError(FILE_READ_ERROR, null, e);
+        } catch (Exception e) {
+            taskHelper.logError("SystemRectifyBulkListFromCsvTask stopped due to exception", null, e);
         }
     }
 

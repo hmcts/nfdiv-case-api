@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
+import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,6 +13,7 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -22,6 +24,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -99,4 +102,20 @@ class SystemRectifyBulkListFromCsvTaskTest {
         verify(ccdUpdateService, times(1))
             .submitEvent(eq(2L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
     }
+
+    @Test
+    void run_logsErrorOnCcdSearchCaseException() throws Exception {
+        when(taskHelper.loadRectifyBatches(anyString())).thenReturn(List.of());
+        when(ccdSearchService.searchForBulkCases(any(), any(), any()))
+            .thenThrow(new CcdSearchCaseException("search error", mock(FeignException.class)));
+
+        task.run();
+
+        verify(taskHelper).logError(
+            eq("SystemRectifyBulkListFromCsvTask stopped due to exception"),
+            isNull(),
+            any(CcdSearchCaseException.class)
+        );
+    }
+
 }
