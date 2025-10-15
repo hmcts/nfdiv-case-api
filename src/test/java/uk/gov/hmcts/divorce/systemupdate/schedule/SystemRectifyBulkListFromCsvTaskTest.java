@@ -67,9 +67,9 @@ class SystemRectifyBulkListFromCsvTaskTest {
         task.run();
 
         verify(ccdUpdateService, times(1))
-            .submitEvent(eq(1758254429226124L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
+            .submitBulkActionEvent(eq(1758254429226124L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
         verify(ccdUpdateService, times(1))
-            .submitEvent(eq(1758261653985127L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
+            .submitBulkActionEvent(eq(1758261653985127L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
     }
 
     @Test
@@ -93,14 +93,14 @@ class SystemRectifyBulkListFromCsvTaskTest {
 
         doThrow(new CcdManagementException(404, "Failed processing of case", null))
             .when(ccdUpdateService)
-            .submitEvent(eq(1L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
+            .submitBulkActionEvent(eq(1L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
 
         task.run();
 
         verify(ccdUpdateService, times(1))
-            .submitEvent(eq(1L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
+            .submitBulkActionEvent(eq(1L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
         verify(ccdUpdateService, times(1))
-            .submitEvent(eq(2L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
+            .submitBulkActionEvent(eq(2L), eq(SYSTEM_RECTIFY_BULK_LIST), any(User.class), anyString());
     }
 
     @Test
