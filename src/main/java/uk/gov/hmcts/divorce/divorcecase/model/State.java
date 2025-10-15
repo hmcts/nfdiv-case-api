@@ -574,7 +574,7 @@ public enum State {
 
     public static final State[] AOS_STATES = {
         Holding, AwaitingConditionalOrder, IssuedToBailiff, AwaitingBailiffService, AwaitingBailiffReferral, BailiffRefused,
-        AwaitingServiceConsideration, LAServiceReview, AwaitingServicePayment, AwaitingAlternativeService, AwaitingDwpResponse,
+        AwaitingServiceConsideration, AwaitingServicePayment, AwaitingAlternativeService, AwaitingDwpResponse,
         AwaitingJudgeClarification, GeneralConsiderationComplete, AwaitingGeneralReferralPayment, AwaitingGeneralConsideration,
         GeneralApplicationReceived, PendingHearingOutcome, PendingHearingDate, AwaitingGeneralApplicationPayment, AwaitingDocuments
     };
