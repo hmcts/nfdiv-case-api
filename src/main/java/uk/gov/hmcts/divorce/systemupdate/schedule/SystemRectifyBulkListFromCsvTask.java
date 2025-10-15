@@ -71,7 +71,7 @@ public class SystemRectifyBulkListFromCsvTask implements Runnable {
         try {
             log.info("Submitting {} for Bulk {}", SYSTEM_RECTIFY_BULK_LIST, caseId);
             // No payload needed: the event itself reads CSV and removes the right cases for THIS bulk
-            ccdUpdateService.submitEvent(
+            ccdUpdateService.submitBulkActionEvent(
                 caseId,
                 SYSTEM_RECTIFY_BULK_LIST,
                 user,
