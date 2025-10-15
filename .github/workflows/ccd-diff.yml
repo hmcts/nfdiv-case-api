@@ -3,7 +3,7 @@ name: Diff CCD definition
 on:
   pull_request:
     branches:
-      - none
+      - master
 
 jobs:
 
@@ -70,8 +70,8 @@ jobs:
           REPORT="${REPORT//'%'/'%25'}"
           REPORT="${REPORT//$'\n'/'%0A'}"
           REPORT="${REPORT//$'\r'/'%0D'}"
-          echo $REPORT
-          echo "::set-output name=content::$REPORT"
+          # echo $REPORT
+          # echo "::set-output name=content::$REPORT"
       - name: Display
         run: |
           echo "${{ steps.ccd-diff.outputs.content }}"
