@@ -49,7 +49,7 @@ public class CaseworkerUploadServiceApplicationDocuments implements CCDConfig<Ca
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER)
+            .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE, SOLICITOR))
             .page("cwUploadServiceAppDocs", this::midEvent)
             .pageLabel(UPLOAD_SERVICE_APPLICATION_DOCS_NAME)
