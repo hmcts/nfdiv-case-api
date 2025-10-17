@@ -71,24 +71,34 @@ public class SystemCreateBulkCaseListTask implements Runnable {
 
                     final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = createBulkCaseListDetails(casesAwaitingPronouncement);
 
-                    final CaseDetails<BulkActionCaseData, BulkActionState> caseDetailsBulkCase = createBulkCase(
-                        user,
-                        serviceAuth,
-                        bulkListCaseDetails);
+                    if (!bulkListCaseDetails.isEmpty()) {
+                        if (casesAwaitingPronouncement.size() > bulkListCaseDetails.size()) {
+                            log.warn(
+                                "Potential Elastic Search issue. casesAwaitingPronouncement: {} bulkListCaseDetails: {}",
+                                casesAwaitingPronouncement.size(), bulkListCaseDetails.size()
+                            );
+                        }
+                        final CaseDetails<BulkActionCaseData, BulkActionState> caseDetailsBulkCase = createBulkCase(
+                            user,
+                            serviceAuth,
+                            bulkListCaseDetails);
 
-                    final List<ListValue<BulkListCaseDetails>> failedAwaitingPronouncementCases = bulkTriggerService.bulkTrigger(
-                        caseDetailsBulkCase.getData().getBulkListCaseDetails(),
-                        SYSTEM_LINK_WITH_BULK_CASE,
-                        bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase, SYSTEM_LINK_WITH_BULK_CASE),
-                        user,
-                        serviceAuth);
+                        final List<ListValue<BulkListCaseDetails>> failedAwaitingPronouncementCases = bulkTriggerService.bulkTrigger(
+                            caseDetailsBulkCase.getData().getBulkListCaseDetails(),
+                            SYSTEM_LINK_WITH_BULK_CASE,
+                            bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase, SYSTEM_LINK_WITH_BULK_CASE),
+                            user,
+                            serviceAuth);
 
-                    failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
-                        failedAwaitingPronouncementCases,
-                        caseDetailsBulkCase,
-                        user,
-                        serviceAuth
-                    );
+                        failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
+                            failedAwaitingPronouncementCases,
+                            caseDetailsBulkCase,
+                            user,
+                            serviceAuth
+                        );
+                    } else {
+                        log.warn("Potential Elastic Search issue. bulkListCaseDetails not populated.");
+                    }
 
                 } else {
                     log.info("Number of cases do not reach the minimum for awaiting pronouncement processing,"
@@ -133,36 +143,53 @@ public class SystemCreateBulkCaseListTask implements Runnable {
         final List<CaseDetails<CaseData, State>> casesAwaitingPronouncement) {
 
         final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = new ArrayList<>();
+        int skippedCases = 0;
 
         for (final CaseDetails<CaseData, State> caseDetails : casesAwaitingPronouncement) {
 
             final CaseData caseData = caseDetails.getData();
-            String caseParties = String.format("%s %s vs %s %s",
-                caseData.getApplicant1().getFirstName(),
-                caseData.getApplicant1().getLastName(),
-                caseData.getApplicant2().getFirstName(),
-                caseData.getApplicant2().getLastName()
-            );
 
-            var bulkCaseDetails = BulkListCaseDetails
-                .builder()
-                .caseParties(caseParties)
-                .caseReference(
-                    CaseLink
-                        .builder()
-                        .caseReference(String.valueOf(caseDetails.getId()))
-                        .build()
-                )
-                .decisionDate(caseData.getConditionalOrder().getDecisionDate())
-                .build();
+            if (caseData.getBulkListCaseReferenceLink() != null) {
+                String caseParties = String.format("%s %s vs %s %s",
+                    caseData.getApplicant1().getFirstName(),
+                    caseData.getApplicant1().getLastName(),
+                    caseData.getApplicant2().getFirstName(),
+                    caseData.getApplicant2().getLastName()
+                );
 
-            var bulkListCaseDetailsListValue =
-                ListValue
-                    .<BulkListCaseDetails>builder()
-                    .value(bulkCaseDetails)
+                var bulkCaseDetails = BulkListCaseDetails
+                    .builder()
+                    .caseParties(caseParties)
+                    .caseReference(
+                        CaseLink
+                            .builder()
+                            .caseReference(String.valueOf(caseDetails.getId()))
+                            .build()
+                    )
+                    .decisionDate(caseData.getConditionalOrder().getDecisionDate())
                     .build();
 
-            bulkListCaseDetails.add(bulkListCaseDetailsListValue);
+                var bulkListCaseDetailsListValue =
+                    ListValue
+                        .<BulkListCaseDetails>builder()
+                        .value(bulkCaseDetails)
+                        .build();
+
+                bulkListCaseDetails.add(bulkListCaseDetailsListValue);
+            } else {
+                log.warn(
+                    "Potential Elastic Search issue. Case {} already has a bulk list case reference link, skipping...",
+                    caseDetails.getId()
+                );
+                skippedCases += 1;
+            }
+        }
+        if (skippedCases > 0) {
+            log.warn(
+                "{} cases provided, {} skipped due to existing bulk list case reference link",
+                casesAwaitingPronouncement.size(),
+                skippedCases
+            );
         }
 
         return bulkListCaseDetails;
