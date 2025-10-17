@@ -64,7 +64,6 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .description(SCHEDULE_CASES_FOR_LISTING)
             .showSummary()
             .showEventNotes()
-//            .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
@@ -96,29 +95,6 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .state(Listed)
             .build();
     }
-
-//    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(
-//        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
-//        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
-//    ) {
-//
-//        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_SCHEDULE_CASE, bulkCaseDetails.getId());
-//
-//        final List<String> errors = validateData(bulkCaseDetails.getData(), beforeDetails.getData());
-//        if (!errors.isEmpty()) {
-//            return AboutToStartOrSubmitResponse
-//                .<BulkActionCaseData, BulkActionState>builder()
-//                .errors(errors)
-//                .data(bulkCaseDetails.getData())
-//                .build();
-//        }
-//
-//        return AboutToStartOrSubmitResponse
-//            .<BulkActionCaseData, BulkActionState>builder()
-//            .data(bulkCaseDetails.getData())
-//            .state(Listed)
-//            .build();
-//    }
 
     public SubmittedCallbackResponse submitted(CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
                                                CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails) {
