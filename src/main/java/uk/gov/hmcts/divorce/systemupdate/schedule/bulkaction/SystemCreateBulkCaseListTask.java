@@ -149,7 +149,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
 
             final CaseData caseData = caseDetails.getData();
 
-            if (caseData.getBulkListCaseReferenceLink() != null) {
+            if (caseData.getBulkListCaseReferenceLink() == null) {
                 String caseParties = String.format("%s %s vs %s %s",
                     caseData.getApplicant1().getFirstName(),
                     caseData.getApplicant1().getLastName(),
@@ -178,15 +178,16 @@ public class SystemCreateBulkCaseListTask implements Runnable {
                 bulkListCaseDetails.add(bulkListCaseDetailsListValue);
             } else {
                 log.warn(
-                    "Potential Elastic Search issue. Case {} already has a bulk list case reference link, skipping...",
-                    caseDetails.getId()
+                    "Potential Elastic Search issue. Case {} already linked to bulk list {}, skipping...",
+                    caseDetails.getId(),
+                    caseData.getBulkListCaseReferenceLink().getCaseReference()
                 );
                 skippedCases += 1;
             }
         }
         if (skippedCases > 0) {
             log.warn(
-                "{} cases provided, {} skipped due to existing bulk list case reference link",
+                "{} cases provided, {} skipped due to existing bulk list case reference links",
                 casesAwaitingPronouncement.size(),
                 skippedCases
             );
