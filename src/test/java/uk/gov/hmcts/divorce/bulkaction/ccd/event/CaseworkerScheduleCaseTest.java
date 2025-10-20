@@ -49,6 +49,7 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.E
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_CASE_ID;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_CASE_IDS_DUPLICATED;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_HEARING_DATE_IN_PAST;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_NO_CASES_FOUND;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_NO_NEW_CASES_ADDED;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_REMOVE_DUPLICATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -325,6 +326,45 @@ class CaseworkerScheduleCaseTest {
         assertThat(response.getErrors()).containsExactly(
             ERROR_HEARING_DATE_IN_PAST,
             ERROR_CASE_ID + TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE
+        );
+    }
+
+    @Test
+    void shouldPopulateErrorMessageWhenSearchReturnsNoResultsAndMidEventIsTriggered() {
+        setUpSystemUser();
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
+            LocalDateTime.now().plusDays(5),
+            List.of(bulkListCaseDetailsListValue())
+        );
+
+        when(ccdSearchService.searchForCases(List.of(TEST_CASE_ID.toString()), user, TEST_SERVICE_AUTH_TOKEN))
+            .thenReturn(new ArrayList<>());
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
+
+        assertThat(response.getErrors()).containsExactly(ERROR_NO_CASES_FOUND + TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldPopulateErrorMessagesWhenHearingDateIsInPastAndSearchReturnsNoResultsAndMidEventIsTriggered() {
+        setUpSystemUser();
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
+            LocalDateTime.now().minusHours(5),
+            List.of(bulkListCaseDetailsListValue())
+        );
+
+        when(ccdSearchService.searchForCases(List.of(TEST_CASE_ID.toString()), user, TEST_SERVICE_AUTH_TOKEN))
+            .thenReturn(new ArrayList<>());
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
+
+        assertThat(response.getErrors()).containsExactly(
+            ERROR_HEARING_DATE_IN_PAST,
+            ERROR_NO_CASES_FOUND + TEST_CASE_ID
         );
     }
 
