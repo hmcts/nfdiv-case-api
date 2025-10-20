@@ -50,6 +50,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     public static final String ERROR_NO_NEW_CASES_ADDED = "Please add at least one new case to schedule for listing";
     public static final String ERROR_CASE_ID = "Case ID ";
     public static final String ERROR_ALREADY_LINKED_TO_BULK_CASE = " is already linked to bulk case ";
+    public static final String ERROR_NO_CASES_FOUND = "Search returned no cases for the provided Case IDs: ";
 
     private static final String SCHEDULE_CASES_FOR_LISTING = "Schedule cases for listing";
 
@@ -204,6 +205,8 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
                     errors.add(ERROR_CASE_ID + caseDetails.getId() + ERROR_ALREADY_LINKED_TO_BULK_CASE + bulkCaseRef);
                 }
             });
+        } else {
+            errors.add(ERROR_NO_CASES_FOUND + String.join(", ", newCaseIds));
         }
 
         return errors;
