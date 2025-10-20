@@ -144,6 +144,12 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
 
     private List<String> getNewCaseIds(final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails,
                                        final List<ListValue<BulkListCaseDetails>> beforeBulkListCaseDetails) {
+        if (beforeBulkListCaseDetails == null) {
+            return bulkListCaseDetails.stream()
+                .map(caseDetails -> caseDetails.getValue().getCaseReference().getCaseReference())
+                .toList();
+        }
+
         return bulkListCaseDetails.stream()
             .filter(caseDetails -> !beforeBulkListCaseDetails.contains(caseDetails))
             .toList()
