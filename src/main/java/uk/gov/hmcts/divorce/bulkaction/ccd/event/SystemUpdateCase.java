@@ -31,7 +31,7 @@ public class SystemUpdateCase implements CCDConfig<BulkActionCaseData, BulkActio
             .forStates(Created, Listed, Pronounced, Dropped)
             .name("System update case")
             .description("System update case")
-            .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE)
+            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grantHistoryOnly(LEGAL_ADVISOR))
             .page("EDIT")
             .pageLabel("SYSTEM EDIT")
