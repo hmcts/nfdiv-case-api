@@ -78,30 +78,38 @@ public class SystemCreateBulkCaseListTask implements Runnable {
                                 casesAwaitingPronouncement.size(), bulkListCaseDetails.size()
                             );
                         }
-                        final CaseDetails<BulkActionCaseData, BulkActionState> caseDetailsBulkCase = createBulkCase(
-                            user,
-                            serviceAuth,
-                            bulkListCaseDetails);
+                        if (minimumCasesToProcess > bulkListCaseDetails.size()) {
+                            log.warn(
+                                "After skipping cases already linked to bulk lists, "
+                                    + "the number of cases does not reach the minimum for awaiting pronouncement processing, "
+                                    + "Minimum size needed {}, Case list size {}",
+                                minimumCasesToProcess, bulkListCaseDetails.size()
+                            );
+                        } else {
+                            final CaseDetails<BulkActionCaseData, BulkActionState> caseDetailsBulkCase = createBulkCase(
+                                user,
+                                serviceAuth,
+                                bulkListCaseDetails);
 
-                        final List<ListValue<BulkListCaseDetails>> failedAwaitingPronouncementCases = bulkTriggerService.bulkTrigger(
-                            caseDetailsBulkCase.getData().getBulkListCaseDetails(),
-                            SYSTEM_LINK_WITH_BULK_CASE,
-                            bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase, SYSTEM_LINK_WITH_BULK_CASE),
-                            user,
-                            serviceAuth);
+                            final List<ListValue<BulkListCaseDetails>> failedAwaitingPronouncementCases = bulkTriggerService.bulkTrigger(
+                                caseDetailsBulkCase.getData().getBulkListCaseDetails(),
+                                SYSTEM_LINK_WITH_BULK_CASE,
+                                bulkCaseCaseTaskFactory.getCaseTask(caseDetailsBulkCase, SYSTEM_LINK_WITH_BULK_CASE),
+                                user,
+                                serviceAuth);
 
-                        failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
-                            failedAwaitingPronouncementCases,
-                            caseDetailsBulkCase,
-                            user,
-                            serviceAuth
-                        );
+                            failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
+                                failedAwaitingPronouncementCases,
+                                caseDetailsBulkCase,
+                                user,
+                                serviceAuth
+                            );
+                        }
                     } else {
                         log.warn("Potential Elastic Search issue. bulkListCaseDetails not populated.");
                     }
-
                 } else {
-                    log.info("Number of cases do not reach the minimum for awaiting pronouncement processing,"
+                    log.info("Number of cases does not reach the minimum for awaiting pronouncement processing, "
                         + "Minimum size needed {}, Case list size {}", minimumCasesToProcess, casesAwaitingPronouncement.size());
                 }
             }
