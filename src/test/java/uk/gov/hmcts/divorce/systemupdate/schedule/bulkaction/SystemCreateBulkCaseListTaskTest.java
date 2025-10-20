@@ -45,11 +45,12 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.*;
 
 @ExtendWith(MockitoExtension.class)
 class SystemCreateBulkCaseListTaskTest {
+
+    private static final String BULK_CASE_REFERENCE = "1234123412341234";
 
     @Mock
     private CcdSearchService ccdSearchService;
@@ -308,6 +309,346 @@ class SystemCreateBulkCaseListTaskTest {
     }
 
     @Test
+    void shouldCreateBulkCaseWithTwoCasesWhenInAwaitingPronouncementAndMinMaxBatchLimitOkAndOneCaseAlreadyAssignedToBulkList() {
+
+        setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
+
+        final CaseData caseData1 =
+            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
+
+        final CaseData caseData2 =
+            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
+        caseData2.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
+
+        final CaseData caseData3 =
+            caseDataWithApplicant("app1fname3", "app1lname3", "app2fname3", "app2lname3");
+
+        final CaseDetails<CaseData, State> caseDetails1 = new CaseDetails<>();
+        caseDetails1.setId(1L);
+        caseDetails1.setData(caseData1);
+
+        final CaseDetails<CaseData, State> caseDetails2 = new CaseDetails<>();
+        caseDetails2.setId(2L);
+        caseDetails2.setData(caseData2);
+
+        final CaseDetails<CaseData, State> caseDetails3 = new CaseDetails<>();
+        caseDetails3.setId(3L);
+        caseDetails3.setData(caseData3);
+
+        final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
+        searchResults.offer(List.of(caseDetails1, caseDetails2, caseDetails3));
+        searchResults.offer(emptyList());
+
+        final ListValue<BulkListCaseDetails> bulkListCaseDetails1 =
+            bulkListCaseDetailsListValue("app1fname1 app1lname1 vs app2fname1 app2lname1", 1L);
+        final ListValue<BulkListCaseDetails> bulkListCaseDetails3 =
+            bulkListCaseDetailsListValue("app1fname3 app1lname3 vs app2fname3 app2lname3", 3L);
+        final List<ListValue<BulkListCaseDetails>> bulkCases = List.of(bulkListCaseDetails1, bulkListCaseDetails3);
+
+        final ListValue<CaseLink> caseAcceptedToHearing1 =
+            caseLinkListValue(bulkListCaseDetails1.getValue().getCaseReference(), "1");
+        final ListValue<CaseLink> caseAcceptedToHearing3 =
+            caseLinkListValue(bulkListCaseDetails3.getValue().getCaseReference(), "2");
+        final List<ListValue<CaseLink>> casesAcceptedToHearing = List.of(caseAcceptedToHearing1, caseAcceptedToHearing3);
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails = new CaseDetails<>();
+        bulkActionCaseDetails.setCaseTypeId(BulkActionCaseTypeConfig.getCaseType());
+        bulkActionCaseDetails.setData(BulkActionCaseData.builder()
+            .bulkListCaseDetails(bulkCases)
+            .casesAcceptedToListForHearing(casesAcceptedToHearing)
+            .build());
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> createdCaseDetails = new CaseDetails<>();
+        createdCaseDetails.setId(4L);
+        createdCaseDetails.setData(BulkActionCaseData.builder()
+            .bulkListCaseDetails(bulkCases)
+            .build());
+
+        final CaseTask caseTask = mock(CaseTask.class);
+
+        when(ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION))
+            .thenReturn(searchResults);
+
+        when(ccdCreateService.createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION))
+            .thenReturn(createdCaseDetails);
+
+        when(bulkCaseCaseTaskFactory.getCaseTask(createdCaseDetails, SYSTEM_LINK_WITH_BULK_CASE)).thenReturn(caseTask);
+
+        when(bulkTriggerService.bulkTrigger(
+            bulkCases,
+            SYSTEM_LINK_WITH_BULK_CASE,
+            caseTask,
+            user,
+            SERVICE_AUTHORIZATION))
+            .thenReturn(emptyList());
+
+        systemCreateBulkCaseListTask.run();
+
+        verify(ccdSearchService).searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION);
+        verify(ccdCreateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
+        verify(bulkTriggerService).bulkTrigger(
+            bulkCases,
+            SYSTEM_LINK_WITH_BULK_CASE,
+            caseTask,
+            user,
+            SERVICE_AUTHORIZATION);
+
+        verifyNoMoreInteractions(ccdSearchService);
+    }
+
+    @Test
+    void shouldCreateTwoBulkCaseWithTwoCasesWhenInAwaitingPronouncementAndMinMaxBatchLimitOkAndTwoCasesAlreadyAssignedToBulkList() {
+
+        setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
+
+        final CaseData caseData1 =
+            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
+
+        final CaseData caseData2 =
+            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
+        caseData2.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
+
+        final CaseData caseData3 =
+            caseDataWithApplicant("app1fname3", "app1lname3", "app2fname3", "app2lname3");
+
+        final CaseData caseData4 =
+            caseDataWithApplicant("app1fname4", "app1lname4", "app2fname4", "app2lname4");
+
+        final CaseData caseData5 =
+            caseDataWithApplicant("app1fname5", "app1lname5", "app2fname5", "app2lname5");
+
+        final CaseData caseData6 =
+            caseDataWithApplicant("app1fname6", "app1lname6", "app2fname6", "app2lname6");
+        caseData6.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
+
+        final CaseDetails<CaseData, State> caseDetails1 = new CaseDetails<>();
+        caseDetails1.setId(1L);
+        caseDetails1.setData(caseData1);
+
+        final CaseDetails<CaseData, State> caseDetails2 = new CaseDetails<>();
+        caseDetails2.setId(2L);
+        caseDetails2.setData(caseData2);
+
+        final CaseDetails<CaseData, State> caseDetails3 = new CaseDetails<>();
+        caseDetails3.setId(3L);
+        caseDetails3.setData(caseData3);
+
+        final CaseDetails<CaseData, State> caseDetails4 = new CaseDetails<>();
+        caseDetails4.setId(4L);
+        caseDetails4.setData(caseData4);
+
+        final CaseDetails<CaseData, State> caseDetails5 = new CaseDetails<>();
+        caseDetails5.setId(5L);
+        caseDetails5.setData(caseData5);
+
+        final CaseDetails<CaseData, State> caseDetails6 = new CaseDetails<>();
+        caseDetails6.setId(6L);
+        caseDetails6.setData(caseData6);
+
+        final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
+        searchResults.offer(List.of(caseDetails1, caseDetails2, caseDetails3));
+        searchResults.offer(List.of(caseDetails4, caseDetails5, caseDetails6));
+        searchResults.offer(emptyList());
+
+        final ListValue<BulkListCaseDetails> bulkListCaseDetails1 =
+            bulkListCaseDetailsListValue("app1fname1 app1lname1 vs app2fname1 app2lname1", 1L);
+        final ListValue<BulkListCaseDetails> bulkListCaseDetails3 =
+            bulkListCaseDetailsListValue("app1fname3 app1lname3 vs app2fname3 app2lname3", 3L);
+        final ListValue<BulkListCaseDetails> bulkListCaseDetails4 =
+            bulkListCaseDetailsListValue("app1fname4 app1lname4 vs app2fname4 app2lname4", 4L);
+        final ListValue<BulkListCaseDetails> bulkListCaseDetails5 =
+            bulkListCaseDetailsListValue("app1fname5 app1lname5 vs app2fname5 app2lname5", 5L);
+        final List<ListValue<BulkListCaseDetails>> bulkCases1 = List.of(bulkListCaseDetails1, bulkListCaseDetails3);
+        final List<ListValue<BulkListCaseDetails>> bulkCases2 = List.of(bulkListCaseDetails4, bulkListCaseDetails5);
+
+        final ListValue<CaseLink> caseAcceptedToHearing1 =
+            caseLinkListValue(bulkListCaseDetails1.getValue().getCaseReference(), "1");
+        final ListValue<CaseLink> caseAcceptedToHearing3 =
+            caseLinkListValue(bulkListCaseDetails3.getValue().getCaseReference(), "2");
+        final List<ListValue<CaseLink>> casesAcceptedToHearing1 = List.of(caseAcceptedToHearing1, caseAcceptedToHearing3);
+
+        final ListValue<CaseLink> caseAcceptedToHearing4 =
+            caseLinkListValue(bulkListCaseDetails4.getValue().getCaseReference(), "1");
+        final ListValue<CaseLink> caseAcceptedToHearing5 =
+            caseLinkListValue(bulkListCaseDetails5.getValue().getCaseReference(), "2");
+        final List<ListValue<CaseLink>> casesAcceptedToHearing2 = List.of(caseAcceptedToHearing4, caseAcceptedToHearing5);
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails1 = new CaseDetails<>();
+        bulkActionCaseDetails1.setCaseTypeId(BulkActionCaseTypeConfig.getCaseType());
+        bulkActionCaseDetails1.setData(BulkActionCaseData.builder()
+            .bulkListCaseDetails(bulkCases1)
+            .casesAcceptedToListForHearing(casesAcceptedToHearing1)
+            .build());
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails2 = new CaseDetails<>();
+        bulkActionCaseDetails2.setCaseTypeId(BulkActionCaseTypeConfig.getCaseType());
+        bulkActionCaseDetails2.setData(BulkActionCaseData.builder()
+            .bulkListCaseDetails(bulkCases2)
+            .casesAcceptedToListForHearing(casesAcceptedToHearing2)
+            .build());
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> createdCaseDetails1 = new CaseDetails<>();
+        createdCaseDetails1.setId(7L);
+        createdCaseDetails1.setData(BulkActionCaseData.builder()
+            .bulkListCaseDetails(bulkCases1)
+            .build());
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> createdCaseDetails2 = new CaseDetails<>();
+        createdCaseDetails2.setId(8L);
+        createdCaseDetails2.setData(BulkActionCaseData.builder()
+            .bulkListCaseDetails(bulkCases2)
+            .build());
+
+        final CaseTask caseTask1 = mock(CaseTask.class);
+        final CaseTask caseTask2 = mock(CaseTask.class);
+
+        when(ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION))
+            .thenReturn(searchResults);
+
+        when(ccdCreateService.createBulkCase(bulkActionCaseDetails1, user, SERVICE_AUTHORIZATION))
+            .thenReturn(createdCaseDetails1);
+
+        when(ccdCreateService.createBulkCase(bulkActionCaseDetails2, user, SERVICE_AUTHORIZATION))
+            .thenReturn(createdCaseDetails2);
+
+        when(bulkCaseCaseTaskFactory.getCaseTask(createdCaseDetails1, SYSTEM_LINK_WITH_BULK_CASE)).thenReturn(caseTask1);
+        when(bulkCaseCaseTaskFactory.getCaseTask(createdCaseDetails2, SYSTEM_LINK_WITH_BULK_CASE)).thenReturn(caseTask2);
+
+        when(bulkTriggerService.bulkTrigger(
+            bulkCases1,
+            SYSTEM_LINK_WITH_BULK_CASE,
+            caseTask1,
+            user,
+            SERVICE_AUTHORIZATION))
+            .thenReturn(emptyList());
+
+        when(bulkTriggerService.bulkTrigger(
+            bulkCases2,
+            SYSTEM_LINK_WITH_BULK_CASE,
+            caseTask2,
+            user,
+            SERVICE_AUTHORIZATION))
+            .thenReturn(emptyList());
+
+        systemCreateBulkCaseListTask.run();
+
+        verify(ccdSearchService).searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION);
+        verify(ccdCreateService).createBulkCase(bulkActionCaseDetails1, user, SERVICE_AUTHORIZATION);
+        verify(ccdCreateService).createBulkCase(bulkActionCaseDetails2, user, SERVICE_AUTHORIZATION);
+        verify(bulkTriggerService).bulkTrigger(
+            bulkCases1,
+            SYSTEM_LINK_WITH_BULK_CASE,
+            caseTask1,
+            user,
+            SERVICE_AUTHORIZATION);
+        verify(bulkTriggerService).bulkTrigger(
+            bulkCases2,
+            SYSTEM_LINK_WITH_BULK_CASE,
+            caseTask2,
+            user,
+            SERVICE_AUTHORIZATION);
+
+        verifyNoMoreInteractions(ccdSearchService);
+    }
+
+    @Test
+    void shouldCreateOneBulkCaseWithTwoCasesWhenInAwaitingPronouncementAndMinMaxBatchLimitOkAndTwoCasesAlreadyAssignedToBulkList() {
+
+        setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
+
+        final CaseData caseData1 =
+            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
+        caseData1.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
+
+        final CaseData caseData2 =
+            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
+        caseData2.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
+
+        final CaseData caseData3 =
+            caseDataWithApplicant("app1fname3", "app1lname3", "app2fname3", "app2lname3");
+
+        final CaseData caseData4 =
+            caseDataWithApplicant("app1fname4", "app1lname4", "app2fname4", "app2lname4");
+
+        final CaseDetails<CaseData, State> caseDetails1 = new CaseDetails<>();
+        caseDetails1.setId(1L);
+        caseDetails1.setData(caseData1);
+
+        final CaseDetails<CaseData, State> caseDetails2 = new CaseDetails<>();
+        caseDetails2.setId(2L);
+        caseDetails2.setData(caseData2);
+
+        final CaseDetails<CaseData, State> caseDetails3 = new CaseDetails<>();
+        caseDetails3.setId(3L);
+        caseDetails3.setData(caseData3);
+
+        final CaseDetails<CaseData, State> caseDetails4 = new CaseDetails<>();
+        caseDetails4.setId(4L);
+        caseDetails4.setData(caseData4);
+
+        final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
+        searchResults.offer(List.of(caseDetails1, caseDetails2));
+        searchResults.offer(List.of(caseDetails3, caseDetails4));
+        searchResults.offer(emptyList());
+
+        final ListValue<BulkListCaseDetails> bulkListCaseDetails3 =
+            bulkListCaseDetailsListValue("app1fname3 app1lname3 vs app2fname3 app2lname3", 3L);
+        final ListValue<BulkListCaseDetails> bulkListCaseDetails4 =
+            bulkListCaseDetailsListValue("app1fname4 app1lname4 vs app2fname4 app2lname4", 4L);
+        final List<ListValue<BulkListCaseDetails>> bulkCases = List.of(bulkListCaseDetails3, bulkListCaseDetails4);
+
+        final ListValue<CaseLink> caseAcceptedToHearing3 =
+            caseLinkListValue(bulkListCaseDetails3.getValue().getCaseReference(), "1");
+        final ListValue<CaseLink> caseAcceptedToHearing4 =
+            caseLinkListValue(bulkListCaseDetails4.getValue().getCaseReference(), "2");
+        final List<ListValue<CaseLink>> casesAcceptedToHearing = List.of(caseAcceptedToHearing3, caseAcceptedToHearing4);
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails = new CaseDetails<>();
+        bulkActionCaseDetails.setCaseTypeId(BulkActionCaseTypeConfig.getCaseType());
+        bulkActionCaseDetails.setData(BulkActionCaseData.builder()
+            .bulkListCaseDetails(bulkCases)
+            .casesAcceptedToListForHearing(casesAcceptedToHearing)
+            .build());
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> createdCaseDetails = new CaseDetails<>();
+        createdCaseDetails.setId(5L);
+        createdCaseDetails.setData(BulkActionCaseData.builder()
+            .bulkListCaseDetails(bulkCases)
+            .build());
+
+        final CaseTask caseTask = mock(CaseTask.class);
+
+        when(ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION))
+            .thenReturn(searchResults);
+
+        when(ccdCreateService.createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION))
+            .thenReturn(createdCaseDetails);
+
+        when(bulkCaseCaseTaskFactory.getCaseTask(createdCaseDetails, SYSTEM_LINK_WITH_BULK_CASE)).thenReturn(caseTask);
+
+        when(bulkTriggerService.bulkTrigger(
+            bulkCases,
+            SYSTEM_LINK_WITH_BULK_CASE,
+            caseTask,
+            user,
+            SERVICE_AUTHORIZATION))
+            .thenReturn(emptyList());
+
+        systemCreateBulkCaseListTask.run();
+
+        verify(ccdSearchService).searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION);
+        verify(ccdCreateService).createBulkCase(bulkActionCaseDetails, user, SERVICE_AUTHORIZATION);
+        verify(bulkTriggerService).bulkTrigger(
+            bulkCases,
+            SYSTEM_LINK_WITH_BULK_CASE,
+            caseTask,
+            user,
+            SERVICE_AUTHORIZATION);
+
+        verifyNoMoreInteractions(ccdSearchService);
+    }
+
+    @Test
     void shouldNotCreateBulkCaseWithWhenCasesInAwaitingPronouncementStateIsLessThanMinimumBatchSize() {
 
         setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
@@ -316,6 +657,75 @@ class SystemCreateBulkCaseListTaskTest {
 
         final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
         searchResults.offer(List.of(caseDetails));
+
+        when(ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION))
+            .thenReturn(searchResults);
+
+        systemCreateBulkCaseListTask.run();
+
+        verify(ccdSearchService).searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION);
+
+        verifyNoMoreInteractions(ccdSearchService);
+    }
+
+    @Test
+    void shouldNotCreateBulkCaseWhenCasesInAwaitingPronouncementIsLessThanMinBatchSizeAfterFilteringForAlreadyLinkedCases() {
+
+        setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
+
+        final CaseData caseData1 =
+            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
+
+        final CaseData caseData2 =
+            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
+        caseData2.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
+
+        final CaseDetails<CaseData, State> caseDetails1 = new CaseDetails<>();
+        caseDetails1.setId(1L);
+        caseDetails1.setData(caseData1);
+
+        final CaseDetails<CaseData, State> caseDetails2 = new CaseDetails<>();
+        caseDetails2.setId(2L);
+        caseDetails2.setData(caseData2);
+
+        final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
+        searchResults.offer(List.of(caseDetails1, caseDetails2));
+        searchResults.offer(emptyList());
+
+        when(ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION))
+            .thenReturn(searchResults);
+
+        systemCreateBulkCaseListTask.run();
+
+        verify(ccdSearchService).searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION);
+
+        verifyNoMoreInteractions(ccdSearchService);
+    }
+
+    @Test
+    void shouldNotCreateBulkCaseWhenAllCasesInAwaitingPronouncementAlreadyLinked() {
+
+        setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
+
+        final CaseData caseData1 =
+            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
+        caseData1.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
+
+        final CaseData caseData2 =
+            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
+        caseData2.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
+
+        final CaseDetails<CaseData, State> caseDetails1 = new CaseDetails<>();
+        caseDetails1.setId(1L);
+        caseDetails1.setData(caseData1);
+
+        final CaseDetails<CaseData, State> caseDetails2 = new CaseDetails<>();
+        caseDetails2.setId(2L);
+        caseDetails2.setData(caseData2);
+
+        final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
+        searchResults.offer(List.of(caseDetails1, caseDetails2));
+        searchResults.offer(emptyList());
 
         when(ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, SERVICE_AUTHORIZATION))
             .thenReturn(searchResults);
