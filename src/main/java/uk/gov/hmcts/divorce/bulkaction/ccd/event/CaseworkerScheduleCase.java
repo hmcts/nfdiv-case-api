@@ -44,7 +44,15 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYS
 @RequiredArgsConstructor
 public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
     public static final String CASEWORKER_SCHEDULE_CASE = "caseworker-schedule-case";
+    public static final String ERROR_HEARING_DATE_IN_PAST = "Please enter a hearing date and time in the future";
+    public static final String ERROR_CASE_IDS_DUPLICATED = "Case IDs duplicated in the list: ";
+    public static final String ERROR_REMOVE_DUPLICATES = "Please remove duplicates and try again";
+    public static final String ERROR_NO_NEW_CASES_ADDED = "Please add at least one new case to schedule for listing";
+    public static final String ERROR_CASE_ID = "Case ID ";
+    public static final String ERROR_ALREADY_LINKED_TO_BULK_CASE = " is already linked to bulk case ";
+
     private static final String SCHEDULE_CASES_FOR_LISTING = "Schedule cases for listing";
+
     private final ScheduleCaseService scheduleCaseService;
     private final BulkTriggerService bulkTriggerService;
     private final BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
@@ -162,13 +170,13 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         final List<String> errors = new ArrayList<>();
 
         if (bulkActionCaseData.getDateAndTimeOfHearing().isBefore(LocalDateTime.now())) {
-            errors.add("Please enter a hearing date and time in the future");
+            errors.add(ERROR_HEARING_DATE_IN_PAST);
         }
 
         final List<String> duplicateCaseIds = checkForDuplicates(bulkActionCaseData.getBulkListCaseDetails());
         if (!duplicateCaseIds.isEmpty()) {
-            errors.add("Case IDs duplicated in the list: " + String.join(", ", duplicateCaseIds));
-            errors.add("Please remove duplicates and try again");
+            errors.add(ERROR_CASE_IDS_DUPLICATED + String.join(", ", duplicateCaseIds));
+            errors.add(ERROR_REMOVE_DUPLICATES);
             return errors;
         }
 
@@ -178,13 +186,13 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         );
 
         if (newCaseIds.isEmpty()) {
-            errors.add("Please add at least one new case to schedule for listing");
+            errors.add(ERROR_NO_NEW_CASES_ADDED);
             return errors;
         }
 
         final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseDetailsList = ccdSearchService.searchForCases(
             newCaseIds,
-            idamService.retrieveOldSystemUpdateUserDetails(),
+            idamService.retrieveSystemUpdateUserDetails(),
             authTokenGenerator.generate()
         );
 
@@ -193,7 +201,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
                 CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
                 if (caseData.getBulkListCaseReferenceLink() != null) {
                     final String bulkCaseRef = caseData.getBulkListCaseReferenceLink().getCaseReference();
-                    errors.add("Case ID " + caseDetails.getId() + " is already linked to bulk case " + bulkCaseRef);
+                    errors.add(ERROR_CASE_ID + caseDetails.getId() + ERROR_ALREADY_LINKED_TO_BULK_CASE + bulkCaseRef);
                 }
             });
         }
