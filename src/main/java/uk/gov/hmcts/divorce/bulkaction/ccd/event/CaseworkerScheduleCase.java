@@ -145,7 +145,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
                 duplicateCaseIds.add(caseId);
             } else {
                 duplicateCheckSet.add(caseId);
-            };
+            }
         }
         return duplicateCaseIds;
     }
