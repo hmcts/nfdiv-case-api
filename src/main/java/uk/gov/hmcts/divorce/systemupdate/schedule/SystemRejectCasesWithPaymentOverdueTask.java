@@ -66,14 +66,7 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
                         .must(awaitingPaymentQuery)
                         .mustNot(paperOrJudicialSeparationCases)
                         .filter(rangeQuery(LAST_STATE_MODIFIED_DATE).lte(LocalDate.now().minusDays(14)))
-                )
-                .should(
-                    boolQuery()
-                        .must(awaitingPaymentQuery)
-                        .must(paperOrJudicialSeparationCases)
-                        .filter(rangeQuery(LAST_STATE_MODIFIED_DATE).lte(LocalDate.now().minusDays(17)))
-                )
-                .minimumShouldMatch(1);
+                ).minimumShouldMatch(1);
 
             final List<CaseDetails> casesInAwaitingPaymentStateForPaymentOverdue =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPayment);

@@ -103,14 +103,7 @@ class SystemRejectCasesWithPaymentOverdueTaskTest {
                     .must(awaitingPaymentQuery)
                     .mustNot(paperOrJudicialSeparationCases)
                     .filter(rangeQuery(LAST_STATE_MODIFIED_DATE).lte(LocalDate.now().minusDays(14)))
-            )
-            .should(
-                boolQuery()
-                    .must(awaitingPaymentQuery)
-                    .must(paperOrJudicialSeparationCases)
-                    .filter(rangeQuery(LAST_STATE_MODIFIED_DATE).lte(LocalDate.now().minusDays(17)))
-            )
-            .minimumShouldMatch(1);
+            ).minimumShouldMatch(1);
 
         user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
