@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -25,9 +26,11 @@ public class CaseworkerUpdateLanguagePreference implements CCDConfig<CaseData, S
     private static final String APPLICANTS_OR_APPLICANT1S = "labelContentApplicantsOrApplicant1s";
     public static final String CASEWORKER_UPDATE_LANGUAGE_PREFERENCE = "caseworker-update-language-preference";
     private static final String CASEWORKER_UPDATE_LANGUAGE = "Update language preference";
-    private static final String LANGUAGE_PREFERENCE = "Is the ${%s} language preference Welsh?";
+    private static final String LANGUAGE_PREFERENCE = "Is the ${%s language preference Welsh?";
     private static final String NEVER_SHOW = "applicant1LanguagePreferenceWelsh=\"NEVER_SHOW\"";
     private static final String RESPONDENTS_OR_APPLICANT2S = "labelContentRespondentsOrApplicant2s";
+    private static final String LABEL_HINT = "Select \"No\" for English or \"Yes\" for bilingual";
+
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -52,12 +55,26 @@ public class CaseworkerUpdateLanguagePreference implements CCDConfig<CaseData, S
                 .done()
             .complex(CaseData::getApplicant1)
                 .mandatoryWithLabel(Applicant::getLanguagePreferenceWelsh,
-                    getLabel(LANGUAGE_PREFERENCE, APPLICANTS_OR_APPLICANT1S))
+                    getLabel(LANGUAGE_PREFERENCE, APPLICANTS_OR_APPLICANT1S+"}"))
                 .done()
             .complex(CaseData::getApplicant2)
                 .mandatoryWithLabel(Applicant::getLanguagePreferenceWelsh,
-                    getLabel(LANGUAGE_PREFERENCE, RESPONDENTS_OR_APPLICANT2S))
+                    getLabel(LANGUAGE_PREFERENCE, RESPONDENTS_OR_APPLICANT2S+"}"))
                 .done()
+            .complex(CaseData::getApplicant1, "applicant1SolicitorRepresented=\"Yes\"")
+            .readonlyNoSummary(Applicant::getSolicitorRepresented, NEVER_SHOW)
+            .complex(Applicant::getSolicitor, "applicant1SolicitorRepresented=\"Yes\"")
+            .mandatory(Solicitor::getLanguagePreferenceWelsh, "applicant1SolicitorRepresented=\"Yes\"", null,
+                getLabel(LANGUAGE_PREFERENCE, APPLICANTS_OR_APPLICANT1S + "} solicitor"), LABEL_HINT, null)
+            .done()
+            .done()
+            .complex(CaseData::getApplicant2, "applicant2SolicitorRepresented=\"Yes\"")
+                .readonlyNoSummary(Applicant::getSolicitorRepresented, NEVER_SHOW)
+                .complex(Applicant::getSolicitor, "applicant2SolicitorRepresented=\"Yes\"")
+                    .mandatory(Solicitor::getLanguagePreferenceWelsh, "applicant2SolicitorRepresented=\"Yes\"", null,
+                         getLabel(LANGUAGE_PREFERENCE, RESPONDENTS_OR_APPLICANT2S + "} solicitor"), LABEL_HINT, null)
+                .done()
+            .done()
             .done();
     }
 

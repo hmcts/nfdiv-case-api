@@ -103,6 +103,12 @@ public class Solicitor {
     )
     private OrganisationPolicy<UserRole> organisationPolicy;
 
+    @CCD(
+        searchable = false
+    )
+
+    private YesOrNo languagePreferenceWelsh;
+
     @JsonIgnore
     public boolean hasOrgId() {
         if (null != organisationPolicy && null != organisationPolicy.getOrganisation()) {
