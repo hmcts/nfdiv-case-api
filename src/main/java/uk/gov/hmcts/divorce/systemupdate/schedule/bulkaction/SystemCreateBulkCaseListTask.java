@@ -28,6 +28,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 
 @Component
@@ -74,7 +75,7 @@ public class SystemCreateBulkCaseListTask implements Runnable {
                     if (!bulkListCaseDetails.isEmpty()) {
                         if (minimumCasesToProcess > bulkListCaseDetails.size()) {
                             log.warn(
-                                "After skipping cases already linked to bulk lists, "
+                                "After skipping cases in incorrect states or already linked to bulk lists, "
                                     + "the number of cases does not reach the minimum for awaiting pronouncement processing, "
                                     + "Minimum size needed {}, Case list size {}",
                                 minimumCasesToProcess, bulkListCaseDetails.size()
@@ -145,13 +146,21 @@ public class SystemCreateBulkCaseListTask implements Runnable {
         final List<CaseDetails<CaseData, State>> casesAwaitingPronouncement) {
 
         final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = new ArrayList<>();
-        int skippedCases = 0;
+        int skippedCasesBulk = 0;
+        int skippedCasesState = 0;
 
         for (final CaseDetails<CaseData, State> caseDetails : casesAwaitingPronouncement) {
 
             final CaseData caseData = caseDetails.getData();
 
-            if (caseData.getBulkListCaseReferenceLink() == null) {
+            if (AwaitingPronouncement != caseDetails.getState()) {
+                log.warn(
+                    "Potential Elastic Search issue. Case {} in state {}, skipping...",
+                    caseDetails.getId(),
+                    caseDetails.getState()
+                );
+                skippedCasesState += 1;
+            } else if (caseData.getBulkListCaseReferenceLink() == null) {
                 String caseParties = String.format("%s %s vs %s %s",
                     caseData.getApplicant1().getFirstName(),
                     caseData.getApplicant1().getLastName(),
@@ -184,15 +193,18 @@ public class SystemCreateBulkCaseListTask implements Runnable {
                     caseDetails.getId(),
                     caseData.getBulkListCaseReferenceLink().getCaseReference()
                 );
-                skippedCases += 1;
+                skippedCasesBulk += 1;
             }
         }
-        if (skippedCases > 0) {
-            log.warn(
-                "{} cases provided, {} skipped due to existing bulk list case reference links",
-                casesAwaitingPronouncement.size(),
-                skippedCases
-            );
+        if (skippedCasesBulk > 0 || skippedCasesState > 0) {
+            String skippedCases = casesAwaitingPronouncement.size() + " cases provided";
+            if (skippedCasesState > 0) {
+                skippedCases += ", " + skippedCasesState + " skipped (incorrect state)";
+            }
+            if (skippedCasesBulk > 0) {
+                skippedCases += ", " + skippedCasesBulk + ", skipped (existing bulk list case reference link)";
+            }
+            log.warn(skippedCases);
         }
 
         return bulkListCaseDetails;
