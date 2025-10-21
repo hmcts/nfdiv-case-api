@@ -72,12 +72,6 @@ public class SystemCreateBulkCaseListTask implements Runnable {
                     final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = createBulkCaseListDetails(casesAwaitingPronouncement);
 
                     if (!bulkListCaseDetails.isEmpty()) {
-                        if (casesAwaitingPronouncement.size() > bulkListCaseDetails.size()) {
-                            log.warn(
-                                "Potential Elastic Search issue. casesAwaitingPronouncement: {} bulkListCaseDetails: {}",
-                                casesAwaitingPronouncement.size(), bulkListCaseDetails.size()
-                            );
-                        }
                         if (minimumCasesToProcess > bulkListCaseDetails.size()) {
                             log.warn(
                                 "After skipping cases already linked to bulk lists, "
