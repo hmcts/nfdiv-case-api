@@ -34,6 +34,7 @@ import java.util.Set;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -49,6 +50,8 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     public static final String ERROR_REMOVE_DUPLICATES = "Please remove duplicates and try again";
     public static final String ERROR_NO_NEW_CASES_ADDED = "Please add at least one new case to schedule for listing";
     public static final String ERROR_CASE_ID = "Case ID ";
+    public static final String ERROR_INVALID_STATE = " is in state ";
+    public static final String ERROR_ONLY_AWAITING_PRONOUNCEMENT = ". Only cases in Awaiting Pronouncement can be scheduled for listing";
     public static final String ERROR_ALREADY_LINKED_TO_BULK_CASE = " is already linked to bulk case ";
     public static final String ERROR_NO_CASES_FOUND = "Search returned no cases for the provided Case IDs: ";
 
@@ -199,6 +202,10 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
 
         if (!caseDetailsList.isEmpty()) {
             caseDetailsList.forEach(caseDetails -> {
+                if (!AwaitingPronouncement.toString().equals(caseDetails.getState())) {
+                    errors.add(ERROR_CASE_ID + caseDetails.getId() + ERROR_INVALID_STATE
+                        + caseDetails.getState() + ERROR_ONLY_AWAITING_PRONOUNCEMENT);
+                }
                 CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
                 if (caseData.getBulkListCaseReferenceLink() != null) {
                     final String bulkCaseRef = caseData.getBulkListCaseReferenceLink().getCaseReference();
