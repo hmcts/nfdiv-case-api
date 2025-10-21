@@ -331,14 +331,19 @@ class CaseworkerScheduleCaseTest {
         setUpSystemUser();
 
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+
+        final Long TEST_CASE_ID_2 = 2L;
+        final ListValue<BulkListCaseDetails> bulkListCaseValue2 = bulkListCaseDetailsListValue(TEST_CASE_ID_2);
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
             LocalDateTime.now().minusHours(5),
-            List.of(bulkListCaseDetailsListValue())
+            List.of(bulkListCaseDetailsListValue(), bulkListCaseValue2, bulkListCaseValue2)
         );
 
         final CaseLink caseLink = CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build();
         final Map<String, Object> caseData = getModelCaseData();
         caseData.put("bulkListCaseReferenceLink", caseLink);
+
+        final Map<String, Object> caseData2 = getModelCaseData();
 
         final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResults = new ArrayList<>();
         searchResults.add(getModelCaseDetails(caseData, State.Submitted));
@@ -355,6 +360,8 @@ class CaseworkerScheduleCaseTest {
 
         assertThat(response.getErrors()).containsExactly(
             ERROR_HEARING_DATE_IN_PAST,
+            ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID_2,
+            ERROR_REMOVE_DUPLICATES,
             ERROR_CASE_ID + TEST_CASE_ID + ERROR_INVALID_STATE + State.Submitted + ERROR_ONLY_AWAITING_PRONOUNCEMENT,
             ERROR_CASE_ID + TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE
         );
@@ -446,14 +453,14 @@ class CaseworkerScheduleCaseTest {
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
     }
 
-    private ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue() {
+    private ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue(Long caseId) {
         final BulkListCaseDetails bulkCaseDetails = BulkListCaseDetails
             .builder()
             .caseParties(TEST_FIRST_NAME + " " + TEST_LAST_NAME + " vs " + TEST_APP2_FIRST_NAME + " " + TEST_APP2_LAST_NAME)
             .caseReference(
                 CaseLink
                     .builder()
-                    .caseReference(String.valueOf(TEST_CASE_ID))
+                    .caseReference(String.valueOf(caseId))
                     .build()
             )
             .build();
@@ -463,6 +470,10 @@ class CaseworkerScheduleCaseTest {
                 .<BulkListCaseDetails>builder()
                 .value(bulkCaseDetails)
                 .build();
+    }
+
+    private ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue() {
+        return bulkListCaseDetailsListValue(TEST_CASE_ID);
     }
 
     private CaseDetails<BulkActionCaseData, BulkActionState> getBulkCaseDetails(LocalDateTime dateAndTimeOfHearing) {
