@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
 import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
@@ -49,8 +50,10 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.E
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_CASE_ID;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_CASE_IDS_DUPLICATED;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_HEARING_DATE_IN_PAST;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_INVALID_STATE;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_NO_CASES_FOUND;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_NO_NEW_CASES_ADDED;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_ONLY_AWAITING_PRONOUNCEMENT;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_REMOVE_DUPLICATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
@@ -297,7 +300,34 @@ class CaseworkerScheduleCaseTest {
     }
 
     @Test
-    void shouldPopulateErrorMessagesWhenHearingDateIsInPastAndNewCaseAddedForListingAlreadyLinkedToBulkCaseAndMidEventIsTriggered() {
+    void shouldPopulateErrorMessageWhenNewCaseAddedForListingInWrongStateAndMidEventIsTriggered() {
+        setUpSystemUser();
+
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
+            LocalDateTime.now().plusDays(5),
+            List.of(bulkListCaseDetailsListValue())
+        );
+
+        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResults = new ArrayList<>();
+        searchResults.add(getModelCaseDetails(getModelCaseData(), State.Submitted));
+
+        when(ccdSearchService.searchForCases(List.of(TEST_CASE_ID.toString()), user, TEST_SERVICE_AUTH_TOKEN))
+            .thenReturn(searchResults);
+
+        final CaseData mappedCaseData = getMappedCaseData();
+
+        when(objectMapper.convertValue(getModelCaseData(), CaseData.class)).thenReturn(mappedCaseData);
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
+
+        assertThat(response.getErrors()).containsExactly(
+            ERROR_CASE_ID + TEST_CASE_ID + ERROR_INVALID_STATE + State.Submitted + ERROR_ONLY_AWAITING_PRONOUNCEMENT
+        );
+    }
+
+    @Test
+    void shouldPopulateErrorMessagesWhenHearingDateInPastAndNewCaseAddedForListingLinkedToBulkCaseAndWrongStateAndMidEventIsTriggered() {
         setUpSystemUser();
 
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
@@ -311,7 +341,7 @@ class CaseworkerScheduleCaseTest {
         caseData.put("bulkListCaseReferenceLink", caseLink);
 
         final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResults = new ArrayList<>();
-        searchResults.add(getModelCaseDetails(caseData));
+        searchResults.add(getModelCaseDetails(caseData, State.Submitted));
 
         when(ccdSearchService.searchForCases(List.of(TEST_CASE_ID.toString()), user, TEST_SERVICE_AUTH_TOKEN))
             .thenReturn(searchResults);
@@ -325,6 +355,7 @@ class CaseworkerScheduleCaseTest {
 
         assertThat(response.getErrors()).containsExactly(
             ERROR_HEARING_DATE_IN_PAST,
+            ERROR_CASE_ID + TEST_CASE_ID + ERROR_INVALID_STATE + State.Submitted + ERROR_ONLY_AWAITING_PRONOUNCEMENT,
             ERROR_CASE_ID + TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE
         );
     }
@@ -463,15 +494,16 @@ class CaseworkerScheduleCaseTest {
         return caseData;
     }
 
-    private uk.gov.hmcts.reform.ccd.client.model.CaseDetails getModelCaseDetails(Map<String, Object> caseData) {
-        final uk.gov.hmcts.reform.ccd.client.model.CaseDetails caseDetails =
-            uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
+    private uk.gov.hmcts.reform.ccd.client.model.CaseDetails getModelCaseDetails(Map<String, Object> caseData, State state) {
+        return uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                 .id(TEST_CASE_ID)
-                .state(AwaitingPronouncement.toString())
+                .state(state.toString())
                 .data(caseData)
                 .build();
+    }
 
-        return caseDetails;
+    private uk.gov.hmcts.reform.ccd.client.model.CaseDetails getModelCaseDetails(Map<String, Object> caseData) {
+        return getModelCaseDetails(caseData, AwaitingPronouncement);
     }
 
     private uk.gov.hmcts.reform.ccd.client.model.CaseDetails getModelCaseDetails() {
