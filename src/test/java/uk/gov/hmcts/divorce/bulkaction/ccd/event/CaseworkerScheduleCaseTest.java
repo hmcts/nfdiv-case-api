@@ -47,6 +47,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.CASEWORKER_SCHEDULE_CASE;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_ALREADY_LINKED_TO_BULK_CASE;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_CASES_NOT_FOUND;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_CASE_ID;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_CASE_IDS_DUPLICATED;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_HEARING_DATE_IN_PAST;
@@ -57,7 +58,9 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.E
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_REMOVE_DUPLICATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -79,6 +82,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2WithAddr
 class CaseworkerScheduleCaseTest {
 
     private static final String BULK_CASE_REFERENCE = "1234123412341234";
+    private static final Long TEST_CASE_ID_2 = 2L;
+    private static final Long TEST_CASE_ID_3 = 3L;
 
     @Mock
     private CcdSearchService ccdSearchService;
@@ -110,8 +115,6 @@ class CaseworkerScheduleCaseTest {
     @InjectMocks
     private CaseworkerScheduleCase scheduleCase;
 
-    private User user;
-
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<BulkActionCaseData, BulkActionState, UserRole> configBuilder = createBulkActionConfigBuilder();
@@ -124,41 +127,16 @@ class CaseworkerScheduleCaseTest {
     }
 
     @Test
-    void shouldSuccessfullyUpdateCasesInBulkWithCourtHearingDetails() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
-        details.setData(BulkActionCaseData.builder().build());
-        details.setId(TEST_CASE_ID);
-
-        setUpUser("Random role");
-
-        doNothing().when(scheduleCaseService).updateCourtHearingDetailsForCasesInBulk(details);
-
-        SubmittedCallbackResponse submittedCallbackResponse = scheduleCase.submitted(details, details);
-
-        assertThat(submittedCallbackResponse).isNotNull();
-        verify(scheduleCaseService).updateCourtHearingDetailsForCasesInBulk(details);
-        verifyNoInteractions(bulkTriggerService);
-    }
-
-    @Test
     void shouldNotPopulateErrorMessageWhenHearingDateIsInFutureAndMidEventIsTriggered() {
-        setUpSystemUser();
-
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
             LocalDateTime.now().plusDays(5),
-            List.of(bulkListCaseDetailsListValue())
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
-        final uk.gov.hmcts.reform.ccd.client.model.CaseDetails caseDetails = getModelCaseDetails();
+        setupSearchMock(getModelCaseDetails(getModelCaseData(), AwaitingPronouncement));
 
-        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResults = new ArrayList<>();
-        searchResults.add(getModelCaseDetails());
-
-        when(ccdSearchService.searchForCases(List.of(TEST_CASE_ID.toString()), user, TEST_SERVICE_AUTH_TOKEN))
-            .thenReturn(searchResults);
-
-        when(objectMapper.convertValue(caseDetails.getData(), CaseData.class)).thenReturn(getMappedCaseData());
+        setupObjectMapperMock(getModelCaseData(), getMappedCaseData());
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
@@ -167,23 +145,15 @@ class CaseworkerScheduleCaseTest {
 
     @Test
     void shouldPopulateErrorMessageWhenHearingDateIsInPastAndMidEventIsTriggered() {
-        setUpSystemUser();
-
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
             LocalDateTime.now().minusHours(5),
-            List.of(bulkListCaseDetailsListValue())
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
-        final uk.gov.hmcts.reform.ccd.client.model.CaseDetails caseDetails = getModelCaseDetails();
+        setupSearchMock(getModelCaseDetails(getModelCaseData(), AwaitingPronouncement));
 
-        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResults = new ArrayList<>();
-        searchResults.add(getModelCaseDetails());
-
-        when(ccdSearchService.searchForCases(List.of(TEST_CASE_ID.toString()), user, TEST_SERVICE_AUTH_TOKEN))
-            .thenReturn(searchResults);
-
-        when(objectMapper.convertValue(caseDetails.getData(), CaseData.class)).thenReturn(getMappedCaseData());
+        setupObjectMapperMock(getModelCaseData(), getMappedCaseData());
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
@@ -195,11 +165,8 @@ class CaseworkerScheduleCaseTest {
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
             LocalDateTime.now().plusDays(5),
-            List.of(bulkListCaseDetailsListValue(), bulkListCaseDetailsListValue())
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID), bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
-
-        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResults = new ArrayList<>();
-        searchResults.add(getModelCaseDetails());
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
@@ -211,11 +178,8 @@ class CaseworkerScheduleCaseTest {
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
             LocalDateTime.now().minusHours(5),
-            List.of(bulkListCaseDetailsListValue(), bulkListCaseDetailsListValue())
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID), bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
-
-        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResults = new ArrayList<>();
-        searchResults.add(getModelCaseDetails());
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
@@ -230,15 +194,12 @@ class CaseworkerScheduleCaseTest {
     void shouldPopulateErrorMessageWhenNoNewCasesAddedForListingAndMidEventIsTriggered() {
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(
             LocalDateTime.now().minusDays(5),
-            List.of(bulkListCaseDetailsListValue())
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
             LocalDateTime.now().plusDays(5),
-            List.of(bulkListCaseDetailsListValue())
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
-
-        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResults = new ArrayList<>();
-        searchResults.add(getModelCaseDetails());
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
@@ -249,15 +210,12 @@ class CaseworkerScheduleCaseTest {
     void shouldPopulateErrorMessagesWhenHearingDateIsInPastAndNoNewCasesAddedForListingAndMidEventIsTriggered() {
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(
             LocalDateTime.now().minusDays(5),
-            List.of(bulkListCaseDetailsListValue())
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
             LocalDateTime.now().minusHours(5),
-            List.of(bulkListCaseDetailsListValue())
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
-
-        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResults = new ArrayList<>();
-        searchResults.add(getModelCaseDetails());
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
@@ -269,28 +227,17 @@ class CaseworkerScheduleCaseTest {
 
     @Test
     void shouldPopulateErrorMessageWhenNewCaseAddedForListingAlreadyLinkedToBulkCaseAndMidEventIsTriggered() {
-        setUpSystemUser();
-
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
             LocalDateTime.now().plusDays(5),
-            List.of(bulkListCaseDetailsListValue())
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
-        final CaseLink caseLink = CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build();
-        final Map<String, Object> caseData = getModelCaseData();
-        caseData.put("bulkListCaseReferenceLink", caseLink);
+        final Map<String, Object> caseData = getModelCaseDataWithCaseLink();
 
-        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResults = new ArrayList<>();
-        searchResults.add(getModelCaseDetails(caseData));
+        setupSearchMock(getModelCaseDetails(caseData, AwaitingPronouncement));
 
-        when(ccdSearchService.searchForCases(List.of(TEST_CASE_ID.toString()), user, TEST_SERVICE_AUTH_TOKEN))
-            .thenReturn(searchResults);
-
-        final CaseData mappedCaseData = getMappedCaseData();
-        mappedCaseData.setBulkListCaseReferenceLink(caseLink);
-
-        when(objectMapper.convertValue(caseData, CaseData.class)).thenReturn(mappedCaseData);
+        setupObjectMapperMock(caseData, getMappedCaseDataWithCaseLink());
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
@@ -301,60 +248,40 @@ class CaseworkerScheduleCaseTest {
 
     @Test
     void shouldPopulateErrorMessageWhenNewCaseAddedForListingInWrongStateAndMidEventIsTriggered() {
-        setUpSystemUser();
-
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
             LocalDateTime.now().plusDays(5),
-            List.of(bulkListCaseDetailsListValue())
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
-        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResults = new ArrayList<>();
-        searchResults.add(getModelCaseDetails(getModelCaseData(), State.Submitted));
+        final uk.gov.hmcts.reform.ccd.client.model.CaseDetails caseDetails = getModelCaseDetails(getModelCaseData(), Submitted);
 
-        when(ccdSearchService.searchForCases(List.of(TEST_CASE_ID.toString()), user, TEST_SERVICE_AUTH_TOKEN))
-            .thenReturn(searchResults);
+        setupSearchMock(caseDetails);
 
-        final CaseData mappedCaseData = getMappedCaseData();
-
-        when(objectMapper.convertValue(getModelCaseData(), CaseData.class)).thenReturn(mappedCaseData);
+        setupObjectMapperMock(caseDetails.getData(), getMappedCaseData());
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
         assertThat(response.getErrors()).containsExactly(
-            ERROR_CASE_ID + TEST_CASE_ID + ERROR_INVALID_STATE + State.Submitted + ERROR_ONLY_AWAITING_PRONOUNCEMENT
+            ERROR_CASE_ID + TEST_CASE_ID + ERROR_INVALID_STATE + Submitted + ERROR_ONLY_AWAITING_PRONOUNCEMENT
         );
     }
 
     @Test
     void shouldPopulateErrorMessagesWhenHearingDateInPastAndNewCaseAddedForListingLinkedToBulkCaseAndWrongStateAndMidEventIsTriggered() {
-        setUpSystemUser();
-
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
 
-        final Long TEST_CASE_ID_2 = 2L;
         final ListValue<BulkListCaseDetails> bulkListCaseValue2 = bulkListCaseDetailsListValue(TEST_CASE_ID_2);
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
             LocalDateTime.now().minusHours(5),
-            List.of(bulkListCaseDetailsListValue(), bulkListCaseValue2, bulkListCaseValue2)
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID), bulkListCaseValue2, bulkListCaseValue2)
         );
 
-        final CaseLink caseLink = CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build();
-        final Map<String, Object> caseData = getModelCaseData();
-        caseData.put("bulkListCaseReferenceLink", caseLink);
+        final uk.gov.hmcts.reform.ccd.client.model.CaseDetails caseDetails = getModelCaseDetails(getModelCaseDataWithCaseLink(), Submitted);
 
-        final Map<String, Object> caseData2 = getModelCaseData();
+        setupSearchMock(caseDetails);
 
-        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResults = new ArrayList<>();
-        searchResults.add(getModelCaseDetails(caseData, State.Submitted));
-
-        when(ccdSearchService.searchForCases(List.of(TEST_CASE_ID.toString()), user, TEST_SERVICE_AUTH_TOKEN))
-            .thenReturn(searchResults);
-
-        final CaseData mappedCaseData = getMappedCaseData();
-        mappedCaseData.setBulkListCaseReferenceLink(caseLink);
-
-        when(objectMapper.convertValue(caseData, CaseData.class)).thenReturn(mappedCaseData);
+        setupObjectMapperMock(caseDetails.getData(), getMappedCaseDataWithCaseLink());
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
@@ -362,23 +289,20 @@ class CaseworkerScheduleCaseTest {
             ERROR_HEARING_DATE_IN_PAST,
             ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID_2,
             ERROR_REMOVE_DUPLICATES,
-            ERROR_CASE_ID + TEST_CASE_ID + ERROR_INVALID_STATE + State.Submitted + ERROR_ONLY_AWAITING_PRONOUNCEMENT,
+            ERROR_CASE_ID + TEST_CASE_ID + ERROR_INVALID_STATE + Submitted + ERROR_ONLY_AWAITING_PRONOUNCEMENT,
             ERROR_CASE_ID + TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE
         );
     }
 
     @Test
     void shouldPopulateErrorMessageWhenSearchReturnsNoResultsAndMidEventIsTriggered() {
-        setUpSystemUser();
-
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
             LocalDateTime.now().plusDays(5),
-            List.of(bulkListCaseDetailsListValue())
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
-        when(ccdSearchService.searchForCases(List.of(TEST_CASE_ID.toString()), user, TEST_SERVICE_AUTH_TOKEN))
-            .thenReturn(new ArrayList<>());
+        setupSearchMock(List.of(TEST_CASE_ID.toString()), new ArrayList<>());
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
@@ -386,17 +310,33 @@ class CaseworkerScheduleCaseTest {
     }
 
     @Test
-    void shouldPopulateErrorMessagesWhenHearingDateIsInPastAndSearchReturnsNoResultsAndMidEventIsTriggered() {
-        setUpSystemUser();
+    void shouldPopulateErrorMessageWhenSearchReturnsMissingResultsAndMidEventIsTriggered() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
+            LocalDateTime.now().plusDays(5),
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID), bulkListCaseDetailsListValue(TEST_CASE_ID_2))
+        );
 
+        final uk.gov.hmcts.reform.ccd.client.model.CaseDetails caseDetails = getModelCaseDetails(getModelCaseData(), AwaitingPronouncement);
+
+        setupSearchMock(List.of(TEST_CASE_ID.toString(), TEST_CASE_ID_2.toString()), getSearchResults(caseDetails));
+
+        setupObjectMapperMock(caseDetails.getData(), getMappedCaseData());
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
+
+        assertThat(response.getErrors()).containsExactly(ERROR_CASES_NOT_FOUND + TEST_CASE_ID_2);
+    }
+
+    @Test
+    void shouldPopulateErrorMessagesWhenHearingDateIsInPastAndSearchReturnsNoResultsAndMidEventIsTriggered() {
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
             LocalDateTime.now().minusHours(5),
-            List.of(bulkListCaseDetailsListValue())
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
-        when(ccdSearchService.searchForCases(List.of(TEST_CASE_ID.toString()), user, TEST_SERVICE_AUTH_TOKEN))
-            .thenReturn(new ArrayList<>());
+        setupSearchMock(List.of(TEST_CASE_ID.toString()), new ArrayList<>());
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
@@ -407,16 +347,62 @@ class CaseworkerScheduleCaseTest {
     }
 
     @Test
+    void shouldPopulateErrorMessagesWhenHearingDateInPastAndDupesAndSearchMissingResultsAndWrongStateAndLinkedAndMidEventIsTriggered() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
+            LocalDateTime.now().minusHours(5),
+            List.of(
+                bulkListCaseDetailsListValue(TEST_CASE_ID),
+                bulkListCaseDetailsListValue(TEST_CASE_ID_2),
+                bulkListCaseDetailsListValue(TEST_CASE_ID_3),
+                bulkListCaseDetailsListValue(TEST_CASE_ID_3)
+            )
+        );
+
+        final uk.gov.hmcts.reform.ccd.client.model.CaseDetails caseDetails = getModelCaseDetails(getModelCaseData(), Submitted);
+
+        setupSearchMock(List.of(TEST_CASE_ID.toString(), TEST_CASE_ID_2.toString()), getSearchResults(caseDetails));
+
+        setupObjectMapperMock(caseDetails.getData(), getMappedCaseDataWithCaseLink());
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
+
+        assertThat(response.getErrors()).containsExactly(
+            ERROR_HEARING_DATE_IN_PAST,
+            ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID_3,
+            ERROR_REMOVE_DUPLICATES,
+            ERROR_CASES_NOT_FOUND + TEST_CASE_ID_2,
+            ERROR_CASE_ID + TEST_CASE_ID + ERROR_INVALID_STATE + Submitted + ERROR_ONLY_AWAITING_PRONOUNCEMENT,
+            ERROR_CASE_ID + TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE
+        );
+    }
+
+    @Test
+    void shouldSuccessfullyUpdateCasesInBulkWithCourtHearingDetails() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
+        details.setData(BulkActionCaseData.builder().build());
+        details.setId(TEST_CASE_ID);
+
+        setupUserAuthMocks(CITIZEN);
+
+        doNothing().when(scheduleCaseService).updateCourtHearingDetailsForCasesInBulk(details);
+
+        SubmittedCallbackResponse submittedCallbackResponse = scheduleCase.submitted(details, details);
+
+        assertThat(submittedCallbackResponse).isNotNull();
+        verify(scheduleCaseService).updateCourtHearingDetailsForCasesInBulk(details);
+        verifyNoInteractions(bulkTriggerService);
+    }
+
+    @Test
     void shouldSuccessfullyLinkCaseWithBulkListWhenRoleIsCaseWorker() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         details.setData(BulkActionCaseData.builder().build());
         details.setId(TEST_CASE_ID);
 
-        User user =  setUpUser(CASE_WORKER.getRole());
-
-        var userDetails = UserInfo.builder().uid(SYSTEM_USER_USER_ID).build();
-        User systemUser = new User(SYSTEM_UPDATE_AUTH_TOKEN, userDetails);
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
+        setupUserAuthMocks(CASE_WORKER);
+        final User systemUser = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().uid(SYSTEM_USER_USER_ID).build());
+        setupSystemAuthMocks(systemUser);
 
         doNothing().when(scheduleCaseService).updateCourtHearingDetailsForCasesInBulk(details);
 
@@ -436,20 +422,15 @@ class CaseworkerScheduleCaseTest {
         );
     }
 
-    private User setUpUser(String userRole) {
-        var userDetails = UserInfo.builder().roles(List.of(userRole)).build();
-        User user = new User(AUTH_HEADER_VALUE, userDetails);
+    private void setupUserAuthMocks(UserRole role) {
+        final User user = new User(AUTH_HEADER_VALUE, UserInfo.builder().roles(List.of(role.getRole())).build());
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
-                .thenReturn(user);
-
-        return user;
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(user);
     }
 
-    void setUpSystemUser() {
-        user = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().build());
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+    private void setupSystemAuthMocks(User systemUser) {
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
     }
 
@@ -457,33 +438,14 @@ class CaseworkerScheduleCaseTest {
         final BulkListCaseDetails bulkCaseDetails = BulkListCaseDetails
             .builder()
             .caseParties(TEST_FIRST_NAME + " " + TEST_LAST_NAME + " vs " + TEST_APP2_FIRST_NAME + " " + TEST_APP2_LAST_NAME)
-            .caseReference(
-                CaseLink
-                    .builder()
-                    .caseReference(String.valueOf(caseId))
-                    .build()
-            )
+            .caseReference(CaseLink.builder().caseReference(String.valueOf(caseId)).build())
             .build();
-
-        return
-            ListValue
-                .<BulkListCaseDetails>builder()
-                .value(bulkCaseDetails)
-                .build();
-    }
-
-    private ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue() {
-        return bulkListCaseDetailsListValue(TEST_CASE_ID);
+        return ListValue.<BulkListCaseDetails>builder().value(bulkCaseDetails).build();
     }
 
     private CaseDetails<BulkActionCaseData, BulkActionState> getBulkCaseDetails(LocalDateTime dateAndTimeOfHearing) {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
-        details.setData(BulkActionCaseData
-            .builder()
-            .dateAndTimeOfHearing(dateAndTimeOfHearing)
-            .build()
-        );
-        details.setId(TEST_CASE_ID);
+        details.setData(BulkActionCaseData.builder().dateAndTimeOfHearing(dateAndTimeOfHearing).build());
         details.setState(Listed);
         return details;
     }
@@ -501,7 +463,12 @@ class CaseworkerScheduleCaseTest {
         final Map<String, Object> caseData = new HashMap<>();
         caseData.put("applicant1", getApplicant());
         caseData.put("applicant2", getApplicant2WithAddress(MALE));
+        return caseData;
+    }
 
+    private Map<String, Object> getModelCaseDataWithCaseLink() {
+        final Map<String, Object> caseData = getModelCaseData();
+        caseData.put("bulkListCaseReferenceLink", CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
         return caseData;
     }
 
@@ -513,17 +480,38 @@ class CaseworkerScheduleCaseTest {
                 .build();
     }
 
-    private uk.gov.hmcts.reform.ccd.client.model.CaseDetails getModelCaseDetails(Map<String, Object> caseData) {
-        return getModelCaseDetails(caseData, AwaitingPronouncement);
-    }
-
-    private uk.gov.hmcts.reform.ccd.client.model.CaseDetails getModelCaseDetails() {
-        return getModelCaseDetails(getModelCaseData());
-    }
-
     private CaseData getMappedCaseData() {
         final CaseData mappedCaseData = caseData();
         mappedCaseData.setApplicant2(getApplicant2WithAddress(MALE));
         return mappedCaseData;
+    }
+
+    private CaseData getMappedCaseDataWithCaseLink() {
+        final CaseData mappedCaseData = getMappedCaseData();
+        mappedCaseData.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
+        return mappedCaseData;
+    }
+
+    private List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> getSearchResults(
+        uk.gov.hmcts.reform.ccd.client.model.CaseDetails modelCaseDetails
+    ) {
+        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResults = new ArrayList<>();
+        searchResults.add(modelCaseDetails);
+        return searchResults;
+    }
+
+    private void setupSearchMock(List<String> caseIds, List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResults) {
+        final User systemUser = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().uid(SYSTEM_USER_USER_ID).build());
+        setupSystemAuthMocks(systemUser);
+        when(ccdSearchService.searchForCases(caseIds, systemUser, TEST_SERVICE_AUTH_TOKEN))
+            .thenReturn(searchResults);
+    }
+
+    private void setupSearchMock(uk.gov.hmcts.reform.ccd.client.model.CaseDetails modelCaseDetails) {
+        setupSearchMock(List.of(String.valueOf(TEST_CASE_ID)), getSearchResults(modelCaseDetails));
+    }
+
+    private void setupObjectMapperMock(Map<String, Object> caseData, CaseData mappedCaseData) {
+        when(objectMapper.convertValue(caseData, CaseData.class)).thenReturn(mappedCaseData);
     }
 }
