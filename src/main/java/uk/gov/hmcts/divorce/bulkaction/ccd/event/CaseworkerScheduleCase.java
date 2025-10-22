@@ -186,9 +186,6 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     }
 
     private DuplicateCheckResult checkForDuplicates(final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails) {
-        if (bulkListCaseDetails == null) {
-            return new DuplicateCheckResult(new ArrayList<>(), new ArrayList<>());
-        }
         final List<String> caseIds = bulkListCaseDetails.stream()
             .map(caseDetails -> caseDetails.getValue().getCaseReference().getCaseReference())
             .toList();
@@ -209,10 +206,6 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     private DuplicateCheckResult getNewCaseIds(final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails,
                                        final List<ListValue<BulkListCaseDetails>> beforeBulkListCaseDetails
     ) {
-        if (bulkListCaseDetails == null) {
-            return new DuplicateCheckResult(new ArrayList<>(), new ArrayList<>());
-        }
-
         if (beforeBulkListCaseDetails == null) {
             return checkForDuplicates(bulkListCaseDetails);
         }
