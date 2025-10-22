@@ -44,6 +44,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -91,14 +93,8 @@ class SystemCreateBulkCaseListTaskTest {
 
         setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
 
-        final CaseData caseData1 =
-            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
-
-        final CaseData caseData2 =
-            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
-
-        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseData1);
-        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseData2);
+        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseDataWithApplicant(1));
+        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseDataWithApplicant(2));
 
         final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
         searchResults.offer(List.of(caseDetails1, caseDetails2));
@@ -157,22 +153,10 @@ class SystemCreateBulkCaseListTaskTest {
 
         setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
 
-        final CaseData caseData1 =
-            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
-
-        final CaseData caseData2 =
-            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
-
-        final CaseData caseData3 =
-            caseDataWithApplicant("app1fname3", "app1lname3", "app2fname3", "app2lname3");
-
-        final CaseData caseData4 =
-            caseDataWithApplicant("app1fname4", "app1lname4", "app2fname4", "app2lname4");
-
-        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseData1);
-        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseData2);
-        final CaseDetails<CaseData, State> caseDetails3 = caseDetails(3L, caseData3);
-        final CaseDetails<CaseData, State> caseDetails4 = caseDetails(4L, caseData4);
+        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseDataWithApplicant(1));
+        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseDataWithApplicant(2));
+        final CaseDetails<CaseData, State> caseDetails3 = caseDetails(3L, caseDataWithApplicant(3));
+        final CaseDetails<CaseData, State> caseDetails4 = caseDetails(4L, caseDataWithApplicant(4));
 
         final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
         searchResults.offer(List.of(caseDetails1, caseDetails2));
@@ -266,19 +250,9 @@ class SystemCreateBulkCaseListTaskTest {
 
         setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
 
-        final CaseData caseData1 =
-            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
-
-        final CaseData caseData2 =
-            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
-        caseData2.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
-
-        final CaseData caseData3 =
-            caseDataWithApplicant("app1fname3", "app1lname3", "app2fname3", "app2lname3");
-
-        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseData1);
-        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseData2);
-        final CaseDetails<CaseData, State> caseDetails3 = caseDetails(3L, caseData3);
+        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseDataWithApplicant(1));
+        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseDataWithApplicantAndBulkListRef(2));
+        final CaseDetails<CaseData, State> caseDetails3 = caseDetails(3L, caseDataWithApplicant(3));
 
         final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
         searchResults.offer(List.of(caseDetails1, caseDetails2, caseDetails3));
@@ -337,19 +311,9 @@ class SystemCreateBulkCaseListTaskTest {
 
         setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
 
-        final CaseData caseData1 =
-            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
-
-        final CaseData caseData2 =
-            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
-
-        final CaseData caseData3 =
-            caseDataWithApplicant("app1fname3", "app1lname3", "app2fname3", "app2lname3");
-
-        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseData1);
-        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseData2);
-        caseDetails2.setState(State.Submitted);
-        final CaseDetails<CaseData, State> caseDetails3 = caseDetails(3L, caseData3);
+        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseDataWithApplicant(1));
+        final CaseDetails<CaseData, State> caseDetails2 = caseDetailsSubmitted(2L, caseDataWithApplicant(2));
+        final CaseDetails<CaseData, State> caseDetails3 = caseDetails(3L, caseDataWithApplicant(3));
 
         final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
         searchResults.offer(List.of(caseDetails1, caseDetails2, caseDetails3));
@@ -408,32 +372,12 @@ class SystemCreateBulkCaseListTaskTest {
 
         setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
 
-        final CaseData caseData1 =
-            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
-
-        final CaseData caseData2 =
-            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
-        caseData2.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
-
-        final CaseData caseData3 =
-            caseDataWithApplicant("app1fname3", "app1lname3", "app2fname3", "app2lname3");
-
-        final CaseData caseData4 =
-            caseDataWithApplicant("app1fname4", "app1lname4", "app2fname4", "app2lname4");
-
-        final CaseData caseData5 =
-            caseDataWithApplicant("app1fname5", "app1lname5", "app2fname5", "app2lname5");
-
-        final CaseData caseData6 =
-            caseDataWithApplicant("app1fname6", "app1lname6", "app2fname6", "app2lname6");
-        caseData6.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
-
-        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseData1);
-        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseData2);
-        final CaseDetails<CaseData, State> caseDetails3 = caseDetails(3L, caseData3);
-        final CaseDetails<CaseData, State> caseDetails4 = caseDetails(4L, caseData4);
-        final CaseDetails<CaseData, State> caseDetails5 = caseDetails(5L, caseData5);
-        final CaseDetails<CaseData, State> caseDetails6 = caseDetails(6L, caseData6);
+        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseDataWithApplicant(1));
+        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseDataWithApplicantAndBulkListRef(2));
+        final CaseDetails<CaseData, State> caseDetails3 = caseDetails(3L, caseDataWithApplicant(3));
+        final CaseDetails<CaseData, State> caseDetails4 = caseDetails(4L, caseDataWithApplicant(4));
+        final CaseDetails<CaseData, State> caseDetails5 = caseDetails(5L, caseDataWithApplicant(5));
+        final CaseDetails<CaseData, State> caseDetails6 = caseDetails(6L, caseDataWithApplicantAndBulkListRef(6));
 
         final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
         searchResults.offer(List.of(caseDetails1, caseDetails2, caseDetails3));
@@ -528,32 +472,12 @@ class SystemCreateBulkCaseListTaskTest {
 
         setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
 
-        final CaseData caseData1 =
-            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
-
-        final CaseData caseData2 =
-            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
-
-        final CaseData caseData3 =
-            caseDataWithApplicant("app1fname3", "app1lname3", "app2fname3", "app2lname3");
-
-        final CaseData caseData4 =
-            caseDataWithApplicant("app1fname4", "app1lname4", "app2fname4", "app2lname4");
-
-        final CaseData caseData5 =
-            caseDataWithApplicant("app1fname5", "app1lname5", "app2fname5", "app2lname5");
-
-        final CaseData caseData6 =
-            caseDataWithApplicant("app1fname6", "app1lname6", "app2fname6", "app2lname6");
-
-        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseData1);
-        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseData2);
-        caseDetails2.setState(State.Submitted);
-        final CaseDetails<CaseData, State> caseDetails3 = caseDetails(3L, caseData3);
-        final CaseDetails<CaseData, State> caseDetails4 = caseDetails(4L, caseData4);
-        final CaseDetails<CaseData, State> caseDetails5 = caseDetails(5L, caseData5);
-        final CaseDetails<CaseData, State> caseDetails6 = caseDetails(6L, caseData6);
-        caseDetails6.setState(State.Submitted);
+        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseDataWithApplicant(1));
+        final CaseDetails<CaseData, State> caseDetails2 = caseDetailsSubmitted(2L, caseDataWithApplicant(2));
+        final CaseDetails<CaseData, State> caseDetails3 = caseDetails(3L, caseDataWithApplicant(3));
+        final CaseDetails<CaseData, State> caseDetails4 = caseDetails(4L, caseDataWithApplicant(4));
+        final CaseDetails<CaseData, State> caseDetails5 = caseDetails(5L, caseDataWithApplicant(5));
+        final CaseDetails<CaseData, State> caseDetails6 = caseDetailsSubmitted(6L, caseDataWithApplicant(6));
 
         final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
         searchResults.offer(List.of(caseDetails1, caseDetails2, caseDetails3));
@@ -648,24 +572,10 @@ class SystemCreateBulkCaseListTaskTest {
 
         setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
 
-        final CaseData caseData1 =
-            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
-        caseData1.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
-
-        final CaseData caseData2 =
-            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
-        caseData2.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
-
-        final CaseData caseData3 =
-            caseDataWithApplicant("app1fname3", "app1lname3", "app2fname3", "app2lname3");
-
-        final CaseData caseData4 =
-            caseDataWithApplicant("app1fname4", "app1lname4", "app2fname4", "app2lname4");
-
-        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseData1);
-        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseData2);
-        final CaseDetails<CaseData, State> caseDetails3 = caseDetails(3L, caseData3);
-        final CaseDetails<CaseData, State> caseDetails4 = caseDetails(4L, caseData4);
+        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseDataWithApplicantAndBulkListRef(1));
+        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseDataWithApplicantAndBulkListRef(2));
+        final CaseDetails<CaseData, State> caseDetails3 = caseDetails(3L, caseDataWithApplicant(3));
+        final CaseDetails<CaseData, State> caseDetails4 = caseDetails(4L, caseDataWithApplicant(4));
 
         final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
         searchResults.offer(List.of(caseDetails1, caseDetails2));
@@ -725,24 +635,10 @@ class SystemCreateBulkCaseListTaskTest {
 
         setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
 
-        final CaseData caseData1 =
-            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
-
-        final CaseData caseData2 =
-            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
-
-        final CaseData caseData3 =
-            caseDataWithApplicant("app1fname3", "app1lname3", "app2fname3", "app2lname3");
-
-        final CaseData caseData4 =
-            caseDataWithApplicant("app1fname4", "app1lname4", "app2fname4", "app2lname4");
-
-        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseData1);
-        caseDetails1.setState(State.Submitted);
-        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseData2);
-        caseDetails2.setState(State.Submitted);
-        final CaseDetails<CaseData, State> caseDetails3 = caseDetails(3L, caseData3);
-        final CaseDetails<CaseData, State> caseDetails4 = caseDetails(4L, caseData4);
+        final CaseDetails<CaseData, State> caseDetails1 = caseDetailsSubmitted(1L, caseDataWithApplicant(1));
+        final CaseDetails<CaseData, State> caseDetails2 = caseDetailsSubmitted(2L, caseDataWithApplicant(2));
+        final CaseDetails<CaseData, State> caseDetails3 = caseDetails(3L, caseDataWithApplicant(3));
+        final CaseDetails<CaseData, State> caseDetails4 = caseDetails(4L, caseDataWithApplicant(4));
 
         final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
         searchResults.offer(List.of(caseDetails1, caseDetails2));
@@ -822,15 +718,8 @@ class SystemCreateBulkCaseListTaskTest {
 
         setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
 
-        final CaseData caseData1 =
-            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
-
-        final CaseData caseData2 =
-            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
-        caseData2.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
-
-        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseData1);
-        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseData2);
+        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseDataWithApplicant(1));
+        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseDataWithApplicantAndBulkListRef(2));
 
         final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
         searchResults.offer(List.of(caseDetails1, caseDetails2));
@@ -851,15 +740,8 @@ class SystemCreateBulkCaseListTaskTest {
 
         setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
 
-        final CaseData caseData1 =
-            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
-
-        final CaseData caseData2 =
-            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
-
-        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseData1);
-        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseData2);
-        caseDetails2.setState(State.Submitted);
+        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseDataWithApplicant(1));
+        final CaseDetails<CaseData, State> caseDetails2 = caseDetailsSubmitted(2L, caseDataWithApplicant(2));
 
         final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
         searchResults.offer(List.of(caseDetails1, caseDetails2));
@@ -880,16 +762,8 @@ class SystemCreateBulkCaseListTaskTest {
 
         setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
 
-        final CaseData caseData1 =
-            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
-
-        final CaseData caseData2 =
-            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
-        caseData2.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
-
-        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseData1);
-        caseDetails1.setState(State.Submitted);
-        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseData2);
+        final CaseDetails<CaseData, State> caseDetails1 = caseDetailsSubmitted(1L, caseDataWithApplicant(1));
+        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseDataWithApplicantAndBulkListRef(2));
 
         final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
         searchResults.offer(List.of(caseDetails1, caseDetails2));
@@ -910,14 +784,8 @@ class SystemCreateBulkCaseListTaskTest {
 
         setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 2);
 
-        final CaseData caseData1 =
-            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
-
-        final CaseData caseData2 =
-            caseDataWithApplicant("app1fname2", "app1lname2", "app2fname2", "app2lname2");
-
-        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseData1);
-        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseData2);
+        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseDataWithApplicant(1));
+        final CaseDetails<CaseData, State> caseDetails2 = caseDetails(2L, caseDataWithApplicant(2));
 
         final Deque<List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
         searchResults.offer(List.of(caseDetails1, caseDetails2));
@@ -989,10 +857,7 @@ class SystemCreateBulkCaseListTaskTest {
 
         setField(systemCreateBulkCaseListTask, "minimumCasesToProcess", 1);
 
-        final CaseData caseData1 =
-            caseDataWithApplicant("app1fname1", "app1lname1", "app2fname1", "app2lname1");
-
-        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseData1);
+        final CaseDetails<CaseData, State> caseDetails1 = caseDetails(1L, caseDataWithApplicant(1));
 
         final Deque<List<CaseDetails<CaseData, State>>> searchResults = new LinkedList<>();
         searchResults.offer(List.of(caseDetails1));
@@ -1039,13 +904,36 @@ class SystemCreateBulkCaseListTaskTest {
             .build();
     }
 
-    private CaseDetails<CaseData, State> caseDetails(final Long id, final CaseData caseData) {
+    private CaseData caseDataWithApplicant(final int id) {
+        return caseDataWithApplicant(
+            "app1fname" + id,
+            "app1lname" + id,
+            "app2fname" + id,
+            "app2lname" + id
+        );
+    }
+
+    private CaseData caseDataWithApplicantAndBulkListRef(final int id) {
+        final CaseData caseData = caseDataWithApplicant(id);
+        caseData.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
+        return caseData;
+    }
+
+    private CaseDetails<CaseData, State> caseDetails(final Long id, final CaseData caseData, final State state) {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(id);
         caseDetails.setData(caseData);
-        caseDetails.setState(State.AwaitingPronouncement);
+        caseDetails.setState(state);
 
         return caseDetails;
+    }
+
+    private CaseDetails<CaseData, State> caseDetails(final Long id, final CaseData caseData) {
+        return caseDetails(id, caseData, AwaitingPronouncement);
+    }
+
+    private CaseDetails<CaseData, State> caseDetailsSubmitted(final Long id, final CaseData caseData) {
+        return caseDetails(id, caseData, Submitted);
     }
 
     private ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue(CaseDetails<CaseData, State> caseDetails) {
