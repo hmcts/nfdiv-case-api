@@ -55,11 +55,11 @@ public class CaseworkerUpdateLanguagePreference implements CCDConfig<CaseData, S
                 .done()
             .complex(CaseData::getApplicant1)
                 .mandatoryWithLabel(Applicant::getLanguagePreferenceWelsh,
-                    getLabel(LANGUAGE_PREFERENCE, APPLICANTS_OR_APPLICANT1S+"}"))
+                    getLabel(LANGUAGE_PREFERENCE, APPLICANTS_OR_APPLICANT1S + "}"))
                 .done()
             .complex(CaseData::getApplicant2)
                 .mandatoryWithLabel(Applicant::getLanguagePreferenceWelsh,
-                    getLabel(LANGUAGE_PREFERENCE, RESPONDENTS_OR_APPLICANT2S+"}"))
+                    getLabel(LANGUAGE_PREFERENCE, RESPONDENTS_OR_APPLICANT2S + "}"))
                 .done()
             .complex(CaseData::getApplicant1, "applicant1SolicitorRepresented=\"Yes\"")
             .readonlyNoSummary(Applicant::getSolicitorRepresented, NEVER_SHOW)
@@ -71,8 +71,9 @@ public class CaseworkerUpdateLanguagePreference implements CCDConfig<CaseData, S
             .complex(CaseData::getApplicant2, "applicant2SolicitorRepresented=\"Yes\"")
                 .readonlyNoSummary(Applicant::getSolicitorRepresented, NEVER_SHOW)
                 .complex(Applicant::getSolicitor, "applicant2SolicitorRepresented=\"Yes\"")
-                    .mandatory(Solicitor::getLanguagePreferenceWelsh, "applicant2SolicitorRepresented=\"Yes\"", null,
-                         getLabel(LANGUAGE_PREFERENCE, RESPONDENTS_OR_APPLICANT2S + "} solicitor"), LABEL_HINT, null)
+                    .mandatory(Solicitor::getLanguagePreferenceWelsh, "applicant2SolicitorRepresented=\"Yes\"",
+                        null, getLabel(LANGUAGE_PREFERENCE, RESPONDENTS_OR_APPLICANT2S + "} solicitor"),
+                        LABEL_HINT, null)
                 .done()
             .done()
             .done();
