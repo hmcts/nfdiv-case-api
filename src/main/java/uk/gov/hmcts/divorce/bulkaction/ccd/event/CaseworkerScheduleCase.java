@@ -53,6 +53,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     public static final String ERROR_INVALID_STATE = " is in state ";
     public static final String ERROR_ONLY_AWAITING_PRONOUNCEMENT = ". Only cases in Awaiting Pronouncement can be scheduled for listing";
     public static final String ERROR_ALREADY_LINKED_TO_BULK_CASE = " is already linked to bulk case ";
+    public static final String ERROR_CASES_NOT_FOUND = "Search returned no results for the following Case IDs: ";
     public static final String ERROR_NO_CASES_FOUND = "Search returned no cases for the provided Case IDs: ";
 
     private static final String SCHEDULE_CASES_FOR_LISTING = "Schedule cases for listing";
@@ -151,8 +152,16 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             return duplicateIds;
         }
 
+        public boolean hasDuplicates() {
+            return !duplicateIds.isEmpty();
+        }
+
         public List<String> getUniqueIds() {
             return uniqueIds;
+        }
+
+        public boolean hasUniqueIds() {
+            return !uniqueIds.isEmpty();
         }
     }
 
@@ -177,15 +186,33 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     }
 
     private DuplicateCheckResult checkForDuplicates(final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails) {
+        if (bulkListCaseDetails == null) {
+            return new DuplicateCheckResult(new ArrayList<>(), new ArrayList<>());
+        }
         final List<String> caseIds = bulkListCaseDetails.stream()
             .map(caseDetails -> caseDetails.getValue().getCaseReference().getCaseReference())
             .toList();
         return checkForDuplicateIds(caseIds);
     }
 
+    private List<String> getMissingIds(
+        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResultsList,
+        final List<String> searchedIds
+    ) {
+        if (searchResultsList.size() < searchedIds.size()) {
+            final List<String> foundIds = searchResultsList.stream().map(caseDetails -> caseDetails.getId().toString()).toList();
+            return searchedIds.stream().filter(id -> !foundIds.contains(id)).toList();
+        }
+        return new ArrayList<>();
+    }
+
     private DuplicateCheckResult getNewCaseIds(final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails,
                                        final List<ListValue<BulkListCaseDetails>> beforeBulkListCaseDetails
     ) {
+        if (bulkListCaseDetails == null) {
+            return new DuplicateCheckResult(new ArrayList<>(), new ArrayList<>());
+        }
+
         if (beforeBulkListCaseDetails == null) {
             return checkForDuplicates(bulkListCaseDetails);
         }
@@ -207,7 +234,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         }
 
         final DuplicateCheckResult duplicateCheckResult = checkForDuplicates(bulkActionCaseData.getBulkListCaseDetails());
-        if (!duplicateCheckResult.getDuplicateIds().isEmpty()) {
+        if (duplicateCheckResult.hasDuplicates()) {
             errors.add(ERROR_CASE_IDS_DUPLICATED + String.join(", ", duplicateCheckResult.getDuplicateIds()));
             errors.add(ERROR_REMOVE_DUPLICATES);
         }
@@ -217,8 +244,8 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             beforeBulkActionCaseData.getBulkListCaseDetails()
         );
 
-        if (newCaseIds.getUniqueIds().isEmpty()) {
-            if (!duplicateCheckResult.getDuplicateIds().isEmpty()) {
+        if (!newCaseIds.hasUniqueIds()) {
+            if (duplicateCheckResult.hasDuplicates()) {
                 return errors;
             }
             errors.add(ERROR_NO_NEW_CASES_ADDED);
@@ -232,6 +259,10 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         );
 
         if (!caseDetailsList.isEmpty()) {
+            final List<String> missingIds = getMissingIds(caseDetailsList, newCaseIds.getUniqueIds());
+            if (!missingIds.isEmpty()) {
+                errors.add(ERROR_CASES_NOT_FOUND + String.join(", ", missingIds));
+            }
             caseDetailsList.forEach(caseDetails -> {
                 if (!AwaitingPronouncement.toString().equals(caseDetails.getState())) {
                     errors.add(ERROR_CASE_ID + caseDetails.getId() + ERROR_INVALID_STATE
