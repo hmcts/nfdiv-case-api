@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 
 import java.time.Clock;
@@ -23,6 +24,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CT
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContentWithCtscContactDetails;
@@ -35,6 +37,9 @@ class BailiffServiceSuccessfulTemplateContentTest {
 
     @Mock
     private DocmosisCommonContent docmosisCommonContent;
+
+    @Mock
+    private CommonContent commonContent;
 
     @InjectMocks
     private BailiffServiceSuccessfulTemplateContent bailiffServiceSuccessfulTemplateContent;
@@ -60,6 +65,9 @@ class BailiffServiceSuccessfulTemplateContentTest {
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
                 .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
 
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn("Wife");
+
         final Map<String, Object> templateContent = bailiffServiceSuccessfulTemplateContent
                 .getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1());
 
@@ -69,7 +77,8 @@ class BailiffServiceSuccessfulTemplateContentTest {
                 entry(RECIPIENT_ADDRESS, "line 1\ntown\npostcode"),
                 entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT),
                 entry(CoS_DATE, "1 March 2022"),
-                entry(DUE_DATE, "1 March 2022")
+                entry(DUE_DATE, "1 March 2022"),
+                entry(RELATION, "Wife")
         );
     }
 }
