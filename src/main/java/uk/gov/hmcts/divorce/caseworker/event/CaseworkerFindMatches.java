@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.stereotype.Component;
@@ -78,6 +79,13 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         log.info("{} about to start findmatches callback invoked for Case Id: {}", FIND_MATCHES, details.getId());
         CaseData caseData = details.getData();
         MarriageDetails marriageDetails = caseData.getApplication().getMarriageDetails();
+
+        if (ObjectUtils.isEmpty(marriageDetails.getDate())) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(Collections.singletonList("Marriage date is not set. Cannot perform find matches."))
+                .build();
+        }
 
         List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseMatchDetails = getFreshMatches(details, marriageDetails);
 
