@@ -104,16 +104,19 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
         log.info("Caseworker add bailiff return about to submit callback invoked for case id: {}", caseId);
 
         Document returnedCoS = caseData.getAlternativeService().getBailiff().getCertificateOfServiceDocumentByBailiff();
-        var cosDivorceDocument = DivorceDocument
-            .builder()
-            .documentLink(returnedCoS)
-            .documentFileName(returnedCoS.getFilename())
-            .documentType(CERTIFICATE_OF_SERVICE)
-            .documentDateAdded(LocalDate.now())
-            .build();
 
-        caseData.getAlternativeService().getBailiff().setCertificateOfServiceDocument(cosDivorceDocument);
-        caseData.getAlternativeService().getBailiff().setCertificateOfServiceDocumentByBailiff(null);
+        if (returnedCoS != null) {
+            var cosDivorceDocument = DivorceDocument
+                .builder()
+                .documentLink(returnedCoS)
+                .documentFileName(returnedCoS.getFilename())
+                .documentType(CERTIFICATE_OF_SERVICE)
+                .documentDateAdded(LocalDate.now())
+                .build();
+
+            caseData.getAlternativeService().getBailiff().setCertificateOfServiceDocument(cosDivorceDocument);
+            caseData.getAlternativeService().getBailiff().setCertificateOfServiceDocumentByBailiff(null);
+        }
 
         if (YES == caseData.getAlternativeService().getBailiff().getSuccessfulServedByBailiff()) {
             if (caseData.isJudicialSeparationCase()) {
