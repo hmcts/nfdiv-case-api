@@ -56,8 +56,10 @@ public class BailiffServiceSuccessfulNotification implements ApplicantNotificati
 
     @Override
     public void sendToApplicant1Offline(CaseData caseData, Long caseId) {
-        log.info("Sending application received letter to applicant 1 for case : {}", caseId);
-        generateLetterAndSend(caseData, caseId, caseData.getApplicant1());
+        if (!caseData.isJudicialSeparationCase()) {
+            log.info("Sending bailiff service successful letter to applicant : {}", caseId);
+            generateLetterAndSend(caseData, caseId, caseData.getApplicant1());
+        }
     }
 
     private void generateLetterAndSend(CaseData caseData, Long caseId, Applicant applicant) {

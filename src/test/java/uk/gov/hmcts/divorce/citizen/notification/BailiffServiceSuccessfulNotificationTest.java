@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
+import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.BailiffServiceSuccessfulTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -28,6 +29,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.citizen.notification.BailiffServiceSuccessfulNotification.BAILIFF_SERVICE_SUCCESSFUL_DOCUMENT_NAME;
@@ -177,7 +179,17 @@ class BailiffServiceSuccessfulNotificationTest {
     }
 
     @Test
-    void testSendToApplicant1Offline() {
+    void shouldNotSendOfflineLetterToApplicant1WhenJudicialSeparationCase() {
+        CaseData caseData = validApplicant1CaseData();
+        caseData.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
+
+        notification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(caseDataDocumentService);
+    }
+
+    @Test
+    void shouldSendOfflineLetterToApplicant1WhenNotJudicialSeparationCase() {
         CaseData caseData = validApplicant1CaseData();
         caseData.getAlternativeService().getBailiff().setCertificateOfServiceDocument(DivorceDocument.builder().build());
 
