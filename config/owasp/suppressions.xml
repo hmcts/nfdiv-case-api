@@ -1,34 +1,3 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-  <suppress>
-    <notes>jackson-databind false positive CVE - suppressing until they remove it</notes>
-    <cve>CVE-2023-35116</cve>
-  </suppress>
-  <suppress>
-    <notes>spring-boot uses safe constructor</notes>
-    <cve>CVE-2022-1471</cve>
-  </suppress>
-  <suppress>
-    <notes>no updates for hutool or json-java_project which fixes this vulnerability</notes>
-    <cve>CVE-2022-45688</cve>
-  </suppress>
-  <suppress>
-    <notes><![CDATA[
-   file name: dependency-management-plugin-1.1.3.jar
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/io\.spring\.gradle/dependency\-management\-plugin@.*$</packageUrl>
-    <cve>CVE-2016-9878</cve>
-    <cve>CVE-2023-34047</cve>
-  </suppress>
-  <suppress base="true">
-    <notes><![CDATA[
-   False positive https://github.com/jeremylong/DependencyCheck/issues/5991
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.json/json@.*$</packageUrl>
-    <cpe>cpe:/a:json-java_project:json-java</cpe>
-  </suppress>
-  <suppress>
-    <notes>Update is available but dependencies need to update it which fixes this vulnerability</notes>
-    <cve>CVE-2023-6378</cve>
-  </suppress>
 </suppressions>
