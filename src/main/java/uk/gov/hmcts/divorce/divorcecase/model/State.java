@@ -408,6 +408,13 @@ public enum State {
     LAReview,
 
     @CCD(
+        label = "LA service app review",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
+    )
+    LAServiceReview,
+
+    @CCD(
         label = "Listed; awaiting pronouncement",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class, LegalAdvisorAccess.class}
@@ -567,7 +574,7 @@ public enum State {
 
     public static final State[] AOS_STATES = {
         Holding, AwaitingConditionalOrder, IssuedToBailiff, AwaitingBailiffService, AwaitingBailiffReferral, BailiffRefused,
-        AwaitingServiceConsideration, AwaitingServicePayment, AwaitingAlternativeService, AwaitingDwpResponse,
+        AwaitingServiceConsideration, LAServiceReview, AwaitingServicePayment, AwaitingAlternativeService, AwaitingDwpResponse,
         AwaitingJudgeClarification, GeneralConsiderationComplete, AwaitingGeneralReferralPayment, AwaitingGeneralConsideration,
         GeneralApplicationReceived, PendingHearingOutcome, PendingHearingDate, AwaitingGeneralApplicationPayment, AwaitingDocuments
     };
@@ -578,6 +585,7 @@ public enum State {
         AwaitingAos,
         AwaitingServicePayment,
         AwaitingServiceConsideration,
+        LAServiceReview,
         AwaitingBailiffReferral,
         BailiffRefused,
         AosOverdue,

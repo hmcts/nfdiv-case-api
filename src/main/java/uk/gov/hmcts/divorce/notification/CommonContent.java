@@ -156,6 +156,8 @@ public class CommonContent {
     public static final String WEB_FORM_TEXT = "webformText";
     public static final String CONTACT_TEXT = "[Contact us using our online form]";
     public static final String CONTACT_TEXT_WELSH = "[Cysylltwch â ni drwy ddefnyddio ein ffurflen ar-lein]";
+    public static final String DO_NOT_REPLY = "This is an automated message, do not reply to this email.";
+    public static final String DO_NOT_REPLY_WELSH = "Neges awtomataidd yw hon, peidiwch ag ymateb i’r e-bost hwn.";
 
     private final DocmosisCommonContent docmosisCommonContent;
 
@@ -190,7 +192,7 @@ public class CommonContent {
         templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
         templateVars.put(WEBFORM_URL, getWebFormUrl(applicant.getLanguagePreference()));
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
-        templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(SMART_SURVEY, getSmartSurveyWithDoNotReply(languagePreference));
         templateVars.put(IDAM_INACTIVITY_POLICY, getIdamInactivityPolicy(languagePreference));
 
         getPhoneAndOpeningTimes(languagePreference, templateVars);
@@ -208,7 +210,7 @@ public class CommonContent {
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
-        templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(SMART_SURVEY, getSmartSurveyWithDoNotReply(languagePreference));
         templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
 
         getPhoneAndOpeningTimes(languagePreference, templateVars);
@@ -405,6 +407,11 @@ public class CommonContent {
         return config.getTemplateVars().get(SMART_SURVEY);
     }
 
+    public String getSmartSurveyWithDoNotReply(LanguagePreference languagePreference) {
+        return getSmartSurvey() + System.lineSeparator() + System.lineSeparator() + "##"
+            + (WELSH.equals(languagePreference) ? DO_NOT_REPLY_WELSH : DO_NOT_REPLY);
+    }
+
     public Map<String, String> nocCitizenTemplateVars(final Long caseId,
                                                       final Applicant applicant) {
         Map<String, String> templateVars = new HashMap<>();
@@ -417,7 +424,7 @@ public class CommonContent {
         } else {
             templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getName());
         }
-        templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(SMART_SURVEY, getSmartSurveyWithDoNotReply(applicant.getLanguagePreference()));
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
 
         getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
@@ -434,7 +441,7 @@ public class CommonContent {
             applicant.getSolicitor(),
             applicant.getLanguagePreference())
         );
-        templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(SMART_SURVEY, getSmartSurveyWithDoNotReply(applicant.getLanguagePreference()));
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
 
         getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
@@ -460,7 +467,7 @@ public class CommonContent {
         );
         templateVars.put(APPLICANT_NAME, beforeApplicant.getFullName());
         templateVars.put(RESPONDENT_NAME, beforePartner.getFullName());
-        templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(SMART_SURVEY, getSmartSurveyWithDoNotReply(beforeApplicant.getLanguagePreference()));
         templateVars.put(DATE_OF_ISSUE, issueDate);
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(beforeApplicant.getLanguagePreference()));
 
