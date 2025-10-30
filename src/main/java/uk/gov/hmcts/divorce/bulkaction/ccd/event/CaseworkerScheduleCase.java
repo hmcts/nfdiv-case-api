@@ -28,6 +28,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -72,12 +73,11 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         new BulkActionPageBuilder(configBuilder
             .event(CASEWORKER_SCHEDULE_CASE)
-            .forStates(Created, Listed)
+            .forStateTransition(EnumSet.of(Created, Listed), Listed)
             .name(SCHEDULE_CASES_FOR_LISTING)
             .description(SCHEDULE_CASES_FOR_LISTING)
             .showSummary()
             .showEventNotes()
-            .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
@@ -104,20 +104,6 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         }
 
         return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder().build();
-    }
-
-    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(
-        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
-        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
-    ) {
-
-        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_SCHEDULE_CASE, bulkCaseDetails.getId());
-
-        return AboutToStartOrSubmitResponse
-            .<BulkActionCaseData, BulkActionState>builder()
-            .data(bulkCaseDetails.getData())
-            .state(Listed)
-            .build();
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,

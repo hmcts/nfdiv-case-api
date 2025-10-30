@@ -378,15 +378,6 @@ class CaseworkerScheduleCaseTest {
     }
 
     @Test
-    void shouldMoveStateToListed() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(LocalDateTime.now());
-
-        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.aboutToSubmit(details, details);
-
-        assertThat(response.getState()).isEqualTo(Listed);
-    }
-
-    @Test
     void shouldSuccessfullyUpdateCasesInBulkWithCourtHearingDetails() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         details.setData(BulkActionCaseData.builder().build());
