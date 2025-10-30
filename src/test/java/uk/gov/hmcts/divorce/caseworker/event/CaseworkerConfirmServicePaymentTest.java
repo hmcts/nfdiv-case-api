@@ -13,7 +13,9 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Fee;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
@@ -138,5 +140,26 @@ class CaseworkerConfirmServicePaymentTest {
 
         assertThat(aboutToStartOrSubmitResponse.getData().getAlternativeService().getServicePaymentFee().getOrderSummary().getFees())
             .isEqualTo(orderSummaryFees);
+    }
+
+    @Test
+    void shouldBlankOutDetailsOfWhetherCitizenOrSolCompletedOnlinePayment() {
+        final CaseData caseData = caseData();
+        caseData.getAlternativeService().setAlternativeServiceType(DEEMED);
+        caseData.getAlternativeService().setServicePaymentFee(
+            FeeDetails.builder()
+                .hasCompletedOnlinePayment(YesOrNo.YES)
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setState(AwaitingServicePayment);
+        details.setId(TEST_CASE_ID);
+
+        var response = alternativeServicePayment.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getAlternativeService().getServicePaymentFee().getHasCompletedOnlinePayment())
+            .isNull();
     }
 }
