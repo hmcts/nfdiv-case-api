@@ -30,8 +30,8 @@ public class CaseworkerAwaitingServiceApplicationClarification implements CCDCon
             .event(CASEWORKER_AWAITING_SERVICE_APP_CLARIFICATION)
             .forStateTransition(ServiceAdminRefusal, AwaitingServiceApplicationClarification)
             .showEventNotes()
-            .name("Awaiting service app clarification")
-            .description("Awaiting service app clarification")
+            .name("Awaiting ser-app clarification")
+            .description("Awaiting ser-app clarification")
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, JUDGE));
     }

@@ -19,7 +19,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 class CaseworkerAwaitingServiceApplicationClarificationTest {
 
     @InjectMocks
-    private CaseworkerAwaitingServiceApplicationClarification caseworkerAwaitingServiceApplicationClarification;
+    private CaseworkerAwaitinServiceApplicationClarification caseworkerAwaitingServiceApplicationClarification;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
