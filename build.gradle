@@ -305,7 +305,7 @@ dependencies {
   testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
   testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
-  testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.5'
+  testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.6'
   testImplementation group: 'org.simplify4u', name: 'slf4j2-mock', version: '2.3.0'
   testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.4.9', classifier: 'all'
 
