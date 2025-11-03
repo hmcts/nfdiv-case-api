@@ -59,6 +59,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         "applicant1ContactDetailsType!=\"private\" AND applicant2ContactDetailsType!=\"private\"";
     private static final String APPLICANTS_CONTACT_DETAILS_PRIVATE =
         "applicant1ContactDetailsType=\"private\" OR applicant2ContactDetailsType=\"private\"";
+    private static final String APPLICANT_1_CONTACT_DETAILS_PUBLIC = "applicant1ContactDetailsType!=\"private\"";
+    private static final String APPLICANT_1_CONTACT_DETAILS_PRIVATE = "applicant1ContactDetailsType=\"private\"";
+    private static final String APPLICANT_2_CONTACT_DETAILS_PUBLIC = "applicant2ContactDetailsType!=\"private\"";
+    private static final String APPLICANT_2_CONTACT_DETAILS_PRIVATE = "applicant2ContactDetailsType=\"private\"";
     private static final String PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS =
         "paperFormApplicant1NoPaymentIncluded=\"Yes\" AND paperFormSoleOrApplicant1PaymentOther=\"Yes\"";
     private static final String PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS =
@@ -250,8 +254,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("documents", "Documents")
             .field("coCertificateOfEntitlementDocument")
             .field("documentsGenerated")
-            .field("applicant1DocumentsUploaded", APPLICANTS_CONTACT_DETAILS_PUBLIC)
-            .field("applicant2DocumentsUploaded")
+            .field("applicant1DocumentsUploaded", APPLICANT_1_CONTACT_DETAILS_PUBLIC)
+            .field("applicant2DocumentsUploaded", APPLICANT_2_CONTACT_DETAILS_PUBLIC)
             .field("scannedDocuments", APPLICANTS_CONTACT_DETAILS_PUBLIC)
             .field(CaseData::getGeneralOrders)
             .field("documentsUploaded")
@@ -387,7 +391,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .field("confidentialDocumentsGenerated")
             .field("confidentialDocumentsUploaded")
-            .field("applicant1DocumentsUploaded", APPLICANTS_CONTACT_DETAILS_PRIVATE)
+            .field("applicant1DocumentsUploaded", APPLICANT_1_CONTACT_DETAILS_PRIVATE)
+            .field("applicant2DocumentsUploaded", APPLICANT_2_CONTACT_DETAILS_PRIVATE)
             .field("scannedDocuments", APPLICANTS_CONTACT_DETAILS_PRIVATE)
             .field(CaseData::getConfidentialGeneralEmails)
             .field(CaseData::getGeneralLetters, APPLICANTS_CONTACT_DETAILS_PRIVATE);
