@@ -402,6 +402,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("alternativeServiceJudgeOrLegalAdvisorDetails")
             .field("serviceApplicationAnswers")
             .field("serviceApplicationDocuments", "serviceApplicationDocuments=\"*\"")
+            .field("serviceApplicationDocsUploadedPreSubmission")
             .field("alternativeServiceFeeRequired")
             .field("servicePaymentFeeServiceRequestReference")
             .field("servicePaymentFeeOrderSummary")
