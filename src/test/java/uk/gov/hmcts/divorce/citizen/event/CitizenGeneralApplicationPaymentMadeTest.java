@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.Clock;
@@ -135,6 +136,8 @@ class CitizenGeneralApplicationPaymentMadeTest {
         assertThat(generalApplication.getGeneralApplicationFee().getPaymentReference()).isEqualTo(TEST_REFERENCE);
         assertThat(generalReferral.getGeneralReferralReason()).isEqualTo(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL);
         assertThat(generalReferral.getGeneralReferralType()).isEqualTo(GeneralReferralType.DISCLOSURE_VIA_DWP);
+        assertThat(generalReferral.getGeneralReferralDocument()).isEqualTo(generalApplication.getGeneralApplicationDocument());
+        assertThat(generalReferral.getGeneralReferralDocuments()).isEqualTo(generalApplication.getGeneralApplicationDocuments());
     }
 
     @Test
@@ -194,6 +197,10 @@ class CitizenGeneralApplicationPaymentMadeTest {
         GeneralApplication generalApplication = GeneralApplication.builder()
             .generalApplicationParty(GeneralParties.APPLICANT)
             .generalApplicationType(GeneralApplicationType.DISCLOSURE_VIA_DWP)
+            .generalApplicationDocument(DivorceDocument.builder().build())
+            .generalApplicationDocuments(List.of(
+                ListValue.<DivorceDocument>builder().value(DivorceDocument.builder().build()).build()
+            ))
             .generalApplicationFee(FeeDetails.builder()
                 .paymentMethod(ServicePaymentMethod.FEE_PAY_BY_CARD)
                 .serviceRequestReference(TEST_SERVICE_REFERENCE)
