@@ -261,11 +261,11 @@ public enum State {
     AwaitingService,
 
     @CCD(
-        label = "Awaiting service app clarification",
+        label = "Pending service app response",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
     )
-    AwaitingServiceApplicationClarification,
+    PendingServiceAppResponse,
 
     @CCD(
         label = "Awaiting service consideration",
@@ -582,7 +582,7 @@ public enum State {
     public static final State[] AOS_STATES = {
         Holding, AwaitingConditionalOrder, IssuedToBailiff, AwaitingBailiffService, AwaitingBailiffReferral, BailiffRefused,
         AwaitingServiceConsideration, LAServiceReview, AwaitingServicePayment, AwaitingAlternativeService, AwaitingDwpResponse,
-        AwaitingJudgeClarification, AwaitingServiceApplicationClarification, GeneralConsiderationComplete, AwaitingGeneralReferralPayment, AwaitingGeneralConsideration,
+        AwaitingJudgeClarification, PendingServiceAppResponse, GeneralConsiderationComplete, AwaitingGeneralReferralPayment, AwaitingGeneralConsideration,
         GeneralApplicationReceived, PendingHearingOutcome, PendingHearingDate, AwaitingGeneralApplicationPayment, AwaitingDocuments
     };
 
