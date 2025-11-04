@@ -467,7 +467,7 @@ docmosis:
       COVERSHEET_SOLICITOR: FL-NFD-GOR-ENG-Solicitor-Coversheet_V1.docx
       NFD_RESP_RESPONDED_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended_V1.docx
       NFD_RESP_RESPONDED_AWAITING_CO_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended-Awaiting-CO_V1.docx
-      GENERAL_LETTER: FL-NFD-GOR-ENG-General-Letter_V3.docx
+      GENERAL_LETTER: FL-NFD-GOR-ENG-General-Letter-V2.docx
       NFD_NOP_A1_SOLE_APP1_CIT_CS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-A1-V6.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-A2-V6.docx
       NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V6.docx
@@ -573,18 +573,14 @@ docmosis:
       JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Clarification-Refusal-Solicitor-Cover-Letter_V1.docx #TODO: update welsh content
       NFD_NOP_A1_SOLE_APP1_CIT_CS: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Sole_V4.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: FL-NFD-GOR-WEL-Notice-Of-Proceedings-Overseas-Sole_V5.docx
-      NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V6.docx #TODO: add Welsh translation
-      NFD_NOP_SOLE_RESPONDENT_CITIZEN: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V14.docx
-      NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V6.docx #TODO: add translated content
-      NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V6.docx #TODO: add translated content
+      NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V4.docx #TODO: add Welsh translation
+      NFD_NOP_SOLE_RESPONDENT_CITIZEN: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V13.docx
+      NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V4.docx #TODO: add translated content
+      NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Respondent-V4.docx #TODO: add translated content
       NFD_NOP_JA1_JOINT_APP1APP2_CIT: FL-NFD-GOR-WEL-Notice-Of-Proceedings-Joint_V4.docx
-      NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1-V5.docx #TODO: update welsh content
-      NFD_NOP_AS2_SOLE_APP1_SOL_SS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS2-V8.docx #TODO: update welsh content
-      NFD_NOP_APP1_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_JS_Sole_V1.docx #TODO: update welsh content
-      NFD_NOP_APP1_JS_SOLE_OS_PS: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole_V1.docx  #TODO: update welsh content
-      NFD_NOP_APP1_SOLICITOR_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_Solicitor_JS_Sole_V1.docx #TODO: update welsh content
-      NFD_NOP_JS_SUBMITTED_RESPONDENT_SOLICITOR: FL-NFD-GOR-ENG-Judicial-Separation-Submitted-NOP-Respondent-Solicitor_V1.docx  #TODO: update welsh content
-      JUDICIAL_SEPARATION_SWITCH_TO_SOLE_SOLICITOR: FL-NFD-GOR-ENG-Judicial-Separation-Switch-To-Sole-Solicitor_V1.docx #TODO: update welsh content
+      NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1-V4.docx #TODO: update welsh content
+      NFD_NOP_AS2_SOLE_APP1_SOL_SS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS2-V7.docx #TODO: update welsh content
+      NFD_NOP_APP1_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_JS_Sole.docx #TODO: update welsh content
       CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter_V2.docx #TODO: update welsh content
       CO_GRANTED_SOL_COVER_LETTER: FL-NFD-GOR-WEL-Conditional-Order-Granted-Sol-Cover-Letter_V1.docx
       NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Joint-JS.docx #TODO: uodate welsh content
