@@ -561,7 +561,7 @@ docmosis:
       COVERSHEET_SOLICITOR: FL-NFD-GOR-ENG-Solicitor-Coversheet.docx
       NFD_RESP_RESPONDED_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended.docx
       NFD_RESP_RESPONDED_AWAITING_CO_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended-Awaiting-CO.docx #TODO: add translated content
-      GENERAL_LETTER: FL-NFD-GOR-ENG-General-Letter_V3.docx
+      GENERAL_LETTER: FL-NFD-GOR-ENG-General-Letter-V1.docx
       NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Joint-Solicitor-V1.docx
       REJECTED_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Refusal-Order_V2.docx
       REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V2.docx #TODO: update welsh content
