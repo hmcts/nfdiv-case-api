@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.InviteApplicantToCaseNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -18,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -85,6 +87,54 @@ class EmailUpdateServiceTest {
     }
 
     @Test
+    void shouldNotInviteWhenApplicant1OnAJointPaperCase() {
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+        caseData.getApplication().setNewPaperCase(YesOrNo.YES);
+        caseData.setApplicationType(JOINT_APPLICATION);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        emailUpdateService.processEmailUpdate(details, details, true);
+
+        verifyNoInteractions(inviteApplicantToCaseNotification);
+    }
+
+    @Test
+    void shouldNotInviteWhenApplicant2OnAJointPaperCase() {
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+        caseData.getApplication().setNewPaperCase(YesOrNo.YES);
+        caseData.setApplicationType(JOINT_APPLICATION);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        emailUpdateService.processEmailUpdate(details, details, false);
+
+        verifyNoInteractions(inviteApplicantToCaseNotification);
+    }
+
+    @Test
+    void shouldNotInviteWhenApplicant1OnASolePaperCase() {
+        final CaseData caseData = validApplicant1CaseData();
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+        caseData.getApplication().setNewPaperCase(YesOrNo.YES);
+        caseData.setApplicationType(SOLE_APPLICATION);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        emailUpdateService.processEmailUpdate(details, details, true);
+
+        verifyNoInteractions(inviteApplicantToCaseNotification);
+    }
+
+    @Test
     void shouldNotInviteWhenApplicant2AndSoleApplicationNotIssuedYet() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
@@ -97,6 +147,81 @@ class EmailUpdateServiceTest {
         emailUpdateService.processEmailUpdate(details, details, false);
 
         verifyNoInteractions(inviteApplicantToCaseNotification);
+    }
+
+    @Test
+    void shouldNotInviteWhenRespondentOnPaperCaseHasSubmittedOfflineAosAndIsOffline() {
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.getApplicant2().setOffline(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+        caseData.getApplication().setNewPaperCase(YesOrNo.YES);
+        caseData.setAcknowledgementOfService(AcknowledgementOfService.builder().build());
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(LocalDateTime.of(2021, 10, 26, 10, 0, 0));
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        emailUpdateService.processEmailUpdate(details, details, false);
+
+        verifyNoInteractions(inviteApplicantToCaseNotification);
+    }
+
+    @Test
+    void shouldInviteOfflineRespondentWhenOnlineCaseAndSubmittedOfflineAos() {
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.getApplicant2().setOffline(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+        caseData.setAcknowledgementOfService(AcknowledgementOfService.builder().build());
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(LocalDateTime.of(2021, 10, 26, 10, 0, 0));
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        emailUpdateService.processEmailUpdate(details, details, false);
+
+        verify(inviteApplicantToCaseNotification).send(caseData,TEST_CASE_ID,false);
+    }
+
+    @Test
+    void shouldInviteOfflineRespondentForPaperCaseWhenCaseIsIssuedButNoAosSubmitted() {
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.getApplicant2().setOffline(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+        caseData.getApplication().setNewPaperCase(YesOrNo.YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        emailUpdateService.processEmailUpdate(details, details, false);
+
+        verify(inviteApplicantToCaseNotification).send(caseData,TEST_CASE_ID,false);
+    }
+
+    @Test
+    void shouldInviteOnlineRespondentForPaperCaseWhenCaseIsIssuedButNoAosSubmitted() {
+        final CaseData caseData = validApplicant2CaseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.getApplicant2().setOffline(YesOrNo.NO);
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+        caseData.getApplication().setNewPaperCase(YesOrNo.YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        emailUpdateService.processEmailUpdate(details, details, false);
+
+        verify(inviteApplicantToCaseNotification).send(caseData,TEST_CASE_ID,false);
     }
 
     @Test
