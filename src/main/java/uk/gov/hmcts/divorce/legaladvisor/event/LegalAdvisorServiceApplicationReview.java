@@ -9,42 +9,33 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.EnumSet;
-
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAdminClarification;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderReview;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.LAReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.LAServiceReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
 @Slf4j
-public class LegalAdvisorReview implements CCDConfig<CaseData, State, UserRole> {
+public class LegalAdvisorServiceApplicationReview implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String LEGAL_ADVISOR_REVIEW = "legal-advisor-review";
+    public static final String LEGAL_ADVISOR_SERVICE_APP_REVIEW = "legal-advisor-service-app-review";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(LEGAL_ADVISOR_REVIEW)
-            .forStateTransition(EnumSet.of(AwaitingLegalAdvisorReferral, ClarificationSubmitted,
-                AwaitingClarification, AwaitingAdminClarification, AwaitingServiceConsideration, LAServiceReview, JSAwaitingLA,
-                    ConditionalOrderReview), LAReview)
-            .name("LA Review")
-            .description("LA Review")
+            .event(LEGAL_ADVISOR_SERVICE_APP_REVIEW)
+            .forStateTransition(AwaitingServiceConsideration, LAServiceReview)
+            .name("LA service app review")
+            .description("LA service app review")
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
             .grantHistoryOnly(
                 CASE_WORKER,
+                JUDGE,
                 SUPER_USER));
     }
 
