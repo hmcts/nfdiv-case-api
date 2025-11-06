@@ -19,7 +19,7 @@ plugins {
   id 'org.springframework.boot' version '3.4.5'
   id 'com.github.ben-manes.versions' version '0.52.0'
   id 'hmcts.ccd.sdk' version '5.6.1'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.1907'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.1914'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -244,9 +244,9 @@ dependencies {
 // uncomment for local version
 //  implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '8.1'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.25.1'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.25.1'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.25.1'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.25.2'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.25.2'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.25.2'
   implementation group: 'com.google.guava', name: 'guava', version: '33.4.8-jre'
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
