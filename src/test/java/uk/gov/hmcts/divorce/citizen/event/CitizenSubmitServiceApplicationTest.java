@@ -26,6 +26,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 
 import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,6 +36,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AOS_SUBMITTED_BY_PARTNER;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AWAITING_DECISION_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -78,6 +80,23 @@ class CitizenSubmitServiceApplicationTest {
         );
 
         assertThat(response.getErrors()).isEqualTo(Collections.singletonList(AWAITING_DECISION_ERROR));
+    }
+
+    @Test
+    void givenAosIsSubmittedThenRejectServiceApplicationSubmission() {
+        CaseData caseData = CaseData.builder().build();
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(
+            LocalDateTime.of(2021, 10, 26, 10, 0, 0));
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
+            caseDetails, caseDetails
+        );
+
+        assertThat(response.getErrors()).isEqualTo(Collections.singletonList(AOS_SUBMITTED_BY_PARTNER));
     }
 
     @Test

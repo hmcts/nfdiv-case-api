@@ -27,6 +27,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner;
 import uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,6 +36,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenGenerateProcessServerDocs.CITIZEN_GENERATE_PROCESS_SERVER_DOCS;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenGenerateProcessServerDocs.CONFIDENTIAL_RESPONDENT_ERROR;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AOS_SUBMITTED_BY_PARTNER;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.SERVICE_DOCUMENTS_ALREADY_REGENERATED;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -139,6 +141,29 @@ class CitizenGenerateProcessServerDocsTest {
                 generateProcessServerDocs.aboutToStart(caseDetails);
 
             assertThat(response.getErrors()).isNull();
+        }
+    }
+
+    @Test
+    void shouldRejectTheUpdateIfRespondentHasSubmittedAos() {
+        final CaseData caseData = validCaseDataForReIssueApplication();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseData.getApplicant2().setContactDetailsType(ContactDetailsType.PUBLIC);
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(
+            LocalDateTime.of(2021, 10, 26, 10, 0, 0));
+
+        caseDetails.setId(12345L);
+        caseDetails.setData(caseData);
+
+        try (MockedStatic<ApplicationValidation> classMock = Mockito.mockStatic(ApplicationValidation.class)) {
+            classMock.when(() -> ApplicationValidation.validateServiceDate(caseData, REISSUE_OFFSET_DAYS))
+                .thenReturn(Collections.emptyList());
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                generateProcessServerDocs.aboutToStart(caseDetails);
+
+            assertThat(response.getErrors()).hasSize(1);
+            assertThat(response.getErrors()).contains(AOS_SUBMITTED_BY_PARTNER);
         }
     }
 

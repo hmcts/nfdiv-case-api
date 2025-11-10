@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
@@ -33,6 +34,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AOS_SUBMITTED_BY_PARTNER;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
@@ -96,6 +98,16 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         }
 
         InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
+
+        if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(userOptions.getInterimApplicationType().getGeneralApplicationType())
+            && data.getAcknowledgementOfService() != null
+            && data.getAcknowledgementOfService().getDateAosSubmitted() != null) {
+            log.info("CitizenGeneralApplication failed because AOS has already been submitted. Case ID: {}", details.getId());
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(AOS_SUBMITTED_BY_PARTNER))
+                .build();
+        }
+
         GeneralApplication newGeneralApplication = buildGeneralApplication(userOptions, isApplicant1);
 
         FeeDetails applicationFee = newGeneralApplication.getGeneralApplicationFee();

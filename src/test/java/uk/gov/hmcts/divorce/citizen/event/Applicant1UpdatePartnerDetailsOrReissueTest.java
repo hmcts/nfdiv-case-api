@@ -31,6 +31,7 @@ import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,6 +42,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.citizen.event.Applicant1UpdatePartnerDetailsOrReissue.CONFIDENTIAL_RESPONDENT_ERROR;
 import static uk.gov.hmcts.divorce.citizen.event.Applicant1UpdatePartnerDetailsOrReissue.UPDATE_PARTNER_DETAILS_OR_REISSUE;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AOS_SUBMITTED_BY_PARTNER;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress.CONTACT_DETAILS_UPDATED;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.PAPERS_SENT;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.SERVICE_DOCUMENTS_ALREADY_REGENERATED;
@@ -125,6 +127,29 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
                 applicant1UpdatePartnerDetailsOrReissue.aboutToStart(caseDetails);
 
             assertThat(response.getErrors()).isNull();
+        }
+    }
+
+    @Test
+    void shouldRejectTheUpdateIfAosSubmittedByPartner() {
+        final CaseData caseData = validCaseDataForReIssueApplication();
+
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(
+            LocalDateTime.of(2021, 10, 26, 10, 0, 0));
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(12345L);
+        caseDetails.setData(caseData);
+
+        try (MockedStatic<ApplicationValidation> classMock = Mockito.mockStatic(ApplicationValidation.class)) {
+            classMock.when(() -> ApplicationValidation.validateServiceDate(caseData, REISSUE_OFFSET_DAYS))
+                .thenReturn(Collections.emptyList());
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                applicant1UpdatePartnerDetailsOrReissue.aboutToStart(caseDetails);
+
+            assertThat(response.getErrors()).hasSize(1);
+            assertThat(response.getErrors()).contains(AOS_SUBMITTED_BY_PARTNER);
         }
     }
 

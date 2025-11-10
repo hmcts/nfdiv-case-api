@@ -36,6 +36,7 @@ import java.util.Optional;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AOS_SUBMITTED_BY_PARTNER;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress.CONTACT_DETAILS_UPDATED;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.PAPERS_SENT;
@@ -92,6 +93,13 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
         log.info("{} aboutToStart callback invoked for Case Id: {}", UPDATE_PARTNER_DETAILS_OR_REISSUE, details.getId());
 
         CaseData caseData = details.getData();
+
+        if (caseData.getAcknowledgementOfService() != null && caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
+            log.info("Applicant1UpdatePartnerDetailsOrReissue failed because AOS has already been submitted. Case ID: {}", details.getId());
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(AOS_SUBMITTED_BY_PARTNER))
+                .build();
+        }
 
         List<String> validationErrors = flattenLists(
             validateServiceDate(caseData, docsRegeneratedOffsetDays)
