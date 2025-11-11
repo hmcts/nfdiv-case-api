@@ -28,9 +28,6 @@ import java.util.Collections;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.OTHER;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
@@ -75,9 +72,6 @@ public class CaseworkerRequestForInformationResponse implements CCDConfig<CaseDa
                 AwaitingHWFPartPayment,
                 AwaitingPayment,
                 AwaitingDocuments,
-                AwaitingApplicant1Response,
-                AwaitingApplicant2Response,
-                Applicant2Approved,
                 InformationRequested,
                 AwaitingRequestedInformation,
                 RequestedInformationSubmitted,
