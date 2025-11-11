@@ -30,7 +30,7 @@ import static uk.gov.hmcts.divorce.common.event.RegenerateApplicationDocument.RE
 import static uk.gov.hmcts.divorce.common.event.RegenerateNoticeOfProceedings.REGENERATE_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -58,7 +58,7 @@ public class CaseworkerAmendApplicationType implements CCDConfig<CaseData, State
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_AMEND_APPLICATION_TYPE)
-            .forStates(STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED)
+            .forStates(POST_SUBMISSION_STATES)
             .name(AMEND_APPLICATION_TYPE)
             .description(AMEND_APPLICATION_TYPE)
             .grant(CREATE_READ_UPDATE, SUPER_USER)

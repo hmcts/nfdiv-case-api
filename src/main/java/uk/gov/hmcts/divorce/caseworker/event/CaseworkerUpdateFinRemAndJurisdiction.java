@@ -29,7 +29,7 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.common.event.RegenerateApplicationDocument.REGENERATE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinancialOrderFor.CHILDREN;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -64,7 +64,7 @@ public class CaseworkerUpdateFinRemAndJurisdiction implements CCDConfig<CaseData
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_UPDATE_FIN_REM_AND_JURISDICTION)
-            .forStates(STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED)
+            .forStates(POST_SUBMISSION_STATES)
             .name("Update FinRem and Jurisdiction")
             .showCondition("applicationType=\"soleApplication\"")
             .description("Update FinRem and Jurisdiction")

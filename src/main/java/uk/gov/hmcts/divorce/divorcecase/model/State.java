@@ -537,15 +537,6 @@ public enum State {
         Rejected
     ));
 
-    public static final EnumSet<State> STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED = EnumSet.complementOf(EnumSet.of(
-        Draft,
-        Withdrawn,
-        Rejected,
-        AwaitingApplicant1Response,
-        AwaitingApplicant2Response,
-        Applicant2Approved
-    ));
-
     public static final EnumSet<State> PRE_RETURN_TO_PREVIOUS_STATES = EnumSet.complementOf(EnumSet.of(
         Draft,
         AwaitingApplicant1Response,
