@@ -50,6 +50,9 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     public static final String ERROR_CASE_IDS_DUPLICATED = "Case IDs duplicated in the list: ";
     public static final String ERROR_REMOVE_DUPLICATES = "Please remove duplicates and try again";
     public static final String ERROR_NO_NEW_CASES_ADDED = "Please add at least one new case to schedule for listing";
+    public static final String ERROR_NO_NEW_CASES_ADDED_OR_HEARING_DATE_UPDATED = "Please add at least one new case to schedule for listing or alter the hearing date/time";
+    public static final String ERROR_NO_CASES_SCHEDULED = "Please add at least one case to schedule for listing";
+    public static final String ERROR_DO_NOT_REMOVE_CASES = "You cannot remove cases from the bulk list with this event. Use Remove cases from bulk list instead.";
     public static final String ERROR_CASE_ID = "Case ID ";
     public static final String ERROR_INVALID_STATE = " is in state ";
     public static final String ERROR_ONLY_AWAITING_PRONOUNCEMENT = ". Only cases in Awaiting Pronouncement can be scheduled for listing";
@@ -162,20 +165,20 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         }
     }
 
-    private DuplicateCheckResult checkForDuplicateIds(final List<String> caseIds) {
+    private DuplicateCheckResult checkForDuplicateIds(final List<BulkListCaseDetails> caseDetailsList) {
         final List<String> duplicateCaseIds = new ArrayList<>();
         final List<String> uniqueIds = new ArrayList<>();
-        final Map<String, Integer> frequencyMap = new java.util.HashMap<>();
+        final Map<BulkListCaseDetails, Integer> frequencyMap = new java.util.HashMap<>();
 
-        for (String caseId : caseIds) {
-            frequencyMap.put(caseId, frequencyMap.getOrDefault(caseId, 0) + 1);
+        for (BulkListCaseDetails caseDetails : caseDetailsList) {
+            frequencyMap.put(caseDetails, frequencyMap.getOrDefault(caseDetails, 0) + 1);
         }
 
-        for (Map.Entry<String, Integer> entry : frequencyMap.entrySet()) {
+        for (Map.Entry<BulkListCaseDetails, Integer> entry : frequencyMap.entrySet()) {
             if (entry.getValue() > 1) {
-                duplicateCaseIds.add(entry.getKey());
+                duplicateCaseIds.add(entry.getKey().getCaseReference().getCaseReference());
             } else if (entry.getValue() == 1) {
-                uniqueIds.add(entry.getKey());
+                uniqueIds.add(entry.getKey().getCaseReference().getCaseReference());
             }
         }
 
@@ -183,10 +186,8 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     }
 
     private DuplicateCheckResult checkForDuplicates(final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails) {
-        final List<String> caseIds = bulkListCaseDetails.stream()
-            .map(caseDetails -> caseDetails.getValue().getCaseReference().getCaseReference())
-            .toList();
-        return checkForDuplicateIds(caseIds);
+        final List<BulkListCaseDetails> caseDetailsList = bulkListCaseDetails.stream().map(ListValue::getValue).toList();
+        return checkForDuplicateIds(caseDetailsList);
     }
 
     private List<String> getMissingIds(
@@ -211,9 +212,26 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .filter(caseDetails -> !beforeBulkListCaseDetails.contains(caseDetails))
             .toList()
             .stream()
-            .map(caseDetails -> caseDetails.getValue().getCaseReference().getCaseReference())
+            .map(ListValue::getValue)
             .toList()
         );
+    }
+
+    private List<String> checkForRemovedCases(
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails,
+        final List<ListValue<BulkListCaseDetails>> beforeBulkListCaseDetails
+    ) {
+        List<String> removedCases = new ArrayList<>();
+        if (beforeBulkListCaseDetails != null) {
+            removedCases = beforeBulkListCaseDetails.stream()
+                .filter(caseDetails -> !bulkListCaseDetails.contains(caseDetails))
+                .toList()
+                .stream()
+                .map(caseDetails -> caseDetails.getValue().getCaseReference().getCaseReference())
+                .toList();
+        }
+
+        return removedCases;
     }
 
     private List<String> validateData(final BulkActionCaseData bulkActionCaseData, final BulkActionCaseData beforeBulkActionCaseData) {
@@ -221,6 +239,16 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
 
         if (bulkActionCaseData.getDateAndTimeOfHearing().isBefore(LocalDateTime.now())) {
             errors.add(ERROR_HEARING_DATE_IN_PAST);
+        }
+
+        if (bulkActionCaseData.getBulkListCaseDetails().isEmpty() && beforeBulkActionCaseData.getBulkListCaseDetails().isEmpty()) {
+            errors.add(ERROR_NO_CASES_SCHEDULED);
+            return errors;
+        }
+
+        final List<String> removedCases = checkForRemovedCases(bulkActionCaseData.getBulkListCaseDetails(), beforeBulkActionCaseData.getBulkListCaseDetails());
+        if (!removedCases.isEmpty()) {
+            errors.add(ERROR_DO_NOT_REMOVE_CASES);
         }
 
         final DuplicateCheckResult duplicateCheckResult = checkForDuplicates(bulkActionCaseData.getBulkListCaseDetails());
@@ -237,9 +265,14 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         if (!newCaseIds.hasUniqueIds()) {
             if (duplicateCheckResult.hasDuplicates()) {
                 return errors;
+            } else if (bulkActionCaseData.getDateAndTimeOfHearing().equals(beforeBulkActionCaseData.getDateAndTimeOfHearing())) {
+                errors.add(ERROR_NO_NEW_CASES_ADDED_OR_HEARING_DATE_UPDATED);
+                return errors;
+            } else {
+                errors.add(ERROR_NO_NEW_CASES_ADDED);
+                return errors;
             }
-            errors.add(ERROR_NO_NEW_CASES_ADDED);
-            return errors;
+
         }
 
         final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseDetailsList = ccdSearchService.searchForCases(
