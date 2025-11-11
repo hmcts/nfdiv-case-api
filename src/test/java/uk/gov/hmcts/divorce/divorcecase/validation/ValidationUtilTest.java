@@ -834,4 +834,27 @@ class ValidationUtilTest {
         assertThat(errors).isEmpty();
     }
 
+    @Test
+    void shouldReturnNoErrorsWhenAosHasNotBeenSubmitted() {
+        CaseData caseData = caseData();
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(null);
+
+        List<String> errors = ValidationUtil.validateAosSubmitted(caseData);
+
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    void shouldReturnErrorsWhenAosHasBeenSubmitted() {
+        CaseData caseData = caseData();
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(
+            LocalDateTime.of(2021, 10, 26, 10, 0, 0));
+
+        List<String> errors = ValidationUtil.validateAosSubmitted(caseData);
+
+        assertThat(errors).isNotEmpty();
+        assertThat(errors.size()).isEqualTo(1);
+        assertThat(errors).contains("Partner has responded to application.");
+    }
+
 }

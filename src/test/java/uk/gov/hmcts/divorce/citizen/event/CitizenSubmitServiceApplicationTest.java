@@ -36,7 +36,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AOS_SUBMITTED_BY_PARTNER;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AWAITING_DECISION_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -96,7 +95,7 @@ class CitizenSubmitServiceApplicationTest {
             caseDetails, caseDetails
         );
 
-        assertThat(response.getErrors()).isEqualTo(Collections.singletonList(AOS_SUBMITTED_BY_PARTNER));
+        assertThat(response.getErrors()).isEqualTo(Collections.singletonList("Partner has responded to application."));
     }
 
     @Test

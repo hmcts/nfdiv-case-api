@@ -36,7 +36,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenGenerateProcessServerDocs.CITIZEN_GENERATE_PROCESS_SERVER_DOCS;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenGenerateProcessServerDocs.CONFIDENTIAL_RESPONDENT_ERROR;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AOS_SUBMITTED_BY_PARTNER;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.SERVICE_DOCUMENTS_ALREADY_REGENERATED;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -163,7 +162,7 @@ class CitizenGenerateProcessServerDocsTest {
                 generateProcessServerDocs.aboutToStart(caseDetails);
 
             assertThat(response.getErrors()).hasSize(1);
-            assertThat(response.getErrors()).contains(AOS_SUBMITTED_BY_PARTNER);
+            assertThat(response.getErrors()).contains("Partner has responded to application.");
         }
     }
 

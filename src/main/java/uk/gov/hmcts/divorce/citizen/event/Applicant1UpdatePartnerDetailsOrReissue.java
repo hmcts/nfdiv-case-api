@@ -36,7 +36,6 @@ import java.util.Optional;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AOS_SUBMITTED_BY_PARTNER;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress.CONTACT_DETAILS_UPDATED;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.PAPERS_SENT;
@@ -54,6 +53,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateServiceDate;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateAosSubmitted;
 
 @Component
 @RequiredArgsConstructor
@@ -94,14 +94,8 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
 
         CaseData caseData = details.getData();
 
-        if (caseData.getAcknowledgementOfService() != null && caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
-            log.info("Applicant1UpdatePartnerDetailsOrReissue failed because AOS has already been submitted. Case ID: {}", details.getId());
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(Collections.singletonList(AOS_SUBMITTED_BY_PARTNER))
-                .build();
-        }
-
         List<String> validationErrors = flattenLists(
+            validateAosSubmitted(caseData),
             validateServiceDate(caseData, docsRegeneratedOffsetDays)
         );
 

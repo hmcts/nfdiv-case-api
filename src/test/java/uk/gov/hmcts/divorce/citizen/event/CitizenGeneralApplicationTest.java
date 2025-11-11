@@ -40,7 +40,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenGeneralApplication.AWAITING_PAYMENT_ERROR;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AOS_SUBMITTED_BY_PARTNER;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -122,7 +121,7 @@ class CitizenGeneralApplicationTest {
             caseDetails, caseDetails
         );
 
-        assertThat(response.getErrors()).isEqualTo(Collections.singletonList(AOS_SUBMITTED_BY_PARTNER));
+        assertThat(response.getErrors()).isEqualTo(Collections.singletonList("Partner has responded to application."));
     }
 
     @Test

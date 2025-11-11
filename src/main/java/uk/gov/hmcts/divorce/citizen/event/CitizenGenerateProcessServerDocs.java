@@ -20,12 +20,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AOS_SUBMITTED_BY_PARTNER;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
@@ -49,6 +47,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateServiceDate;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateAosSubmitted;
 
 @Slf4j
 @Component
@@ -102,14 +101,8 @@ public class CitizenGenerateProcessServerDocs implements CCDConfig<CaseData, Sta
 
         CaseData caseData = details.getData();
 
-        if (caseData.getAcknowledgementOfService() != null && caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
-            log.info("CitizenGenerateProcessServerDocs failed because AOS has already been submitted. Case ID: {}", details.getId());
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(Collections.singletonList(AOS_SUBMITTED_BY_PARTNER))
-                .build();
-        }
-
         List<String> validationErrors = flattenLists(
+            validateAosSubmitted(caseData),
             validateRespondentConfidentiality(caseData),
             validateServiceDate(caseData, docsRegeneratedOffsetDays)
         );

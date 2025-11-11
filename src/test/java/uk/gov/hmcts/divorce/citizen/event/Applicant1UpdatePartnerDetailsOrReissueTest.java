@@ -42,7 +42,6 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerReissueApplication.CASEWORKER_REISSUE_APPLICATION;
 import static uk.gov.hmcts.divorce.citizen.event.Applicant1UpdatePartnerDetailsOrReissue.CONFIDENTIAL_RESPONDENT_ERROR;
 import static uk.gov.hmcts.divorce.citizen.event.Applicant1UpdatePartnerDetailsOrReissue.UPDATE_PARTNER_DETAILS_OR_REISSUE;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AOS_SUBMITTED_BY_PARTNER;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoResponsePartnerNewEmailOrAddress.CONTACT_DETAILS_UPDATED;
 import static uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySomethingElse.PAPERS_SENT;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.SERVICE_DOCUMENTS_ALREADY_REGENERATED;
@@ -149,7 +148,7 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
                 applicant1UpdatePartnerDetailsOrReissue.aboutToStart(caseDetails);
 
             assertThat(response.getErrors()).hasSize(1);
-            assertThat(response.getErrors()).contains(AOS_SUBMITTED_BY_PARTNER);
+            assertThat(response.getErrors()).contains("Partner has responded to application.");
         }
     }
 

@@ -28,6 +28,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -40,6 +41,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateAosSubmitted;
 
 @Component
 @Slf4j
@@ -50,10 +52,6 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
     public static final String AWAITING_DECISION_ERROR = """
         A service application has already been submitted and is awaiting a decision.
-        """;
-
-    public static final String AOS_SUBMITTED_BY_PARTNER = """
-        Partner has already responded to the application.
         """;
 
     private final PaymentSetupService paymentSetupService;
@@ -92,10 +90,11 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
                 .build();
         }
 
-        if (data.getAcknowledgementOfService() != null && data.getAcknowledgementOfService().getDateAosSubmitted() != null) {
-            log.info("CitizenSubmitServiceApplication failed because AOS has already been submitted. Case ID: {}", details.getId());
+        List<String> errors = validateAosSubmitted(data);
+        if (!errors.isEmpty()) {
+            log.info("{} failed since partner has already responded for {} ", CITIZEN_SERVICE_APPLICATION, caseId);
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(Collections.singletonList(AOS_SUBMITTED_BY_PARTNER))
+                .errors(errors)
                 .build();
         }
 

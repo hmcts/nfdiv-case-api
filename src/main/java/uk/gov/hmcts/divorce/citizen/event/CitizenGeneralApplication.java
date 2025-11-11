@@ -31,10 +31,10 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AOS_SUBMITTED_BY_PARTNER;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
@@ -45,6 +45,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateAosSubmitted;
 
 @Component
 @Slf4j
@@ -99,13 +100,14 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
 
         InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
 
-        if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(userOptions.getInterimApplicationType().getGeneralApplicationType())
-            && data.getAcknowledgementOfService() != null
-            && data.getAcknowledgementOfService().getDateAosSubmitted() != null) {
-            log.info("CitizenGeneralApplication failed because AOS has already been submitted. Case ID: {}", details.getId());
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(Collections.singletonList(AOS_SUBMITTED_BY_PARTNER))
-                .build();
+        if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(userOptions.getInterimApplicationType().getGeneralApplicationType())) {
+            List<String> errors = validateAosSubmitted(data);
+            if (!errors.isEmpty()) {
+                log.info("{} failed since partner has already responded for {} ", CITIZEN_GENERAL_APPLICATION, caseId);
+                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .errors(errors)
+                    .build();
+            }
         }
 
         GeneralApplication newGeneralApplication = buildGeneralApplication(userOptions, isApplicant1);
