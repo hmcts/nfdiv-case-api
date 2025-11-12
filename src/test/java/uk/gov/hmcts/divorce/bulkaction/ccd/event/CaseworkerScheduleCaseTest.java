@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -22,6 +24,7 @@ import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction.FailedBulkCaseRemover;
@@ -88,6 +91,7 @@ class CaseworkerScheduleCaseTest {
     private static final Long TEST_CASE_ID_2 = 2L;
     private static final Long TEST_CASE_ID_3 = 3L;
     private static final LocalDateTime NOW = LocalDateTime.now();
+    private static final String BULK_LIST_ERRORED_CASES = "There are errors on the bulk list. Please resolve errors before continuing";
 
     @Mock
     private CcdSearchService ccdSearchService;
@@ -116,6 +120,9 @@ class CaseworkerScheduleCaseTest {
     @Mock
     private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
+    @Mock
+    private ValidationUtil validationUtil;
+
     @InjectMocks
     private CaseworkerScheduleCase scheduleCase;
 
@@ -128,6 +135,24 @@ class CaseworkerScheduleCaseTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(CASEWORKER_SCHEDULE_CASE);
+    }
+
+    @Test
+    void shouldValidateAndErrorIfCasesHaveErrorInBulkList() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
+        details.setData(BulkActionCaseData.builder().erroredCaseDetails(
+            List.of(ListValue.<BulkListCaseDetails>builder().build())).build());
+        details.setId(TEST_CASE_ID);
+
+        try (MockedStatic<ValidationUtil> classMock = Mockito.mockStatic(ValidationUtil.class)) {
+            classMock.when(() -> ValidationUtil.validateBulkListErroredCases(details))
+                .thenReturn(List.of(BULK_LIST_ERRORED_CASES));
+        }
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response =
+            scheduleCase.aboutToStart(details);
+
+        assertThat(response.getErrors().getFirst()).isEqualTo(BULK_LIST_ERRORED_CASES);
     }
 
     @Test
