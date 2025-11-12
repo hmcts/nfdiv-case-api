@@ -28,9 +28,12 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -50,7 +53,6 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     public static final String CASEWORKER_SCHEDULE_CASE = "caseworker-schedule-case";
     public static final String ERROR_HEARING_DATE_IN_PAST = "Please enter a hearing date and time in the future";
     public static final String ERROR_CASE_IDS_DUPLICATED = "Case IDs duplicated in the list: ";
-    public static final String ERROR_REMOVE_DUPLICATES = "Please remove duplicates and try again";
     public static final String ERROR_NO_NEW_CASES_ADDED_OR_HEARING_DETAILS_UPDATED =
         "Please add at least one new case to schedule for listing or update the hearing details";
     public static final String ERROR_NO_CASES_SCHEDULED = "Please add at least one case to schedule for listing";
@@ -246,19 +248,18 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails,
         final List<ListValue<BulkListCaseDetails>> beforeBulkListCaseDetails
     ) {
-        if (beforeBulkListCaseDetails != null) {
-            final List<String> beforeCaseRefs = beforeBulkListCaseDetails.stream()
-                .map(caseDetails -> caseDetails.getValue().getCaseReference().getCaseReference())
-                .toList();
-            final List<String> caseRefs = bulkListCaseDetails.stream()
-                .map(caseDetails -> caseDetails.getValue().getCaseReference().getCaseReference())
-                .toList();
-            return beforeCaseRefs.stream()
-                .filter(beforeCaseRef -> !caseRefs.contains(beforeCaseRef))
-                .toList();
+        if (beforeBulkListCaseDetails == null) {
+            return Collections.emptyList();
         }
 
-        return new ArrayList<>();
+        final Set<String> caseRefs = bulkListCaseDetails.stream()
+            .map(caseDetails -> caseDetails.getValue().getCaseReference().getCaseReference())
+            .collect(Collectors.toSet());
+
+        return beforeBulkListCaseDetails.stream()
+            .map(caseDetails -> caseDetails.getValue().getCaseReference().getCaseReference())
+            .filter(beforeRef -> !caseRefs.contains(beforeRef))
+            .toList();
     }
 
     private List<String> validateData(final BulkActionCaseData bulkActionCaseData, final BulkActionCaseData beforeBulkActionCaseData) {
@@ -284,7 +285,6 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         final DuplicateCheckResult duplicateCheckResult = checkForDuplicates(bulkActionCaseData.getBulkListCaseDetails());
         if (duplicateCheckResult.hasDuplicates()) {
             errors.add(ERROR_CASE_IDS_DUPLICATED + String.join(", ", duplicateCheckResult.duplicateIds()));
-            errors.add(ERROR_REMOVE_DUPLICATES);
         }
 
         final DuplicateCheckResult newCaseIds = getNewCaseIds(

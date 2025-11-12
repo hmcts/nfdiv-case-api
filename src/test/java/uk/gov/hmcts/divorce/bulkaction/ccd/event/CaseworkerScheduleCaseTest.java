@@ -59,7 +59,6 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.E
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_NO_CASES_FOUND;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_NO_NEW_CASES_ADDED_OR_HEARING_DETAILS_UPDATED;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_ONLY_AWAITING_PRONOUNCEMENT;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_REMOVE_DUPLICATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -211,7 +210,7 @@ class CaseworkerScheduleCaseTest {
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
-        assertThat(response.getErrors()).containsExactly(ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID, ERROR_REMOVE_DUPLICATES);
+        assertThat(response.getErrors()).containsExactly(ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID);
     }
 
     @Test
@@ -226,7 +225,7 @@ class CaseworkerScheduleCaseTest {
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
-        assertThat(response.getErrors()).containsExactly(ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID, ERROR_REMOVE_DUPLICATES);
+        assertThat(response.getErrors()).containsExactly(ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID);
     }
 
     @Test
@@ -241,7 +240,7 @@ class CaseworkerScheduleCaseTest {
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
-        assertThat(response.getErrors()).containsExactly(ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID, ERROR_REMOVE_DUPLICATES);
+        assertThat(response.getErrors()).containsExactly(ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID);
     }
 
     @Test
@@ -300,8 +299,7 @@ class CaseworkerScheduleCaseTest {
 
         assertThat(response.getErrors()).containsExactly(
             ERROR_HEARING_DATE_IN_PAST,
-            ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID,
-            ERROR_REMOVE_DUPLICATES
+            ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID
         );
     }
 
@@ -398,7 +396,6 @@ class CaseworkerScheduleCaseTest {
         assertThat(response.getErrors()).containsExactly(
             ERROR_HEARING_DATE_IN_PAST,
             ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID_2,
-            ERROR_REMOVE_DUPLICATES,
             ERROR_CASE_ID + TEST_CASE_ID + ERROR_INVALID_STATE + Submitted + ERROR_ONLY_AWAITING_PRONOUNCEMENT,
             ERROR_CASE_ID + TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE
         );
@@ -480,7 +477,6 @@ class CaseworkerScheduleCaseTest {
         assertThat(response.getErrors()).containsExactly(
             ERROR_HEARING_DATE_IN_PAST,
             ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID_3,
-            ERROR_REMOVE_DUPLICATES,
             ERROR_CASES_NOT_FOUND + TEST_CASE_ID_2,
             ERROR_CASE_ID + TEST_CASE_ID + ERROR_INVALID_STATE + Submitted + ERROR_ONLY_AWAITING_PRONOUNCEMENT,
             ERROR_CASE_ID + TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE
