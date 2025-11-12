@@ -140,25 +140,9 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         return SubmittedCallbackResponse.builder().build();
     }
 
-    private class DuplicateCheckResult {
-        private final List<String> duplicateIds;
-        private final List<String> uniqueIds;
-
-        public DuplicateCheckResult(List<String> duplicateIds, List<String> uniqueIds) {
-            this.duplicateIds = duplicateIds;
-            this.uniqueIds = uniqueIds;
-        }
-
-        public List<String> getDuplicateIds() {
-            return duplicateIds;
-        }
-
+    private record DuplicateCheckResult(List<String> duplicateIds, List<String> uniqueIds) {
         public boolean hasDuplicates() {
             return !duplicateIds.isEmpty();
-        }
-
-        public List<String> getUniqueIds() {
-            return uniqueIds;
         }
 
         public boolean hasUniqueIds() {
@@ -225,12 +209,12 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
 
         if (filteredDuplicateCheckResult.hasUniqueIds()) {
             final List<String> duplicateIdsToRemove = new ArrayList<>();
-            for (String id : filteredDuplicateCheckResult.getUniqueIds()) {
-                if (duplicateCheckResult.getDuplicateIds().contains(id)) {
+            for (String id : filteredDuplicateCheckResult.uniqueIds()) {
+                if (duplicateCheckResult.duplicateIds().contains(id)) {
                     duplicateIdsToRemove.add(id);
                 }
             }
-            filteredDuplicateCheckResult.getUniqueIds().removeAll(duplicateIdsToRemove);
+            filteredDuplicateCheckResult.uniqueIds().removeAll(duplicateIdsToRemove);
         }
 
         return filteredDuplicateCheckResult;
@@ -277,7 +261,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
 
         final DuplicateCheckResult duplicateCheckResult = checkForDuplicates(bulkActionCaseData.getBulkListCaseDetails());
         if (duplicateCheckResult.hasDuplicates()) {
-            errors.add(ERROR_CASE_IDS_DUPLICATED + String.join(", ", duplicateCheckResult.getDuplicateIds()));
+            errors.add(ERROR_CASE_IDS_DUPLICATED + String.join(", ", duplicateCheckResult.duplicateIds()));
             errors.add(ERROR_REMOVE_DUPLICATES);
         }
 
@@ -300,13 +284,13 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         }
 
         final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseDetailsList = ccdSearchService.searchForCases(
-            newCaseIds.getUniqueIds(),
+            newCaseIds.uniqueIds(),
             idamService.retrieveSystemUpdateUserDetails(),
             authTokenGenerator.generate()
         );
 
         if (!caseDetailsList.isEmpty()) {
-            final List<String> missingIds = getMissingIds(caseDetailsList, newCaseIds.getUniqueIds());
+            final List<String> missingIds = getMissingIds(caseDetailsList, newCaseIds.uniqueIds());
             if (!missingIds.isEmpty()) {
                 errors.add(ERROR_CASES_NOT_FOUND + String.join(", ", missingIds));
             }
@@ -322,7 +306,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
                 }
             });
         } else {
-            errors.add(ERROR_NO_CASES_FOUND + String.join(", ", newCaseIds.getUniqueIds()));
+            errors.add(ERROR_NO_CASES_FOUND + String.join(", ", newCaseIds.uniqueIds()));
         }
 
         return errors;
