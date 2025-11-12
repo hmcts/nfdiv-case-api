@@ -19,6 +19,6 @@ dependencies:
     repository: 'oci://hmctspublic.azurecr.io/helm'
     condition: nfdiv-frontend.enabled
   - name: ccd-def-cleanup
-    version: ~9.0.4
+    version: ~9.0.5
     repository: 'oci://hmctspublic.azurecr.io/helm'
     condition: ccd-def-cleanup.enabled
