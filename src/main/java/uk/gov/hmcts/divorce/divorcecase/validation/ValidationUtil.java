@@ -45,6 +45,7 @@ public final class ValidationUtil {
     public static final String CONNECTION = "Connection ";
     public static final String CANNOT_EXIST = " cannot exist";
     public static final String SOT_REQUIRED = "Statement of truth must be accepted by the person making the application";
+    public static final String BULK_LIST_ERRORED_CASES = "There are errors on the bulk list. Please resolve errors before continuing";
 
     private ValidationUtil() {
     }
@@ -275,7 +276,7 @@ public final class ValidationUtil {
         var erroredCaseDetails = bulkCaseDetails.getData().getErroredCaseDetails();
 
         return !ObjectUtils.isEmpty(erroredCaseDetails)
-            ? singletonList("There are errors on the bulk list. Please resolve errors before continuing")
+            ? singletonList(BULK_LIST_ERRORED_CASES)
             : emptyList();
     }
 

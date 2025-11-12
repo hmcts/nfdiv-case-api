@@ -101,7 +101,6 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         log.info("{} aboutToStart-callback invoked for case id: {}", CASEWORKER_SCHEDULE_CASE, bulkCaseDetails.getId());
 
         List<String> validationErrors = validateBulkListErroredCases(bulkCaseDetails);
-
         if (!isEmpty(validationErrors)) {
             return AboutToStartOrSubmitResponse
                 .<BulkActionCaseData, BulkActionState>builder()

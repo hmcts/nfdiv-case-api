@@ -67,6 +67,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.BULK_LIST_ERRORED_CASES;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -91,7 +92,6 @@ class CaseworkerScheduleCaseTest {
     private static final Long TEST_CASE_ID_2 = 2L;
     private static final Long TEST_CASE_ID_3 = 3L;
     private static final LocalDateTime NOW = LocalDateTime.now();
-    private static final String BULK_LIST_ERRORED_CASES = "There are errors on the bulk list. Please resolve errors before continuing";
 
     @Mock
     private CcdSearchService ccdSearchService;
@@ -120,9 +120,6 @@ class CaseworkerScheduleCaseTest {
     @Mock
     private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
-    @Mock
-    private ValidationUtil validationUtil;
-
     @InjectMocks
     private CaseworkerScheduleCase scheduleCase;
 
@@ -139,10 +136,8 @@ class CaseworkerScheduleCaseTest {
 
     @Test
     void shouldValidateAndErrorIfCasesHaveErrorInBulkList() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
-        details.setData(BulkActionCaseData.builder().erroredCaseDetails(
-            List.of(ListValue.<BulkListCaseDetails>builder().build())).build());
-        details.setId(TEST_CASE_ID);
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(NOW);
+        details.setData(BulkActionCaseData.builder().erroredCaseDetails(List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))).build());
 
         try (MockedStatic<ValidationUtil> classMock = Mockito.mockStatic(ValidationUtil.class)) {
             classMock.when(() -> ValidationUtil.validateBulkListErroredCases(details))
