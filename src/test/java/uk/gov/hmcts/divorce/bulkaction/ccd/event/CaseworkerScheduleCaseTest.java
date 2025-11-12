@@ -30,6 +30,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,9 +54,11 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.E
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_HEARING_DATE_IN_PAST;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_INVALID_STATE;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_NO_CASES_FOUND;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_NO_NEW_CASES_ADDED;
+import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_NO_NEW_CASES_ADDED_OR_HEARING_DETAILS_UPDATED;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_ONLY_AWAITING_PRONOUNCEMENT;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_REMOVE_DUPLICATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -84,6 +87,7 @@ class CaseworkerScheduleCaseTest {
     private static final String BULK_CASE_REFERENCE = "1234123412341234";
     private static final Long TEST_CASE_ID_2 = 2L;
     private static final Long TEST_CASE_ID_3 = 3L;
+    private static final LocalDateTime NOW = LocalDateTime.now();
 
     @Mock
     private CcdSearchService ccdSearchService;
@@ -128,9 +132,9 @@ class CaseworkerScheduleCaseTest {
 
     @Test
     void shouldNotPopulateErrorMessageWhenHearingDateIsInFutureAndMidEventIsTriggered() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(NOW.minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
-            LocalDateTime.now().plusDays(5),
+            NOW.plusDays(5),
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
@@ -144,10 +148,27 @@ class CaseworkerScheduleCaseTest {
     }
 
     @Test
-    void shouldPopulateErrorMessageWhenHearingDateIsInPastAndMidEventIsTriggered() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+    void shouldNotPopulateErrorMessageWhenHearingDateNotChangedNoNewCasesListedAndCourtChangedAndMidEventIsTriggered() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(
+            NOW.plusDays(5),
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
+        );
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
-            LocalDateTime.now().minusHours(5),
+            NOW.plusDays(5),
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
+        );
+        details.getData().setCourt(BURY_ST_EDMUNDS);
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldPopulateErrorMessageWhenHearingDateIsInPastAndMidEventIsTriggered() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(NOW.minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
+            NOW.minusHours(5),
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
@@ -162,9 +183,9 @@ class CaseworkerScheduleCaseTest {
 
     @Test
     void shouldPopulateErrorMessageWhenCaseAddedTwiceAndMidEventIsTriggered() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(NOW.minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
-            LocalDateTime.now().plusDays(5),
+            NOW.plusDays(5),
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID), bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
@@ -174,10 +195,84 @@ class CaseworkerScheduleCaseTest {
     }
 
     @Test
-    void shouldPopulateErrorMessagesWhenHearingDateIsInPastAndCaseAddedTwiceAndMidEventIsTriggered() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+    void shouldPopulateErrorMessageWhenCaseAddedTwiceWithDifferentPartiesAndMidEventIsTriggered() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(NOW.minusDays(5));
+        final ListValue<BulkListCaseDetails> updatedBulkListCaseDetails = bulkListCaseDetailsListValue(TEST_CASE_ID);
+        updatedBulkListCaseDetails.getValue().setCaseParties("Different Parties");
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
-            LocalDateTime.now().minusHours(5),
+            NOW.plusDays(5),
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID), updatedBulkListCaseDetails)
+        );
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
+
+        assertThat(response.getErrors()).containsExactly(ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID, ERROR_REMOVE_DUPLICATES);
+    }
+
+    @Test
+    void shouldPopulateErrorMessageWhenCaseAddedTwiceWithDifferentDecisionDateAndMidEventIsTriggered() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(NOW.minusDays(5));
+        final ListValue<BulkListCaseDetails> updatedBulkListCaseDetails = bulkListCaseDetailsListValue(TEST_CASE_ID);
+        updatedBulkListCaseDetails.getValue().setDecisionDate(LocalDate.now().minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
+            NOW.plusDays(5),
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID), updatedBulkListCaseDetails)
+        );
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
+
+        assertThat(response.getErrors()).containsExactly(ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID, ERROR_REMOVE_DUPLICATES);
+    }
+
+    @Test
+    void shouldNotPopulateErrorMessageWhenCasePartiesUpdatedAndMidEventIsTriggered() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(
+            NOW.minusDays(5),
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
+        );
+        final ListValue<BulkListCaseDetails> updatedBulkListCaseDetails = bulkListCaseDetailsListValue(TEST_CASE_ID);
+        updatedBulkListCaseDetails.getValue().setCaseParties("Updated Parties");
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
+            NOW.plusDays(5),
+            List.of(updatedBulkListCaseDetails)
+        );
+
+        setupSearchMock(getModelCaseDetails(getModelCaseData(), AwaitingPronouncement));
+
+        setupObjectMapperMock(getModelCaseData(), getMappedCaseData());
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldNotPopulateErrorMessageWhenDecisionDateUpdatedAndMidEventIsTriggered() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(
+            NOW.minusDays(5),
+            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
+        );
+        final ListValue<BulkListCaseDetails> updatedBulkListCaseDetails = bulkListCaseDetailsListValue(TEST_CASE_ID);
+        updatedBulkListCaseDetails.getValue().setDecisionDate(LocalDate.now());
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
+            NOW.plusDays(5),
+            List.of(updatedBulkListCaseDetails)
+        );
+
+        setupSearchMock(getModelCaseDetails(getModelCaseData(), AwaitingPronouncement));
+
+        setupObjectMapperMock(getModelCaseData(), getMappedCaseData());
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldPopulateErrorMessagesWhenHearingDateIsInPastAndCaseAddedTwiceAndMidEventIsTriggered() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(NOW.minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
+            NOW.minusHours(5),
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID), bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
@@ -191,45 +286,40 @@ class CaseworkerScheduleCaseTest {
     }
 
     @Test
-    void shouldPopulateErrorMessageWhenNoNewCasesAddedForListingAndMidEventIsTriggered() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(
-            LocalDateTime.now().minusDays(5),
-            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
-        );
+    void shouldPopulateErrorMessageWhenNoNewCasesAddedAndHearingDetailsUnchangedAndMidEventIsTriggered() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
-            LocalDateTime.now().plusDays(5),
+            NOW.plusDays(5),
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
-        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, details);
 
-        assertThat(response.getErrors()).containsExactly(ERROR_NO_NEW_CASES_ADDED);
+        assertThat(response.getErrors()).containsExactly(ERROR_NO_NEW_CASES_ADDED_OR_HEARING_DETAILS_UPDATED);
     }
 
     @Test
-    void shouldPopulateErrorMessagesWhenHearingDateIsInPastAndNoNewCasesAddedForListingAndMidEventIsTriggered() {
+    void shouldPopulateErrorMessagesWhenHearingDateIsInPastAndNoNewCasesAddedAndMidEventIsTriggered() {
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(
-            LocalDateTime.now().minusDays(5),
+            NOW.minusDays(5),
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
-            LocalDateTime.now().minusHours(5),
+            NOW.minusHours(5),
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
         assertThat(response.getErrors()).containsExactly(
-            ERROR_HEARING_DATE_IN_PAST,
-            ERROR_NO_NEW_CASES_ADDED
+            ERROR_HEARING_DATE_IN_PAST
         );
     }
 
     @Test
     void shouldPopulateErrorMessageWhenNewCaseAddedForListingAlreadyLinkedToBulkCaseAndMidEventIsTriggered() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(NOW.minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
-            LocalDateTime.now().plusDays(5),
+            NOW.plusDays(5),
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
@@ -248,9 +338,9 @@ class CaseworkerScheduleCaseTest {
 
     @Test
     void shouldPopulateErrorMessageWhenNewCaseAddedForListingInWrongStateAndMidEventIsTriggered() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(NOW.minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
-            LocalDateTime.now().plusDays(5),
+            NOW.plusDays(5),
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
@@ -269,11 +359,11 @@ class CaseworkerScheduleCaseTest {
 
     @Test
     void shouldPopulateErrorMessagesWhenHearingDateInPastAndNewCaseAddedForListingLinkedToBulkCaseAndWrongStateAndMidEventIsTriggered() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(NOW.minusDays(5));
 
         final ListValue<BulkListCaseDetails> bulkListCaseValue2 = bulkListCaseDetailsListValue(TEST_CASE_ID_2);
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
-            LocalDateTime.now().minusHours(5),
+            NOW.minusHours(5),
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID), bulkListCaseValue2, bulkListCaseValue2)
         );
 
@@ -296,9 +386,9 @@ class CaseworkerScheduleCaseTest {
 
     @Test
     void shouldPopulateErrorMessageWhenSearchReturnsNoResultsAndMidEventIsTriggered() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(NOW.minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
-            LocalDateTime.now().plusDays(5),
+            NOW.plusDays(5),
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
@@ -311,9 +401,9 @@ class CaseworkerScheduleCaseTest {
 
     @Test
     void shouldPopulateErrorMessageWhenSearchReturnsMissingResultsAndMidEventIsTriggered() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(NOW.minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
-            LocalDateTime.now().plusDays(5),
+            NOW.plusDays(5),
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID), bulkListCaseDetailsListValue(TEST_CASE_ID_2))
         );
 
@@ -330,9 +420,9 @@ class CaseworkerScheduleCaseTest {
 
     @Test
     void shouldPopulateErrorMessagesWhenHearingDateIsInPastAndSearchReturnsNoResultsAndMidEventIsTriggered() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(NOW.minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
-            LocalDateTime.now().minusHours(5),
+            NOW.minusHours(5),
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
@@ -348,9 +438,9 @@ class CaseworkerScheduleCaseTest {
 
     @Test
     void shouldPopulateErrorMessagesWhenHearingDateInPastAndDupesAndSearchMissingResultsAndWrongStateAndLinkedAndMidEventIsTriggered() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(LocalDateTime.now().minusDays(5));
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(NOW.minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
-            LocalDateTime.now().minusHours(5),
+            NOW.minusHours(5),
             List.of(
                 bulkListCaseDetailsListValue(TEST_CASE_ID),
                 bulkListCaseDetailsListValue(TEST_CASE_ID_2),
@@ -439,13 +529,14 @@ class CaseworkerScheduleCaseTest {
             .builder()
             .caseParties(TEST_FIRST_NAME + " " + TEST_LAST_NAME + " vs " + TEST_APP2_FIRST_NAME + " " + TEST_APP2_LAST_NAME)
             .caseReference(CaseLink.builder().caseReference(String.valueOf(caseId)).build())
+            .decisionDate(LocalDate.now().minusDays(10))
             .build();
         return ListValue.<BulkListCaseDetails>builder().value(bulkCaseDetails).build();
     }
 
     private CaseDetails<BulkActionCaseData, BulkActionState> getBulkCaseDetails(LocalDateTime dateAndTimeOfHearing) {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
-        details.setData(BulkActionCaseData.builder().dateAndTimeOfHearing(dateAndTimeOfHearing).build());
+        details.setData(BulkActionCaseData.builder().dateAndTimeOfHearing(dateAndTimeOfHearing).court(BIRMINGHAM).build());
         details.setState(Listed);
         return details;
     }
