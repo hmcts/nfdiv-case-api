@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.helper.GeneralReferralHelper;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -17,17 +18,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.idam.IdamService;
-import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
@@ -37,7 +35,6 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralReferral.CASEWORKER_GENERAL_REFERRAL;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
@@ -69,13 +66,9 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
 
     private final CcdAccessService ccdAccessService;
 
-    private final IdamService idamService;
-
-    private final AuthTokenGenerator authTokenGenerator;
-
-    private final CcdUpdateService ccdUpdateService;
-
     private final HttpServletRequest request;
+
+    private final GeneralReferralHelper generalReferralHelper;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -121,8 +114,8 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         } else {
             applicationFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF);
             applicationFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
-            data.getGeneralReferral().setGeneralReferralFeeRequired(YesOrNo.YES);
-            data.getGeneralReferral().getGeneralReferralFee().setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF);
+            GeneralReferral automaticReferral = generalReferralHelper.buildGeneralReferral(newGeneralApplication);
+            data.setGeneralReferral(automaticReferral);
 
             details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingGeneralReferralPayment);
         }
@@ -160,16 +153,6 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         ServicePaymentMethod paymentMethod = newGeneralApplication.getGeneralApplicationFee().getPaymentMethod();
 
         if (ServicePaymentMethod.FEE_PAY_BY_HWF.equals(paymentMethod)) {
-
-            if (details.getState().equals(AwaitingGeneralReferralPayment)) {
-                final User user = idamService.retrieveSystemUpdateUserDetails();
-                final String serviceAuth = authTokenGenerator.generate();
-
-                ccdUpdateService
-                    .submitEvent(details.getId(), CASEWORKER_GENERAL_REFERRAL, user, serviceAuth);
-
-            }
-
             interimApplicationSubmissionService.sendGeneralApplicationNotifications(
                 details.getId(), newGeneralApplication, details.getData()
             );

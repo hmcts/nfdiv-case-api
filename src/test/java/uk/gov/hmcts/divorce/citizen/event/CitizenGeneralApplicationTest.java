@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.helper.GeneralReferralHelper;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -41,7 +42,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralReferral.CASEWORKER_GENERAL_REFERRAL;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenGeneralApplication.AWAITING_PAYMENT_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
@@ -80,6 +80,9 @@ class CitizenGeneralApplicationTest {
 
     @Mock
     private IdamService idamService;
+
+    @Mock
+    private GeneralReferralHelper generalReferralHelper;
 
 
     @InjectMocks
@@ -271,9 +274,6 @@ class CitizenGeneralApplicationTest {
         verify(interimApplicationSubmissionService).sendGeneralApplicationNotifications(
             TEST_CASE_ID, generalApplication, afterDetails.getData()
         );
-
-        verify(ccdUpdateService).submitEvent(
-            eq(afterDetails.getId()), eq(CASEWORKER_GENERAL_REFERRAL), any(), any());
     }
 
     @Test
