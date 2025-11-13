@@ -14,6 +14,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
@@ -23,8 +25,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +38,7 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -64,6 +69,10 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CIVIL_PARTNER_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43;
+import static uk.gov.hmcts.divorce.notification.CommonContent.CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_HEARING;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DISSOLUTION_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
@@ -786,7 +795,7 @@ class CommonContentTest {
         assertEquals("John", templateVars.get("first name"));
         assertEquals("Doe", templateVars.get("last name"));
         assertEquals("XYZ Solicitors", templateVars.get("solicitor firm"));
-        assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
+        assertThat(templateVars.get(CommonContent.SMART_SURVEY)).contains("https://testsurveylink");
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
 
     }
@@ -808,7 +817,7 @@ class CommonContentTest {
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
         assertEquals("Solicitor Name", templateVars.get(CommonContent.NAME));
         assertEquals("SolRef", templateVars.get(CommonContent.SOLICITOR_REFERENCE));
-        assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
+        assertThat(templateVars.get(CommonContent.SMART_SURVEY)).contains("https://testsurveylink");
     }
 
     @Test
@@ -827,7 +836,7 @@ class CommonContentTest {
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
         assertEquals("Solicitor Name", templateVars.get(CommonContent.NAME));
         assertEquals(NOT_PROVIDED, templateVars.get(SOLICITOR_REFERENCE));
-        assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
+        assertThat(templateVars.get(CommonContent.SMART_SURVEY)).contains("https://testsurveylink");
     }
 
     @Test
@@ -851,7 +860,7 @@ class CommonContentTest {
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
         assertEquals("Old Solicitor Name", templateVars.get(CommonContent.NAME));
         assertEquals("First Last", templateVars.get(CommonContent.APPLICANT_NAME));
-        assertEquals("https://testsurveylink", templateVars.get(CommonContent.SMART_SURVEY));
+        assertThat(templateVars.get(CommonContent.SMART_SURVEY)).contains("https://testsurveylink");
         assertEquals(PHONE_AND_OPENING_TIMES_TEXT, templateVars.get(PHONE_AND_OPENING_TIMES));
         assertEquals("[Contact us using our online form](webformUrl)", templateVars.get(WEB_FORM_TEXT));
     }
@@ -994,6 +1003,101 @@ class CommonContentTest {
             .contains(
                 entry(FIRST_NAME, "User"),
                 entry(LAST_NAME, ""));
+    }
+
+    @Test
+    void shouldSetTemplateVarsForCoPronouncedEnglish() {
+
+        LocalDateTime localDate = LocalDate.of(2020, 1, 1).atStartOfDay();
+
+        final Applicant applicant1 = Applicant.builder()
+            .gender(MALE)
+            .build();
+
+        final Applicant applicant2 = Applicant.builder()
+            .gender(FEMALE)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .conditionalOrder(ConditionalOrder.builder()
+                .court(ConditionalOrderCourt.BIRMINGHAM).dateAndTimeOfHearing(localDate).grantedDate(localDate.toLocalDate()).build())
+            .build();
+
+        final Map<String, String> result = commonContent.coPronouncedTemplateVars(caseData, TEST_CASE_ID, applicant1, applicant2);
+
+        assertThat(result)
+            .isNotEmpty()
+            .contains(
+                entry(PARTNER, "wife"),
+                entry(SMART_SURVEY, result.get(CommonContent.SMART_SURVEY)),
+                entry(IDAM_INACTIVITY_POLICY, result.get(IDAM_INACTIVITY_POLICY)),
+                entry(COURT_NAME, result.get(COURT_NAME)),
+                entry(DATE_OF_HEARING, result.get(DATE_OF_HEARING)),
+                entry(CO_PRONOUNCEMENT_DATE_PLUS_43, result.get(CO_PRONOUNCEMENT_DATE_PLUS_43)),
+                entry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, result.get(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS)));
+    }
+
+    @Test
+    void shouldSetTemplateVarsForCoPronouncedWelsh() {
+
+        LocalDateTime localDate = LocalDate.of(2020, 1, 1).atStartOfDay();
+
+        final Applicant applicant1 = Applicant.builder()
+            .gender(MALE)
+            .languagePreferenceWelsh(YES)
+            .build();
+
+        final Applicant applicant2 = Applicant.builder()
+            .gender(FEMALE)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .conditionalOrder(ConditionalOrder.builder()
+                .court(ConditionalOrderCourt.BIRMINGHAM).dateAndTimeOfHearing(localDate).grantedDate(localDate.toLocalDate()).build())
+            .build();
+
+        final Map<String, String> result = commonContent.coPronouncedTemplateVars(caseData, TEST_CASE_ID, applicant1, applicant2);
+
+        assertThat(result)
+            .isNotEmpty()
+            .contains(
+                entry(PARTNER, "gwraig"),
+                entry(SMART_SURVEY, result.get(CommonContent.SMART_SURVEY)),
+                entry(IDAM_INACTIVITY_POLICY, result.get(IDAM_INACTIVITY_POLICY_CY)),
+                entry(COURT_NAME, result.get(COURT_NAME)),
+                entry(DATE_OF_HEARING, result.get(DATE_OF_HEARING)),
+                entry(CO_PRONOUNCEMENT_DATE_PLUS_43, result.get(CO_PRONOUNCEMENT_DATE_PLUS_43)),
+                entry(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS, result.get(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS)));
+    }
+
+    @Test
+    void shouldThrowExceptionIfMandaotoryFieldsAreMissing() {
+
+        LocalDateTime localDate = LocalDate.of(2020, 1, 1).atStartOfDay();
+
+        final Applicant applicant1 = Applicant.builder()
+            .gender(MALE)
+            .languagePreferenceWelsh(YES)
+            .build();
+
+        final Applicant applicant2 = Applicant.builder()
+            .gender(FEMALE)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicant1)
+            .applicant2(applicant2)
+            .build();
+
+        assertThrows(NotificationTemplateException.class,
+            () -> commonContent.coPronouncedTemplateVars(caseData, TEST_CASE_ID, applicant1, applicant2));
     }
 }
 

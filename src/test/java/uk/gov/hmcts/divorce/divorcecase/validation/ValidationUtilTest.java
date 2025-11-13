@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -51,6 +52,7 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SUBMITT
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBulkListErroredCases;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCasesAcceptedToListForHearing;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCitizenResendInvite;
@@ -62,7 +64,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 
-class CaseValidationTest {
+class ValidationUtilTest {
 
     private static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year and one day ago.";
     private static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION =
@@ -806,4 +808,30 @@ class CaseValidationTest {
         assertThat(response.getErrorResponse().getErrors().get(0)).isEqualTo("No PBA numbers associated with the provided email address");
 
     }
+
+    @Test
+    void shouldValidateBulkListForErroredCases() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
+        details.setData(BulkActionCaseData.builder().erroredCaseDetails(
+            List.of(ListValue.<BulkListCaseDetails>builder().build())).build());
+        details.setId(TEST_CASE_ID);
+
+        List<String> response = validateBulkListErroredCases(details);
+
+        assertThat(response.size()).isEqualTo(1);
+    }
+
+    @Test
+    void shouldValidateAndReturnNoErrorsWhenBulkListHasNoErroredCases() {
+        // Given
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails = new CaseDetails<>();
+        bulkCaseDetails.setData(BulkActionCaseData.builder()
+            .erroredCaseDetails(null)
+            .build());
+
+        List<String> errors = ValidationUtil.validateBulkListErroredCases(bulkCaseDetails);
+
+        assertThat(errors).isEmpty();
+    }
+
 }

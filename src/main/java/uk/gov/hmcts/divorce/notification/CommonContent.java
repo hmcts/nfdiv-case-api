@@ -9,18 +9,21 @@ import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.RefusalOption;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
@@ -156,6 +159,15 @@ public class CommonContent {
     public static final String WEB_FORM_TEXT = "webformText";
     public static final String CONTACT_TEXT = "[Contact us using our online form]";
     public static final String CONTACT_TEXT_WELSH = "[Cysylltwch â ni drwy ddefnyddio ein ffurflen ar-lein]";
+    public static final String MISSING_FIELD_MESSAGE = "Notification failed with missing field '%s' for Case Id: %s";
+    public static final String DO_NOT_REPLY = "This is an automated message, do not reply to this email.";
+    public static final String DO_NOT_REPLY_WELSH = "Neges awtomataidd yw hon, peidiwch ag ymateb i’r e-bost hwn.";
+
+    @Value("${final_order.eligible_from_offset_days}")
+    private long finalOrderOffsetDays;
+
+    @Value("${final_order.respondent_eligible_from_offset_months}")
+    private long finalOrderRespondentOffsetMonth;
 
     private final DocmosisCommonContent docmosisCommonContent;
 
@@ -190,7 +202,7 @@ public class CommonContent {
         templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
         templateVars.put(WEBFORM_URL, getWebFormUrl(applicant.getLanguagePreference()));
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
-        templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(SMART_SURVEY, getSmartSurveyWithDoNotReply(languagePreference));
         templateVars.put(IDAM_INACTIVITY_POLICY, getIdamInactivityPolicy(languagePreference));
 
         getPhoneAndOpeningTimes(languagePreference, templateVars);
@@ -208,7 +220,7 @@ public class CommonContent {
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
-        templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(SMART_SURVEY, getSmartSurveyWithDoNotReply(languagePreference));
         templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
 
         getPhoneAndOpeningTimes(languagePreference, templateVars);
@@ -405,6 +417,11 @@ public class CommonContent {
         return config.getTemplateVars().get(SMART_SURVEY);
     }
 
+    public String getSmartSurveyWithDoNotReply(LanguagePreference languagePreference) {
+        return getSmartSurvey() + System.lineSeparator() + System.lineSeparator() + "##"
+            + (WELSH.equals(languagePreference) ? DO_NOT_REPLY_WELSH : DO_NOT_REPLY);
+    }
+
     public Map<String, String> nocCitizenTemplateVars(final Long caseId,
                                                       final Applicant applicant) {
         Map<String, String> templateVars = new HashMap<>();
@@ -417,7 +434,7 @@ public class CommonContent {
         } else {
             templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getName());
         }
-        templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(SMART_SURVEY, getSmartSurveyWithDoNotReply(applicant.getLanguagePreference()));
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
 
         getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
@@ -434,7 +451,7 @@ public class CommonContent {
             applicant.getSolicitor(),
             applicant.getLanguagePreference())
         );
-        templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(SMART_SURVEY, getSmartSurveyWithDoNotReply(applicant.getLanguagePreference()));
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
 
         getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
@@ -460,7 +477,7 @@ public class CommonContent {
         );
         templateVars.put(APPLICANT_NAME, beforeApplicant.getFullName());
         templateVars.put(RESPONDENT_NAME, beforePartner.getFullName());
-        templateVars.put(SMART_SURVEY, getSmartSurvey());
+        templateVars.put(SMART_SURVEY, getSmartSurveyWithDoNotReply(beforeApplicant.getLanguagePreference()));
         templateVars.put(DATE_OF_ISSUE, issueDate);
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(beforeApplicant.getLanguagePreference()));
 
@@ -500,6 +517,31 @@ public class CommonContent {
         }
     }
 
+    public Map<String, String> coPronouncedTemplateVars(final CaseData caseData,
+                                                        final Long caseId,
+                                                        final Applicant applicant,
+                                                        final Applicant partner) {
+
+        final ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
+
+        requireNonNull(conditionalOrder, "conditionalOrder", caseId);
+        requireNonNull(conditionalOrder.getCourt(), "coCourt", caseId);
+        requireNonNull(conditionalOrder.getDateAndTimeOfHearing(), "coDateAndTimeOfHearing", caseId);
+        requireNonNull(conditionalOrder.getGrantedDate(), "coGrantedDate", caseId);
+
+        DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
+
+        final Map<String, String> templateVars = this.mainTemplateVars(caseData, caseId, applicant, partner);
+        templateVars.put(COURT_NAME, conditionalOrder.getCourt().getLabel());
+        templateVars.put(DATE_OF_HEARING, conditionalOrder.getDateAndTimeOfHearing().format(dateTimeFormatter));
+        templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43,
+            conditionalOrder.getGrantedDate().plusDays(finalOrderOffsetDays).format(dateTimeFormatter));
+        templateVars.put(CO_PRONOUNCEMENT_DATE_PLUS_43_PLUS_3_MONTHS,
+            conditionalOrder.getGrantedDate().plusDays(finalOrderOffsetDays)
+                .plusMonths(finalOrderRespondentOffsetMonth).format(dateTimeFormatter));
+        return templateVars;
+    }
+
     private String getUserNameForSelectedLanguage(LanguagePreference languagePreference) {
         return languagePreference == WELSH ? "Defnyddiwr" : "User";
     }
@@ -508,5 +550,11 @@ public class CommonContent {
         return WELSH.equals(languagePreference)
             ? config.getTemplateVars().get(IDAM_INACTIVITY_POLICY_CY)
             : config.getTemplateVars().get(IDAM_INACTIVITY_POLICY);
+    }
+
+    private void requireNonNull(Object value, String fieldName, Long caseId) {
+        if (isNull(value)) {
+            throw new NotificationTemplateException(format(MISSING_FIELD_MESSAGE, fieldName, caseId));
+        }
     }
 }
