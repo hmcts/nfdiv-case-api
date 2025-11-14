@@ -44,6 +44,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.validation.BulkListValidationUtil.validateCasesNotRemoved;
 import static uk.gov.hmcts.divorce.divorcecase.validation.BulkListValidationUtil.validateDuplicates;
 import static uk.gov.hmcts.divorce.divorcecase.validation.BulkListValidationUtil.validateHearingDate;
+import static uk.gov.hmcts.divorce.divorcecase.validation.BulkListValidationUtil.validateLinkToBulkCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.BulkListValidationUtil.validateLinkedCaseDetails;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBulkListErroredCases;
@@ -201,7 +202,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         caseSearchResults.stream().map(caseDetails -> objectMapper.convertValue(
             caseDetails, new TypeReference<CaseDetails<CaseData, State>>() {}
         )).forEach(caseDetails -> {
-            errors.addAll(validateLinkedCaseDetails(caseDetails, bulkCaseId));
+            errors.addAll(validateLinkToBulkCase(caseDetails, bulkCaseId));
             searchCaseReferences.remove(caseDetails.getId().toString());
         });
 

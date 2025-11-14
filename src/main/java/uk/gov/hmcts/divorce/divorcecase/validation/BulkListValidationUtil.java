@@ -42,7 +42,7 @@ public final class BulkListValidationUtil {
             Collections.emptyList();
     }
 
-    public static List<String> validateLinkedCaseDetails(CaseDetails<CaseData, State> details, Long bulkCaseId) {
+    public static List<String> validateLinkToBulkCase(CaseDetails<CaseData, State> details, Long bulkCaseId) {
         List<String> errors = new ArrayList<>();
 
         if (!AwaitingPronouncement.equals(details.getState())) {
