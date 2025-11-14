@@ -30,7 +30,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -181,17 +180,15 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         final Map<BulkListCaseDetails, Integer> frequencyMap = new java.util.HashMap<>();
         final Map<String, Integer> idFrequencyMap = new java.util.HashMap<>();
 
-        //Create frequency map of BulkListCaseDetails entries
         for (BulkListCaseDetails caseDetails : caseDetailsList) {
             frequencyMap.put(caseDetails, frequencyMap.getOrDefault(caseDetails, 0) + 1);
         }
 
-        //Create collections of duplicate and unique case IDs based on frequency map
         for (Map.Entry<BulkListCaseDetails, Integer> entry : frequencyMap.entrySet()) {
             if (entry.getValue() > 1) {
                 duplicateCaseIds.add(entry.getKey().getCaseReference().getCaseReference());
             } else if (entry.getValue() == 1) {
-                //Unique IDs may still contain duplicates at this point - it's possible the same case ID is present in the list multiple times
+                //Unique IDs may still contain duplicates at this point - it's possible the same case ID is present in the list 1+ times
                 //with different BulkListCaseDetails data (e.g. different parties or reasons for listing)
                 uniqueIds.add(entry.getKey().getCaseReference().getCaseReference());
             }
@@ -215,40 +212,16 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     }
 
     private Set<String> getMissingIds(
-        final Set<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResultsList,
+        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResultsList,
         final Set<String> searchedIds
     ) {
         if (searchResultsList.size() < searchedIds.size()) {
-            final Set<String> foundIds = searchResultsList.stream().map(caseDetails -> caseDetails.getId().toString()).collect(Collectors.toSet());
+            final Set<String> foundIds =
+                searchResultsList.stream().map(caseDetails -> caseDetails.getId().toString()).collect(Collectors.toSet());
             return searchedIds.stream().filter(id -> !foundIds.contains(id)).collect(Collectors.toSet());
         }
         return Collections.emptySet();
     }
-
-//    private DuplicateCheckResult getNewCaseIds(final List<BulkListCaseDetails> bulkListCaseDetails,
-//                                       final Set<BulkListCaseDetails> beforeBulkListCaseDetails
-//    ) {
-//        final DuplicateCheckResult duplicateCheckResult = checkForDuplicates(bulkListCaseDetails);
-//        if (beforeBulkListCaseDetails.isEmpty()) {
-//            return duplicateCheckResult;
-//        }
-//
-//        final DuplicateCheckResult filteredDuplicateCheckResult = checkForDuplicates(bulkListCaseDetails.stream()
-//            .filter(caseDetails -> !beforeBulkListCaseDetails.contains(caseDetails))
-//            .toList());
-//
-//        if (filteredDuplicateCheckResult.hasUniqueIds()) {
-//            final Set<String> duplicateIdsToRemove = new java.util.HashSet<>();
-//            for (String id : filteredDuplicateCheckResult.uniqueIds()) {
-//                if (duplicateCheckResult.duplicateIds().contains(id)) {
-//                    duplicateIdsToRemove.add(id);
-//                }
-//            }
-//            filteredDuplicateCheckResult.uniqueIds().removeAll(duplicateIdsToRemove);
-//        }
-//
-//        return filteredDuplicateCheckResult;
-//    }
 
     private List<String> checkForRemovedCases(
         final Set<String> caseDetailsIdSet,
@@ -316,31 +289,14 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             errors.add(ERROR_CASE_IDS_DUPLICATED + String.join(", ", duplicateCheckResult.duplicateIds()));
         }
 
-//        final DuplicateCheckResult newCaseIds = getNewCaseIds(caseDetailsList, beforeCaseDetailsSet);
-//
-//        if (!newCaseIds.hasUniqueIds()) {
-//            if (duplicateCheckResult.hasDuplicates()) {
-//                return errors;
-//            } else if (
-//                bulkActionCaseData.getDateAndTimeOfHearing().equals(beforeBulkActionCaseData.getDateAndTimeOfHearing())
-//                    && bulkActionCaseData.getCourt().equals(beforeBulkActionCaseData.getCourt())
-//            ) {
-//                errors.add(ERROR_NO_NEW_CASES_ADDED_OR_HEARING_DETAILS_UPDATED);
-//                return errors;
-//            }
-//            return errors;
-//        }
-
         if (duplicateCheckResult.hasUniqueIds()) {
-            final Set<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseDetailsSearchResults = new HashSet<>(ccdSearchService.searchForCases(
-//            newCaseIds.uniqueIds().stream().toList(),
+            final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseDetailsSearchResults = ccdSearchService.searchForCases(
                 duplicateCheckResult.uniqueIds.stream().toList(),
                 idamService.retrieveSystemUpdateUserDetails(),
                 authTokenGenerator.generate()
-            ));
+            );
 
             if (!caseDetailsSearchResults.isEmpty()) {
-//                final Set<String> missingIds = getMissingIds(caseDetailsSearchResults, newCaseIds.uniqueIds());
                 final Set<String> missingIds = getMissingIds(caseDetailsSearchResults, duplicateCheckResult.uniqueIds());
                 if (!missingIds.isEmpty()) {
                     errors.add(ERROR_CASES_NOT_FOUND + String.join(", ", missingIds));
@@ -351,13 +307,14 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
                             + caseDetails.getState() + ERROR_ONLY_AWAITING_PRONOUNCEMENT);
                     }
                     CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-                    if (caseData.getBulkListCaseReferenceLink() != null && !caseData.getBulkListCaseReferenceLink().getCaseReference().equals(bulkCaseId)) {
+                    if (caseData.getBulkListCaseReferenceLink() != null
+                        && !caseData.getBulkListCaseReferenceLink().getCaseReference().equals(bulkCaseId)
+                    ) {
                         final String bulkCaseRef = caseData.getBulkListCaseReferenceLink().getCaseReference();
                         errors.add(ERROR_CASE_ID + caseDetails.getId() + ERROR_ALREADY_LINKED_TO_BULK_CASE + bulkCaseRef);
                     }
                 });
             } else {
-//                errors.add(ERROR_NO_CASES_FOUND + String.join(", ", newCaseIds.uniqueIds()));
                 errors.add(ERROR_NO_CASES_FOUND + String.join(", ", duplicateCheckResult.uniqueIds()));
             }
 

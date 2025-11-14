@@ -57,7 +57,6 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.E
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_HEARING_DATE_IN_PAST;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_INVALID_STATE;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_NO_CASES_FOUND;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_NO_NEW_CASES_ADDED_OR_HEARING_DETAILS_UPDATED;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_ONLY_AWAITING_PRONOUNCEMENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
@@ -151,7 +150,7 @@ class CaseworkerScheduleCaseTest {
     }
 
     @Test
-    void shouldNotPopulateErrorMessageWhenHearingDateIsInFutureAndMidEventIsTriggered() {
+    void shouldNotPopulateErrorMessageWhenUpdatedHearingDateIsInFutureAndMidEventIsTriggered() {
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(NOW.minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
             NOW.plusDays(5),
@@ -168,7 +167,7 @@ class CaseworkerScheduleCaseTest {
     }
 
     @Test
-    void shouldNotPopulateErrorMessageWhenHearingDateNotChangedNoNewCasesListedAndCourtChangedAndMidEventIsTriggered() {
+    void shouldNotPopulateErrorMessageWhenHearingDateIsInFutureAndCourtUpdatedAndMidEventIsTriggered() {
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(
             NOW.plusDays(5),
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
@@ -308,18 +307,6 @@ class CaseworkerScheduleCaseTest {
         );
     }
 
-//    @Test
-//    void shouldPopulateErrorMessageWhenNoNewCasesAddedAndHearingDetailsUnchangedAndMidEventIsTriggered() {
-//        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
-//            NOW.plusDays(5),
-//            List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
-//        );
-//
-//        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, details);
-//
-//        assertThat(response.getErrors()).containsExactly(ERROR_NO_NEW_CASES_ADDED_OR_HEARING_DETAILS_UPDATED);
-//    }
-
     @Test
     void shouldPopulateErrorMessagesWhenHearingDateIsInPastAndNoNewCasesAddedAndMidEventIsTriggered() {
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(
@@ -394,7 +381,8 @@ class CaseworkerScheduleCaseTest {
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID), bulkListCaseValue2, bulkListCaseValue2)
         );
 
-        final uk.gov.hmcts.reform.ccd.client.model.CaseDetails caseDetails = getModelCaseDetails(getModelCaseDataWithCaseLink(BULK_CASE_REFERENCE), Submitted);
+        final uk.gov.hmcts.reform.ccd.client.model.CaseDetails caseDetails =
+            getModelCaseDetails(getModelCaseDataWithCaseLink(BULK_CASE_REFERENCE), Submitted);
 
         setupSearchMock(caseDetails);
 
