@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.Collection;
 
@@ -54,6 +55,7 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, JUDGE, CITIZEN))
             .page("createGeneralLetter", this::midEvent)
@@ -89,15 +91,27 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
-        CaseData caseData = details.getData();
-
         log.info("Caseworker create general letter about to submit callback invoked for Case Id: {}", details.getId());
 
         // Pre-generate letter using existing caseTask to allow letter attachments to be stored on caseData before attempting to send them.
-        // XUI now using CDAM and issue with 403 error is resolved now so we can directly
-        // generate and send letters from about to submit callback.
+        // This is to avoid CDAM issues of the letter attachments having empty meta-data resulting in a 403 permissions error.
         generateGeneralLetter.apply(details);
 
+        details.getData().setGeneralLetter(null);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
+    }
+
+    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
+                                               final CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("Caseworker create general letter submitted callback invoked for Case Id: {}", details.getId());
+
+        CaseData caseData = details.getData();
+
+        // Although we pass in an applicant, the letter printer will ignore the argument as document is pre-generated in aboutToSubmit.
         Applicant applicant = GeneralParties.RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
             ? caseData.getApplicant2()
             : caseData.getApplicant1();
@@ -108,10 +122,6 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
             generalLetterDocumentPack.getDocumentPack(caseData, applicant),
             generalLetterDocumentPack.getLetterId());
 
-        details.getData().setGeneralLetter(null);
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .build();
+        return SubmittedCallbackResponse.builder().build();
     }
 }

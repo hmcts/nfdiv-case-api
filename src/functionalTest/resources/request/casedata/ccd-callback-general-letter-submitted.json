@@ -24,7 +24,7 @@
   "issueDate": "2020-05-28",
   "accessCode": "",
   "applicant1LanguagePreferenceWelsh": "No",
-  "applicant1ContactDetailsType": "private",
+  "applicant1ContactDetailsType": "public",
   "applicant1Gender": "female",
   "applicant2FirstName": "test_first_name_2",
   "applicant2MiddleName": "test_middle_name",
@@ -69,16 +69,28 @@
       }
     }
   ],
-  "generalLetterParties": "applicant",
-  "generalLetterDetails": "some details",
-  "generalLetterAttachments" : [ {
-    "id" : "8c1a4b5e-8a05-41d8-b55d-d0e190356437",
-    "value" : {
-      "documentLink" : {
-        "document_url" : "http://dm-store-aat.service.core-compute-aat.internal/documents/cf959e3e-2414-42ab-b5a4-79e7add7a7a4",
-        "document_filename" : "4ab5c253-44a4-4061-ab64-e58cdeae1ddd.pdf",
-        "document_binary_url" : "http://dm-store-aat.service.core-compute-aat.internal/documents/cf959e3e-2414-42ab-b5a4-79e7add7a7a4/binary"
+  "generalLetters": [
+    {
+      "id": "123456789",
+      "value": {
+        "generalLetterDateTime": "2021-06-17T01:00:00.000",
+        "generalLetterParties": "applicant",
+        "generalLetterLink": {
+          "document_url" : "http://dm-store-aat.service.core-compute-aat.internal/documents/cf959e3e-2414-42ab-b5a4-79e7add7a7a4",
+          "document_filename" : "4ab5c253-44a4-4061-ab64-e58cdeae1ddd.pdf",
+          "document_binary_url" : "http://dm-store-aat.service.core-compute-aat.internal/documents/cf959e3e-2414-42ab-b5a4-79e7add7a7a4/binary"
+        },
+        "generalLetterAttachmentLinks": [
+          {
+            "id" : "8c1a4b5e-8a05-41d8-b55d-d0e190356437",
+            "value" : {
+              "document_url" : "http://dm-store-aat.service.core-compute-aat.internal/documents/3aa37fdb-bb95-48ac-abf5-97d27a9b5b5c",
+              "document_filename" : "4ab5c253-44a4-4061-ab64-e58cdeae1ddd.pdf",
+              "document_binary_url" : "http://dm-store-aat.service.core-compute-aat.internal/documents/3aa37fdb-bb95-48ac-abf5-97d27a9b5b5c/binary"
+            }
+          }
+        ]
       }
     }
-  } ]
+  ]
 }
