@@ -52,12 +52,9 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.CASEWORKER_SCHEDULE_CASE;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_ALREADY_LINKED_TO_BULK_CASE;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_CASES_NOT_FOUND;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_CASE_ID;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_CASE_IDS_DUPLICATED;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_DO_NOT_REMOVE_CASES;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_HEARING_DATE_IN_PAST;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_INVALID_STATE;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_NO_CASES_FOUND;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_NO_CASES_SCHEDULED;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.ERROR_ONLY_AWAITING_PRONOUNCEMENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
@@ -292,7 +289,7 @@ class CaseworkerScheduleCaseTest {
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
         assertThat(response.getErrors()).containsExactly(
-            ERROR_CASE_ID + TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE_2
+            TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE_2
         );
     }
 
@@ -313,7 +310,7 @@ class CaseworkerScheduleCaseTest {
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
         assertThat(response.getErrors()).containsExactly(
-            ERROR_CASE_ID + TEST_CASE_ID + ERROR_INVALID_STATE + Submitted + ERROR_ONLY_AWAITING_PRONOUNCEMENT
+            ERROR_ONLY_AWAITING_PRONOUNCEMENT + TEST_CASE_ID
         );
     }
 
@@ -339,8 +336,8 @@ class CaseworkerScheduleCaseTest {
         assertThat(response.getErrors()).containsExactly(
             ERROR_HEARING_DATE_IN_PAST,
             ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID_2,
-            ERROR_CASE_ID + TEST_CASE_ID + ERROR_INVALID_STATE + Submitted + ERROR_ONLY_AWAITING_PRONOUNCEMENT,
-            ERROR_CASE_ID + TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE_2
+            TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE_2,
+            ERROR_ONLY_AWAITING_PRONOUNCEMENT + TEST_CASE_ID
         );
     }
 
@@ -356,7 +353,7 @@ class CaseworkerScheduleCaseTest {
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
-        assertThat(response.getErrors()).containsExactly(ERROR_NO_CASES_FOUND + TEST_CASE_ID);
+        assertThat(response.getErrors()).containsExactly(ERROR_CASES_NOT_FOUND + TEST_CASE_ID);
     }
 
     @Test
@@ -392,7 +389,7 @@ class CaseworkerScheduleCaseTest {
 
         assertThat(response.getErrors()).containsExactly(
             ERROR_HEARING_DATE_IN_PAST,
-            ERROR_NO_CASES_FOUND + TEST_CASE_ID
+            ERROR_CASES_NOT_FOUND + TEST_CASE_ID
         );
     }
 
@@ -421,8 +418,8 @@ class CaseworkerScheduleCaseTest {
             ERROR_HEARING_DATE_IN_PAST,
             ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID_3,
             ERROR_CASES_NOT_FOUND + TEST_CASE_ID_2,
-            ERROR_CASE_ID + TEST_CASE_ID + ERROR_INVALID_STATE + Submitted + ERROR_ONLY_AWAITING_PRONOUNCEMENT,
-            ERROR_CASE_ID + TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE_2
+            TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE_2,
+            ERROR_ONLY_AWAITING_PRONOUNCEMENT + TEST_CASE_ID
         );
     }
 

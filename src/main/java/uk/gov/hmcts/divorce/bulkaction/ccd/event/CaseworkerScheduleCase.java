@@ -51,18 +51,14 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYS
 @RequiredArgsConstructor
 public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
     public static final String CASEWORKER_SCHEDULE_CASE = "caseworker-schedule-case";
-    public static final String ERROR_HEARING_DATE_IN_PAST = "Please enter a hearing date and time in the future";
+    public static final String ERROR_HEARING_DATE_IN_PAST = "Please enter a hearing date and time in the future.";
     public static final String ERROR_CASE_IDS_DUPLICATED = "Case IDs duplicated in the list: ";
-    public static final String ERROR_NO_CASES_SCHEDULED = "Please add at least one case to schedule for listing";
+    public static final String ERROR_NO_CASES_SCHEDULED = "Please add at least one case to schedule for listing.";
     public static final String ERROR_DO_NOT_REMOVE_CASES =
         "You cannot remove cases from the bulk list with this event. Use Remove cases from bulk list instead.";
-    public static final String ERROR_CASE_ID = "Case ID ";
-    public static final String ERROR_INVALID_STATE = " is in state ";
-    public static final String ERROR_ONLY_AWAITING_PRONOUNCEMENT = ". Only cases in Awaiting Pronouncement can be scheduled for listing";
-    public static final String ERROR_ALREADY_LINKED_TO_BULK_CASE = " is already linked to bulk case ";
     public static final String ERROR_CASES_NOT_FOUND = "Search returned no results for the following Case IDs: ";
-    public static final String ERROR_NO_CASES_FOUND = "Search returned no cases for the provided Case IDs: ";
-
+    public static final String ERROR_ONLY_AWAITING_PRONOUNCEMENT = "Only cases in Awaiting Pronouncement can be scheduled for listing. Check Case IDs: ";
+    public static final String ERROR_ALREADY_LINKED_TO_BULK_CASE = " already linked to bulk list: ";
     private static final String SCHEDULE_CASES_FOR_LISTING = "Schedule cases for listing";
 
     private final ScheduleCaseService scheduleCaseService;
@@ -279,21 +275,24 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
                 if (!missingIds.isEmpty()) {
                     errors.add(ERROR_CASES_NOT_FOUND + String.join(", ", missingIds));
                 }
+                final List<String> wrongState = new ArrayList<>();
                 caseDetailsSearchResults.forEach(caseDetails -> {
                     if (!AwaitingPronouncement.toString().equals(caseDetails.getState())) {
-                        errors.add(ERROR_CASE_ID + caseDetails.getId() + ERROR_INVALID_STATE
-                            + caseDetails.getState() + ERROR_ONLY_AWAITING_PRONOUNCEMENT);
+                        wrongState.add(caseDetails.getId().toString());
                     }
                     CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
                     if (caseData.getBulkListCaseReferenceLink() != null
                         && !caseData.getBulkListCaseReferenceLink().getCaseReference().equals(bulkCaseId.toString())
                     ) {
                         final String bulkCaseRef = caseData.getBulkListCaseReferenceLink().getCaseReference();
-                        errors.add(ERROR_CASE_ID + caseDetails.getId() + ERROR_ALREADY_LINKED_TO_BULK_CASE + bulkCaseRef);
+                        errors.add(caseDetails.getId() + ERROR_ALREADY_LINKED_TO_BULK_CASE + bulkCaseRef);
                     }
                 });
+                if (!wrongState.isEmpty()) {
+                    errors.add(ERROR_ONLY_AWAITING_PRONOUNCEMENT + String.join(", ", wrongState));
+                }
             } else {
-                errors.add(ERROR_NO_CASES_FOUND + String.join(", ", duplicateCheckResult.uniqueIds()));
+                errors.add(ERROR_CASES_NOT_FOUND + String.join(", ", duplicateCheckResult.uniqueIds()));
             }
 
         }
