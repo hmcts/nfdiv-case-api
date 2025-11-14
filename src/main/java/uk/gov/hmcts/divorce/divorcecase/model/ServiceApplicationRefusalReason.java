@@ -13,7 +13,10 @@ public enum ServiceApplicationRefusalReason implements HasLabel {
     ADMIN_REFUSAL("Admin Refusal"),
 
     @JsonProperty("refusalOrderToApplicant")
-    REFUSAL_ORDER_TO_APPLICANT("Refusal order to applicant");
+    REFUSAL_ORDER_TO_APPLICANT("Refusal order to applicant"),
+
+    @JsonProperty("otherResponse")
+    OTHER_RESPONSE("Other response");
 
     private final String label;
 }

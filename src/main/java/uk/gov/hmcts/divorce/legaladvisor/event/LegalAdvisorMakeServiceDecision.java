@@ -31,6 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEM
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.ADMIN_REFUSAL;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.OTHER_RESPONSE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
@@ -175,7 +176,8 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     SERVICE_ORDER_TEMPLATE_ID);
             }
         } else {
-            if (ADMIN_REFUSAL.equals(caseDataCopy.getAlternativeService().getRefusalReason())) {
+            if (ADMIN_REFUSAL.equals(caseDataCopy.getAlternativeService().getRefusalReason())
+                || OTHER_RESPONSE.equals(caseDataCopy.getAlternativeService().getRefusalReason())) {
                 endState = ServiceAdminRefusal;
             } else {
                 if (DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {

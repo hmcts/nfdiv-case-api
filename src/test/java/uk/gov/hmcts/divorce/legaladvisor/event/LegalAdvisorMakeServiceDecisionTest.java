@@ -46,6 +46,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.ADMIN_REFUSAL;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.OTHER_RESPONSE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
@@ -749,6 +750,36 @@ class LegalAdvisorMakeServiceDecisionTest {
                     .receivedServiceApplicationDate(LocalDate.now(clock))
                     .serviceApplicationGranted(NO)
                     .refusalReason(ADMIN_REFUSAL)
+                    .serviceApplicationRefusalReason("Reason order refused")
+                    .alternativeServiceType(DISPENSED)
+                    .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            makeServiceDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(ServiceAdminRefusal);
+        verifyNoInteractions(caseDataDocumentService);
+        verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldUpdateStateToServiceAdminRefusalIfApplicationIsNotGrantedAndReasonIsOtherResponse() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .alternativeService(
+                AlternativeService
+                    .builder()
+                    .receivedServiceApplicationDate(LocalDate.now(clock))
+                    .serviceApplicationGranted(NO)
+                    .refusalReason(OTHER_RESPONSE)
                     .serviceApplicationRefusalReason("Reason order refused")
                     .alternativeServiceType(DISPENSED)
                     .build()
