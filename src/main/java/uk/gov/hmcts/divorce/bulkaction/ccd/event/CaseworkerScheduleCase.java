@@ -53,8 +53,6 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     public static final String CASEWORKER_SCHEDULE_CASE = "caseworker-schedule-case";
     public static final String ERROR_HEARING_DATE_IN_PAST = "Please enter a hearing date and time in the future";
     public static final String ERROR_CASE_IDS_DUPLICATED = "Case IDs duplicated in the list: ";
-    public static final String ERROR_NO_NEW_CASES_ADDED_OR_HEARING_DETAILS_UPDATED =
-        "Please add at least one new case to schedule for listing or update the hearing details";
     public static final String ERROR_NO_CASES_SCHEDULED = "Please add at least one case to schedule for listing";
     public static final String ERROR_DO_NOT_REMOVE_CASES =
         "You cannot remove cases from the bulk list with this event. Use Remove cases from bulk list instead.";
@@ -122,7 +120,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     ) {
         log.info("{} mid event callback invoked for Case Id: {}", CASEWORKER_SCHEDULE_CASE, bulkCaseDetails.getId());
 
-        final List<String> errors = validateData(bulkCaseDetails, beforeDetails);
+        final List<String> errors = validateData(bulkCaseDetails.getData(), beforeDetails.getData(), bulkCaseDetails.getId());
         if (!errors.isEmpty()) {
             return AboutToStartOrSubmitResponse
                 .<BulkActionCaseData, BulkActionState>builder()
@@ -165,50 +163,40 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     }
 
     private record DuplicateCheckResult(Set<String> duplicateIds, Set<String> uniqueIds) {
-        public boolean hasDuplicates() {
+        boolean hasDuplicates() {
             return !duplicateIds.isEmpty();
         }
 
-        public boolean hasUniqueIds() {
+        boolean hasUniqueIds() {
             return !uniqueIds.isEmpty();
         }
     }
 
-    private DuplicateCheckResult checkForDuplicates(final List<BulkListCaseDetails> caseDetailsList) {
+    private DuplicateCheckResult checkForDuplicates(final BulkActionCaseData bulkActionCaseData) {
+        final List<String> caseReferences = bulkActionCaseData.getBulkListCaseDetails() == null
+            ? new ArrayList<>()
+            : bulkActionCaseData.getBulkListCaseDetails()
+                .stream()
+                .map(bulkListCaseDetails -> bulkListCaseDetails.getValue().getCaseReference().getCaseReference())
+                .toList();
+
         final Set<String> duplicateCaseIds = new java.util.HashSet<>();
-        final List<String> uniqueIds = new ArrayList<>();
-        final Map<BulkListCaseDetails, Integer> frequencyMap = new java.util.HashMap<>();
-        final Map<String, Integer> idFrequencyMap = new java.util.HashMap<>();
+        final Set<String> uniqueIds = new java.util.HashSet<>();
+        final Map<String, Integer> frequencyMap = new java.util.HashMap<>();
 
-        for (BulkListCaseDetails caseDetails : caseDetailsList) {
-            frequencyMap.put(caseDetails, frequencyMap.getOrDefault(caseDetails, 0) + 1);
+        for (String caseRef: caseReferences) {
+            frequencyMap.put(caseRef, frequencyMap.getOrDefault(caseRef, 0) + 1);
         }
 
-        for (Map.Entry<BulkListCaseDetails, Integer> entry : frequencyMap.entrySet()) {
-            if (entry.getValue() > 1) {
-                duplicateCaseIds.add(entry.getKey().getCaseReference().getCaseReference());
-            } else if (entry.getValue() == 1) {
-                //Unique IDs may still contain duplicates at this point - it's possible the same case ID is present in the list 1+ times
-                //with different BulkListCaseDetails data (e.g. different parties or reasons for listing)
-                uniqueIds.add(entry.getKey().getCaseReference().getCaseReference());
-            }
-        }
-
-        //Create frequency map of unique IDs to identify any remaining duplicates
-        for (String caseRef: uniqueIds) {
-            idFrequencyMap.put(caseRef, idFrequencyMap.getOrDefault(caseRef, 0) + 1);
-        }
-
-        //Add any remaining duplicates to duplicate IDs collection
-        for (Map.Entry<String, Integer> entry : idFrequencyMap.entrySet()) {
+        for (Map.Entry<String, Integer> entry : frequencyMap.entrySet()) {
             if (entry.getValue() > 1) {
                 duplicateCaseIds.add(entry.getKey());
+            } else if (entry.getValue() == 1) {
+                uniqueIds.add(entry.getKey());
             }
         }
-        //Remove all duplicates from unique IDs collection
-        uniqueIds.removeAll(duplicateCaseIds);
 
-        return new DuplicateCheckResult(duplicateCaseIds, new java.util.HashSet<>(uniqueIds));
+        return new DuplicateCheckResult(duplicateCaseIds, uniqueIds);
     }
 
     private Set<String> getMissingIds(
@@ -223,68 +211,58 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         return Collections.emptySet();
     }
 
-    private List<String> checkForRemovedCases(
-        final Set<String> caseDetailsIdSet,
-        final Set<String> beforeCaseDetailsIdSet
+    private Boolean haveCasesBeenRemoved(
+        final Set<BulkListCaseDetails> caseDetailsSet,
+        final Set<BulkListCaseDetails> beforeCaseDetailsSet
     ) {
-        if (beforeCaseDetailsIdSet.isEmpty()) {
-            return Collections.emptyList();
-        }
 
-        return beforeCaseDetailsIdSet.stream()
-            .filter(beforeRef -> !caseDetailsIdSet.contains(beforeRef))
-            .toList();
-    }
-
-    private List<String> validateData(
-        final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails,
-        final CaseDetails<BulkActionCaseData, BulkActionState> beforeBulkActionCaseDetails
-    ) {
-        final List<String> errors = new ArrayList<>();
-        final BulkActionCaseData bulkActionCaseData = bulkActionCaseDetails.getData();
-        final BulkActionCaseData beforeBulkActionCaseData = beforeBulkActionCaseDetails.getData();
-        final String bulkCaseId = bulkActionCaseDetails.getId().toString();
-
-        // Needs to be a list to preserve any duplicate entries for validation
-        final List<BulkListCaseDetails> caseDetailsList = bulkActionCaseData.getBulkListCaseDetails() != null
-            ? bulkActionCaseData.getBulkListCaseDetails()
-                .stream()
-                .map(ListValue::getValue)
-                .toList()
-            : new ArrayList<>();
-
-        // Needs to be a list to preserve any duplicate entries for validation
-        final List<String> caseDetailsIdList = caseDetailsList.stream()
+        final Set<String> caseDetailsIdSet = caseDetailsSet.stream()
             .map(bulkListCaseDetails -> bulkListCaseDetails.getCaseReference().getCaseReference())
-            .toList();
-
-        // Create sets for more efficient lookup
-        final Set<String> caseDetailsIdSet = new java.util.HashSet<>(caseDetailsIdList);
-        final Set<BulkListCaseDetails> beforeCaseDetailsSet = beforeBulkActionCaseData.getBulkListCaseDetails() != null
-            ? beforeBulkActionCaseData.getBulkListCaseDetails()
-                .stream()
-                .map(ListValue::getValue)
-                .collect(Collectors.toSet())
-            : Collections.emptySet();
+            .collect(Collectors.toSet());
         final Set<String> beforeCaseDetailsIdSet = beforeCaseDetailsSet.stream()
             .map(bulkListCaseDetails -> bulkListCaseDetails.getCaseReference().getCaseReference())
             .collect(Collectors.toSet());
 
-        if (bulkActionCaseData.getDateAndTimeOfHearing().isBefore(LocalDateTime.now())) {
+        if (beforeCaseDetailsIdSet.isEmpty()) {
+            return false;
+        }
+
+        return !beforeCaseDetailsIdSet.stream()
+            .filter(beforeRef -> !caseDetailsIdSet.contains(beforeRef))
+            .collect(Collectors.toSet())
+            .isEmpty();
+    }
+
+    private Set<BulkListCaseDetails> getCaseDetailsSet(
+        final BulkActionCaseData bulkActionCaseData
+    ) {
+        return bulkActionCaseData.getBulkListCaseDetails() == null
+            ? Collections.emptySet()
+            : bulkActionCaseData.getBulkListCaseDetails()
+                .stream()
+                .map(ListValue::getValue)
+                .collect(Collectors.toSet());
+    }
+
+    private List<String> validateData(final BulkActionCaseData bulkData, final BulkActionCaseData beforeBulkData, final Long bulkCaseId) {
+        final List<String> errors = new ArrayList<>();
+        final Set<BulkListCaseDetails> caseDetailsSet = getCaseDetailsSet(bulkData);
+        final Set<BulkListCaseDetails> beforeCaseDetailsSet = getCaseDetailsSet(beforeBulkData);
+
+        if (bulkData.getDateAndTimeOfHearing().isBefore(LocalDateTime.now())) {
             errors.add(ERROR_HEARING_DATE_IN_PAST);
         }
 
-        if (caseDetailsList.isEmpty() && beforeCaseDetailsSet.isEmpty()) {
+        if (caseDetailsSet.isEmpty() && beforeCaseDetailsSet.isEmpty()) {
             errors.add(ERROR_NO_CASES_SCHEDULED);
             return errors;
         }
 
-        final List<String> removedCases = checkForRemovedCases(caseDetailsIdSet, beforeCaseDetailsIdSet);
-        if (!removedCases.isEmpty()) {
+        if (haveCasesBeenRemoved(caseDetailsSet, beforeCaseDetailsSet)) {
             errors.add(ERROR_DO_NOT_REMOVE_CASES);
         }
 
-        final DuplicateCheckResult duplicateCheckResult = checkForDuplicates(caseDetailsList);
+        final DuplicateCheckResult duplicateCheckResult = checkForDuplicates(bulkData);
         if (duplicateCheckResult.hasDuplicates()) {
             errors.add(ERROR_CASE_IDS_DUPLICATED + String.join(", ", duplicateCheckResult.duplicateIds()));
         }
@@ -308,7 +286,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
                     }
                     CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
                     if (caseData.getBulkListCaseReferenceLink() != null
-                        && !caseData.getBulkListCaseReferenceLink().getCaseReference().equals(bulkCaseId)
+                        && !caseData.getBulkListCaseReferenceLink().getCaseReference().equals(bulkCaseId.toString())
                     ) {
                         final String bulkCaseRef = caseData.getBulkListCaseReferenceLink().getCaseReference();
                         errors.add(ERROR_CASE_ID + caseDetails.getId() + ERROR_ALREADY_LINKED_TO_BULK_CASE + bulkCaseRef);
