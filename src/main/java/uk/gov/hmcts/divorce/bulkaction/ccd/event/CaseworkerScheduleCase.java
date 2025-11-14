@@ -182,11 +182,11 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             validateHearingDate(bulkData),
             validateCasesNotRemoved(afterCaseReferences, beforeCaseReferences),
             validateDuplicates(afterCaseReferences),
-            validateNewCases(afterCaseReferences, beforeCaseReferences, bulkCaseId)
+            validateNewlyAddedCases(afterCaseReferences, beforeCaseReferences, bulkCaseId)
         );
     }
 
-    private List<String> validateNewCases(final List<String> afterCaseReferences, final List<String> beforeCaseReferences, Long bulkCaseId) {
+    private List<String> validateNewlyAddedCases(final List<String> afterCaseReferences, final List<String> beforeCaseReferences, Long bulkCaseId) {
         Set<String> addedCaseReferences = new HashSet<>(afterCaseReferences);
         addedCaseReferences.removeAll(beforeCaseReferences);
 
@@ -200,16 +200,13 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
 
         Set<String> missingCaseRefs = new HashSet<>(addedCaseReferences);
         caseSearchResults.stream().map(caseDetails -> objectMapper.convertValue(
-                caseDetails,
-                new TypeReference<CaseDetails<CaseData, State>>() {}
-            )).forEach(caseDetails -> {
-                missingCaseRefs.remove(caseDetails.getId().toString());
-                errors.addAll(validateLinkedCaseDetails(caseDetails, bulkCaseId));
+            caseDetails, new TypeReference<CaseDetails<CaseData, State>>() {}
+        )).forEach(caseDetails -> {
+            missingCaseRefs.remove(caseDetails.getId().toString());
+            errors.addAll(validateLinkedCaseDetails(caseDetails, bulkCaseId));
         });
 
-        errors.add(String.format(
-            "Some cases were not found in CCD: %s", String.join(", ", missingCaseRefs)
-        ));
+        errors.add(String.format("Some cases were not found in CCD: %s", String.join(", ", missingCaseRefs)));
 
         return errors;
     }

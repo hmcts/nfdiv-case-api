@@ -1,40 +1,19 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
-import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.ObjectUtils;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
-import uk.gov.hmcts.ccd.sdk.type.DynamicList;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 
 @Slf4j
@@ -63,18 +42,17 @@ public final class BulkListValidationUtil {
             Collections.emptyList();
     }
 
-    public static List<String> validateLinkedCaseDetails(CaseDetails details, Long bulkCaseId) {
+    public static List<String> validateLinkedCaseDetails(CaseDetails<CaseData, State> details, Long bulkCaseId) {
         List<String> errors = new ArrayList<>();
-        long caseId = details.getId();
 
-        if (!AwaitingPronouncement.toString().equals(details.getState())) {
-            errors.add(String.format("Case %s is not in the correct state for bulk list processing.", caseId));
+        if (!AwaitingPronouncement.equals(details.getState())) {
+            errors.add(String.format("Case %s is not in awaiting pronouncement state.", details.getId()));
         }
 
-        CaseLink bulkCaseLink = details.getData().get;
+        CaseLink bulkCaseLink = details.getData().getBulkListCaseReferenceLink();
 
         if (bulkCaseLink != null && !bulkCaseLink.getCaseReference().equals(bulkCaseId.toString())) {
-            errors.add(String.format("Case %s is already linked to bulk list %s.", caseId, bulkCaseLink.getCaseReference()));
+            errors.add(String.format("Case %s is already linked to bulk list %s.", details.getId(), bulkCaseLink.getCaseReference()));
         }
 
         return errors;
