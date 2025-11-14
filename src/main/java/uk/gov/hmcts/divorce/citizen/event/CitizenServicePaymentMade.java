@@ -28,6 +28,7 @@ import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -88,6 +89,13 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
         alternativeService.getServicePaymentFee().setPaymentReference(paymentReference);
         details.setState(isAwaitingDocuments ? AwaitingDocuments : AwaitingServiceConsideration);
         servicePaymentFee.setDateOfPayment(LocalDate.now(clock));
+
+        if (details.getData().isWelshApplication()) {
+            details.getData().getApplication().setWelshPreviousState(details.getState());
+            details.setState(WelshTranslationReview);
+            log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
+                details.getData().getApplication().getWelshPreviousState(), details.getId());
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

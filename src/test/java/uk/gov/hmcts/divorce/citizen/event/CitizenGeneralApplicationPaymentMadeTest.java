@@ -36,11 +36,14 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.service.PaymentValidatorService.ERROR_PAYMENT_INCOMPLETE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.DECLINED;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -119,6 +122,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
 
         final var caseData = buildTestData();
         final var details = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant1().setGeneralAppPayments(payments);
         details.setId(TEST_CASE_ID);
 
@@ -141,6 +145,32 @@ class CitizenGeneralApplicationPaymentMadeTest {
     }
 
     @Test
+    void givenValidPaymentMadeForWelshApplicationThenShouldSetStateToWelshTranslationReview() {
+        setMockClock(clock);
+
+        List<ListValue<Payment>> payments = singletonList(new ListValue<>(
+            "1", Payment.builder().amount(6000).status(SUCCESS).reference(TEST_REFERENCE).build())
+        );
+
+        final var caseData = buildTestData();
+        final var details = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplicant1().setGeneralAppPayments(payments);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        details.setId(TEST_CASE_ID);
+
+        when(paymentValidatorService.validatePayments(payments, TEST_CASE_ID)).thenReturn(
+            Collections.emptyList()
+        );
+        when(paymentValidatorService.getLastPayment(payments)).thenReturn(payments.getLast().getValue());
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplicationPayment.aboutToSubmit(details, details);
+
+        assertThat(response.getState()).isEqualTo(WelshTranslationReview);
+        assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(AwaitingGeneralConsideration);
+    }
+
+    @Test
     void givenGeneralReferralAlreadyInProgressThenShouldNotCreateNewReferral() {
         setMockClock(clock);
 
@@ -150,6 +180,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
 
         final var caseData = buildTestData();
         final var details = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant1().setGeneralAppPayments(payments);
         caseData.setGeneralReferral(
             GeneralReferral.builder()
