@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,15 +18,21 @@ import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
 import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction.FailedBulkCaseRemover;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -33,6 +41,12 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.BulkListValidationUtil.validateCasesNotRemoved;
+import static uk.gov.hmcts.divorce.divorcecase.validation.BulkListValidationUtil.validateDuplicates;
+import static uk.gov.hmcts.divorce.divorcecase.validation.BulkListValidationUtil.validateHearingDate;
+import static uk.gov.hmcts.divorce.divorcecase.validation.BulkListValidationUtil.validateLinkToBulkCase;
+import static uk.gov.hmcts.divorce.divorcecase.validation.BulkListValidationUtil.validateLinkedCaseDetails;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBulkListErroredCases;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 
@@ -49,6 +63,8 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     private final AuthTokenGenerator authTokenGenerator;
     private final HttpServletRequest request;
     private final FailedBulkCaseRemover failedBulkCaseRemover;
+    private final CcdSearchService ccdSearchService;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
@@ -64,11 +80,27 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .submittedCallback(this::submitted)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
-            .page("scheduleForListing")
+            .page("scheduleForListing", this::midEvent)
             .pageLabel(SCHEDULE_CASES_FOR_LISTING)
             .mandatory(BulkActionCaseData::getCourt)
             .mandatory(BulkActionCaseData::getDateAndTimeOfHearing)
             .mandatoryNoSummary(BulkActionCaseData::getBulkListCaseDetails);
+    }
+
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> midEvent(
+        CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
+        CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
+    ) {
+        log.info("{} mid event callback invoked for Case Id: {}", CASEWORKER_SCHEDULE_CASE, bulkCaseDetails.getId());
+
+        final List<String> errors = validateData(bulkCaseDetails.getData(), beforeDetails.getData(), bulkCaseDetails.getId());
+        if (!errors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
+                .errors(errors)
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder().build();
     }
 
     public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToStart(final CaseDetails<BulkActionCaseData,
@@ -141,5 +173,43 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
 
         scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkCaseDetails);
         return SubmittedCallbackResponse.builder().build();
+    }
+
+    private List<String> validateData(final BulkActionCaseData bulkData, final BulkActionCaseData beforeBulkData, final Long bulkCaseId) {
+        final List<String> beforeCaseReferences = beforeBulkData.getCaseReferences();
+        final List<String> afterCaseReferences = bulkData.getCaseReferences();
+
+        return flattenLists(
+            validateHearingDate(bulkData),
+            validateCasesNotRemoved(afterCaseReferences, beforeCaseReferences),
+            validateDuplicates(afterCaseReferences),
+            validateNewlyAddedCases(afterCaseReferences, beforeCaseReferences, bulkCaseId)
+        );
+    }
+
+    private List<String> validateNewlyAddedCases(final List<String> afterCaseReferences, final List<String> beforeCaseReferences, Long bulkCaseId) {
+        Set<String> searchCaseReferences = new HashSet<>(afterCaseReferences);
+        searchCaseReferences.removeAll(beforeCaseReferences);
+
+        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseSearchResults = ccdSearchService.searchForCases(
+            searchCaseReferences.stream().toList(),
+            idamService.retrieveSystemUpdateUserDetails(),
+            authTokenGenerator.generate()
+        );
+
+        List<String> errors = new ArrayList<>();
+
+        caseSearchResults.stream().map(caseDetails -> objectMapper.convertValue(
+            caseDetails, new TypeReference<CaseDetails<CaseData, State>>() {}
+        )).forEach(caseDetails -> {
+            errors.addAll(validateLinkToBulkCase(caseDetails, bulkCaseId));
+            searchCaseReferences.remove(caseDetails.getId().toString());
+        });
+
+        if (!searchCaseReferences.isEmpty()) {
+            errors.add(String.format("Some cases were not found in CCD: %s", String.join(", ", searchCaseReferences)));
+        }
+
+        return errors;
     }
 }
