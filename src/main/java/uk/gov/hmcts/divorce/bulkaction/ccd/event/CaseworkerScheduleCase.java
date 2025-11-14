@@ -187,26 +187,27 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     }
 
     private List<String> validateNewlyAddedCases(final List<String> afterCaseReferences, final List<String> beforeCaseReferences, Long bulkCaseId) {
-        Set<String> addedCaseReferences = new HashSet<>(afterCaseReferences);
-        addedCaseReferences.removeAll(beforeCaseReferences);
+        Set<String> searchCaseReferences = new HashSet<>(afterCaseReferences);
+        searchCaseReferences.removeAll(beforeCaseReferences);
 
         final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseSearchResults = ccdSearchService.searchForCases(
-            addedCaseReferences.stream().toList(),
+            searchCaseReferences.stream().toList(),
             idamService.retrieveSystemUpdateUserDetails(),
             authTokenGenerator.generate()
         );
 
         List<String> errors = new ArrayList<>();
 
-        Set<String> missingCaseRefs = new HashSet<>(addedCaseReferences);
         caseSearchResults.stream().map(caseDetails -> objectMapper.convertValue(
             caseDetails, new TypeReference<CaseDetails<CaseData, State>>() {}
         )).forEach(caseDetails -> {
-            missingCaseRefs.remove(caseDetails.getId().toString());
             errors.addAll(validateLinkedCaseDetails(caseDetails, bulkCaseId));
+            searchCaseReferences.remove(caseDetails.getId().toString());
         });
 
-        errors.add(String.format("Some cases were not found in CCD: %s", String.join(", ", missingCaseRefs)));
+        if (!searchCaseReferences.isEmpty()) {
+            errors.add(String.format("Some cases were not found in CCD: %s", String.join(", ", searchCaseReferences)));
+        }
 
         return errors;
     }
