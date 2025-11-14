@@ -123,7 +123,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     ) {
         log.info("{} mid event callback invoked for Case Id: {}", CASEWORKER_SCHEDULE_CASE, bulkCaseDetails.getId());
 
-        final List<String> errors = validateData(bulkCaseDetails.getData(), beforeDetails.getData());
+        final List<String> errors = validateData(bulkCaseDetails, beforeDetails);
         if (!errors.isEmpty()) {
             return AboutToStartOrSubmitResponse
                 .<BulkActionCaseData, BulkActionState>builder()
@@ -263,8 +263,14 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .toList();
     }
 
-    private List<String> validateData(final BulkActionCaseData bulkActionCaseData, final BulkActionCaseData beforeBulkActionCaseData) {
+    private List<String> validateData(
+        final CaseDetails<BulkActionCaseData, BulkActionState> bulkActionCaseDetails,
+        final CaseDetails<BulkActionCaseData, BulkActionState> beforeBulkActionCaseDetails
+    ) {
         final List<String> errors = new ArrayList<>();
+        final BulkActionCaseData bulkActionCaseData = bulkActionCaseDetails.getData();
+        final BulkActionCaseData beforeBulkActionCaseData = beforeBulkActionCaseDetails.getData();
+        final String bulkCaseId = bulkActionCaseDetails.getId().toString();
 
         // Needs to be a list to preserve any duplicate entries for validation
         final List<BulkListCaseDetails> caseDetailsList = bulkActionCaseData.getBulkListCaseDetails() != null
@@ -345,7 +351,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
                             + caseDetails.getState() + ERROR_ONLY_AWAITING_PRONOUNCEMENT);
                     }
                     CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-                    if (caseData.getBulkListCaseReferenceLink() != null) {
+                    if (caseData.getBulkListCaseReferenceLink() != null && !caseData.getBulkListCaseReferenceLink().getCaseReference().equals(bulkCaseId)) {
                         final String bulkCaseRef = caseData.getBulkListCaseReferenceLink().getCaseReference();
                         errors.add(ERROR_CASE_ID + caseDetails.getId() + ERROR_ALREADY_LINKED_TO_BULK_CASE + bulkCaseRef);
                     }

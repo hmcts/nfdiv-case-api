@@ -87,7 +87,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2WithAddr
 @ExtendWith(MockitoExtension.class)
 class CaseworkerScheduleCaseTest {
 
-    private static final String BULK_CASE_REFERENCE = "1234123412341234";
+    private static final Long BULK_CASE_REFERENCE = 1234123412341234L;
+    private static final Long BULK_CASE_REFERENCE_2 = 2345234523452345L;
     private static final Long TEST_CASE_ID_2 = 2L;
     private static final Long TEST_CASE_ID_3 = 3L;
     private static final LocalDateTime NOW = LocalDateTime.now();
@@ -349,16 +350,16 @@ class CaseworkerScheduleCaseTest {
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID))
         );
 
-        final Map<String, Object> caseData = getModelCaseDataWithCaseLink();
+        final Map<String, Object> caseData = getModelCaseDataWithCaseLink(BULK_CASE_REFERENCE_2);
 
         setupSearchMock(getModelCaseDetails(caseData, AwaitingPronouncement));
 
-        setupObjectMapperMock(caseData, getMappedCaseDataWithCaseLink());
+        setupObjectMapperMock(caseData, getMappedCaseDataWithCaseLink(BULK_CASE_REFERENCE_2));
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
         assertThat(response.getErrors()).containsExactly(
-            ERROR_CASE_ID + TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE
+            ERROR_CASE_ID + TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE_2
         );
     }
 
@@ -393,11 +394,11 @@ class CaseworkerScheduleCaseTest {
             List.of(bulkListCaseDetailsListValue(TEST_CASE_ID), bulkListCaseValue2, bulkListCaseValue2)
         );
 
-        final uk.gov.hmcts.reform.ccd.client.model.CaseDetails caseDetails = getModelCaseDetails(getModelCaseDataWithCaseLink(), Submitted);
+        final uk.gov.hmcts.reform.ccd.client.model.CaseDetails caseDetails = getModelCaseDetails(getModelCaseDataWithCaseLink(BULK_CASE_REFERENCE), Submitted);
 
         setupSearchMock(caseDetails);
 
-        setupObjectMapperMock(caseDetails.getData(), getMappedCaseDataWithCaseLink());
+        setupObjectMapperMock(caseDetails.getData(), getMappedCaseDataWithCaseLink(BULK_CASE_REFERENCE_2));
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
@@ -405,7 +406,7 @@ class CaseworkerScheduleCaseTest {
             ERROR_HEARING_DATE_IN_PAST,
             ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID_2,
             ERROR_CASE_ID + TEST_CASE_ID + ERROR_INVALID_STATE + Submitted + ERROR_ONLY_AWAITING_PRONOUNCEMENT,
-            ERROR_CASE_ID + TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE
+            ERROR_CASE_ID + TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE_2
         );
     }
 
@@ -478,7 +479,7 @@ class CaseworkerScheduleCaseTest {
 
         setupSearchMock(List.of(TEST_CASE_ID.toString(), TEST_CASE_ID_2.toString()), getSearchResults(caseDetails));
 
-        setupObjectMapperMock(caseDetails.getData(), getMappedCaseDataWithCaseLink());
+        setupObjectMapperMock(caseDetails.getData(), getMappedCaseDataWithCaseLink(BULK_CASE_REFERENCE_2));
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, beforeDetails);
 
@@ -487,7 +488,7 @@ class CaseworkerScheduleCaseTest {
             ERROR_CASE_IDS_DUPLICATED + TEST_CASE_ID_3,
             ERROR_CASES_NOT_FOUND + TEST_CASE_ID_2,
             ERROR_CASE_ID + TEST_CASE_ID + ERROR_INVALID_STATE + Submitted + ERROR_ONLY_AWAITING_PRONOUNCEMENT,
-            ERROR_CASE_ID + TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE
+            ERROR_CASE_ID + TEST_CASE_ID + ERROR_ALREADY_LINKED_TO_BULK_CASE + BULK_CASE_REFERENCE_2
         );
     }
 
@@ -562,6 +563,7 @@ class CaseworkerScheduleCaseTest {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
         details.setData(BulkActionCaseData.builder().dateAndTimeOfHearing(dateAndTimeOfHearing).court(BIRMINGHAM).build());
         details.setState(Listed);
+        details.setId(BULK_CASE_REFERENCE);
         return details;
     }
 
@@ -581,11 +583,12 @@ class CaseworkerScheduleCaseTest {
         return caseData;
     }
 
-    private Map<String, Object> getModelCaseDataWithCaseLink() {
+    private Map<String, Object> getModelCaseDataWithCaseLink(Long bulkCaseReference) {
         final Map<String, Object> caseData = getModelCaseData();
-        caseData.put("bulkListCaseReferenceLink", CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
+        caseData.put("bulkListCaseReferenceLink", CaseLink.builder().caseReference(bulkCaseReference.toString()).build());
         return caseData;
     }
+
 
     private uk.gov.hmcts.reform.ccd.client.model.CaseDetails getModelCaseDetails(Map<String, Object> caseData, State state) {
         return uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
@@ -601,9 +604,9 @@ class CaseworkerScheduleCaseTest {
         return mappedCaseData;
     }
 
-    private CaseData getMappedCaseDataWithCaseLink() {
+    private CaseData getMappedCaseDataWithCaseLink(Long bulkCaseReference) {
         final CaseData mappedCaseData = getMappedCaseData();
-        mappedCaseData.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(BULK_CASE_REFERENCE).build());
+        mappedCaseData.setBulkListCaseReferenceLink(CaseLink.builder().caseReference(bulkCaseReference.toString()).build());
         return mappedCaseData;
     }
 
