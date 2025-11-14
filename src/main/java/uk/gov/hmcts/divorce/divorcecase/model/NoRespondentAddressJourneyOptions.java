@@ -7,11 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
-
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 
 @Data
 @Builder
@@ -33,7 +29,7 @@ public class NoRespondentAddressJourneyOptions {
     private YesOrNo noRespAddressHasWayToContact;
 
     @CCD(
-        label = "Do you have a different way to contact your partner?",
+        label = "Would you like to apply for alternative service?",
         searchable = false
     )
     private YesOrNo noRespAddressWillApplyAltService;
