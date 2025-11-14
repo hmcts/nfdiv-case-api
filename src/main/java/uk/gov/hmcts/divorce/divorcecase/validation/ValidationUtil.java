@@ -269,14 +269,4 @@ public final class ValidationUtil {
                 "No PBA numbers associated with the provided email address");
         }
     }
-
-    public static List<String> validateBulkListErroredCases(CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails) {
-
-        var erroredCaseDetails = bulkCaseDetails.getData().getErroredCaseDetails();
-
-        return !ObjectUtils.isEmpty(erroredCaseDetails)
-            ? singletonList("There are errors on the bulk list. Please resolve errors before continuing")
-            : emptyList();
-    }
-
 }
