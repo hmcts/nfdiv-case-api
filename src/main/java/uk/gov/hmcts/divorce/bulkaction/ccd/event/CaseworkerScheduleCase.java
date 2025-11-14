@@ -57,7 +57,8 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     public static final String ERROR_DO_NOT_REMOVE_CASES =
         "You cannot remove cases from the bulk list with this event. Use Remove cases from bulk list instead.";
     public static final String ERROR_CASES_NOT_FOUND = "Search returned no results for the following Case IDs: ";
-    public static final String ERROR_ONLY_AWAITING_PRONOUNCEMENT = "Only cases in Awaiting Pronouncement can be scheduled for listing. Check Case IDs: ";
+    public static final String ERROR_ONLY_AWAITING_PRONOUNCEMENT =
+        "Only cases in Awaiting Pronouncement can be scheduled for listing. Check Case IDs: ";
     public static final String ERROR_ALREADY_LINKED_TO_BULK_CASE = " already linked to bulk list: ";
     private static final String SCHEDULE_CASES_FOR_LISTING = "Schedule cases for listing";
 
