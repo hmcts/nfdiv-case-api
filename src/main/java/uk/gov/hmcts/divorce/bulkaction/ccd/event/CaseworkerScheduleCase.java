@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
 import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
@@ -26,10 +28,10 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,11 +41,16 @@ import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBulkListErroredCases;
+import static uk.gov.hmcts.divorce.divorcecase.validation.BulkCaseValidationUtil.validateBulkListErroredCases;
+import static uk.gov.hmcts.divorce.divorcecase.validation.BulkCaseValidationUtil.validateCasesNotRemoved;
+import static uk.gov.hmcts.divorce.divorcecase.validation.BulkCaseValidationUtil.validateCasesAreScheduled;
+import static uk.gov.hmcts.divorce.divorcecase.validation.BulkCaseValidationUtil.validateDuplicates;
+import static uk.gov.hmcts.divorce.divorcecase.validation.BulkCaseValidationUtil.validateHearingDate;
+import static uk.gov.hmcts.divorce.divorcecase.validation.BulkCaseValidationUtil.validateLinkToBulkCase;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
 
 @Component
@@ -56,7 +63,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     public static final String ERROR_NO_CASES_SCHEDULED = "Please add at least one case to schedule for listing.";
     public static final String ERROR_DO_NOT_REMOVE_CASES =
         "You cannot remove cases from the bulk list with this event. Use Remove cases from bulk list instead.";
-    public static final String ERROR_CASES_NOT_FOUND = "Search returned no results for the following Case IDs: ";
+    public static final String ERROR_CASES_NOT_FOUND = "Some cases were not found in CCD: %s";
     public static final String ERROR_ONLY_AWAITING_PRONOUNCEMENT =
         "Only cases in Awaiting Pronouncement can be scheduled for listing. Check Case IDs: ";
     public static final String ERROR_ALREADY_LINKED_TO_BULK_CASE = " already linked to bulk list: ";
@@ -169,133 +176,176 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
         }
     }
 
-    private DuplicateCheckResult checkForDuplicates(final BulkActionCaseData bulkActionCaseData) {
-        final List<String> caseReferences = bulkActionCaseData.getBulkListCaseDetails() == null
-            ? new ArrayList<>()
-            : bulkActionCaseData.getBulkListCaseDetails()
-                .stream()
-                .map(bulkListCaseDetails -> bulkListCaseDetails.getValue().getCaseReference().getCaseReference())
-                .toList();
+//    private DuplicateCheckResult checkForDuplicates(final BulkActionCaseData bulkActionCaseData) {
+//        final List<String> caseReferences = bulkActionCaseData.getBulkListCaseDetails() == null
+//            ? new ArrayList<>()
+//            : bulkActionCaseData.getBulkListCaseDetails()
+//                .stream()
+//                .map(bulkListCaseDetails -> bulkListCaseDetails.getValue().getCaseReference().getCaseReference())
+//                .toList();
+//
+//        final Set<String> duplicateCaseIds = new java.util.HashSet<>();
+//        final Set<String> uniqueIds = new java.util.HashSet<>();
+//        final Map<String, Integer> frequencyMap = new java.util.HashMap<>();
+//
+//        for (String caseRef: caseReferences) {
+//            frequencyMap.put(caseRef, frequencyMap.getOrDefault(caseRef, 0) + 1);
+//        }
+//
+//        for (Map.Entry<String, Integer> entry : frequencyMap.entrySet()) {
+//            if (entry.getValue() > 1) {
+//                duplicateCaseIds.add(entry.getKey());
+//            } else if (entry.getValue() == 1) {
+//                uniqueIds.add(entry.getKey());
+//            }
+//        }
+//
+//        return new DuplicateCheckResult(duplicateCaseIds, uniqueIds);
+//    }
+//
+//    private Set<String> getMissingIds(
+//        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResultsList,
+//        final Set<String> searchedIds
+//    ) {
+//        if (searchResultsList.size() < searchedIds.size()) {
+//            final Set<String> foundIds =
+//                searchResultsList.stream().map(caseDetails -> caseDetails.getId().toString()).collect(Collectors.toSet());
+//            return searchedIds.stream().filter(id -> !foundIds.contains(id)).collect(Collectors.toSet());
+//        }
+//        return Collections.emptySet();
+//    }
+//
+//    private Boolean haveCasesBeenRemoved(
+//        final Set<BulkListCaseDetails> caseDetailsSet,
+//        final Set<BulkListCaseDetails> beforeCaseDetailsSet
+//    ) {
+//
+//        final Set<String> caseDetailsIdSet = caseDetailsSet.stream()
+//            .map(bulkListCaseDetails -> bulkListCaseDetails.getCaseReference().getCaseReference())
+//            .collect(Collectors.toSet());
+//        final Set<String> beforeCaseDetailsIdSet = beforeCaseDetailsSet.stream()
+//            .map(bulkListCaseDetails -> bulkListCaseDetails.getCaseReference().getCaseReference())
+//            .collect(Collectors.toSet());
+//
+//        if (beforeCaseDetailsIdSet.isEmpty()) {
+//            return false;
+//        }
+//
+//        return !beforeCaseDetailsIdSet.stream()
+//            .filter(beforeRef -> !caseDetailsIdSet.contains(beforeRef))
+//            .collect(Collectors.toSet())
+//            .isEmpty();
+//    }
+//
+//    private Set<BulkListCaseDetails> getCaseDetailsSet(
+//        final BulkActionCaseData bulkActionCaseData
+//    ) {
+//        return bulkActionCaseData.getBulkListCaseDetails() == null
+//            ? Collections.emptySet()
+//            : bulkActionCaseData.getBulkListCaseDetails()
+//                .stream()
+//                .map(ListValue::getValue)
+//                .collect(Collectors.toSet());
+//    }
 
-        final Set<String> duplicateCaseIds = new java.util.HashSet<>();
-        final Set<String> uniqueIds = new java.util.HashSet<>();
-        final Map<String, Integer> frequencyMap = new java.util.HashMap<>();
-
-        for (String caseRef: caseReferences) {
-            frequencyMap.put(caseRef, frequencyMap.getOrDefault(caseRef, 0) + 1);
-        }
-
-        for (Map.Entry<String, Integer> entry : frequencyMap.entrySet()) {
-            if (entry.getValue() > 1) {
-                duplicateCaseIds.add(entry.getKey());
-            } else if (entry.getValue() == 1) {
-                uniqueIds.add(entry.getKey());
-            }
-        }
-
-        return new DuplicateCheckResult(duplicateCaseIds, uniqueIds);
-    }
-
-    private Set<String> getMissingIds(
-        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> searchResultsList,
-        final Set<String> searchedIds
-    ) {
-        if (searchResultsList.size() < searchedIds.size()) {
-            final Set<String> foundIds =
-                searchResultsList.stream().map(caseDetails -> caseDetails.getId().toString()).collect(Collectors.toSet());
-            return searchedIds.stream().filter(id -> !foundIds.contains(id)).collect(Collectors.toSet());
-        }
-        return Collections.emptySet();
-    }
-
-    private Boolean haveCasesBeenRemoved(
-        final Set<BulkListCaseDetails> caseDetailsSet,
-        final Set<BulkListCaseDetails> beforeCaseDetailsSet
-    ) {
-
-        final Set<String> caseDetailsIdSet = caseDetailsSet.stream()
-            .map(bulkListCaseDetails -> bulkListCaseDetails.getCaseReference().getCaseReference())
-            .collect(Collectors.toSet());
-        final Set<String> beforeCaseDetailsIdSet = beforeCaseDetailsSet.stream()
-            .map(bulkListCaseDetails -> bulkListCaseDetails.getCaseReference().getCaseReference())
-            .collect(Collectors.toSet());
-
-        if (beforeCaseDetailsIdSet.isEmpty()) {
-            return false;
-        }
-
-        return !beforeCaseDetailsIdSet.stream()
-            .filter(beforeRef -> !caseDetailsIdSet.contains(beforeRef))
-            .collect(Collectors.toSet())
-            .isEmpty();
-    }
-
-    private Set<BulkListCaseDetails> getCaseDetailsSet(
-        final BulkActionCaseData bulkActionCaseData
-    ) {
-        return bulkActionCaseData.getBulkListCaseDetails() == null
-            ? Collections.emptySet()
-            : bulkActionCaseData.getBulkListCaseDetails()
-                .stream()
-                .map(ListValue::getValue)
-                .collect(Collectors.toSet());
-    }
+//    private List<String> validateData(final BulkActionCaseData bulkData, final BulkActionCaseData beforeBulkData, final Long bulkCaseId) {
+//        final List<String> errors = new ArrayList<>();
+//        final Set<BulkListCaseDetails> caseDetailsSet = getCaseDetailsSet(bulkData);
+//        final Set<BulkListCaseDetails> beforeCaseDetailsSet = getCaseDetailsSet(beforeBulkData);
+//
+//        if (bulkData.getDateAndTimeOfHearing().isBefore(LocalDateTime.now())) {
+//            errors.add(ERROR_HEARING_DATE_IN_PAST);
+//        }
+//
+//        if (caseDetailsSet.isEmpty() && beforeCaseDetailsSet.isEmpty()) {
+//            errors.add(ERROR_NO_CASES_SCHEDULED);
+//            return errors;
+//        }
+//
+//        if (haveCasesBeenRemoved(caseDetailsSet, beforeCaseDetailsSet)) {
+//            errors.add(ERROR_DO_NOT_REMOVE_CASES);
+//        }
+//
+//        final DuplicateCheckResult duplicateCheckResult = checkForDuplicates(bulkData);
+//        if (duplicateCheckResult.hasDuplicates()) {
+//            errors.add(ERROR_CASE_IDS_DUPLICATED + String.join(", ", duplicateCheckResult.duplicateIds()));
+//        }
+//
+//        if (duplicateCheckResult.hasUniqueIds()) {
+//            final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseDetailsSearchResults = ccdSearchService.searchForCases(
+//                duplicateCheckResult.uniqueIds.stream().toList(),
+//                idamService.retrieveSystemUpdateUserDetails(),
+//                authTokenGenerator.generate()
+//            );
+//
+//            if (!caseDetailsSearchResults.isEmpty()) {
+//                final Set<String> missingIds = getMissingIds(caseDetailsSearchResults, duplicateCheckResult.uniqueIds());
+//                if (!missingIds.isEmpty()) {
+//                    errors.add(ERROR_CASES_NOT_FOUND + String.join(", ", missingIds));
+//                }
+//                final List<String> wrongState = new ArrayList<>();
+//                caseDetailsSearchResults.forEach(caseDetails -> {
+//                    if (!AwaitingPronouncement.toString().equals(caseDetails.getState())) {
+//                        wrongState.add(caseDetails.getId().toString());
+//                    }
+//                    CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
+//                    if (caseData.getBulkListCaseReferenceLink() != null
+//                        && !caseData.getBulkListCaseReferenceLink().getCaseReference().equals(bulkCaseId.toString())
+//                    ) {
+//                        final String bulkCaseRef = caseData.getBulkListCaseReferenceLink().getCaseReference();
+//                        errors.add(caseDetails.getId() + ERROR_ALREADY_LINKED_TO_BULK_CASE + bulkCaseRef);
+//                    }
+//                });
+//                if (!wrongState.isEmpty()) {
+//                    errors.add(ERROR_ONLY_AWAITING_PRONOUNCEMENT + String.join(", ", wrongState));
+//                }
+//            } else {
+//                errors.add(ERROR_CASES_NOT_FOUND + String.join(", ", duplicateCheckResult.uniqueIds()));
+//            }
+//
+//        }
+//
+//        return errors;
+//    }
 
     private List<String> validateData(final BulkActionCaseData bulkData, final BulkActionCaseData beforeBulkData, final Long bulkCaseId) {
-        final List<String> errors = new ArrayList<>();
-        final Set<BulkListCaseDetails> caseDetailsSet = getCaseDetailsSet(bulkData);
-        final Set<BulkListCaseDetails> beforeCaseDetailsSet = getCaseDetailsSet(beforeBulkData);
+        final List<String> beforeCaseReferences = beforeBulkData.getCaseReferences();
+        final List<String> afterCaseReferences = bulkData.getCaseReferences();
 
-        if (bulkData.getDateAndTimeOfHearing().isBefore(LocalDateTime.now())) {
-            errors.add(ERROR_HEARING_DATE_IN_PAST);
+        return flattenLists(
+            validateHearingDate(bulkData),
+            validateCasesAreScheduled(bulkData, beforeBulkData),
+            validateCasesNotRemoved(afterCaseReferences, beforeCaseReferences),
+            validateDuplicates(afterCaseReferences),
+            validateNewlyAddedCases(afterCaseReferences, beforeCaseReferences, bulkCaseId)
+        );
+    }
+
+    private List<String> validateNewlyAddedCases(final List<String> afterCaseReferences, final List<String> beforeCaseReferences, Long bulkCaseId) {
+        Set<String> searchCaseReferences = new HashSet<>(afterCaseReferences);
+        searchCaseReferences.removeAll(new HashSet<>(beforeCaseReferences));
+
+        if (searchCaseReferences.isEmpty()) {
+            return Collections.emptyList();
         }
 
-        if (caseDetailsSet.isEmpty() && beforeCaseDetailsSet.isEmpty()) {
-            errors.add(ERROR_NO_CASES_SCHEDULED);
-            return errors;
-        }
+        final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseSearchResults = ccdSearchService.searchForCases(
+            searchCaseReferences.stream().toList(),
+            idamService.retrieveSystemUpdateUserDetails(),
+            authTokenGenerator.generate()
+        );
 
-        if (haveCasesBeenRemoved(caseDetailsSet, beforeCaseDetailsSet)) {
-            errors.add(ERROR_DO_NOT_REMOVE_CASES);
-        }
+        List<String> errors = new ArrayList<>();
 
-        final DuplicateCheckResult duplicateCheckResult = checkForDuplicates(bulkData);
-        if (duplicateCheckResult.hasDuplicates()) {
-            errors.add(ERROR_CASE_IDS_DUPLICATED + String.join(", ", duplicateCheckResult.duplicateIds()));
-        }
+        caseSearchResults.stream().map(caseDetails -> objectMapper.convertValue(
+            caseDetails, new TypeReference<CaseDetails<CaseData, State>>() {}
+        )).forEach(caseDetails -> {
+            errors.addAll(validateLinkToBulkCase(caseDetails, bulkCaseId));
+            searchCaseReferences.remove(caseDetails.getId().toString());
+        });
 
-        if (duplicateCheckResult.hasUniqueIds()) {
-            final List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseDetailsSearchResults = ccdSearchService.searchForCases(
-                duplicateCheckResult.uniqueIds.stream().toList(),
-                idamService.retrieveSystemUpdateUserDetails(),
-                authTokenGenerator.generate()
-            );
-
-            if (!caseDetailsSearchResults.isEmpty()) {
-                final Set<String> missingIds = getMissingIds(caseDetailsSearchResults, duplicateCheckResult.uniqueIds());
-                if (!missingIds.isEmpty()) {
-                    errors.add(ERROR_CASES_NOT_FOUND + String.join(", ", missingIds));
-                }
-                final List<String> wrongState = new ArrayList<>();
-                caseDetailsSearchResults.forEach(caseDetails -> {
-                    if (!AwaitingPronouncement.toString().equals(caseDetails.getState())) {
-                        wrongState.add(caseDetails.getId().toString());
-                    }
-                    CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
-                    if (caseData.getBulkListCaseReferenceLink() != null
-                        && !caseData.getBulkListCaseReferenceLink().getCaseReference().equals(bulkCaseId.toString())
-                    ) {
-                        final String bulkCaseRef = caseData.getBulkListCaseReferenceLink().getCaseReference();
-                        errors.add(caseDetails.getId() + ERROR_ALREADY_LINKED_TO_BULK_CASE + bulkCaseRef);
-                    }
-                });
-                if (!wrongState.isEmpty()) {
-                    errors.add(ERROR_ONLY_AWAITING_PRONOUNCEMENT + String.join(", ", wrongState));
-                }
-            } else {
-                errors.add(ERROR_CASES_NOT_FOUND + String.join(", ", duplicateCheckResult.uniqueIds()));
-            }
-
+        if (!searchCaseReferences.isEmpty()) {
+            errors.add(String.format(ERROR_CASES_NOT_FOUND, String.join(", ", searchCaseReferences)));
         }
 
         return errors;
