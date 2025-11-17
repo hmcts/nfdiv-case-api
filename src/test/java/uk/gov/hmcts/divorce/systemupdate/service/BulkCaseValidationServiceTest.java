@@ -33,8 +33,8 @@ import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
-import static uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService.BULK_LIST_ERRORED_CASES;
 import static uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService.ERROR_ALREADY_LINKED_TO_BULK_CASE;
+import static uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService.ERROR_BULK_LIST_ERRORED_CASES;
 import static uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService.ERROR_CASES_NOT_FOUND;
 import static uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService.ERROR_CASE_IDS_DUPLICATED;
 import static uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService.ERROR_DO_NOT_REMOVE_CASES;
@@ -82,7 +82,7 @@ public class BulkCaseValidationServiceTest {
 
         List<String> errors = bulkCaseValidationService.validateBulkListErroredCases(details);
 
-        assertThat(errors).containsExactly(BULK_LIST_ERRORED_CASES);
+        assertThat(errors).containsExactly(ERROR_BULK_LIST_ERRORED_CASES);
     }
 
     @Test

@@ -42,7 +42,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMI
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
-import static uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService.BULK_LIST_ERRORED_CASES;
+import static uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService.ERROR_BULK_LIST_ERRORED_CASES;
 import static uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService.ERROR_HEARING_DATE_IN_PAST;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -101,12 +101,12 @@ class CaseworkerScheduleCaseTest {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkDetails();
 
         when(bulkCaseValidationService.validateBulkListErroredCases(details))
-            .thenReturn(List.of(BULK_LIST_ERRORED_CASES));
+            .thenReturn(List.of(ERROR_BULK_LIST_ERRORED_CASES));
 
         AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response =
             scheduleCase.aboutToStart(details);
 
-        assertThat(response.getErrors()).containsExactly(BULK_LIST_ERRORED_CASES);
+        assertThat(response.getErrors()).containsExactly(ERROR_BULK_LIST_ERRORED_CASES);
 
     }
 

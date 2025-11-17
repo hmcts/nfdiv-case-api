@@ -17,11 +17,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,21 +25,26 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class BulkCaseValidationService {
 
-    public final static String ERROR_HEARING_DATE_IN_PAST = "Please enter a hearing date and time in the future";
-    public final static String ERROR_CASE_IDS_DUPLICATED = "Please removed duplicate Case IDs from the bulk list";
-    public final static String ERROR_NO_CASES_SCHEDULED = "Please add at least one case to schedule for listing";
-    public final static String ERROR_DO_NOT_REMOVE_CASES =
+    public static final String ERROR_ALREADY_LINKED_TO_BULK_CASE = "Case %s is already linked to bulk list %s";
+    public static final String ERROR_BULK_LIST_ERRORED_CASES = "There are errors on the bulk list. Please resolve errors before continuing";
+    public static final String ERROR_CASE_IDS_DUPLICATED = "Please removed duplicate Case IDs from the bulk list";
+    public static final String ERROR_CASES_NOT_FOUND = "Some cases were not found in CCD: %s";
+    public static final String ERROR_DO_NOT_REMOVE_CASES =
         "You cannot remove cases from the bulk list with this event. Use Remove cases from bulk list instead";
-    public final static String ERROR_NOT_AWAITING_PRONOUNCEMENT =
+    public static final String ERROR_HEARING_DATE_IN_PAST = "Please enter a hearing date and time in the future";
+    public static final String ERROR_NO_CASES_SCHEDULED = "Please add at least one case to schedule for listing";
+    public static final String ERROR_NOT_AWAITING_PRONOUNCEMENT =
         "Case %s is not in awaiting pronouncement state.";
-    public final static String ERROR_ALREADY_LINKED_TO_BULK_CASE = "Case %s is already linked to bulk list %s";
-    public final static String BULK_LIST_ERRORED_CASES = "There are errors on the bulk list. Please resolve errors before continuing";
-    public final static String ERROR_CASES_NOT_FOUND = "Some cases were not found in CCD: %s";
 
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
@@ -56,7 +56,7 @@ public class BulkCaseValidationService {
         var erroredCaseDetails = bulkDetails.getData().getErroredCaseDetails();
 
         return !ObjectUtils.isEmpty(erroredCaseDetails)
-            ? singletonList(BULK_LIST_ERRORED_CASES)
+            ? singletonList(ERROR_BULK_LIST_ERRORED_CASES)
             : emptyList();
     }
 
@@ -81,9 +81,9 @@ public class BulkCaseValidationService {
     }
 
     private List<String> validateHearingDate(final BulkActionCaseData bulkData) {
-        return bulkData.getDateAndTimeOfHearing().isBefore(LocalDateTime.now()) ?
-            List.of(ERROR_HEARING_DATE_IN_PAST) :
-            Collections.emptyList();
+        return bulkData.getDateAndTimeOfHearing().isBefore(LocalDateTime.now())
+            ? List.of(ERROR_HEARING_DATE_IN_PAST)
+            : Collections.emptyList();
     }
 
     private List<String> validateCasesAreScheduled(final BulkActionCaseData bulkData, final BulkActionCaseData beforeBulkData) {
