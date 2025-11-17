@@ -173,7 +173,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
     }
 
     private boolean hasGeneralReferralInProgress(GeneralReferral generalReferral) {
-        return generalReferral != null && generalReferral.getGeneralReferralType() != null;
+        return generalReferral != null && generalReferral.getGeneralReferralReason() != null;
     }
 
     private GeneralReferral buildGeneralReferral(GeneralApplication generalApplication) {
@@ -181,6 +181,8 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
             .generalReferralReason(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL)
             .generalReferralFraudCase(YesOrNo.NO)
             .generalReferralUrgentCase(YesOrNo.NO)
+            .generalReferralDocument(generalApplication.getGeneralApplicationDocument())
+            .generalReferralDocuments(generalApplication.getGeneralApplicationDocuments())
             .generalApplicationFrom(generalApplication.getGeneralApplicationParty())
             .generalApplicationReferralDate(LocalDate.now(clock))
             .generalApplicationAddedDate(generalApplication.getGeneralApplicationReceivedDate().toLocalDate())
