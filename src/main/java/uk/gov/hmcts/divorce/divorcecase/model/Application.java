@@ -284,6 +284,12 @@ public class Application {
     private YesOrNo applicant1KnowsApplicant2Address;
 
     @CCD(
+        label = "Have you been able to find your partner’s address?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo applicant1FoundApplicant2Address;
+
+    @CCD(
         label = "Applicant 2 is using digital channel?",
         access = {DefaultAccess.class}
     )
