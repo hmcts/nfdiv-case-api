@@ -278,7 +278,7 @@ public class BulkCaseValidationServiceTest {
     }
 
     @Test
-    void shouldPopulateErrorMessageWhenSearchReturnsNoResultsAndMidEventIsTriggered() {
+    void shouldPopulateErrorMessageWhenSearchReturnsNoResults() {
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(NOW.minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
             NOW.plusDays(5),
@@ -293,7 +293,7 @@ public class BulkCaseValidationServiceTest {
     }
 
     @Test
-    void shouldPopulateErrorMessageWhenSearchReturnsMissingResultsAndMidEventIsTriggered() {
+    void shouldPopulateErrorMessageWhenSearchReturnsMissingResults() {
         final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails = getBulkCaseDetails(NOW.minusDays(5));
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkCaseDetails(
             NOW.plusDays(5),
@@ -344,6 +344,34 @@ public class BulkCaseValidationServiceTest {
         );
     }
 
+    @Test
+    void shouldPopulateErrorMessageWhenCaseInWrongStateAndNotLinkedWhenValidatingForListing() {
+        List<String> errors = bulkCaseValidationService.validateCaseForListing(getCaseDetails(Submitted, caseData()));
+
+        assertThat(errors).containsExactly(String.format(ERROR_NOT_AWAITING_PRONOUNCEMENT, TEST_CASE_ID));
+    }
+
+    @Test
+    void shouldPopulateErrorMessageWhenCaseLinkedWhenValidatingForListing() {
+        List<String> errors = bulkCaseValidationService.validateCaseForListing(
+            getCaseDetails(AwaitingPronouncement, getCaseDataWithCaseLink(BULK_CASE_REFERENCE))
+        );
+
+        assertThat(errors).containsExactly(String.format(ERROR_ALREADY_LINKED_TO_BULK_CASE, TEST_CASE_ID, BULK_CASE_REFERENCE));
+    }
+
+    @Test
+    void shouldPopulateErrorMessageWhenCaseInWrongStateAndLinkedWhenValidatingForListing() {
+        List<String> errors = bulkCaseValidationService.validateCaseForListing(
+            getCaseDetails(Submitted, getCaseDataWithCaseLink(BULK_CASE_REFERENCE))
+        );
+
+        assertThat(errors).containsExactly(
+            String.format(ERROR_NOT_AWAITING_PRONOUNCEMENT, TEST_CASE_ID),
+            String.format(ERROR_ALREADY_LINKED_TO_BULK_CASE, TEST_CASE_ID, BULK_CASE_REFERENCE)
+        );
+    }
+
     private ListValue<BulkListCaseDetails> bulkListCaseDetailsListValue(Long caseId) {
         final BulkListCaseDetails bulkCaseDetails = BulkListCaseDetails
             .builder()
@@ -375,6 +403,14 @@ public class BulkCaseValidationServiceTest {
         return uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
             .id(TEST_CASE_ID)
             .state(state.toString())
+            .build();
+    }
+
+    private CaseDetails<CaseData, State> getCaseDetails(State state, CaseData caseData) {
+        return CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .state(state)
+            .data(caseData)
             .build();
     }
 

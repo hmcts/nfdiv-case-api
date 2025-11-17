@@ -35,14 +35,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BulkCaseValidationService {
 
-    public final static String ERROR_HEARING_DATE_IN_PAST = "Please enter a hearing date and time in the future.";
-    public final static String ERROR_CASE_IDS_DUPLICATED = "Please removed duplicate Case IDs from the bulk list.";
-    public final static String ERROR_NO_CASES_SCHEDULED = "Please add at least one case to schedule for listing.";
+    public final static String ERROR_HEARING_DATE_IN_PAST = "Please enter a hearing date and time in the future";
+    public final static String ERROR_CASE_IDS_DUPLICATED = "Please removed duplicate Case IDs from the bulk list";
+    public final static String ERROR_NO_CASES_SCHEDULED = "Please add at least one case to schedule for listing";
     public final static String ERROR_DO_NOT_REMOVE_CASES =
-        "You cannot remove cases from the bulk list with this event. Use Remove cases from bulk list instead.";
+        "You cannot remove cases from the bulk list with this event. Use Remove cases from bulk list instead";
     public final static String ERROR_NOT_AWAITING_PRONOUNCEMENT =
         "Case %s is not in awaiting pronouncement state.";
-    public final static String ERROR_ALREADY_LINKED_TO_BULK_CASE = "Case %s is already linked to bulk list %s.";
+    public final static String ERROR_ALREADY_LINKED_TO_BULK_CASE = "Case %s is already linked to bulk list %s";
     public final static String BULK_LIST_ERRORED_CASES = "There are errors on the bulk list. Please resolve errors before continuing";
     public final static String ERROR_CASES_NOT_FOUND = "Some cases were not found in CCD: %s";
 
@@ -73,6 +73,13 @@ public class BulkCaseValidationService {
         return errors.isEmpty() ? validateNewlyAddedCases(afterCaseReferences, beforeCaseReferences, bulkCaseId) : errors;
     }
 
+    public List<String> validateCaseForListing(final CaseDetails<CaseData, State> caseDetails) {
+        return flattenLists(
+            validateState(caseDetails),
+            validateLinkToBulkCase(caseDetails)
+        );
+    }
+
     private List<String> validateHearingDate(final BulkActionCaseData bulkData) {
         return bulkData.getDateAndTimeOfHearing().isBefore(LocalDateTime.now()) ?
             List.of(ERROR_HEARING_DATE_IN_PAST) :
@@ -98,22 +105,36 @@ public class BulkCaseValidationService {
         Set<String> uniqueCaseReferences = new HashSet<>(caseReferences);
         boolean hasDuplicates = uniqueCaseReferences.size() < caseReferences.size();
 
-        return hasDuplicates ?
-            List.of(ERROR_CASE_IDS_DUPLICATED) :
-            Collections.emptyList();
+        return hasDuplicates ? List.of(ERROR_CASE_IDS_DUPLICATED) : Collections.emptyList();
     }
 
-    private List<String> validateLinkToBulkCase(CaseDetails<CaseData, State> caseDetails, Long bulkCaseId) {
+    private List<String> validateState(CaseDetails<CaseData, State> caseDetails) {
         List<String> errors = new ArrayList<>();
 
         if (!AwaitingPronouncement.equals(caseDetails.getState())) {
             errors.add(String.format(ERROR_NOT_AWAITING_PRONOUNCEMENT, caseDetails.getId()));
         }
 
+        return errors;
+    }
+
+    private List<String> validateLinkToBulkCase(CaseDetails<CaseData, State> caseDetails) {
+        List<String> errors = new ArrayList<>();
+
         CaseLink bulkCaseLink = caseDetails.getData().getBulkListCaseReferenceLink();
 
-        if (bulkCaseLink != null && !bulkCaseLink.getCaseReference().equals(bulkCaseId.toString())) {
+        if (bulkCaseLink != null) {
             errors.add(String.format(ERROR_ALREADY_LINKED_TO_BULK_CASE, caseDetails.getId(), bulkCaseLink.getCaseReference()));
+        }
+
+        return errors;
+    }
+
+    private List<String> validateLinkToBulkCase(CaseDetails<CaseData, State> caseDetails, Long bulkCaseId) {
+        List<String> errors = validateLinkToBulkCase(caseDetails);
+
+        if (!errors.isEmpty() && caseDetails.getData().getBulkListCaseReferenceLink().getCaseReference().equals(bulkCaseId.toString())) {
+            return Collections.emptyList();
         }
 
         return errors;
@@ -137,11 +158,12 @@ public class BulkCaseValidationService {
             authTokenGenerator.generate()
         );
 
-        List<String> errors = new ArrayList<>();
+        final List<String> errors = new ArrayList<>();
 
         caseSearchResults.stream().map(caseDetails -> objectMapper.convertValue(
             caseDetails, new TypeReference<CaseDetails<CaseData, State>>() {}
         )).forEach(caseDetails -> {
+            errors.addAll(validateState(caseDetails));
             errors.addAll(validateLinkToBulkCase(caseDetails, bulkCaseId));
             searchCaseReferences.remove(caseDetails.getId().toString());
         });
