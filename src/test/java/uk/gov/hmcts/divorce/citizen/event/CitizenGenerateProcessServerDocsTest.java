@@ -27,6 +27,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner;
 import uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -139,6 +140,29 @@ class CitizenGenerateProcessServerDocsTest {
                 generateProcessServerDocs.aboutToStart(caseDetails);
 
             assertThat(response.getErrors()).isNull();
+        }
+    }
+
+    @Test
+    void shouldRejectTheUpdateIfRespondentHasSubmittedAos() {
+        final CaseData caseData = validCaseDataForReIssueApplication();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseData.getApplicant2().setContactDetailsType(ContactDetailsType.PUBLIC);
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(
+            LocalDateTime.of(2021, 10, 26, 10, 0, 0));
+
+        caseDetails.setId(12345L);
+        caseDetails.setData(caseData);
+
+        try (MockedStatic<ApplicationValidation> classMock = Mockito.mockStatic(ApplicationValidation.class)) {
+            classMock.when(() -> ApplicationValidation.validateServiceDate(caseData, REISSUE_OFFSET_DAYS))
+                .thenReturn(Collections.emptyList());
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                generateProcessServerDocs.aboutToStart(caseDetails);
+
+            assertThat(response.getErrors()).hasSize(1);
+            assertThat(response.getErrors()).contains("Partner has responded to application.");
         }
     }
 

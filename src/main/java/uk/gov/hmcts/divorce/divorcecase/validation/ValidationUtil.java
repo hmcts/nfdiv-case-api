@@ -279,4 +279,12 @@ public final class ValidationUtil {
             : emptyList();
     }
 
+    public static List<String> validateAosSubmitted(CaseData caseData) {
+        if (caseData.getAcknowledgementOfService() != null
+            && caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
+            return singletonList("Partner has responded to application.");
+        }
+        return emptyList();
+    }
+
 }
