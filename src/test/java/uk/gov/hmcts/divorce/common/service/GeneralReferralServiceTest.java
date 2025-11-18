@@ -136,7 +136,7 @@ class GeneralReferralServiceTest {
         assertThat(referral.getGeneralReferralUrgentCase()).isEqualTo(NO);
         assertThat(referral.getGeneralApplicationFrom()).isEqualTo(GeneralParties.APPLICANT);
         assertThat(referral.getGeneralReferralType()).isEqualTo(GeneralReferralType.DISCLOSURE_VIA_DWP);
-        assertThat(referral.getGeneralApplicationReferralDate()).isEqualTo(LocalDate.of(2025, 11, 13));
+        assertThat(referral.getGeneralApplicationReferralDate()).isEqualTo(LocalDate.now());
         assertThat(referral.getGeneralReferralJudgeOrLegalAdvisorDetails())
             .isEqualTo("Please refer to the Search Government Records application in the general applications tab");
     }
