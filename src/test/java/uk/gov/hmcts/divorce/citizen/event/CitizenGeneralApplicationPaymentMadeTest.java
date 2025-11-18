@@ -11,7 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.caseworker.service.helper.GeneralReferralHelper;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -67,7 +67,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
     private HttpServletRequest request;
 
     @Mock
-    private GeneralReferralHelper generalReferralHelper;
+    private GeneralReferralService generalReferralService;
 
     @InjectMocks
     private CitizenGeneralApplicationPaymentMade citizenGeneralApplicationPayment;
@@ -146,7 +146,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
             Collections.emptyList()
         );
         when(paymentValidatorService.getLastPayment(payments)).thenReturn(payments.getLast().getValue());
-        when(generalReferralHelper.buildGeneralReferral(generalApp)).thenReturn(genReferral);
+        when(generalReferralService.buildGeneralReferral(generalApp)).thenReturn(genReferral);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplicationPayment.aboutToSubmit(details, details);
 

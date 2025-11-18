@@ -11,8 +11,8 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.caseworker.service.helper.GeneralReferralHelper;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -60,7 +60,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
     private final HttpServletRequest request;
 
-    private final GeneralReferralHelper generalReferralHelper;
+    private final GeneralReferralService generalReferralService;
 
     private static final String GENERAL_APPLICATION_NOT_FOUND = "No general applications are awaiting payment";
 
@@ -116,7 +116,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
         if (hasGeneralReferralInProgress(data.getGeneralReferral())) {
             details.setState(GeneralApplicationReceived);
         } else {
-            GeneralReferral automaticReferral = generalReferralHelper.buildGeneralReferral(generalApplication);
+            GeneralReferral automaticReferral = generalReferralService.buildGeneralReferral(generalApplication);
             data.setGeneralReferral(automaticReferral);
 
             details.setState(AwaitingGeneralConsideration);

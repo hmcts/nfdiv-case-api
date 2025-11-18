@@ -10,8 +10,8 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.caseworker.service.helper.GeneralReferralHelper;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -68,7 +68,7 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
 
     private final HttpServletRequest request;
 
-    private final GeneralReferralHelper generalReferralHelper;
+    private final GeneralReferralService generalReferralService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -114,7 +114,7 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         } else {
             applicationFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF);
             applicationFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
-            GeneralReferral automaticReferral = generalReferralHelper.buildGeneralReferral(newGeneralApplication);
+            GeneralReferral automaticReferral = generalReferralService.buildGeneralReferral(newGeneralApplication);
             data.setGeneralReferral(automaticReferral);
 
             details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingGeneralReferralPayment);
