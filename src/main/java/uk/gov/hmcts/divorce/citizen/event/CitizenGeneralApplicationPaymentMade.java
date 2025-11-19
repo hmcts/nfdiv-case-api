@@ -39,6 +39,7 @@ import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -122,6 +123,13 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
             details.setState(AwaitingGeneralConsideration);
         }
 
+        if (details.getData().isWelshApplication()) {
+            details.getData().getApplication().setWelshPreviousState(details.getState());
+            details.setState(WelshTranslationReview);
+            log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
+                details.getData().getApplication().getWelshPreviousState(), details.getId());
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .state(details.getState())
@@ -173,7 +181,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
     }
 
     private boolean hasGeneralReferralInProgress(GeneralReferral generalReferral) {
-        return generalReferral != null && generalReferral.getGeneralReferralType() != null;
+        return generalReferral != null && generalReferral.getGeneralReferralReason() != null;
     }
 
     private GeneralReferral buildGeneralReferral(GeneralApplication generalApplication) {
@@ -181,6 +189,8 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
             .generalReferralReason(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL)
             .generalReferralFraudCase(YesOrNo.NO)
             .generalReferralUrgentCase(YesOrNo.NO)
+            .generalReferralDocument(generalApplication.getGeneralApplicationDocument())
+            .generalReferralDocuments(generalApplication.getGeneralApplicationDocuments())
             .generalApplicationFrom(generalApplication.getGeneralApplicationParty())
             .generalApplicationReferralDate(LocalDate.now(clock))
             .generalApplicationAddedDate(generalApplication.getGeneralApplicationReceivedDate().toLocalDate())
