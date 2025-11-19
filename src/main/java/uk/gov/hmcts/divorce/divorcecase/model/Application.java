@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant1DeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
@@ -321,7 +322,7 @@ public class Application {
 
     @CCD(
         label = "Link to online application",
-        access = {DefaultAccess.class},
+        access = {DefaultAccess.class, SolicitorAccess.class},
         searchable = false
     )
     private Document miniApplicationLink;
