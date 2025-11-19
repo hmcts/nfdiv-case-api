@@ -133,8 +133,7 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
 
         for (Map.Entry<Integer, String> entry : generalApplicationLabels(caseData).entrySet()) {
             String applicationLabel = entry.getValue();
-            String referredApplicationLabel = referredApplication.getValueLabel() == null ? referredApplication.getListItems()
-                .getFirst().getLabel() : referredApplication.getValueLabel();
+            String referredApplicationLabel = referredApplication.getValueLabel();
 
             if (referredApplicationLabel.equals(applicationLabel)) {
                 int applicationIdx = entry.getKey();
