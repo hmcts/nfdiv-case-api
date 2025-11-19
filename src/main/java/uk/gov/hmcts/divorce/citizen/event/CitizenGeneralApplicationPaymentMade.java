@@ -189,6 +189,8 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
             .generalReferralReason(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL)
             .generalReferralFraudCase(YesOrNo.NO)
             .generalReferralUrgentCase(YesOrNo.NO)
+            .generalReferralDocument(generalApplication.getGeneralApplicationDocument())
+            .generalReferralDocuments(generalApplication.getGeneralApplicationDocuments())
             .generalApplicationFrom(generalApplication.getGeneralApplicationParty())
             .generalApplicationReferralDate(LocalDate.now(clock))
             .generalApplicationAddedDate(generalApplication.getGeneralApplicationReceivedDate().toLocalDate())
