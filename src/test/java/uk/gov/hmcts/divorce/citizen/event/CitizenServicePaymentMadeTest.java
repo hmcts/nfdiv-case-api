@@ -26,12 +26,15 @@ import java.util.List;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenServicePaymentMade.CITIZEN_SERVICE_PAYMENT;
 import static uk.gov.hmcts.divorce.common.service.PaymentValidatorService.ERROR_PAYMENT_INCOMPLETE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.DECLINED;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -95,9 +98,10 @@ class CitizenServicePaymentMadeTest {
         );
 
         CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
             .alternativeService(AlternativeService.builder()
                 .alternativeServiceType(AlternativeServiceType.ALTERNATIVE_SERVICE)
-                .serviceApplicationDocsUploadedPreSubmission(YesOrNo.YES)
+                .serviceApplicationDocsUploadedPreSubmission(YES)
                 .servicePayments(payments)
                 .build()
             ).build();
@@ -118,6 +122,38 @@ class CitizenServicePaymentMadeTest {
     }
 
     @Test
+    void givenValidPaymentMadeForWelshApplicationThenShouldSetStateToWelshTranslationReview() {
+        setMockClock(clock);
+
+        List<ListValue<Payment>> payments = singletonList(new ListValue<>(
+            "1", Payment.builder().amount(6000).status(SUCCESS).reference(TEST_REFERENCE).build())
+        );
+
+        CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .alternativeService(AlternativeService.builder()
+                .alternativeServiceType(AlternativeServiceType.ALTERNATIVE_SERVICE)
+                .serviceApplicationDocsUploadedPreSubmission(YES)
+                .servicePayments(payments)
+                .build()
+            ).build();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+
+        final var details = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        details.setId(TEST_CASE_ID);
+
+        when(paymentValidatorService.validatePayments(payments, TEST_CASE_ID)).thenReturn(
+            Collections.emptyList()
+        );
+        when(paymentValidatorService.getLastPayment(payments)).thenReturn(payments.getLast().getValue());
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenServicePaymentMade.aboutToSubmit(details, details);
+
+        assertThat(response.getState()).isEqualTo(WelshTranslationReview);
+        assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(AwaitingServiceConsideration);
+    }
+
+    @Test
     void givenDocumentsNotUploadedThenShouldSetStateToAwaitingApplicant() {
         setMockClock(clock);
 
@@ -126,6 +162,7 @@ class CitizenServicePaymentMadeTest {
         );
 
         CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
             .alternativeService(AlternativeService.builder()
                 .alternativeServiceType(AlternativeServiceType.ALTERNATIVE_SERVICE)
                 .serviceApplicationDocsUploadedPreSubmission(YesOrNo.NO)
