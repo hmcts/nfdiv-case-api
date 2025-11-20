@@ -529,9 +529,6 @@ public enum State {
     ));
 
     public static final EnumSet<State> PRE_SUBMISSION_STATES = EnumSet.of(
-        AwaitingApplicant1Response,
-        AwaitingApplicant2Response,
-        Applicant2Approved,
         AwaitingPayment,
         AwaitingHWFDecision,
         AwaitingDocuments,
