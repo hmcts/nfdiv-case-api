@@ -285,7 +285,8 @@ public class Application {
 
     @CCD(
         label = "Have you been able to find your partner’s address?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private YesOrNo applicant1FoundApplicant2Address;
 
