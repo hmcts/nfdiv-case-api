@@ -464,6 +464,13 @@ public enum State {
     PendingHearingOutcome,
 
     @CCD(
+        label = "Pending refund",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    PendingRefund,
+
+    @CCD(
         label = "Pending service app response",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
