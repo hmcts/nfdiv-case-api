@@ -14,7 +14,7 @@ jobs:
         with:
           distribution: corretto
           java-version: 17
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           path: build/branch
       - name: Build
@@ -32,7 +32,7 @@ jobs:
         with:
           distribution: corretto
           java-version: 17
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: master
           path: build/master
@@ -70,8 +70,8 @@ jobs:
           REPORT="${REPORT//'%'/'%25'}"
           REPORT="${REPORT//$'\n'/'%0A'}"
           REPORT="${REPORT//$'\r'/'%0D'}"
-          echo $REPORT
-          echo "::set-output name=content::$REPORT"
+          # echo $REPORT
+          # echo "::set-output name=content::$REPORT"
       - name: Display
         run: |
           echo "${{ steps.ccd-diff.outputs.content }}"
