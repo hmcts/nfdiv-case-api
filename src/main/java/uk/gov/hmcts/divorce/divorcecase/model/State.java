@@ -464,6 +464,13 @@ public enum State {
     PendingHearingOutcome,
 
     @CCD(
+        label = "Pending service app response",
+        hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
+        access = {DefaultStateAccess.class}
+    )
+    PendingServiceAppResponse,
+
+    @CCD(
         label = "Removed from bulk case",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
         access = {DefaultStateAccess.class}
@@ -589,9 +596,9 @@ public enum State {
     public static final State[] AOS_STATES = {
         Holding, AwaitingConditionalOrder, IssuedToBailiff, AwaitingBailiffService, AwaitingBailiffReferral, BailiffRefused,
         AwaitingServiceConsideration, LAServiceReview, AwaitingServicePayment, AwaitingAlternativeService, AwaitingDwpResponse,
-        AwaitingJudgeClarification, GeneralConsiderationComplete, AwaitingGeneralReferralPayment, AwaitingGeneralConsideration,
-        GeneralApplicationReceived, PendingHearingOutcome, PendingHearingDate, AwaitingGeneralApplicationPayment, AwaitingDocuments,
-        AwaitingGenAppHWFPartPayment, AwaitingGenAppHWFEvidence
+        AwaitingJudgeClarification, PendingServiceAppResponse, GeneralConsiderationComplete, AwaitingGeneralReferralPayment,
+        AwaitingGeneralConsideration, GeneralApplicationReceived, PendingHearingOutcome, PendingHearingDate,
+        AwaitingGeneralApplicationPayment, AwaitingDocuments, AwaitingGenAppHWFPartPayment, AwaitingGenAppHWFEvidence
     };
 
     public static final State[] POST_SUBMISSION_PRE_AWAITING_CO_STATES = {
