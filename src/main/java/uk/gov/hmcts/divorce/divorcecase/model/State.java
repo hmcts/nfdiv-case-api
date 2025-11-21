@@ -15,11 +15,13 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.CASE_TITLE;
 @RequiredArgsConstructor
 @Getter
 public enum State {
+
     @CCD(
         label = "20 week holding period",
         hint = CASE_TITLE,
         access = {DefaultStateAccess.class}
-    ) Holding,
+    )
+    Holding,
 
     @CCD(
         label = "AoS awaiting",
