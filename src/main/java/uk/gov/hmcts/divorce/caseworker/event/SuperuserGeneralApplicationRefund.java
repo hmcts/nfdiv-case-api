@@ -28,7 +28,7 @@ public class SuperuserGeneralApplicationRefund implements CCDConfig<CaseData, St
         new PageBuilder(configBuilder
             .event(SUPERUSER_GENERAL_APPLICATION_REFUND)
             .forStates(POST_SUBMISSION_STATES)
-            .name("General application Refund")
+            .name("General application refund")
             .description("General application Refund")
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, SUPER_USER)
