@@ -22,9 +22,9 @@ public class NoFaultDivorce implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASE_TYPE_DESCRIPTION = "New Law Case";
     public static final String JURISDICTION = "DIVORCE";
     public static final String CASE_TITLE = """
-    ### ${hyphenatedCaseRef} ${applicant1LastName} and ${applicant2LastName}
-    ### No Fault Divorce
-    """;
+        ### ${hyphenatedCaseRef} ${applicant1LastName} and ${applicant2LastName}
+        ### No Fault Divorce
+        """;
 
     public static String getCaseType() {
         return ofNullable(getenv().get("CHANGE_ID"))
