@@ -6,6 +6,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccessExcludingCAA;
 import uk.gov.hmcts.divorce.divorcecase.model.access.LegalAdvisorAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.PreSubmissionStateAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.PreSubmissionStateAccessExcludingCAA;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAccess;
 
 import java.util.EnumSet;
@@ -45,7 +47,7 @@ public enum State {
     @CCD(
         label = "Applicant 2 approved",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class, SolicitorAccess.class}
+        access = {PreSubmissionStateAccess.class, SolicitorAccess.class}
     )
     Applicant2Approved,
 
@@ -108,14 +110,14 @@ public enum State {
     @CCD(
         label = "Awaiting applicant 1 response",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class, SolicitorAccess.class}
+        access = {PreSubmissionStateAccess.class, SolicitorAccess.class}
     )
     AwaitingApplicant1Response,
 
     @CCD(
         label = "Awaiting applicant 2 response",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccess.class, SolicitorAccess.class}
+        access = {PreSubmissionStateAccess.class, SolicitorAccess.class}
     )
     AwaitingApplicant2Response,
 
@@ -354,7 +356,7 @@ public enum State {
     @CCD(
         label = "Draft",
         hint = "### Case number: ${hyphenatedCaseRef}\n ### ${applicant1LastName} and ${applicant2LastName}\n",
-        access = {DefaultStateAccessExcludingCAA.class, SolicitorAccess.class}
+        access = {PreSubmissionStateAccessExcludingCAA.class, SolicitorAccess.class}
     )
     Draft,
 
