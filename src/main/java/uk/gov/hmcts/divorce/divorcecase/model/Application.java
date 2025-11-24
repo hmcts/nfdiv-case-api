@@ -640,9 +640,7 @@ public class Application {
 
     @JsonIgnore
     public boolean hasAwaitingApplicant1Documents() {
-        return applicant1WantsToHavePapersServedAnotherWay != null
-            && applicant1WantsToHavePapersServedAnotherWay.toBoolean()
-            || !isEmpty(applicant1CannotUploadSupportingDocument);
+        return !isEmpty(applicant1CannotUploadSupportingDocument);
     }
 
     @JsonIgnore

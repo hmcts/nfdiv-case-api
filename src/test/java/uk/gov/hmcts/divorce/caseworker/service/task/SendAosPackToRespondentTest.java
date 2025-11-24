@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
@@ -71,19 +70,6 @@ class SendAosPackToRespondentTest {
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-
-        sendAosPackToRespondent.apply(caseDetails);
-
-        verifyNoInteractions(aosPackPrinter);
-    }
-
-    @Test
-    void shouldNotSendAosLetterToApplicant2WhenApplicant1WantsToServeDocumentsOtherWayYes() {
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(setCaseDataWithServiceMethod(SOLE_APPLICATION, YES));
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 

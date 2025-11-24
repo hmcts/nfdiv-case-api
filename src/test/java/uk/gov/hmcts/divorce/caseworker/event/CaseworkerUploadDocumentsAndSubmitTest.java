@@ -95,7 +95,6 @@ class CaseworkerUploadDocumentsAndSubmitTest {
             caseworkerUploadDocumentsAndSubmit.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(AwaitingDocuments);
-        assertThat(response.getData().getApplication().getApplicant1WantsToHavePapersServedAnotherWay()).isNull();
         assertThat(response.getData().getApplication().getApplicant1CannotUploadSupportingDocument()).isNull();
         assertThat(response.getData().getApplication().getApplicant1CannotUpload()).isEqualTo(NO);
     }

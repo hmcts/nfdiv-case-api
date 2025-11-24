@@ -19,7 +19,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
@@ -94,8 +93,7 @@ public class CitizenPaymentMade implements CCDConfig<CaseData, State, UserRole> 
         final CaseDetails<CaseData, State> updatedCaseDetails = submissionService.submitApplication(details);
 
         if (caseData.getApplicationType().isSole()
-            && NO.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address())
-            && YES.equals(caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay())) {
+            && NO.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address())) {
             updatedCaseDetails.setState(AwaitingDocuments);
         }
 

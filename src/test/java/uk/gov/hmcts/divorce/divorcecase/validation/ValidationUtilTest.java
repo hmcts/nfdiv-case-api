@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
 import java.time.LocalDate;
@@ -271,7 +272,7 @@ class ValidationUtilTest {
     void shouldReturnTrueWhenCaseHasAwaitingDocuments() {
         CaseData caseData = new CaseData();
         caseData.setDivorceOrDissolution(DIVORCE);
-        caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
+        caseData.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(DocumentType.CORRESPONDENCE));
         assertTrue(caseData.getApplication().hasAwaitingApplicant1Documents());
     }
 

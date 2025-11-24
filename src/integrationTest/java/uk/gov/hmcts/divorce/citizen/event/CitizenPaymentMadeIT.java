@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.notification.exception.NotificationException;
 import uk.gov.service.notify.NotificationClientException;
@@ -153,10 +154,10 @@ public class CitizenPaymentMadeIT {
     public void givenValidSoleCaseDataWhenCallbackIsInvokedThenSendEmailsToApplicant1() throws Exception {
         CaseData data = caseDataWithOrderSummary();
         data.setApplicationType(SOLE_APPLICATION);
-        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
         data.getApplication().setApplicant1KnowsApplicant2Address(NO);
         data.getApplication().setServiceMethod(ServiceMethod.PERSONAL_SERVICE);
         data.getApplication().setDateSubmitted(LocalDateTime.now());
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(DocumentType.CORRESPONDENCE));
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         data.getApplication().setApplicationFeeOrderSummary(orderSummary);
@@ -187,10 +188,10 @@ public class CitizenPaymentMadeIT {
         CaseData data = caseDataWithOrderSummary();
         data.getApplicant1().setLanguagePreferenceWelsh(YES);
         data.setApplicationType(SOLE_APPLICATION);
-        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
         data.getApplication().setApplicant1KnowsApplicant2Address(NO);
         data.getApplication().setServiceMethod(ServiceMethod.PERSONAL_SERVICE);
         data.getApplication().setDateSubmitted(LocalDateTime.now());
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(DocumentType.CORRESPONDENCE));
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         data.getApplication().setApplicationFeeOrderSummary(orderSummary);

@@ -5,6 +5,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -164,8 +165,7 @@ class ApplicationTest {
     @Test
     void shouldReturnTrueIfApplicant1WantsToHavePapersServedAnotherWayIsYes() {
 
-        final var application = Application.builder()
-            .applicant1WantsToHavePapersServedAnotherWay(YES)
+        final var application = Application.builder().applicant1CannotUploadSupportingDocument(Set.of(DocumentType.CORRESPONDENCE))
             .build();
 
         assertThat(application.hasAwaitingApplicant1Documents()).isTrue();

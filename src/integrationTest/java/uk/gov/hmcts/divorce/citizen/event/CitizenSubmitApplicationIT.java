@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
@@ -27,6 +28,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -48,6 +50,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitApplication.CITIZEN_SUBMIT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
 import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesLookup;
 import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesNotFound;
@@ -134,7 +137,6 @@ public class CitizenSubmitApplicationIT {
     @Test
     public void givenValidCaseDataWithHwfThenSendEmailsToApplicant1AndReturnResponseWithNoErrors() throws Exception {
         CaseData caseData = validApplicant1CaseData();
-        caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
         caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
 
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
@@ -151,7 +153,7 @@ public class CitizenSubmitApplicationIT {
             .getContentAsString();
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(ENGLISH), anyLong());
+            .sendEmail(eq(TEST_USER_EMAIL), eq(APPLICATION_SUBMITTED), anyMap(), eq(ENGLISH), anyLong());
 
         // marriageDate and payments.id are ignored using ${json-unit.ignore}
         // assertion will fail if the above elements are missing actual value
