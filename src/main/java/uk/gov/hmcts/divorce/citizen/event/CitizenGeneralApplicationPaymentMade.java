@@ -39,6 +39,7 @@ import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -120,6 +121,13 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
             data.setGeneralReferral(automaticReferral);
 
             details.setState(AwaitingGeneralConsideration);
+        }
+
+        if (details.getData().isWelshApplication()) {
+            details.getData().getApplication().setWelshPreviousState(details.getState());
+            details.setState(WelshTranslationReview);
+            log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
+                details.getData().getApplication().getWelshPreviousState(), details.getId());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

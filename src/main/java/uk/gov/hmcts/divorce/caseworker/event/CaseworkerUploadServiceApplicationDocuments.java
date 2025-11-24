@@ -41,20 +41,20 @@ public class CaseworkerUploadServiceApplicationDocuments implements CCDConfig<Ca
         new PageBuilder(configBuilder
             .event(UPLOAD_SERVICE_APPLICATION_DOCS)
             .forStates(
-                AwaitingDocuments
+                AwaitingDocuments, AwaitingServiceConsideration, AwaitingServicePayment
             )
             .name(UPLOAD_SERVICE_APPLICATION_DOCS_NAME)
             .description(UPLOAD_SERVICE_APPLICATION_DOCS_NAME)
-            .showCondition("serviceApplicationDocsUploadedPreSubmission=\"No\"")
+            .showCondition("alternativeServiceType=\"*\"")
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE, SOLICITOR))
+            .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER)
+            .grantHistoryOnly(LEGAL_ADVISOR, JUDGE, SOLICITOR))
             .page("cwUploadServiceAppDocs", this::midEvent)
             .pageLabel(UPLOAD_SERVICE_APPLICATION_DOCS_NAME)
             .complex(CaseData::getAlternativeService)
-            .readonlyNoSummary(AlternativeService::getServiceApplicationDocsUploadedPreSubmission, NEVER_SHOW)
+            .readonlyNoSummary(AlternativeService::getAlternativeServiceType, NEVER_SHOW)
             .optional(AlternativeService::getServiceApplicationDocuments)
             .optional(AlternativeService::getAlternativeServiceJudgeOrLegalAdvisorDetails)
             .done();
@@ -94,16 +94,34 @@ public class CaseworkerUploadServiceApplicationDocuments implements CCDConfig<Ca
         var caseData = details.getData();
         AlternativeService alternativeService = caseData.getAlternativeService();
 
-        State endState = AwaitingServiceConsideration;
-
-        if (StringUtils.isNotEmpty(alternativeService.getServicePaymentFee().getHelpWithFeesReferenceNumber())) {
-            endState = AwaitingServicePayment;
-        }
+        State endState = determineEndState(alternativeService, details.getState());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .state(endState)
             .build();
+    }
+
+    private State determineEndState(final AlternativeService alternativeService, State currentState) {
+        State endState = currentState;
+
+        if (!AwaitingDocuments.equals(endState)) {
+            return endState;
+        }
+
+        endState = State.AwaitingServiceConsideration;
+        if (alternativeService.getServiceApplicationSubmittedOnline() != null
+            && alternativeService.getServiceApplicationSubmittedOnline().toBoolean()) {
+            if (StringUtils.isNotEmpty(alternativeService.getServicePaymentFee().getHelpWithFeesReferenceNumber())) {
+                endState = AwaitingServicePayment;
+            }
+        } else {
+            if (alternativeService.getAlternativeServiceFeeRequired().toBoolean()) {
+                endState = AwaitingServicePayment;
+            }
+        }
+
+        return endState;
     }
 }
 
