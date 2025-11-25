@@ -1,16 +1,23 @@
 package uk.gov.hmcts.divorce.divorcecase.validation;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.ObjectUtils;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -222,8 +230,53 @@ public final class ValidationUtil {
             : singletonList("Not possible to update applicant 2 invite email address");
     }
 
+    public static List<String> validateJointApplicantOfflineStatus(CaseDetails<CaseData, State> details) {
+        CaseData caseData = details.getData();
+        boolean isJoint = !caseData.getApplicationType().isSole();
+        Applicant applicant1 = caseData.getApplicant1();
+        Applicant applicant2 = caseData.getApplicant2();
+        boolean applicantOfflineStatusMatches = applicant1.isApplicantOffline() == applicant2.isApplicantOffline();
+
+        return isJoint && !applicantOfflineStatusMatches && jointlyRepresented(applicant1, applicant2)
+            ? singletonList(String.format("Applicants have different offline status in a joint case."
+            + " Both applicants needs to be either online or offline for caseID: %s", details.getId()))
+            : emptyList();
+    }
+
+    public static boolean jointlyRepresented(Applicant applicant1, Applicant applicant2) {
+        Solicitor applicant1Solicitor = applicant1.getSolicitor();
+        Solicitor applicant2Solicitor = applicant2.getSolicitor();
+
+        return applicant1.isRepresented() && applicant2.isRepresented()
+            && applicant1Solicitor != null && applicant2Solicitor != null
+            && Objects.equals(applicant1Solicitor.getName(), applicant2Solicitor.getName())
+            && Objects.equals(applicant1Solicitor.getFirmName(), applicant2Solicitor.getFirmName());
+    }
+
     @SafeVarargs
     public static <E> List<E> flattenLists(List<E>... lists) {
         return Arrays.stream(lists).flatMap(Collection::stream).collect(toList());
     }
+
+    public static SolicitorPbaValidation validateSolicitorPbaNumbers(CaseData caseData, PbaService pbaService, Long caseId) {
+        try {
+            final DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
+            log.info("Successfully retrieved PBA numbers for Case Id: {}", caseId);
+            return SolicitorPbaValidation.success(pbaNumbersDynamicList);
+        } catch (FeignException e) {
+            log.error("Failed to retrieve PBA numbers for Case Id: {}", caseId);
+            return SolicitorPbaValidation.error(caseData,
+                "No PBA numbers associated with the provided email address");
+        }
+    }
+
+    public static List<String> validateBulkListErroredCases(CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails) {
+
+        var erroredCaseDetails = bulkCaseDetails.getData().getErroredCaseDetails();
+
+        return !ObjectUtils.isEmpty(erroredCaseDetails)
+            ? singletonList("There are errors on the bulk list. Please resolve errors before continuing")
+            : emptyList();
+    }
+
 }

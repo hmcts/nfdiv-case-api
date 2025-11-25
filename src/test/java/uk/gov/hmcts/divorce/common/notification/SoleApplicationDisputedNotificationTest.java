@@ -25,6 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.common.notification.SoleApplicationDisputedNotification.DISPUTED_AOS_FEE;
+import static uk.gov.hmcts.divorce.common.notification.SoleApplicationNotDisputedNotification.DOC_UPLOADED;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
@@ -239,6 +240,43 @@ class SoleApplicationDisputedNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(DISPUTED_AOS_FEE,DISPUTE_FEE)
+            )),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendAosDisputedEmailToSoleRespondentWithDivorceContentAndCantUploadDocs() {
+        CaseData data = validCaseDataForAosSubmitted();
+        data.getApplication().setIssueDate(LocalDate.now());
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(data);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setState(Holding);
+        ReflectionTestUtils.setField(soleApplicationDisputedNotification, "disputeDueDateOffsetDays", DISPUTE_DUE_DATE_OFFSET_DAYS);
+        data.getApplicant2().setEmail(null);
+        data.getApplicant2().setUnableToUploadEvidence(YesOrNo.YES);
+
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getMainTemplateVars());
+        when(paymentService.getServiceCost(anyString(), anyString(), anyString())).thenReturn(245.00);
+
+        soleApplicationDisputedNotification.sendToApplicant2(caseDetails);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(SOLE_RESPONDENT_DISPUTED_AOS_SUBMITTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                hasEntry(SUBMISSION_RESPONSE_DATE,
+                    data.getApplication().getIssueDate()
+                        .plusDays(DISPUTE_DUE_DATE_OFFSET_DAYS).format(DATE_TIME_FORMATTER)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(DISPUTED_AOS_FEE,DISPUTE_FEE),
+                hasEntry(DOC_UPLOADED, NO)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
