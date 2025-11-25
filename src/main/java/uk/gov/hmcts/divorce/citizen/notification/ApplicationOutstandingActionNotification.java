@@ -81,8 +81,6 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     private Map<String, String> applicant1TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.putAll(courtDocumentDetails(caseData));
-        boolean soleServingAnotherWay = caseData.getApplicationType().isSole()
-            && caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES;
         return templateVars;
     }
 

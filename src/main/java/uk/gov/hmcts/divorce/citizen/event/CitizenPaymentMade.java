@@ -9,11 +9,13 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
+import uk.gov.hmcts.divorce.citizen.notification.FurtherActionNeededNotification;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
@@ -43,6 +45,8 @@ public class CitizenPaymentMade implements CCDConfig<CaseData, State, UserRole> 
     private final SubmissionService submissionService;
 
     private final PaymentValidatorService paymentValidatorService;
+    private final NotificationDispatcher notificationDispatcher;
+    private final FurtherActionNeededNotification furtherActionNeededNotifications;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -93,8 +97,10 @@ public class CitizenPaymentMade implements CCDConfig<CaseData, State, UserRole> 
         final CaseDetails<CaseData, State> updatedCaseDetails = submissionService.submitApplication(details);
 
         if (caseData.getApplicationType().isSole()
-            && NO.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address())) {
+            && (NO.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address())
+            || NO.equals(caseData.getApplication().getApplicant1FoundApplicant2Address()))) {
             updatedCaseDetails.setState(AwaitingDocuments);
+            notificationDispatcher.send(furtherActionNeededNotifications, caseData, caseId);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
