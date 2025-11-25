@@ -80,7 +80,12 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
                 .mandatory(AlternativeService::getAlternativeServiceType)
                 .optional(AlternativeService::getAlternativeServiceJudgeOrLegalAdvisorDetails)
                 .mandatory(AlternativeService::getAlternativeServiceFeeRequired)
-                .done();
+            .done()
+            .page("serviceApplicationReceivedDocs")
+            .pageLabel("Upload Service Application Documents")
+            .complex(CaseData::getAlternativeService)
+                .optional(AlternativeService::getServiceApplicationDocuments)
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(

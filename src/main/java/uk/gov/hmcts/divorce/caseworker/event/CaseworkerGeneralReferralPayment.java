@@ -17,9 +17,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGenAppHWFEvidence;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGenAppHWFPartPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -55,7 +58,8 @@ public class CaseworkerGeneralReferralPayment implements CCDConfig<CaseData, Sta
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(CASEWORKER_GENERAL_REFERRAL_PAYMENT)
-            .forStateTransition(AwaitingGeneralReferralPayment, AwaitingGeneralConsideration)
+            .forStateTransition(EnumSet.of(AwaitingGeneralReferralPayment, AwaitingGenAppHWFPartPayment, AwaitingGenAppHWFEvidence),
+                AwaitingGeneralConsideration)
             .name("General referral payment")
             .description("General referral payment")
             .showSummary()

@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralReason;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -122,6 +123,18 @@ class CaseworkerGeneralReferralTest {
 
     @Test
     void shouldHandleEmptyGeneralApplicationsWhenSettingLabels() {
+        final CaseDetails<CaseData, State> details = buildTestCaseDetails(null);
+        details.getData().setGeneralApplications(Collections.emptyList());
+        details.getData().getGeneralReferral().setGeneralReferralType(GeneralReferralType.PERMISSION_ON_DA_OOT);
+
+        AboutToStartOrSubmitResponse<CaseData, State> aboutToStartResponse = generalReferral.aboutToStart(details);
+
+        assertThat(aboutToStartResponse.getData().getGeneralReferral().getGeneralReferralType())
+            .isNull();
+    }
+
+    @Test
+    void shouldResetGeneralReferralType() {
         final CaseDetails<CaseData, State> details = buildTestCaseDetails(null);
         details.getData().setGeneralApplications(Collections.emptyList());
 
