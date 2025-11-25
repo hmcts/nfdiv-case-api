@@ -152,8 +152,8 @@ public class CitizenPaymentMadeIT {
     @Test
     public void givenValidSoleCaseDataWhenCallbackIsInvokedThenSendEmailsToApplicant1() throws Exception {
         CaseData data = caseDataWithOrderSummary();
-        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
         data.setApplicationType(SOLE_APPLICATION);
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
         data.getApplication().setApplicant1KnowsApplicant2Address(NO);
         data.getApplication().setServiceMethod(ServiceMethod.PERSONAL_SERVICE);
         data.getApplication().setDateSubmitted(LocalDateTime.now());

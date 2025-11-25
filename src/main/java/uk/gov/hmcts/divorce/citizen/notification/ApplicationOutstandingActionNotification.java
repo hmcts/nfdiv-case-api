@@ -108,7 +108,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         boolean languagePreferenceWelsh = WELSH == caseData.getApplicant1().getLanguagePreference();
         String divorceOrDissolution = languagePreferenceWelsh ? DIVORCE_WELSH : DIVORCE;
         String partner = soleServingAnotherWay ? commonContent.getPartner(caseData, caseData.getApplicant2(),
-            caseData.getApplicant1().getLanguagePreference()) : "";
+                caseData.getApplicant1().getLanguagePreference()) : "";
 
         templateVars.put(PAPERS_SERVED_ANOTHER_WAY, soleServingAnotherWay ? YES : NO);
         templateVars.put(DIVORCE_OR_DISSOLUTION, divorceOrDissolution);
