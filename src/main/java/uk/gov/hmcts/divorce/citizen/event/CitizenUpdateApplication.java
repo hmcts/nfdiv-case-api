@@ -19,6 +19,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPaymen
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.NewPaperCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -36,6 +37,7 @@ public class CitizenUpdateApplication implements CCDConfig<CaseData, State, User
         AwaitingHWFEvidence,
         AwaitingHWFPartPayment,
         NewPaperCase,
+        Submitted,
         Withdrawn,
         Rejected,
         Archived
