@@ -11,6 +11,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
@@ -25,7 +26,8 @@ public class CaseworkerHwfApplicationAndPaymentHelper {
 
     public State getState(CaseData caseData) {
         if (caseData.getApplicationType().isSole()
-            && NO.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address())) {
+            && NO.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address())
+            && YES.equals(caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay())) {
             return AwaitingDocuments;
         } else {
             return Submitted;

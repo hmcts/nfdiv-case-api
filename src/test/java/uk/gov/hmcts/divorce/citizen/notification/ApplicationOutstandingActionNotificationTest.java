@@ -30,6 +30,7 @@ import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingAc
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_NAME_CHANGE_PROOF;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.PAPERS_SERVED_ANOTHER_WAY;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT_DISSOLUTION;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT_DIVORCE;
@@ -253,6 +254,7 @@ class ApplicationOutstandingActionNotificationTest {
         data.setApplicationType(SOLE_APPLICATION);
         data.setApplicant2(getApplicant2(MALE));
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.YES);
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
         data.setApplicationType(SOLE_APPLICATION);
 
         Set<DocumentType> docs = new HashSet<>();
@@ -273,6 +275,7 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE, YES),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES),
+                hasEntry(PAPERS_SERVED_ANOTHER_WAY, YES),
                 hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, CommonContent.NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, CommonContent.NO)
             )),
@@ -287,6 +290,7 @@ class ApplicationOutstandingActionNotificationTest {
         data.setApplicationType(SOLE_APPLICATION);
         data.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.YES);
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
 
         Set<DocumentType> docs = new HashSet<>();
         docs.add(MARRIAGE_CERTIFICATE);
@@ -305,7 +309,9 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE, YES),
-                hasEntry(MISSING_NAME_CHANGE_PROOF, YES))),
+                hasEntry(MISSING_NAME_CHANGE_PROOF, YES),
+                hasEntry(PAPERS_SERVED_ANOTHER_WAY, YES)
+            )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
@@ -317,9 +323,10 @@ class ApplicationOutstandingActionNotificationTest {
         data.setApplicationType(SOLE_APPLICATION);
         data.setApplicant2(getApplicant2(MALE));
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.YES);
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
         data.setApplicationType(SOLE_APPLICATION);
 
-        data.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(DocumentType.CORRESPONDENCE));
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(new HashSet<>());
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
@@ -330,9 +337,10 @@ class ApplicationOutstandingActionNotificationTest {
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
-                hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
+                hasEntry(SEND_DOCUMENTS_TO_COURT, CommonContent.NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE, CommonContent.NO),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, CommonContent.NO),
+                hasEntry(PAPERS_SERVED_ANOTHER_WAY, YES),
                 hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, CommonContent.NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, CommonContent.NO)
             )),
@@ -380,9 +388,10 @@ class ApplicationOutstandingActionNotificationTest {
 
         data.setApplicant2(getApplicant2(MALE));
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.YES);
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
         data.setApplicationType(SOLE_APPLICATION);
-        data.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(DocumentType.CORRESPONDENCE));
 
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(new HashSet<>());
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
@@ -392,7 +401,9 @@ class ApplicationOutstandingActionNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
-                hasEntry(SEND_DOCUMENTS_TO_COURT, YES)
+                hasEntry(SEND_DOCUMENTS_TO_COURT, NO),
+                hasEntry(SEND_DOCUMENTS_TO_COURT_DIVORCE, NO),
+                hasEntry(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, NO)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -406,9 +417,10 @@ class ApplicationOutstandingActionNotificationTest {
 
         data.setApplicant2(getApplicant2(MALE));
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.YES);
+        data.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YesOrNo.YES);
         data.setApplicationType(SOLE_APPLICATION);
 
-        data.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(DocumentType.CORRESPONDENCE));
+        data.getApplication().setApplicant1CannotUploadSupportingDocument(new HashSet<>());
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
 
@@ -418,7 +430,9 @@ class ApplicationOutstandingActionNotificationTest {
             eq(TEST_USER_EMAIL),
             eq(OUTSTANDING_ACTIONS),
             argThat(allOf(
-                hasEntry(SEND_DOCUMENTS_TO_COURT, YES)
+                hasEntry(SEND_DOCUMENTS_TO_COURT, NO),
+                hasEntry(SEND_DOCUMENTS_TO_COURT_DIVORCE, NO),
+                hasEntry(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, NO)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)

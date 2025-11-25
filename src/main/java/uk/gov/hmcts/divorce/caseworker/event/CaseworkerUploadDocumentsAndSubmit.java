@@ -132,6 +132,7 @@ public class CaseworkerUploadDocumentsAndSubmit implements CCDConfig<CaseData, S
     }
 
     private void allowCaseToBeSubmitted(final Application application) {
+        application.setApplicant1WantsToHavePapersServedAnotherWay(null);
         application.setApplicant1CannotUploadSupportingDocument(null);
         application.setApplicant1CannotUpload(NO);
     }

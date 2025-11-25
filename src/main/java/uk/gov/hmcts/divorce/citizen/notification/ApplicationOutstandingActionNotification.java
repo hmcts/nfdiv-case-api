@@ -18,11 +18,16 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
 
@@ -32,6 +37,8 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_AC
 public class ApplicationOutstandingActionNotification implements ApplicantNotification {
 
     public static final String PAPERS_SERVED_ANOTHER_WAY = "papersServedAnotherWay";
+    public static final String DIVORCE_SERVED_ANOTHER_WAY = "divorceServedAnotherWay";
+    public static final String DISSOLUTION_SERVED_ANOTHER_WAY = "dissolutionServedAnotherWay";
 
     public static final String SEND_DOCUMENTS_TO_COURT = "sendDocumentsToCourt";
     public static final String SEND_DOCUMENTS_TO_COURT_DIVORCE = "sendDocumentsToCourtDivorce";
@@ -81,12 +88,33 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     private Map<String, String> applicant1TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.putAll(courtDocumentDetails(caseData));
+        boolean soleServingAnotherWay = caseData.getApplicationType().isSole()
+            && caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES;
+        templateVars.putAll(serveAnotherWayTemplateVars(soleServingAnotherWay, caseData));
         return templateVars;
     }
 
     private Map<String, String> applicant2TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.putAll(courtDocumentDetails(caseData));
+        templateVars.putAll(serveAnotherWayTemplateVars(false, caseData));
+        return templateVars;
+    }
+
+    private Map<String, String> serveAnotherWayTemplateVars(boolean soleServingAnotherWay, CaseData caseData) {
+        Map<String, String> templateVars = new HashMap<>();
+
+        boolean servedAnotherWay = soleServingAnotherWay && caseData.isDivorce();
+        boolean languagePreferenceWelsh = WELSH == caseData.getApplicant1().getLanguagePreference();
+        String divorceOrDissolution = languagePreferenceWelsh ? DIVORCE_WELSH : DIVORCE;
+        String partner = soleServingAnotherWay ? commonContent.getPartner(caseData, caseData.getApplicant2(),
+            caseData.getApplicant1().getLanguagePreference()) : "";
+
+        templateVars.put(PAPERS_SERVED_ANOTHER_WAY, soleServingAnotherWay ? YES : NO);
+        templateVars.put(DIVORCE_OR_DISSOLUTION, divorceOrDissolution);
+        templateVars.put(PARTNER,  partner);
+        templateVars.put(DIVORCE_SERVED_ANOTHER_WAY, servedAnotherWay ? YES : NO);
+        templateVars.put(DISSOLUTION_SERVED_ANOTHER_WAY, soleServingAnotherWay && !caseData.isDivorce() ? YES : NO);
         return templateVars;
     }
 
