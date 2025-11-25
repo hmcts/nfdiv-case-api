@@ -10,6 +10,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingHearingDate;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingHearingOutcome;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
@@ -30,7 +33,8 @@ public class CaseworkerGeneralApplicationHwfAccepted implements CCDConfig<CaseDa
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_GENERAL_APPLICATION_HWF_ACCEPTED)
-            .forStates(RespondentFinalOrderRequested, PendingHearingDate, PendingHearingOutcome)
+            .forStates(RespondentFinalOrderRequested, PendingHearingDate, PendingHearingOutcome, AwaitingServicePayment,
+                AwaitingGeneralApplicationPayment, AwaitingGeneralReferralPayment)
             .name("GenAppHWF accepted")
             .description("General application HWF accepted")
             .showEventNotes()

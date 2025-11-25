@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -23,15 +24,20 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.ALTERNATIVE_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.ADMIN_REFUSAL;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.OTHER_RESPONSE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.LAServiceReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -42,12 +48,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.ALTERNATIVE_SERVICE_REFUSED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_SERVICE_REFUSED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_AS_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SERVICE_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SERVICE_REFUSAL_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.ALTERNATIVE_SERVICE_REFUSED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DEEMED_SERVICE_REFUSED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DISPENSE_WITH_SERVICE_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.DISPENSE_WITH_SERVICE_REFUSED;
@@ -70,15 +78,19 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
     private final HoldingPeriodService holdingPeriodService;
 
+    public static final String ERROR_MUST_MAKE_BAILIFF_DECISION = "Bailiff application decisions must be made with 'Make bailiff decision'";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(LEGAL_ADVISOR_SERVICE_DECISION)
-            .forStates(AwaitingServiceConsideration)
+            .forStates(AwaitingServiceConsideration, LAServiceReview)
             .name("Make service decision")
+            .showCondition("alternativeServiceType!=\"bailiff\"")
             .description("Make service decision")
             .showSummary()
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, SOLICITOR, CITIZEN, SYSTEMUPDATE, JUDGE))
@@ -86,6 +98,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .pageLabel("Approve service application")
             .complex(CaseData::getAlternativeService)
                 .mandatory(AlternativeService::getServiceApplicationGranted)
+                .optional(AlternativeService::getServiceApplicationFurtherDetails, "serviceApplicationGranted=\"Yes\"")
                 .readonly(AlternativeService::getAlternativeServiceType, "serviceApplicationGranted=\"NEVER_SHOW\"")
                 .mandatory(AlternativeService::getDeemedServiceDate,
                 "alternativeServiceType=\"deemed\" AND serviceApplicationGranted=\"Yes\"")
@@ -97,6 +110,19 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                 .mandatory(AlternativeService::getRefusalReason)
                 .mandatory(AlternativeService::getServiceApplicationRefusalReason)
                 .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        AlternativeServiceType serviceType = details.getData().getAlternativeService().getAlternativeServiceType();
+        if (AlternativeServiceType.BAILIFF.equals(serviceType)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(ERROR_MUST_MAKE_BAILIFF_DECISION))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -120,6 +146,8 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
             if (application.getIssueDate() == null) {
                 endState = Submitted;
+            } else if (ALTERNATIVE_SERVICE.equals(serviceApplication.getAlternativeServiceType())) {
+                endState = GeneralConsiderationComplete;
             } else if (caseDataCopy.getApplicationType().isSole()
                 && caseDataCopy.isJudicialSeparationCase()
                 && (DEEMED.equals(serviceApplication.getAlternativeServiceType())
@@ -133,14 +161,14 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             }
 
             if (DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {
-                generateAndSetOrderToDeemedOrDispenseDocument(
+                generateAndSetOrderDocumentForServiceApplication(
                     caseDataCopy,
                     details.getId(),
                     DISPENSED_AS_SERVICE_GRANTED,
                     DISPENSE_WITH_SERVICE_GRANTED,
                     SERVICE_ORDER_TEMPLATE_ID);
             } else if (DEEMED.equals(serviceApplication.getAlternativeServiceType())) {
-                generateAndSetOrderToDeemedOrDispenseDocument(
+                generateAndSetOrderDocumentForServiceApplication(
                     caseDataCopy,
                     details.getId(),
                     DEEMED_AS_SERVICE_GRANTED,
@@ -148,11 +176,12 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     SERVICE_ORDER_TEMPLATE_ID);
             }
         } else {
-            if (ADMIN_REFUSAL.equals(caseDataCopy.getAlternativeService().getRefusalReason())) {
+            if (ADMIN_REFUSAL.equals(caseDataCopy.getAlternativeService().getRefusalReason())
+                || OTHER_RESPONSE.equals(caseDataCopy.getAlternativeService().getRefusalReason())) {
                 endState = ServiceAdminRefusal;
             } else {
                 if (DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {
-                    generateAndSetOrderToDeemedOrDispenseDocument(
+                    generateAndSetOrderDocumentForServiceApplication(
                         caseDataCopy,
                         details.getId(),
                         DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME,
@@ -160,11 +189,19 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                         SERVICE_REFUSAL_TEMPLATE_ID);
                     endState = caseDataCopy.getApplication().getIssueDate() != null ? AwaitingAos : ServiceAdminRefusal;
                 } else if (DEEMED.equals(serviceApplication.getAlternativeServiceType())) {
-                    generateAndSetOrderToDeemedOrDispenseDocument(
+                    generateAndSetOrderDocumentForServiceApplication(
                         caseDataCopy,
                         details.getId(),
                         DEEMED_SERVICE_REFUSED_FILE_NAME,
                         DEEMED_SERVICE_REFUSED,
+                        SERVICE_REFUSAL_TEMPLATE_ID);
+                    endState = AwaitingAos;
+                } else if (ALTERNATIVE_SERVICE.equals(serviceApplication.getAlternativeServiceType())) {
+                    generateAndSetOrderDocumentForServiceApplication(
+                        caseDataCopy,
+                        details.getId(),
+                        ALTERNATIVE_SERVICE_REFUSED_FILE_NAME,
+                        ALTERNATIVE_SERVICE_REFUSED,
                         SERVICE_REFUSAL_TEMPLATE_ID);
                     endState = AwaitingAos;
                 }
@@ -174,7 +211,8 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
         log.info("ServiceApplication decision. End State is {} Due date is {}", endState, caseDataCopy.getDueDate());
 
         log.info("Sending ServiceApplicationNotification case ID: {}", details.getId());
-        if (endState != ServiceAdminRefusal) {
+        if (endState != ServiceAdminRefusal
+            && !(ALTERNATIVE_SERVICE.equals(serviceApplication.getAlternativeServiceType()) && serviceApplication.isApplicationGranted())) {
             notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
         }
 
@@ -186,10 +224,10 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             .build();
     }
 
-    private void generateAndSetOrderToDeemedOrDispenseDocument(final CaseData caseDataCopy,
-                                                               final Long caseId,
-                                                               final String fileName,
-                                                               final DocumentType documentType, String templateId) {
+    private void generateAndSetOrderDocumentForServiceApplication(final CaseData caseDataCopy,
+                                                                  final Long caseId,
+                                                                  final String fileName,
+                                                                  final DocumentType documentType, String templateId) {
         log.info("Generating order to dispense document for templateId : {} caseId: {}", templateId, caseId);
 
         Document document = caseDataDocumentService.renderDocument(
@@ -200,7 +238,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
             fileName
         );
 
-        var deemedOrDispensedDoc = DivorceDocument
+        var orderDocument = DivorceDocument
             .builder()
             .documentLink(document)
             .documentFileName(document.getFilename())
@@ -209,7 +247,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
         caseDataCopy.getDocuments().setDocumentsGenerated(addDocumentToTop(
             caseDataCopy.getDocuments().getDocumentsGenerated(),
-            deemedOrDispensedDoc
+            orderDocument
         ));
     }
 }

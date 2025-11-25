@@ -79,12 +79,11 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
-            .grant(CREATE_READ_UPDATE, CASE_WORKER)
+            .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE)
             .grantHistoryOnly(
                 SOLICITOR,
                 SUPER_USER,
                 LEGAL_ADVISOR,
-                SYSTEMUPDATE,
                 JUDGE))
             .page("reissueApplication")
             .pageLabel("Reissue Application")

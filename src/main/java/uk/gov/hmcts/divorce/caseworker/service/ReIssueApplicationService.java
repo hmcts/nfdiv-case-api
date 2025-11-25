@@ -64,16 +64,19 @@ public class ReIssueApplicationService {
     private final ValidateIssue validateIssue;
 
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
-        if (caseDetails.getData().isJudicialSeparationCase()) {
-            JudicialSeparationReissueOption jsReissueOption = caseDetails.getData().getApplication().getJudicialSeparationReissueOption();
+
+        CaseData caseData = caseDetails.getData();
+
+        if (caseData.isJudicialSeparationCase()) {
+            JudicialSeparationReissueOption jsReissueOption = caseData.getApplication().getJudicialSeparationReissueOption();
             switch (jsReissueOption) {
-                case OFFLINE_AOS -> caseDetails.getData().getApplication().setReissueOption(OFFLINE_AOS);
-                case REISSUE_CASE -> caseDetails.getData().getApplication().setReissueOption(REISSUE_CASE);
-                default -> caseDetails.getData().getApplication().setReissueOption(null);
+                case OFFLINE_AOS -> caseData.getApplication().setReissueOption(OFFLINE_AOS);
+                case REISSUE_CASE -> caseData.getApplication().setReissueOption(REISSUE_CASE);
+                default -> caseData.getApplication().setReissueOption(null);
             }
-            caseDetails.getData().getApplication().setJudicialSeparationReissueOption(null);
+            caseData.getApplication().setJudicialSeparationReissueOption(null);
         }
-        ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
+        ReissueOption reissueOption = caseData.getApplication().getReissueOption();
 
         log.info("For case id {} reissue option selected is {} ", caseDetails.getId(), reissueOption);
 
@@ -169,6 +172,5 @@ public class ReIssueApplicationService {
                 "Exception occurred while sending reissue application notifications for case id " + caseDetails.getId()
             );
         }
-
     }
 }

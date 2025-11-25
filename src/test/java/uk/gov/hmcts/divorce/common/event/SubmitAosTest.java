@@ -28,6 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.event.SubmitAos.AOS_ALREADY_SUBMITTED_ERROR;
 import static uk.gov.hmcts.divorce.common.event.SubmitAos.SUBMIT_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
@@ -240,7 +241,6 @@ class SubmitAosTest {
 
         assertThat(response.getData()).isSameAs(caseData);
         assertThat(response.getErrors())
-            .containsExactly(
-                "The Acknowledgement Of Service has already been submitted.");
+            .containsExactly(AOS_ALREADY_SUBMITTED_ERROR);
     }
 }
