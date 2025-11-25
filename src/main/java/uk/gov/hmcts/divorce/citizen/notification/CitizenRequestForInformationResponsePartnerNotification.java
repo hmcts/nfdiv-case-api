@@ -215,7 +215,7 @@ public class CitizenRequestForInformationResponsePartnerNotification implements 
                                                          final Applicant partner) {
         Map<String, String> templateVars =
             commonContent.requestForInformationTemplateVars(caseData, caseId, applicant, partner);
-        templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
+        templateVars.put(SMART_SURVEY, commonContent.getSmartSurveyWithDoNotReply(applicant.getLanguagePreference()));
 
         return templateVars;
     }
@@ -237,7 +237,6 @@ public class CitizenRequestForInformationResponsePartnerNotification implements 
             : "not provided");
         templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
-        templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
 
         return templateVars;
     }

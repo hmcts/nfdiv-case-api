@@ -162,7 +162,6 @@ class ReIssueApplicationServiceTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setReIssueAndDueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
@@ -502,5 +501,20 @@ class ReIssueApplicationServiceTest {
         assertThatThrownBy(() -> reIssueApplicationService.sendNotifications(caseDetails, null))
             .isExactlyInstanceOf(InvalidReissueOptionException.class)
             .hasMessage("Exception occurred while sending reissue application notifications for case id 1616591401473378");
+    }
+
+    @Test
+    void shouldThrowInvalidReissueOptionExceptionWhenNoResponseUpdateContactDetailsIsNotSet() {
+
+        final CaseData caseData = caseData();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        assertThatThrownBy(() -> reIssueApplicationService.process(caseDetails))
+            .isExactlyInstanceOf(InvalidReissueOptionException.class)
+            .hasMessage("Invalid reissue option for CaseId: 1616591401473378");
     }
 }

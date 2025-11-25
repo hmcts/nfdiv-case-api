@@ -11,6 +11,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.EnumSet;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGenAppHWFEvidence;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGenAppHWFPartPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJudgeClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
@@ -31,7 +33,8 @@ public class CaseworkerAwaitingJudgeClarification implements CCDConfig<CaseData,
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_AWAITING_JUDGE_CLARIFICATION)
-            .forStateTransition(EnumSet.of(GeneralConsiderationComplete, AwaitingGeneralReferralPayment), AwaitingJudgeClarification)
+            .forStateTransition(EnumSet.of(GeneralConsiderationComplete, AwaitingGeneralReferralPayment, AwaitingGenAppHWFPartPayment,
+                AwaitingGenAppHWFEvidence), AwaitingJudgeClarification)
             .showEventNotes()
             .name("Awaiting judge clarification")
             .description("Awaiting judge clarification")

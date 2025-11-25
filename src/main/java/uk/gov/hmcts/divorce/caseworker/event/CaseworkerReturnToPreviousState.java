@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.ArrayList;
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_RETURN_TO_PREVIOUS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -33,6 +34,9 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
         = "You cannot move this case into a pre-submission state. Select another state before continuing.";
     private static final String CASE_MUST_BE_ISSUED_ERROR
         = "You cannot move this case into a post-issue state as it has not been issued";
+    private static final String CANNOT_MOVE_TO_AWAITING_SERVICE_CONSIDERATION_ERROR
+        = "Return to previous state cannot be used to transfer the case to Awaiting service consideration. "
+        + "Please use the response to service application event.";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -66,6 +70,9 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
         }
         if (POST_ISSUE_STATES.contains(state) && caseData.getApplication().getIssueDate() == null) {
             validationErrors.add(CASE_MUST_BE_ISSUED_ERROR);
+        }
+        if (AwaitingServiceConsideration.equals(state)) {
+            validationErrors.add(CANNOT_MOVE_TO_AWAITING_SERVICE_CONSIDERATION_ERROR);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

@@ -14,19 +14,28 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.print.documentpack.CertificateOfEntitlementDocumentPack;
 import uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderPronouncedDocumentPack;
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.documentpack.FinalOrderGrantedDocumentPack;
+import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME;
@@ -40,8 +49,21 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_HEARING;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REGENERATE_COURT_ORDERS_CO_PRONOUNCED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_REGENERATE_COURT_ORDERS_CO_PRONOUNCED;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.jointCaseDataWithOrderSummary;
 
 @ExtendWith(MockitoExtension.class)
 class RegenerateCourtOrdersNotificationTest {
@@ -57,6 +79,12 @@ class RegenerateCourtOrdersNotificationTest {
 
     @Mock
     private ConditionalOrderPronouncedDocumentPack conditionalOrderPronouncedDocPack;
+
+    @Mock
+    private NotificationService notificationService;
+
+    @Mock
+    private CommonContent commonContent;
 
     @InjectMocks
     private RegenerateCourtOrdersNotification notification;
@@ -247,6 +275,100 @@ class RegenerateCourtOrdersNotificationTest {
 
         // Verify that the letterPrinter is not called
         verifyNoInteractions(letterPrinter);
+    }
+
+    @Test
+    void shouldSendEmailToApplicant1ForRegenerateCourtOrders() {
+
+        LocalDateTime now = LocalDateTime.now();
+        CaseData data = caseData();
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .court(ConditionalOrderCourt.BIRMINGHAM)
+            .dateAndTimeOfHearing(now)
+            .grantedDate(now.toLocalDate())
+            .build()
+        );
+        when(commonContent.coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(getCoPronouncedTemplateVars());
+
+        notification.sendToApplicant1(data, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(REGENERATE_COURT_ORDERS_CO_PRONOUNCED),
+            any(),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendEmailToApplicant2ForRegenerateCourtOrdersOnJointCase() {
+
+        LocalDateTime hearingDate = LocalDateTime.of(2021, 1, 1, 12, 0);
+        CaseData data = jointCaseDataWithOrderSummary();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .court(ConditionalOrderCourt.BIRMINGHAM)
+            .dateAndTimeOfHearing(hearingDate)
+            .grantedDate(hearingDate.toLocalDate())
+            .build()
+        );
+
+        when(commonContent.coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getCoPronouncedTemplateVars());
+
+        notification.sendToApplicant2(data, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(REGENERATE_COURT_ORDERS_CO_PRONOUNCED),
+            any(),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendEmailToRespondentForRegenerateCourtOrdersOnSoleCase() {
+
+        LocalDateTime now = LocalDateTime.now();
+        CaseData data = caseData();
+        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .court(ConditionalOrderCourt.BIRMINGHAM)
+            .dateAndTimeOfHearing(now)
+            .grantedDate(now.toLocalDate())
+            .build()
+        );
+        when(commonContent.coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(getCoPronouncedTemplateVars());
+
+        notification.sendToApplicant2(data, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_APPLICANT_2_USER_EMAIL),
+            eq(SOLE_RESPONDENT_REGENERATE_COURT_ORDERS_CO_PRONOUNCED),
+            any(),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+    }
+
+    private Map<String, String> getCoPronouncedTemplateVars() {
+
+        Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID);
+        templateVars.put(IS_DIVORCE, CommonContent.YES);
+        templateVars.put(IS_DISSOLUTION, CommonContent.NO);
+        templateVars.put(DATE_OF_HEARING, "1 January 2025");
+        templateVars.put(COURT_NAME, "Birmingham Civil and Family Justice Centre");
+        templateVars.put(PARTNER, "partner");
+        templateVars.put(COURT_EMAIL, "courtEmail");
+        return templateVars;
     }
 }
 

@@ -226,7 +226,6 @@ public class RequestForInformationNotification implements ApplicantNotification 
             : "not provided");
         templateVars.put(REQUEST_FOR_INFORMATION_DETAILS, requestForInformationDetails);
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
-        templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
 
         return templateVars;
     }
@@ -247,7 +246,7 @@ public class RequestForInformationNotification implements ApplicantNotification 
         Map<String, String> templateVars =
             commonContent.requestForInformationTemplateVars(caseData, caseId, applicant, partner);
         templateVars.put(REQUEST_FOR_INFORMATION_DETAILS, requestForInformationDetails);
-        templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
+        templateVars.put(SMART_SURVEY, commonContent.getSmartSurveyWithDoNotReply(applicant.getLanguagePreference()));
 
         if (BOTH.equals(caseData.getRequestForInformationList().getLatestRequest().getRequestForInformationJointParties())) {
             templateVars.put(SENT_TO_BOTH_APPLICANTS, YES);
@@ -271,7 +270,6 @@ public class RequestForInformationNotification implements ApplicantNotification 
         templateVars.put(ISSUE_DATE_POPULATED, caseData.getApplication().getIssueDate() != null ? YES : NO);
         templateVars.put(NOT_YET_ISSUED, caseData.getApplication().getIssueDate() == null ? YES : NO);
         templateVars.put(REQUEST_FOR_INFORMATION_DETAILS, requestForInformation.getRequestForInformationDetails());
-        templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
 
         return templateVars;
     }

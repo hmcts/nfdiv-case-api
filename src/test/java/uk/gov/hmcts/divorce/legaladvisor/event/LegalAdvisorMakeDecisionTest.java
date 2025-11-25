@@ -13,7 +13,9 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.LegalAdvisorDecision;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -59,6 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 
 @ExtendWith(MockitoExtension.class)
@@ -104,7 +107,7 @@ class LegalAdvisorMakeDecisionTest {
 
         setMockClock(clock);
 
-        final CaseData caseData = CaseData.builder()
+        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.SOLE_APPLICATION)
             .conditionalOrder(ConditionalOrder.builder().granted(YES).build())
             .build();
 
@@ -522,6 +525,69 @@ class LegalAdvisorMakeDecisionTest {
     }
 
     @Test
+    void midEventShouldReturnErrorWhenCoRefusedDueToLegalNameDifferentButOtherTextNotProvided() {
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder()
+                .granted(NO)
+                .refusalDecision(MORE_INFO)
+                .refusalClarificationReason(Set.of(ClarificationReason.LEGAL_NAME_DIFFERENT_TO_CERTIFICATE))
+                .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            legalAdvisorMakeDecision.midEvent(caseDetails, null);
+        assertThat(response.getErrors().size()).isOne();
+        assertThat(response.getErrors()).contains("You need to select the free text option to input the refusal reason");
+    }
+
+    @Test
+    void midEventShouldNotReturnErrorWhenCoRefusedNotDueToLegalNameDifferentAndOtherTextNotProvided() {
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(ConditionalOrder.builder()
+                .granted(NO)
+                .refusalDecision(MORE_INFO)
+                .refusalClarificationReason(Set.of(ClarificationReason.JURISDICTION_DETAILS))
+                .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
+
+        String documentUrl = "http://localhost:8080/4567";
+        var refusalConditionalOrderDoc = new Document(
+            documentUrl,
+            REFUSAL_ORDER_DOCUMENT_NAME,
+            documentUrl + "/binary"
+        );
+
+        when(
+            caseDataDocumentService.renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID,
+                ENGLISH,
+                REFUSAL_ORDER_DOCUMENT_NAME
+            ))
+            .thenReturn(refusalConditionalOrderDoc);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            legalAdvisorMakeDecision.midEvent(caseDetails, null);
+
+        assertThat(response.getData().getConditionalOrder().getRefusalOrderDocument()).isEqualTo(refusalConditionalOrderDoc);
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
     void shouldGenerateRefusalDocumentAndSendLettersIfConditionalOrderIsRejectedForAmendmentAndIsOfflineApplication() {
 
         setMockClock(clock);
@@ -599,5 +665,97 @@ class LegalAdvisorMakeDecisionTest {
 
         verify(notificationDispatcher).send(moreInfoDecisionNotification, caseData, TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldMakeRespondentOfflineWhenRespondentIsNotRepresentedAndEmailIsMissingForSoleCase() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().offline(NO).solicitorRepresented(NO).build())
+            .applicationType(ApplicationType.SOLE_APPLICATION)
+            .conditionalOrder(ConditionalOrder.builder()
+                .granted(YES)
+                .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(caseData.getApplicant2().getOffline()).isEqualTo(YES);
+    }
+
+    @Test
+    void shouldNotMakeApplicant2OfflineWhenApplicant2IsNotRepresentedAndEmailIsMissingForJointCase() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().offline(NO).solicitorRepresented(NO).build())
+            .applicationType(ApplicationType.JOINT_APPLICATION)
+            .conditionalOrder(ConditionalOrder.builder()
+                .granted(YES)
+                .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(caseData.getApplicant2().getOffline()).isEqualTo(NO);
+    }
+
+    @Test
+    void shouldNotMakeApplicant2OfflineWhenApplicant2IsSolicitorRepresentedAndEmailIsMissingForSoleCase() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().offline(NO).solicitorRepresented(YES).build())
+            .applicationType(ApplicationType.SOLE_APPLICATION)
+            .conditionalOrder(ConditionalOrder.builder()
+                .granted(YES)
+                .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(caseData.getApplicant2().getOffline()).isEqualTo(NO);
+    }
+
+    @Test
+    void shouldNotMakeApplicant2OfflineWhenApplicant2IsProvidedForSoleCase() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().offline(NO).solicitorRepresented(NO).email(TEST_USER_EMAIL).build())
+            .applicationType(ApplicationType.SOLE_APPLICATION)
+            .conditionalOrder(ConditionalOrder.builder()
+                .granted(YES)
+                .build()
+            )
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        legalAdvisorMakeDecision.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(caseData.getApplicant2().getOffline()).isEqualTo(NO);
     }
 }

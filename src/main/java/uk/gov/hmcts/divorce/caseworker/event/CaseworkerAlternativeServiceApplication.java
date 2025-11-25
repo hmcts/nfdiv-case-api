@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -23,7 +22,6 @@ import java.time.LocalDate;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
@@ -82,7 +80,12 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
                 .mandatory(AlternativeService::getAlternativeServiceType)
                 .optional(AlternativeService::getAlternativeServiceJudgeOrLegalAdvisorDetails)
                 .mandatory(AlternativeService::getAlternativeServiceFeeRequired)
-                .done();
+            .done()
+            .page("serviceApplicationReceivedDocs")
+            .pageLabel("Upload Service Application Documents")
+            .complex(CaseData::getAlternativeService)
+                .optional(AlternativeService::getServiceApplicationDocuments)
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -99,8 +102,6 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
 
         if (YesOrNo.YES == caseData.getAlternativeService().getAlternativeServiceFeeRequired()) {
             endState = AwaitingServicePayment;
-        } else if (AlternativeServiceType.BAILIFF == caseData.getAlternativeService().getAlternativeServiceType()) {
-            endState = AwaitingBailiffReferral;
         }
 
         notificationDispatcher.send(generalApplicationReceivedNotification, caseData, details.getId());

@@ -10,7 +10,9 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.RefusalOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -25,8 +27,10 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
@@ -56,6 +60,8 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String LEGAL_ADVISOR_MAKE_DECISION = "legal-advisor-make-decision";
+
+    private static final String SELECT_FREE_TEXT_OPTION = "You need to select the free text option to input the refusal reason";
 
     private final LegalAdvisorRejectedDecisionNotification rejectedNotification;
 
@@ -144,6 +150,12 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
             log.info("Legal advisor conditional order granted for case id: {}", details.getId());
             conditionalOrder.setDecisionDate(LocalDate.now(clock));
             endState = AwaitingPronouncement;
+            Applicant applicant2 = caseData.getApplicant2();
+
+            if (caseData.getApplicationType().isSole()
+                && !applicant2.isRepresented() && isEmpty(applicant2.getEmail())) {
+                applicant2.setOffline(YesOrNo.YES);
+            }
 
         } else if (REJECT.equals(conditionalOrder.getRefusalDecision())) {
             generateAndSetConditionalOrderRefusedDocument(
@@ -187,6 +199,17 @@ public class LegalAdvisorMakeDecision implements CCDConfig<CaseData, State, User
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details,
                                                                   final CaseDetails<CaseData, State> detailsBefore) {
         CaseData caseData = details.getData();
+
+        ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
+        if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())
+            && conditionalOrder.getRefusalClarificationReason() != null
+            && conditionalOrder.getRefusalClarificationReason().contains(ClarificationReason.LEGAL_NAME_DIFFERENT_TO_CERTIFICATE)
+            && !conditionalOrder.getRefusalClarificationReason().contains(ClarificationReason.OTHER)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(List.of(SELECT_FREE_TEXT_OPTION))
+                .build();
+        }
 
         caseData.getConditionalOrder().setRefusalOrderDocument(generateRefusalDocument(
             caseData,

@@ -223,7 +223,7 @@ public class CitizenRequestForInformationResponseNotification implements Applica
                                                          final Applicant partner) {
         Map<String, String> templateVars =
             commonContent.requestForInformationTemplateVars(caseData, caseId, applicant, partner);
-        templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
+        templateVars.put(SMART_SURVEY, commonContent.getSmartSurveyWithDoNotReply(applicant.getLanguagePreference()));
 
         return templateVars;
     }

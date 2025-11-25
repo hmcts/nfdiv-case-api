@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
@@ -29,7 +30,10 @@ public class Bailiff {
     )
     private String localCourtEmail;
 
-    @CCD(label = "Certificate of Service")
+    @CCD(
+        label = "Certificate of Service",
+        searchable = false
+    )
     private DivorceDocument certificateOfServiceDocument;
 
     @CCD(
@@ -45,7 +49,14 @@ public class Bailiff {
 
     @CCD(
         label = "Reason for failure to serve",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String reasonFailureToServeByBailiff;
+
+    @CCD(
+        label = "Certificate of Service returned by Bailiff",
+        searchable = false
+    )
+    private Document certificateOfServiceDocumentByBailiff;
 }

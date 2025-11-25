@@ -40,9 +40,14 @@ public class PaymentValidatorService {
         return validationErrors;
     }
 
+    public Payment getLastPayment(final List<ListValue<Payment>> payments) {
+        return CollectionUtils.isEmpty(payments) ? null : payments.getLast().getValue();
+    }
+
     private PaymentStatus lastPaymentStatus(List<ListValue<Payment>> payments) {
-        return CollectionUtils.isEmpty(payments)
-            ? null : payments.get(payments.size() - 1).getValue().getStatus();
+        Payment lastPayment = getLastPayment(payments);
+        
+        return lastPayment != null ? lastPayment.getStatus() : null;
     }
 }
 

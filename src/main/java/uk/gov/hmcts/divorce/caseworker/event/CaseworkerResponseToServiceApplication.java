@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -20,14 +19,12 @@ import java.util.List;
 import static java.util.Objects.isNull;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
-import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffRefused;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingServiceAppResponse;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -48,7 +45,7 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_RESPONSE_TO_SERVICE_APPLICATION)
-            .forStates(AwaitingAos, AosOverdue, BailiffRefused, ServiceAdminRefusal)
+            .forStates(AwaitingAos, AosOverdue, BailiffRefused, ServiceAdminRefusal, PendingServiceAppResponse)
             .name("Response to service app")
             .description("Response to service application")
             .aboutToStartCallback(this::aboutToStart)
@@ -117,7 +114,6 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
 
         CaseData caseData = details.getData();
         AlternativeService altService = caseData.getAlternativeService();
-        AlternativeServiceType altServiceType = altService.getAlternativeServiceType();
 
         if (isNotEmpty(altService.getServiceApplicationDocuments())) {
             altService.getServiceApplicationDocuments().forEach(divorceDocumentListValue -> {
@@ -126,16 +122,9 @@ public class CaseworkerResponseToServiceApplication implements CCDConfig<CaseDat
             });
         }
 
-        State state;
-        if (DEEMED.equals(altServiceType) || DISPENSED.equals(altServiceType)) {
-            state = AwaitingServiceConsideration;
-        } else {
-            state = AwaitingBailiffReferral;
-        }
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
-            .state(state)
+            .state(AwaitingServiceConsideration)
             .build();
     }
 }

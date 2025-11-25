@@ -11,20 +11,26 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.AcaSystemUserAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2DeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CitizenAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -84,16 +90,21 @@ public class Applicant {
     private YesOrNo languagePreferenceWelsh;
 
     @CCD(
-        label = "Did they change their last name when they got married?"
+        label = "Did they change their last name when they got married?",
+        searchable = false
     )
     private YesOrNo lastNameChangedWhenMarried;
 
-    @CCD(label = "How did they change their last name when they got married?")
+    @CCD(
+        label = "How did they change their last name when they got married?",
+        searchable = false
+    )
     private Set<ChangedNameHow> lastNameChangedWhenMarriedMethod;
 
     @CCD(
         label = "Details of how they changed their last name when they got married",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String lastNameChangedWhenMarriedOtherDetails;
 
@@ -102,12 +113,16 @@ public class Applicant {
     )
     private YesOrNo nameDifferentToMarriageCertificate;
 
-    @CCD(label = "How did they change their name since they got married?")
+    @CCD(
+        label = "How did they change their name since they got married?",
+        searchable = false
+    )
     private Set<ChangedNameHow> nameDifferentToMarriageCertificateMethod;
 
     @CCD(
         label = "Details of how they changed their name since they got married",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String nameDifferentToMarriageCertificateOtherDetails;
 
@@ -116,7 +131,8 @@ public class Applicant {
 
     @CCD(
         label = "Details of how they changed their name",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String nameChangedHowOtherDetails;
 
@@ -130,7 +146,10 @@ public class Applicant {
     /* Second address field to allow solicitors to enter applicant addresses when creating applications
      * and view non-confidential addresses for solicitor service. We do not give solicitors read access to the
      * primary "address" field as it can contain a confidential address. */
-    @CCD(label = "Non-Confidential Address")
+    @CCD(
+        label = "Non-Confidential Address",
+        searchable = false
+    )
     private AddressGlobalUK nonConfidentialAddress;
 
     @CCD(label = "Is this an international address?")
@@ -183,7 +202,8 @@ public class Applicant {
     private YesOrNo usedWelshTranslationOnSubmission;
 
     @CCD(
-        label = "Who are the financial orders for?"
+        label = "Who are the financial orders for?",
+        searchable = false
     )
     private Set<FinancialOrderFor> financialOrdersFor;
 
@@ -196,22 +216,46 @@ public class Applicant {
         label = "Provide details of the other legal proceedings",
         hint = "Provide as much information as possible, such as the case number(s); "
             + "the names of the people involved and if the proceedings are ongoing or if they’ve finished.",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String legalProceedingsDetails;
 
     @CCD(
         label = "Provide details of the other legal proceedings(Translated)",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String legalProceedingsDetailsTranslated;
 
     @CCD(
         label = "Translated To?",
         typeOverride = FixedRadioList,
-        typeParameterOverride = "TranslatedToLanguage"
+        typeParameterOverride = "TranslatedToLanguage",
+        searchable = false
     )
     private TranslatedToLanguage legalProceedingsDetailsTranslatedTo;
+
+    @CCD(
+        label = "Have the proceedings been concluded?",
+        searchable = false
+    )
+    private YesOrNo legalProceedingsConcluded;
+
+    @CCD(
+        label = "Upload your evidence",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
+        access = {DefaultAccess.class, Applicant2DeleteAccess.class},
+        searchable = false
+    )
+    private List<ListValue<DivorceDocument>> legalProceedingDocs;
+
+    @CCD(
+        label = "Unable to upload evidence?",
+        searchable = false
+    )
+    private YesOrNo unableToUploadEvidence;
 
     @CCD(
         label = "PCQ ID"
@@ -239,6 +283,39 @@ public class Applicant {
         access = {DefaultAccess.class}
     )
     private YesOrNo coPronouncedCoverLetterRegenerated;
+
+    @JsonUnwrapped
+    @CCD(
+        label = "Service & General Application Options",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private InterimApplicationOptions interimApplicationOptions;
+
+    @CCD(
+        label = "Interim Applications",
+        typeOverride = Collection,
+        typeParameterOverride = "InterimApplication",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private List<ListValue<InterimApplication>> interimApplications;
+
+    @CCD(
+        label = "General Application Payments",
+        typeOverride = Collection,
+        typeParameterOverride = "Payment",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private List<ListValue<Payment>> generalAppPayments;
+
+    @CCD(
+        label = "General Application Service Request",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private String generalAppServiceRequest;
 
     @JsonIgnore
     public LanguagePreference getLanguagePreference() {
@@ -322,6 +399,12 @@ public class Applicant {
     }
 
     @JsonIgnore
+    public void setActiveGeneralApplication(String serviceRequest) {
+        this.generalAppServiceRequest = serviceRequest;
+        this.generalAppPayments = new ArrayList<>();
+    }
+
+    @JsonIgnore
     public boolean appliedForFinancialOrder() {
         return nonNull(financialOrder) && financialOrder.toBoolean();
     }
@@ -333,6 +416,33 @@ public class Applicant {
 
     @JsonIgnore
     public String getFullName() {
-        return Stream.of(firstName, middleName, lastName).filter(Objects::nonNull).collect(joining(" "));
+        return Stream.of(firstName, middleName, lastName)
+            .filter(s -> s != null && !s.isEmpty())
+            .collect(joining(" "));
+    }
+
+    @JsonIgnore
+    public void archiveInterimApplicationOptions() {
+        setInterimApplications(List.of(
+            ListValue.<InterimApplication>builder().value(
+                InterimApplication.builder()
+                    .options(interimApplicationOptions)
+                    .build()
+            ).build()
+        ));
+
+        setInterimApplicationOptions(new InterimApplicationOptions());
+    }
+
+    @JsonIgnore
+    public boolean mustBeServedOverseas() {
+        boolean unrepresentedBasedOverseas = !isRepresented() && isBasedOverseas();
+        boolean solicitorBasedOverseas = isRepresented() && YesOrNo.YES.equals(
+            Optional.ofNullable(getSolicitor())
+                .map(Solicitor::getAddressOverseas)
+                .orElse(null)
+        );
+
+        return unrepresentedBasedOverseas || solicitorBasedOverseas;
     }
 }

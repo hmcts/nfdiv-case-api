@@ -8,14 +8,18 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationRemindApplicant2Notification;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import java.util.List;
+
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService.CASE_ALREADY_PROCESSED_ERROR;
 
 @Component
 @RequiredArgsConstructor
@@ -44,6 +48,12 @@ public class SystemRemindApplicant2 implements CCDConfig<CaseData, State, UserRo
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
         CaseData data = details.getData();
+        Application application = data.getApplication();
+        if (YesOrNo.YES.equals(application.getApplicant2ReminderSent())) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(CASE_ALREADY_PROCESSED_ERROR))
+                .build();
+        }
 
         notificationDispatcher.send(applicationRemindApplicant2Notification, data, details.getId());
 

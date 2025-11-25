@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -19,10 +20,13 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffRefused;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.LAServiceReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -50,15 +54,19 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
 
     private final NotificationDispatcher notificationDispatcher;
 
+    public static final String ERROR_MUST_MAKE_SERVICE_DECISION = "Service application decisions must be made with 'Make service decision'";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_BAILIFF_DECISION)
-            .forState(AwaitingBailiffReferral)
+            .forStates(AwaitingBailiffReferral, AwaitingServiceConsideration, LAServiceReview)
+            .showCondition("alternativeServiceType=\"bailiff\"")
             .name("Make bailiff decision")
             .description("Make bailiff decision")
             .showSummary()
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, LEGAL_ADVISOR)
             .grantHistoryOnly(CASE_WORKER, SOLICITOR, SYSTEMUPDATE, JUDGE))
@@ -73,6 +81,19 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
                 .complex(CaseData::getAlternativeService)
                 .mandatory(AlternativeService::getServiceApplicationRefusalReason)
                 .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        AlternativeServiceType serviceType = details.getData().getAlternativeService().getAlternativeServiceType();
+        if (!AlternativeServiceType.BAILIFF.equals(serviceType)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(ERROR_MUST_MAKE_SERVICE_DECISION))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(

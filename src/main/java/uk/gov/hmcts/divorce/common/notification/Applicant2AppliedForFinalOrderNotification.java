@@ -18,7 +18,6 @@ import static uk.gov.hmcts.divorce.common.notification.Applicant2RemindAwaitingJ
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_OR_FO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONSE_DUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER;
@@ -160,7 +159,6 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
         // https://tools.hmcts.net/jira/browse/NFDIV-3687
         templateVars.put(IS_OVERDUE, YES);
         templateVars.put(IN_TIME, NO);
-        templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
 
         return templateVars;
     }

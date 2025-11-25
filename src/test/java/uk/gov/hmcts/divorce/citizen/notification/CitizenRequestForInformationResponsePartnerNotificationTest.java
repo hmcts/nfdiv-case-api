@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 
 import static java.lang.String.join;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -76,7 +77,7 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getRequestForInformationTemplateVars());
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+        when(commonContent.getSmartSurveyWithDoNotReply(any())).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent();
 
@@ -123,8 +124,6 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
 
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
-
         Map<String, String> templateContent = solicitorTemplateContent();
 
         citizenRequestForInformationResponsePartnerNotification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
@@ -168,7 +167,7 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getRequestForInformationTemplateVars());
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+        when(commonContent.getSmartSurveyWithDoNotReply(any())).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent();
 
@@ -208,8 +207,6 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
 
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
-
         Map<String, String> templateContent = solicitorTemplateContent();
 
         citizenRequestForInformationResponsePartnerNotification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
@@ -246,7 +243,7 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getRequestForInformationTemplateVars());
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+        when(commonContent.getSmartSurveyWithDoNotReply(any())).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent();
 
@@ -270,8 +267,6 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
             .thenReturn(getMainTemplateVars());
 
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
-
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = solicitorTemplateContent();
 
@@ -297,7 +292,7 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getRequestForInformationTemplateVars());
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+        when(commonContent.getSmartSurveyWithDoNotReply(any())).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent();
 
@@ -325,8 +320,6 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
 
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
-
         Map<String, String> templateContent = solicitorTemplateContent();
 
         citizenRequestForInformationResponsePartnerNotification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
@@ -348,7 +341,7 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getRequestForInformationTemplateVars());
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+        when(commonContent.getSmartSurveyWithDoNotReply(any())).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent();
 
@@ -395,8 +388,6 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
 
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
-
         Map<String, String> templateContent = solicitorTemplateContent();
 
         citizenRequestForInformationResponsePartnerNotification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
@@ -440,7 +431,7 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getRequestForInformationTemplateVars());
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+        when(commonContent.getSmartSurveyWithDoNotReply(any())).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent();
 
@@ -480,8 +471,6 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
 
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
-
         Map<String, String> templateContent = solicitorTemplateContent();
 
         citizenRequestForInformationResponsePartnerNotification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
@@ -518,7 +507,7 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getRequestForInformationTemplateVars());
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+        when(commonContent.getSmartSurveyWithDoNotReply(any())).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent();
 
@@ -542,8 +531,6 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
             .thenReturn(getMainTemplateVars());
 
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
-
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = solicitorTemplateContent();
 
@@ -569,7 +556,7 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getRequestForInformationTemplateVars());
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+        when(commonContent.getSmartSurveyWithDoNotReply(any())).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent();
 
@@ -596,8 +583,6 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
             .thenReturn(getMainTemplateVars());
 
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID)).thenReturn(PROFESSIONAL_USERS_SIGN_IN_URL);
-
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = solicitorTemplateContent();
 
@@ -628,7 +613,6 @@ class CitizenRequestForInformationResponsePartnerNotificationTest {
         templateVars.put(SOLICITOR_REFERENCE, "not provided");
         templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         templateVars.put(SIGN_IN_URL, PROFESSIONAL_USERS_SIGN_IN_URL);
-        templateVars.put(SMART_SURVEY, SMART_SURVEY_TEST_URL);
 
         return templateVars;
     }

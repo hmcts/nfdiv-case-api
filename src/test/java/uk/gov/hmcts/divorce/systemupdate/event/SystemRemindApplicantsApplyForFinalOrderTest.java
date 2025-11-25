@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForFinalOrder.SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService.CASE_ALREADY_PROCESSED_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -45,6 +46,20 @@ class SystemRemindApplicantsApplyForFinalOrderTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(SYSTEM_REMIND_APPLICANTS_APPLY_FOR_FINAL_ORDER);
+    }
+
+    @Test
+    void shouldErrorWhenTheCaseHasAlreadyBeenProcessed() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+        caseData.getFinalOrder().setFinalOrderReminderSentApplicant1(YesOrNo.YES);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            systemRemindApplicantsApplyForFinalOrder.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).containsExactly(CASE_ALREADY_PROCESSED_ERROR);
     }
 
     @Test

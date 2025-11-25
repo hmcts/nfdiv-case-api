@@ -270,7 +270,7 @@ public class CaseworkerIssueApplicationIT {
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-A1-V3.docx");
         stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID,
-                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx");
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V13.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -534,7 +534,7 @@ public class CaseworkerIssueApplicationIT {
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1-V3.docx");
         stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID,
-                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx");
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V13.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
@@ -820,7 +820,7 @@ public class CaseworkerIssueApplicationIT {
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V4.docx");
         stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID,
-                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx");
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V13.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
 
@@ -915,7 +915,7 @@ public class CaseworkerIssueApplicationIT {
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V4.docx");
         stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID,
-                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx");
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V13.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
 
@@ -1821,7 +1821,7 @@ public class CaseworkerIssueApplicationIT {
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V4.docx");
         stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID,
-                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx");
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V13.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
         stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
 
@@ -1996,7 +1996,7 @@ public class CaseworkerIssueApplicationIT {
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "NFD_CP_Dummy_Template.docx");
         stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID,
-                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx");
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V13.docx");
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
@@ -2039,7 +2039,7 @@ public class CaseworkerIssueApplicationIT {
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1-V3.docx");
         stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID,
-                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx");
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V13.docx");
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
@@ -2125,7 +2125,7 @@ public class CaseworkerIssueApplicationIT {
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, "FL-NFD-GOR-ENG-Notice-Of-Proceedings-AS1-V3.docx");
         stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID,
-                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V12.docx");
+                "FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V13.docx");
         stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, "NFD_Applicant_Coversheet.docx");
         stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID);
 
