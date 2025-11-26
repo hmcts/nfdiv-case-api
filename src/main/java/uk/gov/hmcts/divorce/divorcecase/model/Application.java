@@ -574,13 +574,15 @@ public class Application {
 
     @CCD(
         label = "Application withdrawn by Applicant?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private YesOrNo confirmWithdrawApplication;
 
     @CCD(
         label = "Reason for withdrawing the application",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private String withdrawApplicationReason;
 
