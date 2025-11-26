@@ -21,7 +21,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED_BY_CW;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED_BY_CASEWORKER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
@@ -52,7 +52,7 @@ class ServiceApplicationRejectedNotificationTest {
 
         verify(notificationService).sendEmail(
             TEST_USER_EMAIL,
-            SERVICE_APPLICATION_REJECTED_BY_CW,
+            SERVICE_APPLICATION_REJECTED_BY_CASEWORKER,
             templateVars,
             ENGLISH,
             TEST_CASE_ID

@@ -79,8 +79,7 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
                 .build();
         }
 
-        if (caseData.getAlternativeService().getServiceApplicationSubmittedOnline() != null
-            && YesOrNo.YES.equals(caseData.getAlternativeService().getServiceApplicationSubmittedOnline())) {
+        if (YesOrNo.YES.equals(caseData.getAlternativeService().getServiceApplicationSubmittedOnline())) {
             notificationDispatcher.send(serviceApplicationRejectedNotification, caseData, details.getId());
         }
 

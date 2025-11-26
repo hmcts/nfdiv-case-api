@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED_BY_CW;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_REJECTED_BY_CASEWORKER;
 
 @Component
 @Slf4j
@@ -31,7 +31,7 @@ public class ServiceApplicationRejectedNotification implements ApplicantNotifica
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
-            SERVICE_APPLICATION_REJECTED_BY_CW,
+            SERVICE_APPLICATION_REJECTED_BY_CASEWORKER,
             templateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
             caseData.getApplicant1().getLanguagePreference(),
             caseId
