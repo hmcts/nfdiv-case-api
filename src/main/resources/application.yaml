@@ -526,6 +526,7 @@ docmosis:
       ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Alternative-Service-Application_V1.docx
       DISPENSE_WITH_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Dispense-With-Service-Application_V1.docx
       SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-ENG-Search-Government-Records-Application_V1.docx
+      BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-ENG-Bailiff-Service-Successful-Letter-V1.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V1.docx
@@ -623,6 +624,7 @@ docmosis:
       ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Alternative-Service-Application_V1.docx
       DISPENSE_WITH_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Dispense-With-Service-Application_V1.docx
       SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-WEL-Search-Government-Records-Application_V1.docx
+      BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-WEL-Bailiff-Service-Successful-Letter-V1.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}
