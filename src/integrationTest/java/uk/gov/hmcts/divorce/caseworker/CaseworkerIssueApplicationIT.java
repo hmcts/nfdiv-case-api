@@ -1627,6 +1627,7 @@ public class CaseworkerIssueApplicationIT {
         final CaseData caseData = invalidCaseData();
         caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
         caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.setApplicationType(SOLE_APPLICATION);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Divorce application");
