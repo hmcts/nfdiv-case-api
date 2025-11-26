@@ -24,6 +24,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLIC
 public class ApplicationWithdrawnNotification implements ApplicantNotification {
     private static final String IS_RESPONDENT = "isRespondent";
     private static final String RESPONDENT_PARTNER = "respondentPartner";
+    private static final String ADD_REFUND_TEXT = "addRefundText";
 
     private final CommonContent commonContent;
 
@@ -39,6 +40,8 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(IS_RESPONDENT, NO);
         templateVars.put(RESPONDENT_PARTNER, "");
+        templateVars.put(ADD_REFUND_TEXT, caseData.getApplication().getDateSubmitted() == null ? NO : YES);
+
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
@@ -58,6 +61,7 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
             log.info("Sending application withdrawn notification to applicant 2 for: {}", id);
             final Map<String, String> templateVars =
                 commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+            templateVars.put(ADD_REFUND_TEXT, NO);
 
             if (caseData.getApplicationType().isSole()) {
                 templateVars.put(IS_RESPONDENT, YES);

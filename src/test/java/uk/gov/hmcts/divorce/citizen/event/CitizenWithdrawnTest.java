@@ -18,6 +18,8 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenWithdrawn.CITIZEN_WITHDRAWN;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenWithdrawnTest {
@@ -41,10 +43,45 @@ class CitizenWithdrawnTest {
 
     @Test
     void shouldWithdrawCaseByDelegatingToWithdrawCaseService() {
-        final var caseDetails = new CaseDetails<CaseData, State>();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        CaseData data = validCaseDataForIssueApplication();
+        caseDetails.setData(data);
+        caseDetails.setState(State.Draft);
 
         citizenWithdrawn.aboutToSubmit(caseDetails, caseDetails);
 
         verify(withdrawCaseService).withdraw(caseDetails);
+    }
+
+    @Test
+    void shouldTransitionStateToWithdrawn() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        CaseData data = validCaseDataForIssueApplication();
+        data.getApplication().setDateSubmitted(null);
+        caseDetails.setData(data);
+        caseDetails.setState(State.Draft);
+
+        CaseData caseData = CaseData.builder().build();
+        caseData.getApplication().setDateSubmitted(null);
+
+        var response = citizenWithdrawn.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(State.Withdrawn);
+    }
+
+    @Test
+    void shouldTransitionStateToPendingRefund() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        CaseData data = validCaseDataForIssueApplication();
+        data.getApplication().setIssueDate(null);
+        caseDetails.setData(data);
+        caseDetails.setState(State.Submitted);
+
+        var response = citizenWithdrawn.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(State.PendingRefund);
     }
 }
