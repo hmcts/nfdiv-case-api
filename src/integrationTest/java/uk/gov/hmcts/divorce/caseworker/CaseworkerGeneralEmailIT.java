@@ -46,6 +46,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_COURT_EMAIL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
@@ -144,7 +146,7 @@ public class CaseworkerGeneralEmailIT {
             .andExpect(
                 status().isOk());
 
-        Map<String, String> templateVars = new HashMap<>();
+        Map<String, String> templateVars = defaultTemplateVars();
         templateVars.put(GENERAL_EMAIL_DETAILS, "Test Body");
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
@@ -194,7 +196,7 @@ public class CaseworkerGeneralEmailIT {
             .andExpect(
                 status().isOk());
 
-        Map<String, String> templateVars = new HashMap<>();
+        Map<String, String> templateVars = defaultTemplateVars();
         templateVars.put(GENERAL_EMAIL_DETAILS, "Test Body");
         templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
@@ -240,7 +242,7 @@ public class CaseworkerGeneralEmailIT {
             .andExpect(
                 status().isOk());
 
-        Map<String, String> templateVars = new HashMap<>();
+        Map<String, String> templateVars = defaultTemplateVars();
         templateVars.put(GENERAL_EMAIL_DETAILS, "Test Body");
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
@@ -291,7 +293,7 @@ public class CaseworkerGeneralEmailIT {
             .andExpect(
                 status().isOk());
 
-        Map<String, String> templateVars = new HashMap<>();
+        Map<String, String> templateVars = defaultTemplateVars();
         templateVars.put(GENERAL_EMAIL_DETAILS, "Test Body");
         templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
@@ -337,7 +339,7 @@ public class CaseworkerGeneralEmailIT {
             .andExpect(
                 status().isOk());
 
-        Map<String, String> templateVars = new HashMap<>();
+        Map<String, String> templateVars = defaultTemplateVars();
         templateVars.put(GENERAL_EMAIL_DETAILS, "Test Body");
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, "otherparty");
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
@@ -379,6 +381,13 @@ public class CaseworkerGeneralEmailIT {
         }
 
         return generalEmail;
+    }
+
+    Map<String, String> defaultTemplateVars() {
+        return new HashMap<>(Map.of(
+            IS_DIVORCE, CommonContent.YES,
+            IS_DISSOLUTION, CommonContent.NO
+        ));
     }
 
     Map<String, Object> populateAttachmentVars(Map<String, String> templateVars) {
