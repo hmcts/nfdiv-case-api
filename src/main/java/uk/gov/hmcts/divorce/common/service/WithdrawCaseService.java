@@ -36,11 +36,11 @@ public class WithdrawCaseService {
         cancelInvitationToApplicant2(caseData);
         removeSolicitorOrganisationPolicy(caseData.getApplicant1());
         removeSolicitorOrganisationPolicy(caseData.getApplicant2());
-        unlinkApplicantsFromCcdCase(details.getId());
+        unlinkPartiesFromCcdCase(details.getId());
 
         log.info("Case successfully withdrawn Case Id: {}", details.getId());
 
-        notifyApplicantsOfCaseWithdrawal(caseData, details);
+        notifyPartiesOfCaseWithdrawal(details);
     }
 
     private void cancelInvitationToApplicant2(final CaseData caseData) {
@@ -55,11 +55,11 @@ public class WithdrawCaseService {
         }
     }
 
-    private void unlinkApplicantsFromCcdCase(Long caseId) {
+    private void unlinkPartiesFromCcdCase(Long caseId) {
         ccdAccessService.removeUsersWithRole(caseId, List.of(CREATOR.getRole(), APPLICANT_2.getRole()));
     }
 
-    private void notifyApplicantsOfCaseWithdrawal(final CaseData data, final CaseDetails<CaseData, State> details) {
+    private void notifyPartiesOfCaseWithdrawal(final CaseDetails<CaseData, State> details) {
         notificationDispatcher.send(applicationWithdrawnNotification, details);
     }
 }
