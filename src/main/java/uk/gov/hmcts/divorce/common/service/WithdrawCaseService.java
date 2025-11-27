@@ -15,7 +15,9 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import java.util.List;
 import java.util.Objects;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 
 @Service
@@ -56,7 +58,10 @@ public class WithdrawCaseService {
     }
 
     private void unlinkPartiesFromCcdCase(Long caseId) {
-        ccdAccessService.removeUsersWithRole(caseId, List.of(CREATOR.getRole(), APPLICANT_2.getRole()));
+        ccdAccessService.removeUsersWithRole(caseId, List.of(
+            CREATOR.getRole(), APPLICANT_2.getRole(),
+            APPLICANT_1_SOLICITOR.getRole(), APPLICANT_2_SOLICITOR.getRole()
+        ));
     }
 
     private void notifyPartiesOfCaseWithdrawal(final CaseDetails<CaseData, State> details) {

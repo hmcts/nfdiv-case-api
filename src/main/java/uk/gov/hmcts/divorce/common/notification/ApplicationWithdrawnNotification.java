@@ -107,11 +107,11 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
         final long caseId = caseDetails.getId();
         final CaseData caseData = caseDetails.getData();
 
-        log.info("Sending application withdrawn notification to applicant 2 solicitor for case : {}", caseId);
-
         if (!shouldSendNotificationToApplicant2(caseData, caseDetails.getState())) {
             return;
         }
+
+        log.info("Sending application withdrawn notification to applicant 2 solicitor for case : {}", caseId);
 
         String solicitorEmail = caseData.getApplicant2().getSolicitor().getEmail();
         final Map<String, String> templateVars =
