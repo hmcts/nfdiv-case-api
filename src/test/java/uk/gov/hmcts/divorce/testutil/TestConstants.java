@@ -30,6 +30,7 @@ public final class TestConstants {
     public static final String TEST_APP2_MIDDLE_NAME = "test_app2_middle_name";
     public static final String TEST_APP2_LAST_NAME = "test_app2_last_name";
     public static final String TEST_REFERENCE = "test_ref";
+    public static final String TEST_VALIDATION_ERROR = "test_validation_error";
 
     public static final String APPLICANT_2_FIRST_NAME = "applicant_2_first_name";
     public static final String APPLICANT_2_LAST_NAME = "applicant_2last_name";
