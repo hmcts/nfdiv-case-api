@@ -47,12 +47,17 @@ public class SendSubmissionNotifications implements CaseTask {
             && isEmpty(application.getMissingDocumentTypes())) {
             log.info("Sending application submitted notifications for case : {}", caseId);
             notificationDispatcher.send(applicationSubmittedNotification, caseData, caseId);
+
+            return caseDetails;
         }
 
+        // We are working on this to be combined so that only one notification goes out with whatever is required
         if (NO.equals(application.getApplicant1KnowsApplicant2Address()) || NO.equals(application.getApplicant1FoundApplicant2Address())) {
             log.info("Sending further action needed notifications for case : {}", caseId);
             notificationDispatcher.send(furtherActionNeededNotification, caseData, caseId);
-        } else {
+        }
+
+        if (!isEmpty(caseData.getApplication().getApplicant1CannotUploadSupportingDocument())) {
             log.info("Sending outstanding action notification if awaiting documents for case : {}", caseId);
             notificationDispatcher.send(applicationOutstandingActionNotification, caseData, caseId);
         }
