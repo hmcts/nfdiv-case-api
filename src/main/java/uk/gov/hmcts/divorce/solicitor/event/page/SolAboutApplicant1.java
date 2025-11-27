@@ -37,7 +37,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
         """;
     public static final String IS_NAME_DIFFERENT_HINT = """
         If %s's name is different on the ${labelContentMarriageOrCivilPartnership} certificate, you will have to upload some
-        evidence like a government issued ID, a passport, driving licence or birth certificate, deed poll.
+        evidence like a government issued ID, a passport, driving licence, birth certificate, or deed poll.
         """;
 
     public static final String HOW_NAME_WRITTEN_ON_CERTIFICATE_LABEL = """
@@ -51,7 +51,7 @@ public class SolAboutApplicant1 implements CcdPageConfiguration {
         You must explain the reason for the difference, for example, they changed their name or part of their name was not included on the
         ${labelContentMarriageOrCivilPartnership} certificate. If you are unable to explain the difference by providing evidence, it may
         take longer to process the application. If you indicate the reason for the difference, you will have to upload some evidence like a
-        government issued ID, a passport, driving licence or birth certificate, deed poll.
+        government issued ID, a passport, driving licence, birth certificate, or deed poll.
         """;
     public static final String WHY_NAME_DIFFERENT_DETAILS_LABEL = """
         If you selected ‘Other’, please provide details explaining why their name is different on the

@@ -22,7 +22,7 @@ public class UploadDocument implements CcdPageConfiguration {
                     + "If you have indicated that there is a difference in ${labelContentTheApplicantOrApplicant1}'s or"
                     + " ${labelContentTheApplicant2}'s names and how it is written on the ${labelContentMarriageOrCivilPartnership}"
                     + " certificate then upload some evidence like a government issued ID, a passport,"
-                    + " driving licence or birth certificate, deed poll.\n\n"
+                    + " driving licence, birth certificate, or deed poll.\n\n"
                     + "Make sure the image you upload shows the entire document and all the text is legible.")
             .complex(CaseData::getDocuments)
                 .optional(CaseDocuments::getApplicant1DocumentsUploaded)
