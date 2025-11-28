@@ -71,7 +71,7 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
                 );
             } else {
                 templateVars.put(IS_RESPONDENT, NO);
-                templateVars.put(IS_PENDING_REFUND, YES);
+                templateVars.put(IS_PENDING_REFUND, caseData.getApplication().getDateSubmitted() == null ? NO : YES);
                 templateVars.put(RESPONDENT_PARTNER, "");
             }
 
