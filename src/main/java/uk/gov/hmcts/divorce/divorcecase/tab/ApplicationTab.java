@@ -18,11 +18,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.notShowForState;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.APP1_HAS_CHANGED_NAME_IN_OTHER_WAY;
-import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.APP1_HAS_CHANGED_PARTS_OF_NAME;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.APP1_NAME_IS_DIFFERENT;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.APP1_NAME_IS_DIFFERENT_FOR_OTHER_REASON;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant2.APP2_HAS_CHANGED_NAME_IN_OTHER_WAY;
-import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant2.APP2_HAS_CHANGED_PARTS_OF_NAME;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant2.APP2_NAME_IS_DIFFERENT;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant2.APP2_NAME_IS_DIFFERENT_FOR_OTHER_REASON;
 
@@ -39,6 +37,10 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
         + "applicant2AddressOverseas=\"Yes\"";
     private static final String APPLICANT_2_REPRESENTED_OVERSEAS = "applicant2SolicitorRepresented=\"Yes\" AND "
         + "applicant2SolicitorAddressOverseas=\"Yes\"";
+    public static final String APP1_NAME_CHANGE_EXPLANATION_REQUIRED =
+        "applicant1WhyNameDifferentCONTAINS\"changedPartsOfName\" OR applicant1WhyNameDifferent!=\"*\"";
+    public static final String APP2_NAME_CHANGE_EXPLANATION_REQUIRED =
+        "applicant2WhyNameDifferentCONTAINS\"changedPartsOfName\" OR applicant2WhyNameDifferent!=\"*\"";
     private static final String NEVER_SHOW = "applicationType=\"NEVER_SHOW\"";
     private static final String JOINT_APPLICATION = "applicationType=\"jointApplication\"";
     private static final String SOLE_APPLICATION = "applicationType=\"soleApplication\"";
@@ -226,11 +228,11 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant1NameDifferentToMarriageCertificate")
             .field(
                 "applicant1NameDifferentToMarriageCertificateMethod",
-                andShowCondition(APP1_NAME_IS_DIFFERENT, APP1_HAS_CHANGED_PARTS_OF_NAME)
+                andShowCondition(APP1_NAME_IS_DIFFERENT, APP1_NAME_CHANGE_EXPLANATION_REQUIRED)
             )
             .field(
                 "applicant1NameDifferentToMarriageCertificateOtherDetails",
-                andShowCondition(APP1_NAME_IS_DIFFERENT, APP1_HAS_CHANGED_PARTS_OF_NAME, APP1_HAS_CHANGED_NAME_IN_OTHER_WAY)
+                andShowCondition(APP1_NAME_IS_DIFFERENT, APP1_NAME_CHANGE_EXPLANATION_REQUIRED, APP1_HAS_CHANGED_NAME_IN_OTHER_WAY)
             )
             .field("applicant1WhyNameDifferent", APP1_NAME_IS_DIFFERENT)
             .field(
@@ -307,11 +309,11 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2NameDifferentToMarriageCertificate")
             .field(
                 "applicant2NameDifferentToMarriageCertificateMethod",
-                andShowCondition(APP2_NAME_IS_DIFFERENT, APP2_HAS_CHANGED_PARTS_OF_NAME)
+                andShowCondition(APP2_NAME_IS_DIFFERENT, APP2_NAME_CHANGE_EXPLANATION_REQUIRED)
             )
             .field(
                 "applicant2NameDifferentToMarriageCertificateOtherDetails",
-                andShowCondition(APP2_NAME_IS_DIFFERENT, APP2_HAS_CHANGED_PARTS_OF_NAME, APP2_HAS_CHANGED_NAME_IN_OTHER_WAY)
+                andShowCondition(APP2_NAME_IS_DIFFERENT, APP2_NAME_CHANGE_EXPLANATION_REQUIRED, APP2_HAS_CHANGED_NAME_IN_OTHER_WAY)
             )
             .field("applicant2WhyNameDifferent", APP2_NAME_IS_DIFFERENT)
             .field(
