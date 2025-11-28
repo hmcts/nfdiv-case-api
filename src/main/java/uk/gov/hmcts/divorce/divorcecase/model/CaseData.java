@@ -78,6 +78,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.WhoDivorcing.WIFE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.REQUEST_FOR_INFORMATION_RESPONSE_DOC;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
@@ -638,6 +639,15 @@ public class CaseData {
             documentType,
             clock
         );
+
+        boolean documentHasBeenReclassified = documents.documentPresentInList(
+            documents.getDocumentsUploaded(),
+            divorceDocument
+        );
+
+        if (documentHasBeenReclassified && RESPONDENT_ANSWERS.equals(documentType)) {
+            return;
+        }
 
         List<ListValue<DivorceDocument>> updatedDocumentsUploaded = addDocumentToTop(
             documents.getDocumentsUploaded(),
