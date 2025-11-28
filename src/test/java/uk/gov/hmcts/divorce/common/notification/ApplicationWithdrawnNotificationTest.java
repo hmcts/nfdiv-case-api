@@ -247,7 +247,7 @@ class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_RESPONDENT, NO),
-                hasEntry(IS_PENDING_REFUND, NO),
+                hasEntry(IS_PENDING_REFUND, YES),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
             eq(ENGLISH),
@@ -280,7 +280,7 @@ class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(IS_RESPONDENT, NO),
-                hasEntry(IS_PENDING_REFUND, NO),
+                hasEntry(IS_PENDING_REFUND, YES),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
             eq(ENGLISH),

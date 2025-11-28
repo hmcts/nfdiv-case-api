@@ -13,6 +13,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenWithdrawn.CITIZEN_WITHDRAWN;
@@ -83,5 +85,19 @@ class CitizenWithdrawnTest {
         var response = citizenWithdrawn.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(State.PendingRefund);
+    }
+
+    @Test
+    void shouldReturnErrorWhenCaseCannotBeWithdrawnBecauseItHasBeenIssued() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        CaseData data = validCaseDataForIssueApplication();
+        data.getApplication().setIssueDate(LocalDate.now());
+        caseDetails.setData(data);
+        caseDetails.setState(State.AwaitingService);
+
+        var response = citizenWithdrawn.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors().size()).isEqualTo(1);
     }
 }

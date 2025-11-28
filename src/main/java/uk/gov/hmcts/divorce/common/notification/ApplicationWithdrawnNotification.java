@@ -61,16 +61,17 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
             log.info("Sending application withdrawn notification to applicant 2 for: {}", id);
             final Map<String, String> templateVars =
                 commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-            templateVars.put(IS_PENDING_REFUND, NO);
 
             if (caseData.getApplicationType().isSole()) {
                 templateVars.put(IS_RESPONDENT, YES);
+                templateVars.put(IS_PENDING_REFUND, NO);
                 templateVars.put(
                     RESPONDENT_PARTNER,
                     commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
                 );
             } else {
                 templateVars.put(IS_RESPONDENT, NO);
+                templateVars.put(IS_PENDING_REFUND, YES);
                 templateVars.put(RESPONDENT_PARTNER, "");
             }
 
