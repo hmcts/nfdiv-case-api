@@ -22,7 +22,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
-import uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdCreateService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -31,7 +30,6 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,8 +47,6 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
-import static uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService.ERROR_ALREADY_LINKED_TO_BULK_CASE;
-import static uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService.ERROR_NOT_AWAITING_PRONOUNCEMENT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 
@@ -70,9 +66,6 @@ class SystemCreateBulkCaseListTaskTest {
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
-
-    @Mock
-    private BulkCaseValidationService bulkCaseValidationService;
 
     @Mock
     private FailedBulkCaseRemover failedBulkCaseRemover;
@@ -289,12 +282,6 @@ class SystemCreateBulkCaseListTaskTest {
         when(ccdCreateService.createBulkCase(bulkActionCaseDetails, user, TEST_SERVICE_AUTH_TOKEN))
             .thenReturn(createdCaseDetails);
 
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails1)).thenReturn(Collections.emptyList());
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails2)).thenReturn(
-            List.of(String.format(ERROR_ALREADY_LINKED_TO_BULK_CASE, 2L, BULK_CASE_REFERENCE))
-        );
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails3)).thenReturn(Collections.emptyList());
-
         when(bulkCaseCaseTaskFactory.getCaseTask(createdCaseDetails, SYSTEM_LINK_WITH_BULK_CASE)).thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
@@ -355,12 +342,6 @@ class SystemCreateBulkCaseListTaskTest {
 
         when(ccdCreateService.createBulkCase(bulkActionCaseDetails, user, TEST_SERVICE_AUTH_TOKEN))
             .thenReturn(createdCaseDetails);
-
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails1)).thenReturn(Collections.emptyList());
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails2)).thenReturn(
-            List.of(String.format(ERROR_NOT_AWAITING_PRONOUNCEMENT, 2L))
-        );
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails3)).thenReturn(Collections.emptyList());
 
         when(bulkCaseCaseTaskFactory.getCaseTask(createdCaseDetails, SYSTEM_LINK_WITH_BULK_CASE)).thenReturn(caseTask);
 
@@ -445,17 +426,6 @@ class SystemCreateBulkCaseListTaskTest {
 
         when(ccdCreateService.createBulkCase(bulkActionCaseDetails2, user, TEST_SERVICE_AUTH_TOKEN))
             .thenReturn(createdCaseDetails2);
-
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails1)).thenReturn(Collections.emptyList());
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails2)).thenReturn(
-            List.of(String.format(ERROR_ALREADY_LINKED_TO_BULK_CASE, 2L, BULK_CASE_REFERENCE))
-        );
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails3)).thenReturn(Collections.emptyList());
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails4)).thenReturn(Collections.emptyList());
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails5)).thenReturn(Collections.emptyList());
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails6)).thenReturn(
-            List.of(String.format(ERROR_ALREADY_LINKED_TO_BULK_CASE, 6L, BULK_CASE_REFERENCE))
-        );
 
         when(bulkCaseCaseTaskFactory.getCaseTask(createdCaseDetails1, SYSTEM_LINK_WITH_BULK_CASE)).thenReturn(caseTask1);
         when(bulkCaseCaseTaskFactory.getCaseTask(createdCaseDetails2, SYSTEM_LINK_WITH_BULK_CASE)).thenReturn(caseTask2);
@@ -557,17 +527,6 @@ class SystemCreateBulkCaseListTaskTest {
         when(ccdCreateService.createBulkCase(bulkActionCaseDetails2, user, TEST_SERVICE_AUTH_TOKEN))
             .thenReturn(createdCaseDetails2);
 
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails1)).thenReturn(Collections.emptyList());
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails2)).thenReturn(
-            List.of(String.format(ERROR_NOT_AWAITING_PRONOUNCEMENT, 2L))
-        );
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails3)).thenReturn(Collections.emptyList());
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails4)).thenReturn(Collections.emptyList());
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails5)).thenReturn(Collections.emptyList());
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails6)).thenReturn(
-            List.of(String.format(ERROR_NOT_AWAITING_PRONOUNCEMENT, 6L))
-        );
-
         when(bulkCaseCaseTaskFactory.getCaseTask(createdCaseDetails1, SYSTEM_LINK_WITH_BULK_CASE)).thenReturn(caseTask1);
         when(bulkCaseCaseTaskFactory.getCaseTask(createdCaseDetails2, SYSTEM_LINK_WITH_BULK_CASE)).thenReturn(caseTask2);
 
@@ -647,15 +606,6 @@ class SystemCreateBulkCaseListTaskTest {
         when(ccdCreateService.createBulkCase(bulkActionCaseDetails, user, TEST_SERVICE_AUTH_TOKEN))
             .thenReturn(createdCaseDetails);
 
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails1)).thenReturn(
-            List.of(String.format(ERROR_ALREADY_LINKED_TO_BULK_CASE, 1L, BULK_CASE_REFERENCE))
-        );
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails2)).thenReturn(
-            List.of(String.format(ERROR_ALREADY_LINKED_TO_BULK_CASE, 2L, BULK_CASE_REFERENCE))
-        );
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails3)).thenReturn(Collections.emptyList());
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails4)).thenReturn(Collections.emptyList());
-
         when(bulkCaseCaseTaskFactory.getCaseTask(createdCaseDetails, SYSTEM_LINK_WITH_BULK_CASE)).thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
@@ -719,15 +669,6 @@ class SystemCreateBulkCaseListTaskTest {
         when(ccdCreateService.createBulkCase(bulkActionCaseDetails, user, TEST_SERVICE_AUTH_TOKEN))
             .thenReturn(createdCaseDetails);
 
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails1)).thenReturn(
-            List.of(String.format(ERROR_NOT_AWAITING_PRONOUNCEMENT, 1L))
-        );
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails2)).thenReturn(
-            List.of(String.format(ERROR_NOT_AWAITING_PRONOUNCEMENT, 2L))
-        );
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails3)).thenReturn(Collections.emptyList());
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails4)).thenReturn(Collections.emptyList());
-
         when(bulkCaseCaseTaskFactory.getCaseTask(createdCaseDetails, SYSTEM_LINK_WITH_BULK_CASE)).thenReturn(caseTask);
 
         when(bulkTriggerService.bulkTrigger(
@@ -787,11 +728,6 @@ class SystemCreateBulkCaseListTaskTest {
         when(ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, TEST_SERVICE_AUTH_TOKEN))
             .thenReturn(searchResults);
 
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails1)).thenReturn(Collections.emptyList());
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails2)).thenReturn(
-            List.of(String.format(ERROR_ALREADY_LINKED_TO_BULK_CASE, 2L, BULK_CASE_REFERENCE))
-        );
-
         systemCreateBulkCaseListTask.run();
 
         verify(ccdSearchService).searchAwaitingPronouncementCasesAllPages(user, TEST_SERVICE_AUTH_TOKEN);
@@ -814,11 +750,6 @@ class SystemCreateBulkCaseListTaskTest {
         when(ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, TEST_SERVICE_AUTH_TOKEN))
             .thenReturn(searchResults);
 
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails1)).thenReturn(Collections.emptyList());
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails2)).thenReturn(
-            List.of(String.format(ERROR_NOT_AWAITING_PRONOUNCEMENT, 2L))
-        );
-
         systemCreateBulkCaseListTask.run();
 
         verify(ccdSearchService).searchAwaitingPronouncementCasesAllPages(user, TEST_SERVICE_AUTH_TOKEN);
@@ -840,13 +771,6 @@ class SystemCreateBulkCaseListTaskTest {
 
         when(ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, TEST_SERVICE_AUTH_TOKEN))
             .thenReturn(searchResults);
-
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails1)).thenReturn(
-            List.of(String.format(ERROR_NOT_AWAITING_PRONOUNCEMENT, 1L))
-        );
-        when(bulkCaseValidationService.validateCaseForListing(caseDetails2)).thenReturn(
-            List.of(String.format(ERROR_ALREADY_LINKED_TO_BULK_CASE, 2L, BULK_CASE_REFERENCE))
-        );
 
         systemCreateBulkCaseListTask.run();
 
