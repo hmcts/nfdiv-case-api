@@ -270,6 +270,14 @@ public final class ValidationUtil {
         }
     }
 
+    public static List<String> validateAosSubmitted(CaseData caseData) {
+        if (caseData.getAcknowledgementOfService() != null
+            && caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
+            return singletonList("Partner has responded to application.");
+        }
+        return emptyList();
+    }
+
     public static List<String> validateBulkListErroredCases(CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails) {
 
         var erroredCaseDetails = bulkCaseDetails.getData().getErroredCaseDetails();

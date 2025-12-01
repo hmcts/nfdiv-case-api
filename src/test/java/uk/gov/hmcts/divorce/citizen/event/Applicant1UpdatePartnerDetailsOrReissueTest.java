@@ -31,6 +31,7 @@ import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -125,6 +126,29 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
                 applicant1UpdatePartnerDetailsOrReissue.aboutToStart(caseDetails);
 
             assertThat(response.getErrors()).isNull();
+        }
+    }
+
+    @Test
+    void shouldRejectTheUpdateIfAosSubmittedByPartner() {
+        final CaseData caseData = validCaseDataForReIssueApplication();
+
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(
+            LocalDateTime.of(2021, 10, 26, 10, 0, 0));
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(12345L);
+        caseDetails.setData(caseData);
+
+        try (MockedStatic<ApplicationValidation> classMock = Mockito.mockStatic(ApplicationValidation.class)) {
+            classMock.when(() -> ApplicationValidation.validateServiceDate(caseData, REISSUE_OFFSET_DAYS))
+                .thenReturn(Collections.emptyList());
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                applicant1UpdatePartnerDetailsOrReissue.aboutToStart(caseDetails);
+
+            assertThat(response.getErrors()).hasSize(1);
+            assertThat(response.getErrors()).contains("Partner has responded to application.");
         }
     }
 

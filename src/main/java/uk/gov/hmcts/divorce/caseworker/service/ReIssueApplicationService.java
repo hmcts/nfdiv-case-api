@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifica
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
+import uk.gov.hmcts.divorce.caseworker.service.task.ValidateIssue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.JudicialSeparationReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
@@ -60,6 +61,8 @@ public class ReIssueApplicationService {
 
     private final GenerateD84Form generateD84Form;
 
+    private final ValidateIssue validateIssue;
+
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
 
         CaseData caseData = caseDetails.getData();
@@ -93,6 +96,7 @@ public class ReIssueApplicationService {
             caseDetails.getData().getApplicant2().setOffline(NO);
 
             return caseTasks(
+                validateIssue,
                 setPostIssueState,
                 setReIssueAndDueDate,
                 generateApplicant1NoticeOfProceeding,
@@ -106,6 +110,7 @@ public class ReIssueApplicationService {
             caseDetails.getData().getApplicant2().setOffline(YES);
 
             return caseTasks(
+                validateIssue,
                 setPostIssueState,
                 setReIssueAndDueDate,
                 setNoticeOfProceedingDetailsForRespondent,
@@ -119,6 +124,7 @@ public class ReIssueApplicationService {
         } else if (REISSUE_CASE.equals(reissueOption)) {
             log.info("For case id {} processing complete reissue ", caseDetails.getId());
             return caseTasks(
+                validateIssue,
                 setPostIssueState,
                 setReIssueAndDueDate,
                 setNoticeOfProceedingDetailsForRespondent,

@@ -30,6 +30,7 @@ import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -94,6 +95,36 @@ class CitizenGeneralApplicationTest {
         );
 
         assertThat(response.getErrors()).isEqualTo(Collections.singletonList(AWAITING_PAYMENT_ERROR));
+    }
+
+    @Test
+    void givenAosIsSubmittedThenRejectGeneralApplicationDWPSubmission() {
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder().build()
+            ).build();
+        InterimApplicationOptions applicationOptions = InterimApplicationOptions.builder()
+            .interimAppsUseHelpWithFees(YesOrNo.YES)
+            .interimAppsCannotUploadDocs(YesOrNo.NO)
+            .interimApplicationType(InterimApplicationType.SEARCH_GOV_RECORDS)
+            .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
+            .build();
+        caseData.getApplicant1().setInterimApplicationOptions(applicationOptions);
+
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(
+            LocalDateTime.of(2021, 10, 26, 10, 0, 0));
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(AUTHORIZATION);
+        when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplication.aboutToSubmit(
+            caseDetails, caseDetails
+        );
+
+        assertThat(response.getErrors()).isEqualTo(Collections.singletonList("Partner has responded to application."));
     }
 
     @Test
