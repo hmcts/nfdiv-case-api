@@ -40,7 +40,7 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(IS_RESPONDENT, NO);
         templateVars.put(RESPONDENT_PARTNER, "");
-        templateVars.put(IS_PENDING_REFUND, caseData.getApplication().getDateSubmitted() == null ? NO : YES);
+        templateVars.put(IS_PENDING_REFUND, shouldAddRefundText(caseData, true) ? YES : NO);
 
 
         notificationService.sendEmail(
@@ -61,17 +61,16 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
             log.info("Sending application withdrawn notification to applicant 2 for: {}", id);
             final Map<String, String> templateVars =
                 commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+            templateVars.put(IS_PENDING_REFUND, shouldAddRefundText(caseData, false) ? YES : NO);
 
             if (caseData.getApplicationType().isSole()) {
                 templateVars.put(IS_RESPONDENT, YES);
-                templateVars.put(IS_PENDING_REFUND, NO);
                 templateVars.put(
                     RESPONDENT_PARTNER,
                     commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant2().getLanguagePreference())
                 );
             } else {
                 templateVars.put(IS_RESPONDENT, NO);
-                templateVars.put(IS_PENDING_REFUND, caseData.getApplication().getDateSubmitted() == null ? NO : YES);
                 templateVars.put(RESPONDENT_PARTNER, "");
             }
 
@@ -96,5 +95,18 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
 
     private boolean soleRespondentInvited(final CaseData caseData) {
         return caseData.getApplicationType().isSole() && !isNull(caseData.getApplication().getIssueDate());
+    }
+
+    private boolean shouldAddRefundText (CaseData caseData, boolean isApplicant1) {
+        boolean isCaseSubmittedButNotIssued = caseData.getApplication().getDateSubmitted() != null
+            && caseData.getApplication().getIssueDate() == null;
+        if (isApplicant1 && isCaseSubmittedButNotIssued) {
+            return true;
+        }
+
+        if (!isApplicant1 && !caseData.getApplicationType().isSole() && isCaseSubmittedButNotIssued) {
+            return true;
+        }
+        return false;
     }
 }

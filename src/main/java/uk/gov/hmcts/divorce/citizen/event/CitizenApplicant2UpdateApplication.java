@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
@@ -50,7 +51,7 @@ public class CitizenApplicant2UpdateApplication implements CCDConfig<CaseData, S
                 ConditionalOrderDrafted, ConditionalOrderPending, AwaitingClarification, AwaitingService,
                 AwaitingFinalOrder, AwaitingFinalOrderPayment, AwaitingJointFinalOrder, OfflineDocumentReceived,
                 AwaitingRequestedInformation, InformationRequested, RequestedInformationSubmitted, Submitted,
-                AwaitingHWFDecision, AwaitingHWFEvidence, AwaitingHWFPartPayment))
+                AwaitingHWFDecision, AwaitingHWFEvidence, AwaitingHWFPartPayment, AwaitingResponseToHWFDecision))
             .name("Patch a joint case")
             .showCondition(NEVER_SHOW)
             .description("Patch a joint divorce or dissolution as applicant 2")
