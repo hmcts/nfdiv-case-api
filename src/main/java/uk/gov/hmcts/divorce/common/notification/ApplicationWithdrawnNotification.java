@@ -97,7 +97,7 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
         return caseData.getApplicationType().isSole() && !isNull(caseData.getApplication().getIssueDate());
     }
 
-    private boolean shouldAddRefundText (CaseData caseData, boolean isApplicant1) {
+    private boolean shouldAddRefundText(CaseData caseData, boolean isApplicant1) {
         boolean isCaseSubmittedButNotIssued = caseData.getApplication().getDateSubmitted() != null
             && caseData.getApplication().getIssueDate() == null;
         if (isApplicant1 && isCaseSubmittedButNotIssued) {
