@@ -25,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHWF
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -50,7 +51,7 @@ public class CitizenWithdrawn implements CCDConfig<CaseData, State, UserRole> {
             .description("Citizen Withdraw")
             .showEventNotes()
             .showCondition(NEVER_SHOW)
-            .grant(CREATE_READ_UPDATE, CREATOR)
+            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2)
             .grantHistoryOnly(
                 CASE_WORKER,
                 SOLICITOR,
@@ -84,14 +85,11 @@ public class CitizenWithdrawn implements CCDConfig<CaseData, State, UserRole> {
     }
 
     private boolean canApplicationBeWithdrawn(State state, CaseData data) {
-        return EnumSet.of(
-                Draft,
-                AwaitingApplicant1Response,
-                AwaitingApplicant2Response,
-                Applicant2Approved,
-                AwaitingPayment,
-                AwaitingResponseToHWFDecision
-            ).contains(state)
-            ||  (data.getApplicationType().isSole() && data.getApplication().getIssueDate() == null);
+        boolean isAllowedPreSubmissionState = EnumSet.of(Draft, AwaitingApplicant1Response, AwaitingApplicant2Response, Applicant2Approved,
+            AwaitingPayment, AwaitingResponseToHWFDecision).contains(state);
+        boolean isApplicationSubmittedButNotIssued = data.getApplication().getDateSubmitted() != null
+            && data.getApplication().getIssueDate() == null;;
+
+        return isAllowedPreSubmissionState || isApplicationSubmittedButNotIssued;
     }
 }
