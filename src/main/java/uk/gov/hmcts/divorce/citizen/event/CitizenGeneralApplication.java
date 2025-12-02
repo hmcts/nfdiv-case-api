@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
@@ -30,6 +31,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -37,12 +39,14 @@ import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateAosSubmitted;
 
 @Component
 @Slf4j
@@ -96,6 +100,17 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         }
 
         InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
+
+        if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(userOptions.getInterimApplicationType().getGeneralApplicationType())) {
+            List<String> errors = validateAosSubmitted(data);
+            if (!errors.isEmpty()) {
+                log.info("{} failed since partner has already responded for {} ", CITIZEN_GENERAL_APPLICATION, caseId);
+                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .errors(errors)
+                    .build();
+            }
+        }
+
         GeneralApplication newGeneralApplication = buildGeneralApplication(userOptions, isApplicant1);
 
         FeeDetails applicationFee = newGeneralApplication.getGeneralApplicationFee();
@@ -111,6 +126,13 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
             applicationFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
 
             details.setState(GeneralApplicationReceived);
+
+            if (data.isWelshApplication()) {
+                data.getApplication().setWelshPreviousState(details.getState());
+                details.setState(WelshTranslationReview);
+                log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
+                    data.getApplication().getWelshPreviousState(), details.getId());
+            }
         }
 
         DivorceDocument applicationDocument = interimApplicationSubmissionService

@@ -9,13 +9,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import java.util.EnumSet;
-
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGenAppHWFEvidence;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGenAppHWFPartPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJudgeClarification;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingServiceAppResponse;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -25,19 +20,18 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
-public class CaseworkerAwaitingJudgeClarification implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerAwaitingServiceApplicationClarification implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_AWAITING_JUDGE_CLARIFICATION = "caseworker-awaiting-judge-clarification";
+    public static final String CASEWORKER_AWAITING_SERVICE_APP_CLARIFICATION = "pending-service-app-response";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_AWAITING_JUDGE_CLARIFICATION)
-            .forStateTransition(EnumSet.of(GeneralConsiderationComplete, AwaitingGeneralReferralPayment, AwaitingGenAppHWFPartPayment,
-                AwaitingGenAppHWFEvidence), AwaitingJudgeClarification)
+            .event(CASEWORKER_AWAITING_SERVICE_APP_CLARIFICATION)
+            .forStateTransition(ServiceAdminRefusal, PendingServiceAppResponse)
             .showEventNotes()
-            .name("Awaiting judge clarification")
-            .description("Awaiting judge clarification")
+            .name("Pending service app response")
+            .description("Pending service app response")
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, JUDGE));
     }
