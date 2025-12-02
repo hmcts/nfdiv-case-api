@@ -70,15 +70,5 @@
     }
   ],
   "generalLetterParties": "applicant",
-  "generalLetterDetails": "some details",
-  "generalLetterAttachments" : [ {
-    "id" : "8c1a4b5e-8a05-41d8-b55d-d0e190356437",
-    "value" : {
-      "documentLink" : {
-        "document_url" : "http://dm-store-aat.service.core-compute-aat.internal/documents/cf959e3e-2414-42ab-b5a4-79e7add7a7a4",
-        "document_filename" : "4ab5c253-44a4-4061-ab64-e58cdeae1ddd.pdf",
-        "document_binary_url" : "http://dm-store-aat.service.core-compute-aat.internal/documents/cf959e3e-2414-42ab-b5a4-79e7add7a7a4/binary"
-      }
-    }
-  } ]
+  "generalLetterDetails": "some details"
 }
