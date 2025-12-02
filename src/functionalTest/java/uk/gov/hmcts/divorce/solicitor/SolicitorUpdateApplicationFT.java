@@ -31,6 +31,10 @@ import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_1_ADDRESS_LINE_1;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_ADDRESS_LINE_1;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_OTHER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_OTHER_PHONE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_PHONE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationContactInformation;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
@@ -65,6 +69,10 @@ public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
             "applicant2NonConfidentialAddress",
             AddressGlobalUK.builder().addressLine1(TEST_APPLICANT_2_ADDRESS_LINE_1).build()
         );
+        caseData.put("applicant1NonConfidentialEmail", TEST_USER_EMAIL);
+        caseData.put("applicant2NonConfidentialEmail", TEST_OTHER_EMAIL);
+        caseData.put("applicant1NonConfidentialPhone", TEST_USER_PHONE);
+        caseData.put("applicant2NonConfidentialPhone", TEST_OTHER_PHONE);
 
         final ListValue<DivorceDocument> miniApplicationListValue = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()

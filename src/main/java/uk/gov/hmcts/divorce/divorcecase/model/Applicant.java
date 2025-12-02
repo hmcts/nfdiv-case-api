@@ -69,7 +69,9 @@ public class Applicant {
 
     @CCD(
         label = "Email address",
-        typeOverride = Email
+        typeOverride = Email,
+        access = {DefaultAccessExcludingSolicitor.class, CitizenAccess.class},
+        inheritAccessFromParent = false
     )
     private String email;
 
@@ -154,21 +156,37 @@ public class Applicant {
     )
     private AddressGlobalUK address;
 
-    /* Second address field to allow solicitors to enter applicant addresses when creating applications
-     * and view non-confidential addresses for solicitor service. We do not give solicitors read access to the
-     * primary "address" field as it can contain a confidential address. */
+    /* Non confidential contact detail fields to allow solicitors to enter applicant details when creating applications
+     * and view non-confidential details for solicitor service. We do not give solicitors read access to the
+     * primary contact details fields as they can contain confidential information. */
     @CCD(
         label = "Non-Confidential Address",
         searchable = false
     )
     private AddressGlobalUK nonConfidentialAddress;
 
+    @CCD(
+        label = "Non-Confidential Phone number",
+        regex = "^[0-9 +().-]{9,}$",
+        searchable = false
+    )
+    private String nonConfidentialPhone;
+
+    @CCD(
+        label = "Non-Confidential Email address",
+        typeOverride = Email,
+        searchable = false
+    )
+    private String nonConfidentialEmail;
+
     @CCD(label = "Is this an international address?")
     private YesOrNo addressOverseas;
 
     @CCD(
         label = "Phone number",
-        regex = "^[0-9 +().-]{9,}$"
+        regex = "^[0-9 +().-]{9,}$",
+        access = {DefaultAccessExcludingSolicitor.class, CitizenAccess.class},
+        inheritAccessFromParent = false
     )
     private String phoneNumber;
 
