@@ -149,7 +149,9 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
         serviceApplication.setServiceApplicationDecisionDate(LocalDate.now(clock));
 
         final boolean caseHasBeenIssued = application.getIssueDate() != null;
-        final AlternativeServiceType serviceType = details.getData().getAlternativeService().getAlternativeServiceType();
+        final AlternativeServiceType serviceType = serviceApplication.getAlternativeServiceType();
+        final boolean isAdminRefusal = serviceApplication.getRefusalReason() != null
+            && ADMIN_REFUSAL_REASONS.contains(serviceApplication.getRefusalReason());
 
         if (serviceApplication.isApplicationGranted()) {
             log.info("Service application granted for case id {}", details.getId());
@@ -163,7 +165,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     DISPENSED_AS_SERVICE_GRANTED,
                     DISPENSE_WITH_SERVICE_GRANTED,
                     SERVICE_ORDER_TEMPLATE_ID);
-            } else if (DEEMED.equals(serviceApplication.getAlternativeServiceType())) {
+            } else if (DEEMED.equals(serviceType)) {
                 generateAndSetOrderDocumentForServiceApplication(
                     caseDataCopy,
                     details.getId(),
@@ -172,23 +174,25 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     SERVICE_ORDER_TEMPLATE_ID);
             }
         } else {
-            endState = serviceRefusedEndState(caseHasBeenIssued, serviceType);
+            endState = serviceRefusedEndState(caseHasBeenIssued, serviceType, isAdminRefusal);
 
-            if (DISPENSED.equals(serviceType) && caseHasBeenIssued) {
+            boolean orderShouldBeGenerated = caseHasBeenIssued && !isAdminRefusal;
+
+            if (DISPENSED.equals(serviceType) && orderShouldBeGenerated) {
                 generateAndSetOrderDocumentForServiceApplication(
                     caseDataCopy,
                     details.getId(),
                     DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME,
                     DISPENSE_WITH_SERVICE_REFUSED,
                     SERVICE_REFUSAL_TEMPLATE_ID);
-            } else if (DEEMED.equals(serviceType)) {
+            } else if (DEEMED.equals(serviceType) && orderShouldBeGenerated) {
                 generateAndSetOrderDocumentForServiceApplication(
                     caseDataCopy,
                     details.getId(),
                     DEEMED_SERVICE_REFUSED_FILE_NAME,
                     DEEMED_SERVICE_REFUSED,
                     SERVICE_REFUSAL_TEMPLATE_ID);
-            } else if (ALTERNATIVE_SERVICE.equals(serviceType) && caseHasBeenIssued) {
+            } else if (ALTERNATIVE_SERVICE.equals(serviceType) && orderShouldBeGenerated) {
                 generateAndSetOrderDocumentForServiceApplication(
                     caseDataCopy,
                     details.getId(),
@@ -201,7 +205,8 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
         log.info("ServiceApplication decision. End State is {} Due date is {}", endState, caseDataCopy.getDueDate());
 
         log.info("Sending ServiceApplicationNotification case ID: {}", details.getId());
-        if (endState != ServiceAdminRefusal
+
+        if (endState != ServiceAdminRefusal && caseHasBeenIssued
             && !(ALTERNATIVE_SERVICE.equals(serviceType) && serviceApplication.isApplicationGranted())) {
             notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
         }
@@ -260,9 +265,13 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
         return Holding;
     }
 
-    private State serviceRefusedEndState(boolean caseHasBeenIssued, AlternativeServiceType serviceType) {
-        if (ALTERNATIVE_SERVICE.equals(serviceType)) {
+    private State serviceRefusedEndState(
+        boolean caseHasBeenIssued, AlternativeServiceType serviceType, boolean isAdminRefusal
+    ) {
+        if (ALTERNATIVE_SERVICE.equals(serviceType) && !caseHasBeenIssued) {
             return GeneralConsiderationComplete;
+        } else if (isAdminRefusal) {
+            return ServiceAdminRefusal;
         } else {
             return caseHasBeenIssued ? AwaitingAos : ServiceAdminRefusal;
         }
