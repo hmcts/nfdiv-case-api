@@ -5,27 +5,30 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
+import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.service.BulkTriggerService;
 import uk.gov.hmcts.divorce.bulkaction.service.ScheduleCaseService;
 import uk.gov.hmcts.divorce.bulkaction.task.BulkCaseCaseTaskFactory;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction.FailedBulkCaseRemover;
-import uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
@@ -36,34 +39,27 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.CaseworkerScheduleCase.CASEWORKER_SCHEDULE_CASE;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYSTEM_LINK_WITH_BULK_CASE;
-import static uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService.ERROR_BULK_LIST_ERRORED_CASES;
-import static uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService.ERROR_HEARING_DATE_IN_PAST;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerScheduleCaseTest {
 
-    private static final Long BULK_CASE_REFERENCE = 1234123412341234L;
-    private static final LocalDateTime NOW = LocalDateTime.now();
-
+    private static final String BULK_LIST_ERRORED_CASES = "There are errors on the bulk list. Please resolve errors before continuing";
     @Mock
     private ScheduleCaseService scheduleCaseService;
 
     @Mock
     private IdamService idamService;
-
     @Mock
     private AuthTokenGenerator authTokenGenerator;
 
@@ -80,7 +76,7 @@ class CaseworkerScheduleCaseTest {
     private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @Mock
-    private BulkCaseValidationService bulkCaseValidationService;
+    private ValidationUtil validationUtil;
 
     @InjectMocks
     private CaseworkerScheduleCase scheduleCase;
@@ -97,46 +93,12 @@ class CaseworkerScheduleCaseTest {
     }
 
     @Test
-    void shouldValidateAndErrorIfCasesHaveErrorInBulkList() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkDetails();
-
-        when(bulkCaseValidationService.validateBulkListErroredCases(details))
-            .thenReturn(List.of(ERROR_BULK_LIST_ERRORED_CASES));
-
-        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response =
-            scheduleCase.aboutToStart(details);
-
-        assertThat(response.getErrors()).containsExactly(ERROR_BULK_LIST_ERRORED_CASES);
-
-    }
-
-    @Test
-    void shouldPopulateErrorMessageWhenMidEventIsTriggeredAndValidationFails() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkDetails();
-
-        setupValidatorMock(List.of(ERROR_HEARING_DATE_IN_PAST));
-
-        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, details);
-
-        assertThat(response.getErrors()).containsExactly(ERROR_HEARING_DATE_IN_PAST);
-    }
-
-    @Test
-    void shouldNotPopulateErrorMessageWhenMidEventIsTriggeredAndValidationSucceeds() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkDetails();
-
-        setupValidatorMock(Collections.emptyList());
-
-        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, details);
-
-        assertThat(response.getErrors()).isNull();
-    }
-
-    @Test
     void shouldSuccessfullyUpdateCasesInBulkWithCourtHearingDetails() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkDetails();
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
+        details.setData(BulkActionCaseData.builder().build());
+        details.setId(TEST_CASE_ID);
 
-        setupUserAuthMocks(CITIZEN);
+        setUpUser("Random role");
 
         doNothing().when(scheduleCaseService).updateCourtHearingDetailsForCasesInBulk(details);
 
@@ -148,12 +110,46 @@ class CaseworkerScheduleCaseTest {
     }
 
     @Test
-    void shouldSuccessfullyLinkCaseWithBulkListWhenRoleIsCaseWorker() {
-        final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkDetails();
+    void shouldNotPopulateErrorMessageWhenHearingDateIsInFutureAndAboutToSubmitIsTriggered() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
+        details.setData(BulkActionCaseData
+            .builder()
+            .dateAndTimeOfHearing(LocalDateTime.now().plusDays(5))
+            .build()
+        );
+        details.setId(TEST_CASE_ID);
 
-        setupUserAuthMocks(CASE_WORKER);
-        final User systemUser = new User(SYSTEM_UPDATE_AUTH_TOKEN, UserInfo.builder().uid(SYSTEM_USER_USER_ID).build());
-        setupSystemAuthMocks(systemUser);
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldPopulateErrorMessageWhenHearingDateIsInPastAndAboutToSubmitIsTriggered() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
+        details.setData(BulkActionCaseData
+            .builder()
+            .dateAndTimeOfHearing(LocalDateTime.now().minusHours(5))
+            .build()
+        );
+        details.setId(TEST_CASE_ID);
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).containsExactly("Please enter a hearing date and time in the future");
+    }
+
+    @Test
+    void shouldSuccessfullyLinkCaseWithBulkListWhenRoleIsCaseWorker() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
+        details.setData(BulkActionCaseData.builder().build());
+        details.setId(TEST_CASE_ID);
+
+        User user =  setUpUser(CASE_WORKER.getRole());
+
+        var userDetails = UserInfo.builder().uid(SYSTEM_USER_USER_ID).build();
+        User systemUser = new User(SYSTEM_UPDATE_AUTH_TOKEN, userDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
 
         doNothing().when(scheduleCaseService).updateCourtHearingDetailsForCasesInBulk(details);
 
@@ -173,28 +169,32 @@ class CaseworkerScheduleCaseTest {
         );
     }
 
-    private void setupUserAuthMocks(UserRole role) {
-        final User user = new User(AUTH_HEADER_VALUE, UserInfo.builder().roles(List.of(role.getRole())).build());
+    @Test
+    void shouldValidateAndErrorIfCasesHaveErrorInBulkList() {
+        final CaseDetails<BulkActionCaseData, BulkActionState> details = new CaseDetails<>();
+        details.setData(BulkActionCaseData.builder().erroredCaseDetails(
+            List.of(ListValue.<BulkListCaseDetails>builder().build())).build());
+        details.setId(TEST_CASE_ID);
+
+        try (MockedStatic<ValidationUtil> classMock = Mockito.mockStatic(ValidationUtil.class)) {
+            classMock.when(() -> ValidationUtil.validateBulkListErroredCases(details))
+                .thenReturn(List.of(BULK_LIST_ERRORED_CASES));
+        }
+
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response =
+            scheduleCase.aboutToStart(details);
+
+        assertThat(response.getErrors().getFirst()).isEqualTo(BULK_LIST_ERRORED_CASES);
+    }
+
+    private User setUpUser(String userRole) {
+        var userDetails = UserInfo.builder().roles(List.of(userRole)).build();
+        User user = new User(AUTH_HEADER_VALUE, userDetails);
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(user);
-    }
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN))
+                .thenReturn(user);
 
-    private void setupSystemAuthMocks(User systemUser) {
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
-        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-    }
-
-    private void setupValidatorMock(List<String> errors) {
-        when(bulkCaseValidationService.validateData(any(), any(), any()))
-            .thenReturn(errors);
-    }
-
-    private CaseDetails<BulkActionCaseData, BulkActionState> getBulkDetails() {
-        return CaseDetails.<BulkActionCaseData, BulkActionState>builder()
-            .data(BulkActionCaseData.builder().dateAndTimeOfHearing(NOW).court(BIRMINGHAM).build())
-            .state(Listed)
-            .id(BULK_CASE_REFERENCE)
-            .build();
+        return user;
     }
 }
