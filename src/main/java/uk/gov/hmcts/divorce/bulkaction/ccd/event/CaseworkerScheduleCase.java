@@ -56,16 +56,17 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         new BulkActionPageBuilder(configBuilder
             .event(CASEWORKER_SCHEDULE_CASE)
-            .forStateTransition(EnumSet.of(Created, Listed), Listed)
+            .forStates(Created, Listed)
             .name(SCHEDULE_CASES_FOR_LISTING)
             .description(SCHEDULE_CASES_FOR_LISTING)
             .showSummary()
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .explicitGrants()
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE))
-            .page("scheduleForListing", this::midEvent)
+            .page("scheduleForListing")
             .pageLabel(SCHEDULE_CASES_FOR_LISTING)
             .mandatory(BulkActionCaseData::getCourt)
             .mandatory(BulkActionCaseData::getDateAndTimeOfHearing)
@@ -91,7 +92,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .build();
     }
 
-    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> midEvent(
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(
         CaseDetails<BulkActionCaseData, BulkActionState> bulkDetails,
         CaseDetails<BulkActionCaseData, BulkActionState> beforeBulkDetails
     ) {
@@ -110,7 +111,10 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
                 .build();
         }
 
-        return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder().build();
+        return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkDetails.getData())
+            .state(Listed)
+            .build();
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<BulkActionCaseData, BulkActionState> bulkDetails,

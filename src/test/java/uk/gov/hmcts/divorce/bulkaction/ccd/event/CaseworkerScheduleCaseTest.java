@@ -111,23 +111,23 @@ class CaseworkerScheduleCaseTest {
     }
 
     @Test
-    void shouldPopulateErrorMessageWhenMidEventIsTriggeredAndValidationFails() {
+    void shouldPopulateErrorMessageWhenAboutToSubmitIsTriggeredAndValidationFails() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkDetails();
 
         setupValidatorMock(List.of(ERROR_HEARING_DATE_IN_PAST));
 
-        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, details);
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).containsExactly(ERROR_HEARING_DATE_IN_PAST);
     }
 
     @Test
-    void shouldNotPopulateErrorMessageWhenMidEventIsTriggeredAndValidationSucceeds() {
+    void shouldNotPopulateErrorMessageWhenAboutToSubmitIsTriggeredAndValidationSucceeds() {
         final CaseDetails<BulkActionCaseData, BulkActionState> details = getBulkDetails();
 
         setupValidatorMock(Collections.emptyList());
 
-        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.midEvent(details, details);
+        AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> response = scheduleCase.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNull();
     }
