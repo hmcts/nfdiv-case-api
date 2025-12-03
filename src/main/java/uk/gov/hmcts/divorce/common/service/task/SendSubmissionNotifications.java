@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import java.util.EnumSet;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 
@@ -47,18 +46,19 @@ public class SendSubmissionNotifications implements CaseTask {
             && isEmpty(application.getMissingDocumentTypes())) {
             log.info("Sending application submitted notifications for case : {}", caseId);
             notificationDispatcher.send(applicationSubmittedNotification, caseData, caseId);
-
-            return caseDetails;
         }
 
         // We are working on this to be combined so that only one notification goes out with whatever is required
-        if (NO.equals(application.getApplicant1KnowsApplicant2Address()) || NO.equals(application.getApplicant1FoundApplicant2Address())) {
-            log.info("Sending further action needed notifications for case : {}", caseId);
-            notificationDispatcher.send(furtherActionNeededNotification, caseData, caseId);
-        }
 
-        if (!isEmpty(caseData.getApplication().getApplicant1CannotUploadSupportingDocument())) {
-            log.info("Sending outstanding action notification if awaiting documents for case : {}", caseId);
+        if (application.hasAwaitingApplicant1Documents() || application.hasAwaitingApplicant2Documents()
+            || !application.isAddressProvidedOrServeAnotherWay()) {
+
+            if (application.isAddressProvidedOrServeAnotherWay()) {
+                log.info("Sending further action needed notifications for case : {}", caseId);
+            } else {
+                log.info("Sending outstanding action notification if awaiting documents for case : {}", caseId);
+            }
+
             notificationDispatcher.send(applicationOutstandingActionNotification, caseData, caseId);
         }
 

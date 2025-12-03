@@ -11,8 +11,6 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
@@ -44,9 +42,7 @@ public class SetStateAfterSubmission implements CaseTask {
         boolean applicationHasBeenPaidFor = application.hasBeenPaidFor();
 
         boolean isAddressProvidedOrServeAnotherWay = caseData.getApplicationType().isSole()
-            && (YES.equals(caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay())
-            || (NO.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address())
-            || NO.equals(caseData.getApplication().getApplicant1FoundApplicant2Address())));
+            && caseData.getApplication().isAddressProvidedOrServeAnotherWay();
 
         if (applicantNeedsHelpWithFees && !applicationHasBeenPaidFor) {
             caseDetails.setState(AwaitingHWFDecision);
