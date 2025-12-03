@@ -24,7 +24,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.util.EnumSet;
 import java.util.List;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
