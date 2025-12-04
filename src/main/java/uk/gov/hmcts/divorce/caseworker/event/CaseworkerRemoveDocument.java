@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
@@ -61,6 +62,9 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
             .done()
             .complex(CaseData::getRequestForInformationList)
                 .optional(RequestForInformationList::getRfiOnlineResponseDocuments)
+            .done()
+            .complex(CaseData::getAlternativeService)
+                .optionalWithLabel(AlternativeService::getServiceApplicationDocuments, "Service application documents")
             .done();
     }
 
@@ -116,6 +120,11 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
         divorceDocsToRemove.addAll(findDocumentsForRemoval(
             beforeCaseData.getRequestForInformationList().getRfiOnlineResponseDocuments(),
             currentCaseData.getRequestForInformationList().getRfiOnlineResponseDocuments()
+        ));
+
+        divorceDocsToRemove.addAll(findDocumentsForRemoval(
+            beforeCaseData.getAlternativeService().getServiceApplicationDocuments(),
+            currentCaseData.getAlternativeService().getServiceApplicationDocuments()
         ));
 
         if (!divorceDocsToRemove.isEmpty()) {
