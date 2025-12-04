@@ -113,7 +113,9 @@ public class Applicant {
     )
     private String lastNameChangedWhenMarriedOtherDetails;
 
-    @CCD(label = "Is any part of their name written differently on the marriage certificate?")
+    @CCD(
+        label = "Is any part of their name written differently on the marriage certificate?"
+    )
     private YesOrNo nameDifferentToMarriageCertificate;
 
     @CCD(
@@ -129,7 +131,10 @@ public class Applicant {
     )
     private String whyNameDifferentOtherDetails;
 
-    @CCD(label = "How did they change their name since they got married?")
+    @CCD(
+        label = "How did they change their name since they got married?",
+        searchable = false
+    )
     private Set<ChangedNameHow> nameDifferentToMarriageCertificateMethod;
 
     @CCD(
