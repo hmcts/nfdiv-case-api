@@ -87,6 +87,10 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
         ADMIN_REFUSAL, OTHER_RESPONSE
     );
 
+    private static final Set<State> NO_NOTIFICATION_END_STATES = Set.of(
+        ServiceAdminRefusal, GeneralConsiderationComplete
+    );
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -206,8 +210,8 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
         log.info("Sending ServiceApplicationNotification case ID: {}", details.getId());
 
-        if (endState != ServiceAdminRefusal && caseHasBeenIssued
-            && !(ALTERNATIVE_SERVICE.equals(serviceType) && serviceApplication.isApplicationGranted())) {
+        boolean shouldSendNotification = !NO_NOTIFICATION_END_STATES.contains(endState);
+        if (shouldSendNotification) {
             notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
         }
 
