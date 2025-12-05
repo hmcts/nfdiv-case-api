@@ -572,6 +572,20 @@ public class Application {
     )
     private YesOrNo beingIssuedWithoutAddress;
 
+    @CCD(
+        label = "Application withdrawn by Applicant?",
+        access = {Applicant2Access.class, DefaultAccess.class},
+        searchable = false
+    )
+    private YesOrNo confirmWithdrawApplication;
+
+    @CCD(
+        label = "Reason for withdrawing the application",
+        access = {Applicant2Access.class, DefaultAccess.class},
+        searchable = false
+    )
+    private String withdrawApplicationReason;
+
     @JsonIgnore
     public boolean hasBeenPaidFor() {
         return null != applicationFeeOrderSummary
