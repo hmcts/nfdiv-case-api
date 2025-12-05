@@ -87,7 +87,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
         ADMIN_REFUSAL, OTHER_RESPONSE
     );
 
-    private static final Set<State> NO_NOTIFICATION_END_STATES = Set.of(
+    private static final Set<State> NOTIFICATION_FROM_CASEWORKER_STATES = Set.of(
         ServiceAdminRefusal, GeneralConsiderationComplete
     );
 
@@ -210,8 +210,9 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
         log.info("Sending ServiceApplicationNotification case ID: {}", details.getId());
 
-        boolean shouldSendNotification = !NO_NOTIFICATION_END_STATES.contains(endState);
-        if (shouldSendNotification) {
+        boolean shouldNotifyApplicantAutomatically = !NOTIFICATION_FROM_CASEWORKER_STATES.contains(endState);
+
+        if (shouldNotifyApplicantAutomatically) {
             notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
         }
 
