@@ -40,6 +40,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FAMILY_COURT_LOGO;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HMCTS_LOGO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
@@ -90,15 +92,15 @@ public class DocmosisCommonContent {
             templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
             templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
             templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
-            templateContent.put("hmctsLogo",  "[userImage:hmcts_logo_nfd_en.png]");
-            templateContent.put("familyCourtLogo", "[userImage:family_court_logo_nfd_en.png]");
+            templateContent.put(HMCTS_LOGO,  "[userImage:hmcts_logo_nfd_en.png]");
+            templateContent.put(FAMILY_COURT_LOGO, "[userImage:family_court_logo_nfd_en.png]");
         } else {
             templateContent.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY);
             templateContent.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
             templateContent.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
             templateContent.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
-            templateContent.put("hmctsLogo",  "[userImage:hmcts_logo_nfd_cy.png]");
-            templateContent.put("familyCourtLogo", "[userImage:family_court_logo_nfd_cy.png]");
+            templateContent.put(HMCTS_LOGO,  "[userImage:hmcts_logo_nfd_cy.png]");
+            templateContent.put(FAMILY_COURT_LOGO, "[userImage:family_court_logo_nfd_cy.png]");
         }
 
         final var ctscContactDetails = CtscContactDetails
