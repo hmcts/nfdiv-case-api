@@ -8,5 +8,6 @@
   "serviceApplicationDecisionDate": "2021-06-18",
   "serviceApplicationGranted": "No",
   "serviceApplicationRefusalReason": "refusal reasons",
-  "dueDate": "2020-04-28"
+  "dueDate": "2020-04-28",
+  "issueDate": "2020-04-01"
 }
