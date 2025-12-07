@@ -15,6 +15,8 @@ public final class TestConstants {
     public static final String TEST_APPLICANT_1_ADDRESS_LINE_1 = "line1 applicant1";
     public static final String TEST_APPLICANT_2_ADDRESS_LINE_1 = "line1 applicant2";
     public static final String TEST_USER_EMAIL = "test@test.com";
+    public static final String TEST_USER_PHONE = "0000";
+    public static final String TEST_OTHER_PHONE = "1111";
     public static final String TEST_SOLICITOR_EMAIL = "solicitor@test.com";
     public static final String TEST_SOLICITOR_NAME = "The Solicitor";
     public static final String TEST_SOLICITOR_ADDRESS = "The Solicitor's Address";
@@ -28,6 +30,7 @@ public final class TestConstants {
     public static final String TEST_APP2_MIDDLE_NAME = "test_app2_middle_name";
     public static final String TEST_APP2_LAST_NAME = "test_app2_last_name";
     public static final String TEST_REFERENCE = "test_ref";
+    public static final String TEST_VALIDATION_ERROR = "test_validation_error";
 
     public static final String APPLICANT_2_FIRST_NAME = "applicant_2_first_name";
     public static final String APPLICANT_2_LAST_NAME = "applicant_2last_name";
