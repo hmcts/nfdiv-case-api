@@ -221,6 +221,9 @@ uk:
             RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: '8977e26f-15f7-494c-b3de-036d8fe76cfa'
             RESPONDENT_DRAFT_AOS_STARTED_APPLICATION_OVERDUE: '7035d412-8192-45bb-b920-c511dd98f731'
             APP1_UPDATED_PARTNER_CONTACT_DETAILS: '3322403c-408c-4590-ae92-93c516912fbd'
+            REGENERATE_COURT_ORDERS_CO_PRONOUNCED: '24b45a12-0054-4be6-97b4-794645554eb7'
+            SOLE_RESPONDENT_REGENERATE_COURT_ORDERS_CO_PRONOUNCED: '7bc211bc-7583-4498-97a0-1bd98348bf71'
+            SERVICE_APPLICATION_REJECTED_BY_CASEWORKER: 'e598cb5b-c3a4-4728-8892-83b972da7db4'
           welsh:
             REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT: '6fed53fd-8558-4f9a-8804-8b1004221083'
             SAVE_SIGN_OUT: '01202704-dfb7-48a3-91bd-1bbbbd4ee511'
@@ -382,6 +385,9 @@ uk:
             RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: '6b3000f3-deb6-49a8-8021-93f6f96e5f25'
             RESPONDENT_DRAFT_AOS_STARTED_APPLICATION_OVERDUE: '5b577659-b9de-4146-8e62-d1d4121d7760'
             APP1_UPDATED_PARTNER_CONTACT_DETAILS: '871a6a70-078b-4241-9289-657edad8493f'
+            REGENERATE_COURT_ORDERS_CO_PRONOUNCED: '84def710-732e-441b-a75a-86f6cd3636f5'
+            SOLE_RESPONDENT_REGENERATE_COURT_ORDERS_CO_PRONOUNCED: 'dffa2141-83a1-4aaf-a22d-8f4a5a979a98'
+            SERVICE_APPLICATION_REJECTED_BY_CASEWORKER: '6325b679-d758-49d2-a1dd-5ce8ed21367d'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator,payment_app}
@@ -424,36 +430,36 @@ core_case_data:
 docmosis:
   templates:
     english:
-      DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V8.docx
-      DIVORCE_APPLICATION_JOINT: FL-NFD-APP-ENG-Divorce-Application-Joint_V2.docx
+      DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx
+      DIVORCE_APPLICATION_JOINT: FL-NFD-APP-ENG-Divorce-Application-Joint_V1.docx
       DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
-      REJECTED_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order_V4.docx
-      CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline_V6.docx
-      CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V3.docx
-      JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V2.docx
-      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V2.docx
-      JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Refusal-Solicitor-Cover-Letter_V2.docx
-      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Clarification-Refusal-Solicitor-Cover-Letter_V2.docx
-      REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V3.docx
-      DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V4.docx
-      RESPONDENT_ANSWERS: FL-NFD-GOR-ENG-Respondent-Answers-Eng-V3.docx #TODO: update content
-      CERTIFICATE_OF_SERVICE: FL-NFD-GOR-ENG-Certificate_Of_Service_V3.docx
-      SERVICE_ORDER: FL-NFD-GOR-ENG-Service-Order-V6.docx #TODO: update content
-      BULK_CASE_PRONOUNCEMENT: FL-NFD-GOR-ENG-Pronouncement-List-V4.docx
-      CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V2.docx
-      CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT: FL-NFD-GOR-ENG-Do-Not-Attend-Court-CO-Granted-Letter_V1.docx
-      CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V4.docx
-      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V5.docx
-      CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS_V1.docx
-      CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor_V1.docx
-      CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor_V2.docx
-      CERTIFICATE_OF_ENTITLEMENT_OFFLINE_RESPONDENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent_V2.docx
-      DIVORCE_SOLE_APPLICANT_1_ANSWERS: FL-NFD-GOR-ENG-Sole-Applicant-1-Answers_V6.docx
-      DIVORCE_JOINT_APPLICANT_1_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-1-Answers_V2.docx
-      DIVORCE_JOINT_APPLICANT_2_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers_V2.docx
-      SERVICE_REFUSAL: FL-NFD-GOR-ENG-Refusal-Order-Deemed-Dispensed-Service-V5.docx
-      BAILIFF_APPLICATION_APPROVED: FL-NFD-GOR-ENG-Bailiff-Application-Approved-V2.docx
-      BAILIFF_APPLICATION_NOT_APPROVED: FL-NFD-GOR-ENG-Bailiff-Application-Not-Approved-V2.docx
+      REJECTED_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order_V3.docx
+      CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline_V5.docx
+      CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V2.docx
+      JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx
+      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx
+      JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Refusal-Solicitor-Cover-Letter_V1.docx
+      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Clarification-Refusal-Solicitor-Cover-Letter_V1.docx
+      REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V2.docx
+      DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V3.docx
+      RESPONDENT_ANSWERS: FL-NFD-GOR-ENG-Respondent-Answers-Eng-V2.docx #TODO: update content
+      CERTIFICATE_OF_SERVICE: FL-NFD-GOR-ENG-Certificate_Of_Service_V2.docx
+      SERVICE_ORDER: FL-NFD-GOR-ENG-Service-Order-V5.docx #TODO: update content
+      BULK_CASE_PRONOUNCEMENT: FL-NFD-GOR-ENG-Pronouncement-List-V3.docx
+      CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx
+      CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT: FL-NFD-GOR-ENG-Do-Not-Attend-Court-CO-Granted-Letter.docx
+      CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V3.docx
+      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx
+      CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx
+      CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor.docx
+      CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor_V1.docx
+      CERTIFICATE_OF_ENTITLEMENT_OFFLINE_RESPONDENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent_V1.docx
+      DIVORCE_SOLE_APPLICANT_1_ANSWERS: FL-NFD-GOR-ENG-Sole-Applicant-1-Answers_V5.docx
+      DIVORCE_JOINT_APPLICANT_1_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-1-Answers_V1.docx
+      DIVORCE_JOINT_APPLICANT_2_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers_V1.docx
+      SERVICE_REFUSAL: FL-NFD-GOR-ENG-Refusal-Order-Deemed-Dispensed-Service-V4.docx
+      BAILIFF_APPLICATION_APPROVED: FL-NFD-GOR-ENG-Bailiff-Application-Approved-V1.docx
+      BAILIFF_APPLICATION_NOT_APPROVED: FL-NFD-GOR-ENG-Bailiff-Application-Not-Approved-V1.docx
       CONDITIONAL_ORDER_ANSWERS: FL-NFD-GOR-ENG-Conditional_Order_Answers_V1.docx
       CONDITIONAL_ORDER_REMINDER: FL-NFD-GOR-ENG-Conditional-Order-Reminder_V1.docx
       APPLIED_FOR_CONDITIONAL_ORDER_LETTER: FL-NFD-GOR-ENG-Applied-For-Conditional-Order-Letter_V1.docx
@@ -468,7 +474,7 @@ docmosis:
       NFD_RESP_RESPONDED_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended.docx
       NFD_RESP_RESPONDED_AWAITING_CO_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended-Awaiting-CO.docx
       GENERAL_LETTER: FL-NFD-GOR-ENG-General-Letter-V2.docx
-      NFD_NOP_A1_SOLE_APP1_CIT_CS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-A1-V6.docx
+      NFD_NOP_A1_SOLE_APP1_CIT_CS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-A1-V4.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-A2-V5.docx
       NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V4.docx
       NFD_NOP_SOLE_RESPONDENT_CITIZEN: FL-NFD-GOR-ENG-Notice-Of-Proceedings-R2-V13.docx
@@ -522,6 +528,7 @@ docmosis:
       ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Alternative-Service-Application_V1.docx
       DISPENSE_WITH_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Dispense-With-Service-Application_V1.docx
       SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-ENG-Search-Government-Records-Application_V1.docx
+      BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-ENG-Bailiff-Service-Successful-Letter-V1.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V2.docx
@@ -619,6 +626,7 @@ docmosis:
       ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Alternative-Service-Application_V1.docx
       DISPENSE_WITH_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Dispense-With-Service-Application_V1.docx
       SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-WEL-Search-Government-Records-Application_V1.docx
+      BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-WEL-Bailiff-Service-Successful-Letter-V1.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}

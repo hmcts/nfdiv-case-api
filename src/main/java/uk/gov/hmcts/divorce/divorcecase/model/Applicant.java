@@ -69,7 +69,9 @@ public class Applicant {
 
     @CCD(
         label = "Email address",
-        typeOverride = Email
+        typeOverride = Email,
+        access = {DefaultAccessExcludingSolicitor.class, CitizenAccess.class},
+        inheritAccessFromParent = false
     )
     private String email;
 
@@ -89,18 +91,21 @@ public class Applicant {
     )
     private YesOrNo languagePreferenceWelsh;
 
+    // To be retired
     @CCD(
         label = "Did they change their last name when they got married?",
         searchable = false
     )
     private YesOrNo lastNameChangedWhenMarried;
 
+    // To be retired
     @CCD(
         label = "How did they change their last name when they got married?",
         searchable = false
     )
     private Set<ChangedNameHow> lastNameChangedWhenMarriedMethod;
 
+    // To be retired
     @CCD(
         label = "Details of how they changed their last name when they got married",
         typeOverride = TextArea,
@@ -109,9 +114,22 @@ public class Applicant {
     private String lastNameChangedWhenMarriedOtherDetails;
 
     @CCD(
-        label = "Have they changed their name since they got married?"
+        label = "Is any part of their name written differently on the marriage certificate?"
     )
     private YesOrNo nameDifferentToMarriageCertificate;
+
+    @CCD(
+        label = "Why is their legal name different to the marriage certificate?",
+        searchable = false
+    )
+    private Set<ChangedNameWhy> whyNameDifferent;
+
+    @CCD(
+        label = "Details of why their legal name is different to the marriage certificate",
+        searchable = false,
+        typeOverride = TextArea
+    )
+    private String whyNameDifferentOtherDetails;
 
     @CCD(
         label = "How did they change their name since they got married?",
@@ -143,21 +161,37 @@ public class Applicant {
     )
     private AddressGlobalUK address;
 
-    /* Second address field to allow solicitors to enter applicant addresses when creating applications
-     * and view non-confidential addresses for solicitor service. We do not give solicitors read access to the
-     * primary "address" field as it can contain a confidential address. */
+    /* Non confidential contact detail fields to allow solicitors to enter applicant details when creating applications
+     * and view non-confidential details for solicitor service. We do not give solicitors read access to the
+     * primary contact details fields as they can contain confidential information. */
     @CCD(
         label = "Non-Confidential Address",
         searchable = false
     )
     private AddressGlobalUK nonConfidentialAddress;
 
+    @CCD(
+        label = "Non-Confidential Phone number",
+        regex = "^[0-9 +().-]{9,}$",
+        searchable = false
+    )
+    private String nonConfidentialPhone;
+
+    @CCD(
+        label = "Non-Confidential Email address",
+        typeOverride = Email,
+        searchable = false
+    )
+    private String nonConfidentialEmail;
+
     @CCD(label = "Is this an international address?")
     private YesOrNo addressOverseas;
 
     @CCD(
         label = "Phone number",
-        regex = "^[0-9 +().-]{9,}$"
+        regex = "^[0-9 +().-]{9,}$",
+        access = {DefaultAccessExcludingSolicitor.class, CitizenAccess.class},
+        inheritAccessFromParent = false
     )
     private String phoneNumber;
 
