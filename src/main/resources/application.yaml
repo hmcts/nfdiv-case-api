@@ -605,6 +605,10 @@ docmosis:
       NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed_V1.docx
       NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Undisputed_V1.docx
       NFD_NOP_APP1_JS_SOLE_UNDISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_JS_Sole_Undisputed_V1.docx
+      NFD_NOP_APP2_JS_SOLE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Respondent_JS_Sole_V1.docx
+      NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Disputed_V1.docx
+      JUDICIAL_SEPARATION_SOLE_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Sole_V1.docx
+      JUDICIAL_SEPARATION_JOINT_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Joint_V1.docx
       NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2: FL-NFD-GRP-WEL-Grant-Of-Representation_V1.docx
       NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: FL-NFD-GOR-WEL-SOLICITOR-APPLIED-FOR-FINAL-ORDER_V1.docx
       NFD_APPLICANT_PAPERCASE_RECEIVED: FL-NFD-GOR-WEL-PaperCase-Received-Applicant-V3.docx
