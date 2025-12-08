@@ -130,6 +130,18 @@ class CaseworkerFindMatchesTest {
     }
 
     @Test
+    void shouldReturnErrorWhenMarriageDateNotSetOnAboutToStart() {
+        CaseDetails<CaseData, State> caseDetails = buildCaseDetails();
+        CaseData caseData = caseDetails.getData();
+        caseData.getApplication().getMarriageDetails().setDate(null);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerFindMatches.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).isNotEmpty();
+        assertThat(response.getErrors().get(0)).isEqualTo("Marriage date is not set. Cannot perform find matches.");
+    }
+
+    @Test
     void testAddMatches() {
         CaseData caseData = buildEmptyCaseData();
 

@@ -8,11 +8,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
+import java.util.List;
 
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
@@ -55,6 +60,21 @@ public class GeneralReferral {
         typeParameterOverride = "GeneralReferralType"
     )
     private GeneralReferralType generalReferralType;
+
+    @CCD(
+        label = "General Referral Document",
+        searchable = false
+    )
+    private DivorceDocument generalReferralDocument;
+
+    @CCD(
+        label = "General Referral Documents",
+        typeOverride = Collection,
+        typeParameterOverride = "DivorceDocument",
+        access = {DefaultAccess.class, CaseworkerDeleteAccess.class},
+        searchable = false
+    )
+    private List<ListValue<DivorceDocument>> generalReferralDocuments;
 
     @CCD(
         label = "Medium requested for alternative service",

@@ -31,11 +31,13 @@ import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEM
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.ADMIN_REFUSAL;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.OTHER_RESPONSE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.LAServiceReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -82,7 +84,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(LEGAL_ADVISOR_SERVICE_DECISION)
-            .forStates(AwaitingServiceConsideration)
+            .forStates(AwaitingServiceConsideration, LAServiceReview)
             .name("Make service decision")
             .showCondition("alternativeServiceType!=\"bailiff\"")
             .description("Make service decision")
@@ -174,7 +176,8 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
                     SERVICE_ORDER_TEMPLATE_ID);
             }
         } else {
-            if (ADMIN_REFUSAL.equals(caseDataCopy.getAlternativeService().getRefusalReason())) {
+            if (ADMIN_REFUSAL.equals(caseDataCopy.getAlternativeService().getRefusalReason())
+                || OTHER_RESPONSE.equals(caseDataCopy.getAlternativeService().getRefusalReason())) {
                 endState = ServiceAdminRefusal;
             } else {
                 if (DISPENSED.equals(serviceApplication.getAlternativeServiceType())) {

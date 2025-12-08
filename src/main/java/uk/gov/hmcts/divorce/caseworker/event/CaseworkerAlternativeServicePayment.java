@@ -20,8 +20,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
 
+import java.util.EnumSet;
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGenAppHWFEvidence;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGenAppHWFPartPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -52,7 +55,8 @@ public class CaseworkerAlternativeServicePayment implements CCDConfig<CaseData, 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(CASEWORKER_SERVICE_PAYMENT)
-            .forStateTransition(AwaitingServicePayment, AwaitingServiceConsideration)
+            .forStateTransition(EnumSet.of(AwaitingServicePayment, AwaitingGenAppHWFPartPayment, AwaitingGenAppHWFEvidence),
+                AwaitingServiceConsideration)
             .name("Confirm service payment")
             .description("Service payment made")
             .showSummary()
