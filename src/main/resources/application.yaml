@@ -605,27 +605,23 @@ docmosis:
       NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed_V1.docx
       NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Undisputed_V1.docx
       NFD_NOP_APP1_JS_SOLE_UNDISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_JS_Sole_Undisputed_V1.docx
-      NFD_NOP_APP2_JS_SOLE: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Respondent_JS_Sole_V1.docx
-      NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Disputed_V1.docx
-      JUDICIAL_SEPARATION_SOLE_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Sole_V1.docx
-      JUDICIAL_SEPARATION_JOINT_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Joint_V1.docx
-      NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2: FL-NFD-GRP-WEL-Grant-Of-Representation.docx
-      NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: FL-NFD-GOR-WEL-SOLICITOR-APPLIED-FOR-FINAL-ORDER.docx
-      NFD_APPLICANT_PAPERCASE_RECEIVED: FL-NFD-GOR-WEL-PaperCase-Received-Applicant-V2.docx
-      NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-WEL-Solicitor_stopped_representation_citizen_letter_V1.docx
-      NFD_SOL_STOPPED_REP_NOTIFY_APP: FL-NFD-GOR-WEL-Solicitor_stopped_representation_notify_citizen_V1.docx
-      REQUEST_FOR_INFORMATION_LETTER: FL-NFD-GOR-WEL-Request-For-Information.docx
-      REQUEST_FOR_INFORMATION_SOLICITOR_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Solicitor.docx
-      REQUEST_FOR_INFORMATION_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Response.docx
-      REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Solicitor-Response.docx
-      REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Partner-Response.docx
-      REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Partner-Solicitor-Response.docx
-      RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-WEL-Respondent-Started-Drafting-AoS-Application-Cy.docx
-      DEEMED_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Deemed-Service-Application_V1.docx
-      BAILIFF_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Bailiff-Service-Application_V1.docx
-      ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Alternative-Service-Application_V1.docx
-      DISPENSE_WITH_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Dispense-With-Service-Application_V1.docx
-      SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-WEL-Search-Government-Records-Application_V1.docx
+      NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2: FL-NFD-GRP-WEL-Grant-Of-Representation_V1.docx
+      NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: FL-NFD-GOR-WEL-SOLICITOR-APPLIED-FOR-FINAL-ORDER_V1.docx
+      NFD_APPLICANT_PAPERCASE_RECEIVED: FL-NFD-GOR-WEL-PaperCase-Received-Applicant-V3.docx
+      NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-WEL-Solicitor_stopped_representation_citizen_letter_V2.docx
+      NFD_SOL_STOPPED_REP_NOTIFY_APP: FL-NFD-GOR-WEL-Solicitor_stopped_representation_notify_citizen_V2.docx
+      REQUEST_FOR_INFORMATION_LETTER: FL-NFD-GOR-WEL-Request-For-Information_V1.docx
+      REQUEST_FOR_INFORMATION_SOLICITOR_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Solicitor_V1.docx
+      REQUEST_FOR_INFORMATION_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Response_V1.docx
+      REQUEST_FOR_INFORMATION_SOLICITOR_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Solicitor-Response_V1.docx
+      REQUEST_FOR_INFORMATION_PARTNER_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Partner-Response_V1.docx
+      REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER: FL-NFD-GOR-WEL-Request-For-Information-Partner-Solicitor-Response_V1.docx
+      RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-WEL-Respondent-Started-Drafting-AoS-Application_V1.docx
+      DEEMED_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Deemed-Service-Application_V2.docx
+      BAILIFF_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Bailiff-Service-Application_V2.docx
+      ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Alternative-Service-Application_V2.docx
+      DISPENSE_WITH_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Dispense-With-Service-Application_V2.docx
+      SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-WEL-Search-Government-Records-Application_V2.docx
       BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-WEL-Bailiff-Service-Successful-Letter-V1.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
