@@ -10,10 +10,14 @@ import uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderPronounc
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.documentpack.FinalOrderGrantedDocumentPack;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
+import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REGENERATE_COURT_ORDERS_CO_PRONOUNCED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_REGENERATE_COURT_ORDERS_CO_PRONOUNCED;
 
 @RequiredArgsConstructor
 @Component
@@ -23,6 +27,8 @@ public class RegenerateCourtOrdersNotification implements ApplicantNotification 
     private final CertificateOfEntitlementDocumentPack certificateOfEntitlementDocPack;
     private final FinalOrderGrantedDocumentPack finalOrderGrantedDocPack;
     private final ConditionalOrderPronouncedDocumentPack conditionalOrderPronouncedDocPack;
+    private final NotificationService notificationService;
+    private final CommonContent commonContent;
 
 
     @Override
@@ -108,5 +114,33 @@ public class RegenerateCourtOrdersNotification implements ApplicantNotification 
                 conditionalOrderPronouncedDocPack.getLetterId()
             );
         }
+    }
+
+    @Override
+    public void sendToApplicant1(final CaseData caseData, final Long caseId) {
+
+        log.info("Sending Regenerated Court Orders email notification to applicant 1 for case : {}", caseId);
+
+        notificationService.sendEmail(
+            caseData.getApplicant1().getEmail(),
+            REGENERATE_COURT_ORDERS_CO_PRONOUNCED,
+            commonContent.coPronouncedTemplateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
+            caseData.getApplicant1().getLanguagePreference(),
+            caseId);
+    }
+
+    @Override
+    public void sendToApplicant2(final CaseData caseData, final Long caseId) {
+
+        log.info("Sending Regenerated Court Orders email notification to applicant 2 for case : {}", caseId);
+
+        notificationService.sendEmail(
+            caseData.getApplicant2().getEmail(),
+            caseData.getApplicationType().isSole() ? SOLE_RESPONDENT_REGENERATE_COURT_ORDERS_CO_PRONOUNCED
+                : REGENERATE_COURT_ORDERS_CO_PRONOUNCED,
+            commonContent.coPronouncedTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
+            caseData.getApplicant2().getLanguagePreference(),
+            caseId);
+
     }
 }

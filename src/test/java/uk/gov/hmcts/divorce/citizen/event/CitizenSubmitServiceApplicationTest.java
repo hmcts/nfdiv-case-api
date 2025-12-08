@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
@@ -26,6 +25,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 
 import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,8 +35,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AWAITING_DECISION_ERROR;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -81,16 +85,34 @@ class CitizenSubmitServiceApplicationTest {
     }
 
     @Test
+    void givenAosIsSubmittedThenRejectServiceApplicationSubmission() {
+        CaseData caseData = CaseData.builder().build();
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(
+            LocalDateTime.of(2021, 10, 26, 10, 0, 0));
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
+            caseDetails, caseDetails
+        );
+
+        assertThat(response.getErrors()).isEqualTo(Collections.singletonList("Partner has responded to application."));
+    }
+
+    @Test
     void givenCitizenWillMakePaymentThenChangeStateToAwaitingServicePaymentAndSetOrderSummary() {
         setMockClock(clock);
 
         CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
             .applicant1(
                 Applicant.builder()
                     .firstName(TEST_FIRST_NAME)
                     .interimApplicationOptions(InterimApplicationOptions.builder()
-                        .interimAppsUseHelpWithFees(YesOrNo.NO)
-                        .interimAppsCannotUploadDocs(YesOrNo.YES)
+                        .interimAppsUseHelpWithFees(NO)
+                        .interimAppsCannotUploadDocs(YES)
                         .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
                         .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
                         .build())
@@ -122,11 +144,11 @@ class CitizenSubmitServiceApplicationTest {
         assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
         assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isEqualTo(orderSummary);
         assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
-        assertThat(alternativeService.getAlternativeServiceFeeRequired()).isEqualTo(YesOrNo.YES);
+        assertThat(alternativeService.getAlternativeServiceFeeRequired()).isEqualTo(YES);
         assertThat(alternativeService.getServicePaymentFee().getPaymentMethod())
             .isEqualTo(ServicePaymentMethod.FEE_PAY_BY_CARD);
-        assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
-        assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.NO);
+        assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YES);
+        assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(NO);
         assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
     }
 
@@ -135,12 +157,13 @@ class CitizenSubmitServiceApplicationTest {
         setMockClock(clock);
 
         CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
             .applicant1(
                 Applicant.builder()
                     .firstName(TEST_FIRST_NAME)
                     .interimApplicationOptions(InterimApplicationOptions.builder()
-                        .interimAppsUseHelpWithFees(YesOrNo.YES)
-                        .interimAppsCannotUploadDocs(YesOrNo.NO)
+                        .interimAppsUseHelpWithFees(YES)
+                        .interimAppsCannotUploadDocs(NO)
                         .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
                         .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
                         .build())
@@ -164,12 +187,47 @@ class CitizenSubmitServiceApplicationTest {
         assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
         assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isNull();
         assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isNull();
-        assertThat(alternativeService.getAlternativeServiceFeeRequired()).isEqualTo(YesOrNo.YES);
+        assertThat(alternativeService.getAlternativeServiceFeeRequired()).isEqualTo(YES);
         assertThat(alternativeService.getServicePaymentFee().getPaymentMethod())
             .isEqualTo(ServicePaymentMethod.FEE_PAY_BY_HWF);
-        assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
-        assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.YES);
+        assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YES);
+        assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YES);
         assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
+    }
+
+    @Test
+    void givenCitizenSubmitsWithWelshLanguagePreferenceThenChangeStateToWelshTranslationReview() {
+        setMockClock(clock);
+
+        CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(
+                Applicant.builder()
+                    .firstName(TEST_FIRST_NAME)
+                    .interimApplicationOptions(InterimApplicationOptions.builder()
+                        .interimAppsUseHelpWithFees(YES)
+                        .interimAppsCannotUploadDocs(NO)
+                        .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
+                        .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
+                        .build())
+                    .languagePreferenceWelsh(YES)
+                    .build()
+            ).build();
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        DivorceDocument generatedApplication = DivorceDocument.builder().build();
+        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+            TEST_CASE_ID, caseData.getApplicant1(), caseData
+        )).thenReturn(generatedApplication);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
+            caseDetails, caseDetails
+        );
+
+        assertThat(response.getState()).isEqualTo(WelshTranslationReview);
+        assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(AwaitingServicePayment);
     }
 
     @Test
@@ -177,13 +235,14 @@ class CitizenSubmitServiceApplicationTest {
         setMockClock(clock);
 
         InterimApplicationOptions applicationOptions = InterimApplicationOptions.builder()
-            .interimAppsUseHelpWithFees(YesOrNo.YES)
-            .interimAppsCannotUploadDocs(YesOrNo.NO)
+            .interimAppsUseHelpWithFees(YES)
+            .interimAppsCannotUploadDocs(NO)
             .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
             .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
             .build();
 
         CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
             .applicant1(
                 Applicant.builder()
                     .firstName(TEST_FIRST_NAME)
@@ -214,12 +273,13 @@ class CitizenSubmitServiceApplicationTest {
         setMockClock(clock);
 
         CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
             .applicant1(
                 Applicant.builder()
                     .firstName(TEST_FIRST_NAME)
                     .interimApplicationOptions(InterimApplicationOptions.builder()
-                        .interimAppsUseHelpWithFees(YesOrNo.YES)
-                        .interimAppsCannotUploadDocs(YesOrNo.YES)
+                        .interimAppsUseHelpWithFees(YES)
+                        .interimAppsCannotUploadDocs(YES)
                         .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
                         .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
                         .build())
@@ -243,9 +303,9 @@ class CitizenSubmitServiceApplicationTest {
         assertThat(alternativeService.getServiceApplicationAnswers()).isEqualTo(generatedApplication);
         assertThat(alternativeService.getServicePaymentFee().getOrderSummary()).isNull();
         assertThat(alternativeService.getServicePaymentFee().getServiceRequestReference()).isNull();
-        assertThat(alternativeService.getAlternativeServiceFeeRequired()).isEqualTo(YesOrNo.YES);
-        assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
-        assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(YesOrNo.NO);
+        assertThat(alternativeService.getAlternativeServiceFeeRequired()).isEqualTo(YES);
+        assertThat(alternativeService.getServiceApplicationSubmittedOnline()).isEqualTo(YES);
+        assertThat(alternativeService.getServiceApplicationDocsUploadedPreSubmission()).isEqualTo(NO);
         assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.DEEMED);
     }
 
@@ -260,14 +320,15 @@ class CitizenSubmitServiceApplicationTest {
         );
 
         CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
             .applicant1(
                 Applicant.builder()
                     .firstName(TEST_FIRST_NAME)
                     .interimApplicationOptions(InterimApplicationOptions.builder()
-                        .interimAppsCanUploadEvidence(YesOrNo.NO)
+                        .interimAppsCanUploadEvidence(NO)
                         .interimAppsEvidenceDocs(evidenceDocs)
-                        .interimAppsUseHelpWithFees(YesOrNo.YES)
-                        .interimAppsCannotUploadDocs(YesOrNo.YES)
+                        .interimAppsUseHelpWithFees(YES)
+                        .interimAppsCannotUploadDocs(YES)
                         .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
                         .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
                         .build())
@@ -333,7 +394,7 @@ class CitizenSubmitServiceApplicationTest {
                         .paymentMethod(ServicePaymentMethod.FEE_PAY_BY_CARD)
                         .build()
                 )
-                .alternativeServiceFeeRequired(YesOrNo.YES)
+                .alternativeServiceFeeRequired(YES)
                 .alternativeServiceType(AlternativeServiceType.DEEMED)
                 .build()
         );
