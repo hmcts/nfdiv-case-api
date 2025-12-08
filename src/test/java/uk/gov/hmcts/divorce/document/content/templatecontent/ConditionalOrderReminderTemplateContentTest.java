@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderTemplateContent;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
 import java.time.Clock;
 import java.util.LinkedHashMap;
@@ -46,6 +47,9 @@ class ConditionalOrderReminderTemplateContentTest {
 
     @Mock
     private Clock clock;
+
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
     private ConditionalOrderReminderTemplateContent conditionalOrderReminderTemplateContent;
