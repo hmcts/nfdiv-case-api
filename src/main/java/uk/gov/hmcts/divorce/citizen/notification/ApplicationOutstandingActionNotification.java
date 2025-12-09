@@ -19,13 +19,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
@@ -42,9 +38,6 @@ import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 @Slf4j
 public class ApplicationOutstandingActionNotification implements ApplicantNotification {
 
-    public static final String PAPERS_SERVED_ANOTHER_WAY = "papersServedAnotherWay";
-    public static final String DIVORCE_SERVED_ANOTHER_WAY = "divorceServedAnotherWay";
-    public static final String DISSOLUTION_SERVED_ANOTHER_WAY = "dissolutionServedAnotherWay";
 
     public static final String SEND_DOCUMENTS_TO_COURT = "sendDocumentsToCourt";
     public static final String SEND_DOCUMENTS_TO_COURT_DIVORCE = "sendDocumentsToCourtDivorce";
@@ -56,6 +49,16 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     public static final String MISSING_MARRIAGE_CERTIFICATE_TRANSLATION = "marriageCertificateTranslation";
     public static final String MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION = "civilPartnershipCertificateTranslation";
     public static final String MISSING_NAME_CHANGE_PROOF = "nameChangeProof";
+    public static final String IS_ADDRESS_PROVIDED = "isAddressProvided";
+    public static final String ALTERNATIVE_APPLICATION_FEE = "alternativeApplicationFee";
+    public static final String UPDATE_POSTAL_ADDRESS = "updatePostalAddress";
+    public static final String APPLY_TO_PROGRESS_ANOTHER_WAY = "applyToProgressAnotherWay";
+    public static final String GET_HELP_WITH_FEE = "getHelpWithFee";
+    public static final String IS_ADDRESS_PROVIDED_DIVORCE = "isAddressProvidedDivorce";
+    public static final String IS_ADDRESS_PROVIDED_DISSOLUTION = "isAddressProvidedDissolution";
+    public static final String SEND_DOCUMENTS_REFERENCE_NUMBER = "sendDocumentsToCourtReferenceNumber";
+    public static final String UPLOAD_DOCUMENTS_USING_FORM = "uploadDocumentsUsingForm";
+
 
     private final NotificationService notificationService;
     private final CommonContent commonContent;
@@ -92,22 +95,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     private Map<String, String> applicant1TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
 
-        boolean addressNotProvided = !caseData.getApplication().isAddressProvidedOrServeAnotherWay();
         templateVars.putAll(courtDocumentDetails(caseData, id));
-        boolean soleServingAnotherWay = caseData.getApplicationType().isSole()
-            && caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES;
-        templateVars.putAll(serveAnotherWayTemplateVars(soleServingAnotherWay, caseData));
-        templateVars.put("isAddressProvided", addressNotProvided ? YES : NO);
-        templateVars.put("alternativeApplicationFee", addressNotProvided ? formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_GENERAL,KEYWORD_WITHOUT_NOTICE)) : "");
-        templateVars.put("updatePostalAddress", addressNotProvided
-            ? "[Update your partner’s postal address](https://ucd-divorce-prototype.herokuapp.com/no-response/no-resp-address-postcode-entry-2)" : "");
-        templateVars.put("applyToProgressAnotherWay", addressNotProvided
-            ? "[apply to progress your application another way](https://ucd-divorce-prototype.herokuapp.com/no-response/no-resp-address-options)" : "");
-        templateVars.put("getHelpWithFee", addressNotProvided ? "[get help paying this fee](https://www.gov.uk/get-help-with-court-fees)" : "");
-        templateVars.put("isAddressProvidedDivorce", addressNotProvided && caseData.isDivorce() ? YES : NO);
-        templateVars.put("isAddressProvidedDissolution", addressNotProvided && !caseData.isDivorce() ? YES : NO);
-        templateVars.put("isAddressProvidedPartner", addressNotProvided
-            ? commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant1().getLanguagePreference()) : "");
 
         return templateVars;
     }
@@ -115,24 +103,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     private Map<String, String> applicant2TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.putAll(courtDocumentDetails(caseData, id));
-        templateVars.putAll(serveAnotherWayTemplateVars(false, caseData));
-        return templateVars;
-    }
 
-    private Map<String, String> serveAnotherWayTemplateVars(boolean soleServingAnotherWay, CaseData caseData) {
-        Map<String, String> templateVars = new HashMap<>();
-
-        boolean servedAnotherWay = soleServingAnotherWay && caseData.isDivorce();
-        boolean languagePreferenceWelsh = WELSH == caseData.getApplicant1().getLanguagePreference();
-        String divorceOrDissolution = languagePreferenceWelsh ? DIVORCE_WELSH : DIVORCE;
-        String partner = soleServingAnotherWay ? commonContent.getPartner(caseData, caseData.getApplicant2(),
-            caseData.getApplicant1().getLanguagePreference()) : "";
-
-        templateVars.put(PAPERS_SERVED_ANOTHER_WAY, soleServingAnotherWay ? YES : NO);
-        templateVars.put(DIVORCE_OR_DISSOLUTION, divorceOrDissolution);
-        templateVars.put(PARTNER,  partner);
-        templateVars.put(DIVORCE_SERVED_ANOTHER_WAY, servedAnotherWay ? YES : NO);
-        templateVars.put(DISSOLUTION_SERVED_ANOTHER_WAY, soleServingAnotherWay && !caseData.isDivorce() ? YES : NO);
         return templateVars;
     }
 
@@ -146,12 +117,28 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         templateVars.put(SEND_DOCUMENTS_TO_COURT_DIVORCE, isDivorceAndSendDocumentsToCourt ? YES : NO);
         templateVars.put(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, isDissolutionAndSendDocumentsToCourt ? YES : NO);
         templateVars.put(JOINT_CONDITIONAL_ORDER, !caseData.getApplicationType().isSole() ? YES : NO);
-        templateVars.put("sendDocumentsDivorce", needsToSendDocuments && caseData.isDivorce() ? YES : NO);
-        templateVars.put("sendDocumentsDissolution", needsToSendDocuments && !caseData.isDivorce() ? YES : NO);
-        templateVars.put("sendDocumentsToCourtReferenceNumber", needsToSendDocuments ? id != null ? formatId(id) : null : "");
-        templateVars.put("uploadDocumentsUsingForm", needsToSendDocuments ? "[upload your documents using our online form](https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/)." : "");
+        templateVars.put(SEND_DOCUMENTS_REFERENCE_NUMBER, needsToSendDocuments ? id != null ? formatId(id) : null : "");
+        templateVars.put(UPLOAD_DOCUMENTS_USING_FORM, needsToSendDocuments
+            ? "[upload your documents using our online form](https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/)."
+            : "");
+
+        boolean addressNotProvided = !caseData.getApplication().isAddressProvided();
 
         templateVars.putAll(missingDocsTemplateVars(caseData, needsToSendDocuments));
+        templateVars.put(IS_ADDRESS_PROVIDED, addressNotProvided ? YES : NO);
+        templateVars.put(ALTERNATIVE_APPLICATION_FEE, addressNotProvided
+            ? formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_GENERAL,KEYWORD_WITHOUT_NOTICE)) : "");
+        templateVars.put(UPDATE_POSTAL_ADDRESS, addressNotProvided
+            ? String.format("[Update your partner’s postal address](%s)", commonContent.getSignInUrl(caseData)) : "");
+        templateVars.put(APPLY_TO_PROGRESS_ANOTHER_WAY, addressNotProvided
+            ? String.format("[apply to progress your application another way](%s)", commonContent.getSignInUrl(caseData)) : "");
+        templateVars.put(GET_HELP_WITH_FEE, addressNotProvided ? "[get help paying this fee](https://www.gov.uk/get-help-with-court-fees)"
+            : "");
+        templateVars.put(IS_ADDRESS_PROVIDED_DIVORCE, addressNotProvided && caseData.isDivorce() ? YES : NO);
+        templateVars.put(IS_ADDRESS_PROVIDED_DISSOLUTION, addressNotProvided && !caseData.isDivorce() ? YES : NO);
+        templateVars.put(PARTNER, addressNotProvided
+            ? commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant1().getLanguagePreference()) : "");
+
 
         return templateVars;
     }
@@ -186,8 +173,8 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         templateVars.put(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION,
             needsToSendDocuments && isMissingTranslatedMarriageCertificate && !caseData.isDivorce() ? YES : NO);
 
-        templateVars.put(MISSING_NAME_CHANGE_PROOF, needsToSendDocuments && missingDocTypes.contains(NAME_CHANGE_EVIDENCE) && !isEmpty(nameChangedHowSet)
-            && !nameChangedHowSet.contains(ChangedNameHow.MARRIAGE_CERTIFICATE) ? YES : NO);
+        templateVars.put(MISSING_NAME_CHANGE_PROOF, needsToSendDocuments && missingDocTypes.contains(NAME_CHANGE_EVIDENCE)
+            && !isEmpty(nameChangedHowSet) && !nameChangedHowSet.contains(ChangedNameHow.MARRIAGE_CERTIFICATE) ? YES : NO);
 
         return templateVars;
     }

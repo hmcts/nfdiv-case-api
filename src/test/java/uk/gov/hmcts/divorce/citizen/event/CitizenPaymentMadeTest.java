@@ -12,8 +12,8 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
-import uk.gov.hmcts.divorce.citizen.notification.FurtherActionNeededNotification;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -70,7 +70,7 @@ class CitizenPaymentMadeTest {
     private NotificationDispatcher notificationDispatcher;
 
     @Mock
-    private FurtherActionNeededNotification furtherActionNeededNotification;
+    private ApplicationOutstandingActionNotification applicationOutstandingActionNotification;
 
     @InjectMocks
     private CitizenPaymentMade citizenPaymentMade;
@@ -234,7 +234,7 @@ class CitizenPaymentMadeTest {
         assertThat(result.getData()).isSameAs(expectedCaseData);
         assertThat(result.getState()).isSameAs(AwaitingDocuments);
         verify(submissionService).submitApplication(details);
-        verify(notificationDispatcher).send(furtherActionNeededNotification, caseData, details.getId());
+        verify(notificationDispatcher).send(applicationSubmittedNotification, caseData, details.getId());
     }
 
     @Test

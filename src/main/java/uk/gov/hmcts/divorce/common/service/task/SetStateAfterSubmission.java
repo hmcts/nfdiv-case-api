@@ -42,7 +42,7 @@ public class SetStateAfterSubmission implements CaseTask {
         boolean applicationHasBeenPaidFor = application.hasBeenPaidFor();
 
         boolean isAddressProvidedOrServeAnotherWay = caseData.getApplicationType().isSole()
-            && caseData.getApplication().isAddressProvidedOrServeAnotherWay();
+            && caseData.getApplication().isAddressProvided();
 
         if (applicantNeedsHelpWithFees && !applicationHasBeenPaidFor) {
             caseDetails.setState(AwaitingHWFDecision);

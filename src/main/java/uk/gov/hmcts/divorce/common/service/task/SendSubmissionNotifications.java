@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
-import uk.gov.hmcts.divorce.citizen.notification.FurtherActionNeededNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -28,8 +27,6 @@ public class SendSubmissionNotifications implements CaseTask {
 
     private final ApplicationSubmittedNotification applicationSubmittedNotification;
 
-    private final FurtherActionNeededNotification furtherActionNeededNotification;
-
     private final NotificationDispatcher notificationDispatcher;
 
     @Override
@@ -48,16 +45,10 @@ public class SendSubmissionNotifications implements CaseTask {
             notificationDispatcher.send(applicationSubmittedNotification, caseData, caseId);
         }
 
-        // We are working on this to be combined so that only one notification goes out with whatever is required
-
         if (application.hasAwaitingApplicant1Documents() || application.hasAwaitingApplicant2Documents()
-            || !application.isAddressProvidedOrServeAnotherWay()) {
+            || !application.isAddressProvided()) {
 
-            if (application.isAddressProvidedOrServeAnotherWay()) {
-                log.info("Sending further action needed notifications for case : {}", caseId);
-            } else {
-                log.info("Sending outstanding action notification if awaiting documents for case : {}", caseId);
-            }
+            log.info("Sending outstanding action needed notification for case : {}", caseId);
 
             notificationDispatcher.send(applicationOutstandingActionNotification, caseData, caseId);
         }

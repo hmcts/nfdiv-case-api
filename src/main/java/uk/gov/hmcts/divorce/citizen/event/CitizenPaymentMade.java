@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
-import uk.gov.hmcts.divorce.citizen.notification.FurtherActionNeededNotification;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -44,7 +43,6 @@ public class CitizenPaymentMade implements CCDConfig<CaseData, State, UserRole> 
 
     private final PaymentValidatorService paymentValidatorService;
     private final NotificationDispatcher notificationDispatcher;
-    private final FurtherActionNeededNotification furtherActionNeededNotifications;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
