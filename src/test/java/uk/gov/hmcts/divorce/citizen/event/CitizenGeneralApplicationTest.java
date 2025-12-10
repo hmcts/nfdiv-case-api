@@ -48,9 +48,8 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenGeneralApplication.AWAITING_PAYMENT_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -321,7 +320,7 @@ class CitizenGeneralApplicationTest {
         );
 
         assertThat(response.getState()).isEqualTo(WelshTranslationReview);
-        assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(GeneralApplicationReceived);
+        assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(AwaitingDocuments);
     }
 
     @Test
