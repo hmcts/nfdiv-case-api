@@ -267,4 +267,13 @@ public final class ValidationUtil {
                 "No PBA numbers associated with the provided email address");
         }
     }
+
+    public static List<String> validateAosSubmitted(CaseData caseData) {
+        if (caseData.getAcknowledgementOfService() != null
+            && caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
+            return singletonList("Partner has responded to application.");
+        }
+        return emptyList();
+    }
+
 }

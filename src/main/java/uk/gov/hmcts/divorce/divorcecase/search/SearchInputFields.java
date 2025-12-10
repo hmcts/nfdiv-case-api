@@ -81,7 +81,14 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
             .build(),
         SearchField.<UserRole>builder().label("Applicant first name").id(APPLICANT_1_FIRST_NAME).build(),
         SearchField.<UserRole>builder().label("Applicant last name").id(APPLICANT_1_LAST_NAME).build(),
-        SearchField.<UserRole>builder().label("Applicant email").id(APPLICANT_1_EMAIL).build(),
+        SearchField.<UserRole>builder().label("Applicant email")
+            .id(APPLICANT_1_EMAIL)
+            .userRole(UserRole.CASE_WORKER)
+            .build(),
+        SearchField.<UserRole>builder().label("Applicant email")
+            .id(APPLICANT_1_EMAIL)
+            .userRole(UserRole.JUDGE)
+            .build(),
         SearchField.<UserRole>builder().label("Applicant postcode")
             .id(APPLICANT_1_ADDRESS)
             .userRole(UserRole.CASE_WORKER)
@@ -92,7 +99,14 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
             .listElementCode("PostCode").build(),
         SearchField.<UserRole>builder().label("Respondent first name").id(APPLICANT_2_FIRST_NAME).build(),
         SearchField.<UserRole>builder().label("Respondent last name").id(APPLICANT_2_LAST_NAME).build(),
-        SearchField.<UserRole>builder().label("Respondent email").id(APPLICANT_2_EMAIL).build(),
+        SearchField.<UserRole>builder().label("Respondent email")
+            .id(APPLICANT_2_EMAIL)
+            .userRole(UserRole.CASE_WORKER)
+            .build(),
+        SearchField.<UserRole>builder().label("Respondent email")
+            .id(APPLICANT_2_EMAIL)
+            .userRole(UserRole.JUDGE)
+            .build(),
         SearchField.<UserRole>builder().label("Respondent postcode")
             .id(APPLICANT_2_ADDRESS)
             .userRole(UserRole.CASE_WORKER)

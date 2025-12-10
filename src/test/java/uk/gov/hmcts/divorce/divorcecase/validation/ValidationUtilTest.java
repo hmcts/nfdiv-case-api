@@ -62,7 +62,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 
-class CaseValidationTest {
+class ValidationUtilTest {
 
     private static final String LESS_THAN_ONE_YEAR_AGO = " can not be less than one year and one day ago.";
     private static final String LESS_THAN_ONE_YEAR_SINCE_SUBMISSION =
@@ -806,4 +806,28 @@ class CaseValidationTest {
         assertThat(response.getErrorResponse().getErrors().get(0)).isEqualTo("No PBA numbers associated with the provided email address");
 
     }
+
+    @Test
+    void shouldReturnNoErrorsWhenAosHasNotBeenSubmitted() {
+        CaseData caseData = caseData();
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(null);
+
+        List<String> errors = ValidationUtil.validateAosSubmitted(caseData);
+
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    void shouldReturnErrorsWhenAosHasBeenSubmitted() {
+        CaseData caseData = caseData();
+        caseData.getAcknowledgementOfService().setDateAosSubmitted(
+            LocalDateTime.of(2021, 10, 26, 10, 0, 0));
+
+        List<String> errors = ValidationUtil.validateAosSubmitted(caseData);
+
+        assertThat(errors).isNotEmpty();
+        assertThat(errors.size()).isEqualTo(1);
+        assertThat(errors).contains("Partner has responded to application.");
+    }
+
 }

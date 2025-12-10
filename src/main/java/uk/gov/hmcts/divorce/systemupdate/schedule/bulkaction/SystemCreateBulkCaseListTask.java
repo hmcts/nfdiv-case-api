@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdCreateService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
@@ -46,6 +47,8 @@ public class SystemCreateBulkCaseListTask implements Runnable {
 
     private final AuthTokenGenerator authTokenGenerator;
 
+    private final BulkCaseValidationService bulkCaseValidationService;
+
     private final FailedBulkCaseRemover failedBulkCaseRemover;
 
     private final BulkTriggerService bulkTriggerService;
@@ -64,13 +67,10 @@ public class SystemCreateBulkCaseListTask implements Runnable {
                 ccdSearchService.searchAwaitingPronouncementCasesAllPages(user, serviceAuth);
 
             while (!pages.isEmpty()) {
-
                 final List<CaseDetails<CaseData, State>> casesAwaitingPronouncement = pages.poll();
 
-                if (minimumCasesToProcess <= casesAwaitingPronouncement.size()) {
-
-                    final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = createBulkCaseListDetails(casesAwaitingPronouncement);
-
+                final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = checkCasesToProcess(casesAwaitingPronouncement);
+                if (!bulkListCaseDetails.isEmpty()) {
                     final CaseDetails<BulkActionCaseData, BulkActionState> caseDetailsBulkCase = createBulkCase(
                         user,
                         serviceAuth,
@@ -89,13 +89,8 @@ public class SystemCreateBulkCaseListTask implements Runnable {
                         user,
                         serviceAuth
                     );
-
-                } else {
-                    log.info("Number of cases do not reach the minimum for awaiting pronouncement processing,"
-                        + "Minimum size needed {}, Case list size {}", minimumCasesToProcess, casesAwaitingPronouncement.size());
                 }
             }
-
             log.info("Awaiting pronouncement scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
             log.error("Awaiting pronouncement schedule task stopped after search error", e);
@@ -129,42 +124,79 @@ public class SystemCreateBulkCaseListTask implements Runnable {
         return ccdCreateService.createBulkCase(bulkActionCaseDetails, user, serviceAuth);
     }
 
-    private List<ListValue<BulkListCaseDetails>> createBulkCaseListDetails(
-        final List<CaseDetails<CaseData, State>> casesAwaitingPronouncement) {
+    private List<ListValue<BulkListCaseDetails>> checkCasesToProcess(final List<CaseDetails<CaseData, State>> casesAwaitingPronouncement) {
+        final String belowMinimum
+            = "Number of cases does not reach the minimum for awaiting pronouncement processing, Minimum size needed %s, Case list size %s";
 
-        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = new ArrayList<>();
+        if (minimumCasesToProcess > casesAwaitingPronouncement.size()) {
+            log.info(String.format(belowMinimum, minimumCasesToProcess, casesAwaitingPronouncement.size()));
+            return new ArrayList<>();
+        }
 
-        for (final CaseDetails<CaseData, State> caseDetails : casesAwaitingPronouncement) {
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = createBulkCaseListDetails(casesAwaitingPronouncement);
 
-            final CaseData caseData = caseDetails.getData();
-            String caseParties = String.format("%s %s vs %s %s",
-                caseData.getApplicant1().getFirstName(),
-                caseData.getApplicant1().getLastName(),
-                caseData.getApplicant2().getFirstName(),
-                caseData.getApplicant2().getLastName()
-            );
+        if (bulkListCaseDetails.isEmpty()) {
+            log.error("Potential Elastic Search issue. bulkListCaseDetails not populated.");
+            return new ArrayList<>();
+        }
 
-            var bulkCaseDetails = BulkListCaseDetails
-                .builder()
-                .caseParties(caseParties)
-                .caseReference(
-                    CaseLink
-                        .builder()
-                        .caseReference(String.valueOf(caseDetails.getId()))
-                        .build()
-                )
-                .decisionDate(caseData.getConditionalOrder().getDecisionDate())
-                .build();
-
-            var bulkListCaseDetailsListValue =
-                ListValue
-                    .<BulkListCaseDetails>builder()
-                    .value(bulkCaseDetails)
-                    .build();
-
-            bulkListCaseDetails.add(bulkListCaseDetailsListValue);
+        if (minimumCasesToProcess > bulkListCaseDetails.size()) {
+            log.error(String.format(belowMinimum, minimumCasesToProcess, bulkListCaseDetails.size()));
+            return new ArrayList<>();
         }
 
         return bulkListCaseDetails;
+    }
+
+    private List<ListValue<BulkListCaseDetails>> createBulkCaseListDetails(
+        final List<CaseDetails<CaseData, State>> casesAwaitingPronouncement
+    ) {
+        final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails = new ArrayList<>();
+
+        for (final CaseDetails<CaseData, State> caseDetails : casesAwaitingPronouncement) {
+            final List<String> errors = bulkCaseValidationService.validateCaseForListing(caseDetails);
+            if (!errors.isEmpty()) {
+                log.error(
+                    "Potential Elastic Search issue. Case {} skipped due to errors: {}",
+                    caseDetails.getId(),
+                    String.join("\n ", errors)
+                );
+            } else {
+                bulkListCaseDetails.add(getBulkListCaseDetailsListValue(caseDetails.getData(), caseDetails.getId()));
+            }
+        }
+
+        if (casesAwaitingPronouncement.size() > bulkListCaseDetails.size()) {
+            log.error("{} cases were skipped as they were either not in the correct state or already linked to a bulk case",
+                casesAwaitingPronouncement.size() - bulkListCaseDetails.size());
+        }
+
+        return bulkListCaseDetails;
+    }
+
+    private ListValue<BulkListCaseDetails> getBulkListCaseDetailsListValue(final CaseData caseData, Long id) {
+        String caseParties = String.format("%s %s vs %s %s",
+            caseData.getApplicant1().getFirstName(),
+            caseData.getApplicant1().getLastName(),
+            caseData.getApplicant2().getFirstName(),
+            caseData.getApplicant2().getLastName()
+        );
+
+        var bulkCaseDetails = BulkListCaseDetails
+            .builder()
+            .caseParties(caseParties)
+            .caseReference(
+                CaseLink
+                    .builder()
+                    .caseReference(String.valueOf(id))
+                    .build()
+            )
+            .decisionDate(caseData.getConditionalOrder().getDecisionDate())
+            .build();
+
+        return ListValue
+                .<BulkListCaseDetails>builder()
+                .value(bulkCaseDetails)
+                .build();
     }
 }

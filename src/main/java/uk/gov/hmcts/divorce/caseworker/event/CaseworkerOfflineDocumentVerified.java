@@ -125,7 +125,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR, JUDGE))
-            .page("documentTypeReceived", this::midEvent)
+            .page("documentTypeReceived")
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
 
             .complex(CaseData::getDocuments)
@@ -235,38 +235,20 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .build();
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
-                                                                  CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
-        final CaseData data = details.getData();
-        if (RFI_RESPONSE.equals(data.getDocuments().getTypeOfDocumentAttached())) {
-            if (data.getRequestForInformationList().getRequestsForInformation() == null
-                    || data.getRequestForInformationList().getRequestsForInformation().isEmpty()
-            ) {
-                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                    .errors(Collections.singletonList(NO_REQUEST_FOR_INFORMATION_ERROR))
-                    .build();
-            }
-
-            if (data.getApplication().getIssueDate() != null) {
-                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                    .errors(Collections.singletonList(NO_REQUEST_FOR_INFORMATION_POST_ISSUE_ERROR))
-                    .build();
-            }
-        }
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
-            .build();
-    }
-
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
         CaseData caseData = details.getData();
         log.info("Scanned subtype received is {} for case {}", caseData.getDocuments().getScannedSubtypeReceived(), details.getId());
         log.info("Type of document attached is {} for case {}", caseData.getDocuments().getTypeOfDocumentAttached(), details.getId());
+
+
+        List<String> errors = validateDocumentVerification(details.getData());
+        if (!errors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(errors)
+                .build();
+        }
 
         if (AOS_D10.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
             return processD10AndSendNotifications(details);
@@ -303,6 +285,22 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .state(state)
                 .build();
         }
+    }
+
+    private List<String> validateDocumentVerification(CaseData data) {
+        if (RFI_RESPONSE.equals(data.getDocuments().getTypeOfDocumentAttached())) {
+            if (data.getRequestForInformationList().getRequestsForInformation() == null
+                || data.getRequestForInformationList().getRequestsForInformation().isEmpty()
+            ) {
+                return Collections.singletonList(NO_REQUEST_FOR_INFORMATION_ERROR);
+            }
+
+            if (data.getApplication().getIssueDate() != null) {
+                return Collections.singletonList(NO_REQUEST_FOR_INFORMATION_POST_ISSUE_ERROR);
+            }
+        }
+
+        return Collections.emptyList();
     }
 
     private AboutToStartOrSubmitResponse<CaseData, State> processD36AndSendNotifications(CaseDetails<CaseData, State> details) {

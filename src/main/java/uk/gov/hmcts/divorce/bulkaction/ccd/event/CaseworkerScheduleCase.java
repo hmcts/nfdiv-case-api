@@ -20,13 +20,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction.FailedBulkCaseRemover;
+import uk.gov.hmcts.divorce.systemupdate.service.BulkCaseValidationService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.util.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -40,6 +41,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemLinkWithBulkCase.SYS
 public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
     public static final String CASEWORKER_SCHEDULE_CASE = "caseworker-schedule-case";
     private static final String SCHEDULE_CASES_FOR_LISTING = "Schedule cases for listing";
+
     private final ScheduleCaseService scheduleCaseService;
     private final BulkTriggerService bulkTriggerService;
     private final BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
@@ -47,6 +49,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
     private final AuthTokenGenerator authTokenGenerator;
     private final HttpServletRequest request;
     private final FailedBulkCaseRemover failedBulkCaseRemover;
+    private final BulkCaseValidationService bulkCaseValidationService;
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
@@ -57,6 +60,7 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .description(SCHEDULE_CASES_FOR_LISTING)
             .showSummary()
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .explicitGrants()
@@ -68,32 +72,54 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             .mandatoryNoSummary(BulkActionCaseData::getBulkListCaseDetails);
     }
 
-    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(
-        final CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
-        final CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails
-    ) {
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToStart(final CaseDetails<BulkActionCaseData,
+        BulkActionState> bulkDetails) {
 
-        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_SCHEDULE_CASE, bulkCaseDetails.getId());
+        log.info("{} aboutToStart-callback invoked for case id: {}", CASEWORKER_SCHEDULE_CASE, bulkDetails.getId());
 
-        if (bulkCaseDetails.getData().getDateAndTimeOfHearing().isBefore(LocalDateTime.now())) {
+        List<String> validationErrors = bulkCaseValidationService.validateBulkListErroredCases(bulkDetails);
+        if (!isEmpty(validationErrors)) {
             return AboutToStartOrSubmitResponse
                 .<BulkActionCaseData, BulkActionState>builder()
-                .errors(List.of("Please enter a hearing date and time in the future"))
-                .data(bulkCaseDetails.getData())
+                .errors(validationErrors)
+                .data(bulkDetails.getData())
                 .build();
         }
 
-        return AboutToStartOrSubmitResponse
-            .<BulkActionCaseData, BulkActionState>builder()
-            .data(bulkCaseDetails.getData())
+        return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkDetails.getData())
+            .build();
+    }
+
+    public AboutToStartOrSubmitResponse<BulkActionCaseData, BulkActionState> aboutToSubmit(
+        CaseDetails<BulkActionCaseData, BulkActionState> bulkDetails,
+        CaseDetails<BulkActionCaseData, BulkActionState> beforeBulkDetails
+    ) {
+        log.info("{} mid event callback invoked for Case Id: {}", CASEWORKER_SCHEDULE_CASE, bulkDetails.getId());
+
+        final List<String> errors = bulkCaseValidationService.validateData(
+            bulkDetails.getData(),
+            beforeBulkDetails.getData(),
+            bulkDetails.getId()
+        );
+        if (!errors.isEmpty()) {
+            return AboutToStartOrSubmitResponse
+                .<BulkActionCaseData, BulkActionState>builder()
+                .errors(errors)
+                .data(bulkDetails.getData())
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<BulkActionCaseData, BulkActionState>builder()
+            .data(bulkDetails.getData())
             .state(Listed)
             .build();
     }
 
-    public SubmittedCallbackResponse submitted(CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails,
-                                               CaseDetails<BulkActionCaseData, BulkActionState> beforeDetails) {
+    public SubmittedCallbackResponse submitted(CaseDetails<BulkActionCaseData, BulkActionState> bulkDetails,
+                                               CaseDetails<BulkActionCaseData, BulkActionState> beforeBulkDetails) {
 
-        log.info("{} submitted callback invoked for Case Id: {}", CASEWORKER_SCHEDULE_CASE, bulkCaseDetails.getId());
+        log.info("{} submitted callback invoked for Case Id: {}", CASEWORKER_SCHEDULE_CASE, bulkDetails.getId());
 
         User user = idamService.retrieveUser(request.getHeader(AUTHORIZATION));
         String serviceAuth = authTokenGenerator.generate();
@@ -102,21 +128,21 @@ public class CaseworkerScheduleCase implements CCDConfig<BulkActionCaseData, Bul
             User systemUser = idamService.retrieveSystemUpdateUserDetails();
 
             final List<ListValue<BulkListCaseDetails>> failedAwaitingPronouncementCases = bulkTriggerService.bulkTrigger(
-                    bulkCaseDetails.getData().getBulkListCaseDetails(),
+                    bulkDetails.getData().getBulkListCaseDetails(),
                     SYSTEM_LINK_WITH_BULK_CASE,
-                    bulkCaseCaseTaskFactory.getCaseTask(bulkCaseDetails, SYSTEM_LINK_WITH_BULK_CASE),
+                    bulkCaseCaseTaskFactory.getCaseTask(bulkDetails, SYSTEM_LINK_WITH_BULK_CASE),
                     systemUser,
                     serviceAuth);
 
             failedBulkCaseRemover.removeFailedCasesFromBulkListCaseDetails(
                     failedAwaitingPronouncementCases,
-                    bulkCaseDetails,
+                    bulkDetails,
                     systemUser,
                     serviceAuth
             );
         }
 
-        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkCaseDetails);
+        scheduleCaseService.updateCourtHearingDetailsForCasesInBulk(bulkDetails);
         return SubmittedCallbackResponse.builder().build();
     }
 }

@@ -93,6 +93,8 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
 
         populateGeneralApplicationList(caseData);
 
+        caseData.getGeneralReferral().setGeneralReferralType(null);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
