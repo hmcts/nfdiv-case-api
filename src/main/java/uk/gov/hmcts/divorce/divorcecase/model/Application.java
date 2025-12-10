@@ -580,11 +580,25 @@ public class Application {
     private YesOrNo confirmWithdrawApplication;
 
     @CCD(
-        label = "Reason for withdrawing the application",
+        label = "Reason for withdrawal",
         access = {Applicant2Access.class, DefaultAccess.class},
         searchable = false
     )
     private String withdrawApplicationReason;
+
+    @CCD(
+        label = "Caseworker reason for withdrawal",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "WithdrawApplicationReasonType",
+        access = {DefaultAccess.class}
+    )
+    private WithdrawApplicationReasonType cwWithdrawApplicationReason;
+
+    @CCD(
+        label = "Details of reason for withdrawal",
+        access = {DefaultAccess.class}
+    )
+    private String cwWithdrawApplicationDetails;
 
     @JsonIgnore
     public boolean hasBeenPaidFor() {

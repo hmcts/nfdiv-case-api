@@ -47,4 +47,22 @@ class CaseworkerWithdrawnTest {
 
         verify(withdrawCaseService).withdraw(caseDetails);
     }
+
+    @Test
+    void shouldReturnErrorFromMidEventCallbackWhenWithdrawalDetailsIsNotProvidedWhenReasonSelectedIsOther() {
+        final var caseData = new CaseData();
+        caseData.getApplication().setCwWithdrawApplicationReason(
+            uk.gov.hmcts.divorce.divorcecase.model.WithdrawApplicationReasonType.OTHER
+        );
+        caseData.getApplication().setCwWithdrawApplicationDetails(null);
+
+        final var caseDetails = new CaseDetails<CaseData, State>();
+        caseDetails.setData(caseData);
+
+        final var response = caseworkerWithdrawn.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).containsExactly(
+            CaseworkerWithdrawn.DETAILS_NOT_PROVIDED
+        );
+    }
 }

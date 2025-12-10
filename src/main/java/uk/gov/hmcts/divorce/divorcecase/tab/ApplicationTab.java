@@ -9,7 +9,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.andShowCondition;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.SeparationOrderGranted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -17,6 +19,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.notShowForState;
+import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.showForState;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.APP1_HAS_CHANGED_NAME_IN_OTHER_WAY;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.APP1_NAME_IS_DIFFERENT;
 import static uk.gov.hmcts.divorce.solicitor.event.page.SolAboutApplicant1.APP1_NAME_IS_DIFFERENT_FOR_OTHER_REASON;
@@ -132,6 +135,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
         addApplicant2Representation(tabBuilderForJointApplication);
         addOtherProceedings(tabBuilderForJointApplication);
         addService(tabBuilderForJointApplication);
+        addWithdrawApplicationDetails(tabBuilderForJointApplication);
     }
 
     private void buildJointApplicationTabWithApplicant1ContactDetails(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -152,6 +156,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
         addApplicant2Representation(tabBuilderForJointApplication);
         addOtherProceedings(tabBuilderForJointApplication);
         addService(tabBuilderForJointApplication);
+        addWithdrawApplicationDetails(tabBuilderForJointApplication);
     }
 
     private void buildJointApplicationTabWithApplicant2ContactDetails(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -172,6 +177,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
         addApplicant2Representation(tabBuilderForJointApplication);
         addOtherProceedings(tabBuilderForJointApplication);
         addService(tabBuilderForJointApplication);
+        addWithdrawApplicationDetails(tabBuilderForJointApplication);
     }
 
     private void addDynamicContentHiddenAndHeaderFields(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
@@ -186,6 +192,7 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
         addService(tabBuilder);
         addOtherCourtCases(tabBuilder);
         addApplicant1StatementOfTruth(tabBuilder);
+        addWithdrawApplicationDetails(tabBuilder);
     }
 
     private void addDynamicContentHiddenFields(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
@@ -450,5 +457,17 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     private void addApplicant1StatementOfTruth(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
             .field("applicant1StatementOfTruth");
+    }
+
+    private void addWithdrawApplicationDetails(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+        tabBuilder
+            .label("LabelApplicationWithdrawn-Heading",
+                "cwWithdrawApplicationReason=\"*\" OR withdrawApplicationReason=\"*\"", "#### Application Withdrawn")
+            .field("withdrawApplicationReason",
+                "withdrawApplicationReason=\"*\" AND " + showForState(Withdrawn, PendingRefund))
+            .field("cwWithdrawApplicationReason",
+                "cwWithdrawApplicationReason=\"*\" AND " + showForState(Withdrawn))
+            .field("cwWithdrawApplicationDetails",
+                "cwWithdrawApplicationDetails=\"*\" AND " + showForState(Withdrawn));
     }
 }
