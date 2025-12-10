@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
@@ -36,6 +37,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSolePa
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_APPLICATION;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.OTHER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.REQUEST_FOR_INFORMATION_RESPONSE_DOC;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -687,5 +689,49 @@ class CaseworkerRemoveDocumentTest {
         assertThat(responseRfi.getLatestResponse().getRequestForInformationResponseDocs()).hasSize(1);
         assertThat(responseRfi.getLatestResponse().getRequestForInformationResponseDocs().get(0).getValue()).isEqualTo(doc1.getValue());
         assertThat(responseDocs).isNull();
+    }
+
+    @Test
+    void shouldRemoveServiceApplicationDocuments() {
+
+        final ListValue<DivorceDocument> doc1 = getDivorceDocumentListValue(
+            "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003",
+            "doc1.pdf",
+            OTHER
+        );
+
+        final ListValue<DivorceDocument> doc2 = getDivorceDocumentListValue(
+            "http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130004",
+            "doc2.pdf",
+            OTHER
+        );
+
+        AlternativeService beforeAlternativeService = AlternativeService.builder()
+            .serviceApplicationDocuments(List.of(doc1, doc2))
+            .build();
+
+        CaseData beforeCaseData = CaseData.builder()
+            .alternativeService(beforeAlternativeService)
+            .build();
+
+        CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder()
+            .data(beforeCaseData)
+            .build();
+
+        AlternativeService afterAlternativeService = AlternativeService.builder()
+            .serviceApplicationDocuments(List.of(doc1))
+            .build();
+
+        CaseData currentCaseData = CaseData.builder()
+            .alternativeService(afterAlternativeService)
+            .build();
+
+        CaseDetails<CaseData, State> currentDetails = CaseDetails.<CaseData, State>builder()
+            .data(currentCaseData)
+            .build();
+
+        caseworkerRemoveDocument.aboutToSubmit(currentDetails, beforeDetails);
+
+        verify(documentRemovalService).deleteDocument(List.of(doc2));
     }
 }
