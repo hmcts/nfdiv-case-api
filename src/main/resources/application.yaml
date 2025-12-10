@@ -224,6 +224,7 @@ uk:
             APPLICATION_REJECTED_FEE_NOT_PAID: '92cfb46f-2903-43c2-9c61-2402e39ac0e3'
             REGENERATE_COURT_ORDERS_CO_PRONOUNCED: '24b45a12-0054-4be6-97b4-794645554eb7'
             SOLE_RESPONDENT_REGENERATE_COURT_ORDERS_CO_PRONOUNCED: '7bc211bc-7583-4498-97a0-1bd98348bf71'
+            SERVICE_APPLICATION_REJECTED_BY_CASEWORKER: 'e598cb5b-c3a4-4728-8892-83b972da7db4'
           welsh:
             REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT: '6fed53fd-8558-4f9a-8804-8b1004221083'
             SAVE_SIGN_OUT: '01202704-dfb7-48a3-91bd-1bbbbd4ee511'
@@ -388,6 +389,7 @@ uk:
             APPLICATION_REJECTED_FEE_NOT_PAID: '92cfb46f-2903-43c2-9c61-2402e39ac0e3' #TODO - Welsh translation needed
             REGENERATE_COURT_ORDERS_CO_PRONOUNCED: '84def710-732e-441b-a75a-86f6cd3636f5'
             SOLE_RESPONDENT_REGENERATE_COURT_ORDERS_CO_PRONOUNCED: 'dffa2141-83a1-4aaf-a22d-8f4a5a979a98'
+            SERVICE_APPLICATION_REJECTED_BY_CASEWORKER: '6325b679-d758-49d2-a1dd-5ce8ed21367d'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator,payment_app}
@@ -528,6 +530,7 @@ docmosis:
       ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Alternative-Service-Application_V1.docx
       DISPENSE_WITH_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Dispense-With-Service-Application_V1.docx
       SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-ENG-Search-Government-Records-Application_V1.docx
+      BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-ENG-Bailiff-Service-Successful-Letter-V1.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V1.docx
@@ -625,6 +628,7 @@ docmosis:
       ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Alternative-Service-Application_V1.docx
       DISPENSE_WITH_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Dispense-With-Service-Application_V1.docx
       SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-WEL-Search-Government-Records-Application_V1.docx
+      BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-WEL-Bailiff-Service-Successful-Letter-V1.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}
