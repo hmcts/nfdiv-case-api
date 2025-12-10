@@ -144,7 +144,8 @@ class CitizenGeneralApplicationPaymentMadeTest {
             .generalReferralFee(generalApp.getGeneralApplicationFee())
             .generalReferralJudgeOrLegalAdvisorDetails(
                 "Please refer to the Search Government Records application in the general applications tab"
-            )
+            ).generalReferralDocument(generalApp.getGeneralApplicationDocument())
+            .generalReferralDocuments(generalApp.getGeneralApplicationDocuments())
             .build();
 
         when(paymentValidatorService.validatePayments(payments, TEST_CASE_ID)).thenReturn(
