@@ -10,6 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -28,6 +30,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -66,6 +69,9 @@ class CitizenGeneralApplicationPaymentMadeTest {
 
     @Mock
     private HttpServletRequest request;
+
+    @Mock
+    private GeneralReferralService generalReferralService;
 
     @InjectMocks
     private CitizenGeneralApplicationPaymentMade citizenGeneralApplicationPayment;
@@ -126,10 +132,27 @@ class CitizenGeneralApplicationPaymentMadeTest {
         caseData.getApplicant1().setGeneralAppPayments(payments);
         details.setId(TEST_CASE_ID);
 
+        GeneralApplication generalApp = caseData.getGeneralApplications().getFirst().getValue();
+        GeneralReferral genReferral = GeneralReferral.builder()
+            .generalReferralReason(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL)
+            .generalReferralFraudCase(YesOrNo.NO)
+            .generalReferralUrgentCase(YesOrNo.NO)
+            .generalApplicationFrom(generalApp.getGeneralApplicationParty())
+            .generalApplicationReferralDate(LocalDate.now(clock))
+            .generalApplicationAddedDate(generalApp.getGeneralApplicationReceivedDate().toLocalDate())
+            .generalReferralType(GeneralReferralType.DISCLOSURE_VIA_DWP)
+            .generalReferralFee(generalApp.getGeneralApplicationFee())
+            .generalReferralJudgeOrLegalAdvisorDetails(
+                "Please refer to the Search Government Records application in the general applications tab"
+            ).generalReferralDocument(generalApp.getGeneralApplicationDocument())
+            .generalReferralDocuments(generalApp.getGeneralApplicationDocuments())
+            .build();
+
         when(paymentValidatorService.validatePayments(payments, TEST_CASE_ID)).thenReturn(
             Collections.emptyList()
         );
         when(paymentValidatorService.getLastPayment(payments)).thenReturn(payments.getLast().getValue());
+        when(generalReferralService.buildGeneralReferral(generalApp)).thenReturn(genReferral);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplicationPayment.aboutToSubmit(details, details);
 
@@ -236,7 +259,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
                 .paymentMethod(ServicePaymentMethod.FEE_PAY_BY_CARD)
                 .serviceRequestReference(TEST_SERVICE_REFERENCE)
                 .build())
-            .generalApplicationReceivedDate(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+            .generalApplicationReceivedDate(LocalDateTime.now())
             .build();
 
         return CaseData.builder()

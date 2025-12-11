@@ -43,6 +43,7 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CCD_RE
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.EVIDENCE_HANDLED;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.FRAUD_REFERRAL_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_APPLICATION_URGENT_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_FEE_METHOD;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_URGENT_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.MARRIAGE_DATE;
@@ -72,6 +73,10 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
         SearchField.<UserRole>builder().label("Type of service").id(ALTERNATIVE_SERVICE_TYPE).build(),
         SearchField.<UserRole>builder().label("Service payment method")
             .id(ALTERNATIVE_SERVICE_PAYMENT_METHOD)
+            .userRole(UserRole.CASE_WORKER)
+            .build(),
+        SearchField.<UserRole>builder().label("General referral payment method")
+            .id(GENERAL_REFERRAL_FEE_METHOD)
             .userRole(UserRole.CASE_WORKER)
             .build(),
         SearchField.<UserRole>builder().label("Applicant first name").id(APPLICANT_1_FIRST_NAME).build(),
