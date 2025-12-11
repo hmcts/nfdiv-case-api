@@ -28,6 +28,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -41,6 +42,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateAosSubmitted;
 
 @Component
 @Slf4j
@@ -86,6 +88,14 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         if (serviceAppAwaitingDecision(data.getAlternativeService())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(Collections.singletonList(AWAITING_DECISION_ERROR))
+                .build();
+        }
+
+        List<String> errors = validateAosSubmitted(data);
+        if (!errors.isEmpty()) {
+            log.info("{} failed since partner has already responded for {} ", CITIZEN_SERVICE_APPLICATION, caseId);
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(errors)
                 .build();
         }
 

@@ -10,7 +10,9 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
+import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.exception.InvalidDataException;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -25,9 +27,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.util.List;
-
-import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDwpResponse;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
@@ -39,7 +38,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateIssue;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 
 @Component
@@ -61,6 +59,8 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
     private final IdamService idamService;
 
     private final AuthTokenGenerator authTokenGenerator;
+
+    private final SetServiceType setServiceType;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -123,28 +123,26 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
-
-        CaseData caseData = details.getData();
         log.info("Caseworker issue application about to submit callback invoked for case id: {}", details.getId());
 
-        log.info("Validating Issue for Case Id: {}", details.getId());
-        final List<String> caseValidationErrors = validateIssue(details.getData());
-
-        if (!isEmpty(caseValidationErrors)) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(caseValidationErrors)
-                .build();
-        }
-
+        CaseData caseData = details.getData();
         caseData.getApplication().setBeingIssuedWithoutAddress(null);
 
-        final CaseDetails<CaseData, State> result = issueApplicationService.issueApplication(details);
+        try {
+            final CaseDetails<CaseData, State> result = issueApplicationService.issueApplication(details);
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(result.getData())
-            .state(result.getState())
-            .build();
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(result.getData())
+                .state(result.getState())
+                .build();
+        } catch (InvalidDataException exception) {
+            log.info("Data not valid for application issue, case id: {}", details.getId(), exception);
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(exception.getErrors())
+                .build();
+        }
     }
 
     public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,

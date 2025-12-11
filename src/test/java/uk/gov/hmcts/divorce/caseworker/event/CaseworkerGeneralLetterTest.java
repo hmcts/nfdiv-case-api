@@ -146,13 +146,13 @@ class CaseworkerGeneralLetterTest {
                     .build()
         );
 
+        var documentPackInfo = generalLetterDocumentPack.getDocumentPack(caseData, null);
+
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        var documentPackInfo = generalLetterDocumentPack.getDocumentPack(caseData, null);
-
-        generalLetter.submitted(details, details);
+        AboutToStartOrSubmitResponse response = generalLetter.aboutToSubmit(details, details);
         verify(letterPrinter).sendLetters(
             caseData,
             details.getId(),

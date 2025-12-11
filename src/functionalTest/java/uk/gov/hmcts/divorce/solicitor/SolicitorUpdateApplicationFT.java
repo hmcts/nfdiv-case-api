@@ -1,17 +1,16 @@
 package uk.gov.hmcts.divorce.solicitor;
 
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
-import uk.gov.hmcts.divorce.testutil.IdamTokenGenerator;
-import uk.gov.hmcts.divorce.testutil.ServiceAuthenticationGenerator;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,26 +30,29 @@ import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_1_ADDRESS_LINE_1;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_ADDRESS_LINE_1;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_OTHER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_OTHER_PHONE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_PHONE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationContactInformation;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
 public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
 
+    @Value("${idam.s2s-auth.microservice}")
+    private String s2sName;
+
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-solicitor-update.json";
 
     @Autowired
-    private IdamTokenGenerator idamTokenGenerator;
-
-    @Autowired
-    private ServiceAuthenticationGenerator serviceAuthenticationGenerator;
+    private IdamService idamService;
 
     @Autowired
     private CaseDocumentAccessManagement caseDocumentAccessManagement;
 
 
     @Test
-    @Disabled("CDAM requires the case to exist")
     public void shouldUpdateCaseDataWhenAboutToSubmitCallbackIsSuccessful() throws Exception {
 
         final Map<String, Object> caseData = caseData(REQUEST);
@@ -65,6 +67,10 @@ public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
             "applicant2NonConfidentialAddress",
             AddressGlobalUK.builder().addressLine1(TEST_APPLICANT_2_ADDRESS_LINE_1).build()
         );
+        caseData.put("applicant1NonConfidentialEmail", TEST_USER_EMAIL);
+        caseData.put("applicant2NonConfidentialEmail", TEST_OTHER_EMAIL);
+        caseData.put("applicant1NonConfidentialPhone", TEST_USER_PHONE);
+        caseData.put("applicant2NonConfidentialPhone", TEST_OTHER_PHONE);
 
         final ListValue<DivorceDocument> miniApplicationListValue = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -90,11 +96,11 @@ public class SolicitorUpdateApplicationFT extends FunctionalTestSuite {
 
     private uk.gov.hmcts.ccd.sdk.type.Document uploadDocument() throws IOException {
         var document = caseDocumentAccessManagement.upload(
-            idamTokenGenerator.generateIdamTokenForSystem(),
-            serviceAuthenticationGenerator.generate(),
+            idamService.retrieveSystemUpdateUserDetails().getAuthToken(),
+            serviceAuthenticationGenerator.generate(s2sName),
             "",
             "draft-divorce-application-1234567890123456.pdf",
-            "classpath:Test.pdf"
+            "/Test.pdf"
         ).getDocuments().get(0);
         return new uk.gov.hmcts.ccd.sdk.type.Document(
             document.links.self.href,
