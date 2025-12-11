@@ -2,13 +2,11 @@ package uk.gov.hmcts.divorce.divorcecase.validation;
 
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.ObjectUtils;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -270,13 +268,12 @@ public final class ValidationUtil {
         }
     }
 
-    public static List<String> validateBulkListErroredCases(CaseDetails<BulkActionCaseData, BulkActionState> bulkCaseDetails) {
-
-        var erroredCaseDetails = bulkCaseDetails.getData().getErroredCaseDetails();
-
-        return !ObjectUtils.isEmpty(erroredCaseDetails)
-            ? singletonList("There are errors on the bulk list. Please resolve errors before continuing")
-            : emptyList();
+    public static List<String> validateAosSubmitted(CaseData caseData) {
+        if (caseData.getAcknowledgementOfService() != null
+            && caseData.getAcknowledgementOfService().getDateAosSubmitted() != null) {
+            return singletonList("Partner has responded to application.");
+        }
+        return emptyList();
     }
 
 }
