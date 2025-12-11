@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -19,7 +18,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -38,9 +36,8 @@ import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -71,8 +68,6 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
     private final CcdAccessService ccdAccessService;
 
     private final HttpServletRequest request;
-
-    private final GeneralReferralService generalReferralService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -129,10 +124,8 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         } else {
             applicationFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF);
             applicationFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
-            GeneralReferral automaticReferral = generalReferralService.buildGeneralReferral(newGeneralApplication);
-            data.setGeneralReferral(automaticReferral);
 
-            details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingGeneralReferralPayment);
+            details.setState(GeneralApplicationReceived);
 
             if (data.isWelshApplication()) {
                 data.getApplication().setWelshPreviousState(details.getState());

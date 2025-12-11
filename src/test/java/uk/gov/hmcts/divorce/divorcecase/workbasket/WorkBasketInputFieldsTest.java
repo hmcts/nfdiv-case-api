@@ -99,10 +99,6 @@ class WorkBasketInputFieldsTest {
                 tuple("evidenceHandled",
                     "Supplementary evidence handled",
                     null,
-                    null),
-                tuple("generalReferralFeePaymentMethod",
-                    "General referral payment method",
-                    null,
                     null)
             );
     }

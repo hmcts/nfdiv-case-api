@@ -13,34 +13,21 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.task.SetGeneralReferralDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
-import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Random;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralReferral.CASEWORKER_GENERAL_REFERRAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType.DISCLOSURE_VIA_DWP;
-import static uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralReason.GENERAL_APPLICATION_REFERRAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 
 @ExtendWith(MockitoExtension.class)
 class GeneralReferralServiceTest {
@@ -56,9 +43,6 @@ class GeneralReferralServiceTest {
 
     @Mock
     private SetGeneralReferralDetails setGeneralReferralDetails;
-
-    @Mock
-    private Clock clock;
 
     @InjectMocks
     private GeneralReferralService generalReferralService;
@@ -114,30 +98,5 @@ class GeneralReferralServiceTest {
         verify(ccdUpdateService).submitEventWithRetry(
             eq(caseDetails.getId().toString()), eq(CASEWORKER_GENERAL_REFERRAL), same(setGeneralReferralDetails), any(), any());
         verifyNoInteractions(setGeneralReferralDetails);
-    }
-
-    @Test
-    void shouldBuildGeneralReferral() {
-        setMockClock(clock);
-
-        final CaseData caseData = TestDataHelper.caseData();
-        caseData.setGeneralApplication(GeneralApplication.builder()
-            .generalApplicationType(DISCLOSURE_VIA_DWP)
-            .generalApplicationParty(GeneralParties.APPLICANT)
-            .generalApplicationTypeOtherComments("some comments")
-            .generalApplicationReceivedDate(LocalDateTime.now())
-            .build()
-        );
-
-        GeneralReferral referral = generalReferralService.buildGeneralReferral(caseData.getGeneralApplication());
-
-        assertThat(referral.getGeneralReferralReason()).isEqualTo(GENERAL_APPLICATION_REFERRAL);
-        assertThat(referral.getGeneralReferralUrgentCase()).isEqualTo(NO);
-        assertThat(referral.getGeneralReferralUrgentCase()).isEqualTo(NO);
-        assertThat(referral.getGeneralApplicationFrom()).isEqualTo(GeneralParties.APPLICANT);
-        assertThat(referral.getGeneralReferralType()).isEqualTo(GeneralReferralType.DISCLOSURE_VIA_DWP);
-        assertThat(referral.getGeneralApplicationReferralDate()).isEqualTo(LocalDate.now());
-        assertThat(referral.getGeneralReferralJudgeOrLegalAdvisorDetails())
-            .isEqualTo("Please refer to the Search Government Records application in the general applications tab");
     }
 }
