@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.ALTERNATIVE_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -37,7 +38,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DOCUMENTS_ISSUED_ON;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE_POPULATED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SERVICE_ORDER_TYPE_ALTERNATIVE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SERVICE_ORDER_TYPE_DEEMED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SERVICE_ORDER_TYPE_DISPENSED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JUDICIAL_SEPARATION_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ORDER_TYPE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
@@ -77,6 +80,8 @@ class ServiceOrderTemplateContentTest {
         expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
         expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
         expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, NO);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DISPENSED, YES);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_ALTERNATIVE, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
         expectedEntries.put(DUE_DATE, "20 June 2021");
         expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
@@ -101,6 +106,8 @@ class ServiceOrderTemplateContentTest {
         expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
         expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
         expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, NO);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DISPENSED, YES);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_ALTERNATIVE, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, JUDICIAL_SEPARATION_PROCESS);
         expectedEntries.put(DUE_DATE, "20 June 2021");
         expectedEntries.put(ORDER_TYPE, SEPARATION_ORDER);
@@ -125,6 +132,8 @@ class ServiceOrderTemplateContentTest {
         expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
         expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
         expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, NO);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DISPENSED, YES);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_ALTERNATIVE, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, SEPARATION_PROCESS);
         expectedEntries.put(DUE_DATE, "20 June 2021");
         expectedEntries.put(ORDER_TYPE, SEPARATION_ORDER);
@@ -149,6 +158,8 @@ class ServiceOrderTemplateContentTest {
         expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
         expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
         expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, YES);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DISPENSED, NO);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_ALTERNATIVE, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
         expectedEntries.put(DUE_DATE, "20 June 2021");
         expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
@@ -174,6 +185,8 @@ class ServiceOrderTemplateContentTest {
         expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
         expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
         expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, YES);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DISPENSED, NO);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_ALTERNATIVE, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, JUDICIAL_SEPARATION_PROCESS);
         expectedEntries.put(DUE_DATE, "20 June 2021");
         expectedEntries.put(ORDER_TYPE, SEPARATION_ORDER);
@@ -199,6 +212,8 @@ class ServiceOrderTemplateContentTest {
         expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
         expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
         expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, YES);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DISPENSED, NO);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_ALTERNATIVE, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, SEPARATION_PROCESS);
         expectedEntries.put(DUE_DATE, "20 June 2021");
         expectedEntries.put(ORDER_TYPE, SEPARATION_ORDER);
@@ -225,6 +240,8 @@ class ServiceOrderTemplateContentTest {
         expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
         expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
         expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, NO);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DISPENSED, YES);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_ALTERNATIVE, NO);
         expectedEntries.put(REFUSAL_REASON, "refusal reasons");
         expectedEntries.put(PARTNER, "spouse");
         expectedEntries.put(IS_DIVORCE, YES);
@@ -253,6 +270,8 @@ class ServiceOrderTemplateContentTest {
         expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
         expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
         expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, NO);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DISPENSED, YES);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_ALTERNATIVE, NO);
         expectedEntries.put(REFUSAL_REASON, "refusal reasons");
         expectedEntries.put(PARTNER, "civil partner");
         expectedEntries.put(IS_DIVORCE, NO);
@@ -279,6 +298,8 @@ class ServiceOrderTemplateContentTest {
         expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
         expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
         expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, YES);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DISPENSED, NO);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_ALTERNATIVE, NO);
         expectedEntries.put(REFUSAL_REASON, "refusal reasons");
         expectedEntries.put(PARTNER, "spouse");
         expectedEntries.put(IS_DIVORCE, YES);
@@ -307,10 +328,41 @@ class ServiceOrderTemplateContentTest {
         expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
         expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
         expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, YES);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DISPENSED, NO);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_ALTERNATIVE, NO);
         expectedEntries.put(REFUSAL_REASON, "refusal reasons");
         expectedEntries.put(PARTNER, "civil partner");
         expectedEntries.put(IS_DIVORCE, NO);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP);
+        expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
+        expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
+        expectedEntries.put(ISSUE_DATE_POPULATED, true);
+
+        Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
+        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
+    void shouldSuccessfullyApplyContentFromDivorceCaseDataForGeneratingAlternativeServiceRefusalDocument() {
+        CaseData caseData = buildCaseData(NO, ALTERNATIVE_SERVICE);
+        caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
+
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("spouse");
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put(CASE_REFERENCE, FORMATTED_TEST_CASE_ID);
+        expectedEntries.put(DOCUMENTS_ISSUED_ON, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_RECEIVED_DATE, "18 June 2021");
+        expectedEntries.put(SERVICE_APPLICATION_DECISION_DATE, "18 June 2021");
+        expectedEntries.put(PETITIONER_FULL_NAME, "pet full test_middle_name name");
+        expectedEntries.put(RESPONDENT_FULL_NAME, "resp full name");
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DEEMED, NO);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_DISPENSED, NO);
+        expectedEntries.put(IS_SERVICE_ORDER_TYPE_ALTERNATIVE, YES);
+        expectedEntries.put(REFUSAL_REASON, "refusal reasons");
+        expectedEntries.put(PARTNER, "spouse");
+        expectedEntries.put(IS_DIVORCE, YES);
+        expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS);
         expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(ISSUE_DATE_POPULATED, true);

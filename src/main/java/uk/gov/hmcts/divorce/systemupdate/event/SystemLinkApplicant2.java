@@ -60,8 +60,14 @@ public class SystemLinkApplicant2 implements CCDConfig<CaseData, State, UserRole
         data.setCaseInvite(data.getCaseInvite().useAccessCode());
         data.getApplicant2().setOffline(NO);
 
+        ignoreApplicant1CaseInviteRequestData(data, beforeDetails.getData());
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .build();
+    }
+
+    private void ignoreApplicant1CaseInviteRequestData(CaseData data, CaseData beforeData) {
+        data.setCaseInviteApp1(beforeData.getCaseInviteApp1());
     }
 }

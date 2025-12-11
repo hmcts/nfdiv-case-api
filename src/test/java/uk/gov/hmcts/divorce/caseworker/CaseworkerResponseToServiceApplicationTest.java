@@ -100,29 +100,6 @@ class CaseworkerResponseToServiceApplicationTest {
     }
 
     @Test
-    void shouldMoveStateToAwaitingBailiffReferralWhenBailiff() {
-
-        CaseData caseData = CaseData.builder()
-            .alternativeService(AlternativeService
-                .builder()
-                .alternativeServiceType(BAILIFF)
-                .build())
-            .build();
-
-        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        updatedCaseDetails.setData(caseData);
-        updatedCaseDetails.setId(TEST_CASE_ID);
-        updatedCaseDetails.setCreatedDate(LOCAL_DATE_TIME);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerResponseToServiceApplication.aboutToSubmit(
-            updatedCaseDetails,
-            CaseDetails.<CaseData, State>builder().build()
-        );
-
-        assertThat(response.getState()).isEqualTo(State.AwaitingBailiffReferral);
-    }
-
-    @Test
     void shouldNotReturnValidationErrorsWhenAlternativeServiceTypeListIsPopulated() {
 
         List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes =

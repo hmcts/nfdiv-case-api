@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
 import uk.gov.hmcts.divorce.solicitor.service.task.DivorceApplicationDraft;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicant1SolicitorAddress;
-import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicantAddresses;
+import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicantContactDetails;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicantGender;
 
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
@@ -25,7 +25,7 @@ public class SolicitorUpdateApplicationService {
 
     private final SetApplicant1SolicitorAddress setApplicant1SolicitorAddress;
 
-    private final SetApplicantAddresses setApplicantAddresses;
+    private final SetApplicantContactDetails setApplicantContactDetails;
 
     private final SetApplicantGender setApplicantGender;
 
@@ -33,7 +33,7 @@ public class SolicitorUpdateApplicationService {
 
         return caseTasks(
             setApplicant1SolicitorAddress,
-            setApplicantAddresses,
+            setApplicantContactDetails,
             divorceApplicationRemover,
             divorceApplicationDraft,
             setApplicantGender

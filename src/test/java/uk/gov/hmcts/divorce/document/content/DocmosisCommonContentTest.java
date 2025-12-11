@@ -46,6 +46,10 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CT
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
@@ -311,6 +315,42 @@ class DocmosisCommonContentTest {
         assertThat(templateContent).contains(
             entry(APPLICANT_2_SOLICITOR_NAME, NOT_REPRESENTED_CY),
             entry(SOLICITOR_REFERENCE, NOT_PROVIDED_CY));
+    }
+
+    @Test
+    void shouldReturnApplicationNameForWelshDivorce() {
+        CaseData caseData = getSolicitorCaseData(WELSH, SOLE_APPLICATION, DIVORCE);
+
+        String result = docmosisCommonContent.getApplicationType(LanguagePreference.WELSH, caseData);
+
+        assertThat(result).isEqualTo(DIVORCE_APPLICATION_CY);
+    }
+
+    @Test
+    void shouldReturnApplicationNameForEnglishDivorce() {
+        CaseData caseData = getSolicitorCaseData(ENGLISH, SOLE_APPLICATION, DIVORCE);
+
+        String result = docmosisCommonContent.getApplicationType(LanguagePreference.ENGLISH, caseData);
+
+        assertThat(result).isEqualTo(DIVORCE_APPLICATION);
+    }
+
+    @Test
+    void shouldReturnApplicationNameForWelshDissolution() {
+        CaseData caseData = getSolicitorCaseData(WELSH, SOLE_APPLICATION, DISSOLUTION);
+
+        String result = docmosisCommonContent.getApplicationType(LanguagePreference.WELSH, caseData);
+
+        assertThat(result).isEqualTo(END_CIVIL_PARTNERSHIP_CY);
+    }
+
+    @Test
+    void shouldReturnApplicationNameForEnglishDissolution() {
+        CaseData caseData = getSolicitorCaseData(ENGLISH, SOLE_APPLICATION, DISSOLUTION);
+
+        String result = docmosisCommonContent.getApplicationType(ENGLISH, caseData);
+
+        assertThat(result).isEqualTo(END_CIVIL_PARTNERSHIP);
     }
 
     CaseData getSolicitorCaseData(

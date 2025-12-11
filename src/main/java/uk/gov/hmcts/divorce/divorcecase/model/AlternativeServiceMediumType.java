@@ -17,6 +17,9 @@ public enum AlternativeServiceMediumType implements HasLabel {
     @JsonProperty("socialMedia")
     SOCIAL_MEDIA("Social media"),
 
+    @JsonProperty("whatsapp")
+    WHATSAPP("WhatsApp"),
+
     @JsonProperty("other")
     OTHER("Other");
 

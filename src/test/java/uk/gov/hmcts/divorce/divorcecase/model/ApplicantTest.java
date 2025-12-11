@@ -2,6 +2,10 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -10,6 +14,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.organisationPolicy;
 
 class ApplicantTest {
@@ -355,5 +360,129 @@ class ApplicantTest {
 
         assertThat(applicant.getCorrespondenceAddressWithoutConfidentialCheck())
             .isEqualTo("Correspondence Address\nLine 2\nLine 3\nPost Town\nCounty\nUK\nPost Code");
+    }
+
+    @Test
+    void shouldReturnFullNameByCombiningNameFields() {
+        final Applicant applicant = Applicant.builder()
+            .firstName("first")
+            .middleName("middle")
+            .lastName("last")
+            .build();
+
+        assertThat(applicant.getFullName())
+            .isEqualTo("first middle last");
+    }
+
+    @Test
+    void shouldHandleNullNames() {
+        final Applicant applicant = Applicant.builder()
+            .firstName("first")
+            .middleName(null)
+            .lastName("last")
+            .build();
+
+        assertThat(applicant.getFullName())
+            .isEqualTo("first last");
+    }
+
+    @Test
+    void shouldHandleEmptyNames() {
+        final Applicant applicant = Applicant.builder()
+            .firstName("first")
+            .middleName("")
+            .lastName("last")
+            .build();
+
+        assertThat(applicant.getFullName())
+            .isEqualTo("first last");
+    }
+
+    @Test
+    void shouldSetGeneralAppServiceRequest() {
+        final Applicant applicant = Applicant.builder()
+            .generalAppPayments(List.of(
+                ListValue.<Payment>builder()
+                    .value(Payment.builder().amount(10).build())
+                    .build()
+            ))
+            .build();
+
+        applicant.setActiveGeneralApplication("service-request");
+
+        assertThat(applicant.getGeneralAppServiceRequest())
+            .isEqualTo("service-request");
+        assertThat(applicant.getGeneralAppPayments()).isEmpty();
+    }
+
+    @Test
+    void shouldArchiveInterimApplicationOptions() {
+        InterimApplicationOptions applicationOptions = InterimApplicationOptions.builder()
+            .interimAppsUseHelpWithFees(YesOrNo.YES)
+            .interimAppsCannotUploadDocs(YesOrNo.NO)
+            .interimApplicationType(InterimApplicationType.SEARCH_GOV_RECORDS)
+            .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
+            .build();
+
+        final Applicant applicant = Applicant.builder()
+            .interimApplicationOptions(applicationOptions)
+            .build();
+
+        applicant.archiveInterimApplicationOptions();
+
+        assertThat(applicant.getInterimApplicationOptions()).isEqualTo(new InterimApplicationOptions());
+        assertThat(applicant.getInterimApplications().size()).isEqualTo(1);
+        assertThat(applicant.getInterimApplications().getFirst().getValue().getOptions()).isEqualTo(applicationOptions);
+    }
+
+    @Test
+    void shouldSuggestOverseasServiceIfRepresentedByOverseasSolicitor() {
+        Applicant applicant = caseData().getApplicant2();
+        applicant.setSolicitorRepresented(YES);
+        applicant.setSolicitor(
+            Solicitor.builder().addressOverseas(YesOrNo.YES).build()
+        );
+        applicant.setAddress(AddressGlobalUK.builder().country("France").build());
+
+        assertThat(applicant.mustBeServedOverseas()).isTrue();
+    }
+
+    @Test
+    void shouldSuggestNoOverseasServiceIfRepresentedByUKSolicitor() {
+        Applicant applicant = caseData().getApplicant2();
+        applicant.setSolicitorRepresented(YES);
+        applicant.setSolicitor(
+            Solicitor.builder().addressOverseas(YesOrNo.NO).build()
+        );
+
+        assertThat(applicant.mustBeServedOverseas()).isFalse();
+    }
+
+    @Test
+    void shouldSuggestOverseasServiceIfUnrepresentedApplicantIsOverseas() {
+        Applicant applicant = caseData().getApplicant2();
+        applicant.setAddress(
+            AddressGlobalUK.builder()
+                .country("Scotland")
+                .postCode("111111")
+                .build()
+        );
+        applicant.setSolicitorRepresented(NO);
+
+        assertThat(applicant.mustBeServedOverseas()).isTrue();
+    }
+
+    @Test
+    void shouldSuggestNoOverseasServiceIfUnrepresentedApplicantIsInEngland() {
+        Applicant applicant = caseData().getApplicant2();
+        applicant.setAddress(
+            AddressGlobalUK.builder()
+                .country("UK")
+                .postCode("en1111")
+                .build()
+        );
+        applicant.setSolicitorRepresented(NO);
+
+        assertThat(applicant.mustBeServedOverseas()).isFalse();
     }
 }

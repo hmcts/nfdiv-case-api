@@ -33,8 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorIntendsSwitchToSoleFo.INTEND_TO_SWITCHED_TO_SOLE_FO_ERROR;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorIntendsSwitchToSoleFo.getIntendsToSwitchToSoleInformationLabel;
-import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorIntendsSwitchToSoleFo.getOtherApplicantIsNotRepresentedLabel;
-import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorIntendsSwitchToSoleFo.getOtherApplicantIsRepresentedLabel;
+import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorIntendsSwitchToSoleFo.getOtherApplicantCanStillApplyLabel;
 
 @Slf4j
 @Component
@@ -75,10 +74,7 @@ public class Applicant2SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseD
             .complex(CaseData::getApplicant1)
                 .readonlyNoSummary(Applicant::getSolicitorRepresented, NEVER_SHOW)
             .done()
-            .label("app2OtherApplicantIsRepresented",
-                getOtherApplicantIsRepresentedLabel(), "applicant1SolicitorRepresented=\"Yes\"")
-            .label("app2OtherApplicantIsNotRepresented",
-                getOtherApplicantIsNotRepresentedLabel(),"applicant1SolicitorRepresented=\"No\"")
+            .label("app2OtherApplicantCanStillApply", getOtherApplicantCanStillApplyLabel())
             .label("app2IntendsSwitchToSoleFoInfo", getIntendsToSwitchToSoleInformationLabel())
             .complex(CaseData::getFinalOrder)
                 .optionalNoSummary(FinalOrder::getApplicant2IntendsToSwitchToSole, null, BLANK_LABEL)

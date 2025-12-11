@@ -30,14 +30,16 @@ public class RequestForInformationResponseDraft {
         label = "Write your response below if the court has asked for additional information. If the court has just asked for documents, "
             + " then you do not need to write anything unless you think it's useful information.",
         typeOverride = TextArea,
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private String rfiDraftResponseDetails;
 
     @CCD(
         label = "Upload documents",
         typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument"
+        typeParameterOverride = "DivorceDocument",
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> rfiDraftResponseDocs;
 

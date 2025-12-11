@@ -35,6 +35,7 @@ public class Applicant2SolStatementOfTruth implements CcdPageConfiguration {
             .complex(CaseData::getApplicant2)
                 .readonlyNoSummary(Applicant::getLegalProceedings)
                 .readonlyNoSummary(Applicant::getLegalProceedingsDetails, "applicant2LegalProceedings=\"Yes\"")
+                .readonlyNoSummary(Applicant::getLegalProceedingsConcluded, "applicant2LegalProceedings=\"Yes\"")
             .done();
     }
 }

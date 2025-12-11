@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.caseworker.service.task;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -19,8 +20,10 @@ import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingsWithAddressContent;
 import uk.gov.hmcts.divorce.document.content.templatecontent.CoversheetApplicantTemplateContent;
 import uk.gov.hmcts.divorce.document.content.templatecontent.CoversheetSolicitorTemplateContent;
+import uk.gov.hmcts.divorce.document.print.model.Letter;
 
 import java.time.Clock;
+import java.util.List;
 import java.util.Map;
 
 import static java.time.LocalDateTime.now;
@@ -39,6 +42,8 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS1_SOLE_A
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_RS2_SOLE_APP2_SOL_OFFLINE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDINGS_APP_2_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 
 @Component
@@ -163,10 +168,13 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
 
             LanguagePreference applicant2LanguagePreference = applicant2.getLanguagePreference();
             Applicant applicant1 = caseData.getApplicant1();
-            boolean reissuedAsOfflineAOS = OFFLINE_AOS.equals(caseData.getApplication().getReissueOption());
             boolean isCourtService = caseData.getApplication().isCourtServiceMethod();
             boolean app2BasedOverseas = applicant2.isBasedOverseas() || applicant2.getCorrespondenceAddressIsOverseas() == YesOrNo.YES;
-            boolean isCoversheetRequired = !isCourtService || reissuedAsOfflineAOS || app2BasedOverseas;
+            boolean app2IsOffline = applicant2.isApplicantOffline() || OFFLINE_AOS.equals(caseData.getApplication().getReissueOption());
+            final List<Letter> oldCoversheetLetters = getLettersBasedOnContactPrivacy(caseData, COVERSHEET);
+            boolean outdatedCoversheetIsPresent = !CollectionUtils.isEmpty(oldCoversheetLetters);
+
+            boolean isCoversheetRequired = !isCourtService || app2BasedOverseas || app2IsOffline || outdatedCoversheetIsPresent;
 
             generateNoticeOfProceedings(
                     caseData,

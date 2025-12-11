@@ -2,14 +2,17 @@ package uk.gov.hmcts.divorce.common.ccd;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.befta.dse.ccd.CcdEnvironment;
 import uk.gov.hmcts.befta.dse.ccd.CcdRoleConfig;
 import uk.gov.hmcts.befta.dse.ccd.DataLoaderToDefinitionStore;
+import uk.gov.hmcts.befta.exception.ImportException;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 
 public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
@@ -42,6 +45,10 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
 
     private final CcdEnvironment environment;
 
+    private static final Set<Integer> TOLERABLE_EXCEPTIONS = Set.of(
+        HttpStatus.GATEWAY_TIMEOUT.value(), HttpStatus.CONFLICT.value()
+    );
+
     public HighLevelDataSetupApp(CcdEnvironment dataSetupEnvironment) {
         super(dataSetupEnvironment);
         environment = dataSetupEnvironment;
@@ -52,7 +59,11 @@ public class HighLevelDataSetupApp extends DataLoaderToDefinitionStore {
     }
 
     @Override
-    protected boolean shouldTolerateDataSetupFailure() {
+    protected boolean shouldTolerateDataSetupFailure(Throwable e) {
+        if (e instanceof ImportException importException) {
+            return TOLERABLE_EXCEPTIONS.contains(importException.getHttpStatusCode());
+        }
+
         var env = getDataSetupEnvironment();
 
         return CcdEnvironment.PERFTEST == env || CcdEnvironment.DEMO == env || CcdEnvironment.ITHC == env;

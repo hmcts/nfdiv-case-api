@@ -35,6 +35,7 @@ public class ConditionalOrderRefusedForClarificationContent implements Condition
     private static final String IS_JOINT = "isJoint";
     public static final String JUDICIAL_SEPARATION = "judicialSeparation";
     public static final String REASON_JURISDICTION_DETAILS = "jurisdictionDetails";
+    public static final String REASON_LEGAL_NAME_DIFFERENT = "legalNameDifferentToCertificate";
     public static final String REASON_MARRIAGE_CERT_TRANSLATION = "marriageCertTranslation";
     public static final String REASON_MARRIAGE_CERTIFICATE = "marriageCertificate";
     public static final String REASON_PREVIOUS_PROCEEDINGS_DETAILS = "previousProceedingDetails";
@@ -74,6 +75,8 @@ public class ConditionalOrderRefusedForClarificationContent implements Condition
             clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE));
         templateContent.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS,
             clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
+        templateContent.put(REASON_LEGAL_NAME_DIFFERENT,
+            clarificationReasons.contains(ClarificationReason.LEGAL_NAME_DIFFERENT_TO_CERTIFICATE));
 
         templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrderCommonContent.generateLegalAdvisorComments(conditionalOrder));
 

@@ -6,7 +6,6 @@
     "applicant1LastName": "test_last_name",
     "applicant1Gender": "female",
     "applicant1ContactDetailsType": "private",
-    "applicant1CoPronouncedCoverLetterRegenerated": "Yes",
     "applicant1Offline": "Yes",
     "applicant2FirstName": "test_first_name",
     "applicant2LastName": "test_last_name",
@@ -19,20 +18,6 @@
     "coGrantedDate": "2022-01-06",
     "coCourt": "birmingham",
     "coDateAndTimeOfHearing": "2022-01-06T10:30:00.000",
-    "confidentialDocumentsGenerated": [
-      {
-        "id": "${json-unit.any-string}",
-        "value": {
-          "confidentialDocumentsReceived": "coGrantedCoversheet",
-          "documentLink": {
-            "document_url": "${json-unit.any-string}",
-            "document_filename": "${json-unit.any-string}",
-            "document_binary_url": "${json-unit.any-string}"
-          },
-          "documentFileName": "${json-unit.any-string}"
-        }
-      }
-    ],
     "documentsGenerated": [
       {
         "id": "f3d5429e-342c-4689-918a-d89cbe6d7ed0",
@@ -56,6 +41,18 @@
           },
           "documentFileName": "conditionalOrderGrantedCoversheet-1666271929442515-2022-10-20:14:30.pdf",
           "documentType": "coGrantedCoversheetApp2"
+        }
+      },
+      {
+        "id": "8a5af58c-8a0d-48df-b715-0671572303ee",
+        "value": {
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/3aa37fdb-bb95-48ac-abf5-97d27a9b5b5c",
+            "document_filename": "conditionalOrderGrantedCoversheet-1666271929442515-2022-10-20:14:30.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/3aa37fdb-bb95-48ac-abf5-97d27a9b5b5c/binary"
+          },
+          "documentType": "coGrantedCoversheet",
+          "documentFileName": "conditionalOrderGrantedCoversheet-1666271929442515-2022-10-20:14:30.pdf"
         }
       }
     ],

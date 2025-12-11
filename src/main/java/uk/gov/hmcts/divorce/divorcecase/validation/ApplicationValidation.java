@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.divorcecase.validation;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,10 +15,12 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validat
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForPersonalAndSolicitorService;
 
 public final class ApplicationValidation {
-
     private ApplicationValidation() {
 
     }
+
+    public static final String SERVICE_DOCUMENTS_ALREADY_REGENERATED =
+        "Service Documents have been regenerated too recently.";
 
     public static List<String> validateReadyForPayment(CaseData caseData) {
         List<String> errors = validateBasicCase(caseData);
@@ -62,4 +65,19 @@ public final class ApplicationValidation {
         );
     }
 
+    public static List<String> validateServiceDate(CaseData caseData, int offsetDays) {
+        List<String> errors = new ArrayList<>();
+
+        LocalDate docsRegeneratedDate = caseData.getApplication().getServiceDocumentsRegeneratedDate();
+        if (docsRegeneratedDate == null) {
+            return errors;
+        }
+
+        LocalDate earliestRegenerationDate = docsRegeneratedDate.plusDays(offsetDays);
+        if (earliestRegenerationDate.isAfter(LocalDate.now())) {
+            errors.add(SERVICE_DOCUMENTS_ALREADY_REGENERATED);
+        }
+
+        return errors;
+    }
 }

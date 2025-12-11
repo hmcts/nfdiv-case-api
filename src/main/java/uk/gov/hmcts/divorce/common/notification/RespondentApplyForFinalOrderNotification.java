@@ -20,7 +20,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.GENERAL_FEE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_APPLY_FOR_FINAL_ORDER;
@@ -89,7 +88,6 @@ public class RespondentApplyForFinalOrderNotification implements ApplicantNotifi
     private Map<String, String> templateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner, String generalAppFees) {
         Map<String, String> templateVariables = commonContent.conditionalOrderTemplateVars(caseData, id, applicant, partner);
         templateVariables.put(GENERAL_FEE, generalAppFees);
-        templateVariables.put(SMART_SURVEY, commonContent.getSmartSurvey());
         return templateVariables;
     }
 

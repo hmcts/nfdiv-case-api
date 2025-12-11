@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.Applicant1CanSwitchToSoleNotification;
 import uk.gov.hmcts.divorce.common.notification.Applicant2CanSwitchToSoleNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService.CASE_ALREADY_PROCESSED_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -60,6 +62,28 @@ class SystemNotifyJointApplicantCanSwitchToSoleTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(SystemNotifyJointApplicantCanSwitchToSole.SYSTEM_NOTIFY_JOINT_APPLICANT_CAN_SWITCH_TO_SOLE);
+    }
+
+    @Test
+    void shouldErrorWhenTheCaseHasAlreadyBeenProcessed() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant2(respondent());
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+            .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                .submittedDate(LocalDate.now().minusDays(15).atStartOfDay())
+                .isSubmitted(YES)
+                .build())
+            .build());
+        caseData.getApplication().setJointApplicantNotifiedCanSwitchToSole(YesOrNo.YES);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            systemNotifyJointApplicantCanSwitchToSole.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).containsExactly(CASE_ALREADY_PROCESSED_ERROR);
     }
 
     @Test

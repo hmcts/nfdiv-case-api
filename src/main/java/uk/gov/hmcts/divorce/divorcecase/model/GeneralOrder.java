@@ -70,19 +70,22 @@ public class GeneralOrder {
     @CCD(
         label = "General order details",
         typeOverride = TextArea,
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private String generalOrderDetails;
 
     @CCD(
         label = "General Order Draft",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private Document generalOrderDraft;
 
     @CCD(
         label = "General Order Scanned Draft",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private ScannedDocument generalOrderScannedDraft;
 

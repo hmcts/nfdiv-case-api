@@ -76,14 +76,16 @@ public class AcknowledgementOfService {
     @CCD(
         label = "Reason respondent disagreed to claimed jurisdiction",
         typeOverride = TextArea,
-        access = {AosAccess.class}
+        access = {AosAccess.class},
+        searchable = false
     )
     private String reasonCourtsOfEnglandAndWalesHaveNoJurisdiction;
 
     @CCD(
         label = "Reason respondent disagreed to claimed jurisdiction(Translated)",
         typeOverride = TextArea,
-        access = {AosAccess.class}
+        access = {AosAccess.class},
+        searchable = false
     )
     private String reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslated;
 
@@ -91,7 +93,8 @@ public class AcknowledgementOfService {
         label = "Translated To?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "TranslatedToLanguage",
-        access = {SystemUpdateAndSuperUserAccess.class}
+        access = {SystemUpdateAndSuperUserAccess.class},
+        searchable = false
     )
     private TranslatedToLanguage reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslatedTo;
 
@@ -130,7 +133,8 @@ public class AcknowledgementOfService {
         label = "Additional Comments",
         hint = "For the attention of court staff. These comments will not form part of the AOS",
         typeOverride = TextArea,
-        access = {AosAccess.class}
+        access = {AosAccess.class},
+        searchable = false
     )
     private String additionalComments;
 

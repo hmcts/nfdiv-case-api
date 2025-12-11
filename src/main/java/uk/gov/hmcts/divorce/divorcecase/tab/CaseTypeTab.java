@@ -59,6 +59,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         "applicant1ContactDetailsType!=\"private\" AND applicant2ContactDetailsType!=\"private\"";
     private static final String APPLICANTS_CONTACT_DETAILS_PRIVATE =
         "applicant1ContactDetailsType=\"private\" OR applicant2ContactDetailsType=\"private\"";
+    private static final String APPLICANT_1_CONTACT_DETAILS_PUBLIC = "applicant1ContactDetailsType!=\"private\"";
+    private static final String APPLICANT_1_CONTACT_DETAILS_PRIVATE = "applicant1ContactDetailsType=\"private\"";
+    private static final String APPLICANT_2_CONTACT_DETAILS_PUBLIC = "applicant2ContactDetailsType!=\"private\"";
+    private static final String APPLICANT_2_CONTACT_DETAILS_PRIVATE = "applicant2ContactDetailsType=\"private\"";
     private static final String PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS =
         "paperFormApplicant1NoPaymentIncluded=\"Yes\" AND paperFormSoleOrApplicant1PaymentOther=\"Yes\"";
     private static final String PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS =
@@ -174,6 +178,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("intendToDelay")
             .field("applicant2LegalProceedings")
             .field("applicant2LegalProceedingsDetails")
+            .field("applicant2LegalProceedingsConcluded")
             .field("dueDate")
             .field("howToRespondApplication")
             .field("applicant2LanguagePreferenceWelsh")
@@ -353,10 +358,14 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("generalApplicationReferralDate", "generalApplicationReferralDate=\"*\"")
             .field("generalApplicationAddedDate")
             .field("generalReferralType")
+            .field("generalReferralDocument")
+            .field("generalReferralDocuments")
             .field("alternativeServiceMedium")
             .field("generalReferralJudgeOrLegalAdvisorDetails")
             .field("generalReferralFeeRequired")
             .field("generalReferralFeePaymentMethod")
+            .field("generalReferralFeeServiceRequestReference")
+            .field("generalReferralFeePaymentReference")
             .field("generalReferralDecisionDate")
             .field("generalReferralDecision")
             .field("generalReferralDecisionReason")
@@ -384,21 +393,32 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("confidentialDocumentsGenerated")
             .field("confidentialDocumentsUploaded")
             .field("scannedDocuments")
+            .field("applicant1DocumentsUploaded", APPLICANT_1_CONTACT_DETAILS_PRIVATE)
+            .field("applicant2DocumentsUploaded", APPLICANT_2_CONTACT_DETAILS_PRIVATE)
             .field(CaseData::getConfidentialGeneralEmails)
             .field(CaseData::getGeneralLetters, APPLICANTS_CONTACT_DETAILS_PRIVATE);
     }
 
     private void buildServiceApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("alternativeService", "Service Application")
-            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
+            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER, APPLICANT_1_SOLICITOR)
             .field("receivedServiceApplicationDate")
             .field("receivedServiceAddedDate")
             .field("alternativeServiceType")
             .field("alternativeServiceJudgeOrLegalAdvisorDetails")
+            .field("serviceApplicationAnswers")
             .field("serviceApplicationDocuments", "serviceApplicationDocuments=\"*\"")
+            .field("serviceApplicationDocsUploadedPreSubmission")
             .field("alternativeServiceFeeRequired")
+            .field("servicePaymentFeeServiceRequestReference")
+            .field("servicePaymentFeeOrderSummary")
+            .field("servicePaymentFeePaymentReference")
             .field("servicePaymentFeePaymentMethod", "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\"")
-            .field("dateOfPayment", "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\"")
+            .field("servicePaymentFeeHasCompletedOnlinePayment")
+            .field("servicePaymentFeePaymentReference")
+            .field(
+              "servicePaymentFeeDateOfPayment",
+              "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\" OR servicePaymentFeePaymentReference=\"*\"")
             .field("servicePaymentFeeAccountNumber",
                 "servicePaymentFeePaymentMethod=\"feePayByAccount\" AND alternativeServiceFeeRequired=\"Yes\"")
             .field("servicePaymentFeeAccountReferenceNumber",
@@ -418,6 +438,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                 "### Outcome of Service Application")
             .field("serviceApplicationGranted")
             .field("serviceApplicationDecisionDate")
+            .field("serviceApplicationFurtherDetails", "serviceApplicationGranted=\"Yes\"")
             .field("refusalReason", "serviceApplicationGranted=\"No\"")
             .field("serviceApplicationRefusalReason", "serviceApplicationGranted=\"No\"")
             .field("deemedServiceDate")

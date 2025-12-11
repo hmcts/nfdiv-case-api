@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -62,7 +63,7 @@ class CitizenRequestForInformationResponseNotificationTest {
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getRequestForInformationTemplateVars());
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+        when(commonContent.getSmartSurveyWithDoNotReply(any())).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent();
 
@@ -107,7 +108,7 @@ class CitizenRequestForInformationResponseNotificationTest {
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getRequestForInformationTemplateVars());
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+        when(commonContent.getSmartSurveyWithDoNotReply(any())).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent();
 
@@ -145,7 +146,7 @@ class CitizenRequestForInformationResponseNotificationTest {
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getRequestForInformationTemplateVars());
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+        when(commonContent.getSmartSurveyWithDoNotReply(any())).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent();
 
@@ -208,7 +209,7 @@ class CitizenRequestForInformationResponseNotificationTest {
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getRequestForInformationTemplateVars());
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+        when(commonContent.getSmartSurveyWithDoNotReply(any())).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent();
 
@@ -231,7 +232,7 @@ class CitizenRequestForInformationResponseNotificationTest {
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getRequestForInformationTemplateVars());
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+        when(commonContent.getSmartSurveyWithDoNotReply(any())).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent();
 
@@ -276,7 +277,7 @@ class CitizenRequestForInformationResponseNotificationTest {
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getRequestForInformationTemplateVars());
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+        when(commonContent.getSmartSurveyWithDoNotReply(any())).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent();
 
@@ -314,7 +315,7 @@ class CitizenRequestForInformationResponseNotificationTest {
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getRequestForInformationTemplateVars());
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+        when(commonContent.getSmartSurveyWithDoNotReply(any())).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent();
 
@@ -340,7 +341,7 @@ class CitizenRequestForInformationResponseNotificationTest {
         when(commonContent.requestForInformationTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getRequestForInformationTemplateVars());
 
-        when(commonContent.getSmartSurvey()).thenReturn(SMART_SURVEY_TEST_URL);
+        when(commonContent.getSmartSurveyWithDoNotReply(any())).thenReturn(SMART_SURVEY_TEST_URL);
 
         Map<String, String> templateContent = getApplicantTemplateContent();
 

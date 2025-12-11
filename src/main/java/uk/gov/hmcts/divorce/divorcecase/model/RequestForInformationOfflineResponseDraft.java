@@ -35,7 +35,8 @@ public class RequestForInformationOfflineResponseDraft {
     @CCD(
         label = "Documents",
         typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument"
+        typeParameterOverride = "DivorceDocument",
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> rfiOfflineDraftResponseDocs;
 
@@ -70,7 +71,8 @@ public class RequestForInformationOfflineResponseDraft {
 
     @CCD(
         label = "All requested documents uploaded",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private YesOrNo rfiOfflineAllDocumentsUploaded;
 

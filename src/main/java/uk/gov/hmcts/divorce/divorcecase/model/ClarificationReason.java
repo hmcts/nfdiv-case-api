@@ -21,6 +21,10 @@ public enum ClarificationReason implements HasLabel {
     @JsonProperty("previousProceedingDetails")
     PREVIOUS_PROCEEDINGS_DETAILS("Previous proceedings details"),
 
+    @JsonProperty("legalNameDifferentToCertificate")
+    LEGAL_NAME_DIFFERENT_TO_CERTIFICATE("Legal name different to marriage certificate "
+        + "(If you select this, enter the reason using the free text option)"),
+
     @JsonProperty("other")
     OTHER("Enter free Text / Make free text order");
 

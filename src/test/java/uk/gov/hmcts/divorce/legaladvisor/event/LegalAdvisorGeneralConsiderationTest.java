@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -155,6 +156,52 @@ class LegalAdvisorGeneralConsiderationTest {
         assertThat(responseData.getGeneralReferral().getGeneralReferralUrgentCase()).isEqualTo(YesOrNo.YES);
         assertThat(responseData.getGeneralReferral())
             .hasAllNullFieldsOrPropertiesExcept("generalReferralUrgentCase", "generalReferralFee");
+        assertThat(responseData.getGeneralReferral().getGeneralReferralFee()).hasAllNullFieldsOrProperties();
+    }
+
+    @Test
+    void shouldSetDecisionDateAndPreserveOldReferralsAndResetExistingGeneralReferralExcludingReferralTypeWhenAboutToSubmitIsInvoked() {
+
+        setMockClock(clock);
+
+        final List<ListValue<GeneralReferral>> generalReferrals = new ArrayList<>();
+        generalReferrals.add(
+            ListValue.<GeneralReferral>builder()
+                .value(GeneralReferral.builder()
+                    .generalReferralDecision(OTHER)
+                    .generalReferralDecisionReason("reason")
+                    .build())
+                .build());
+
+        final CaseData caseData = CaseData
+            .builder()
+            .generalReferral(
+                GeneralReferral.builder()
+                    .generalReferralDecision(APPROVE)
+                    .generalReferralType(GeneralReferralType.PERMISSION_ON_DA_OOT)
+                    .generalReferralDecisionReason("approved")
+                    .build())
+            .generalReferrals(generalReferrals)
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            legalAdvisorGeneralConsideration.aboutToSubmit(caseDetails, null);
+
+        final CaseData responseData = response.getData();
+        assertThat(responseData.getGeneralReferrals()).hasSize(2);
+        assertThat(responseData.getGeneralReferrals().get(0).getValue().getGeneralReferralDecisionDate()).isEqualTo(getExpectedLocalDate());
+        assertThat(responseData.getGeneralReferrals().get(0).getValue().getGeneralReferralDecision()).isEqualTo(APPROVE);
+        assertThat(responseData.getGeneralReferrals().get(0).getValue().getGeneralReferralDecisionReason()).isEqualTo("approved");
+
+        assertThat(responseData.getGeneralReferrals().get(1).getValue().getGeneralReferralDecision()).isEqualTo(OTHER);
+        assertThat(responseData.getGeneralReferrals().get(1).getValue().getGeneralReferralDecisionReason()).isEqualTo("reason");
+
+        assertThat(responseData.getGeneralReferral().getGeneralReferralType()).isEqualTo(GeneralReferralType.PERMISSION_ON_DA_OOT);
+        assertThat(responseData.getGeneralReferral())
+            .hasAllNullFieldsOrPropertiesExcept("generalReferralUrgentCase", "generalReferralFee", "generalReferralType");
         assertThat(responseData.getGeneralReferral().getGeneralReferralFee()).hasAllNullFieldsOrProperties();
     }
 }

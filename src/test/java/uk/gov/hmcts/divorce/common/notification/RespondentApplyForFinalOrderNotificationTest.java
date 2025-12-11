@@ -35,7 +35,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_APPLY_FOR_FINAL_ORDER;
@@ -116,8 +115,6 @@ class RespondentApplyForFinalOrderNotificationTest {
         when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_NOTICE)).thenReturn(expectedGeneralAppFees);
         when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getConditionalOrderTemplateVars(SOLE_APPLICATION));
-        when(commonContent.getSmartSurvey())
-            .thenReturn("https://www.smartsurvey.co.uk/s/NFD_Feedback/?pageurl=email");
 
         respondentApplyForFinalOrderNotification.sendToApplicant2(data, TEST_CASE_ID);
         String formattedGeneralAppFees = "£180.00";
@@ -129,8 +126,7 @@ class RespondentApplyForFinalOrderNotificationTest {
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
                 hasEntry(JOINT_CONDITIONAL_ORDER, CommonContent.NO),
-                hasEntry(GENERAL_FEE, formattedGeneralAppFees),
-                hasEntry(SMART_SURVEY, "https://www.smartsurvey.co.uk/s/NFD_Feedback/?pageurl=email")
+                hasEntry(GENERAL_FEE, formattedGeneralAppFees)
             )),
             any(),
             any()

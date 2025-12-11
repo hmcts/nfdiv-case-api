@@ -64,21 +64,24 @@ public class RequestForInformationResponse {
     @CCD(
         label = "Provided Response",
         typeOverride = TextArea,
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private String requestForInformationResponseDetails;
 
     @CCD(
         label = "Uploaded documents",
         typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument"
+        typeParameterOverride = "DivorceDocument",
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> requestForInformationResponseDocs;
 
     @CCD(
         label = "Offline documents",
         typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument"
+        typeParameterOverride = "DivorceDocument",
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> rfiOfflineResponseDocs;
 

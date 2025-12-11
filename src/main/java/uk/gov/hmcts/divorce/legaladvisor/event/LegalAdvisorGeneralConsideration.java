@@ -79,11 +79,12 @@ public class LegalAdvisorGeneralConsideration implements CCDConfig<CaseData, Sta
             caseData.getGeneralReferrals().add(0, generalReferralListValue);
         }
 
-        // Reset all fields apart from urgent case flag as it is still required by agents to filter cases.
+        // Reset all fields apart from urgent case flag and generalReferralType as it is still required by agents to filter cases.
         caseData.setGeneralReferral(
             GeneralReferral
                 .builder()
                 .generalReferralUrgentCase(caseData.getGeneralReferral().getGeneralReferralUrgentCase())
+                .generalReferralType(caseData.getGeneralReferral().getGeneralReferralType())
                 .build()
         );
 

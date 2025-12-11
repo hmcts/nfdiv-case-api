@@ -138,7 +138,7 @@ public class ApplicationSentForReviewNotification implements ApplicantNotificati
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
-        templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
+        templateVars.put(SMART_SURVEY, commonContent.getSmartSurveyWithDoNotReply(respondent.getLanguagePreference()));
         templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
 
         commonContent.getPhoneAndOpeningTimes(respondent.getLanguagePreference(), templateVars);

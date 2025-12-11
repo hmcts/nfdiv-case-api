@@ -28,6 +28,8 @@ public class ConditionalOrderCommonContent {
 
     private final CommonContent commonContent;
 
+    private static final String LEGAL_NAME_DIFFERENT = "Difference between legal name(s) and names(s) on marriage certificate";
+
     public List<RefusalReason> generateLegalAdvisorComments(ConditionalOrder conditionalOrder) {
 
         if (MORE_INFO.equals(conditionalOrder.getRefusalDecision())) {
@@ -41,7 +43,13 @@ public class ConditionalOrderCommonContent {
             List<RefusalReason> legalAdvisorComments = new ArrayList<>(
                 refusalClarificationReason.stream()
                     .filter(clarificationReason -> !clarificationReason.equals(ClarificationReason.OTHER))
-                    .map(reason -> new RefusalReason(reason.getLabel()))
+                    .map(reason -> {
+                        if (reason.equals(ClarificationReason.LEGAL_NAME_DIFFERENT_TO_CERTIFICATE)) {
+                            return new RefusalReason(LEGAL_NAME_DIFFERENT);
+                        } else {
+                            return new RefusalReason(reason.getLabel());
+                        }
+                    })
                     .toList()
             );
 

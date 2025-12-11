@@ -7,15 +7,25 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralReason;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
+import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.generalApplicationLabels;
+import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.populateGeneralApplicationList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
@@ -38,6 +48,8 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
 
     private final Clock clock;
 
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, h:mm:ss a");
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -47,6 +59,7 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
             .description(GENERAL_REFERRAL)
             .showSummary(false)
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, SOLICITOR, CITIZEN, JUDGE))
@@ -54,6 +67,10 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
             .pageLabel(GENERAL_REFERRAL)
             .complex(CaseData::getGeneralReferral)
                 .mandatory(GeneralReferral::getGeneralReferralReason)
+                .mandatory(
+                    GeneralReferral::getSelectedGeneralApplication,
+                    "generalReferralReason=\"generalApplicationReferral\""
+                )
                 .mandatory(GeneralReferral::getGeneralReferralUrgentCase)
                 .mandatory(GeneralReferral::getGeneralReferralUrgentCaseReason, "generalReferralUrgentCase=\"Yes\"")
                 .mandatory(GeneralReferral::getGeneralReferralFraudCase)
@@ -67,6 +84,22 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
                 .done();
     }
 
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(
+        final CaseDetails<CaseData, State> details
+    ) {
+        log.info("Caseworker general referral about to start callback invoked. CaseID: {}", details.getId());
+
+        final CaseData caseData = details.getData();
+
+        populateGeneralApplicationList(caseData);
+
+        caseData.getGeneralReferral().setGeneralReferralType(null);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
+    }
+
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
@@ -74,6 +107,13 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
         log.info("Caseworker general referral about to submit callback invoked. CaseID: {}", details.getId());
 
         final CaseData caseData = details.getData();
+
+        GeneralReferralReason referralReason = caseData.getGeneralReferral().getGeneralReferralReason();
+
+        if (GeneralReferralReason.GENERAL_APPLICATION_REFERRAL.equals(referralReason)) {
+            processSelectedGeneralApplication(caseData, details.getId());
+        }
+        caseData.getGeneralReferral().setSelectedGeneralApplication(null);
 
         State endState = caseData.getGeneralReferral().getGeneralReferralFeeRequired().toBoolean()
             ? AwaitingGeneralReferralPayment
@@ -85,5 +125,37 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
             .data(caseData)
             .state(endState)
             .build();
+    }
+
+    private void processSelectedGeneralApplication(CaseData caseData, long caseId) {
+        var referredApplication = caseData.getGeneralReferral().getSelectedGeneralApplication();
+        if (referredApplication == null) {
+            return;
+        }
+
+        for (Map.Entry<Integer, String> entry : generalApplicationLabels(caseData).entrySet()) {
+            String applicationLabel = entry.getValue();
+            String referredApplicationLabel = referredApplication.getValueLabel();
+
+            if (referredApplicationLabel.equals(applicationLabel)) {
+                int applicationIdx = entry.getKey();
+
+                log.info("General application selected for referral ({}), case ID: {}", applicationLabel, caseId);
+
+                GeneralApplication application = caseData.getGeneralApplications().get(applicationIdx).getValue();
+                FeeDetails fee = application.getGeneralApplicationFee();
+                boolean applicationAwaitingPayment = YesOrNo.YES.equals(application.getGeneralApplicationSubmittedOnline())
+                    && fee != null
+                    && fee.getServiceRequestReference() != null
+                    && fee.getPaymentReference() == null;
+
+                if (applicationAwaitingPayment) {
+                    fee.setServiceRequestReference(null);
+                    Applicant applicant = GeneralParties.APPLICANT.equals(application.getGeneralApplicationParty())
+                        ? caseData.getApplicant1() : caseData.getApplicant2();
+                    applicant.setActiveGeneralApplication(null);
+                }
+            }
+        }
     }
 }

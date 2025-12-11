@@ -104,7 +104,8 @@ public class RequestForInformation {
     @CCD(
         label = "Please provide details",
         typeOverride = TextArea,
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private String requestForInformationDetails;
 
@@ -112,7 +113,8 @@ public class RequestForInformation {
         label = "Responses",
         typeOverride = Collection,
         typeParameterOverride = "RequestForInformationResponse",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private List<ListValue<RequestForInformationResponse>> requestForInformationResponses;
 

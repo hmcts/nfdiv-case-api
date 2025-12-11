@@ -3,16 +3,14 @@ package uk.gov.hmcts.divorce.legaladvisor;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
-import uk.gov.hmcts.divorce.testutil.IdamTokenGenerator;
-import uk.gov.hmcts.divorce.testutil.ServiceAuthenticationGenerator;
 
 import java.io.IOException;
 import java.util.Map;
@@ -39,6 +37,9 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 
 @SpringBootTest
 public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
+
+    @Value("${idam.s2s-auth.microservice}")
+    private String s2sName;
 
     private static final String REQUEST = "classpath:request/casedata/ccd-callback-casedata-legal-advisor-make-decision.json";
     private static final String JOINT_WELSH_REQUEST =
@@ -71,12 +72,6 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
         = "classpath:responses/response-legal-advisor-make-decision-co-more-info-mid-event.json";
     private static final String CO_REJECTED_MID_EVENT_RESPONSE
         = "classpath:responses/response-legal-advisor-make-decision-co-rejected-mid-event.json";
-
-    @Autowired
-    private IdamTokenGenerator idamTokenGenerator;
-
-    @Autowired
-    private ServiceAuthenticationGenerator serviceAuthenticationGenerator;
 
     @Autowired
     private CaseDocumentAccessManagement caseDocumentAccessManagement;
@@ -124,7 +119,6 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled("CDAM requires the case to exist")
     public void shouldSendAwaitingAmendedApplicationLettersToOfflineApplicantOnlyIfSoleCase() throws IOException {
         Map<String, Object> request = caseData(OFFLINE_CO_REJECTED_REQUEST);
 
@@ -148,7 +142,6 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     }
 
     @Test
-    @Disabled("CDAM requires the case to exist")
     public void shouldSendAwaitingAmendedApplicationLettersToBothOfflineApplicantsIfJointCase() throws IOException {
         Map<String, Object> request = caseData(OFFLINE_CO_REJECTED_REQUEST);
 
@@ -304,10 +297,10 @@ public class LegalAdvisorMakeDecisionFT extends FunctionalTestSuite {
     private uk.gov.hmcts.ccd.sdk.type.Document uploadDocument() throws IOException {
         var document = caseDocumentAccessManagement.upload(
             idamTokenGenerator.generateIdamTokenForSystem(),
-            serviceAuthenticationGenerator.generate(),
+            serviceAuthenticationGenerator.generate(s2sName),
             "",
             "draft-divorce-application-1234567890123456.pdf",
-            "classpath:Test.pdf"
+            "/Test.pdf"
         ).getDocuments().get(0);
         return new uk.gov.hmcts.ccd.sdk.type.Document(
             document.links.self.href,

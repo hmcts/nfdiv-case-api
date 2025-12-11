@@ -8,6 +8,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.AwaitingConditionalOrderReminderNotification;
 import uk.gov.hmcts.divorce.common.notification.ConditionalOrderPendingReminderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -21,6 +22,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicantsApplyForCOrder.SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService.CASE_ALREADY_PROCESSED_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -50,6 +52,19 @@ class SystemRemindApplicantsApplyForCOrderTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(SYSTEM_REMIND_APPLICANTS_CONDITIONAL_ORDER);
+    }
+
+    @Test
+    void shouldErrorWhenTheCaseHasAlreadyBeenProcessed() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
+            .state(AwaitingConditionalOrder).id(TEST_CASE_ID).data(caseData)
+            .build();
+        caseData.getApplication().setApplicantsRemindedCanApplyForConditionalOrder(YesOrNo.YES);
+
+        final var response = systemRemindApplicantsApplyForCOrder.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).containsExactly(CASE_ALREADY_PROCESSED_ERROR);
     }
 
     @Test

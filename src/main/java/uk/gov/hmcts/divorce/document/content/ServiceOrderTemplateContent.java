@@ -16,7 +16,9 @@ import java.util.Map;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.ALTERNATIVE_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -28,7 +30,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DOCUMENTS_ISSUED_ON;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE_POPULATED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SERVICE_ORDER_TYPE_ALTERNATIVE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SERVICE_ORDER_TYPE_DEEMED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SERVICE_ORDER_TYPE_DISPENSED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JUDICIAL_SEPARATION_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ORDER_TYPE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
@@ -112,7 +116,10 @@ public class ServiceOrderTemplateContent {
             alternativeService.getServiceApplicationDecisionDate().format(DATE_TIME_FORMATTER));
         templateContent.put(SERVICE_APPLICATION_RECEIVED_DATE,
             alternativeService.getReceivedServiceApplicationDate().format(DATE_TIME_FORMATTER));
-        templateContent.put(IS_SERVICE_ORDER_TYPE_DEEMED, isServiceOrderTypeDeemed ? YES : NO);
+        templateContent.put(IS_SERVICE_ORDER_TYPE_DEEMED, DEEMED.equals(alternativeService.getAlternativeServiceType()) ? YES : NO);
+        templateContent.put(IS_SERVICE_ORDER_TYPE_DISPENSED, DISPENSED.equals(alternativeService.getAlternativeServiceType()) ? YES : NO);
+        templateContent.put(IS_SERVICE_ORDER_TYPE_ALTERNATIVE,
+            ALTERNATIVE_SERVICE.equals(alternativeService.getAlternativeServiceType()) ? YES : NO);
         templateContent.put(ORDER_TYPE, caseData.isJudicialSeparationCase() ? SEPARATION_ORDER : CONDITIONAL_ORDER);
         templateContent.put(ISSUE_DATE_POPULATED, caseData.getApplication().getIssueDate() != null);
 
