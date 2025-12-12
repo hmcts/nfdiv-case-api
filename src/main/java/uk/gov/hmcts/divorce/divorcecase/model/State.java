@@ -534,7 +534,8 @@ public enum State {
         AwaitingApplicant2Response,
         Applicant2Approved,
         Withdrawn,
-        Rejected
+        Rejected,
+        Archived
     ));
 
     public static final EnumSet<State> PRE_SUBMISSION_STATES = EnumSet.of(
@@ -549,7 +550,8 @@ public enum State {
         Draft,
         AwaitingApplicant1Response,
         AwaitingApplicant2Response,
-        Applicant2Approved
+        Applicant2Approved,
+        Archived
     ));
 
     public static final EnumSet<State> STATES_NOT_WITHDRAWN_OR_REJECTED = EnumSet.complementOf(EnumSet.of(
@@ -564,7 +566,8 @@ public enum State {
         Applicant2Approved,
         Withdrawn,
         AwaitingClarification,
-        AwaitingAmendedApplication
+        AwaitingAmendedApplication,
+        Archived
     ));
 
     public static final EnumSet<State> POST_ISSUE_STATES = EnumSet.complementOf(EnumSet.of(
