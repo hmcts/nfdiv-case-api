@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.ServiceApplicationRejectedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -19,10 +20,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectServiceApplication.CASEWORKER_REJECT_SERVICE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
@@ -37,6 +40,12 @@ class CaseworkerRejectServiceApplicationTest {
 
     @Mock
     private DocumentRemovalService documentRemovalService;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    ServiceApplicationRejectedNotification serviceApplicationRejectedNotification;
 
     @InjectMocks
     private CaseworkerRejectServiceApplication caseworkerRejectServiceApplication;
@@ -187,5 +196,62 @@ class CaseworkerRejectServiceApplicationTest {
             caseworkerRejectServiceApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getAlternativeService().getServiceApplicationSubmittedOnline()).isNull();
+    }
+
+    @Test
+    void shouldSendNotificationIfServiceApplicationSubmittedOnlineIsYes() {
+
+        final CaseData caseData = CaseData.builder().build();
+        caseData.setAlternativeService(AlternativeService.builder()
+            .serviceApplicationSubmittedOnline(YesOrNo.YES)
+            .build());
+
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
+            .state(AwaitingServiceConsideration)
+            .build();
+
+        caseworkerRejectServiceApplication.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(notificationDispatcher).send(serviceApplicationRejectedNotification, caseData, TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldNotSendNotificationIfServiceApplicationSubmittedOnlineIsNull() {
+
+        final CaseData caseData = CaseData.builder().build();
+        caseData.setAlternativeService(AlternativeService.builder()
+            .serviceApplicationSubmittedOnline(null)
+            .build());
+
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
+            .state(AwaitingServiceConsideration)
+            .build();
+
+        caseworkerRejectServiceApplication.aboutToSubmit(caseDetails, caseDetails);
+
+        verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldNotSendNotificationIfServiceApplicationSubmittedOnlineIsNo() {
+
+        final CaseData caseData = CaseData.builder().build();
+        caseData.setAlternativeService(AlternativeService.builder()
+            .serviceApplicationSubmittedOnline(YesOrNo.NO)
+            .build());
+
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
+            .state(AwaitingServiceConsideration)
+            .build();
+
+        caseworkerRejectServiceApplication.aboutToSubmit(caseDetails, caseDetails);
+
+        verifyNoInteractions(notificationDispatcher);
     }
 }

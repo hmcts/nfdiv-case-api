@@ -13,10 +13,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-class SetApplicantAddressesTest {
+class SetApplicantContactDetailsTest {
 
     @InjectMocks
-    private SetApplicantAddresses setApplicantAddresses;
+    private SetApplicantContactDetails setApplicantContactDetails;
 
     @Test
     void shouldSetApplicantAddressesToMatchNonConfidentialAddressesEnteredBySolicitor() {
@@ -32,7 +32,7 @@ class SetApplicantAddressesTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        final CaseDetails<CaseData, State> result = setApplicantAddresses.apply(caseDetails);
+        final CaseDetails<CaseData, State> result = setApplicantContactDetails.apply(caseDetails);
 
         assertThat(result.getData().getApplicant1().getAddress()).isEqualTo(app1Address);
         assertThat(result.getData().getApplicant2().getAddress()).isEqualTo(app2Address);

@@ -53,6 +53,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateServiceDate;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateAosSubmitted;
 
 @Component
 @RequiredArgsConstructor
@@ -94,6 +95,7 @@ public class Applicant1UpdatePartnerDetailsOrReissue implements CCDConfig<CaseDa
         CaseData caseData = details.getData();
 
         List<String> validationErrors = flattenLists(
+            validateAosSubmitted(caseData),
             validateServiceDate(caseData, docsRegeneratedOffsetDays)
         );
 

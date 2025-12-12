@@ -11,8 +11,8 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -20,8 +20,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralReason;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -36,9 +34,9 @@ import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -63,13 +61,15 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
     private final HttpServletRequest request;
 
+    private final GeneralReferralService generalReferralService;
+
     private static final String GENERAL_APPLICATION_NOT_FOUND = "No general applications are awaiting payment";
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CITIZEN_GENERAL_APPLICATION_PAYMENT)
-            .forStates(AwaitingGeneralApplicationPayment)
+            .forStates(POST_SUBMISSION_STATES)
             .name("General application payment")
             .description("General application payment made")
             .showSummary()
@@ -117,7 +117,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
         if (hasGeneralReferralInProgress(data.getGeneralReferral())) {
             details.setState(GeneralApplicationReceived);
         } else {
-            GeneralReferral automaticReferral = buildGeneralReferral(generalApplication);
+            GeneralReferral automaticReferral = generalReferralService.buildGeneralReferral(generalApplication);
             data.setGeneralReferral(automaticReferral);
 
             details.setState(AwaitingGeneralConsideration);
@@ -182,23 +182,5 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
     private boolean hasGeneralReferralInProgress(GeneralReferral generalReferral) {
         return generalReferral != null && generalReferral.getGeneralReferralReason() != null;
-    }
-
-    private GeneralReferral buildGeneralReferral(GeneralApplication generalApplication) {
-        return GeneralReferral.builder()
-            .generalReferralReason(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL)
-            .generalReferralFraudCase(YesOrNo.NO)
-            .generalReferralUrgentCase(YesOrNo.NO)
-            .generalReferralDocument(generalApplication.getGeneralApplicationDocument())
-            .generalReferralDocuments(generalApplication.getGeneralApplicationDocuments())
-            .generalApplicationFrom(generalApplication.getGeneralApplicationParty())
-            .generalApplicationReferralDate(LocalDate.now(clock))
-            .generalApplicationAddedDate(generalApplication.getGeneralApplicationReceivedDate().toLocalDate())
-            .generalReferralType(GeneralReferralType.DISCLOSURE_VIA_DWP)
-            .generalReferralFee(generalApplication.getGeneralApplicationFee())
-            .generalReferralJudgeOrLegalAdvisorDetails(
-                "Please refer to the Search Government Records application in the general applications tab"
-            )
-            .build();
     }
 }
