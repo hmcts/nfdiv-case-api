@@ -54,6 +54,8 @@ public class ServiceRequestDto {
         private String caseReference;
 
         private String status;
+
+        private Date dateUpdated;
     }
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)

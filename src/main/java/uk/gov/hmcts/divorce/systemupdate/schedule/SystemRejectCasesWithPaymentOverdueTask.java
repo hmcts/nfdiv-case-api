@@ -5,7 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.divorce.payment.client.PaymentClient;
+import uk.gov.hmcts.divorce.payment.client.PaymentsResponse;
+import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto;
 import uk.gov.hmcts.divorce.payment.service.PaymentStatusService;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
@@ -16,8 +23,14 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.chrono.ChronoLocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.List;
 
+import static org.apache.commons.lang3.BooleanUtils.forEach;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
@@ -34,6 +47,10 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.SUPPLEM
 @Slf4j
 public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
 
+    private static final int MAX_CASE_AGE_DAYS = 16;
+    private static final int GRACE_PERIOD_HOURS = 24;
+    private static final String SUCCESS_STATUS = "success";
+
     private static final String LAST_STATE_MODIFIED_DATE = "last_state_modified_date";
     private static final String NEW_PAPER_CASE = "newPaperCase";
     private final CcdSearchService ccdSearchService;
@@ -42,6 +59,7 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
     private final CcdUpdateService ccdUpdateService;
     private final PaymentStatusService paymentStatusService;
     private final CaseDetailsConverter caseDetailsConverter;
+    private final PaymentClient paymentClient;
 
     @Override
     public void run() {
@@ -70,11 +88,8 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
 
             casesInAwaitingPaymentStateForPaymentOverdue.stream()
                 .map(caseDetailsConverter::convertToCaseDetailsFromReformModel)
-                .filter(caseDetails ->
-                    !paymentStatusService.hasSuccessfulPayment(caseDetails, user.getAuthToken(), serviceAuth)).toList()
                 .forEach(caseDetails -> {
-                    log.info("Rejecting case {} due to fee not paid within allocated time", caseDetails.getId());
-                    ccdUpdateService.submitEvent(caseDetails.getId(), APPLICATION_REJECTED_FEE_NOT_PAID, user, serviceAuth);
+                    processPaymentRejection(caseDetails, user, serviceAuth);
                 });
 
             log.info("SystemRejectCasesWithPaymentOverdueTask scheduled task complete.");
@@ -83,5 +98,85 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
         } catch (final CcdConflictException e) {
             log.info("SystemRejectCasesWithPaymentOverdueTask schedule task stopping due to conflict with another running task");
         }
+    }
+
+    private void processPaymentRejection(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails, User user, String serviceAuth) {
+        ServiceRequestDto latestServiceRequest = getLatestServiceRequest(caseDetails, user, serviceAuth);
+
+        // Hard rejection after 15 days - no exceptions
+        if (isCaseOverAgeLimit(caseDetails)) {
+            rejectCase(caseDetails, "case has exceeded the 15-day limit", user, serviceAuth);
+            return;
+        }
+
+        // Within 15-day window: check grace period and payment status
+        if (isServiceRequestWithinGracePeriod(latestServiceRequest)) {
+            log.info("Skipping case {} - service request created within last {} hours",
+                caseDetails.getId(), GRACE_PERIOD_HOURS);
+        } else if (!hasSuccessfulPayment(latestServiceRequest)) {
+            rejectCase(caseDetails, "payment not made after creating service request", user, serviceAuth);
+        }
+    }
+
+    private ServiceRequestDto getLatestServiceRequest(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails, User user, String serviceAuth) {
+        var paymentClientResponse = paymentClient.getServiceRequests(
+            user.getAuthToken(), serviceAuth, caseDetails.getId().toString());
+
+        return paymentClientResponse.getServiceRequests()
+            .stream()
+            .max(Comparator.comparing(ServiceRequestDto::getDateCreated))
+            .orElse(ServiceRequestDto.builder().build());
+
+//         Doing it via all payments endpoint
+
+//        User u = idamService.retrieveUser(idamService.getCachedIdamOauth2Token("payments.probate@mailinator.com", "LevelAt12"));
+//
+//        PaymentsResponse response = paymentClient.getAllPayments(u.getAuthToken(), serviceAuth, caseDetails.getId().toString());
+
+//        response.getPayments().stream().max(Comparator.comparing(ServiceRequestDto.PaymentDto::getDateUpdated))
+//            .ifPresent(payment -> {
+//
+//                log.info("Payment Details:");
+//                log.info("  Reference: {}", payment.getPaymentReference());
+//                log.info("  Status: {}", payment.getStatus());
+//                log.info("  Amount: {}", payment.getAmount());
+//                log.info("  Payer: {}", payment.getPayerName());
+//                log.info("  Organisation: {}", payment.getOrganisationName());
+//                log.info("  Case Reference: {}", payment.getCaseReference());
+//            });
+//
+//        return null;
+    }
+
+    private boolean isCaseOverAgeLimit(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails) {
+        return caseDetails.getLastModified()
+            .toLocalDate()
+            .isBefore(LocalDate.now().minusDays(MAX_CASE_AGE_DAYS));
+    }
+
+    private boolean isServiceRequestWithinGracePeriod(ServiceRequestDto serviceRequest) {
+        if (serviceRequest.getDateCreated() == null) {
+            return false;
+        }
+
+        LocalDateTime gracePeriodStart = LocalDateTime.now().minusHours(GRACE_PERIOD_HOURS);
+        LocalDateTime serviceCreatedTime = LocalDateTime.ofInstant(
+            serviceRequest.getDateCreated().toInstant(),
+            ZoneId.systemDefault()
+        );
+
+        return gracePeriodStart.isBefore(serviceCreatedTime);
+    }
+
+    private boolean hasSuccessfulPayment(ServiceRequestDto serviceRequest) {
+        return serviceRequest.getPayments()
+            .stream()
+            .map(ServiceRequestDto.PaymentDto::getStatus)
+            .anyMatch(SUCCESS_STATUS::equalsIgnoreCase);
+    }
+
+    private void rejectCase(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails, String reason, User user, String serviceAuth) {
+        log.info("Rejecting case {} as {}", caseDetails.getId(), reason);
+        ccdUpdateService.submitEvent(caseDetails.getId(), APPLICATION_REJECTED_FEE_NOT_PAID, user, serviceAuth);
     }
 }
