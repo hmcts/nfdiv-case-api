@@ -462,9 +462,12 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     private void addWithdrawApplicationDetails(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
             .label("LabelApplicationWithdrawn-Heading",
-                "cwWithdrawApplicationReason=\"*\" OR withdrawApplicationReason=\"*\"", "#### Application Withdrawn")
+                "cwWithdrawApplicationReason=\"*\" OR withdrawApplicationReason=\"*\" "
+                    + "OR applicant2WithdrawApplicationReason=\"*\"", "#### Application Withdrawn")
             .field("withdrawApplicationReason",
                 "withdrawApplicationReason=\"*\" AND " + showForState(Withdrawn, PendingRefund))
+            .field("applicant2WithdrawApplicationReason",
+                "applicant2WithdrawApplicationReason=\"*\" AND " + showForState(Withdrawn, PendingRefund))
             .field("cwWithdrawApplicationReason",
                 "cwWithdrawApplicationReason=\"*\" AND " + showForState(Withdrawn))
             .field("cwWithdrawApplicationDetails",

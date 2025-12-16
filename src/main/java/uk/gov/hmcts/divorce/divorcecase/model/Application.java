@@ -587,6 +587,20 @@ public class Application {
     private String withdrawApplicationReason;
 
     @CCD(
+        label = "Application withdrawn by Applicant2?",
+        access = {Applicant2Access.class, DefaultAccess.class},
+        searchable = false
+    )
+    private YesOrNo applicant2ConfirmWithdrawApplication;
+
+    @CCD(
+        label = "Applicant 2 reason for withdrawal",
+        access = {Applicant2Access.class, DefaultAccess.class},
+        searchable = false
+    )
+    private String applicant2WithdrawApplicationReason;
+
+    @CCD(
         label = "Caseworker reason for withdrawal",
         typeOverride = FixedRadioList,
         typeParameterOverride = "WithdrawApplicationReasonType",
