@@ -1418,6 +1418,19 @@ class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
+    void shouldNotValidateUnlessRequestForInformationResponseSelected() {
+        CaseData caseData = caseData();
+        caseData.getDocuments().setTypeOfDocumentAttached(CO_D84);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getData()).isEqualTo(caseData);
+    }
+
+    @Test
     void shouldThrowErrorIfCaseHasBeenIssuedWhenRequestForInformationResponseSelected() {
         CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails();
         CaseData caseData = caseDetails.getData();
