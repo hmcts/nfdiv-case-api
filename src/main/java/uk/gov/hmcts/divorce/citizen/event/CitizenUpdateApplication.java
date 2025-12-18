@@ -34,12 +34,9 @@ public class CitizenUpdateApplication implements CCDConfig<CaseData, State, User
         AwaitingApplicant2Response,
         Applicant2Approved,
         AwaitingPayment,
-        AwaitingHWFDecision,
         AwaitingHWFEvidence,
         AwaitingHWFPartPayment,
-        AwaitingDocuments,
         NewPaperCase,
-        Submitted,
         Withdrawn,
         Rejected,
         Archived
