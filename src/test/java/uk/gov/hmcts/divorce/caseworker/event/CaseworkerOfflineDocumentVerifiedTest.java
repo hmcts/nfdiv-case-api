@@ -1411,7 +1411,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.midEvent(caseDetails, caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).contains(NO_REQUEST_FOR_INFORMATION_ERROR);
@@ -1424,7 +1424,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.midEvent(caseDetails, caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).contains(NO_REQUEST_FOR_INFORMATION_POST_ISSUE_ERROR);
