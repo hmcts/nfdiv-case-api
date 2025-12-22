@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -19,6 +20,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ConditionalOrderReminderTemplateContent implements TemplateContent {
 
     public static final String DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION = "divorceOrEndCivilPartnershipApplication";
@@ -30,11 +32,13 @@ public class ConditionalOrderReminderTemplateContent implements TemplateContent 
     public static final String DIVORCE = "get a divorce";
     public static final String END_THE_CIVIL_PARTNERSHIP = "end the civil partnership";
 
+    private final DocmosisCommonContent docmosisCommonContent;
 
     @Override
     public Map<String, Object> getTemplateContent(final CaseData caseData, final Long caseId, Applicant applicant) {
 
-        final Map<String, Object> templateContent = new HashMap<>();
+        final Map<String, Object> templateContent = docmosisCommonContent
+            .getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 
         templateContent.put(CASE_REFERENCE, formatId(caseId));
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());
