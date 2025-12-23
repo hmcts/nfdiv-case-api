@@ -29,6 +29,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -51,6 +52,12 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
     public static final String FIND_MATCHES = "caseworker-find-matches";
     public static final String WILDCARD_SEARCH = ".*";
+    private static final EnumSet<State> EVENT_STATES = EnumSet.copyOf(POST_SUBMISSION_STATES);
+
+    static {
+        EVENT_STATES.remove(State.Archived);
+    }
+
     private final CcdSearchService ccdSearchService;
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
@@ -59,10 +66,9 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-
         new PageBuilder(configBuilder
             .event(FIND_MATCHES)
-            .forStates(POST_SUBMISSION_STATES)
+            .forStates(EVENT_STATES)
             .name("Find matches")
             .description("Find matches")
             .aboutToStartCallback(this::aboutToStart)
@@ -140,7 +146,7 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
             }
         }
         LocalDate marriageDate = marriageDetails.getDate();
-        List<String> stateValues = POST_SUBMISSION_STATES.stream().map(State::name).toList();
+        List<String> stateValues = EVENT_STATES.stream().map(State::name).toList();
 
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
             .filter(QueryBuilders.termsQuery(STATE_KEY, stateValues))
