@@ -29,6 +29,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.andShowCondition;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
@@ -53,6 +54,12 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     public static final String DRAFT_AOS = "draft-aos";
     public static final String DRAFT_AOS_ALREADY_SUBMITTED_ERROR
         = "The Acknowledgement Of Service has already been submitted.";
+    public static final String DRAFT_AOS_SHOW_CONDITION = andShowCondition(
+        "applicationType=\"soleApplication\"",
+            "aosIsDrafted!=\"Yes\"",
+            "coApplicant1SubmittedDate!=\"*\""
+    );
+
     protected static final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
         new Applicant2SolReviewApplicant1Application(),
@@ -78,7 +85,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
             .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingAos, AosOverdue, OfflineDocumentReceived, AwaitingService))
             .name("Draft AoS")
             .description("Draft Acknowledgement of Service")
-            .showCondition("applicationType=\"soleApplication\" AND aosIsDrafted!=\"Yes\"")
+            .showCondition(DRAFT_AOS_SHOW_CONDITION)
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()

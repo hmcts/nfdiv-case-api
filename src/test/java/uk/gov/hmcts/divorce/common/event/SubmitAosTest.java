@@ -79,6 +79,9 @@ class SubmitAosTest {
             .build();
 
         final CaseData caseData = caseData();
+        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(
+            LocalDateTime.of(2022, 1, 1, 1, 1)
+        );
         caseData.getApplicant2().setLegalProceedings(null);
         caseData.setAcknowledgementOfService(acknowledgementOfService);
 
@@ -91,6 +94,7 @@ class SubmitAosTest {
         assertThat(response.getData()).isSameAs(caseData);
         assertThat(response.getErrors())
             .containsExactly(
+                "A conditional order has already been submitted.",
                 "You must be authorised by the respondent to sign this statement.",
                 "The respondent must have read the application.",
                 "The respondent must agree or disagree to claimed jurisdiction.",
