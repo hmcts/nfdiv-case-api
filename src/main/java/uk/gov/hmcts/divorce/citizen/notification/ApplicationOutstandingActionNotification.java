@@ -122,7 +122,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
             ? "[upload your documents using our online form](https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/)."
             : "");
 
-        boolean addressNotProvided = !caseData.getApplication().isAddressProvided();
+        boolean addressNotProvided = !caseData.getApplication().knowsRespondentAddress();
 
         templateVars.putAll(missingDocsTemplateVars(caseData, needsToSendDocuments));
         templateVars.put(IS_ADDRESS_PROVIDED, addressNotProvided ? YES : NO);

@@ -46,7 +46,7 @@ public class SendSubmissionNotifications implements CaseTask {
         }
 
         if (application.hasAwaitingApplicant1Documents() || application.hasAwaitingApplicant2Documents()
-            || (caseData.getApplicationType().isSole() && !application.isAddressProvided())) {
+            || (caseData.getApplicationType().isSole() && !application.knowsRespondentAddress())) {
 
             log.info("Sending outstanding action needed notification for case : {}", caseId);
 

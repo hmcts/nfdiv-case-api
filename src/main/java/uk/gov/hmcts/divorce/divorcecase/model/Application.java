@@ -729,7 +729,7 @@ public class Application {
     }
 
     @JsonIgnore
-    public boolean isAddressProvided() {
+    public boolean knowsRespondentAddress() {
         return (YES.equals(applicant1KnowsApplicant2Address) || YES.equals(applicant1FoundApplicant2Address));
     }
 }
