@@ -31,7 +31,7 @@ public class SetStateAfterSubmission implements CaseTask {
         final boolean isHWFApplicant2 = application.isHelpWithFeesApplicationApplicant2();
         final boolean isSoleApplication =  nonNull(caseData.getApplicationType())
             && caseData.getApplicationType().isSole();
-        final boolean isApplicant1AwaitingDocuments = !isEmpty(application.getApplicant1CannotUploadSupportingDocument())
+        final boolean isApplicant1AwaitingDocuments = application.hasAwaitingApplicant1Documents()
             || isSoleApplication && application.isPersonalServiceMethod();
         final boolean isApplicant2AwaitingDocuments = application.hasAwaitingApplicant2Documents();
 
@@ -41,12 +41,12 @@ public class SetStateAfterSubmission implements CaseTask {
             || (!isSoleApplication && isHWFApplicant1 && isHWFApplicant2);
         boolean applicationHasBeenPaidFor = application.hasBeenPaidFor();
 
-        boolean isAddressProvidedOrServeAnotherWay = caseData.getApplicationType().isSole()
+        boolean hasProvidedAddressForService = caseData.getApplicationType().isSole()
             && caseData.getApplication().knowsRespondentAddress();
 
         if (applicantNeedsHelpWithFees && !applicationHasBeenPaidFor) {
             caseDetails.setState(AwaitingHWFDecision);
-        } else if (applicantIsAwaitingDocuments || !hasProvidedAddressForService) {
+        } else if (applicantIsAwaitingDocuments || !hasProvidedAddressForService ) {
             caseDetails.setState(AwaitingDocuments);
         } else if (!applicationHasBeenPaidFor) {
             caseDetails.setState(AwaitingPayment);

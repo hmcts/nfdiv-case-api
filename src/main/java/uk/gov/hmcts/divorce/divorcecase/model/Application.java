@@ -639,14 +639,14 @@ public class Application {
     }
 
     @JsonIgnore
-    public boolean applicant1WantsToHavePapersServedAnotherWay() {
+    public boolean applicant1ServedPapersAnotherWay() {
         return applicant1WantsToHavePapersServedAnotherWay != null
             && applicant1WantsToHavePapersServedAnotherWay.toBoolean();
     }
 
     @JsonIgnore
     public boolean hasAwaitingApplicant1Documents() {
-        return applicant1WantsToHavePapersServedAnotherWay() || !isEmpty(applicant1CannotUploadSupportingDocument);
+        return applicant1ServedPapersAnotherWay() || !isEmpty(applicant1CannotUploadSupportingDocument);
     }
 
     @JsonIgnore
