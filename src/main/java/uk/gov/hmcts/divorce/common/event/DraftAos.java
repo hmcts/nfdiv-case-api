@@ -57,7 +57,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     public static final String DRAFT_AOS_ALREADY_SUBMITTED_ERROR
         = "The Acknowledgement Of Service has already been submitted.";
     public static final String CONDITIONAL_ORDER_ALREADY_SUBMITTED_ERROR
-        = "\"A conditional order has already been submitted on this case.\"";
+        = "A conditional order application has been made for this case and the AoS can no longer be submitted.";
 
     protected static final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
