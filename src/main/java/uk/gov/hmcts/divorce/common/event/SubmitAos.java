@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.common.event.page.SolicitorDetailsWithStatementOfTru
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -27,11 +26,10 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.andShowCondition;
+import static uk.gov.hmcts.divorce.common.event.DraftAos.validateConditionalOrderStatus;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
@@ -55,12 +53,6 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SUBMIT_AOS = "submit-aos";
     public static final String AOS_ALREADY_SUBMITTED_ERROR = "The Acknowledgement Of Service has already been submitted";
-    public static final String SUBMIT_AOS_SHOW_CONDITION = andShowCondition(
-        "applicationType=\"soleApplication\"",
-            "aosIsDrafted=\"Yes\"",
-            "coApplicant1SubmittedDate!=\"*\""
-    );
-
 
     private final List<CcdPageConfiguration> pages = List.of(
         new Applicant2SolStatementOfTruth(),
@@ -149,12 +141,6 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
         final List<String> errors = new ArrayList<>();
 
-        final ConditionalOrderQuestions app1Questions = caseData.getConditionalOrder().getConditionalOrderApplicant1Questions();
-        final boolean conditionalOrderHasBeenSubmitted = Objects.nonNull(app1Questions.getSubmittedDate());
-        if (conditionalOrderHasBeenSubmitted) {
-            errors.add("A conditional order has already been submitted.");
-        }
-
         if (!YES.equals(acknowledgementOfService.getStatementOfTruth())) {
             errors.add("You must be authorised by the respondent to sign this statement.");
         }
@@ -188,6 +174,8 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
             errors.add("The respondent must enter the details of their other legal proceedings.");
         }
 
+        errors.addAll(validateConditionalOrderStatus(caseData));
+
         return errors;
     }
 
@@ -197,7 +185,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
             .forStates(ArrayUtils.addAll(AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived, AwaitingService))
             .name("Submit AoS")
             .description("Submit AoS")
-            .showCondition(SUBMIT_AOS_SHOW_CONDITION)
+            .showCondition("applicationType=\"soleApplication\" AND aosIsDrafted=\"Yes\"")
             .showSummary()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)

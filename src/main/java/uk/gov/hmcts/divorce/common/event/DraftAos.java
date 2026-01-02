@@ -18,18 +18,20 @@ import uk.gov.hmcts.divorce.common.event.page.Applicant2SolConfirmContactDetails
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolReviewApplicant1Application;
 import uk.gov.hmcts.divorce.common.notification.RespondentDraftAosStartedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.andShowCondition;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
@@ -54,11 +56,8 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     public static final String DRAFT_AOS = "draft-aos";
     public static final String DRAFT_AOS_ALREADY_SUBMITTED_ERROR
         = "The Acknowledgement Of Service has already been submitted.";
-    public static final String DRAFT_AOS_SHOW_CONDITION = andShowCondition(
-        "applicationType=\"soleApplication\"",
-            "aosIsDrafted!=\"Yes\"",
-            "coApplicant1SubmittedDate!=\"*\""
-    );
+    public static final String CONDITIONAL_ORDER_ALREADY_SUBMITTED_ERROR
+        = "\"A conditional order has already been submitted on this case.\"";
 
     protected static final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
@@ -85,7 +84,7 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
             .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingAos, AosOverdue, OfflineDocumentReceived, AwaitingService))
             .name("Draft AoS")
             .description("Draft Acknowledgement of Service")
-            .showCondition(DRAFT_AOS_SHOW_CONDITION)
+            .showCondition("applicationType=\"soleApplication\" AND aosIsDrafted!=\"Yes\"")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary()
@@ -153,6 +152,19 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
             errors.add("You cannot draft the AoS until the case has been issued. Please wait for the case to be issued.");
         }
 
+        errors.addAll(validateConditionalOrderStatus(caseData));
+
         return errors;
+    }
+
+    public static List<String> validateConditionalOrderStatus(CaseData caseData) {
+        final ConditionalOrderQuestions app1Questions = caseData.getConditionalOrder().getConditionalOrderApplicant1Questions();
+        final boolean conditionalOrderHasBeenSubmitted = Objects.nonNull(app1Questions.getSubmittedDate());
+
+        if (conditionalOrderHasBeenSubmitted) {
+            return List.of(CONDITIONAL_ORDER_ALREADY_SUBMITTED_ERROR);
+        }
+
+        return Collections.emptyList();
     }
 }
