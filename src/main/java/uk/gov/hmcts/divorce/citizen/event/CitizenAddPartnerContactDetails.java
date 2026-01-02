@@ -24,7 +24,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 public class CitizenAddPartnerContactDetails implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CITIZEN_ADD_PARTNER_CONTACT = "citizen-add-partner-contact";
+    public static final String CITIZEN_ADD_PARTNER_DETAILS = "citizen-add-partner-details";
 
     private static final EnumSet<State> CITIZEN_UPDATE_STATES = EnumSet.complementOf(EnumSet.of(
         AwaitingPayment,
@@ -39,7 +39,7 @@ public class CitizenAddPartnerContactDetails implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         configBuilder
-            .event(CITIZEN_ADD_PARTNER_CONTACT)
+            .event(CITIZEN_ADD_PARTNER_DETAILS)
             .forStates(CITIZEN_UPDATE_STATES)
             .showCondition(NEVER_SHOW)
             .name("Add partner contact details")

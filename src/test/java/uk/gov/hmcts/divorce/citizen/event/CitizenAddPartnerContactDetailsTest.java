@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPartnerContactDetails.CITIZEN_ADD_PARTNER_CONTACT;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPartnerContactDetails.CITIZEN_ADD_PARTNER_DETAILS;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 @ExtendWith(SpringExtension.class)
@@ -31,7 +31,7 @@ class CitizenAddPartnerContactDetailsTest {
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(CITIZEN_ADD_PARTNER_CONTACT);
+            .contains(CITIZEN_ADD_PARTNER_DETAILS);
     }
 
     @Test
