@@ -69,7 +69,7 @@ class SendSubmissionNotificationsTest {
     }
 
     @Test
-    void shouldDispatchSubmittedNotificationsAndOutstandingActionNotificationsIfWelshPreviousStateSubmitted() {
+    void shouldDispatchSubmittedNotificationsIfWelshPreviousStateSubmitted() {
         final CaseData caseData = caseData();
         caseData.getApplication().setWelshPreviousState(Submitted);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -80,11 +80,10 @@ class SendSubmissionNotificationsTest {
         sendSubmissionNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(applicationSubmittedNotification, caseData, TEST_CASE_ID);
-        verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
-    void shouldDispatchSubmittedNotificationsAndOutstandingActionNotificationsIfWelshPreviousStateAwaitingHwfDecision() {
+    void shouldDispatchSubmittedNotificationsIfWelshPreviousStateAwaitingHwfDecision() {
         final CaseData caseData = caseData();
         caseData.getApplication().setWelshPreviousState(AwaitingHWFDecision);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -95,7 +94,6 @@ class SendSubmissionNotificationsTest {
         sendSubmissionNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(applicationSubmittedNotification, caseData, TEST_CASE_ID);
-        verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
     }
 
     @Test

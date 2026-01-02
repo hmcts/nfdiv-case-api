@@ -162,7 +162,7 @@ class ApplicationTest {
     }
 
     @Test
-    void shouldReturnTrueIfApplicant1WantsToHavePapersServedAnotherWayIsYes() {
+    void shouldReturnTrueIfApplicant1ServedPapersAnotherWayIsYes() {
 
         final var application = Application.builder()
             .applicant1WantsToHavePapersServedAnotherWay(YES)
@@ -172,7 +172,7 @@ class ApplicationTest {
     }
 
     @Test
-    void shouldReturnTrueIfApplicant1WantsToHavePapersServedAnotherWayIsNoAndApplicant1CannotUploadSupportingDocument() {
+    void shouldReturnTrueIfApplicant1WantsToHavePapersServedAnotherWayIsNoAndApplicant1CannotUploadSupportingDocumentPapers() {
 
         final var application = Application.builder()
             .applicant1WantsToHavePapersServedAnotherWay(NO)
@@ -183,7 +183,7 @@ class ApplicationTest {
     }
 
     @Test
-    void shouldReturnFalseIfApplicant1WantsToHavePapersServedAnotherWayIsNoAndEmptyApplicant1CannotUploadSupportingDocument() {
+    void shouldReturnFalseIfApplicant1WantsToHavePapersServedAnotherWayIsNoAndEmptyApplicant1CannotUploadSupportingDocumentPapers() {
 
         final var application = Application.builder()
             .applicant1WantsToHavePapersServedAnotherWay(NO)
@@ -193,7 +193,7 @@ class ApplicationTest {
     }
 
     @Test
-    void shouldReturnFalseIfApplicant1WantsToHavePapersServedAnotherWayIsNull() {
+    void shouldReturnFalseIfApplicant1ServedPapersAnotherWayIsNull() {
 
         final var application = Application.builder()
             .build();
