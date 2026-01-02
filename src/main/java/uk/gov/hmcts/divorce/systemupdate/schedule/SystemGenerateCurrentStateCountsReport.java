@@ -23,9 +23,15 @@ import java.util.Map;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.LAReview;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.LAServiceReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.NewPaperCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -58,7 +64,9 @@ public class SystemGenerateCurrentStateCountsReport implements Runnable {
             final BoolQueryBuilder query = boolQuery()
                 .must(termsQuery("state.keyword", List.of(Submitted.name(),AwaitingHWFDecision.name(),
                     OfflineDocumentReceived.name(), NewPaperCase.name(), FinalOrderRequested.name(),
-                    GeneralApplicationReceived.name(), GeneralConsiderationComplete.name())));
+                    GeneralApplicationReceived.name(), GeneralConsiderationComplete.name(), AwaitingServiceConsideration.name(),
+                    ClarificationSubmitted.name(), JSAwaitingLA.name(), LAReview.name(), LAServiceReview.name(),
+                    AwaitingLegalAdvisorReferral.name())));
 
             Map<String, Map<String, Long>> mapByStateAndLastStateModifiedDate =
                 ccdSearchService.countAllCasesByStateAndLastModifiedDate(query, user, serviceAuth);
