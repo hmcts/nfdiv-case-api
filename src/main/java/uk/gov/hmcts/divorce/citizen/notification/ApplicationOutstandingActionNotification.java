@@ -49,13 +49,13 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     public static final String MISSING_MARRIAGE_CERTIFICATE_TRANSLATION = "marriageCertificateTranslation";
     public static final String MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION = "civilPartnershipCertificateTranslation";
     public static final String MISSING_NAME_CHANGE_PROOF = "nameChangeProof";
-    public static final String IS_ADDRESS_PROVIDED = "isAddressProvided";
+    public static final String ADDRESS_NOT_PROVIDED = "addressNotProvided";
     public static final String ALTERNATIVE_APPLICATION_FEE = "alternativeApplicationFee";
     public static final String UPDATE_POSTAL_ADDRESS = "updatePostalAddress";
     public static final String APPLY_TO_PROGRESS_ANOTHER_WAY = "applyToProgressAnotherWay";
     public static final String GET_HELP_WITH_FEE = "getHelpWithFee";
-    public static final String IS_ADDRESS_PROVIDED_DIVORCE = "isAddressProvidedDivorce";
-    public static final String IS_ADDRESS_PROVIDED_DISSOLUTION = "isAddressProvidedDissolution";
+    public static final String ADDRESS_NOT_PROVIDED_DIVORCE = "addressNotProvidedDivorce";
+    public static final String ADDRESS_NOT_PROVIDED_DISSOLUTION = "addressNotProvidedDissolution";
     public static final String SEND_DOCUMENTS_REFERENCE_NUMBER = "sendDocumentsToCourtReferenceNumber";
     public static final String UPLOAD_DOCUMENTS_USING_FORM = "uploadDocumentsUsingForm";
 
@@ -122,10 +122,10 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
             ? "[upload your documents using our online form](https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/)."
             : "");
 
-        boolean addressNotProvided = !caseData.getApplication().isAddressProvided();
+        boolean addressNotProvided = !caseData.getApplication().knowsRespondentAddress();
 
         templateVars.putAll(missingDocsTemplateVars(caseData, needsToSendDocuments));
-        templateVars.put(IS_ADDRESS_PROVIDED, addressNotProvided ? YES : NO);
+        templateVars.put(ADDRESS_NOT_PROVIDED, addressNotProvided ? YES : NO);
         templateVars.put(ALTERNATIVE_APPLICATION_FEE, addressNotProvided
             ? formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_GENERAL,KEYWORD_WITHOUT_NOTICE)) : "");
         templateVars.put(UPDATE_POSTAL_ADDRESS, addressNotProvided
@@ -134,8 +134,8 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
             ? String.format("[apply to progress your application another way](%s)", commonContent.getSignInUrl(caseData)) : "");
         templateVars.put(GET_HELP_WITH_FEE, addressNotProvided ? "[get help paying this fee](https://www.gov.uk/get-help-with-court-fees)"
             : "");
-        templateVars.put(IS_ADDRESS_PROVIDED_DIVORCE, addressNotProvided && caseData.isDivorce() ? YES : NO);
-        templateVars.put(IS_ADDRESS_PROVIDED_DISSOLUTION, addressNotProvided && !caseData.isDivorce() ? YES : NO);
+        templateVars.put(ADDRESS_NOT_PROVIDED_DIVORCE, addressNotProvided && caseData.isDivorce() ? YES : NO);
+        templateVars.put(ADDRESS_NOT_PROVIDED_DISSOLUTION, addressNotProvided && !caseData.isDivorce() ? YES : NO);
         templateVars.put(PARTNER, addressNotProvided
             ? commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant1().getLanguagePreference()) : "");
 
