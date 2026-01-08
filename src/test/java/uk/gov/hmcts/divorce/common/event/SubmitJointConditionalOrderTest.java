@@ -191,6 +191,7 @@ class SubmitJointConditionalOrderTest {
 
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
         caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
+        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(YesOrNo.YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.ConditionalOrderPending).id(TEST_CASE_ID).build();
 
