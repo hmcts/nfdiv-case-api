@@ -17,19 +17,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.CASE_ALREADY_ISSUED_ERROR;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.CASE_MUST_BE_ISSUED_ERROR;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.INVALID_STATE_ERROR;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.validateStateTransition;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_ISSUE_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_RETURN_TO_PREVIOUS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -103,17 +97,7 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
 
         final CaseData caseData = details.getData();
         State state = caseData.getApplication().getStateToTransitionApplicationTo();
-        List<String> validationErrors = new ArrayList<>();
-
-        if (!PRE_RETURN_TO_PREVIOUS_STATES.contains(state)) {
-            validationErrors.add(INVALID_STATE_ERROR);
-        }
-
-        if (POST_ISSUE_STATES.contains(state) && caseData.getApplication().getIssueDate() == null) {
-            validationErrors.add(CASE_MUST_BE_ISSUED_ERROR);
-        } else if (EnumSet.complementOf(POST_ISSUE_STATES).contains(state) && caseData.getApplication().getIssueDate() != null) {
-            validationErrors.add(CASE_ALREADY_ISSUED_ERROR);
-        }
+        List<String> validationErrors = validateStateTransition(caseData, state);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
