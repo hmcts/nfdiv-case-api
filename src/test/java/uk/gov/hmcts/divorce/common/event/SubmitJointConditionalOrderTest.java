@@ -143,12 +143,28 @@ class SubmitJointConditionalOrderTest {
     }
 
     @Test
-    void shouldSetStateToConditionalOrderPendingOnAboutToSubmit() {
+    void shouldSetStateToConditionalOrderPendingOnAboutToSubmitWhenTheStateWasConditionalOrderDrafted() {
         setMockClock(clock);
 
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.ConditionalOrderDrafted).id(TEST_CASE_ID).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitJointConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(ConditionalOrderPending);
+
+        verifyNoInteractions(documentGenerator);
+    }
+
+    @Test
+    void shouldSetStateToConditionalOrderPendingOnAboutToSubmitWhenApplicant1HasNotSubmittedCO() {
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(YesOrNo.NO);
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).state(ConditionalOrderPending).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitJointConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 

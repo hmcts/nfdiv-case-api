@@ -83,7 +83,11 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
         data.getConditionalOrder().getConditionalOrderApplicant2Questions().setSubmittedDate(LocalDateTime.now(clock));
         data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(YES);
 
-        var state = ConditionalOrderDrafted.equals(beforeDetails.getState())
+        boolean hasApplicant1Submitted =
+            data.getConditionalOrder().getConditionalOrderApplicant1Questions() != null
+            && YES.equals(data.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted());
+
+        var state = ConditionalOrderDrafted.equals(beforeDetails.getState()) || !hasApplicant1Submitted
             ? ConditionalOrderPending
             : AwaitingLegalAdvisorReferral;
 
