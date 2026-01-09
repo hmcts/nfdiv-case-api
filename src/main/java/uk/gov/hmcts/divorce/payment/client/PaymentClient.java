@@ -40,4 +40,12 @@ public interface PaymentClient {
         @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorisation,
         @PathVariable("ccdCaseNumber") String ccdCaseNumber
     );
+
+    @GetMapping(value = "/cases/{case}/payments",
+        headers = CONTENT_TYPE + "=" + APPLICATION_JSON_VALUE)
+    PaymentsResponse getAllPayments(
+        @RequestHeader(AUTHORIZATION) String authorisation,
+        @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorisation,
+        @PathVariable("case") String ccdCaseNumber
+    );
 }
