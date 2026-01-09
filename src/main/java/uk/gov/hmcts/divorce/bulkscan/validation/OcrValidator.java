@@ -121,7 +121,7 @@ public class OcrValidator {
 
     private void validateAboutTheRespondent(OcrDataFields data, List<String> warnings) {
 
-        Map<String, String> validateWarningFields = new HashMap<>();
+
         Map<String, String> validateErrorFields = new HashMap<>();
 
         validateErrorFields.put("respondentOrApplicant2FirstName", data.getRespondentOrApplicant2FirstName());
@@ -133,6 +133,8 @@ public class OcrValidator {
         ) {
             validateErrorFields.put("respondentOrApplicant2WhyMarriedNameChanged", data.getRespondentOrApplicant2WhyMarriedNameChanged());
         }
+
+        Map<String, String> validateWarningFields = new HashMap<>();
 
         if (!isEmpty(data.getRespondentOrApplicant2Email())) {
             validateWarningFields.put("respondentEmailAccess", data.getRespondentEmailAccess());
