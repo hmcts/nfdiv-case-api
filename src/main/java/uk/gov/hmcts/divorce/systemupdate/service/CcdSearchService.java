@@ -533,7 +533,8 @@ public class CcdSearchService {
             .filter(caseDetail -> caseDetail.getState() != null)
             .forEach(caseDetail -> {
                 String stateName = caseDetail.getState().name();
-                String serviceAppTypeName = AwaitingServiceConsideration.name().equals(stateName)
+                String serviceAppTypeName = (AwaitingServiceConsideration.name().equals(stateName)
+                    && caseDetail.getData().getAlternativeService().getAlternativeServiceType() != null)
                     ? "-" + caseDetail.getData().getAlternativeService().getAlternativeServiceType().name()
                     : "";
 
