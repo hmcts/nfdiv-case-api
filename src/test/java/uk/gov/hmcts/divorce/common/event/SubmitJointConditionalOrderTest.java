@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 
 import java.time.Clock;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -191,7 +192,7 @@ class SubmitJointConditionalOrderTest {
 
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
         caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
-        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(YesOrNo.YES);
+        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(LocalDateTime.now());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.ConditionalOrderPending).id(TEST_CASE_ID).build();
 
