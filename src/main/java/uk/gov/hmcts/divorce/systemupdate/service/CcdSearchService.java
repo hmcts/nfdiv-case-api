@@ -45,6 +45,7 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 
@@ -532,9 +533,15 @@ public class CcdSearchService {
             .filter(caseDetail -> caseDetail.getState() != null)
             .forEach(caseDetail -> {
                 String stateName = caseDetail.getState().name();
+                String serviceAppTypeName = AwaitingServiceConsideration.name().equals(stateName)
+                    ? "-" + caseDetail.getData().getAlternativeService().getAlternativeServiceType().name()
+                    : "";
+
+                String modifiedStateName = stateName + serviceAppTypeName;
+
                 String lastModifiedDate = caseDetail.getLastStateModifiedDate().toLocalDate().format(CASE_DATE_FORMAT);
 
-                Map<String, Long> stateMap = aggregatedResults.computeIfAbsent(stateName, k -> new HashMap<>());
+                Map<String, Long> stateMap = aggregatedResults.computeIfAbsent(modifiedStateName, k -> new HashMap<>());
 
                 stateMap.merge(lastModifiedDate, 1L, Long::sum);
             });
