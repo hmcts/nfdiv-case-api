@@ -135,7 +135,7 @@ public class CitizenSubmitApplicationIT {
     public void givenValidCaseDataWithHwfThenSendEmailsToApplicant1AndReturnResponseWithNoErrors() throws Exception {
         CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
-        caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
+        caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YES);
 
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
         stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData, caseData.getApplicant1().getFullName()));

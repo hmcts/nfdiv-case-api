@@ -639,10 +639,14 @@ public class Application {
     }
 
     @JsonIgnore
-    public boolean hasAwaitingApplicant1Documents() {
+    public boolean applicant1ServedPapersAnotherWay() {
         return applicant1WantsToHavePapersServedAnotherWay != null
-            && applicant1WantsToHavePapersServedAnotherWay.toBoolean()
-            || !isEmpty(applicant1CannotUploadSupportingDocument);
+            && applicant1WantsToHavePapersServedAnotherWay.toBoolean();
+    }
+
+    @JsonIgnore
+    public boolean hasAwaitingApplicant1Documents() {
+        return applicant1ServedPapersAnotherWay() || !isEmpty(applicant1CannotUploadSupportingDocument);
     }
 
     @JsonIgnore
@@ -724,4 +728,8 @@ public class Application {
             .map(dynamicList -> dynamicList.getValue().getLabel());
     }
 
+    @JsonIgnore
+    public boolean knowsRespondentAddress() {
+        return (YES.equals(applicant1KnowsApplicant2Address) || YES.equals(applicant1FoundApplicant2Address));
+    }
 }
