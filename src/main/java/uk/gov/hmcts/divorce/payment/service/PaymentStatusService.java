@@ -19,7 +19,6 @@ import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -41,7 +40,6 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemRejectCasesWithPayme
 @Slf4j
 public class PaymentStatusService {
 
-    private static final int MAX_CASE_AGE_DAYS = 16;
     private static final int GRACE_PERIOD_HOURS = 24;
 
     private final PaymentClient paymentClient;
@@ -163,13 +161,6 @@ public class PaymentStatusService {
 
     public void processPaymentRejection(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails, User user, String serviceAuth) {
 
-        // Hard rejection after 15 days even if service request has been created in last 24 hours
-        // as at this point the case is over 2 days old
-        if (isCaseOverAgeLimit(caseDetails)) {
-            rejectCase(caseDetails, "case has exceeded the 15-day limit", user, serviceAuth);
-            return;
-        }
-
         ServiceRequestDto latestServiceRequest = getLatestServiceRequest(caseDetails, user, serviceAuth);
 
         if (latestServiceRequest != null && isServiceRequestWithinGracePeriod(latestServiceRequest)) {
@@ -191,12 +182,6 @@ public class PaymentStatusService {
             .stream()
             .max(Comparator.comparing(ServiceRequestDto::getDateCreated))
             .orElse(ServiceRequestDto.builder().build());
-    }
-
-    private boolean isCaseOverAgeLimit(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails) {
-        return caseDetails.getLastModified()
-            .toLocalDate()
-            .isBefore(LocalDate.now().minusDays(MAX_CASE_AGE_DAYS));
     }
 
     private boolean isServiceRequestWithinGracePeriod(ServiceRequestDto serviceRequest) {

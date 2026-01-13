@@ -276,18 +276,6 @@ class PaymentStatusServiceTest {
         return payments;
     }
 
-    @Test
-    void shouldRejectCaseInStateAwaitingPaymentWhenPaymentOverdueAfter16Days() {
-        final CaseDetails cd = CaseDetails.builder().data(Map.of(APPLICATION_PAYMENTS, ""))
-            .id(TEST_CASE_ID).state(AWAITING_PAYMENT).build();
-
-        caseDetails.setLastModified(LocalDateTime.now().minusDays(17));
-        paymentStatusService.processPaymentRejection(caseDetails, user, SERVICE_AUTHORIZATION);
-
-        verify(ccdUpdateService).submitEvent(TEST_CASE_ID,
-            APPLICATION_REJECTED_FEE_NOT_PAID, user, SERVICE_AUTHORIZATION);
-    }
-
     private void stubServiceRequestSearch(List<ServiceRequestDto> caseServiceRequests) {
         when(paymentClient.getServiceRequests(user.getAuthToken(), SERVICE_AUTHORIZATION, String.valueOf(TEST_CASE_ID)))
             .thenReturn(CaseServiceRequestsResponse.builder().serviceRequests(caseServiceRequests).build());
