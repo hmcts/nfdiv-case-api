@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
@@ -16,7 +15,6 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Optional;
 
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
@@ -49,8 +47,7 @@ public class CaseProcessingStateFilter {
                 var caseIsAlreadyPronounced = !isEmpty(caseData.getFinalOrder())
                         && !isEmpty(caseData.getFinalOrder().getDateFinalOrderEligibleFrom());
 
-                if (postStates.contains(state) || hasFinalOrder(caseData)
-                        || (state.equals(State.OfflineDocumentReceived) && caseIsAlreadyPronounced)) {
+                if (postStates.contains(state) || (!state.equals(State.AwaitingPronouncement) && caseIsAlreadyPronounced)) {
 
                     log.info(
                         "Case ID {} will be skipped and moved to processed list as already processed",
@@ -87,12 +84,5 @@ public class CaseProcessingStateFilter {
         return bulkListCaseDetails.stream()
             .map(bulkCase -> bulkCase.getValue().getCaseReference().getCaseReference())
             .toList();
-    }
-
-    private boolean hasFinalOrder(CaseData caseData) {
-        return Optional.ofNullable(caseData)
-            .map(CaseData::getFinalOrder)
-            .map(FinalOrder::getGrantedDate)
-            .isPresent();
     }
 }

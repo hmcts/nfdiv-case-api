@@ -47,6 +47,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateServiceDate;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateAosSubmitted;
 
 @Slf4j
 @Component
@@ -101,6 +102,7 @@ public class CitizenGenerateProcessServerDocs implements CCDConfig<CaseData, Sta
         CaseData caseData = details.getData();
 
         List<String> validationErrors = flattenLists(
+            validateAosSubmitted(caseData),
             validateRespondentConfidentiality(caseData),
             validateServiceDate(caseData, docsRegeneratedOffsetDays)
         );

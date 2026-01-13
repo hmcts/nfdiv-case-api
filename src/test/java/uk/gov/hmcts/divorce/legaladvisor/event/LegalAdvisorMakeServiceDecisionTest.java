@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.legaladvisor.event;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
@@ -37,7 +39,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.ALTERNATIVE_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
@@ -46,6 +47,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.ADMIN_REFUSAL;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.OTHER_RESPONSE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.REFUSAL_ORDER_TO_APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
@@ -559,273 +562,426 @@ class LegalAdvisorMakeServiceDecisionTest {
         assertThat(response.getData().getDocuments().getDocumentsGenerated())
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
+    }
+    
+    @Nested
+    class DispenseServiceApplicationRefusalEndStates {
+        @Test
+        void awaitingAosAndGeneratesOrderWhenIssuedCaseRefusedToApplicant() {
+            setMockClock(clock);
 
-        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
+            CaseDetails<CaseData, State> details = setupTestData(DISPENSED, YesOrNo.NO);
+
+            final Map<String, Object> templateContent = new HashMap<>();
+            when(serviceOrderTemplateContent.apply(details.getData(), TEST_CASE_ID)).thenReturn(templateContent);
+
+            var dispenseWithServiceRefusedDoc = new Document(
+                DOCUMENT_URL,
+                DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME,
+                DOCUMENT_URL + "/binary"
+            );
+
+            when(
+                caseDataDocumentService.renderDocument(
+                    templateContent,
+                    TEST_CASE_ID,
+                    SERVICE_REFUSAL_TEMPLATE_ID,
+                    ENGLISH,
+                    DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME
+                ))
+                .thenReturn(dispenseWithServiceRefusedDoc);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                makeServiceDecision.aboutToSubmit(details, details);
+
+            ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().getFirst();
+            assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+                .isEqualTo(getExpectedLocalDate());
+
+            assertThat(response.getState()).isEqualTo(AwaitingAos);
+
+            var deemedOrDispensedDoc = DivorceDocument
+                .builder()
+                .documentLink(dispenseWithServiceRefusedDoc)
+                .documentFileName(dispenseWithServiceRefusedDoc.getFilename())
+                .documentType(DocumentType.DISPENSE_WITH_SERVICE_REFUSED)
+                .build();
+
+            assertThat(response.getData().getDocuments().getDocumentsGenerated())
+                .extracting("value")
+                .containsExactly(deemedOrDispensedDoc);
+
+            verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), details.getId());
+        }
+
+        @Test
+        void serviceAdminRefusalAndDoesNotGenerateOrderAndDoesNotSendNotificationWhenIssuedCaseIsRefusedToAdmin() {
+            setMockClock(clock);
+
+            CaseDetails<CaseData, State> details = setupTestData(DISPENSED, YesOrNo.NO);
+            details.getData().getAlternativeService().setRefusalReason(ADMIN_REFUSAL);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                makeServiceDecision.aboutToSubmit(details, details);
+
+            verifyNoInteractions(caseDataDocumentService);
+            verifyNoInteractions(notificationDispatcher);
+
+            ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().getFirst();
+            assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+                .isEqualTo(getExpectedLocalDate());
+
+            assertThat(response.getState()).isEqualTo(ServiceAdminRefusal);
+        }
+
+        @Test
+        void serviceAdminRefusalAndDoesNotGenerateOrderAndDoesNotSendNotificationWhenIssuedCaseIsRefusedToOther() {
+            setMockClock(clock);
+
+            CaseDetails<CaseData, State> details = setupTestData(DISPENSED, YesOrNo.NO);
+            details.getData().getAlternativeService().setRefusalReason(OTHER_RESPONSE);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                makeServiceDecision.aboutToSubmit(details, details);
+
+            verifyNoInteractions(caseDataDocumentService);
+            verifyNoInteractions(notificationDispatcher);
+
+            ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().getFirst();
+            assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+                .isEqualTo(getExpectedLocalDate());
+
+            assertThat(response.getState()).isEqualTo(ServiceAdminRefusal);
+        }
+
+        @Test
+        void serviceAdminRefusalAndDoesNotGenerateOrderAndDoesNotSendNotificationWhenUnissuedCaseIsRefusedToApplicant() {
+            setMockClock(clock);
+
+            CaseDetails<CaseData, State> details = setupTestData(DISPENSED, YesOrNo.NO);
+            details.getData().getApplication().setIssueDate(null);
+            details.getData().getAlternativeService().setRefusalReason(REFUSAL_ORDER_TO_APPLICANT);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                makeServiceDecision.aboutToSubmit(details, details);
+
+            ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().getFirst();
+            assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+                .isEqualTo(getExpectedLocalDate());
+
+            assertThat(response.getState()).isEqualTo(ServiceAdminRefusal);
+
+            verifyNoInteractions(caseDataDocumentService);
+            verifyNoInteractions(notificationDispatcher);
+        }
+
+        @Test
+        void serviceAdminRefusalAndDoesNotGenerateOrderAndDoesNotSendNotificationWhenUnissuedCaseIsRefusedToAdmin() {
+            setMockClock(clock);
+
+            CaseDetails<CaseData, State> details = setupTestData(DISPENSED, YesOrNo.NO);
+            details.getData().getApplication().setIssueDate(null);
+            details.getData().getAlternativeService().setRefusalReason(ADMIN_REFUSAL);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                makeServiceDecision.aboutToSubmit(details, details);
+
+            verifyNoInteractions(caseDataDocumentService);
+            verifyNoInteractions(notificationDispatcher);
+
+            ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().getFirst();
+            assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+                .isEqualTo(getExpectedLocalDate());
+
+            assertThat(response.getState()).isEqualTo(ServiceAdminRefusal);
+        }
+
+        @Test
+        void serviceAdminRefusalAndDoesNotGenerateOrderAndDoesNotSendNotificationWhenUnissuedCaseIsRefusedToOther() {
+            setMockClock(clock);
+
+            CaseDetails<CaseData, State> details = setupTestData(DISPENSED, YesOrNo.NO);
+            details.getData().getApplication().setIssueDate(null);
+            details.getData().getAlternativeService().setRefusalReason(OTHER_RESPONSE);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                makeServiceDecision.aboutToSubmit(details, details);
+
+            verifyNoInteractions(caseDataDocumentService);
+            verifyNoInteractions(notificationDispatcher);
+
+            ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().getFirst();
+            assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+                .isEqualTo(getExpectedLocalDate());
+
+            assertThat(response.getState()).isEqualTo(ServiceAdminRefusal);
+        }
     }
 
-    @Test
-    void shouldUpdateServiceApplicationDecisionDateIfServiceApplicationIsNotGranted() {
+    @Nested
+    class AlternativeServiceApplicationRefusalEndStates {
+        @Test
+        void generalConsiderationCompleteAndGeneratesOrderAndSendNotificationWhenIssuedCaseRefusedToApplicant() {
+            setMockClock(clock);
 
-        setMockClock(clock);
+            CaseDetails<CaseData, State> details = setupTestData(ALTERNATIVE_SERVICE, YesOrNo.NO);
 
+            final Map<String, Object> templateContent = new HashMap<>();
+            when(serviceOrderTemplateContent.apply(details.getData(), TEST_CASE_ID)).thenReturn(templateContent);
+
+            var serviceRefusedDoc = new Document(
+                DOCUMENT_URL,
+                ALTERNATIVE_SERVICE_REFUSED_FILE_NAME,
+                DOCUMENT_URL + "/binary"
+            );
+
+            when(
+                caseDataDocumentService.renderDocument(
+                    templateContent,
+                    TEST_CASE_ID,
+                    SERVICE_REFUSAL_TEMPLATE_ID,
+                    ENGLISH,
+                    ALTERNATIVE_SERVICE_REFUSED_FILE_NAME
+                ))
+                .thenReturn(serviceRefusedDoc);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                makeServiceDecision.aboutToSubmit(details, details);
+
+            ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().getFirst();
+            assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+                .isEqualTo(getExpectedLocalDate());
+
+            assertThat(response.getState()).isEqualTo(AwaitingAos);
+
+            var serviceDoc = DivorceDocument
+                .builder()
+                .documentLink(serviceRefusedDoc)
+                .documentFileName(serviceRefusedDoc.getFilename())
+                .documentType(DocumentType.ALTERNATIVE_SERVICE_REFUSED)
+                .build();
+
+            assertThat(response.getData().getDocuments().getDocumentsGenerated())
+                .extracting("value")
+                .containsExactly(serviceDoc);
+
+            verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), details.getId());
+        }
+
+        @Test
+        void serviceAdminRefusalAndDoesNotGenerateOrderAndDoesNotSendNotificationWhenIssuedCaseIsRefusedToAdmin() {
+            setMockClock(clock);
+
+            CaseDetails<CaseData, State> details = setupTestData(ALTERNATIVE_SERVICE, YesOrNo.NO);
+            details.getData().getAlternativeService().setRefusalReason(ADMIN_REFUSAL);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                makeServiceDecision.aboutToSubmit(details, details);
+
+            verifyNoInteractions(caseDataDocumentService);
+            verifyNoInteractions(notificationDispatcher);
+
+            ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().getFirst();
+            assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+                .isEqualTo(getExpectedLocalDate());
+
+            assertThat(response.getState()).isEqualTo(ServiceAdminRefusal);
+        }
+
+        @Test
+        void serviceAdminRefusalAndDoesNotGenerateOrderAndDoesNotSendNotificationWhenIssuedCaseIsRefusedToOther() {
+            setMockClock(clock);
+
+            CaseDetails<CaseData, State> details = setupTestData(ALTERNATIVE_SERVICE, YesOrNo.NO);
+            details.getData().getAlternativeService().setRefusalReason(OTHER_RESPONSE);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                makeServiceDecision.aboutToSubmit(details, details);
+
+            verifyNoInteractions(caseDataDocumentService);
+            verifyNoInteractions(notificationDispatcher);
+
+            ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().getFirst();
+            assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+                .isEqualTo(getExpectedLocalDate());
+
+            assertThat(response.getState()).isEqualTo(ServiceAdminRefusal);
+        }
+
+        @Test
+        void serviceAdminRefusalAndDoesNotGenerateOrderAndDoesNotSendNotificationWhenUnissuedCaseIsRefusedToApplicant() {
+            setMockClock(clock);
+
+            CaseDetails<CaseData, State> details = setupTestData(ALTERNATIVE_SERVICE, YesOrNo.NO);
+            details.getData().getApplication().setIssueDate(null);
+            details.getData().getAlternativeService().setRefusalReason(REFUSAL_ORDER_TO_APPLICANT);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                makeServiceDecision.aboutToSubmit(details, details);
+
+            ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().getFirst();
+            assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+                .isEqualTo(getExpectedLocalDate());
+
+            assertThat(response.getState()).isEqualTo(GeneralConsiderationComplete);
+
+            verifyNoInteractions(caseDataDocumentService);
+            verifyNoInteractions(notificationDispatcher);
+        }
+
+        @Test
+        void serviceAdminRefusalAndDoesNotGenerateOrderAndDoesNotSendNotificationWhenUnissuedCaseIsRefusedToAdmin() {
+            setMockClock(clock);
+
+            CaseDetails<CaseData, State> details = setupTestData(ALTERNATIVE_SERVICE, YesOrNo.NO);
+            details.getData().getApplication().setIssueDate(null);
+            details.getData().getAlternativeService().setRefusalReason(ADMIN_REFUSAL);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                makeServiceDecision.aboutToSubmit(details, details);
+
+            verifyNoInteractions(caseDataDocumentService);
+            verifyNoInteractions(notificationDispatcher);
+
+            ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().getFirst();
+            assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+                .isEqualTo(getExpectedLocalDate());
+
+            assertThat(response.getState()).isEqualTo(GeneralConsiderationComplete);
+        }
+
+        @Test
+        void serviceAdminRefusalAndDoesNotGenerateOrderAndDoesNotSendNotificationWhenUnissuedCaseIsRefusedToOther() {
+            setMockClock(clock);
+
+            CaseDetails<CaseData, State> details = setupTestData(ALTERNATIVE_SERVICE, YesOrNo.NO);
+            details.getData().getApplication().setIssueDate(null);
+            details.getData().getAlternativeService().setRefusalReason(OTHER_RESPONSE);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                makeServiceDecision.aboutToSubmit(details, details);
+
+            verifyNoInteractions(caseDataDocumentService);
+            verifyNoInteractions(notificationDispatcher);
+
+            ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().getFirst();
+            assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+                .isEqualTo(getExpectedLocalDate());
+
+            assertThat(response.getState()).isEqualTo(GeneralConsiderationComplete);
+        }
+    }
+
+    @Nested
+    class DeemedServiceApplicationRefusalEndStates {
+        @Test
+        void generalConsiderationCompleteAndGeneratesOrderAndSendNotificationWhenIssuedCaseRefusedToApplicant() {
+            setMockClock(clock);
+
+            CaseDetails<CaseData, State> details = setupTestData(DEEMED, YesOrNo.NO);
+
+            final Map<String, Object> templateContent = new HashMap<>();
+            when(serviceOrderTemplateContent.apply(details.getData(), TEST_CASE_ID)).thenReturn(templateContent);
+
+            var serviceRefusedDoc = new Document(
+                DOCUMENT_URL,
+                DEEMED_SERVICE_REFUSED_FILE_NAME,
+                DOCUMENT_URL + "/binary"
+            );
+
+            when(
+                caseDataDocumentService.renderDocument(
+                    templateContent,
+                    TEST_CASE_ID,
+                    SERVICE_REFUSAL_TEMPLATE_ID,
+                    ENGLISH,
+                    DEEMED_SERVICE_REFUSED_FILE_NAME
+                ))
+                .thenReturn(serviceRefusedDoc);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                makeServiceDecision.aboutToSubmit(details, details);
+
+            ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().getFirst();
+            assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+                .isEqualTo(getExpectedLocalDate());
+
+            assertThat(response.getState()).isEqualTo(AwaitingAos);
+
+            var serviceDoc = DivorceDocument
+                .builder()
+                .documentLink(serviceRefusedDoc)
+                .documentFileName(serviceRefusedDoc.getFilename())
+                .documentType(DocumentType.DEEMED_SERVICE_REFUSED)
+                .build();
+
+            assertThat(response.getData().getDocuments().getDocumentsGenerated())
+                .extracting("value")
+                .containsExactly(serviceDoc);
+
+            verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), details.getId());
+        }
+
+        @Test
+        void serviceAdminRefusalAndDoesNotGenerateOrderAndDoesNotSendNotificationWhenIssuedCaseIsRefusedToAdmin() {
+            setMockClock(clock);
+
+            CaseDetails<CaseData, State> details = setupTestData(DEEMED, YesOrNo.NO);
+            details.getData().getAlternativeService().setRefusalReason(ADMIN_REFUSAL);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                makeServiceDecision.aboutToSubmit(details, details);
+
+            verifyNoInteractions(caseDataDocumentService);
+            verifyNoInteractions(notificationDispatcher);
+
+            ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().getFirst();
+            assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+                .isEqualTo(getExpectedLocalDate());
+
+            assertThat(response.getState()).isEqualTo(ServiceAdminRefusal);
+        }
+
+        @Test
+        void serviceAdminRefusalAndDoesNotGenerateOrderAndDoesNotSendNotificationWhenIssuedCaseIsRefusedToOther() {
+            setMockClock(clock);
+
+            CaseDetails<CaseData, State> details = setupTestData(DEEMED, YesOrNo.NO);
+            details.getData().getAlternativeService().setRefusalReason(OTHER_RESPONSE);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                makeServiceDecision.aboutToSubmit(details, details);
+
+            verifyNoInteractions(caseDataDocumentService);
+            verifyNoInteractions(notificationDispatcher);
+
+            ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().getFirst();
+            assertThat(listValue.getValue().getReceivedServiceApplicationDate())
+                .isEqualTo(getExpectedLocalDate());
+
+            assertThat(response.getState()).isEqualTo(ServiceAdminRefusal);
+        }
+    }
+
+    private CaseDetails<CaseData, State> setupTestData(AlternativeServiceType serviceType, YesOrNo serviceAppGranted) {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder()
             .alternativeService(
                 AlternativeService
-                        .builder()
-                        .deemedServiceDate(LocalDate.now(clock))
-                        .serviceApplicationGranted(NO)
-                        .alternativeServiceType(DISPENSED)
-                        .build()
-        )
-                .build();
+                    .builder()
+                    .receivedServiceApplicationDate(LocalDate.now(clock))
+                    .deemedServiceDate(LocalDate.now(clock))
+                    .serviceApplicationGranted(serviceAppGranted)
+                    .alternativeServiceType(serviceType)
+                    .build()
+            )
+            .application(Application.builder().issueDate(LocalDate.now(clock)).build())
+            .build();
 
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setState(AwaitingServiceConsideration);
         caseDetails.setData(caseData);
 
-        final Map<String, Object> templateContent = new HashMap<>();
-        when(serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
-
-        var orderToDispensedDoc = new Document(
-                DOCUMENT_URL,
-                DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME,
-                DOCUMENT_URL + "/binary"
-        );
-
-        when(
-                caseDataDocumentService.renderDocument(
-                        templateContent,
-                        TEST_CASE_ID,
-                        SERVICE_REFUSAL_TEMPLATE_ID,
-                        ENGLISH,
-                        DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME
-                )).thenReturn(orderToDispensedDoc);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            makeServiceDecision.aboutToSubmit(caseDetails, null);
-
-        assertThat(response.getState()).isEqualTo(ServiceAdminRefusal);
-
-        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
-        assertThat(listValue.getValue().getServiceApplicationDecisionDate()).isEqualTo(getExpectedLocalDate());
-
-        verifyNoInteractions(notificationDispatcher);
-    }
-
-    @Test
-    void shouldUpdateStateToAwaitingAosAndGenerateDispensedServiceRefusalOrderDocIfApplicationIsNotGrantedAndTypeIsDispensed() {
-
-        setMockClock(clock);
-
-        final CaseData caseData = CaseData.builder()
-            .alternativeService(
-                AlternativeService
-                    .builder()
-                    .receivedServiceApplicationDate(LocalDate.now(clock))
-                    .serviceApplicationGranted(NO)
-                    .alternativeServiceType(DISPENSED)
-                    .build()
-            ).application(Application.builder().issueDate(LocalDate.now(clock)).build())
-            .build();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        final Map<String, Object> templateContent = new HashMap<>();
-        when(serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
-
-        var dispenseWithServiceRefusedDoc = new Document(
-            DOCUMENT_URL,
-            DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME,
-            DOCUMENT_URL + "/binary"
-        );
-
-        when(
-            caseDataDocumentService.renderDocument(
-                templateContent,
-                TEST_CASE_ID,
-                SERVICE_REFUSAL_TEMPLATE_ID,
-                ENGLISH,
-                DISPENSED_WITH_SERVICE_REFUSED_FILE_NAME
-            ))
-            .thenReturn(dispenseWithServiceRefusedDoc);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            makeServiceDecision.aboutToSubmit(caseDetails, caseDetails);
-
-        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
-        assertThat(listValue.getValue().getReceivedServiceApplicationDate())
-            .isEqualTo(getExpectedLocalDate());
-
-        assertThat(response.getState()).isEqualTo(AwaitingAos);
-
-        var deemedOrDispensedDoc = DivorceDocument
-            .builder()
-            .documentLink(dispenseWithServiceRefusedDoc)
-            .documentFileName(dispenseWithServiceRefusedDoc.getFilename())
-            .documentType(DocumentType.DISPENSE_WITH_SERVICE_REFUSED)
-            .build();
-
-        assertThat(response.getData().getDocuments().getDocumentsGenerated())
-            .extracting("value")
-            .containsExactly(deemedOrDispensedDoc);
-
-        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
-    }
-
-    @Test
-    void shouldUpdateStateToAwaitingAosAndGenerateAlternativeServiceRefusalOrderDocIfApplicationIsNotGrantedAndTypeIsAlternativeService() {
-
-        setMockClock(clock);
-
-        final CaseData caseData = CaseData.builder()
-            .alternativeService(
-                AlternativeService
-                    .builder()
-                    .receivedServiceApplicationDate(LocalDate.now(clock))
-                    .serviceApplicationGranted(NO)
-                    .alternativeServiceType(ALTERNATIVE_SERVICE)
-                    .build()
-            ).application(Application.builder().issueDate(LocalDate.now(clock)).build())
-            .build();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        final Map<String, Object> templateContent = new HashMap<>();
-        when(serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
-
-        var alternativeServiceRefusedDoc = new Document(
-            DOCUMENT_URL,
-            ALTERNATIVE_SERVICE_REFUSED_FILE_NAME,
-            DOCUMENT_URL + "/binary"
-        );
-
-        when(
-            caseDataDocumentService.renderDocument(
-                templateContent,
-                TEST_CASE_ID,
-                SERVICE_REFUSAL_TEMPLATE_ID,
-                ENGLISH,
-                ALTERNATIVE_SERVICE_REFUSED_FILE_NAME
-            ))
-            .thenReturn(alternativeServiceRefusedDoc);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            makeServiceDecision.aboutToSubmit(caseDetails, caseDetails);
-
-        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
-        assertThat(listValue.getValue().getReceivedServiceApplicationDate())
-            .isEqualTo(getExpectedLocalDate());
-
-        assertThat(response.getState()).isEqualTo(AwaitingAos);
-
-        var alternativeServiceDoc = DivorceDocument
-            .builder()
-            .documentLink(alternativeServiceRefusedDoc)
-            .documentFileName(alternativeServiceRefusedDoc.getFilename())
-            .documentType(DocumentType.ALTERNATIVE_SERVICE_REFUSED)
-            .build();
-
-        assertThat(response.getData().getDocuments().getDocumentsGenerated())
-            .extracting("value")
-            .containsExactly(alternativeServiceDoc);
-
-        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
-    }
-
-    @Test
-    void shouldUpdateStateToServiceAdminRefusalIfApplicationIsNotGrantedAndReasonIsAdminRefusal() {
-
-        setMockClock(clock);
-
-        final CaseData caseData = CaseData.builder()
-            .alternativeService(
-                AlternativeService
-                    .builder()
-                    .receivedServiceApplicationDate(LocalDate.now(clock))
-                    .serviceApplicationGranted(NO)
-                    .refusalReason(ADMIN_REFUSAL)
-                    .serviceApplicationRefusalReason("Reason order refused")
-                    .alternativeServiceType(DISPENSED)
-                    .build()
-            )
-            .build();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            makeServiceDecision.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getState()).isEqualTo(ServiceAdminRefusal);
-        verifyNoInteractions(caseDataDocumentService);
-        verifyNoInteractions(notificationDispatcher);
-    }
-
-    @Test
-    void shouldUpdateStateToAwaitingAosAndGenerateDeemedServiceRefusalOrderDocIfApplicationIsNotGrantedAndTypeIsDeemed() {
-
-        setMockClock(clock);
-
-        final CaseData caseData = CaseData.builder()
-            .alternativeService(
-                AlternativeService
-                    .builder()
-                    .receivedServiceApplicationDate(LocalDate.now(clock))
-                    .serviceApplicationGranted(NO)
-                    .alternativeServiceType(DEEMED)
-                    .build()
-            ).application(Application.builder().issueDate(LocalDate.now(clock)).build())
-            .build();
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        final Map<String, Object> templateContent = new HashMap<>();
-        when(serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID)).thenReturn(templateContent);
-
-        var deemedServiceRefusedDoc = new Document(
-            DOCUMENT_URL,
-            DEEMED_SERVICE_REFUSED_FILE_NAME,
-            DOCUMENT_URL + "/binary"
-        );
-
-        when(
-            caseDataDocumentService.renderDocument(
-                templateContent,
-                TEST_CASE_ID,
-                SERVICE_REFUSAL_TEMPLATE_ID,
-                ENGLISH,
-                DEEMED_SERVICE_REFUSED_FILE_NAME
-            ))
-            .thenReturn(deemedServiceRefusedDoc);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            makeServiceDecision.aboutToSubmit(caseDetails, caseDetails);
-
-        ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
-        assertThat(listValue.getValue().getReceivedServiceApplicationDate())
-            .isEqualTo(getExpectedLocalDate());
-
-        assertThat(response.getState()).isEqualTo(AwaitingAos);
-
-        var deemedOrDispensedDoc = DivorceDocument
-            .builder()
-            .documentLink(deemedServiceRefusedDoc)
-            .documentFileName(deemedServiceRefusedDoc.getFilename())
-            .documentType(DocumentType.DEEMED_SERVICE_REFUSED)
-            .build();
-
-        assertThat(response.getData().getDocuments().getDocumentsGenerated())
-            .extracting("value")
-            .containsExactly(deemedOrDispensedDoc);
-
-        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
+        return caseDetails;
     }
 }

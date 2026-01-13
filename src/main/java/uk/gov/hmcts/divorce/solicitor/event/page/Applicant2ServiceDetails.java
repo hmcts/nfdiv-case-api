@@ -105,7 +105,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
                         + " this application, using the ‘general application’ event.",
                     IS_RESPONDENT_NOT_REPRESENTED)
 
-                .optional(Applicant::getEmail,
+                .optional(Applicant::getNonConfidentialEmail,
                     IS_APPLICANT2_REPRESENTED_OR_NOT_REPRESENTED,
                         null,
                         "${labelContentApplicant2UC} email address",
