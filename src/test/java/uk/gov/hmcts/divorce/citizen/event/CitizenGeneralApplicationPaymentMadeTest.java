@@ -10,6 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -28,6 +30,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -36,11 +39,14 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.service.PaymentValidatorService.ERROR_PAYMENT_INCOMPLETE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.DECLINED;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -63,6 +69,9 @@ class CitizenGeneralApplicationPaymentMadeTest {
 
     @Mock
     private HttpServletRequest request;
+
+    @Mock
+    private GeneralReferralService generalReferralService;
 
     @InjectMocks
     private CitizenGeneralApplicationPaymentMade citizenGeneralApplicationPayment;
@@ -119,13 +128,31 @@ class CitizenGeneralApplicationPaymentMadeTest {
 
         final var caseData = buildTestData();
         final var details = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant1().setGeneralAppPayments(payments);
         details.setId(TEST_CASE_ID);
+
+        GeneralApplication generalApp = caseData.getGeneralApplications().getFirst().getValue();
+        GeneralReferral genReferral = GeneralReferral.builder()
+            .generalReferralReason(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL)
+            .generalReferralFraudCase(YesOrNo.NO)
+            .generalReferralUrgentCase(YesOrNo.NO)
+            .generalApplicationFrom(generalApp.getGeneralApplicationParty())
+            .generalApplicationReferralDate(LocalDate.now(clock))
+            .generalApplicationAddedDate(generalApp.getGeneralApplicationReceivedDate().toLocalDate())
+            .generalReferralType(GeneralReferralType.DISCLOSURE_VIA_DWP)
+            .generalReferralFee(generalApp.getGeneralApplicationFee())
+            .generalReferralJudgeOrLegalAdvisorDetails(
+                "Please refer to the Search Government Records application in the general applications tab"
+            ).generalReferralDocument(generalApp.getGeneralApplicationDocument())
+            .generalReferralDocuments(generalApp.getGeneralApplicationDocuments())
+            .build();
 
         when(paymentValidatorService.validatePayments(payments, TEST_CASE_ID)).thenReturn(
             Collections.emptyList()
         );
         when(paymentValidatorService.getLastPayment(payments)).thenReturn(payments.getLast().getValue());
+        when(generalReferralService.buildGeneralReferral(generalApp)).thenReturn(genReferral);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplicationPayment.aboutToSubmit(details, details);
 
@@ -141,6 +168,32 @@ class CitizenGeneralApplicationPaymentMadeTest {
     }
 
     @Test
+    void givenValidPaymentMadeForWelshApplicationThenShouldSetStateToWelshTranslationReview() {
+        setMockClock(clock);
+
+        List<ListValue<Payment>> payments = singletonList(new ListValue<>(
+            "1", Payment.builder().amount(6000).status(SUCCESS).reference(TEST_REFERENCE).build())
+        );
+
+        final var caseData = buildTestData();
+        final var details = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getApplicant1().setGeneralAppPayments(payments);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        details.setId(TEST_CASE_ID);
+
+        when(paymentValidatorService.validatePayments(payments, TEST_CASE_ID)).thenReturn(
+            Collections.emptyList()
+        );
+        when(paymentValidatorService.getLastPayment(payments)).thenReturn(payments.getLast().getValue());
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplicationPayment.aboutToSubmit(details, details);
+
+        assertThat(response.getState()).isEqualTo(WelshTranslationReview);
+        assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(AwaitingGeneralConsideration);
+    }
+
+    @Test
     void givenGeneralReferralAlreadyInProgressThenShouldNotCreateNewReferral() {
         setMockClock(clock);
 
@@ -150,6 +203,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
 
         final var caseData = buildTestData();
         final var details = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant1().setGeneralAppPayments(payments);
         caseData.setGeneralReferral(
             GeneralReferral.builder()
@@ -205,7 +259,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
                 .paymentMethod(ServicePaymentMethod.FEE_PAY_BY_CARD)
                 .serviceRequestReference(TEST_SERVICE_REFERENCE)
                 .build())
-            .generalApplicationReceivedDate(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+            .generalApplicationReceivedDate(LocalDateTime.now())
             .build();
 
         return CaseData.builder()

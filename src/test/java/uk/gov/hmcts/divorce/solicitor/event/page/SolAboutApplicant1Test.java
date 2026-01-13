@@ -25,7 +25,7 @@ class SolAboutApplicant1Test {
     void shouldReturnErrorIfEmailValidationFails() {
         final CaseData caseData = caseData();
         caseData.setApplicant1(Applicant.builder()
-                .email("invalidEmail")
+                .nonConfidentialEmail("invalidEmail")
             .build());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -43,7 +43,7 @@ class SolAboutApplicant1Test {
     void shouldNotReturnErrorIfEmailValidationPasses() {
         final CaseData caseData = caseData();
         caseData.setApplicant1(Applicant.builder()
-            .email(TEST_USER_EMAIL)
+            .nonConfidentialEmail(TEST_USER_EMAIL)
             .build());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();

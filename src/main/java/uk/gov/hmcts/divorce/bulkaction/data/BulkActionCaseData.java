@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -180,6 +181,20 @@ public class BulkActionCaseData {
     public <T> List<T> fromListValueToList(final List<ListValue<T>> targetList) {
         return targetList.stream()
             .map(ListValue::getValue)
+            .toList();
+    }
+
+    @JsonIgnore
+    public List<String> getCaseReferences() {
+        if (bulkListCaseDetails == null) {
+            return Collections.emptyList();
+        }
+
+        return bulkListCaseDetails
+            .stream()
+            .map(ListValue::getValue)
+            .map(BulkListCaseDetails::getCaseReference)
+            .map(CaseLink::getCaseReference)
             .toList();
     }
 }
