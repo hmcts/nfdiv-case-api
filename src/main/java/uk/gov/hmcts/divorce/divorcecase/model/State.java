@@ -6,6 +6,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultStateAccessExcludingCAA;
 import uk.gov.hmcts.divorce.divorcecase.model.access.LegalAdvisorAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.PreSubmissionStateAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.PreSubmissionStateAccessExcludingCAA;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAccess;
 
 import java.util.EnumSet;
@@ -47,7 +49,7 @@ public enum State {
     @CCD(
         label = "Applicant 2 approved",
         hint = CASE_TITLE,
-        access = {DefaultStateAccess.class, SolicitorAccess.class}
+        access = {PreSubmissionStateAccess.class, SolicitorAccess.class}
     )
     Applicant2Approved,
 
@@ -110,14 +112,14 @@ public enum State {
     @CCD(
         label = "Awaiting applicant 1 response",
         hint = CASE_TITLE,
-        access = {DefaultStateAccess.class, SolicitorAccess.class}
+        access = {PreSubmissionStateAccess.class, SolicitorAccess.class}
     )
     AwaitingApplicant1Response,
 
     @CCD(
         label = "Awaiting applicant 2 response",
         hint = CASE_TITLE,
-        access = {DefaultStateAccess.class, SolicitorAccess.class}
+        access = {PreSubmissionStateAccess.class, SolicitorAccess.class}
     )
     AwaitingApplicant2Response,
 
@@ -356,7 +358,7 @@ public enum State {
     @CCD(
         label = "Draft",
         hint = CASE_TITLE,
-        access = {DefaultStateAccessExcludingCAA.class, SolicitorAccess.class}
+        access = {PreSubmissionStateAccessExcludingCAA.class, SolicitorAccess.class}
     )
     Draft,
 
@@ -532,13 +534,11 @@ public enum State {
         AwaitingApplicant2Response,
         Applicant2Approved,
         Withdrawn,
-        Rejected
+        Rejected,
+        Archived
     ));
 
     public static final EnumSet<State> PRE_SUBMISSION_STATES = EnumSet.of(
-        AwaitingApplicant1Response,
-        AwaitingApplicant2Response,
-        Applicant2Approved,
         AwaitingPayment,
         AwaitingHWFDecision,
         AwaitingDocuments,
@@ -550,16 +550,11 @@ public enum State {
         Draft,
         AwaitingApplicant1Response,
         AwaitingApplicant2Response,
-        Applicant2Approved
+        Applicant2Approved,
+        Archived
     ));
 
     public static final EnumSet<State> STATES_NOT_WITHDRAWN_OR_REJECTED = EnumSet.complementOf(EnumSet.of(
-        Withdrawn,
-        Rejected
-    ));
-
-    public static final EnumSet<State> STATES_NOT_DRAFT_OR_WITHDRAWN_OR_REJECTED = EnumSet.complementOf(EnumSet.of(
-        Draft,
         Withdrawn,
         Rejected
     ));
@@ -571,7 +566,8 @@ public enum State {
         Applicant2Approved,
         Withdrawn,
         AwaitingClarification,
-        AwaitingAmendedApplication
+        AwaitingAmendedApplication,
+        Archived
     ));
 
     public static final EnumSet<State> POST_ISSUE_STATES = EnumSet.complementOf(EnumSet.of(
