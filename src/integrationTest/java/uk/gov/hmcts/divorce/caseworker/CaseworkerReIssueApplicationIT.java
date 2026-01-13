@@ -1359,7 +1359,9 @@ public class CaseworkerReIssueApplicationIT {
     void givenInvalidCaseDataWhenAboutToSubmitCallbackIsInvokedThenResponseContainsErrors() throws Exception {
         final CaseData caseData = invalidCaseData();
         caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
+        caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setSolSignStatementOfTruth(YES);
+        caseData.getApplication().setReissueOption(REISSUE_CASE);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(documentIdProvider.documentId()).thenReturn("Divorce application");

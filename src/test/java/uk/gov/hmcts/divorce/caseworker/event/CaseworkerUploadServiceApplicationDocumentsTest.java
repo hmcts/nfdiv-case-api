@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -126,10 +127,26 @@ class CaseworkerUploadServiceApplicationDocumentsTest {
         assertThat(response.getErrors()).isEmpty();
     }
 
+    @Test
+    void shouldNotUpdateStateIfCurrentStateIsNotAwaitingDocuments() {
+        CaseData caseData = CaseData.builder().build();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setState(State.AwaitingServiceConsideration);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUploadServiceApplicationDocuments
+            .aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(State.AwaitingServiceConsideration);
+    }
 
     @Test
-    void shouldUpdateStateToAwaitingServiceConsideration() {
+    void shouldUpdateStateToAwaitingServiceConsiderationForOnlineServiceApplication() {
         CaseData caseData = CaseData.builder().build();
+        caseData.getAlternativeService().setServiceApplicationSubmittedOnline(YesOrNo.YES);
+        caseData.getAlternativeService().getServicePaymentFee().setHelpWithFeesReferenceNumber(null);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -143,9 +160,44 @@ class CaseworkerUploadServiceApplicationDocumentsTest {
     }
 
     @Test
-    void shouldUpdateStateToAwaitingServicePayment() {
+    void shouldUpdateStateToAwaitingServicePaymentForOnlineServiceApplication() {
         CaseData caseData = CaseData.builder().build();
+        caseData.getAlternativeService().setServiceApplicationSubmittedOnline(YesOrNo.YES);
         caseData.getAlternativeService().getServicePaymentFee().setHelpWithFeesReferenceNumber("HWF123456");
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setState(State.AwaitingDocuments);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUploadServiceApplicationDocuments
+            .aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(State.AwaitingServicePayment);
+    }
+
+    @Test
+    void shouldUpdateStateToAwaitingServiceConsiderationForOfflineServiceApplication() {
+        CaseData caseData = CaseData.builder().build();
+        caseData.getAlternativeService().setServiceApplicationSubmittedOnline(null);
+        caseData.getAlternativeService().setAlternativeServiceFeeRequired(YesOrNo.NO);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setState(State.AwaitingDocuments);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerUploadServiceApplicationDocuments
+            .aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(State.AwaitingServiceConsideration);
+    }
+
+    @Test
+    void shouldUpdateStateToAwaitingServicePaymentForOfflineServiceApplication() {
+        CaseData caseData = CaseData.builder().build();
+        caseData.getAlternativeService().setServiceApplicationSubmittedOnline(null);
+        caseData.getAlternativeService().setAlternativeServiceFeeRequired(YesOrNo.YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);

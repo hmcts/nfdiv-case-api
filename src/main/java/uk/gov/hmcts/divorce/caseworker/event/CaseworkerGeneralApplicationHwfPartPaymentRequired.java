@@ -8,6 +8,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.EnumSet;
+
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGenAppHWFPartPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingHearingDate;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingHearingOutcome;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
@@ -27,7 +33,8 @@ public class CaseworkerGeneralApplicationHwfPartPaymentRequired implements CCDCo
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_GENERAL_APPLICATION_HWF_PART_PAYMENT_REQUIRED)
-            .forStates(RespondentFinalOrderRequested, PendingHearingDate, PendingHearingOutcome)
+            .forStateTransition(EnumSet.of(RespondentFinalOrderRequested, PendingHearingDate, PendingHearingOutcome, AwaitingServicePayment,
+                AwaitingGeneralApplicationPayment, AwaitingGeneralReferralPayment), AwaitingGenAppHWFPartPayment)
             .name("GenAppHWF part pay required")
             .description("General application HWF part payment required")
             .showEventNotes()

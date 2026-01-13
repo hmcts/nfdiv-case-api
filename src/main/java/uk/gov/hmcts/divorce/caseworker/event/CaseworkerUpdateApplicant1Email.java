@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 
@@ -47,9 +47,7 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE_DELETE, SUPER_USER, CASE_WORKER)
-            .grantHistoryOnly(
-                SOLICITOR,
-                LEGAL_ADVISOR))
+            .grantHistoryOnly(APPLICANT_1_SOLICITOR, LEGAL_ADVISOR))
             .page("updateApp1Email", this::midEvent)
             .pageLabel("Update applicant/applicant1 email")
             .complex(CaseData::getApplicant1)

@@ -7,12 +7,14 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.ServiceApplicationRejectedNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.DocumentRemovalService;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.util.List;
 import java.util.Objects;
@@ -35,7 +37,8 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
     public static final String CASEWORKER_REJECT_SERVICE_APPLICATION = "caseworker-reject-service-application";
     private static final String REJECT_SERVICE_APPLICATION = "Reject Service Application";
 
-    private final DocumentRemovalService documentRemovalService;
+    private final ServiceApplicationRejectedNotification serviceApplicationRejectedNotification;
+    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -74,6 +77,10 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(List.of("No service application to reject."))
                 .build();
+        }
+
+        if (YesOrNo.YES.equals(caseData.getAlternativeService().getServiceApplicationSubmittedOnline())) {
+            notificationDispatcher.send(serviceApplicationRejectedNotification, caseData, details.getId());
         }
 
         caseData.setAlternativeService(new AlternativeService());
