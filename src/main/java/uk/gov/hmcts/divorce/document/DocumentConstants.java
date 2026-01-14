@@ -200,6 +200,8 @@ public final class DocumentConstants {
 
     public static final String PAPER_APPLICATION_RECEIVED_TEMPLATE_ID = "NFD_APPLICANT_PAPERCASE_RECEIVED";
 
+    public static final String BAILIFF_SERVICE_SUCCESSFUL_TEMPLATE_ID = "BAILIFF_SERVICE_SUCCESSFUL_LETTER";
+
     public static final String APPLICANT1 = "applicant1";
     public static final String APPLICANT2 = "applicant2";
 

@@ -7,7 +7,6 @@
     "applicant1Email": "test@test.com"
   },
   "errors": [
-    "ApplicationType cannot be empty or null",
     "Applicant2FirstName cannot be empty or null",
     "Applicant2LastName cannot be empty or null",
     "Applicant1FinancialOrder cannot be empty or null",

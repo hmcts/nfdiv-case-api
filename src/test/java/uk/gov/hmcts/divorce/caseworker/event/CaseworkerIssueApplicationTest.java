@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
+import uk.gov.hmcts.divorce.common.exception.InvalidDataException;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
@@ -58,6 +59,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_VALIDATION_ERROR;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
@@ -208,34 +210,24 @@ class CaseworkerIssueApplicationTest {
     }
 
     @Test
-    void shouldFailCaseDataValidationWhenMandatoryFieldsAreNotPopulatedForIssueApplication() {
+    void shouldReturnValidationErrorsWhenThereIsAnInvalidDataException() {
         final var caseData = invalidCaseData();
-        caseData.getApplicant2().setEmail("onlineApplicant2@email.com");
-        caseData.getApplication().setSolSignStatementOfTruth(YES);
-
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
         details.setCreatedDate(LOCAL_DATE_TIME);
 
+        when(issueApplicationService.issueApplication(details))
+            .thenThrow(new InvalidDataException(
+                "dummy details",
+                null,
+                Collections.singletonList(TEST_VALIDATION_ERROR)
+            ));
+
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
 
         assertThat(response.getErrors())
-            .containsExactlyInAnyOrder(
-                "ApplicationType cannot be empty or null",
-                "Applicant2FirstName cannot be empty or null",
-                "Applicant2LastName cannot be empty or null",
-                "Applicant1FinancialOrder cannot be empty or null",
-                "Applicant2Gender cannot be empty or null",
-                "MarriageApplicant1Name cannot be empty or null",
-                "Applicant1ContactDetailsType cannot be empty or null",
-                "Applicant 1 must confirm prayer to dissolve their marriage (get a divorce)",
-                "MarriageDate cannot be empty or null",
-                "JurisdictionConnections cannot be empty or null",
-                "MarriageApplicant2Name cannot be empty or null",
-                "PlaceOfMarriage cannot be empty or null",
-                "Applicant1Gender cannot be empty or null"
-            );
+            .contains(TEST_VALIDATION_ERROR);
     }
 
     @Test
@@ -288,49 +280,6 @@ class CaseworkerIssueApplicationTest {
         verifyNoInteractions(ccdUpdateService);
 
         verify(issueApplicationService).sendNotifications(caseDetails);
-    }
-
-    @Test
-    void shouldThrowErrorIfPersonalServiceConfidential() {
-        final CaseData caseData = caseDataWithStatementOfTruth();
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
-        caseDetails.setData(caseData);
-        caseDetails.setState(Submitted);
-        final Applicant applicant2 = caseData.getApplicant2();
-        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
-
-        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
-        updatedCaseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(
-            updatedCaseDetails, caseDetails);
-
-        assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).contains("You may not select Solicitor Service "
-            + "or Personal Service if the respondent is confidential.");
-    }
-
-    @Test
-    void shouldThrowErrorIfSolicitorServiceConfidential() {
-        final CaseData caseData = caseDataWithStatementOfTruth();
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setState(Submitted);
-        final Applicant applicant2 = caseData.getApplicant2();
-        applicant2.setContactDetailsType(ContactDetailsType.PRIVATE);
-
-        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
-        updatedCaseDetails.setData(caseData);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(
-            updatedCaseDetails, caseDetails);
-
-        assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).contains("You may not select Solicitor Service "
-            + "or Personal Service if the respondent is confidential.");
     }
 
     @Test

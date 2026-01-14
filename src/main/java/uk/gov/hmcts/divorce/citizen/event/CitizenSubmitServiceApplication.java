@@ -28,11 +28,13 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -40,6 +42,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateAosSubmitted;
 
 @Component
 @Slf4j
@@ -88,6 +91,14 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
                 .build();
         }
 
+        List<String> errors = validateAosSubmitted(data);
+        if (!errors.isEmpty()) {
+            log.info("{} failed since partner has already responded for {} ", CITIZEN_SERVICE_APPLICATION, caseId);
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(errors)
+                .build();
+        }
+
         Applicant applicant = data.getApplicant1();
         InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
         AlternativeService newServiceApplication = buildServiceApplication(userOptions);
@@ -105,6 +116,13 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             serviceFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
 
             details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServicePayment);
+
+            if (data.isWelshApplication()) {
+                data.getApplication().setWelshPreviousState(details.getState());
+                details.setState(WelshTranslationReview);
+                log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
+                    data.getApplication().getWelshPreviousState(), details.getId());
+            }
         }
 
         DivorceDocument applicationDocument = interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
