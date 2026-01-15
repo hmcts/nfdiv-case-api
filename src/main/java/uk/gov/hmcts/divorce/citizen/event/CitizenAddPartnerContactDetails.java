@@ -18,7 +18,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.NewPaperCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
@@ -42,9 +46,11 @@ public class CitizenAddPartnerContactDetails implements CCDConfig<CaseData, Stat
             .event(CITIZEN_ADD_PARTNER_DETAILS)
             .forStates(CITIZEN_UPDATE_STATES)
             .showCondition(NEVER_SHOW)
-            .name("Add partner contact details")
-            .description("Add partner contact details")
-            .grant(CREATE_READ_UPDATE, CREATOR);
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .name("Add partner details")
+            .description("Add partner details")
+            .grant(CREATE_READ_UPDATE, CREATOR)
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE, LEGAL_ADVISOR);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
