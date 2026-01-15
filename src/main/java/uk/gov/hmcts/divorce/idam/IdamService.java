@@ -56,7 +56,7 @@ public class IdamService {
         return user;
     }
 
-    private String getCachedIdamOauth2Token(String username, String password) {
+    public String getCachedIdamOauth2Token(String username, String password) {
         String userToken = cache.getIfPresent(username);
         if (userToken == null) {
             userToken = idamClient.getAccessToken(username, password);

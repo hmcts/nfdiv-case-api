@@ -13,11 +13,16 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.payment.client.PaymentClient;
 import uk.gov.hmcts.divorce.payment.model.Payment;
+import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto;
+import uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -26,14 +31,16 @@ import java.util.Optional;
 import static java.util.Collections.emptyList;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenPaymentMade.CITIZEN_PAYMENT_MADE;
 import static uk.gov.hmcts.divorce.citizen.event.RespondentFinalOrderPaymentMade.RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
+import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRejectCasesWithPaymentOverdue.APPLICATION_REJECTED_FEE_NOT_PAID;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentStatusService {
 
-    private static final String SUCCESS = "Success";
+    private static final int GRACE_PERIOD_HOURS = 24;
 
     private final PaymentClient paymentClient;
 
@@ -117,7 +124,7 @@ public class PaymentStatusService {
                 : caseDetails.getData().getFinalOrder().getFinalOrderPayments();
     }
 
-    private boolean hasSuccessfulPayment(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
+    public boolean hasSuccessfulPayment(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
                                          String userToken, String s2sToken) {
 
         final List<ListValue<uk.gov.hmcts.divorce.divorcecase.model.Payment>> payments = getPayments(caseDetails);
@@ -133,6 +140,15 @@ public class PaymentStatusService {
             .orElse(false);
     }
 
+    private boolean hasSuccessfulPayment(ServiceRequestDto serviceRequest) {
+        return serviceRequest.getPayments()
+            .stream()
+            .filter(Objects::nonNull)
+            .map(ServiceRequestDto.PaymentDto::getStatus)
+            .filter(Objects::nonNull)  // Filter null statuses
+            .anyMatch(SUCCESS.getLabel()::equalsIgnoreCase);
+    }
+
     private boolean paymentSuccessful(String paymentReference, String userToken, String s2sToken) {
         final Payment payment = paymentClient.getPaymentByReference(
             userToken,
@@ -140,6 +156,51 @@ public class PaymentStatusService {
             paymentReference
         );
 
-        return SUCCESS.equalsIgnoreCase(payment.getStatus());
+        return SUCCESS.getLabel().equalsIgnoreCase(payment.getStatus());
+    }
+
+    public void processPaymentRejection(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails, User user, String serviceAuth) {
+
+        ServiceRequestDto latestServiceRequest = getLatestServiceRequest(caseDetails, user, serviceAuth);
+
+        if (latestServiceRequest != null && isServiceRequestWithinGracePeriod(latestServiceRequest)) {
+            log.info("Skipping case {} - service request created within last {} hours",
+                caseDetails.getId(), GRACE_PERIOD_HOURS);
+        } else if (latestServiceRequest != null
+            && (!ServiceRequestStatus.PAID.equals(latestServiceRequest.getServiceRequestStatus())
+                || !hasSuccessfulPayment(latestServiceRequest))) {
+            rejectCase(caseDetails, "payment not made after creating service request", user, serviceAuth);
+        }
+    }
+
+    private ServiceRequestDto getLatestServiceRequest(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
+                                                      User user, String serviceAuth) {
+        var paymentClientResponse = paymentClient.getServiceRequests(
+            user.getAuthToken(), serviceAuth, caseDetails.getId().toString());
+
+        return paymentClientResponse.getServiceRequests()
+            .stream()
+            .max(Comparator.comparing(ServiceRequestDto::getDateCreated))
+            .orElse(ServiceRequestDto.builder().build());
+    }
+
+    private boolean isServiceRequestWithinGracePeriod(ServiceRequestDto serviceRequest) {
+        if (serviceRequest.getDateCreated() == null) {
+            return false;
+        }
+
+        LocalDateTime gracePeriodStart = LocalDateTime.now().minusHours(GRACE_PERIOD_HOURS);
+        LocalDateTime serviceCreatedTime = LocalDateTime.ofInstant(
+            serviceRequest.getDateCreated().toInstant(),
+            ZoneId.systemDefault()
+        );
+
+        return gracePeriodStart.isBefore(serviceCreatedTime);
+    }
+
+    private void rejectCase(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
+                            String reason, User user, String serviceAuth) {
+        log.info("Rejecting case {} as {}", caseDetails.getId(), reason);
+        ccdUpdateService.submitEvent(caseDetails.getId(), APPLICATION_REJECTED_FEE_NOT_PAID, user, serviceAuth);
     }
 }
