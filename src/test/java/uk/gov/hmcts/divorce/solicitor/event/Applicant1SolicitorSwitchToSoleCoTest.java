@@ -18,6 +18,8 @@ import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorSwitchToSoleCoNotification;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -33,6 +35,7 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_ANSWERS;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorSwitchToSoleCo.APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO;
+import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorSwitchToSoleCo.ERROR_OTHER_PARTY_HAS_SUBMITTED;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -62,6 +65,26 @@ class Applicant1SolicitorSwitchToSoleCoTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO);
+    }
+
+    @Test
+    void shouldThrowErrorIfApplicant2HasSubmittedCo() {
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().languagePreferenceWelsh(NO).build())
+            .conditionalOrder(ConditionalOrder.builder().build())
+            .build();
+
+        caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(YES);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant1SolicitorSwitchToSoleCo.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(ERROR_OTHER_PARTY_HAS_SUBMITTED);
     }
 
     @Test
