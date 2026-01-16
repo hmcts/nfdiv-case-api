@@ -18,6 +18,8 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorSwitchToSoleCoNotification;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.util.List;
+
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
@@ -39,6 +41,8 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 public class Applicant1SolicitorSwitchToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO = "app1-sol-switch-to-sole-co";
+    public static final String SHOW_CONDITION = "coApplicant1EnableSolicitorSwitchToSoleCo=\"Yes\" AND coApplicant2IsSubmitted!=\"Yes\"";
+    public static final String ERROR_OTHER_PARTY_HAS_SUBMITTED = "The Conditional Order on this case has been submitted by both parties.";
 
     private final NotificationDispatcher notificationDispatcher;
     private final SolicitorSwitchToSoleCoNotification applicant1SolicitorSwitchToSoleCoNotification;
@@ -50,7 +54,7 @@ public class Applicant1SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
         new PageBuilder(configBuilder
             .event(APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_CO)
             .forStates(ConditionalOrderPending, JSAwaitingLA, AwaitingLegalAdvisorReferral)
-            .showCondition("coApplicant1EnableSolicitorSwitchToSoleCo=\"Yes\"")
+            .showCondition(SHOW_CONDITION)
             .name("Switch To Sole CO")
             .description("Changing to a sole conditional order application")
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
@@ -82,6 +86,12 @@ public class Applicant1SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
         final Long caseId = details.getId();
 
         log.info("Applicant 1 Solicitor SwitchedToSoleCO aboutToSubmit callback invoked for Case Id: {}", caseId);
+
+        if (YES.equals(data.getConditionalOrder().getConditionalOrderApplicant2Questions().getIsSubmitted())) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(ERROR_OTHER_PARTY_HAS_SUBMITTED))
+                .build();
+        }
 
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setSwitchedToSoleCo(YES);
