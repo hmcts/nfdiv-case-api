@@ -26,6 +26,7 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.INTERIM_APPLICATION_SAVE_SIGN_OUT;
@@ -199,6 +200,29 @@ class SaveAndSignOutNotificationHandlerTest {
             eq(TEST_USER_EMAIL),
             eq(SAVE_SIGN_OUT),
             any(),
+            eq(ENGLISH),
+            eq(CASE_ID)
+        );
+    }
+
+    @Test
+    void shouldCallSendEmailToApp1WhenInterimApplicationTypeAlternativeServiceAndStateIsAwaitingDocuments() {
+        CaseData caseData = validApplicant1CaseData();
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions
+            .builder().interimApplicationType(InterimApplicationType.ALTERNATIVE_SERVICE).build());
+        User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).build());
+        when(idamService.retrieveUser(USER_TOKEN)).thenReturn(user);
+        when(ccdAccessService.isApplicant1(USER_TOKEN, CASE_ID)).thenReturn(true);
+
+
+        saveAndSignOutNotificationHandler.notifyApplicant(AwaitingDocuments, caseData, CASE_ID, USER_TOKEN);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(INTERIM_APPLICATION_SAVE_SIGN_OUT),
+            argThat(allOf(
+                hasEntry("interimApplicationType", "alternative service")
+            )),
             eq(ENGLISH),
             eq(CASE_ID)
         );
