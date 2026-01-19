@@ -26,9 +26,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties.OTHER;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
@@ -80,9 +77,6 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
                 AwaitingHWFEvidence,
                 AwaitingHWFPartPayment,
                 AwaitingDocuments,
-                AwaitingApplicant1Response,
-                AwaitingApplicant2Response,
-                Applicant2Approved,
                 InformationRequested,
                 AwaitingRequestedInformation,
                 RequestedInformationSubmitted,
