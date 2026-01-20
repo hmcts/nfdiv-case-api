@@ -41,7 +41,7 @@ class CitizenWithdrawServiceApplicationTest {
     }
 
     @Test
-    void shouldClearAllDataFieldsPertainingToServiceApplicationAndTransitionCaseToAwaitingDocuments() {
+    void shouldClearServiceApplicationFieldsAndTransitionPreIssueCaseToAwaitingDocuments() {
         CaseData caseData = CaseData.builder()
             .alternativeService(AlternativeService.builder()
                 .alternativeServiceType(AlternativeServiceType.DEEMED)
