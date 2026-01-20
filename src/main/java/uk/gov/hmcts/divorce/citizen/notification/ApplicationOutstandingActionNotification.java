@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.payment.service.PaymentService;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,14 +23,9 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFIC
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
-import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_WITHOUT_NOTICE;
-import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 
 @Component
 @RequiredArgsConstructor
@@ -50,19 +44,13 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     public static final String MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION = "civilPartnershipCertificateTranslation";
     public static final String MISSING_NAME_CHANGE_PROOF = "nameChangeProof";
     public static final String ADDRESS_NOT_PROVIDED = "addressNotProvided";
-    public static final String ALTERNATIVE_APPLICATION_FEE = "alternativeApplicationFee";
-    public static final String UPDATE_POSTAL_ADDRESS = "updatePostalAddress";
-    public static final String APPLY_TO_PROGRESS_ANOTHER_WAY = "applyToProgressAnotherWay";
-    public static final String GET_HELP_WITH_FEE = "getHelpWithFee";
-    public static final String ADDRESS_NOT_PROVIDED_DIVORCE = "addressNotProvidedDivorce";
-    public static final String ADDRESS_NOT_PROVIDED_DISSOLUTION = "addressNotProvidedDissolution";
     public static final String SEND_DOCUMENTS_REFERENCE_NUMBER = "sendDocumentsToCourtReferenceNumber";
     public static final String UPLOAD_DOCUMENTS_USING_FORM = "uploadDocumentsUsingForm";
+    public static final String ADDRESS_NOT_PROVIDED_SIGN_IN_URL = "addressNotProvidedSignInUrl";
 
 
     private final NotificationService notificationService;
     private final CommonContent commonContent;
-    private final PaymentService paymentService;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -124,21 +112,10 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
         boolean addressNotProvided = !caseData.getApplication().knowsRespondentAddress();
 
-        templateVars.putAll(missingDocsTemplateVars(caseData, needsToSendDocuments));
+        templateVars.put(ADDRESS_NOT_PROVIDED_SIGN_IN_URL, commonContent.getSignInUrl(caseData));
         templateVars.put(ADDRESS_NOT_PROVIDED, addressNotProvided ? YES : NO);
-        templateVars.put(ALTERNATIVE_APPLICATION_FEE, addressNotProvided
-            ? formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_GENERAL,KEYWORD_WITHOUT_NOTICE)) : "");
-        templateVars.put(UPDATE_POSTAL_ADDRESS, addressNotProvided
-            ? String.format("[Update your partner’s postal address](%s)", commonContent.getSignInUrl(caseData)) : "");
-        templateVars.put(APPLY_TO_PROGRESS_ANOTHER_WAY, addressNotProvided
-            ? String.format("[apply to progress your application another way](%s)", commonContent.getSignInUrl(caseData)) : "");
-        templateVars.put(GET_HELP_WITH_FEE, addressNotProvided ? "[get help paying this fee](https://www.gov.uk/get-help-with-court-fees)"
-            : "");
-        templateVars.put(ADDRESS_NOT_PROVIDED_DIVORCE, addressNotProvided && caseData.isDivorce() ? YES : NO);
-        templateVars.put(ADDRESS_NOT_PROVIDED_DISSOLUTION, addressNotProvided && !caseData.isDivorce() ? YES : NO);
-        templateVars.put(PARTNER, addressNotProvided
-            ? commonContent.getPartner(caseData, caseData.getApplicant1(), caseData.getApplicant1().getLanguagePreference()) : "");
 
+        templateVars.putAll(missingDocsTemplateVars(caseData, needsToSendDocuments));
 
         return templateVars;
     }

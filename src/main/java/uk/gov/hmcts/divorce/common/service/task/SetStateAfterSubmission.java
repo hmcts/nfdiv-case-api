@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static java.util.Objects.nonNull;
-import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
@@ -46,7 +45,7 @@ public class SetStateAfterSubmission implements CaseTask {
 
         if (applicantNeedsHelpWithFees && !applicationHasBeenPaidFor) {
             caseDetails.setState(AwaitingHWFDecision);
-        } else if (applicantIsAwaitingDocuments || !hasProvidedAddressForService ) {
+        } else if (applicantIsAwaitingDocuments || !hasProvidedAddressForService) {
             caseDetails.setState(AwaitingDocuments);
         } else if (!applicationHasBeenPaidFor) {
             caseDetails.setState(AwaitingPayment);
