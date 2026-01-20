@@ -179,7 +179,6 @@ class CitizenPaymentMadeTest {
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().setApplicant1KnowsApplicant2Address(NO);
         caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
-        final CaseData expectedCaseData = CaseData.builder().build();
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
@@ -189,18 +188,17 @@ class CitizenPaymentMadeTest {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
-        expectedDetails.setData(expectedCaseData);
+        details.setState(AwaitingDocuments);
 
         when(paymentValidatorService.validatePayments(caseData.getApplication().getApplicationPayments(), details.getId())).thenReturn(
             Collections.emptyList()
         );
 
-        when(submissionService.submitApplication(details)).thenReturn(expectedDetails);
+        when(submissionService.submitApplication(details)).thenReturn(details);
 
         final AboutToStartOrSubmitResponse<CaseData, State> result = citizenPaymentMade.aboutToSubmit(details, details);
 
-        assertThat(result.getData()).isSameAs(expectedCaseData);
+        assertThat(result.getData()).isSameAs(caseData);
         assertThat(result.getState()).isSameAs(AwaitingDocuments);
         verify(submissionService).submitApplication(details);
     }
@@ -210,7 +208,6 @@ class CitizenPaymentMadeTest {
         final CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setApplicant1StatementOfTruth(YES);
         caseData.getApplication().setApplicant1FoundApplicant2Address(NO);
-        final CaseData expectedCaseData = CaseData.builder().build();
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("55000").build();
         caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
@@ -220,21 +217,19 @@ class CitizenPaymentMadeTest {
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
-        final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
-        expectedDetails.setData(expectedCaseData);
+        details.setState(AwaitingDocuments);
 
         when(paymentValidatorService.validatePayments(caseData.getApplication().getApplicationPayments(), details.getId())).thenReturn(
             Collections.emptyList()
         );
 
-        when(submissionService.submitApplication(details)).thenReturn(expectedDetails);
+        when(submissionService.submitApplication(details)).thenReturn(details);
 
         final AboutToStartOrSubmitResponse<CaseData, State> result = citizenPaymentMade.aboutToSubmit(details, details);
 
-        assertThat(result.getData()).isSameAs(expectedCaseData);
+        assertThat(result.getData()).isSameAs(caseData);
         assertThat(result.getState()).isSameAs(AwaitingDocuments);
         verify(submissionService).submitApplication(details);
-        verify(notificationDispatcher).send(applicationSubmittedNotification, caseData, details.getId());
     }
 
     @Test
