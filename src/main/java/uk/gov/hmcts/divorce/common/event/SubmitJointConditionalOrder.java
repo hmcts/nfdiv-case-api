@@ -21,6 +21,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
@@ -83,7 +84,10 @@ public class SubmitJointConditionalOrder implements CCDConfig<CaseData, State, U
         data.getConditionalOrder().getConditionalOrderApplicant2Questions().setSubmittedDate(LocalDateTime.now(clock));
         data.getConditionalOrder().getConditionalOrderApplicant2Questions().setIsSubmitted(YES);
 
-        var state = ConditionalOrderDrafted.equals(beforeDetails.getState())
+        boolean hasApplicant1NotSubmitted =
+            Objects.isNull(data.getConditionalOrder().getConditionalOrderApplicant1Questions().getSubmittedDate());
+
+        var state = ConditionalOrderDrafted.equals(beforeDetails.getState()) || hasApplicant1NotSubmitted
             ? ConditionalOrderPending
             : AwaitingLegalAdvisorReferral;
 
