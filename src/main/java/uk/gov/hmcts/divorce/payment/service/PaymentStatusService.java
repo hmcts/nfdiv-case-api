@@ -161,8 +161,10 @@ public class PaymentStatusService {
         if (paidServiceRequest != null && isServiceRequestWithinGracePeriod(paidServiceRequest)) {
             log.info("Skipping case {} - service request created within last {} hours",
                 caseDetails.getId(), GRACE_PERIOD_HOURS);
-        } else if (paidServiceRequest != null && !paidServiceRequest.hasSuccessfulPayment()) {
-            rejectCase(caseDetails, "payment not made after creating service request", user, serviceAuth);
+        } else if (paidServiceRequest != null && paidServiceRequest.hasSuccessfulPayment()) {
+            log.info("Skipping case {} = payment has been made as successful payment found", caseDetails.getId());
+        } else {
+            rejectCase(caseDetails, "Skipping case {} = payment not made after creating service request", user, serviceAuth);
         }
     }
 
