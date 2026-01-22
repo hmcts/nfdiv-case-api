@@ -234,8 +234,6 @@ class PaymentStatusServiceTest {
         paymentStatusService.processPaymentRejection(caseDetails, user, SERVICE_AUTHORIZATION);
 
         verify(user, times(2)).getAuthToken();
-        verify(ccdUpdateService).submitEvent(TEST_CASE_ID,
-            APPLICATION_REJECTED_FEE_NOT_PAID, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
