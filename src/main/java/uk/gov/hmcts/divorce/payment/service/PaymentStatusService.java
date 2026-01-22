@@ -22,7 +22,6 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -140,15 +139,6 @@ public class PaymentStatusService {
             .orElse(false);
     }
 
-    private boolean hasSuccessfulPayment(ServiceRequestDto serviceRequest) {
-        return serviceRequest.getPayments()
-            .stream()
-            .filter(Objects::nonNull)
-            .map(ServiceRequestDto.PaymentDto::getStatus)
-            .filter(Objects::nonNull)  // Filter null statuses
-            .anyMatch(SUCCESS.getLabel()::equalsIgnoreCase);
-    }
-
     private boolean paymentSuccessful(String paymentReference, String userToken, String s2sToken) {
         final Payment payment = paymentClient.getPaymentByReference(
             userToken,
@@ -161,27 +151,34 @@ public class PaymentStatusService {
 
     public void processPaymentRejection(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails, User user, String serviceAuth) {
 
-        ServiceRequestDto latestServiceRequest = getLatestServiceRequest(caseDetails, user, serviceAuth);
+        List<ServiceRequestDto> allServiceRequests = getAllServiceRequests(caseDetails, user, serviceAuth);
 
-        if (latestServiceRequest != null && isServiceRequestWithinGracePeriod(latestServiceRequest)) {
+        // Find the first service request that is NOT "NOT_PAID" (i.e., PAID or PARTIALLY_PAID)
+        ServiceRequestDto paidServiceRequest = allServiceRequests.stream()
+            .filter(sr -> !ServiceRequestStatus.NOT_PAID.equals(sr.getServiceRequestStatus()))
+            .findFirst()
+            .orElse(null);
+
+
+        if (paidServiceRequest != null && isServiceRequestWithinGracePeriod(paidServiceRequest)) {
             log.info("Skipping case {} - service request created within last {} hours",
                 caseDetails.getId(), GRACE_PERIOD_HOURS);
-        } else if (latestServiceRequest != null
-            && (!ServiceRequestStatus.PAID.equals(latestServiceRequest.getServiceRequestStatus())
-                || !hasSuccessfulPayment(latestServiceRequest))) {
+        } else if (paidServiceRequest != null
+            && (ServiceRequestStatus.NOT_PAID.equals(paidServiceRequest.getServiceRequestStatus())
+                || !paidServiceRequest.hasSuccessfulPayment())) {
             rejectCase(caseDetails, "payment not made after creating service request", user, serviceAuth);
         }
     }
 
-    private ServiceRequestDto getLatestServiceRequest(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
+    private List<ServiceRequestDto> getAllServiceRequests(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
                                                       User user, String serviceAuth) {
         var paymentClientResponse = paymentClient.getServiceRequests(
             user.getAuthToken(), serviceAuth, caseDetails.getId().toString());
 
         return paymentClientResponse.getServiceRequests()
             .stream()
-            .max(Comparator.comparing(ServiceRequestDto::getDateCreated))
-            .orElse(ServiceRequestDto.builder().build());
+            .filter(Objects::nonNull)
+            .toList();
     }
 
     private boolean isServiceRequestWithinGracePeriod(ServiceRequestDto serviceRequest) {

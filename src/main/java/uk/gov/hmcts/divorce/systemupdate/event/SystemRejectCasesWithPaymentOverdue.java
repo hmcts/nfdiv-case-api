@@ -8,23 +8,15 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.notification.ApplicationRejectedFeeNotPaidNotification;
+import uk.gov.hmcts.divorce.common.service.CaseTerminationService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
-
-import java.util.List;
-import java.util.Objects;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
@@ -39,9 +31,7 @@ public class SystemRejectCasesWithPaymentOverdue implements CCDConfig<CaseData, 
     public static final String APPLICATION_REJECTED_FEE_NOT_PAID = "application-rejected-fee-not-paid";
     private static final String APPLICATION_REJECTED = "Application rejected";
 
-    private final NotificationDispatcher notificationDispatcher;
-    private final ApplicationRejectedFeeNotPaidNotification applicationRejectedFeeNotPaidNotification;
-    private final CcdAccessService ccdAccessService;
+    private final CaseTerminationService caseTerminationService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -70,20 +60,7 @@ public class SystemRejectCasesWithPaymentOverdue implements CCDConfig<CaseData, 
 
         CaseData caseData = details.getData();
 
-        final var roles = List.of(CREATOR.getRole(), APPLICANT_2.getRole());
-
-        if (Objects.nonNull(caseData.getCaseInvite())) {
-            caseData.setCaseInvite(new CaseInvite(caseData.getCaseInvite().applicant2InviteEmailAddress(), null, null));
-        }
-
-        removeSolicitorOrganisationPolicy(caseData.getApplicant1());
-        removeSolicitorOrganisationPolicy(caseData.getApplicant2());
-
-        ccdAccessService.removeUsersWithRole(details.getId(), roles);
-
-        caseData.getApplication().setPreviousState(details.getState());
-
-        notificationDispatcher.send(applicationRejectedFeeNotPaidNotification, details.getData(), details.getId());
+        caseTerminationService.reject(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

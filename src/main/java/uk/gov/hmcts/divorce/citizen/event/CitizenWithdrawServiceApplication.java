@@ -8,7 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.service.WithdrawCaseService;
+import uk.gov.hmcts.divorce.common.service.CaseTerminationService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CitizenWithdrawServiceApplication implements CCDConfig<CaseData, State, UserRole> {
     public static final String CITIZEN_WITHDRAW_SERVICE_APPLICATION = "service-application-withdrawn";
 
-    private final WithdrawCaseService withdrawCaseService;
+    private final CaseTerminationService caseTerminationService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

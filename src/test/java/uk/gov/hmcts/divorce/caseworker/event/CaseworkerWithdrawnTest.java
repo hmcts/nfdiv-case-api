@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
-import uk.gov.hmcts.divorce.common.service.WithdrawCaseService;
+import uk.gov.hmcts.divorce.common.service.CaseTerminationService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -23,7 +23,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 class CaseworkerWithdrawnTest {
 
     @Mock
-    private WithdrawCaseService withdrawCaseService;
+    private CaseTerminationService caseTerminationService;
 
     @InjectMocks
     private CaseworkerWithdrawn caseworkerWithdrawn;
@@ -45,6 +45,6 @@ class CaseworkerWithdrawnTest {
 
         caseworkerWithdrawn.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(withdrawCaseService).withdraw(caseDetails);
+        verify(caseTerminationService).withdraw(caseDetails);
     }
 }
