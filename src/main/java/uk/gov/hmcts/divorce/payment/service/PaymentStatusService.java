@@ -154,11 +154,12 @@ public class PaymentStatusService {
         List<ServiceRequestDto> allServiceRequests = getAllServiceRequests(caseDetails, user, serviceAuth);
 
         ServiceRequestDto paidServiceRequest = allServiceRequests.stream()
-            .filter(sr -> !ServiceRequestStatus.NOT_PAID.equals(sr.getServiceRequestStatus()))
+            .filter(sr -> !ServiceRequestStatus.NOT_PAID
+                .equals(sr.getServiceRequestStatus()) && isServiceRequestWithinGracePeriod(sr))
             .findFirst()
             .orElse(null);
 
-        if (paidServiceRequest != null && isServiceRequestWithinGracePeriod(paidServiceRequest)) {
+        if (paidServiceRequest != null && paidServiceRequest.getServiceRequestStatus().equals(ServiceRequestStatus.NOT_PAID)) {
             log.info("Skipping case {} - service request created within last {} hours",
                 caseDetails.getId(), GRACE_PERIOD_HOURS);
         } else if (paidServiceRequest != null && paidServiceRequest.hasSuccessfulPayment()) {
