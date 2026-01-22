@@ -153,19 +153,15 @@ public class PaymentStatusService {
 
         List<ServiceRequestDto> allServiceRequests = getAllServiceRequests(caseDetails, user, serviceAuth);
 
-        // Find the first service request that is NOT "NOT_PAID" (i.e., PAID or PARTIALLY_PAID)
         ServiceRequestDto paidServiceRequest = allServiceRequests.stream()
             .filter(sr -> !ServiceRequestStatus.NOT_PAID.equals(sr.getServiceRequestStatus()))
             .findFirst()
             .orElse(null);
 
-
         if (paidServiceRequest != null && isServiceRequestWithinGracePeriod(paidServiceRequest)) {
             log.info("Skipping case {} - service request created within last {} hours",
                 caseDetails.getId(), GRACE_PERIOD_HOURS);
-        } else if (paidServiceRequest != null
-            && (ServiceRequestStatus.NOT_PAID.equals(paidServiceRequest.getServiceRequestStatus())
-                || !paidServiceRequest.hasSuccessfulPayment())) {
+        } else if (paidServiceRequest != null && !paidServiceRequest.hasSuccessfulPayment()) {
             rejectCase(caseDetails, "payment not made after creating service request", user, serviceAuth);
         }
     }
