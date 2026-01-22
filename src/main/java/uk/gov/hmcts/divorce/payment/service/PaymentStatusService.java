@@ -153,19 +153,25 @@ public class PaymentStatusService {
 
         List<ServiceRequestDto> allServiceRequests = getAllServiceRequests(caseDetails, user, serviceAuth);
 
-        ServiceRequestDto paidServiceRequest = allServiceRequests.stream()
-            .filter(sr -> !ServiceRequestStatus.NOT_PAID
-                .equals(sr.getServiceRequestStatus()) && isServiceRequestWithinGracePeriod(sr))
+        if (allServiceRequests.isEmpty()) {
+            rejectCase(caseDetails, "no service requests found", user, serviceAuth);
+            return;
+        }
+
+        ServiceRequestDto serviceRequestToCheck = allServiceRequests.stream()
+            .filter(sr -> isServiceRequestWithinGracePeriod(sr)
+                || sr.hasSuccessfulPayment()
+                || !ServiceRequestStatus.NOT_PAID.equals(sr.getServiceRequestStatus()))
             .findFirst()
             .orElse(null);
 
-        if (paidServiceRequest != null && paidServiceRequest.getServiceRequestStatus().equals(ServiceRequestStatus.NOT_PAID)) {
+        if (serviceRequestToCheck == null) {
+            rejectCase(caseDetails, "no recent service requests and no successful payments found", user, serviceAuth);
+        } else if (isServiceRequestWithinGracePeriod(serviceRequestToCheck)) {
             log.info("Skipping case {} - service request created within last {} hours",
                 caseDetails.getId(), GRACE_PERIOD_HOURS);
-        } else if (paidServiceRequest != null && paidServiceRequest.hasSuccessfulPayment()) {
-            log.info("Skipping case {} = payment has been made as successful payment found", caseDetails.getId());
         } else {
-            rejectCase(caseDetails, "Skipping case {} = payment not made after creating service request", user, serviceAuth);
+            log.info("Skipping case {} - successful payment found", caseDetails.getId());
         }
     }
 
