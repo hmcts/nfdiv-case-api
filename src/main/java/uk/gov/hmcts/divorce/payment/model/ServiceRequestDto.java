@@ -13,10 +13,8 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 
 @Builder
 @Data
@@ -36,15 +34,6 @@ public class ServiceRequestDto {
     private ServiceRequestStatus serviceRequestStatus;
 
     private List<FeeDto> fees;
-
-    public boolean hasSuccessfulPayment() {
-        return payments
-            .stream()
-            .filter(Objects::nonNull)
-            .map(ServiceRequestDto.PaymentDto::getStatus)
-            .filter(Objects::nonNull)
-            .anyMatch(SUCCESS.getLabel()::equalsIgnoreCase);
-    }
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @JsonInclude(NON_NULL)

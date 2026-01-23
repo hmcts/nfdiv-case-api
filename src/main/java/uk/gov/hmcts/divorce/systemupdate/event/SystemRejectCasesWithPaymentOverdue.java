@@ -9,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.CaseTerminationService;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -58,18 +57,10 @@ public class SystemRejectCasesWithPaymentOverdue implements CCDConfig<CaseData, 
 
         log.info("{} aboutToSubmit callback invoked for case id: {}", APPLICATION_REJECTED_FEE_NOT_PAID, details.getId());
 
-        CaseData caseData = details.getData();
-
         caseTerminationService.reject(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .build();
-    }
-
-    private void removeSolicitorOrganisationPolicy(final Applicant applicant) {
-        if (applicant.isRepresented()) {
-            applicant.getSolicitor().setOrganisationPolicy(null);
-        }
     }
 }

@@ -67,13 +67,18 @@ class PaymentStatusServiceTest {
 
     @Mock
     private CaseDetailsConverter caseDetailsConverter;
+
     @Mock
     private User user;
 
     @Mock
     private UpdateSuccessfulPaymentStatus updateSuccessfulPaymentStatus;
+
     @Mock
     private CcdUpdateService ccdUpdateService;
+
+    @Mock
+    private ServiceRequestSearchService serviceRequestSearchService;
 
     @InjectMocks
     private PaymentStatusService paymentStatusService;

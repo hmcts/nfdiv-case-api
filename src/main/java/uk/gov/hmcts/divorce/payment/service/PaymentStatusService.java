@@ -52,6 +52,8 @@ public class PaymentStatusService {
 
     private final CcdUpdateService ccdUpdateService;
 
+    private final ServiceRequestSearchService serviceRequestSearchService;
+
     private final UpdateSuccessfulPaymentStatus updateSuccessfulPaymentStatus;
 
     public void hasSuccessFulPayment(List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> casesInAwaitingPaymentState) {
@@ -152,52 +154,46 @@ public class PaymentStatusService {
 
     public void processPaymentRejection(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails, User user, String serviceAuth) {
 
-        List<ServiceRequestDto> allServiceRequests = getAllServiceRequests(caseDetails, user, serviceAuth);
+        List<ServiceRequestDto> caseServiceRequests = serviceRequestSearchService.getServiceRequestsForCase(caseDetails.getId());
 
-        if (allServiceRequests.isEmpty()) {
+        if (caseServiceRequests.isEmpty()) {
             rejectCase(caseDetails, "no service requests found", user, serviceAuth);
             return;
         }
 
-        ServiceRequestDto serviceRequestToCheck = allServiceRequests.stream()
-            .filter(sr -> isServiceRequestWithinGracePeriod(sr)
-                ||  isPaymentWithinGracePeriod(sr.getPayments())
-                || sr.hasSuccessfulPayment()
-                || !ServiceRequestStatus.NOT_PAID.equals(sr.getServiceRequestStatus()))
-            .findFirst()
-            .orElse(null);
+        boolean allServiceRequestsCanBeCancelled = caseServiceRequests.stream()
+            .filter(Objects::nonNull)
+            .allMatch(this::canServiceRequestBeCancelled);
 
-        if (serviceRequestToCheck == null) {
+        if (allServiceRequestsCanBeCancelled) {
             rejectCase(caseDetails, "no recent service requests and no successful payments found", user, serviceAuth);
         } else {
             log.info("Skipping case {} - successful payment found", caseDetails.getId());
         }
     }
 
-    private List<ServiceRequestDto> getAllServiceRequests(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
-                                                      User user, String serviceAuth) {
-        var paymentClientResponse = paymentClient.getServiceRequests(
-            user.getAuthToken(), serviceAuth, caseDetails.getId().toString());
+    private boolean canServiceRequestBeCancelled(ServiceRequestDto serviceRequest) {
+        ServiceRequestStatus serviceRequestStatus = serviceRequest.getServiceRequestStatus();
+        boolean hasServiceRequestBeenPaid = !ServiceRequestStatus.NOT_PAID.equals(serviceRequestStatus);
+        boolean isServiceRequestWithinGracePeriod = isDateWithinGracePeriod(serviceRequest.getDateCreated());
 
-        return paymentClientResponse.getServiceRequests()
-            .stream()
-            .filter(Objects::nonNull)
-            .toList();
+        if (isServiceRequestWithinGracePeriod || hasServiceRequestBeenPaid) {
+            return false;
+        }
+
+        return canAllPaymentsBeCancelled(serviceRequest.getPayments());
     }
 
-    private boolean isServiceRequestWithinGracePeriod(ServiceRequestDto serviceRequest) {
-        return isDateWithinGracePeriod(serviceRequest.getDateCreated());
-    }
-
-    private boolean isPaymentWithinGracePeriod(List<ServiceRequestDto.PaymentDto> payments) {
+    private boolean canAllPaymentsBeCancelled(List<ServiceRequestDto.PaymentDto> payments) {
         if (payments == null || payments.isEmpty()) {
             return false;
         }
 
         return payments.stream()
             .filter(Objects::nonNull)
-            .map(ServiceRequestDto.PaymentDto::getDateUpdated)
-            .anyMatch(this::isDateWithinGracePeriod);
+            .noneMatch(payment ->
+                this.isDateWithinGracePeriod(payment.getDateUpdated()) || SUCCESS.getLabel().equalsIgnoreCase(payment.getStatus())
+             );
     }
 
     private boolean isDateWithinGracePeriod(Date date) {
