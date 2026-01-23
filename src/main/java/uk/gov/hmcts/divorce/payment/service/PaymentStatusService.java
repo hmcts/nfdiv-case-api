@@ -186,7 +186,7 @@ public class PaymentStatusService {
 
     private boolean canAllPaymentsBeCancelled(List<ServiceRequestDto.PaymentDto> payments) {
         if (payments == null || payments.isEmpty()) {
-            return false;
+            return true;
         }
 
         return payments.stream()
