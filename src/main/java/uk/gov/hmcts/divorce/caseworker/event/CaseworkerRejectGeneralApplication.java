@@ -147,6 +147,16 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
 
         final CaseData caseData = details.getData();
         State state = caseData.getApplication().getStateToTransitionApplicationTo();
+
+        List<String> validationErrors = validateStateTransition(caseData, state);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .errors(validationErrors)
+            .build();
+    }
+
+    public static List<String> validateStateTransition(final CaseData caseData, final State state) {
         List<String> validationErrors = new ArrayList<>();
 
         if (!PRE_RETURN_TO_PREVIOUS_STATES.contains(state)) {
@@ -159,10 +169,7 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
             validationErrors.add(CASE_ALREADY_ISSUED_ERROR);
         }
 
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .errors(validationErrors)
-            .build();
+        return validationErrors;
     }
 
     private void resetApplicationFields(CaseData caseData, CaseDetails<CaseData, State> details) {
