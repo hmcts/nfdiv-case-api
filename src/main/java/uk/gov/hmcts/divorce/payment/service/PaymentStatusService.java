@@ -22,6 +22,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -160,6 +161,7 @@ public class PaymentStatusService {
 
         ServiceRequestDto serviceRequestToCheck = allServiceRequests.stream()
             .filter(sr -> isServiceRequestWithinGracePeriod(sr)
+                ||  isPaymentWithinGracePeriod(sr.getPayments())
                 || sr.hasSuccessfulPayment()
                 || !ServiceRequestStatus.NOT_PAID.equals(sr.getServiceRequestStatus()))
             .findFirst()
@@ -167,9 +169,6 @@ public class PaymentStatusService {
 
         if (serviceRequestToCheck == null) {
             rejectCase(caseDetails, "no recent service requests and no successful payments found", user, serviceAuth);
-        } else if (isServiceRequestWithinGracePeriod(serviceRequestToCheck)) {
-            log.info("Skipping case {} - service request created within last {} hours",
-                caseDetails.getId(), GRACE_PERIOD_HOURS);
         } else {
             log.info("Skipping case {} - successful payment found", caseDetails.getId());
         }
@@ -187,17 +186,32 @@ public class PaymentStatusService {
     }
 
     private boolean isServiceRequestWithinGracePeriod(ServiceRequestDto serviceRequest) {
-        if (serviceRequest.getDateCreated() == null) {
+        return isDateWithinGracePeriod(serviceRequest.getDateCreated());
+    }
+
+    private boolean isPaymentWithinGracePeriod(List<ServiceRequestDto.PaymentDto> payments) {
+        if (payments == null || payments.isEmpty()) {
+            return false;
+        }
+
+        return payments.stream()
+            .filter(Objects::nonNull)
+            .map(ServiceRequestDto.PaymentDto::getDateUpdated)
+            .anyMatch(this::isDateWithinGracePeriod);
+    }
+
+    private boolean isDateWithinGracePeriod(Date date) {
+        if (date == null) {
             return false;
         }
 
         LocalDateTime gracePeriodStart = LocalDateTime.now().minusHours(GRACE_PERIOD_HOURS);
-        LocalDateTime serviceCreatedTime = LocalDateTime.ofInstant(
-            serviceRequest.getDateCreated().toInstant(),
+        LocalDateTime createdTime = LocalDateTime.ofInstant(
+            date.toInstant(),
             ZoneId.systemDefault()
         );
 
-        return gracePeriodStart.isBefore(serviceCreatedTime);
+        return gracePeriodStart.isBefore(createdTime);
     }
 
     private void rejectCase(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
