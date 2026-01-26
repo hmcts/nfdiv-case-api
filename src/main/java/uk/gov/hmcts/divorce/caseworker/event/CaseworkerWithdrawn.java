@@ -8,7 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.service.WithdrawCaseService;
+import uk.gov.hmcts.divorce.common.service.CaseTerminationService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -28,7 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_WITHDRAWN = "caseworker-withdrawn";
 
-    private final WithdrawCaseService withdrawCaseService;
+    private final CaseTerminationService caseTerminationService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -53,7 +53,7 @@ public class CaseworkerWithdrawn implements CCDConfig<CaseData, State, UserRole>
 
         log.info("Caseworker withdrawn about to submit callback invoked for Case Id: {}", details.getId());
 
-        withdrawCaseService.withdraw(details);
+        caseTerminationService.withdraw(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
