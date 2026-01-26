@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.task.ProgressApplicant1FinalOrderState;
 import uk.gov.hmcts.divorce.common.service.task.ProgressApplicant2FinalOrderState;
@@ -11,14 +12,25 @@ import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant1;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant2;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant2Sol;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.DocumentGenerator;
+import uk.gov.hmcts.divorce.document.content.templatecontent.RespondentFinalOrderAnswersTemplateContent;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_FINAL_ORDER_ANSWERS_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_FINAL_ORDER_ANSWERS;
 
 @Service
 @Slf4j
@@ -41,6 +53,16 @@ public class ApplyForFinalOrderService {
     private final Applicant2AppliedForFinalOrderNotification applicant2AppliedForFinalOrderNotification;
 
     private final NotificationDispatcher notificationDispatcher;
+
+    private final DocumentGenerator documentGenerator;
+
+    private final CaseDataDocumentService caseDataDocumentService;
+
+    private final RespondentFinalOrderAnswersTemplateContent respondentFinalOrderAnswersTemplateContent;
+
+    private final Clock clock;
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public CaseDetails<CaseData, State> applyForFinalOrderAsApplicant1(final CaseDetails<CaseData, State> caseDetails) {
 
@@ -85,5 +107,26 @@ public class ApplyForFinalOrderService {
         log.info("Sending Respondent Applied For Final Order Notification for Case Id: {}", caseDetails.getId());
 
         notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, caseDetails.getData(), caseDetails.getId());
+    }
+
+    public void generateAndStoreFinalOrderAnswersDocument(final CaseData caseData, final Long caseId) {
+        log.info("Generating Final Order Answers document for Case Id: {}", caseId);
+
+        Document document = caseDataDocumentService.renderDocument(
+            respondentFinalOrderAnswersTemplateContent.getTemplateContent(caseData, caseId, caseData.getApplicant2()),
+            caseId,
+            RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID,
+            caseData.getApplicant1().getLanguagePreference(),
+            RESPONDENT_FINAL_ORDER_ANSWERS_DOCUMENT_NAME + LocalDateTime.now(clock).format(formatter)
+        );
+
+        DivorceDocument respondentFinalOrderAnswersDocument = DivorceDocument
+            .builder()
+            .documentType(RESPONDENT_FINAL_ORDER_ANSWERS)
+            .documentLink(document)
+            .build();
+
+        caseData.getDocuments().setDocumentsGenerated(
+            CaseDocuments.addDocumentToTop(caseData.getDocuments().getDocumentsGenerated(), respondentFinalOrderAnswersDocument));
     }
 }

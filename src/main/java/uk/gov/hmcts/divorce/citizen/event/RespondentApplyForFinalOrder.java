@@ -71,6 +71,8 @@ public class RespondentApplyForFinalOrder implements CCDConfig<CaseData, State, 
             updatedCaseDetails = applyForFinalOrderService.applyForFinalOrderAsApplicant2(details);
         }
 
+        applyForFinalOrderService.generateAndStoreFinalOrderAnswersDocument(updatedCaseDetails.getData(), updatedCaseDetails.getId());
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedCaseDetails.getData())
             .state(updatedCaseDetails.getState())
