@@ -17,7 +17,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.payment.client.PaymentClient;
-import uk.gov.hmcts.divorce.payment.model.CaseServiceRequestsResponse;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
@@ -37,7 +36,6 @@ import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -46,6 +44,7 @@ import static uk.gov.hmcts.divorce.citizen.event.RespondentFinalOrderPaymentMade
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRejectCasesWithPaymentOverdue.APPLICATION_REJECTED_FEE_NOT_PAID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -226,26 +225,49 @@ class PaymentStatusServiceTest {
     void shouldRejectCaseInStateAwaitingPaymentWhenPaymentOverdueAfter14Days() {
         final CaseDetails cd = CaseDetails.builder().data(Map.of(APPLICATION_PAYMENTS, ""))
             .id(TEST_CASE_ID).state(AWAITING_PAYMENT).build();
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
-        when(idamService.retrieveSystemUpdateUserDetails().getAuthToken()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        caseDetails.setLastModified(LocalDateTime.now().minusDays(15));
+        paymentStatusService.processPaymentRejection(caseDetails, user, SERVICE_AUTHORIZATION);
+
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID,
+            APPLICATION_REJECTED_FEE_NOT_PAID, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldRejectCaseInStateAwaitingPaymentWhenServiceRequestHasNotBeenPaidOrNotWithinGracePeriod() {
+        final CaseDetails cd = CaseDetails.builder().data(Map.of(APPLICATION_PAYMENTS, ""))
+            .id(TEST_CASE_ID).state(AWAITING_PAYMENT).build();
 
         ServiceRequestDto serviceRequestDto = ServiceRequestDto.builder().payments(
-            List.of(ServiceRequestDto.PaymentDto.builder().build())).serviceRequestStatus(ServiceRequestStatus.PAID).build();
+            List.of(ServiceRequestDto.PaymentDto.builder().build())).serviceRequestStatus(ServiceRequestStatus.NOT_PAID).build();
         List<ServiceRequestDto> caseServiceRequests = List.of(serviceRequestDto);
         stubServiceRequestSearch(caseServiceRequests);
 
         caseDetails.setLastModified(LocalDateTime.now().minusDays(15));
         paymentStatusService.processPaymentRejection(caseDetails, user, SERVICE_AUTHORIZATION);
 
-        verify(user, times(2)).getAuthToken();
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID,
+            APPLICATION_REJECTED_FEE_NOT_PAID, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldRejectCaseInStateAwaitingPaymentWhenNoPaymentMade() {
+        final CaseDetails cd = CaseDetails.builder().data(Map.of(APPLICATION_PAYMENTS, ""))
+            .id(TEST_CASE_ID).state(AWAITING_PAYMENT).build();
+
+        stubServiceRequestSearch(List.of(ServiceRequestDto.builder().serviceRequestStatus(ServiceRequestStatus.NOT_PAID).build()));
+
+        caseDetails.setLastModified(LocalDateTime.now().minusDays(15));
+        paymentStatusService.processPaymentRejection(caseDetails, user, SERVICE_AUTHORIZATION);
+
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID,
+            APPLICATION_REJECTED_FEE_NOT_PAID, user, SERVICE_AUTHORIZATION);
     }
 
     @Test
     void shouldNotRejectCaseInStateAwaitingPaymentWhenPaymentServiceRequestCreatedWithinLast24Hours() {
         final CaseDetails cd = CaseDetails.builder().data(Map.of(APPLICATION_PAYMENTS, ""))
             .id(TEST_CASE_ID).state(AWAITING_PAYMENT).build();
-        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
-        when(idamService.retrieveSystemUpdateUserDetails().getAuthToken()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         ServiceRequestDto serviceRequestDto = ServiceRequestDto.builder().payments(
             List.of(ServiceRequestDto.PaymentDto.builder().build())).dateCreated(Date.from(
@@ -256,7 +278,6 @@ class PaymentStatusServiceTest {
         caseDetails.setLastModified(LocalDateTime.now().minusDays(15));
         paymentStatusService.processPaymentRejection(caseDetails, user, SERVICE_AUTHORIZATION);
 
-        verify(user, times(2)).getAuthToken();
         verifyNoInteractions(ccdUpdateService);
     }
 
@@ -279,7 +300,7 @@ class PaymentStatusServiceTest {
     }
 
     private void stubServiceRequestSearch(List<ServiceRequestDto> caseServiceRequests) {
-        when(paymentClient.getServiceRequests(user.getAuthToken(), SERVICE_AUTHORIZATION, String.valueOf(TEST_CASE_ID)))
-            .thenReturn(CaseServiceRequestsResponse.builder().serviceRequests(caseServiceRequests).build());
+        when(serviceRequestSearchService.getServiceRequestsForCase(caseDetails.getId()))
+            .thenReturn(caseServiceRequests);
     }
 }
