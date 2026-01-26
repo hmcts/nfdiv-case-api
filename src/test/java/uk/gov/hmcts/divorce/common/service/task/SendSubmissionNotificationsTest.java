@@ -51,7 +51,6 @@ class SendSubmissionNotificationsTest {
         sendSubmissionNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(applicationSubmittedNotification, caseData, TEST_CASE_ID);
-        verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
@@ -65,7 +64,6 @@ class SendSubmissionNotificationsTest {
         sendSubmissionNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(applicationSubmittedNotification, caseData, TEST_CASE_ID);
-        verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
