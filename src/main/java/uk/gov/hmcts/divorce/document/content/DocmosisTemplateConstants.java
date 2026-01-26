@@ -252,6 +252,9 @@ public final class DocmosisTemplateConstants {
 
     public static final String REQUEST_FOR_INFORMATION_DETAILS = "requestForInformationDetails";
 
+    public static final String HMCTS_LOGO = "hmctsLogo";
+    public static final String FAMILY_COURT_LOGO = "familyCourtLogo";
+
     private DocmosisTemplateConstants() {
     }
 }
