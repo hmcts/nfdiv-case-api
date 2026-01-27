@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.Applicant2AppliedForFinalOrderNotification;
 import uk.gov.hmcts.divorce.common.service.task.ProgressApplicant1FinalOrderState;
@@ -13,19 +14,32 @@ import uk.gov.hmcts.divorce.common.service.task.ProgressApplicant2FinalOrderStat
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant1;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant2;
 import uk.gov.hmcts.divorce.common.service.task.SetFinalOrderFieldsAsApplicant2Sol;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.templatecontent.RespondentFinalOrderAnswersTemplateContent;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_FINAL_ORDER_ANSWERS_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_REFERENCE;
 
 @ExtendWith(MockitoExtension.class)
 class ApplyForFinalOrderServiceTest {
@@ -53,6 +67,15 @@ class ApplyForFinalOrderServiceTest {
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private RespondentFinalOrderAnswersTemplateContent templateContent;
+
+    @Mock
+    private CaseDataDocumentService caseDataDocumentService;
+
+    @Mock
+    private Clock clock;
 
     @Test
     void shouldRunCorrectTasksForApplyForFinalOrderAsApplicant1() {
@@ -142,5 +165,41 @@ class ApplyForFinalOrderServiceTest {
 
         verify(notificationDispatcher).send(applicant2AppliedForFinalOrderNotification, details.getData(), TEST_CASE_ID);
         verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldGenerateAndStoreRespondentFinalOrderAnswersDocument() {
+        CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().build()).build();
+
+        Map<String, Object> templateVariables = Collections.emptyMap();
+
+        when(templateContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1()))
+            .thenReturn(templateVariables);
+
+        final LocalDateTime dateTime = LocalDateTime.of(2021, Month.JUNE, 15, 13, 39);
+        final Instant instant = dateTime.atZone(ZoneId.of("Europe/London")).toInstant();
+        when(clock.instant()).thenReturn(instant);
+        when(clock.getZone()).thenReturn(ZoneId.of("Europe/London"));
+
+        Document generatedDocument = Document.builder().filename(TEST_REFERENCE).build();
+        when(caseDataDocumentService.renderDocument(
+            templateVariables,
+            TEST_CASE_ID,
+            RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID,
+            caseData.getApplicant2().getLanguagePreference(),
+            RESPONDENT_FINAL_ORDER_ANSWERS_DOCUMENT_NAME + "2021-06-15 13:39:00"
+        )).thenReturn(generatedDocument);
+
+        applyForFinalOrderService.generateAndStoreFinalOrderAnswersDocument(caseData, TEST_CASE_ID);
+
+        verify(caseDataDocumentService).renderDocument(
+            templateVariables,
+            TEST_CASE_ID,
+            RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID,
+            caseData.getApplicant1().getLanguagePreference(),
+            RESPONDENT_FINAL_ORDER_ANSWERS_DOCUMENT_NAME + "2021-06-15 13:39:00"
+        );
+        assertThat(caseData.getDocuments().getDocumentsGenerated().size()).isOne();
     }
 }
