@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -41,8 +42,10 @@ class SendSubmissionNotificationsTest {
     private SendSubmissionNotifications sendSubmissionNotifications;
 
     @Test
-    void shouldDispatchSubmittedNotificationsAndOutstandingActionNotificationsIfSubmittedState() {
+    void shouldDispatchSubmittedNotificationsIfSubmittedState() {
         final CaseData caseData = caseData();
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(YesOrNo.YES);
+
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
@@ -51,13 +54,15 @@ class SendSubmissionNotificationsTest {
         sendSubmissionNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(applicationSubmittedNotification, caseData, TEST_CASE_ID);
-        verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
-    void shouldDispatchOutstandingAndSubmittedNotificationIfAwaitingHwfDecisionState() {
+    void shouldDispatchSubmittedNotificationIfAwaitingHwfDecisionState() {
         final CaseData caseData = caseData();
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(YesOrNo.YES);
+
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingHWFDecision);
@@ -65,13 +70,13 @@ class SendSubmissionNotificationsTest {
         sendSubmissionNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(applicationSubmittedNotification, caseData, TEST_CASE_ID);
-        verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
-    void shouldDispatchSubmittedNotificationsAndOutstandingActionNotificationsIfWelshPreviousStateSubmitted() {
+    void shouldDispatchSubmittedNotificationsIfWelshPreviousStateSubmitted() {
         final CaseData caseData = caseData();
         caseData.getApplication().setWelshPreviousState(Submitted);
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(YesOrNo.YES);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
@@ -80,13 +85,13 @@ class SendSubmissionNotificationsTest {
         sendSubmissionNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(applicationSubmittedNotification, caseData, TEST_CASE_ID);
-        verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
-    void shouldDispatchSubmittedNotificationsAndOutstandingActionNotificationsIfWelshPreviousStateAwaitingHwfDecision() {
+    void shouldDispatchSubmittedNotificationsIfWelshPreviousStateAwaitingHwfDecision() {
         final CaseData caseData = caseData();
         caseData.getApplication().setWelshPreviousState(AwaitingHWFDecision);
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(YesOrNo.YES);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
@@ -95,7 +100,6 @@ class SendSubmissionNotificationsTest {
         sendSubmissionNotifications.apply(caseDetails);
 
         verify(notificationDispatcher).send(applicationSubmittedNotification, caseData, TEST_CASE_ID);
-        verify(notificationDispatcher).send(applicationOutstandingActionNotification, caseData, TEST_CASE_ID);
     }
 
     @Test
