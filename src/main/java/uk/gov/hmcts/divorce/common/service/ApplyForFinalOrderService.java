@@ -116,7 +116,7 @@ public class ApplyForFinalOrderService {
             respondentFinalOrderAnswersTemplateContent.getTemplateContent(caseData, caseId, caseData.getApplicant2()),
             caseId,
             RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID,
-            caseData.getApplicant1().getLanguagePreference(),
+            caseData.getApplicant2().getLanguagePreference(),
             RESPONDENT_FINAL_ORDER_ANSWERS_DOCUMENT_NAME + LocalDateTime.now(clock).format(formatter)
         );
 
