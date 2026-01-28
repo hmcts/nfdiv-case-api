@@ -109,7 +109,7 @@ public class ApplyForFinalOrderService {
         notificationDispatcher.send(applicant2AppliedForFinalOrderNotification, caseDetails.getData(), caseDetails.getId());
     }
 
-    public void generateAndStoreFinalOrderAnswersDocument(final CaseData caseData, final Long caseId) {
+    public void generateAndStoreRespondentFinalOrderAnswersDocument(final CaseData caseData, final Long caseId) {
         log.info("Generating Final Order Answers document for Case Id: {}", caseId);
 
         Document document = caseDataDocumentService.renderDocument(

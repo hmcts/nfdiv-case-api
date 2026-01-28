@@ -101,7 +101,7 @@ class RespondentApplyForFinalOrderTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = respondentApplyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(applyForFinalOrderService).generateAndStoreFinalOrderAnswersDocument(caseData, caseId);
+        verify(applyForFinalOrderService).generateAndStoreRespondentFinalOrderAnswersDocument(caseData, caseId);
     }
 
     private OrderSummary orderSummary() {

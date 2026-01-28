@@ -191,7 +191,7 @@ class ApplyForFinalOrderServiceTest {
             RESPONDENT_FINAL_ORDER_ANSWERS_DOCUMENT_NAME + "2021-06-15 13:39:00"
         )).thenReturn(generatedDocument);
 
-        applyForFinalOrderService.generateAndStoreFinalOrderAnswersDocument(caseData, TEST_CASE_ID);
+        applyForFinalOrderService.generateAndStoreRespondentFinalOrderAnswersDocument(caseData, TEST_CASE_ID);
 
         verify(caseDataDocumentService).renderDocument(
             templateVariables,

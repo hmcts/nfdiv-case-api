@@ -271,6 +271,6 @@ class Applicant2SolicitorApplyForFinalOrderTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant2SolicitorApplyForFinalOrder.aboutToSubmit(caseDetails, new CaseDetails<>());
 
-        verify(applyForFinalOrderService).generateAndStoreFinalOrderAnswersDocument(caseData, TEST_CASE_ID);
+        verify(applyForFinalOrderService).generateAndStoreRespondentFinalOrderAnswersDocument(caseData, TEST_CASE_ID);
     }
 }
