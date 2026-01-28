@@ -87,6 +87,23 @@ class RespondentApplyForFinalOrderTest {
         assertThat(response.getState()).isEqualTo(caseDetails.getState());
     }
 
+    @Test
+    void shouldGenerateFinalOrderAnswersDocumentWhenRespondentAppliesForFinalOrder() {
+        CaseData caseData = CaseData.builder().finalOrder(
+            FinalOrder.builder()
+                .applicant2FinalOrderHelpWithFees(HelpWithFees.builder().needHelp(YesOrNo.YES).build())
+                .build()
+        ).build();
+        long caseId = TEST_CASE_ID;
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(caseId).build();
+
+        when(applyForFinalOrderService.applyForFinalOrderAsApplicant2(caseDetails)).thenReturn(caseDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = respondentApplyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        verify(applyForFinalOrderService).generateAndStoreRespondentFinalOrderAnswersDocument(caseData, caseId);
+    }
+
     private OrderSummary orderSummary() {
         return OrderSummary
             .builder()
