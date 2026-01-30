@@ -1411,10 +1411,23 @@ class CaseworkerOfflineDocumentVerifiedTest {
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.aboutToSubmit(caseDetails, caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).contains(NO_REQUEST_FOR_INFORMATION_ERROR);
+    }
+
+    @Test
+    void shouldNotValidateUnlessRequestForInformationResponseSelected() {
+        CaseData caseData = caseData();
+        caseData.getDocuments().setTypeOfDocumentAttached(CO_D84);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getData()).isEqualTo(caseData);
     }
 
     @Test
@@ -1424,7 +1437,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.aboutToSubmit(caseDetails, caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.midEvent(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).contains(NO_REQUEST_FOR_INFORMATION_POST_ISSUE_ERROR);
