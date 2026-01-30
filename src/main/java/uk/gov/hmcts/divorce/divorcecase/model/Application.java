@@ -604,13 +604,15 @@ public class Application {
         label = "Caseworker reason for withdrawal",
         typeOverride = FixedRadioList,
         typeParameterOverride = "WithdrawApplicationReasonType",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private WithdrawApplicationReasonType cwWithdrawApplicationReason;
 
     @CCD(
         label = "Details of reason for withdrawal",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private String cwWithdrawApplicationDetails;
 
