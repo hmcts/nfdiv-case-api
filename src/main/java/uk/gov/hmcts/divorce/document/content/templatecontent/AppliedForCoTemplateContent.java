@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
 import java.time.Clock;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,10 +27,11 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 @Slf4j
 public class AppliedForCoTemplateContent implements TemplateContent {
 
-    private final Clock clock;
     private static final String DATE_D84_RECEIVED = "dateD84Received";
     private static final String GRANTED_DATE = "grantedDate";
 
+    private final Clock clock;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     @Override
     public List<String> getSupportedTemplates() {
@@ -41,7 +42,8 @@ public class AppliedForCoTemplateContent implements TemplateContent {
     public Map<String, Object> getTemplateContent(final CaseData caseData,
                                                 final Long caseId,
                                                 final Applicant applicant) {
-        final Map<String, Object> templateContent = new HashMap<>();
+        final Map<String, Object> templateContent = docmosisCommonContent
+            .getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
 
         templateContent.put(CASE_REFERENCE, formatId(caseId));
         templateContent.put(NAME, join(" ", applicant.getFirstName(), applicant.getLastName()));
