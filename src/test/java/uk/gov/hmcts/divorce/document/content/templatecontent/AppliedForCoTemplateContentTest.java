@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -36,6 +37,9 @@ class AppliedForCoTemplateContentTest {
 
     private static final String DATE_D84_RECEIVED = "dateD84Received";
     private static final String GRANTED_DATE = "grantedDate";
+
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
 
     @Mock
     private Clock clock;
