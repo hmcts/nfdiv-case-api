@@ -216,6 +216,8 @@ public class CommonContent {
         final Applicant respondent = caseData.getApplicant2();
 
         templateVars.put(APPLICANT_NAME, join(" ", applicant1.getFirstName(), applicant1.getLastName()));
+        templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
+        templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(RESPONDENT_NAME, join(" ", respondent.getFirstName(), respondent.getLastName()));
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
         templateVars.put(COURT_EMAIL,
