@@ -24,8 +24,8 @@ public class SystemCorrectTtl implements CCDConfig<CaseData, State, UserRole> {
         new PageBuilder(configBuilder
             .event(SYSTEM_CORRECT_TTL)
             .forAllStates()
-            .name("Correct case state and TTL")
-            .description("Correct case state and TTL")
+            .name("Correct case TTL")
+            .description("Correct case TTL")
             .ttlIncrement(36524)
             .grant(CREATE_READ_UPDATE, TTL_PROFILE));
     }
