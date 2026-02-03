@@ -53,8 +53,6 @@ public class ConditionalOrderReminderTemplateContentIT {
 
     private static final String HMCTS_LOGO_TEXT = "[userImage:hmcts_logo_nfd_en.png]";
     private static final String FAMILY_COURT_LOGO_TEXT = "[userImage:family_court_logo_nfd_en.png]";
-    private static final String HMCTS_LOGO_TEXT_CY = "[userImage:hmcts_logo_nfd_cy.png]";
-    private static final String FAMILY_COURT_LOGO_TEXT_CY = "[userImage:family_court_logo_nfd_cy.png]";
 
     @Autowired
     private ConditionalOrderReminderTemplateContent conditionalOrderReminderTemplateContent;
