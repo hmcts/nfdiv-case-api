@@ -107,8 +107,6 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
         final Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, id, applicant, partner);
 
-        //Populate variables in templateVars depending on whether notification
-        //is to be sent to the applicant or the respondent.
         if (YesOrNo.YES.equals(applicant.getFinancialOrder())) {
             templateVars.put(FINANCIAL_ORDER_REQUESTED,YES);
             templateVars.put(FINANCIAL_ORDER_NOT_REQUESTED,NO);
@@ -117,18 +115,16 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
             templateVars.put(FINANCIAL_ORDER_NOT_REQUESTED,YES);
         }
 
-        //If Applicant or Joint ApplicationType, then populate fees in templateVars
-        if (isApplicant || !caseData.getApplicationType().isSole()) {
-            String financialOrderFees = formatAmount(paymentService.getServiceCost(SERVICE_OTHER,
-                                                                                   EVENT_MISC,
-                                                                                   KEYWORD_FINANCIAL_ORDER_NOTICE));
-            templateVars.put(FEES_FINANCIAL_ORDER, financialOrderFees);
+        String financialOrderFees = formatAmount(paymentService.getServiceCost(SERVICE_OTHER,
+            EVENT_MISC,
+            KEYWORD_FINANCIAL_ORDER_NOTICE));
+        templateVars.put(FEES_FINANCIAL_ORDER, financialOrderFees);
 
-            String consentOrderFees = formatAmount(paymentService.getServiceCost(SERVICE_OTHER,
-                                                                                 EVENT_GENERAL,
-                                                                                 KEYWORD_CONSENT_ORDER));
-            templateVars.put(FEES_CONSENT_ORDER, consentOrderFees);
-        }
+        String consentOrderFees = formatAmount(paymentService.getServiceCost(SERVICE_OTHER,
+            EVENT_GENERAL,
+            KEYWORD_CONSENT_ORDER));
+        templateVars.put(FEES_CONSENT_ORDER, consentOrderFees);
+
         return templateVars;
     }
 }
