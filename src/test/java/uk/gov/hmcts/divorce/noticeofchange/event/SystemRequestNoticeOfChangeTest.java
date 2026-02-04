@@ -50,7 +50,7 @@ class SystemRequestNoticeOfChangeTest {
     private SystemRequestNoticeOfChange systemRequestNoticeOfChange;
 
     @Test
-    public void configure() {
+    void configure() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         systemRequestNoticeOfChange.configure(configBuilder);
@@ -61,7 +61,7 @@ class SystemRequestNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldReturnValidationErrorForJSCases() {
+    void shouldReturnValidationErrorForJSCases() {
         final var details = new CaseDetails<CaseData, State>();
         CaseData data = caseData();
         data.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
@@ -76,7 +76,7 @@ class SystemRequestNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldReturnValidationErrorForJointCaseWithApp1Offline() {
+    void shouldReturnValidationErrorForJointCaseWithApp1Offline() {
         final var details = new CaseDetails<CaseData, State>();
         CaseData data = caseData();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
@@ -92,7 +92,7 @@ class SystemRequestNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldReturnValidationErrorForJointCaseWithApp2Offline() {
+    void shouldReturnValidationErrorForJointCaseWithApp2Offline() {
         final var details = new CaseDetails<CaseData, State>();
         CaseData data = caseData();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
@@ -108,7 +108,7 @@ class SystemRequestNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldNotReturnValidationErrorWhenCaseIsSuitableForNoc() {
+    void shouldNotReturnValidationErrorWhenCaseIsSuitableForNoc() {
         final var details = new CaseDetails<CaseData, State>();
         CaseData data = caseData();
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
@@ -121,7 +121,7 @@ class SystemRequestNoticeOfChangeTest {
     }
 
     @Test
-    public void shouldCheckNoticeOfChangeApprovalByDelegatingToAssignCaseAccessClient() {
+    void shouldCheckNoticeOfChangeApprovalByDelegatingToAssignCaseAccessClient() {
         final var details = new CaseDetails<CaseData, State>();
         final var beforeDetails = new CaseDetails<CaseData, State>();
 

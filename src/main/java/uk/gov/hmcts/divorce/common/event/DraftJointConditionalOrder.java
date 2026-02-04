@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -41,18 +41,16 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class DraftJointConditionalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String DRAFT_JOINT_CONDITIONAL_ORDER = "draft-joint-conditional-order";
 
-    @Autowired
-    private AddMiniApplicationLink addMiniApplicationLink;
+    private final AddMiniApplicationLink addMiniApplicationLink;
 
-    @Autowired
-    private ProgressDraftConditionalOrderState progressDraftConditionalOrderState;
+    private final ProgressDraftConditionalOrderState progressDraftConditionalOrderState;
 
-    @Autowired
-    private SetLatestBailiffApplicationStatus setLatestBailiffApplicationStatus;
+    private final SetLatestBailiffApplicationStatus setLatestBailiffApplicationStatus;
 
     private final List<CcdPageConfiguration> pages = asList(
         new ConditionalOrderReviewAoSApplicant2(),

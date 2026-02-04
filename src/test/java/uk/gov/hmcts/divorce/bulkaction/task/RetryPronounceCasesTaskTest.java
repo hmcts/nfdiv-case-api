@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetailsListValue;
 
 @ExtendWith(MockitoExtension.class)
-public class RetryPronounceCasesTaskTest {
+class RetryPronounceCasesTaskTest {
 
     @Mock
     private PronounceCasesTask pronounceCasesTask;

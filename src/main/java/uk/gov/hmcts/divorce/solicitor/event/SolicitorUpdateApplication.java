@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -37,15 +38,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_UPDATE = "solicitor-update-application";
 
-    @Autowired
-    private SolAboutTheSolicitor solAboutTheSolicitor;
+    private final SolAboutTheSolicitor solAboutTheSolicitor;
 
-    @Autowired
-    private SolicitorUpdateApplicationService solicitorUpdateApplicationService;
+    private final SolicitorUpdateApplicationService solicitorUpdateApplicationService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -68,6 +68,19 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
         pages.forEach(page -> page.addTo(pageBuilder));
     }
 
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("Solicitor update application about to start callback invoked for Case Id: {}", details.getId());
+
+        CaseData data = details.getData();
+
+        setContactDetails(data.getApplicant1());
+        setContactDetails(data.getApplicant2());
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
+    }
+
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
 
@@ -86,6 +99,12 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
             .build();
     }
 
+    private void setContactDetails(Applicant applicant) {
+        applicant.setNonConfidentialAddress(applicant.getAddress());
+        applicant.setNonConfidentialEmail(applicant.getEmail());
+        applicant.setNonConfidentialPhone(applicant.getPhoneNumber());
+    }
+
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         return new PageBuilder(configBuilder
@@ -95,6 +114,8 @@ public class SolicitorUpdateApplication implements CCDConfig<CaseData, State, Us
             .description("Amend divorce application")
             .showSummary()
             .showEventNotes()
+            .ttlIncrement(180)
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR));
     }

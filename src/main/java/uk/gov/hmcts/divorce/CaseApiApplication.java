@@ -11,11 +11,12 @@ import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import uk.gov.hmcts.divorce.document.DocAssemblyClient;
 import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
-import uk.gov.hmcts.divorce.payment.FeesAndPaymentsClient;
-import uk.gov.hmcts.divorce.payment.PaymentClient;
-import uk.gov.hmcts.divorce.payment.PaymentPbaClient;
+import uk.gov.hmcts.divorce.payment.client.FeesAndPaymentsClient;
+import uk.gov.hmcts.divorce.payment.client.PaymentClient;
+import uk.gov.hmcts.divorce.payment.client.PaymentPbaClient;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaRefDataClient;
+import uk.gov.hmcts.divorce.systemupdate.service.CoreCaseDataApiWithStateModifiedDate;
 import uk.gov.hmcts.divorce.systemupdate.service.ScheduledTaskRunner;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
@@ -29,7 +30,7 @@ import java.util.TimeZone;
 
 @SpringBootApplication(
     scanBasePackages = {"uk.gov.hmcts.ccd.sdk", "uk.gov.hmcts.divorce", "uk.gov.hmcts.reform.idam.client",
-        "uk.gov.hmcts.reform.sendletter", "uk.gov.hmcts.reform.ccd.document.am.feign"}
+        "uk.gov.hmcts.reform.sendletter", "uk.gov.hmcts.reform.ccd.document.am.feign","uk.gov.hmcts.divorce.idam"}
 )
 @EnableFeignClients(
     clients = {
@@ -40,6 +41,7 @@ import java.util.TimeZone;
         FeesAndPaymentsClient.class,
         DocAssemblyClient.class,
         CoreCaseDataApi.class,
+        CoreCaseDataApiWithStateModifiedDate.class,
         CaseAssignmentApi.class,
         CaseDocumentClientApi.class,
         OrganisationClient.class,
@@ -65,6 +67,8 @@ public class CaseApiApplication implements CommandLineRunner {
         if (System.getenv("TASK_NAME") != null) {
             instance.close();
         }
+
+
     }
 
     @Override

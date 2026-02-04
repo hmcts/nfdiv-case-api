@@ -8,9 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.caseworker.service.notification.GeneralEmailNotification;
@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 
@@ -39,12 +40,18 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_COURT_EMAIL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
+import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_URL;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_OTHER_PARTY;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_PETITIONER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_PETITIONER_SOLICITOR;
@@ -88,13 +95,16 @@ public class CaseworkerGeneralEmailIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
+    private CommonContent commonContent;
+
+    @MockitoBean
     private WebMvcConfig webMvcConfig;
 
-    @MockBean
+    @MockitoBean
     private NotificationService notificationService;
 
-    @MockBean
+    @MockitoBean
     private EmailTemplatesConfig emailTemplatesConfig;
 
     @BeforeAll
@@ -107,9 +117,15 @@ public class CaseworkerGeneralEmailIT {
         IdamWireMock.stopAndReset();
     }
 
+    private static final String SMART_SURVEY_DO_NOT_REPLY = "link" + System.lineSeparator() + System.lineSeparator()
+        + "##This is an automated message, do not reply to this email.";
+    private static final String SMART_SURVEY_DO_NOT_REPLY_CY = "link" + System.lineSeparator() + System.lineSeparator()
+        + "##Neges awtomataidd yw hon, peidiwch ag ymateb i’r e-bost hwn.";
+
     @Test
     void shouldSendEmailNotificationToApplicantWhenGeneralEmailPartyIsPetitionerAndIsNotSolicitorRepresented() throws Exception {
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com"));
+        when(emailTemplatesConfig.getTemplateVars())
+                .thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com", SMART_SURVEY, "link"));
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
 
         final var caseData = caseData();
@@ -130,13 +146,16 @@ public class CaseworkerGeneralEmailIT {
             .andExpect(
                 status().isOk());
 
-        Map<String, String> templateVars = new HashMap<>();
+        Map<String, String> templateVars = defaultTemplateVars();
         templateVars.put(GENERAL_EMAIL_DETAILS, "Test Body");
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         templateVars.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, "null null");
         templateVars.put(COURT_EMAIL, "divorce.court@email.com");
+        templateVars.put(SMART_SURVEY, SMART_SURVEY_DO_NOT_REPLY);
+        templateVars.put(WEBFORM_URL, null);
+        templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 
@@ -151,7 +170,8 @@ public class CaseworkerGeneralEmailIT {
 
     @Test
     void shouldSendEmailNotificationToApplicantSolicitorWhenGeneralEmailPartyIsPetitionerAndIsSolicitorRepresented() throws Exception {
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com"));
+        when(emailTemplatesConfig.getTemplateVars())
+            .thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com", SMART_SURVEY, "link"));
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
 
         final var caseData = caseData();
@@ -176,7 +196,7 @@ public class CaseworkerGeneralEmailIT {
             .andExpect(
                 status().isOk());
 
-        Map<String, String> templateVars = new HashMap<>();
+        Map<String, String> templateVars = defaultTemplateVars();
         templateVars.put(GENERAL_EMAIL_DETAILS, "Test Body");
         templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
@@ -184,6 +204,9 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
         templateVars.put(COURT_EMAIL, "divorce.court@email.com");
+        templateVars.put(SMART_SURVEY, SMART_SURVEY_DO_NOT_REPLY);
+        templateVars.put(WEBFORM_URL, null);
+        templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 
@@ -198,7 +221,8 @@ public class CaseworkerGeneralEmailIT {
 
     @Test
     void shouldSendEmailNotificationToRespondentWhenGeneralEmailPartyIsRespondentAndIsNotSolicitorRepresented() throws Exception {
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com"));
+        when(emailTemplatesConfig.getTemplateVars())
+            .thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com", SMART_SURVEY, "link"));
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         final var caseData = caseData();
         final var applicant2 = getApplicant();
@@ -218,13 +242,16 @@ public class CaseworkerGeneralEmailIT {
             .andExpect(
                 status().isOk());
 
-        Map<String, String> templateVars = new HashMap<>();
+        Map<String, String> templateVars = defaultTemplateVars();
         templateVars.put(GENERAL_EMAIL_DETAILS, "Test Body");
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         templateVars.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         templateVars.put(COURT_EMAIL, "divorce.court@email.com");
+        templateVars.put(SMART_SURVEY, SMART_SURVEY_DO_NOT_REPLY);
+        templateVars.put(WEBFORM_URL, null);
+        templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 
@@ -239,7 +266,8 @@ public class CaseworkerGeneralEmailIT {
 
     @Test
     void shouldSendEmailNotificationToRespondentSolicitorWhenGeneralEmailPartyIsRespondentAndIsSolicitorRepresented() throws Exception {
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com"));
+        when(emailTemplatesConfig.getTemplateVars())
+            .thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com", SMART_SURVEY, "link"));
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
 
         final var caseData = caseData();
@@ -265,7 +293,7 @@ public class CaseworkerGeneralEmailIT {
             .andExpect(
                 status().isOk());
 
-        Map<String, String> templateVars = new HashMap<>();
+        Map<String, String> templateVars = defaultTemplateVars();
         templateVars.put(GENERAL_EMAIL_DETAILS, "Test Body");
         templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
@@ -273,6 +301,9 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
         templateVars.put(COURT_EMAIL, "divorce.court@email.com");
+        templateVars.put(SMART_SURVEY, SMART_SURVEY_DO_NOT_REPLY);
+        templateVars.put(WEBFORM_URL, null);
+        templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 
@@ -287,7 +318,8 @@ public class CaseworkerGeneralEmailIT {
 
     @Test
     void shouldSendEmailNotificationToOtherPartyWhenGeneralEmailPartyIsOther() throws Exception {
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com"));
+        when(emailTemplatesConfig.getTemplateVars())
+            .thenReturn(Map.of(DIVORCE_COURT_EMAIL, "divorce.court@email.com", SMART_SURVEY, "link"));
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         final var caseData = caseData();
         caseData.setApplicant1(Applicant.builder().firstName(TEST_FIRST_NAME).lastName(TEST_LAST_NAME).build());
@@ -307,13 +339,16 @@ public class CaseworkerGeneralEmailIT {
             .andExpect(
                 status().isOk());
 
-        Map<String, String> templateVars = new HashMap<>();
+        Map<String, String> templateVars = defaultTemplateVars();
         templateVars.put(GENERAL_EMAIL_DETAILS, "Test Body");
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, "otherparty");
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         templateVars.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
         templateVars.put(RESPONDENT_NAME, APPLICANT_2_FIRST_NAME + " " + APPLICANT_2_LAST_NAME);
         templateVars.put(COURT_EMAIL, "divorce.court@email.com");
+        templateVars.put(SMART_SURVEY, SMART_SURVEY_DO_NOT_REPLY);
+        templateVars.put(WEBFORM_URL, null);
+        templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 
@@ -346,6 +381,13 @@ public class CaseworkerGeneralEmailIT {
         }
 
         return generalEmail;
+    }
+
+    Map<String, String> defaultTemplateVars() {
+        return new HashMap<>(Map.of(
+            IS_DIVORCE, CommonContent.YES,
+            IS_DISSOLUTION, CommonContent.NO
+        ));
     }
 
     Map<String, Object> populateAttachmentVars(Map<String, String> templateVars) {

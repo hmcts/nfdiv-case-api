@@ -100,29 +100,6 @@ class CaseworkerResponseToServiceApplicationTest {
     }
 
     @Test
-    void shouldMoveStateToAwaitingBailiffReferralWhenBailiff() {
-
-        CaseData caseData = CaseData.builder()
-            .alternativeService(AlternativeService
-                .builder()
-                .alternativeServiceType(BAILIFF)
-                .build())
-            .build();
-
-        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
-        updatedCaseDetails.setData(caseData);
-        updatedCaseDetails.setId(TEST_CASE_ID);
-        updatedCaseDetails.setCreatedDate(LOCAL_DATE_TIME);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerResponseToServiceApplication.aboutToSubmit(
-            updatedCaseDetails,
-            CaseDetails.<CaseData, State>builder().build()
-        );
-
-        assertThat(response.getState()).isEqualTo(State.AwaitingBailiffReferral);
-    }
-
-    @Test
     void shouldNotReturnValidationErrorsWhenAlternativeServiceTypeListIsPopulated() {
 
         List<ListValue<AlternativeServiceOutcome>> alternativeServiceOutcomes =
@@ -161,7 +138,7 @@ class CaseworkerResponseToServiceApplicationTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerResponseToServiceApplication.aboutToStart(updatedCaseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(ALTERNATIVE_SERVICE_TYPE_NULL_ERROR);
     }
 
@@ -181,7 +158,7 @@ class CaseworkerResponseToServiceApplicationTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerResponseToServiceApplication.aboutToStart(updatedCaseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(ALTERNATIVE_SERVICE_TYPE_NULL_ERROR);
     }
 
@@ -205,7 +182,7 @@ class CaseworkerResponseToServiceApplicationTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerResponseToServiceApplication.aboutToStart(updatedCaseDetails);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo(ALTERNATIVE_SERVICE_TYPE_NULL_ERROR);
     }
 
@@ -273,7 +250,7 @@ class CaseworkerResponseToServiceApplicationTest {
             CaseDetails.<CaseData, State>builder().build()
         );
 
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().size()).isEqualTo(2);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(2);
     }
 
     private List<ListValue<DivorceDocument>> getListOfDivorceDocument(int size) {

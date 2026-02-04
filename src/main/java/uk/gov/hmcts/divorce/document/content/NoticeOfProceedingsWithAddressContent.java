@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -13,10 +13,10 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class NoticeOfProceedingsWithAddressContent {
 
-    @Autowired
-    private NoticeOfProceedingContent noticeOfProceedingContent;
+    private final NoticeOfProceedingContent noticeOfProceedingContent;
 
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference,

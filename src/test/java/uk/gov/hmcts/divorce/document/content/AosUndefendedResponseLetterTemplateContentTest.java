@@ -36,7 +36,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 
 @ExtendWith(MockitoExtension.class)
-public class AosUndefendedResponseLetterTemplateContentTest {
+class AosUndefendedResponseLetterTemplateContentTest {
 
     @Mock
     private CommonContent commonContent;
@@ -54,13 +54,13 @@ public class AosUndefendedResponseLetterTemplateContentTest {
     private static final LocalDate DATE_TO_WAIT_UNTIL_APPLY_FOR_CO = LocalDate.of(2022, 6, 23);
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         when(holdingPeriodService.getDueDateFor(ISSUE_DATE)).thenReturn(DATE_TO_WAIT_UNTIL_APPLY_FOR_CO);
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(any())).thenReturn(getBasicContent());
     }
 
     @Test
-    public void shouldSuccessfullyApplyDivorceContent() {
+    void shouldSuccessfullyApplyDivorceContent() {
 
         CaseData caseData = buildCaseData(DIVORCE);
 
@@ -84,7 +84,7 @@ public class AosUndefendedResponseLetterTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDissolutionContent() {
+    void shouldSuccessfullyApplyDissolutionContent() {
         CaseData caseData = buildCaseData(DISSOLUTION);
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("civil partner");
@@ -107,7 +107,7 @@ public class AosUndefendedResponseLetterTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDivorceContentWithJSApp1NoSol() {
+    void shouldSuccessfullyApplyDivorceContentWithJSApp1NoSol() {
 
         CaseData caseData = buildCaseDataWithJSAppSol(DIVORCE, false, false);
 
@@ -115,7 +115,7 @@ public class AosUndefendedResponseLetterTemplateContentTest {
 
         Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
-        assertThat(result.size()).isEqualTo(18);
+        assertThat(result).hasSize(18);
         assertThat(result).contains(
             entry("basicKey", "basicValue"),
             entry("caseReference", formatId(TEST_CASE_ID)),
@@ -139,7 +139,7 @@ public class AosUndefendedResponseLetterTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDivorceContentWithJSApp1Sol() {
+    void shouldSuccessfullyApplyDivorceContentWithJSApp1Sol() {
 
         CaseData caseData = buildCaseDataWithJSAppSol(DIVORCE, true, false);
 
@@ -147,7 +147,7 @@ public class AosUndefendedResponseLetterTemplateContentTest {
 
         Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
-        assertThat(result.size()).isEqualTo(18);
+        assertThat(result).hasSize(18);
         assertThat(result).contains(
             entry("basicKey", "basicValue"),
             entry("caseReference", formatId(TEST_CASE_ID)),
@@ -171,7 +171,7 @@ public class AosUndefendedResponseLetterTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDivorceContentWithJSApp1And2Sol() {
+    void shouldSuccessfullyApplyDivorceContentWithJSApp1And2Sol() {
 
         CaseData caseData = buildCaseDataWithJSAppSol(DIVORCE, true, true);
 
@@ -179,7 +179,7 @@ public class AosUndefendedResponseLetterTemplateContentTest {
 
         Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
-        assertThat(result.size()).isEqualTo(18);
+        assertThat(result).hasSize(18);
         assertThat(result).contains(
             entry("basicKey", "basicValue"),
             entry("caseReference", formatId(TEST_CASE_ID)),

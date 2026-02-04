@@ -41,7 +41,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant;
 
 @ExtendWith(MockitoExtension.class)
-public class RespondentSolicitorAosInvitationTemplateContentTest {
+class RespondentSolicitorAosInvitationTemplateContentTest {
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
@@ -50,7 +50,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
     private RespondentSolicitorAosInvitationTemplateContent respondentSolicitorAosInvitationTemplateContent;
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForDivorce() {
+    void shouldSuccessfullyApplyContentFromCaseDataForDivorce() {
         CaseData caseData = caseData();
         caseData.getApplicant1().setFinancialOrder(NO);
         caseData.getApplicant2().setSolicitorRepresented(YES);
@@ -78,7 +78,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForDissolution() {
+    void shouldSuccessfullyApplyContentFromCaseDataForDissolution() {
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.getApplicant1().setFinancialOrder(NO);
@@ -107,7 +107,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
     }
 
     @Test
-    public void shouldConvertMarriageDateToCorrectFormat() {
+    void shouldConvertMarriageDateToCorrectFormat() {
         CaseData caseData = caseData();
         MarriageDetails marriageDetails = new MarriageDetails();
         marriageDetails.setDate(LocalDate.of(2019, 06, 4));
@@ -129,7 +129,7 @@ public class RespondentSolicitorAosInvitationTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyApplicant2PostalAddressIfApplicant2AddressNotNull() {
+    void shouldSuccessfullyApplyApplicant2PostalAddressIfApplicant2AddressNotNull() {
         AddressGlobalUK address = AddressGlobalUK.builder()
             .addressLine1("221b")
             .addressLine2("Baker Street")

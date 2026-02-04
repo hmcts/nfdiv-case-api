@@ -6,7 +6,9 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,6 +48,26 @@ class SetServiceTypeTest {
 
         assertThat(response.getData().getApplicant2()).isEqualTo(expectedCaseData.getApplicant2());
         assertThat(response.getData().getApplication()).isEqualTo(expectedCaseData.getApplication());
+    }
+
+    @Test
+    void shouldSetServiceTypeToPersonalServiceIfApplicant2RepresentedAndApplicant2SolicitorIsOverseas() {
+
+        final CaseData caseData = caseData();
+        caseData.getApplicant2().setSolicitorRepresented(YES);
+        caseData.getApplicant2().setSolicitor(
+            Solicitor.builder().addressOverseas(YesOrNo.YES).build()
+        );
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("France").build());
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        final CaseDetails<CaseData, State> response = setServiceType.apply(caseDetails);
+
+        assertThat(response.getData().getApplication().getServiceMethod()).isEqualTo(PERSONAL_SERVICE);
     }
 
     @Test

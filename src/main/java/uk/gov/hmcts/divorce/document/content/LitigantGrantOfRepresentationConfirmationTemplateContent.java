@@ -48,8 +48,7 @@ public class LitigantGrantOfRepresentationConfirmationTemplateContent implements
         templateContent.put(CASE_REFERENCE, formatId(caseId));
         templateContent.put(RECIPIENT_NAME,  applicant.getFullName());
         templateContent.put(RECIPIENT_ADDRESS,  AddressUtil.getPostalAddress(applicant.getAddress()));
-        templateContent.put(SOLICITOR_ORGANISATION_NAME,  applicant.getSolicitor()
-                .getOrganisationPolicy().getOrganisation().getOrganisationName());
+        templateContent.put(SOLICITOR_ORGANISATION_NAME,  applicant.getSolicitor().getPreferredFirmName());
 
         return templateContent;
     }

@@ -49,9 +49,12 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FAMILY_COURT_LOGO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HMCTS_LOGO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
@@ -114,7 +117,9 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.HA
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_COURT_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_OFFLINE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_PERSONAL_SERVICE;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_REISSUED_OFFLINE_AS_AOS;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_BASED_IN_UK;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_EMAIL_PRESENT;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.MARRIAGE_OR_CIVIL_PARTNER;
@@ -149,6 +154,10 @@ public class NoticeOfProceedingContentIT {
 
     private static final String APPLICANT_2_FULL_NAME_TXT = "applicant2FirstName applicant2LastName";
     private static final String APPLICANT_1_FULL_NAME_TXT = "test_first_name test_middle_name test_last_name";
+    private static final String HMCTS_LOGO_TEXT = "[userImage:hmcts_logo_nfd_en.png]";
+    private static final String FAMILY_COURT_LOGO_TEXT = "[userImage:family_court_logo_nfd_en.png]";
+    private static final String HMCTS_LOGO_TEXT_CY = "[userImage:hmcts_logo_nfd_cy.png]";
+    private static final String FAMILY_COURT_LOGO_TEXT_CY = "[userImage:family_court_logo_nfd_cy.png]";
 
     @Autowired
     private NoticeOfProceedingContent noticeOfProceedingContent;
@@ -236,6 +245,10 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
+        expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -295,12 +308,12 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE, DIVORCE_SERVICE);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, THE_DIVORCE_SERVICE);
         expectedEntries.put(SUBMISSION_RESPONSE_DATE, "6 November 2021");
-        expectedEntries.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, DIVORCE);
+        expectedEntries.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, DIVORCE_CY);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_PAPERS, DIVORCE_PAPERS);
         expectedEntries.put(SERVE_PAPERS_BEFORE_DATE, "16 July 2021");
-        expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
+        expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE_CY);
         expectedEntries.put(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO);
-        expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
+        expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE_CY);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(APPLICANT_1_ADDRESS, "line1\nline2\nUK");
         expectedEntries.put(APPLICANT_2_ADDRESS, "10 the street\nthe town\nUK");
@@ -326,6 +339,10 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
         expectedEntries.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
+        expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT_CY);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT_CY);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -424,6 +441,10 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_2_IS_REPRESENTED, true);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
+        expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -515,7 +536,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(ACCESS_CODE, "ACCESS_CODE");
         expectedEntries.put(URL_TO_LINK_CASE, "https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent");
         expectedEntries.put(CAN_SERVE_BY_EMAIL, false);
-        expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, false);
+        expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
         expectedEntries.put(APPLICANT_2_ADDRESS, "line1\nline2\nUK\nbt31 1re");
         expectedEntries.put(IS_DIVORCE, true);
@@ -527,6 +548,10 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
+        expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -618,6 +643,10 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
+        expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -709,6 +738,10 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
+        expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT_CY);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT_CY);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -818,6 +851,10 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_2_IS_REPRESENTED, true);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
+        expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -932,6 +969,10 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
+        expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -1035,6 +1076,10 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_2_IS_REPRESENTED, true);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
+        expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
+        expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,

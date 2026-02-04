@@ -65,12 +65,12 @@ class ConditionalOrderRefusedForClarificationContentTest {
     private ConditionalOrderRefusedForClarificationContent conditionalOrderRefusedForClarificationContent;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         setMockClock(clock, LocalDate.of(2022, 3, 16));
     }
 
     @Test
-    public void shouldReturnEnglishTemplateContentForEnglish() {
+    void shouldReturnEnglishTemplateContentForEnglish() {
 
         CaseData caseData = buildCaseData();
 

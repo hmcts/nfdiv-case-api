@@ -25,11 +25,9 @@ public class SetServiceType implements CaseTask {
         log.info("Setting service method for case id {}", details.getId());
 
         var isSole = caseData.getApplicationType().isSole();
-        var justCitizenCase = !applicant1.isRepresented() && !applicant2.isRepresented();
-        var applicant2Overseas = applicant2.isBasedOverseas();
+        var applicant1NotRepresented = !applicant1.isRepresented();
 
-        // TODO cater for overseas solicitors
-        if (isSole && justCitizenCase && applicant2Overseas) {
+        if (isSole && applicant1NotRepresented && applicant2.mustBeServedOverseas()) {
             caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
         } else if (caseData.getApplication().getServiceMethod() == null) {
             caseData.getApplication().setServiceMethod(COURT_SERVICE);

@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
@@ -22,13 +22,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICI
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SolAboutTheSolicitor implements CcdPageConfiguration {
 
-    @Autowired
-    private SolicitorCreateApplicationService solicitorCreateApplicationService;
+    private final SolicitorCreateApplicationService solicitorCreateApplicationService;
 
-    @Autowired
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {

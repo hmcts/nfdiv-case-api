@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.tuple;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createExceptionRecordConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getSearchResultFields;
 
-public class ExceptionRecordSearchResultFieldsTest {
+class ExceptionRecordSearchResultFieldsTest {
     private ExceptionRecordSearchResultFields searchResultFields;
 
     @BeforeEach

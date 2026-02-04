@@ -16,18 +16,19 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class WithdrawCaseServiceTest {
+class WithdrawCaseServiceTest {
 
     @Mock
     private ApplicationWithdrawnNotification applicationWithdrawnNotification;
@@ -42,7 +43,7 @@ public class WithdrawCaseServiceTest {
     private WithdrawCaseService withdrawCaseService;
 
     @Test
-    public void shouldUnlinkApplicantsAndSendNotificationsToApplicant() {
+    void shouldUnlinkApplicantsAndSendNotificationsToApplicant() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         var caseData = validApplicant2CaseData();
         caseData.setCaseInvite(new CaseInvite(caseData.getCaseInvite().applicant2InviteEmailAddress(), "12345", "12"));
@@ -54,18 +55,20 @@ public class WithdrawCaseServiceTest {
         assertThat(caseDetails.getData().getCaseInvite().accessCode()).isNull();
         assertThat(caseDetails.getData().getCaseInvite().applicant2UserId()).isNull();
 
-        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
-            List.of(
+        verify(caseAccessService).removeUsersWithRole(
+            eq(TEST_CASE_ID),
+            eq(List.of(
                 CREATOR.getRole(),
-                APPLICANT_2.getRole()
-            )
-        ));
-        verify(notificationDispatcher).send(applicationWithdrawnNotification, caseData, TEST_CASE_ID);
+                APPLICANT_2.getRole(),
+                APPLICANT_1_SOLICITOR.getRole(),
+                APPLICANT_2_SOLICITOR.getRole()
+            )));
+        verify(notificationDispatcher).send(applicationWithdrawnNotification, caseDetails);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
     @Test
-    public void shouldRemoveSolicitorOrganisationPolicyForRepresentedApplicants() {
+    void shouldRemoveSolicitorOrganisationPolicyForRepresentedApplicants() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         var caseData = validApplicant2CaseData();
         caseData.setApplicant1(applicantRepresentedBySolicitor());
@@ -78,13 +81,15 @@ public class WithdrawCaseServiceTest {
         assertThat(caseDetails.getData().getApplicant1().getSolicitor().getOrganisationPolicy()).isNull();
         assertThat(caseDetails.getData().getApplicant2().getSolicitor().getOrganisationPolicy()).isNull();
 
-        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
-            List.of(
+        verify(caseAccessService).removeUsersWithRole(
+            eq(TEST_CASE_ID),
+            eq(List.of(
                 CREATOR.getRole(),
-                APPLICANT_2.getRole()
-            )
-        ));
-        verify(notificationDispatcher).send(applicationWithdrawnNotification, caseData, TEST_CASE_ID);
+                APPLICANT_2.getRole(),
+                APPLICANT_1_SOLICITOR.getRole(),
+                APPLICANT_2_SOLICITOR.getRole()
+        )));
+        verify(notificationDispatcher).send(applicationWithdrawnNotification, caseDetails);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 }

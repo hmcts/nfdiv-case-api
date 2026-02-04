@@ -31,7 +31,7 @@ class MarriageIrretrievablyBrokenForApplicant2Test {
     private MarriageIrretrievablyBrokenForApplicant2 marriageIrretrievablyBrokenForApplicant2Page;
 
     @Test
-    public void shouldPreventProgressIfMarriageNotBroken() {
+    void shouldPreventProgressIfMarriageNotBroken() {
         final CaseData caseData = caseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(NO);
 
@@ -56,7 +56,7 @@ class MarriageIrretrievablyBrokenForApplicant2Test {
     }
 
     @Test
-    public void shouldPreventProgressIfMarriageNotBrokenForBothApplicants() {
+    void shouldPreventProgressIfMarriageNotBrokenForBothApplicants() {
         final CaseData caseData = caseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(NO);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
@@ -79,7 +79,7 @@ class MarriageIrretrievablyBrokenForApplicant2Test {
         AboutToStartOrSubmitResponse<CaseData, State> actualResponse =
             marriageIrretrievablyBrokenForApplicant2Page.midEvent(details, details);
 
-        assertThat(actualResponse.getErrors().size()).isEqualTo(2);
+        assertThat(actualResponse.getErrors()).hasSize(2);
         assertThat(actualResponse.getErrors()).containsExactlyInAnyOrder(
             "To continue, applicant 1 must believe and declare that their marriage has irrevocably broken",
             "To continue, applicant 2 must believe and declare that their marriage has irrevocably broken");
@@ -87,7 +87,7 @@ class MarriageIrretrievablyBrokenForApplicant2Test {
     }
 
     @Test
-    public void shouldAllowProgressIfMarriageIsBroken() {
+    void shouldAllowProgressIfMarriageIsBroken() {
         final CaseData caseData = caseData();
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
 
@@ -110,7 +110,7 @@ class MarriageIrretrievablyBrokenForApplicant2Test {
     }
 
     @Test
-    public void shouldAllowProgressIfMarriageIsBrokenForBothApplicants() {
+    void shouldAllowProgressIfMarriageIsBrokenForBothApplicants() {
         final CaseData caseData = caseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);

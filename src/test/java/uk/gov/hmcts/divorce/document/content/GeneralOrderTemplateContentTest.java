@@ -58,12 +58,12 @@ class GeneralOrderTemplateContentTest {
     private GeneralOrderTemplateContent generalOrderTemplateContent;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         setMockClock(clock, LocalDate.of(2022, 3, 16));
     }
 
     @Test
-    public void shouldSuccessfullyApplySoleContentFromCaseDataForGeneratingGeneralOrderDocument() {
+    void shouldSuccessfullyApplySoleContentFromCaseDataForGeneratingGeneralOrderDocument() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setGeneralOrder(getGeneralOrder());

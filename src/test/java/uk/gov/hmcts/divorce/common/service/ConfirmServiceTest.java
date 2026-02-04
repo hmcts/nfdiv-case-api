@@ -29,13 +29,13 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.documentWithType;
 
 @ExtendWith(MockitoExtension.class)
-public class ConfirmServiceTest {
+class ConfirmServiceTest {
 
     @InjectMocks
     private ConfirmService confirmService;
 
     @Test
-    public void shouldAddValidationErrorWhenServiceProcessedByProcessServerAndNoDocumentsUploaded() {
+    void shouldAddValidationErrorWhenServiceProcessedByProcessServerAndNoDocumentsUploaded() {
         CaseData caseData = CaseData.builder()
             .application(Application.builder()
                 .solicitorService(SolicitorService.builder()
@@ -52,7 +52,7 @@ public class ConfirmServiceTest {
     }
 
     @Test
-    public void shouldNotAddValidationErrorWhenServiceProcessedByProcessServerAndDocumentsAreUploaded() {
+    void shouldNotAddValidationErrorWhenServiceProcessedByProcessServerAndDocumentsAreUploaded() {
         CaseData caseData = CaseData.builder()
             .application(Application.builder()
                 .solicitorService(SolicitorService.builder()
@@ -70,7 +70,7 @@ public class ConfirmServiceTest {
     }
 
     @Test
-    public void shouldNotAddValidationErrorWhenServiceNotProcessedByProcessServer() {
+    void shouldNotAddValidationErrorWhenServiceNotProcessedByProcessServer() {
         CaseData caseData = CaseData.builder()
             .application(Application.builder()
                 .solicitorService(SolicitorService.builder().build())
@@ -83,7 +83,7 @@ public class ConfirmServiceTest {
     }
 
     @Test
-    public void shouldReturnErrorResponseWhenThereAreValidationErrors() {
+    void shouldReturnErrorResponseWhenThereAreValidationErrors() {
         List<String> validationErrors = Lists.newArrayList(DOCUMENTS_NOT_UPLOADED_ERROR);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = confirmService.getErrorResponse(
@@ -94,7 +94,7 @@ public class ConfirmServiceTest {
     }
 
     @Test
-    public void shouldAddAnyConfirmServiceAttachmentsToDocumentsUploadedList() {
+    void shouldAddAnyConfirmServiceAttachmentsToDocumentsUploadedList() {
         final CaseData caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
@@ -129,7 +129,7 @@ public class ConfirmServiceTest {
     }
 
     @Test
-    public void shouldAddAnyConfirmServiceAttachmentsToDocumentsUploadedListWhenDocumentsUploadedIsNull() {
+    void shouldAddAnyConfirmServiceAttachmentsToDocumentsUploadedListWhenDocumentsUploadedIsNull() {
         final CaseData caseData = caseData();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);

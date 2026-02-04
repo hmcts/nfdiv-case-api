@@ -9,11 +9,11 @@
     "solPaymentHowToPay": "feePayByAccount",
     "alternativeServiceType": "deemed",
     "servicePaymentFeeOrderSummary": {
-      "PaymentTotal": "5800",
+      "PaymentTotal": "6000",
       "Fees": [
         {
           "value": {
-            "FeeAmount": "5800",
+            "FeeAmount": "6000",
             "FeeCode": "FEE0228",
             "FeeDescription": "Application (without notice)",
             "FeeVersion": "${json-unit.any-string}"

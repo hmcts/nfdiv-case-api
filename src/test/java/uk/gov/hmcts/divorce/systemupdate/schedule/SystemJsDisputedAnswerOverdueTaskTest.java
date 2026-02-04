@@ -35,8 +35,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.cloud.contract.spec.internal.HttpStatus.REQUEST_TIMEOUT;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAnswer;
-import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemJsDisputedAnswerOverdue.SYSTEM_JS_DISPUTED_ANSWER_OVERDUE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.AOS_RESPONSE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.AWAITING_JS_ANSWER_START_DATE;
@@ -72,8 +70,8 @@ class SystemJsDisputedAnswerOverdueTaskTest {
             .must(matchQuery(STATE, AwaitingAnswer))
             .must(
                 boolQuery()
-                    .should(matchQuery(String.format(DATA, SUPPLEMENTARY_CASE_TYPE), JUDICIAL_SEPARATION))
-                    .should(matchQuery(String.format(DATA, SUPPLEMENTARY_CASE_TYPE), SEPARATION))
+                    .should(matchQuery(String.format(DATA, SUPPLEMENTARY_CASE_TYPE), "judicialSeparation"))
+                    .should(matchQuery(String.format(DATA, SUPPLEMENTARY_CASE_TYPE), "separation"))
                     .minimumShouldMatch(1)
             )
             .must(matchQuery(String.format(DATA, AOS_RESPONSE), DISPUTE_DIVORCE.getType()))
@@ -91,7 +89,7 @@ class SystemJsDisputedAnswerOverdueTaskTest {
     }
 
     @Test
-    public void shouldSubmitEventForMatchingCase() {
+    void shouldSubmitEventForMatchingCase() {
         final CaseDetails caseDetails = mock(CaseDetails.class);
         when(ccdSearchService.searchForAllCasesWithQuery(query, systemUser, SERVICE_AUTHORIZATION, AwaitingAnswer))
             .thenReturn(List.of(caseDetails));
@@ -105,7 +103,7 @@ class SystemJsDisputedAnswerOverdueTaskTest {
     }
 
     @Test
-    public void shouldNotSubmitEventWhenNoCasesFound() {
+    void shouldNotSubmitEventWhenNoCasesFound() {
         when(ccdSearchService.searchForAllCasesWithQuery(query, systemUser, SERVICE_AUTHORIZATION, AwaitingAnswer))
             .thenReturn(List.of());
 

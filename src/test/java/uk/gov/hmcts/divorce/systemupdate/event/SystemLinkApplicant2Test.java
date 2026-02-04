@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseInviteApp1;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
@@ -29,7 +30,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
-public class SystemLinkApplicant2Test {
+class SystemLinkApplicant2Test {
 
     @Mock
     private CcdAccessService ccdAccessService;
@@ -70,6 +71,38 @@ public class SystemLinkApplicant2Test {
 
         assertThat(response.getData().getCaseInvite().accessCode()).isNull();
         assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YesOrNo.NO);
+        verify(ccdAccessService).linkRespondentToApplication(eq("auth header"), eq(TEST_CASE_ID), eq("Applicant2Id"));
+    }
+
+    @Test
+    void shouldIgnoreRequestDataRelatingToApplicant1CaseInvite() {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData());
+
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        beforeDetails.setId(TEST_CASE_ID);
+        beforeDetails.setData(caseData());
+
+        details.getData().setCaseInvite(
+            CaseInvite.builder()
+                .accessCode("D8BC9AQR")
+                .applicant2UserId("Applicant2Id")
+                .build());
+
+        CaseInviteApp1 app1BeforeCaseInvite = CaseInviteApp1.builder().accessCodeApplicant1("BEFORE").build();
+        CaseInviteApp1 app1AfterCaseInvite = CaseInviteApp1.builder().accessCodeApplicant1("AFTER").build();
+        beforeDetails.getData().setCaseInviteApp1(app1BeforeCaseInvite);
+        details.getData().setCaseInviteApp1(app1AfterCaseInvite);
+
+        when(httpServletRequest.getHeader(AUTHORIZATION))
+            .thenReturn("auth header");
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = systemLinkApplicant2.aboutToSubmit(details, beforeDetails);
+
+        assertThat(response.getData().getCaseInvite().accessCode()).isNull();
+        assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YesOrNo.NO);
+        assertThat(response.getData().getCaseInviteApp1()).isEqualTo(app1BeforeCaseInvite);
         verify(ccdAccessService).linkRespondentToApplication(eq("auth header"), eq(TEST_CASE_ID), eq("Applicant2Id"));
     }
 }

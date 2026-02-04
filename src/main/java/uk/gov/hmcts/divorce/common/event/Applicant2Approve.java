@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -37,21 +37,18 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class Applicant2Approve implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APPLICANT_2_APPROVE = "applicant2-approve";
 
-    @Autowired
-    private Applicant2ApprovedNotification applicant2ApprovedNotification;
+    private final Applicant2ApprovedNotification applicant2ApprovedNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final CaseDataDocumentService caseDataDocumentService;
 
-    @Autowired
-    private DraftApplicationTemplateContent draftApplicationTemplateContent;
+    private final DraftApplicationTemplateContent draftApplicationTemplateContent;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

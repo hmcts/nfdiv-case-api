@@ -42,7 +42,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class SystemMigrateBulkCasesTaskTest {
+class SystemMigrateBulkCasesTaskTest {
 
     @Mock
     private CcdUpdateService ccdUpdateService;

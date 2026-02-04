@@ -97,6 +97,47 @@ class NotificationServiceTest {
     }
 
     @Test
+    void shouldInvokeSendEmailWithStringWhenSendingEmailInEnglish() throws NotificationClientException {
+        String templateId = UUID.randomUUID().toString();
+
+        when(sendEmailResponse.getReference()).thenReturn(Optional.of(randomUUID().toString()));
+        when(sendEmailResponse.getNotificationId()).thenReturn(UUID.randomUUID());
+        when(emailTemplatesConfig.getTemplates()).thenReturn(
+            Map.of(
+                ENGLISH, Map.of(SAVE_SIGN_OUT.name(), templateId)
+            ));
+
+        when(notificationClient.sendEmail(
+            eq(templateId),
+            eq(EMAIL_ADDRESS),
+            isNull(),
+            anyString(),
+            any()
+        )).thenReturn(sendEmailResponse);
+
+        // Testing sendEmailWithString directly
+        notificationService.sendEmailWithString(
+            EMAIL_ADDRESS,
+            SAVE_SIGN_OUT,
+            null,
+            ENGLISH,
+            String.valueOf(TEST_CASE_ID)
+        );
+
+        verify(notificationClient).sendEmail(
+            eq(templateId),
+            eq(EMAIL_ADDRESS),
+            isNull(),
+            anyString(),
+            eq(replyToId));
+
+        verify(sendEmailResponse).getReference();
+        verify(sendEmailResponse).getNotificationId();
+
+        verifyNoMoreInteractions(notificationClient, sendEmailResponse);
+    }
+
+    @Test
     void shouldInvokeNotificationClientToSendEmailInWelsh() throws NotificationClientException {
         String templateId = UUID.randomUUID().toString();
 

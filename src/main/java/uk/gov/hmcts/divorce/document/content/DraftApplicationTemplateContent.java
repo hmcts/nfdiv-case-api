@@ -1,7 +1,8 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicantTemplateDataProvider;
@@ -56,13 +57,12 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class DraftApplicationTemplateContent {
 
-    @Autowired
-    private ApplicantTemplateDataProvider applicantTemplateDataProvider;
+    private final ApplicantTemplateDataProvider applicantTemplateDataProvider;
 
-    @Autowired
-    private ApplicationTemplateDataProvider applicationTemplateDataProvider;
+    private final ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
@@ -137,11 +137,9 @@ public class DraftApplicationTemplateContent {
             templateContent.put(RESPONDENT_SOLICITOR_EMAIL,
                 isNull(applicant2Solicitor.getEmail()) ? NOT_GIVEN : applicant2Solicitor.getEmail());
             templateContent.put(RESPONDENT_SOLICITOR_FIRM_NAME,
-                isNull(applicant2Solicitor.getOrganisationPolicy())
-                    ? NOT_GIVEN
-                    : applicant2Solicitor.getOrganisationPolicy().getOrganisation().getOrganisationName());
+                StringUtils.isEmpty(applicant2Solicitor.getPreferredFirmName()) ? NOT_GIVEN : applicant2Solicitor.getPreferredFirmName());
             templateContent.put(RESPONDENT_SOLICITOR_ADDRESS,
-                isNull(applicant2Solicitor.getAddress()) ? NOT_GIVEN : applicant2Solicitor.getAddress());
+                isNull(applicant2Solicitor.getAddress()) ? NOT_GIVEN : applicant2Solicitor.getFirmAndAddress());
         }
 
         return templateContent;

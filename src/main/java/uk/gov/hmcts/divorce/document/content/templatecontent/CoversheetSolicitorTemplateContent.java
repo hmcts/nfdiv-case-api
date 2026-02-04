@@ -37,7 +37,7 @@ public class CoversheetSolicitorTemplateContent implements TemplateContent {
         final Map<String, Object> templateContent = new HashMap<>();
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
-        templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
+        templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getFirmAndAddress());
         return templateContent;
     }
 

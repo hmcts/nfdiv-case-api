@@ -66,7 +66,7 @@ class CaseworkerRejectedTest {
     }
 
     @Test
-    public void shouldUnlinkApplicants() {
+    void shouldUnlinkApplicants() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         var caseData = validApplicant2CaseData();
         caseData.setCaseInvite(new CaseInvite(caseData.getCaseInvite().applicant2InviteEmailAddress(), "12345", "12"));
@@ -87,7 +87,7 @@ class CaseworkerRejectedTest {
     }
 
     @Test
-    public void shouldRemoveSolicitorOrganisationPolicyForRepresentedApplicants() {
+    void shouldRemoveSolicitorOrganisationPolicyForRepresentedApplicants() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         var caseData = validApplicant2CaseData();
         caseData.setApplicant1(applicantRepresentedBySolicitor());

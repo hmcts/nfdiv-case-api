@@ -55,7 +55,7 @@ class CaseworkerAddNoteTest {
     private CaseworkerAddNote caseworkerAddNote;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerAddNote.configure(configBuilder);
@@ -66,7 +66,7 @@ class CaseworkerAddNoteTest {
     }
 
     @Test
-    public void shouldSuccessfullyAddCaseNoteToCaseDataWhenThereAreNoExistingCaseNotes() {
+    void shouldSuccessfullyAddCaseNoteToCaseDataWhenThereAreNoExistingCaseNotes() {
         final CaseData caseData = caseData();
         caseData.setNote("This is a test note");
 
@@ -105,7 +105,7 @@ class CaseworkerAddNoteTest {
     }
 
     @Test
-    public void shouldSuccessfullyAddCaseNoteToStartOfCaseNotesListWhenThereIsExistingCaseNote() {
+    void shouldSuccessfullyAddCaseNoteToStartOfCaseNotesListWhenThereIsExistingCaseNote() {
         final CaseData caseData = caseData();
         caseData.setNote("This is a test note 2");
 

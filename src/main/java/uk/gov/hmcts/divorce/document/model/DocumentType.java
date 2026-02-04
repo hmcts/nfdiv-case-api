@@ -30,12 +30,19 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("appliedForCoLetter")
     APPLIED_FOR_CO_LETTER("Applied for Conditional Order Letter", true),
 
+    @JsonProperty("alternativeService")
+    @JsonAlias({"serviceAlternative"})
+    ALTERNATIVE_SERVICE("Alternative service", false),
+
     @JsonProperty("bailiffCertificateOfService")
     BAILIFF_CERTIFICATE_OF_SERVICE("Bailiff certificate of service", false),
 
     @JsonProperty("bailiffService")
     @JsonAlias({"serviceBaliff"})
     BAILIFF_SERVICE("Bailiff Service", false),
+
+    @JsonProperty("alternativeServiceRefused")
+    ALTERNATIVE_SERVICE_REFUSED("Alternative Service Refused", false),
 
     @JsonProperty("bailiffServiceRefused")
     BAILIFF_SERVICE_REFUSED("Bailiff Service Refused", false),
@@ -66,6 +73,9 @@ public enum DocumentType implements HasLabel {
 
     @JsonProperty("conditionalOrderGranted")
     CONDITIONAL_ORDER_GRANTED("Conditional Order Granted", false),
+
+    @JsonProperty("conditionalOrderGrantedDoNotAttendCourt")
+    CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT("Certificate of entitlement do not attend court", false),
 
     @JsonProperty("coGrantedCoversheet")
     CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1("Applicant/Applicant 1 Conditional order granted cover letter", true),
@@ -253,7 +263,22 @@ public enum DocumentType implements HasLabel {
     SWITCH_TO_SOLE_CO_LETTER("Switch to Sole Conditional Order Letter", true),
 
     @JsonProperty("grantOfRepresentation")
-    GRANT_OF_REPRESENTATION("NoC grant of representation letter", true);
+    GRANT_OF_REPRESENTATION("NoC grant of representation letter", true),
+
+    @JsonProperty("requestForInformation")
+    REQUEST_FOR_INFORMATION("Request for information", true),
+
+    @JsonProperty("requestForInformationResponse")
+    REQUEST_FOR_INFORMATION_RESPONSE("Request for information response", true),
+
+    @JsonProperty("requestForInformationResponseDoc")
+    REQUEST_FOR_INFORMATION_RESPONSE_DOC("RFI response document", true),
+
+    @JsonProperty("paperApplicationReceivedLetter")
+    PAPER_APPLICATION_RECEIVED_LETTER("Paper Application Received Letter", true),
+
+    @JsonProperty("bailiffServiceSuccessfulLetter")
+    BAILIFF_SERVICE_SUCCESSFUL_LETTER("Bailiff Service Successful Letter", true);
 
     private final String label;
     private final boolean potentiallyConfidential;

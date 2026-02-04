@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -18,13 +18,12 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class DivorceApplicationDraft implements CaseTask {
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final CaseDataDocumentService caseDataDocumentService;
 
-    @Autowired
-    private DraftApplicationTemplateContent draftApplicationTemplateContent;
+    private final DraftApplicationTemplateContent draftApplicationTemplateContent;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {

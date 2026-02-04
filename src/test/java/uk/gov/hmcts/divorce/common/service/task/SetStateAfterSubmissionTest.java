@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static java.util.Collections.singletonList;
@@ -61,6 +62,39 @@ class SetStateAfterSubmissionTest {
         final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
 
         assertThat(result.getState()).isEqualTo(AwaitingHWFDecision);
+    }
+
+    @Test
+    void shouldSetSubmittedStateIfHelpWithFeesFlagsAreSetButCitizenHasPaid() {
+
+        final var payment = new ListValue<>(null, Payment
+            .builder()
+            .amount(55000)
+            .status(SUCCESS)
+            .build());
+
+        final Application application = Application.builder()
+            .applicationPayments(Collections.singletonList(payment))
+            .applicationFeeOrderSummary(OrderSummary.builder()
+                .paymentTotal("55000")
+                .build())
+            .applicant1HelpWithFees(HelpWithFees.builder()
+                .needHelp(YES)
+                .build())
+            .build();
+
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setApplication(application);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+        caseDetails.setState(Draft);
+
+        final CaseDetails<CaseData, State> result = setStateAfterSubmission.apply(caseDetails);
+
+        assertThat(result.getState()).isEqualTo(Submitted);
     }
 
     @Test
@@ -243,7 +277,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    public void givenSoleApplicationWithHWF_WhenAwaitingDocuments_ThenShouldSetAwaitingHWFDecisionState() {
+    void givenSoleApplicationWithHWF_WhenAwaitingDocuments_ThenShouldSetAwaitingHWFDecisionState() {
         final var application = Application.builder()
             .solPaymentHowToPay(FEES_HELP_WITH)
             .applicant1CannotUpload(YES)
@@ -265,7 +299,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    public void givenSoleApplicationWithHWF_WhenNoAwaitingDocuments_ThenShouldSetAwaitingHWFDecisionState() {
+    void givenSoleApplicationWithHWF_WhenNoAwaitingDocuments_ThenShouldSetAwaitingHWFDecisionState() {
         final var application = Application.builder()
             .solPaymentHowToPay(FEES_HELP_WITH)
             .applicant1CannotUpload(NO)
@@ -287,7 +321,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    public void givenJointApplicationWithHWF_WhenApplicant1AwaitingDocuments_ThenShouldSetAwaitingHWFDecisionState() {
+    void givenJointApplicationWithHWF_WhenApplicant1AwaitingDocuments_ThenShouldSetAwaitingHWFDecisionState() {
         final var application = Application.builder()
             .solPaymentHowToPay(FEES_HELP_WITH)
             .applicant1CannotUpload(YES)
@@ -309,7 +343,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    public void givenJointApplicationWithHWF_WhenApplicantsUploadedRequiredDocs_ThenShouldSetAwaitingHWFDecisionState() {
+    void givenJointApplicationWithHWF_WhenApplicantsUploadedRequiredDocs_ThenShouldSetAwaitingHWFDecisionState() {
         final var application = Application.builder()
             .solPaymentHowToPay(FEES_HELP_WITH)
             .applicant1CannotUpload(NO)
@@ -333,7 +367,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    public void givenJointApplicationWithoutHWF_WhenApplicant2AwaitingDocuments_ThenShouldSetAwaitingDocumentState() {
+    void givenJointApplicationWithoutHWF_WhenBothApplicantsAwaitingDocuments_ThenShouldSetAwaitingDocumentState() {
         final var payment = new ListValue<>(null, Payment
             .builder()
             .amount(55000)

@@ -33,7 +33,7 @@ class BulkCaseCaseTaskFactoryTest {
     private BulkCaseCaseTaskFactory bulkCaseCaseTaskFactory;
 
     @BeforeEach
-    public void setProviderMap() {
+    void setProviderMap() {
         final Map<String, BulkActionCaseTaskProvider> providerMap = Map.of(EVENT_ID, bulkActionCaseTaskProvider);
         ReflectionTestUtils.setField(bulkCaseCaseTaskFactory, "caseTaskProviders", providerMap);
     }

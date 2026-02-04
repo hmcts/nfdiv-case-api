@@ -44,7 +44,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.jointCaseDataWithOrderSummary;
 
 @ExtendWith(MockitoExtension.class)
-public class BailiffNotApprovedOrderContentTest {
+class BailiffNotApprovedOrderContentTest {
 
     @Mock
     private Clock clock;
@@ -59,7 +59,7 @@ public class BailiffNotApprovedOrderContentTest {
     private static final LocalDate SERVICE_APPLICATION_DATE = LocalDate.of(2021, 12, 25);
 
     @Test
-    public void shouldSuccessfullyApplyDivorceContent() {
+    void shouldSuccessfullyApplyDivorceContent() {
         setMockClock(clock);
 
         final CaseData caseData = jointCaseDataWithOrderSummary();
@@ -83,7 +83,7 @@ public class BailiffNotApprovedOrderContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDissolutionContent() {
+    void shouldSuccessfullyApplyDissolutionContent() {
         setMockClock(clock);
 
         final CaseData caseData = jointCaseDataWithOrderSummary();
@@ -107,7 +107,7 @@ public class BailiffNotApprovedOrderContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDivorceWelshContent() {
+    void shouldSuccessfullyApplyDivorceWelshContent() {
         setMockClock(clock);
 
         final Applicant applicant1 = Applicant.builder()
@@ -139,7 +139,7 @@ public class BailiffNotApprovedOrderContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyDissolutionWelshContent() {
+    void shouldSuccessfullyApplyDissolutionWelshContent() {
         setMockClock(clock);
 
         final Applicant applicant1 = Applicant.builder()

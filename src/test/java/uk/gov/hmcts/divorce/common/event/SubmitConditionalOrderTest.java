@@ -113,6 +113,7 @@ class SubmitConditionalOrderTest {
             .conditionalOrder(ConditionalOrder.builder()
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
                     .statementOfTruth(YES)
+                    .confirmInformationStillCorrect(YES)
                     .build())
                 .build())
             .applicationType(SOLE_APPLICATION)
@@ -129,7 +130,7 @@ class SubmitConditionalOrderTest {
     void shouldFailValidationWhenApplicant1NotConfirmedStatementOfTruthOnAboutToSubmit() {
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(ConditionalOrder.builder()
-                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder().confirmInformationStillCorrect(YES)
                     .build())
                 .build())
             .applicationType(SOLE_APPLICATION)
@@ -149,6 +150,7 @@ class SubmitConditionalOrderTest {
             .conditionalOrder(ConditionalOrder.builder()
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
                     .statementOfTruth(YES)
+                    .confirmInformationStillCorrect(YES)
                     .build())
                 .build())
             .applicationType(JOINT_APPLICATION)
@@ -167,7 +169,7 @@ class SubmitConditionalOrderTest {
         final CaseData caseData = CaseData.builder().applicationType(JOINT_APPLICATION).build();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
@@ -187,8 +189,8 @@ class SubmitConditionalOrderTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
-            .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
+            .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder().confirmInformationStillCorrect(YES)
                 .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
@@ -214,8 +216,8 @@ class SubmitConditionalOrderTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).build())
-            .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).build())
+            .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder().confirmInformationStillCorrect(YES)
                 .statementOfTruth(YES).build())
             .build());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
@@ -233,7 +235,7 @@ class SubmitConditionalOrderTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(NO);
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(AwaitingConditionalOrder).id(TEST_CASE_ID).build();
@@ -256,7 +258,7 @@ class SubmitConditionalOrderTest {
         final CaseData caseData = CaseData.builder().applicationType(SOLE_APPLICATION).build();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
@@ -274,9 +276,9 @@ class SubmitConditionalOrderTest {
         final CaseData caseData = CaseData.builder().applicationType(JOINT_APPLICATION).build();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
@@ -294,9 +296,9 @@ class SubmitConditionalOrderTest {
         final CaseData caseData = CaseData.builder().applicationType(JOINT_APPLICATION).build();
         caseData.setConditionalOrder(ConditionalOrder.builder()
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
-                .statementOfTruth(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
             .build());
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
@@ -310,10 +312,16 @@ class SubmitConditionalOrderTest {
 
     @Test
     void shouldSendApp1NotificationsOnAboutToSubmit() {
-        setupMocks(clock);
+        when(request.getHeader(eq(AUTHORIZATION))).thenReturn(DUMMY_AUTH_TOKEN);
         when(ccdAccessService.isApplicant1(DUMMY_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(true);
 
         CaseData caseData = caseData();
+
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                        .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .build());
+
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
 
         submitConditionalOrder.aboutToSubmit(caseDetails, null);
@@ -328,6 +336,7 @@ class SubmitConditionalOrderTest {
 
         CaseData caseData = caseData();
         caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().setStatementOfTruth(YES);
+        caseData.getConditionalOrder().getConditionalOrderApplicant2Questions().setConfirmInformationStillCorrect(YES);
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
 
         submitConditionalOrder.aboutToSubmit(caseDetails, null);
@@ -337,7 +346,6 @@ class SubmitConditionalOrderTest {
 
     @Test
     void shouldSendApp1SolicitorAndApp2SolicitorNotificationsOnAboutToSubmit() {
-        setupMocks(clock);
         CaseData caseData = caseData();
         caseData.setApplicant1(Applicant
             .builder()
@@ -356,6 +364,12 @@ class SubmitConditionalOrderTest {
                 .build())
             .build());
 
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                        .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                        .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .build());
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
@@ -387,6 +401,7 @@ class SubmitConditionalOrderTest {
                 .build())
             .conditionalOrder(ConditionalOrder.builder()
                 .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                    .confirmInformationStillCorrect(YES)
                     .statementOfTruth(YES)
                     .build())
                 .build())
@@ -413,6 +428,7 @@ class SubmitConditionalOrderTest {
             .conditionalOrder(ConditionalOrder.builder()
                 .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
                     .statementOfTruth(YES)
+                    .confirmInformationStillCorrect(YES)
                     .build())
                 .build())
             .build();
@@ -427,12 +443,16 @@ class SubmitConditionalOrderTest {
 
     @Test
     void shouldSetIsApplicant2ToOfflineIfTheyAreNotLinkedAndNotSubmittedAosAndSuccessfulBailiffApplication() {
-        setupMocks(clock);
         final CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setAcknowledgementOfService(AcknowledgementOfService.builder().build());
         caseData.getConditionalOrder().setLastApprovedServiceApplicationIsBailiffApplication(YES);
+        caseData.getConditionalOrder().setConditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder()
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build());
+        caseData.getConditionalOrder().setConditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build());
         caseData.setCaseInvite(CaseInvite.builder().accessCode("ACCESS12").build());
+
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).id(TEST_CASE_ID).build();
 
@@ -448,6 +468,8 @@ class SubmitConditionalOrderTest {
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setAcknowledgementOfService(AcknowledgementOfService.builder().build());
         caseData.getConditionalOrder().setServiceConfirmed(YES);
+        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setConfirmInformationStillCorrect(YES);
+
         caseData.setCaseInvite(CaseInvite.builder().accessCode("ACCESS12").build());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).id(TEST_CASE_ID).build();
@@ -459,7 +481,6 @@ class SubmitConditionalOrderTest {
 
     @Test
     void shouldSetIsApplicant2ToOfflineIfTheyAreNotLinkedAndNotSubmittedAosAndDeemedApplicationSuccessful() {
-        setupMocks(clock);
         final CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setAcknowledgementOfService(AcknowledgementOfService.builder().build());
@@ -468,6 +489,11 @@ class SubmitConditionalOrderTest {
         caseData.setCaseInvite(CaseInvite.builder().accessCode("ACCESS12").build());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).id(TEST_CASE_ID).build();
+
+        caseData.setConditionalOrder(ConditionalOrder.builder()
+                .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder()
+                        .statementOfTruth(YES).confirmInformationStillCorrect(YES).submittedDate(getExpectedLocalDateTime()).build())
+                .build());
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -483,6 +509,8 @@ class SubmitConditionalOrderTest {
         caseData.getAlternativeService().setServiceApplicationGranted(YES);
         caseData.getAlternativeService().setAlternativeServiceType(DISPENSED);
         caseData.setCaseInvite(CaseInvite.builder().accessCode("ACCESS12").build());
+        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setConfirmInformationStillCorrect(YES);
+
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).id(TEST_CASE_ID).build();
 
@@ -508,6 +536,23 @@ class SubmitConditionalOrderTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getApplicant2().isApplicantOffline()).isFalse();
+    }
+
+    @Test
+    void shouldFailValidationWhenApplicant1NotConfirmedInformationCorrectAndNoReasonProvidedOnAboutToSubmit() {
+        final CaseData caseData = CaseData.builder()
+                .conditionalOrder(ConditionalOrder.builder()
+                        .conditionalOrderApplicant2Questions(ConditionalOrderQuestions.builder().confirmInformationStillCorrect(NO)
+                                .build())
+                        .build())
+                .applicationType(SOLE_APPLICATION)
+                .build();
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(TEST_CASE_ID).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitConditionalOrder.aboutToSubmit(caseDetails, null);
+
+        assertThat(response.getErrors()).contains("Conditional order information not correct but no reason provided");
+        verifyNoInteractions(notificationDispatcher);
     }
 
     private CaseData caseData() {

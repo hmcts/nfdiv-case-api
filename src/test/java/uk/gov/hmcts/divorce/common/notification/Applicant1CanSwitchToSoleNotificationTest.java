@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDa
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant1CanSwitchToSoleNotificationTest {
+class Applicant1CanSwitchToSoleNotificationTest {
     @Mock
     private NotificationService notificationService;
 
@@ -45,7 +45,7 @@ public class Applicant1CanSwitchToSoleNotificationTest {
     private Applicant1CanSwitchToSoleNotification applicant1CanSwitchToSoleNotification;
 
     @Test
-    public void shouldSendEmailToApplicant1WhenJointApplication() {
+    void shouldSendEmailToApplicant1WhenJointApplication() {
 
         CaseData data = validJointApplicant1CaseData();
 
@@ -67,7 +67,7 @@ public class Applicant1CanSwitchToSoleNotificationTest {
     }
 
     @Test
-    public void shouldSendEmailInWelshToApplicant1WhenJointApplication() {
+    void shouldSendEmailInWelshToApplicant1WhenJointApplication() {
 
         CaseData data = validJointApplicant1CaseData();
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
@@ -90,7 +90,7 @@ public class Applicant1CanSwitchToSoleNotificationTest {
     }
 
     @Test
-    public void shouldNotSendEmailToApplicant1WhenSoleApplication() {
+    void shouldNotSendEmailToApplicant1WhenSoleApplication() {
 
         CaseData data = validApplicant1CaseData();
 
@@ -101,7 +101,7 @@ public class Applicant1CanSwitchToSoleNotificationTest {
     }
 
     @Test
-    public void shouldSendEmailToApplicant1SolicitorWhenJointApplication() {
+    void shouldSendEmailToApplicant1SolicitorWhenJointApplication() {
 
         CaseData data = validJointApplicant1CaseData();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
@@ -129,7 +129,7 @@ public class Applicant1CanSwitchToSoleNotificationTest {
     }
 
     @Test
-    public void shouldNotSendEmailToApplicant1SolicitorWhenSoleApplication() {
+    void shouldNotSendEmailToApplicant1SolicitorWhenSoleApplication() {
 
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YES);

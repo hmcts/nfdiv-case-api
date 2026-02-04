@@ -80,7 +80,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class DraftApplicationSoleTemplateContentTest {
+class DraftApplicationSoleTemplateContentTest {
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
@@ -95,7 +95,7 @@ public class DraftApplicationSoleTemplateContentTest {
     private DraftApplicationTemplateContent draftApplicationTemplateContent;
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForSoleDivorceApplication() {
+    void shouldSuccessfullyApplyContentFromCaseDataForSoleDivorceApplication() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant1().setFinancialOrder(NO);
@@ -145,7 +145,7 @@ public class DraftApplicationSoleTemplateContentTest {
             entry(RESPONDENT_SOLICITOR_NAME, "Mr Sol"),
             entry(RESPONDENT_SOLICITOR_EMAIL, "sol@solbros.com"),
             entry(RESPONDENT_SOLICITOR_FIRM_NAME, "Sol Bros"),
-            entry(RESPONDENT_SOLICITOR_ADDRESS, LINE_1_LINE_2_CITY_POSTCODE),
+            entry(RESPONDENT_SOLICITOR_ADDRESS, "Sol Bros\n" + LINE_1_LINE_2_CITY_POSTCODE),
             entry(APPLICANT_1_MARRIAGE_NAME, applicant1MarriageName),
             entry(APPLICANT_2_MARRIAGE_NAME, applicant2MarriageName)
         );
@@ -155,7 +155,7 @@ public class DraftApplicationSoleTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForJointDivorceApplication() {
+    void shouldSuccessfullyApplyContentFromCaseDataForJointDivorceApplication() {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplicant1().setFinancialOrder(NO);
@@ -206,7 +206,7 @@ public class DraftApplicationSoleTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationForDissolution() {
+    void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationForDissolution() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setDivorceOrDissolution(DISSOLUTION);
@@ -249,7 +249,7 @@ public class DraftApplicationSoleTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForJointApplicationForDissolution() {
+    void shouldSuccessfullyApplyContentFromCaseDataForJointApplicationForDissolution() {
         CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.setDivorceOrDissolution(DISSOLUTION);
@@ -289,7 +289,7 @@ public class DraftApplicationSoleTemplateContentTest {
     }
 
     @Test
-    public void shouldConvertMarriageDateToCorrectFormat() {
+    void shouldConvertMarriageDateToCorrectFormat() {
         CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         MarriageDetails marriageDetails = new MarriageDetails();

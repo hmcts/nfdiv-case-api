@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.CaseInfo;
@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationClient;
 import uk.gov.hmcts.divorce.solicitor.service.task.DivorceApplicationDraft;
 import uk.gov.hmcts.divorce.solicitor.service.task.InitialiseSolicitorCreatedApplication;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicant1SolicitorAddress;
+import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicantContactDetails;
 import uk.gov.hmcts.divorce.solicitor.service.task.SetApplicantGender;
 import uk.gov.hmcts.divorce.solicitor.service.task.SolicitorCourtDetails;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -22,33 +23,30 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SolicitorCreateApplicationService {
 
-    @Autowired
-    private InitialiseSolicitorCreatedApplication initialiseSolicitorCreatedApplication;
+    private final InitialiseSolicitorCreatedApplication initialiseSolicitorCreatedApplication;
 
-    @Autowired
-    private SolicitorCourtDetails solicitorCourtDetails;
+    private final SolicitorCourtDetails solicitorCourtDetails;
 
-    @Autowired
-    private DivorceApplicationDraft divorceApplicationDraft;
+    private final DivorceApplicationDraft divorceApplicationDraft;
 
-    @Autowired
-    private SetApplicant1SolicitorAddress setApplicant1SolicitorAddress;
+    private final SetApplicant1SolicitorAddress setApplicant1SolicitorAddress;
 
-    @Autowired
-    private OrganisationClient organisationClient;
+    private final OrganisationClient organisationClient;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private SetApplicantGender setApplicantGender;
+    private final SetApplicantGender setApplicantGender;
+
+    private final SetApplicantContactDetails setApplicantContactDetails;
 
     public CaseDetails<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> caseDetails) {
 
         return caseTasks(
             initialiseSolicitorCreatedApplication,
+            setApplicantContactDetails,
             solicitorCourtDetails,
             setApplicant1SolicitorAddress,
             divorceApplicationDraft,

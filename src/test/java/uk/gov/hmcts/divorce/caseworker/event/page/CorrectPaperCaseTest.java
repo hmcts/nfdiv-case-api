@@ -17,12 +17,12 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SOT_REQ
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class CorrectPaperCaseTest {
+class CorrectPaperCaseTest {
 
     private final CorrectPaperCase page = new CorrectPaperCase();
 
     @Test
-    public void shouldSuccessfullyValidateValuesPassedByUser() {
+    void shouldSuccessfullyValidateValuesPassedByUser() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
@@ -36,7 +36,7 @@ public class CorrectPaperCaseTest {
     }
 
     @Test
-    public void shouldReturnErrorsIfScreenHasMarriageBrokenIsNo() {
+    void shouldReturnErrorsIfScreenHasMarriageBrokenIsNo() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(NO);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(NO);
@@ -54,7 +54,7 @@ public class CorrectPaperCaseTest {
     }
 
     @Test
-    public void shouldReturnErrorsIfStatementOfTruthNotAcceptedForSoleApplication() {
+    void shouldReturnErrorsIfStatementOfTruthNotAcceptedForSoleApplication() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
@@ -73,7 +73,7 @@ public class CorrectPaperCaseTest {
     }
 
     @Test
-    public void shouldReturnErrorsIfStatementOfTruthNotAccepted() {
+    void shouldReturnErrorsIfStatementOfTruthNotAccepted() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
         caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
@@ -93,7 +93,7 @@ public class CorrectPaperCaseTest {
     }
 
     @Test
-    public void shouldNotReturnErrorsIfMarriageBrokenNotAcceptedByApplicant2ForSoleApplication() {
+    void shouldNotReturnErrorsIfMarriageBrokenNotAcceptedByApplicant2ForSoleApplication() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
@@ -110,7 +110,7 @@ public class CorrectPaperCaseTest {
     }
 
     @Test
-    public void shouldReturnErrorsIfMarriageBrokenNotAcceptedByApplicant2ForJointApplication() {
+    void shouldReturnErrorsIfMarriageBrokenNotAcceptedByApplicant2ForJointApplication() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);

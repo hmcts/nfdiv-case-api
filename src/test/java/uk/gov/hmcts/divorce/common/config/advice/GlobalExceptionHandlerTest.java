@@ -11,10 +11,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class GlobalExceptionHandlerTest {
+class GlobalExceptionHandlerTest {
 
     @Test
-    public void shouldHandleNotificationException() {
+    void shouldHandleNotificationException() {
         final GlobalExceptionHandler exceptionHandler = new GlobalExceptionHandler();
         final NotificationException notificationException = mock(NotificationException.class);
 

@@ -32,7 +32,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerDropCaseTest {
+class CaseworkerDropCaseTest {
     @Mock
     private AuthTokenGenerator authTokenGenerator;
 

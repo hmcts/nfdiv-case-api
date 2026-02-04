@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.RegenerateCourtOrdersNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
@@ -36,6 +37,7 @@ import static uk.gov.hmcts.divorce.document.DocumentUtil.removeExistingDocuments
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP2;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
@@ -68,6 +70,11 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
             .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR))
             .page("regenerateCourtOrderDocs")
+            .label("regeneratedConditionalOrderDetails", "# Conditional Order Details")
+            .complex(CaseData::getConditionalOrder)
+                .mandatory(ConditionalOrder::getCourt)
+                .mandatory(ConditionalOrder::getPronouncementJudge)
+            .done()
             .pageLabel(REGENERATE_COURT_ORDERS)
             .label("regenerateCourtOrdersWarningLabel", """
                 Updating court orders recreates the Certificate of Entitlement,
@@ -124,7 +131,7 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
         // so clean up generated documents for certificate of entitlement here and not before
         removeExistingDocuments(
             caseData,
-            List.of(CERTIFICATE_OF_ENTITLEMENT));
+            List.of(CERTIFICATE_OF_ENTITLEMENT, CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT));
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

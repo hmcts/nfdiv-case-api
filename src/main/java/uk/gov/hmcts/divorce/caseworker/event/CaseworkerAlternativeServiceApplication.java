@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -23,11 +22,13 @@ import java.time.LocalDate;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -39,38 +40,52 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_SERVICE_RECEIVED = "caseworker-service-received";
+    private static final String Service_APPLICATION_RECEIVED = "Service application received";
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
-    @Autowired
-    private GeneralApplicationReceivedNotification generalApplicationReceivedNotification;
+    private final GeneralApplicationReceivedNotification generalApplicationReceivedNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_SERVICE_RECEIVED)
-            .forStates(AosOverdue, AwaitingAos, AosDrafted, Submitted, AwaitingDocuments, GeneralApplicationReceived)
-            .name("Service application received")
-            .description("Service application received")
+            .forStates(
+                AosOverdue,
+                AwaitingAos,
+                AosDrafted,
+                Submitted,
+                AwaitingDocuments,
+                AwaitingRequestedInformation,
+                InformationRequested,
+                RequestedInformationSubmitted,
+                GeneralApplicationReceived
+            )
+            .name(Service_APPLICATION_RECEIVED)
+            .description(Service_APPLICATION_RECEIVED)
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE, SOLICITOR, CITIZEN))
             .page("serviceApplicationReceived")
-            .pageLabel("Service application received")
+            .pageLabel(Service_APPLICATION_RECEIVED)
             .complex(CaseData::getAlternativeService)
                 .mandatory(AlternativeService::getReceivedServiceApplicationDate)
                 .mandatory(AlternativeService::getAlternativeServiceType)
                 .optional(AlternativeService::getAlternativeServiceJudgeOrLegalAdvisorDetails)
                 .mandatory(AlternativeService::getAlternativeServiceFeeRequired)
-                .done();
+            .done()
+            .page("serviceApplicationReceivedDocs")
+            .pageLabel("Upload Service Application Documents")
+            .complex(CaseData::getAlternativeService)
+                .optional(AlternativeService::getServiceApplicationDocuments)
+            .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -87,8 +102,6 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
 
         if (YesOrNo.YES == caseData.getAlternativeService().getAlternativeServiceFeeRequired()) {
             endState = AwaitingServicePayment;
-        } else if (AlternativeServiceType.BAILIFF == caseData.getAlternativeService().getAlternativeServiceType()) {
-            endState = AwaitingBailiffReferral;
         }
 
         notificationDispatcher.send(generalApplicationReceivedNotification, caseData, details.getId());

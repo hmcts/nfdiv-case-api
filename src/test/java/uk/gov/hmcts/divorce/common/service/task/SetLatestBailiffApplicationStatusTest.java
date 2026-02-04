@@ -20,7 +20,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 
 @ExtendWith(MockitoExtension.class)
 
-public class SetLatestBailiffApplicationStatusTest {
+class SetLatestBailiffApplicationStatusTest {
 
     @InjectMocks
     private SetLatestBailiffApplicationStatus setLatestBailiffApplicationStatus;

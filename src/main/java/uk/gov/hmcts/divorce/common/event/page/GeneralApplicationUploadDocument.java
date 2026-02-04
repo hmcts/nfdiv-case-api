@@ -19,7 +19,7 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 public class GeneralApplicationUploadDocument implements CcdPageConfiguration {
 
-    private static final String GENERAL_APPLICATION_DOCUMENT_ERROR = "Please upload a document in order to continue";
+    public static final String GENERAL_APPLICATION_DOCUMENT_ERROR = "Please upload a document in order to continue";
     private static final int GENERAL_APPLICATION_MAX_NUMBER = 10;
     private static final String GENERAL_APPLICATION_MAX_NUMBER_ERROR =
         String.format("Maximum uploads allowed for event is %d",GENERAL_APPLICATION_MAX_NUMBER);
@@ -39,22 +39,8 @@ public class GeneralApplicationUploadDocument implements CcdPageConfiguration {
         final CaseData caseData = details.getData();
         final GeneralApplication generalApplication = caseData.getGeneralApplication();
 
-        if (isNull(generalApplication.getGeneralApplicationDocuments())
-            || isEmpty(generalApplication.getGeneralApplicationDocuments())) {
-
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList(GENERAL_APPLICATION_DOCUMENT_ERROR))
-                .build();
-        }
-
-        if (generalApplication.getGeneralApplicationDocuments().size() > GENERAL_APPLICATION_MAX_NUMBER) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList(GENERAL_APPLICATION_MAX_NUMBER_ERROR))
-                .build();
-        }
-
         List<String> documentErrors =
-            validateUploadedDocumentsForMandatoryFields(generalApplication.getGeneralApplicationDocuments());
+            validateGeneralApplicationUploadedDocuments(generalApplication.getGeneralApplicationDocuments());
 
         if (!documentErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -67,7 +53,7 @@ public class GeneralApplicationUploadDocument implements CcdPageConfiguration {
             .build();
     }
 
-    private List<String> validateUploadedDocumentsForMandatoryFields(List<ListValue<DivorceDocument>> docs) {
+    static List<String> validateUploadedDocumentsForMandatoryFields(List<ListValue<DivorceDocument>> docs) {
         List<String> errors = new ArrayList<>();
 
         if (docs.stream()
@@ -89,5 +75,16 @@ public class GeneralApplicationUploadDocument implements CcdPageConfiguration {
         }
 
         return errors;
+    }
+
+    public static List<String> validateGeneralApplicationUploadedDocuments(List<ListValue<DivorceDocument>> docs) {
+        if (isNull(docs) || isEmpty(docs)) {
+            return singletonList(GENERAL_APPLICATION_DOCUMENT_ERROR);
+        }
+
+        if (docs.size() > GENERAL_APPLICATION_MAX_NUMBER) {
+            return singletonList(GENERAL_APPLICATION_MAX_NUMBER_ERROR);
+        }
+        return validateUploadedDocumentsForMandatoryFields(docs);
     }
 }

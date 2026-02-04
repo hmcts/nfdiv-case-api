@@ -65,7 +65,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderQu
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 
 @ExtendWith(MockitoExtension.class)
-public class PronouncementListTemplateContentTest {
+class PronouncementListTemplateContentTest {
 
     @InjectMocks
     PronouncementListTemplateContent pronouncementListTemplateContentService;
@@ -90,7 +90,7 @@ public class PronouncementListTemplateContentTest {
     }
 
     @Test
-    public void shouldUpdateTemplateContentMapWithExpectedData() {
+    void shouldUpdateTemplateContentMapWithExpectedData() {
 
         final LocalDateTime dateAndTimeOfHearing = LocalDateTime.of(2021, 11, 10, 12, 45, 0);
         final BulkActionCaseData bulkActionCaseData = BulkActionCaseData
@@ -141,7 +141,7 @@ public class PronouncementListTemplateContentTest {
     }
 
     @Test
-    public void retrieveBulkListCasesShouldExcludeTheCasesToBeRemoved() {
+    void retrieveBulkListCasesShouldExcludeTheCasesToBeRemoved() {
         final var bulkCase1 = getBulkListCaseDetailsListValue("1");
 
         final var bulkCase2 = getBulkListCaseDetailsListValue("2");
@@ -182,7 +182,7 @@ public class PronouncementListTemplateContentTest {
     }
 
     @Test
-    public void retrieveBulkListCasesShouldReturnAllCasesWhenNoCasesToBeRemoved() {
+    void retrieveBulkListCasesShouldReturnAllCasesWhenNoCasesToBeRemoved() {
 
         final LocalDateTime dateAndTimeOfHearing = LocalDateTime.of(2021, 11, 10, 12, 45, 0);
         final BulkActionCaseData bulkActionCaseData = BulkActionCaseData

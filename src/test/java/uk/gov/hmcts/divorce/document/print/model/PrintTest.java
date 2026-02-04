@@ -22,7 +22,7 @@ class PrintTest {
         final List<String> expected_recipients = List.of(caseId, recipientName, letterType);
 
         Assertions.assertLinesMatch(recipients, expected_recipients);
-        Assertions.assertEquals(print.getIsInternational(), false);
+        Assertions.assertEquals(false, print.getIsInternational());
     }
 
     @Test
@@ -37,6 +37,6 @@ class PrintTest {
         final List<String> expected_recipients = List.of(caseId, recipientName, letterType);
 
         Assertions.assertLinesMatch(recipients, expected_recipients);
-        Assertions.assertEquals(print.getIsInternational(), true);
+        Assertions.assertEquals(true, print.getIsInternational());
     }
 }

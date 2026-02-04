@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.bulkscan.endpoint.data.OcrValidationResponse;
 import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.OcrDataField;
 import uk.gov.hmcts.divorce.bulkscan.endpoint.model.input.TransformationInput;
 import uk.gov.hmcts.divorce.common.exception.InvalidDataException;
@@ -94,7 +93,6 @@ class D8sFormToCaseTransformerTest {
                 .ocrDataFields(transformOcrMapToObject(ocrDataFields))
                 .caseData(caseData)
                 .build();
-        final OcrValidationResponse ocrValidationResponse = OcrValidationResponse.builder().build();
         final Map<String, Object> expectedResult = emptyMap();
 
         final Function<TransformationDetails, TransformationDetails> app1App2 = mock(Function.class);
@@ -153,7 +151,6 @@ class D8sFormToCaseTransformerTest {
                 .ocrDataFields(transformOcrMapToObject(ocrDataFields))
                 .caseData(caseData)
                 .build();
-        final var ocrValidationResponse = OcrValidationResponse.builder().build();
         final List<ListValue<String>> expectedWarnings = singletonList(ListValue.<String>builder()
             .id(UUID.randomUUID().toString())
             .value("warning")

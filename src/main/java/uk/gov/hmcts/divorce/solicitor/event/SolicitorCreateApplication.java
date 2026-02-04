@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -46,24 +46,20 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validat
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SolicitorCreateApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_CREATE = "solicitor-create-application";
 
-    @Autowired
-    private SolAboutTheSolicitor solAboutTheSolicitor;
+    private final SolAboutTheSolicitor solAboutTheSolicitor;
 
-    @Autowired
-    private SolicitorCreateApplicationService solicitorCreateApplicationService;
+    private final SolicitorCreateApplicationService solicitorCreateApplicationService;
 
-    @Autowired
-    private AddSystemUpdateRole addSystemUpdateRole;
+    private final AddSystemUpdateRole addSystemUpdateRole;
 
-    @Autowired
-    private CcdAccessService ccdAccessService;
+    private final CcdAccessService ccdAccessService;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -131,6 +127,7 @@ public class SolicitorCreateApplication implements CCDConfig<CaseData, State, Us
             .initialState(Draft)
             .name("Apply: divorce or dissolution")
             .description("Apply: divorce or dissolution")
+            .ttlIncrement(180)
             .showSummary()
             .showEventNotes()
             .endButtonLabel("Save Application")

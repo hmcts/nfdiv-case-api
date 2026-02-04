@@ -40,12 +40,14 @@ public class MarriageDetails {
     private YesOrNo marriedInUk;
 
     @CCD(
-        label = "${labelContentMarriageOrCivilPartnershipUC} certificate in English?"
+        label = "${labelContentMarriageOrCivilPartnershipUC} certificate in English?",
+        searchable = false
     )
     private YesOrNo certificateInEnglish;
 
     @CCD(
-        label = "${labelContentMarriageOrCivilPartnershipUC} certificate translation"
+        label = "${labelContentMarriageOrCivilPartnershipUC} certificate translation",
+        searchable = false
     )
     private YesOrNo certifiedTranslation;
 

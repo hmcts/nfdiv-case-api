@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifica
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetReIssueAndDueDate;
+import uk.gov.hmcts.divorce.caseworker.service.task.ValidateIssue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.JudicialSeparationReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
@@ -33,55 +34,49 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ReIssueApplicationService {
 
-    @Autowired
-    private SetPostIssueState setPostIssueState;
+    private final SetPostIssueState setPostIssueState;
 
-    @Autowired
-    private GenerateApplication generateApplication;
+    private final GenerateApplication generateApplication;
 
-    @Autowired
-    private GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
+    private final GenerateApplicant2NoticeOfProceedings generateApplicant2NoticeOfProceedings;
 
-    @Autowired
-    private GenerateApplicant1NoticeOfProceeding generateApplicant1NoticeOfProceeding;
+    private final GenerateApplicant1NoticeOfProceeding generateApplicant1NoticeOfProceeding;
 
-    @Autowired
-    private SendAosPackToRespondent sendAosPackToRespondent;
+    private final SendAosPackToRespondent sendAosPackToRespondent;
 
-    @Autowired
-    private SetNoticeOfProceedingDetailsForRespondent setNoticeOfProceedingDetailsForRespondent;
+    private final SetNoticeOfProceedingDetailsForRespondent setNoticeOfProceedingDetailsForRespondent;
 
-    @Autowired
-    private SendApplicationIssueNotifications sendApplicationIssueNotifications;
+    private final SendApplicationIssueNotifications sendApplicationIssueNotifications;
 
-    @Autowired
-    private SetReIssueAndDueDate setReIssueAndDueDate;
+    private final SetReIssueAndDueDate setReIssueAndDueDate;
 
-    @Autowired
-    private SendAosPackToApplicant sendAosPackToApplicant;
+    private final SendAosPackToApplicant sendAosPackToApplicant;
 
-    @Autowired
-    private ResetAosFields resetAosFields;
+    private final ResetAosFields resetAosFields;
 
-    @Autowired
-    private GenerateD10Form generateD10Form;
+    private final GenerateD10Form generateD10Form;
 
-    @Autowired
-    private GenerateD84Form generateD84Form;
+    private final GenerateD84Form generateD84Form;
+
+    private final ValidateIssue validateIssue;
 
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
-        if (caseDetails.getData().isJudicialSeparationCase()) {
-            JudicialSeparationReissueOption jsReissueOption = caseDetails.getData().getApplication().getJudicialSeparationReissueOption();
+
+        CaseData caseData = caseDetails.getData();
+
+        if (caseData.isJudicialSeparationCase()) {
+            JudicialSeparationReissueOption jsReissueOption = caseData.getApplication().getJudicialSeparationReissueOption();
             switch (jsReissueOption) {
-                case OFFLINE_AOS -> caseDetails.getData().getApplication().setReissueOption(OFFLINE_AOS);
-                case REISSUE_CASE -> caseDetails.getData().getApplication().setReissueOption(REISSUE_CASE);
-                default -> caseDetails.getData().getApplication().setReissueOption(null);
+                case OFFLINE_AOS -> caseData.getApplication().setReissueOption(OFFLINE_AOS);
+                case REISSUE_CASE -> caseData.getApplication().setReissueOption(REISSUE_CASE);
+                default -> caseData.getApplication().setReissueOption(null);
             }
-            caseDetails.getData().getApplication().setJudicialSeparationReissueOption(null);
+            caseData.getApplication().setJudicialSeparationReissueOption(null);
         }
-        ReissueOption reissueOption = caseDetails.getData().getApplication().getReissueOption();
+        ReissueOption reissueOption = caseData.getApplication().getReissueOption();
 
         log.info("For case id {} reissue option selected is {} ", caseDetails.getId(), reissueOption);
 
@@ -101,6 +96,7 @@ public class ReIssueApplicationService {
             caseDetails.getData().getApplicant2().setOffline(NO);
 
             return caseTasks(
+                validateIssue,
                 setPostIssueState,
                 setReIssueAndDueDate,
                 generateApplicant1NoticeOfProceeding,
@@ -114,6 +110,7 @@ public class ReIssueApplicationService {
             caseDetails.getData().getApplicant2().setOffline(YES);
 
             return caseTasks(
+                validateIssue,
                 setPostIssueState,
                 setReIssueAndDueDate,
                 setNoticeOfProceedingDetailsForRespondent,
@@ -127,6 +124,7 @@ public class ReIssueApplicationService {
         } else if (REISSUE_CASE.equals(reissueOption)) {
             log.info("For case id {} processing complete reissue ", caseDetails.getId());
             return caseTasks(
+                validateIssue,
                 setPostIssueState,
                 setReIssueAndDueDate,
                 setNoticeOfProceedingDetailsForRespondent,
@@ -174,6 +172,5 @@ public class ReIssueApplicationService {
                 "Exception occurred while sending reissue application notifications for case id " + caseDetails.getId()
             );
         }
-
     }
 }

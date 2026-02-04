@@ -107,7 +107,7 @@ public class Applicant2AppliedForConditionalOrderNotification
                 caseData.getApplicant1().getSolicitor().getEmail(),
                 JOINT_SOLICITOR_OTHER_PARTY_APPLIED_FOR_CONDITIONAL_ORDER,
                 solicitorTemplateVars(caseData, id, caseData.getApplicant1(), APPLICANT2),
-                ENGLISH,
+                caseData.getApplicant1().getLanguagePreference(),
                 id
             );
         }

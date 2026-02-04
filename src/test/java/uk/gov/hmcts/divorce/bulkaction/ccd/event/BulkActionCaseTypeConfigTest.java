@@ -17,7 +17,7 @@ import java.util.HashMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class BulkActionCaseTypeConfigTest {
+class BulkActionCaseTypeConfigTest {
 
     @InjectMocks
     private BulkActionCaseTypeConfig bulkAction;

@@ -16,7 +16,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER_BULK_S
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 
-public class CaseworkerBulkScanAccessTest {
+class CaseworkerBulkScanAccessTest {
     @Test
     void shouldGrantCaseworkerBulkScanAccess() {
 

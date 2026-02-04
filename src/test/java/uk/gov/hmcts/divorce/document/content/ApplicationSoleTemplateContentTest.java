@@ -81,7 +81,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
-public class ApplicationSoleTemplateContentTest {
+class ApplicationSoleTemplateContentTest {
 
     @Mock
     private ApplicantTemplateDataProvider applicantTemplateDataProvider;
@@ -93,7 +93,7 @@ public class ApplicationSoleTemplateContentTest {
     private ApplicationSoleTemplateContent templateContent;
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithTypeDivorce() {
+    void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithTypeDivorce() {
 
         final Applicant applicant1 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
@@ -164,7 +164,7 @@ public class ApplicationSoleTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyWelshContentFromCaseDataForSoleApplicationWithTypeDivorce() {
+    void shouldSuccessfullyApplyWelshContentFromCaseDataForSoleApplicationWithTypeDivorce() {
 
         final Applicant applicant1 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
@@ -227,7 +227,7 @@ public class ApplicationSoleTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithTypeDissolution() {
+    void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithTypeDissolution() {
         final Applicant applicant1 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
             .middleName(TEST_MIDDLE_NAME)
@@ -308,7 +308,7 @@ public class ApplicationSoleTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyWelshContentFromCaseDataForSoleApplicationWithTypeDissolution() {
+    void shouldSuccessfullyApplyWelshContentFromCaseDataForSoleApplicationWithTypeDissolution() {
         final Applicant applicant1 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
             .middleName(TEST_MIDDLE_NAME)
@@ -381,7 +381,7 @@ public class ApplicationSoleTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithFormattedSolicitorAddress() {
+    void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithFormattedSolicitorAddress() {
         final String solAddressWithNewLine = "10 Solicitor Road\ntown\n\npostcode\n";
         final String solAddressWithCleanUp = "10 Solicitor Road\ntown\npostcode";
 
@@ -459,7 +459,7 @@ public class ApplicationSoleTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithNullSolicitorAddress() {
+    void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithNullSolicitorAddress() {
 
         final Applicant applicant1 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
@@ -533,7 +533,7 @@ public class ApplicationSoleTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithBlankSolicitorAddress() {
+    void shouldSuccessfullyApplyContentFromCaseDataForSoleApplicationWithBlankSolicitorAddress() {
 
         final Applicant applicant1 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)

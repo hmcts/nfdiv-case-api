@@ -113,7 +113,7 @@ class BulkCaseTaskUtilTest {
                         SYSTEM_REMOVE_BULK_CASE, user, SERVICE_AUTHORIZATION);
 
         assertThat(result.getData().getBulkListCaseDetails()).hasSize(2);
-        assertThat(result.getData().getErroredCaseDetails()).hasSize(0);
+        assertThat(result.getData().getErroredCaseDetails()).isEmpty();
         assertThat(result.getData().getProcessedCaseDetails()).hasSize(2);
     }
 

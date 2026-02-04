@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import uk.gov.hmcts.ccd.sdk.type.Fee;
 
 import java.util.List;
 
@@ -19,23 +18,20 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CreditAccountPaymentResponse {
 
+    @JsonProperty("payment_reference")
+    private String paymentReference;
+
+    private int amount;
+
+    private String currency;
+
+    @JsonProperty("customer_reference")
+    private String customerReference;
+
     @JsonProperty("account_number")
     private String accountNumber;
 
-    @JsonProperty("ccd_case_number")
-    private String ccdCaseNumber;
-
-    @JsonProperty("amount")
-    private int amount;
-
-    @JsonProperty("fees")
-    private List<Fee> fees;
-
-    @JsonProperty("date_updated")
-    private String dateUpdated;
-
-    @JsonProperty("method")
-    private String method;
+    private String status;
 
     @JsonProperty("status_histories")
     private List<StatusHistoriesItem> statusHistories;
@@ -43,48 +39,6 @@ public class CreditAccountPaymentResponse {
     @JsonProperty("date_created")
     private String dateCreated;
 
-    @JsonProperty("service_name")
-    private String serviceName;
-
-    @JsonProperty("channel")
-    private String channel;
-
-    @JsonProperty("description")
-    private String description;
-
     @JsonProperty("organisation_name")
     private String organisationName;
-
-    @JsonProperty("payment_reference")
-    private String paymentReference;
-
-    @JsonProperty("external_provider")
-    private String externalProvider;
-
-    @JsonProperty("reference")
-    private String reference;
-
-    @JsonProperty("case_reference")
-    private String caseReference;
-
-    @JsonProperty("customer_reference")
-    private String customerReference;
-
-    @JsonProperty("external_reference")
-    private String externalReference;
-
-    @JsonProperty("site_id")
-    private String siteId;
-
-    @JsonProperty("payment_group_reference")
-    private String paymentGroupReference;
-
-    @JsonProperty("currency")
-    private String currency;
-
-    @JsonProperty("id")
-    private String id;
-
-    @JsonProperty("status")
-    private String status;
 }

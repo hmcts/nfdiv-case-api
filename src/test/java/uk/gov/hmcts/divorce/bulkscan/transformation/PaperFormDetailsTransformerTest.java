@@ -21,7 +21,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.PaperCasePaymentMethod.CHEQ
 import static uk.gov.hmcts.divorce.divorcecase.model.PaperCasePaymentMethod.PHONE;
 
 @ExtendWith(MockitoExtension.class)
-public class PaperFormDetailsTransformerTest {
+class PaperFormDetailsTransformerTest {
 
     @InjectMocks
     private PaperFormDetailsTransformer paperFormDetailsTransformer;

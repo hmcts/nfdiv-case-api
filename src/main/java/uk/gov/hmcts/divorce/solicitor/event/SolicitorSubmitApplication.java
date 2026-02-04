@@ -1,27 +1,32 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.PaymentService;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
+import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.solicitor.event.page.HelpWithFeesPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolConfirmJointApplication;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayAccount;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPayment;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolPaymentSummary;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolStatementOfTruth;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -42,24 +47,20 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateReadyForPayment;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_ISSUE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_DIVORCE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_DIVORCE;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_SUBMIT = "solicitor-submit-application";
 
-    @Autowired
-    private PaymentService paymentService;
-
-    @Autowired
-    private SolPayment solPayment;
-
-    @Autowired
-    private SubmissionService submissionService;
+    private final PaymentService paymentService;
+    private final SolPayment solPayment;
+    private final SubmissionService submissionService;
+    private final PaymentSetupService paymentSetupService;
+    private final CaseFlagsService caseFlagsService;
+    private final ServiceRequestSearchService serviceRequestSearchService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -81,15 +82,17 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
         log.info("{} about to start callback invoked for Case Id: {}", SOLICITOR_SUBMIT, details.getId());
 
         log.info("Retrieving order summary");
-        final OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_DIVORCE, EVENT_ISSUE, KEYWORD_DIVORCE);
         final CaseData caseData = details.getData();
-        caseData.getApplication().setApplicationFeeOrderSummary(orderSummary);
 
-        caseData.getApplication().setSolApplicationFeeInPounds(
-            NumberFormat.getNumberInstance().format(
-                new BigDecimal(orderSummary.getPaymentTotal()).movePointLeft(2)
-            )
-        );
+        if (caseData.getApplicant1().getAddress() == null) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(List.of("Please enter an address for the applicant using the 'Amend divorce application' event."))
+                .warnings(null)
+                .build();
+        }
+
+        setPaymentOrderSummary(caseData, details.getId());
 
         caseData.getApplication().setSolStatementOfReconciliationCertify(null);
         caseData.getApplication().setSolStatementOfReconciliationDiscussed(null);
@@ -126,16 +129,21 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             final Optional<String> pbaNumber = application.getPbaNumber();
             if (pbaNumber.isPresent()) {
                 final PbaResponse response = paymentService.processPbaPayment(
-                    caseData,
                     caseId,
+                    application.getApplicationFeeServiceRequestReference(),
                     caseData.getApplicant1().getSolicitor(),
                     pbaNumber.get(),
-                    caseData.getApplication().getApplicationFeeOrderSummary(),
-                    caseData.getApplication().getFeeAccountReference()
+                    application.getApplicationFeeOrderSummary(),
+                    application.getFeeAccountReference()
                 );
 
                 if (response.getHttpStatus() == CREATED) {
-                    caseData.updateCaseDataWithPaymentDetails(applicationFeeOrderSummary, caseData, response.getPaymentReference());
+                    caseData.updateCaseDataWithPaymentDetails(
+                        applicationFeeOrderSummary,
+                        caseData,
+                        response.getPaymentReference(),
+                        application.getApplicationFeeServiceRequestReference()
+                    );
                 } else {
                     return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                         .data(details.getData())
@@ -164,6 +172,13 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .build();
     }
 
+    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
+                                               final CaseDetails<CaseData, State> beforeDetails) {
+        log.info("{} submitted callback invoked CaseID: {}", SOLICITOR_SUBMIT, details.getId());
+        caseFlagsService.setSupplementaryDataForCaseFlags(details.getId());
+        return SubmittedCallbackResponse.builder().build();
+    }
+
     private void updateApplicant2DigitalDetails(CaseData caseData) {
         if (caseData.getApplicant2().getSolicitor() != null
             && caseData.getApplicant2().getSolicitor().getOrganisationPolicy() != null) {
@@ -171,6 +186,23 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
 
             caseData.getApplication().setApp2ContactMethodIsDigital(YES);
         }
+    }
+
+    private void setPaymentOrderSummary(CaseData caseData, long caseId) {
+        Application application = caseData.getApplication();
+
+        // Blanked out to stop cases with SRs made on case create from paying the old fee (NFD-4857)
+        application.setApplicationFeeOrderSummary(null);
+        application.setApplicationFeeServiceRequestReference(null);
+
+        OrderSummary orderSummary = paymentSetupService.createApplicationFeeOrderSummary(caseData, caseId);
+
+        application.setApplicationFeeOrderSummary(orderSummary);
+        application.setSolApplicationFeeInPounds(
+            NumberFormat.getNumberInstance().format(
+                new BigDecimal(application.getApplicationFeeOrderSummary().getPaymentTotal()).movePointLeft(2)
+            )
+        );
     }
 
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -181,10 +213,12 @@ public class SolicitorSubmitApplication implements CCDConfig<CaseData, State, Us
             .description("Agree statement of truth, pay & submit")
             .showSummary()
             .showEventNotes()
+            .ttlIncrement(36524)
             .showCondition("applicationType=\"soleApplication\" OR [STATE]=\"Applicant2Approved\"")
             .endButtonLabel("Submit Application")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(
                 CASE_WORKER,

@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDa
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(SpringExtension.class)
-public class SystemUnlinkApplicantFromCaseTest {
+class SystemUnlinkApplicantFromCaseTest {
 
     @Mock
     private CcdAccessService ccdAccessService;
@@ -65,7 +65,7 @@ public class SystemUnlinkApplicantFromCaseTest {
     }
 
     @Test
-    public void shouldUnlinkApplicant() {
+    void shouldUnlinkApplicant() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         var caseData = caseData();
         caseDetails.setData(caseData);
@@ -81,7 +81,7 @@ public class SystemUnlinkApplicantFromCaseTest {
     }
 
     @Test
-    public void shouldNotUnlinkApplicantIfJointApplicationAndPostSubmission() {
+    void shouldNotUnlinkApplicantIfJointApplicationAndPostSubmission() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         var caseData = validJointApplicant1CaseData();
         caseDetails.setData(caseData);
@@ -102,7 +102,7 @@ public class SystemUnlinkApplicantFromCaseTest {
     }
 
     @Test
-    public void shouldNotUnlinkApplicantIfSoleApplicationAndAOSSubmitted() {
+    void shouldNotUnlinkApplicantIfSoleApplicationAndAOSSubmitted() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         var caseData = validApplicant1CaseData();
         caseDetails.setData(caseData);

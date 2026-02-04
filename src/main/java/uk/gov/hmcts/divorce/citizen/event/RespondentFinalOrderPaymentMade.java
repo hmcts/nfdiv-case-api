@@ -24,6 +24,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICI
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
@@ -46,7 +47,7 @@ public class RespondentFinalOrderPaymentMade implements CCDConfig<CaseData, Stat
             .name("Final order payment made")
             .description("Respondent final order payment made")
             .retries(120, 120)
-            .grant(CREATE_READ_UPDATE, APPLICANT_2)
+            .grant(CREATE_READ_UPDATE, APPLICANT_2, SYSTEMUPDATE)
             .grantHistoryOnly(SUPER_USER, CASE_WORKER, LEGAL_ADVISOR, APPLICANT_2_SOLICITOR)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted);

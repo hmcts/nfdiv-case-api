@@ -112,7 +112,7 @@ public class NocCitizenToSolsNotifications implements ApplicantNotification {
             .ifPresent(email -> notificationService.sendEmail(
                 email,
                 NOC_TO_SOLS_EMAIL_OLD_SOL,
-                commonContent.nocOldSolsTemplateVars(id, oldCaseData.getApplicant1()),
+                commonContent.nocOldSolsTemplateVars(id, oldCaseData, true),
                 oldCaseData.getApplicant1().getLanguagePreference(),
                 id
             ));
@@ -130,7 +130,7 @@ public class NocCitizenToSolsNotifications implements ApplicantNotification {
             .ifPresent(email -> notificationService.sendEmail(
                 email,
                 NOC_TO_SOLS_EMAIL_OLD_SOL,
-                commonContent.nocOldSolsTemplateVars(id, oldCaseData.getApplicant2()),
+                commonContent.nocOldSolsTemplateVars(id, oldCaseData,false),
                 oldCaseData.getApplicant2().getLanguagePreference(),
                 id
             ));

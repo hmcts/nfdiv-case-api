@@ -9,20 +9,20 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class AddressUtilTest {
+class AddressUtilTest {
 
     private static final String ADDRESS_LINE1 = RandomStringUtils.random(20, true, false);
     private static final String ADDRESS_LINE2 = RandomStringUtils.random(10, true, false);
-    public static final String TEST_OVERSEAS_EXCEPTION_MESSAGE =
+    static final String TEST_OVERSEAS_EXCEPTION_MESSAGE =
         "Cannot assert whether address is overseas or not due to null address or blank/null country";
 
     @Test
-    public void shouldReturnNullWhenAddressNotPresent() {
+    void shouldReturnNullWhenAddressNotPresent() {
         assertNull(AddressUtil.getPostalAddress(null));
     }
 
     @Test
-    public void shouldReturnPostalAddressWhenAddressPresentAndLine1IsLongerThan25Chars() {
+    void shouldReturnPostalAddressWhenAddressPresentAndLine1IsLongerThan25Chars() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .addressLine1(String.format("%s,%s", ADDRESS_LINE1, ADDRESS_LINE2))
@@ -35,7 +35,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnPostalAddressWhenAddressPresentAndLine1IsLongerThan25CharsAndLine2Present() {
+    void shouldReturnPostalAddressWhenAddressPresentAndLine1IsLongerThan25CharsAndLine2Present() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .addressLine1(String.format("%s,%s", ADDRESS_LINE1, ADDRESS_LINE2))
@@ -49,7 +49,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnPostalAddressWhenAddressPresentAndLine1IsLessThan25Chars() {
+    void shouldReturnPostalAddressWhenAddressPresentAndLine1IsLessThan25Chars() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .addressLine1(ADDRESS_LINE1)
@@ -63,7 +63,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnPostalAddressWhenAddressPresentAndLine1IsNull() {
+    void shouldReturnPostalAddressWhenAddressPresentAndLine1IsNull() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .postTown("town")
@@ -74,7 +74,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnTrueIfCountryIsNonSanitisedUkAndPostcodeIsNull() {
+    void shouldReturnTrueIfCountryIsNonSanitisedUkAndPostcodeIsNull() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("u.k.")
@@ -85,7 +85,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnTrueIfCountryIsNonSanitised2UkAndPostcodeIsNull() {
+    void shouldReturnTrueIfCountryIsNonSanitised2UkAndPostcodeIsNull() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("U-K")
@@ -96,7 +96,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnTrueIfCountryIsSanitisedUkAndPostcodeIsNull() {
+    void shouldReturnTrueIfCountryIsSanitisedUkAndPostcodeIsNull() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("UK")
@@ -107,7 +107,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnTrueIfCountryIsEnglandAndPostcodeIsNull() {
+    void shouldReturnTrueIfCountryIsEnglandAndPostcodeIsNull() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("England")
@@ -118,7 +118,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnTrueIfCountryIsWalesAndPostcodeIsNull() {
+    void shouldReturnTrueIfCountryIsWalesAndPostcodeIsNull() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("Wales")
@@ -129,7 +129,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnTrueIfCountryIsUkAndPostcodeIsNotScottish() {
+    void shouldReturnTrueIfCountryIsUkAndPostcodeIsNotScottish() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("UK")
@@ -140,7 +140,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnTrueIfCountryIsUnitedKingdomAndPostcodeIsNotScottish() {
+    void shouldReturnTrueIfCountryIsUnitedKingdomAndPostcodeIsNotScottish() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("United Kingdom")
@@ -151,7 +151,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnFalseIfCountryIsUkAndPostcodeIsScottish() {
+    void shouldReturnFalseIfCountryIsUkAndPostcodeIsScottish() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("UK")
@@ -162,7 +162,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnFalseIfCountryIsUnitedKingdomAndPostcodeIsScottish() {
+    void shouldReturnFalseIfCountryIsUnitedKingdomAndPostcodeIsScottish() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("United Kingdom")
@@ -173,7 +173,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnFalseIfCountryIsFranceAndPostcodeIsNotNull() {
+    void shouldReturnFalseIfCountryIsFranceAndPostcodeIsNotNull() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("France")
@@ -184,7 +184,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnFalseIfCountryIsScotlandAndPostcodeIsNotNull() {
+    void shouldReturnFalseIfCountryIsScotlandAndPostcodeIsNotNull() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("Scotland")
@@ -195,7 +195,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnFalseIfCountryIsNorthernIrelandAndPostcodeIsNotNull() {
+    void shouldReturnFalseIfCountryIsNorthernIrelandAndPostcodeIsNotNull() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("Northern Ireland")
@@ -206,7 +206,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnFalseIfCountryIsFranceAndPostcodeIsNull() {
+    void shouldReturnFalseIfCountryIsFranceAndPostcodeIsNull() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("France")
@@ -217,7 +217,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnFalseIfCountryIsScotlandAndPostcodeIsNull() {
+    void shouldReturnFalseIfCountryIsScotlandAndPostcodeIsNull() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("Scotland")
@@ -228,7 +228,7 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldReturnFalseIfCountryIsNorthernIrelandAndPostcodeIsNull() {
+    void shouldReturnFalseIfCountryIsNorthernIrelandAndPostcodeIsNull() {
 
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country("Northern Ireland")
@@ -239,14 +239,14 @@ public class AddressUtilTest {
     }
 
     @Test
-    public void shouldThrowIllegalArgumentExceptionIfAddressIsNull() {
+    void shouldThrowIllegalArgumentExceptionIfAddressIsNull() {
         assertThatThrownBy(() -> AddressUtil.isEnglandOrWales(null))
             .isExactlyInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining(TEST_OVERSEAS_EXCEPTION_MESSAGE);
     }
 
     @Test
-    public void shouldThrowIllegalArgumentExceptionIfCountryIsNull() {
+    void shouldThrowIllegalArgumentExceptionIfCountryIsNull() {
         AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
             .country(null)
             .postCode("SW1A1BB")

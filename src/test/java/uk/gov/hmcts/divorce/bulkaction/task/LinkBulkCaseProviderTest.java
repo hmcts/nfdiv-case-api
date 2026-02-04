@@ -8,7 +8,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
@@ -45,7 +44,7 @@ class LinkBulkCaseProviderTest {
 
         final CaseDetails<CaseData, State> resultCaseDetails = caseTask.apply(caseDetails);
         final CaseData resultCaseData = resultCaseDetails.getData();
-        final ConditionalOrder resultConditionalOrder = resultCaseData.getConditionalOrder();
+        resultCaseData.getConditionalOrder();
 
         assertThat(resultCaseData.getBulkListCaseReferenceLink().getCaseReference()).isEqualTo(TEST_CASE_ID.toString());
     }

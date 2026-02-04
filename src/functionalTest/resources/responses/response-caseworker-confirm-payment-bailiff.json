@@ -9,11 +9,11 @@
     "solPaymentHowToPay": "feePayByAccount",
     "alternativeServiceType": "bailiff",
     "servicePaymentFeeOrderSummary": {
-      "PaymentTotal": "4500",
+      "PaymentTotal": "4600",
       "Fees": [
         {
           "value": {
-            "FeeAmount": "4500",
+            "FeeAmount": "4600",
             "FeeCode": "FEE0391",
             "FeeDescription": "Request for service by a bailiff of document (see order for exceptions)",
             "FeeVersion": "${json-unit.any-string}"

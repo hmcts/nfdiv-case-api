@@ -1,0 +1,51 @@
+{
+  "data": {
+    "changeOfRepresentatives": [],
+    "applicant1FirstName": "test_first_name",
+    "applicant1MiddleName": "test_middle_name",
+    "applicant1LastName": "test_last_name",
+    "applicant1Email": "test@test.com",
+    "applicant1LanguagePreferenceWelsh": "No",
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
+    "applicant1ContactDetailsType": "public",
+    "applicant1Gender": "female",
+    "applicant1FinancialOrder": "No",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "alternativeServiceOutcomes": [
+      {
+        "id": "1",
+        "value": {
+          "receivedServiceApplicationDate": "2021-06-18",
+          "alternativeServiceType": "alternativeService",
+          "receivedServiceAddedDate": "${json-unit.any-string}",
+          "serviceApplicationGranted": "No",
+          "serviceApplicationDecisionDate": "${json-unit.any-string}",
+          "serviceApplicationRefusalReason": "refusal reasons",
+          "serviceApplicationOutcomeLabel": " "
+        }
+      }
+    ],
+    "dataVersion": "${json-unit.any-number}",
+    "warnings": [],
+    "documentsGenerated": [
+      {
+        "id": "${json-unit.any-string}",
+        "value": {
+          "documentFileName": "AlternativeServiceRefused.pdf",
+          "documentType": "alternativeServiceRefused",
+          "documentLink": {
+            "document_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "document_filename": "AlternativeServiceRefused.pdf",
+            "document_binary_url": "http://dm-store-aat.service.core-compute-aat.internal/documents/5cd725e8-f053-4493-9cbe-bb69d1905ae3/binary"
+          }
+        }
+      }
+    ],
+    "divorceOrDissolution": "divorce",
+    "supplementaryCaseType": "notApplicable",
+    "dueDate": "${json-unit.any-string}",
+    "issueDate": "${json-unit.any-string}"
+  },
+  "state": "AwaitingAos"
+}

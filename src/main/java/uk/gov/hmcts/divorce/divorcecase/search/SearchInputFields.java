@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.List;
 
 import static java.util.List.of;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.ALTERNATIVE_SERVICE_PAYMENT_METHOD;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.ALTERNATIVE_SERVICE_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_EMAIL;
@@ -18,12 +19,22 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_HWF;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_ORGANISATION_POLICY;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_ADDRESS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_PHONE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_ADDRESS;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_EMAIL;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_HWF;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_ORGANISATION_POLICY;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOLICITOR_ADDRESS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOLICITOR_PHONE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOL_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_WELSH_TRANSLATION;
@@ -32,8 +43,11 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CCD_RE
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.EVIDENCE_HANDLED;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.FRAUD_REFERRAL_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_APPLICATION_URGENT_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_FEE_METHOD;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_TYPE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_URGENT_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.MARRIAGE_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.ORGANISATION_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.RESPONDENT_WELSH_TRANSLATION;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SCANNED_SUBTYPE_RECEIVED;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SOL_PAYMENT_METHOD;
@@ -53,17 +67,54 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
         SearchField.<UserRole>builder().label("Urgent case").id(URGENT_CASE).build(),
         SearchField.<UserRole>builder().label("Urgent general application case").id(GENERAL_APPLICATION_URGENT_CASE).build(),
         SearchField.<UserRole>builder().label("Urgent general referral case").id(GENERAL_REFERRAL_URGENT_CASE).build(),
+        SearchField.<UserRole>builder().label("General referral type").id(GENERAL_REFERRAL_TYPE).build(),
         SearchField.<UserRole>builder().label("Fraud referral case").id(FRAUD_REFERRAL_CASE).build(),
         SearchField.<UserRole>builder().label("Solicitor firm name").id(APPLICANT_1_FIRM_NAME).build(),
         SearchField.<UserRole>builder().label("Type of service").id(ALTERNATIVE_SERVICE_TYPE).build(),
+        SearchField.<UserRole>builder().label("Service payment method")
+            .id(ALTERNATIVE_SERVICE_PAYMENT_METHOD)
+            .userRole(UserRole.CASE_WORKER)
+            .build(),
+        SearchField.<UserRole>builder().label("General referral payment method")
+            .id(GENERAL_REFERRAL_FEE_METHOD)
+            .userRole(UserRole.CASE_WORKER)
+            .build(),
         SearchField.<UserRole>builder().label("Applicant first name").id(APPLICANT_1_FIRST_NAME).build(),
         SearchField.<UserRole>builder().label("Applicant last name").id(APPLICANT_1_LAST_NAME).build(),
-        SearchField.<UserRole>builder().label("Applicant email").id(APPLICANT_1_EMAIL).build(),
-        SearchField.<UserRole>builder().label("Applicant postcode").id(APPLICANT_1_ADDRESS).listElementCode("PostCode").build(),
+        SearchField.<UserRole>builder().label("Applicant email")
+            .id(APPLICANT_1_EMAIL)
+            .userRole(UserRole.CASE_WORKER)
+            .build(),
+        SearchField.<UserRole>builder().label("Applicant email")
+            .id(APPLICANT_1_EMAIL)
+            .userRole(UserRole.JUDGE)
+            .build(),
+        SearchField.<UserRole>builder().label("Applicant postcode")
+            .id(APPLICANT_1_ADDRESS)
+            .userRole(UserRole.CASE_WORKER)
+            .listElementCode("PostCode").build(),
+        SearchField.<UserRole>builder().label("Applicant postcode")
+            .id(APPLICANT_1_ADDRESS)
+            .userRole(UserRole.JUDGE)
+            .listElementCode("PostCode").build(),
         SearchField.<UserRole>builder().label("Respondent first name").id(APPLICANT_2_FIRST_NAME).build(),
         SearchField.<UserRole>builder().label("Respondent last name").id(APPLICANT_2_LAST_NAME).build(),
-        SearchField.<UserRole>builder().label("Respondent email").id(APPLICANT_2_EMAIL).build(),
-        SearchField.<UserRole>builder().label("Respondent postcode").id(APPLICANT_2_ADDRESS).listElementCode("PostCode").build(),
+        SearchField.<UserRole>builder().label("Respondent email")
+            .id(APPLICANT_2_EMAIL)
+            .userRole(UserRole.CASE_WORKER)
+            .build(),
+        SearchField.<UserRole>builder().label("Respondent email")
+            .id(APPLICANT_2_EMAIL)
+            .userRole(UserRole.JUDGE)
+            .build(),
+        SearchField.<UserRole>builder().label("Respondent postcode")
+            .id(APPLICANT_2_ADDRESS)
+            .userRole(UserRole.CASE_WORKER)
+            .listElementCode("PostCode").build(),
+        SearchField.<UserRole>builder().label("Respondent postcode")
+            .id(APPLICANT_2_ADDRESS)
+            .userRole(UserRole.JUDGE)
+            .listElementCode("PostCode").build(),
         SearchField.<UserRole>builder().label("Supplementary evidence handled").id(EVIDENCE_HANDLED).build(),
         SearchField.<UserRole>builder().label("Applicant Welsh Translation").id(APPLICANT_WELSH_TRANSLATION).build(),
         SearchField.<UserRole>builder().label("Respondent Welsh Translation").id(RESPONDENT_WELSH_TRANSLATION).build(),
@@ -75,6 +126,48 @@ public class SearchInputFields implements CCDConfig<CaseData, State, UserRole> {
         SearchField.<UserRole>builder()
             .label("Respondent Applied For Final Order")
             .id(APPLICANT_2_APPLIED_FOR_FINAL_ORDER)
+            .build(),
+        SearchField.<UserRole>builder().label("Applicant Solicitor Name")
+            .id(APPLICANT_1_SOLICITOR_NAME)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Applicant Solicitor Organisation Name")
+            .id(APPLICANT_1_ORGANISATION_POLICY)
+            .listElementCode(ORGANISATION_NAME)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Applicant Solicitor Email")
+            .id(APPLICANT_1_SOLICITOR_EMAIL)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Applicant Solicitor Phone")
+            .id(APPLICANT_1_SOLICITOR_PHONE)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Applicant Solicitor Address")
+            .id(APPLICANT_1_SOLICITOR_ADDRESS)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Respondent Solicitor Name")
+            .id(APPLICANT_2_SOLICITOR_NAME)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Respondent Solicitor Organisation Name")
+            .id(APPLICANT_2_ORGANISATION_POLICY)
+            .listElementCode(ORGANISATION_NAME)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Respondent Solicitor Email")
+            .id(APPLICANT_2_SOLICITOR_EMAIL)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Respondent Solicitor Phone")
+            .id(APPLICANT_2_SOLICITOR_PHONE)
+            .userRole(UserRole.SUPER_USER)
+            .build(),
+        SearchField.<UserRole>builder().label("Respondent Solicitor Address")
+            .id(APPLICANT_2_SOLICITOR_ADDRESS)
+            .userRole(UserRole.SUPER_USER)
             .build()
         );
 

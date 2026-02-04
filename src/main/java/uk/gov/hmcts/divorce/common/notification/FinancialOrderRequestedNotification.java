@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.payment.PaymentService;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
 
 import java.util.Map;
 
@@ -24,11 +24,11 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
 import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_GENERAL;
-import static uk.gov.hmcts.divorce.payment.PaymentService.EVENT_MISC;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_CONSENT_ORDER;
-import static uk.gov.hmcts.divorce.payment.PaymentService.KEYWORD_FINANCIAL_ORDER_NOTICE;
-import static uk.gov.hmcts.divorce.payment.PaymentService.SERVICE_OTHER;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_MISC;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_CONSENT_ORDER;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_FINANCIAL_ORDER_NOTICE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 
 @Component
 @Slf4j

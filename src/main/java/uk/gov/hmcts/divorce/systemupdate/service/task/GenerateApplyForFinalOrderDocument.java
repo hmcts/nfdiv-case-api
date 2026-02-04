@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -23,16 +23,14 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class GenerateApplyForFinalOrderDocument {
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final CaseDataDocumentService caseDataDocumentService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     public void generateApplyForFinalOrder(final CaseData caseData,
                                            final Long caseId,
@@ -47,7 +45,7 @@ public class GenerateApplyForFinalOrderDocument {
         DocumentType finalOrderDocType = isApplicant1 ? FINAL_ORDER_CAN_APPLY_APP1 : FINAL_ORDER_CAN_APPLY_APP2;
         final Map<String, Object> templateVars =
             commonContent.templateContentCanApplyForCoOrFo(caseData, caseId, applicant, partner, now.toLocalDate());
-        templateVars.put(FINAL_ORDER_OVERDUE_DATE, caseData.getFinalOrder().getDateFinalOrderEligibleFrom().plusMonths(12)
+        templateVars.put(FINAL_ORDER_OVERDUE_DATE, caseData.getConditionalOrder().getGrantedDate().plusMonths(12)
             .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
 
         caseDataDocumentService.renderDocumentAndUpdateCaseData(

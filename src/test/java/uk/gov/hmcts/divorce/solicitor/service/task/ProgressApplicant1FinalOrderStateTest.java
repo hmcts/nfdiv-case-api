@@ -31,7 +31,7 @@ class ProgressApplicant1FinalOrderStateTest {
         var details = CaseDetails.<CaseData, State>builder().data(caseData).state(AwaitingFinalOrder).build();
         var result = task.apply(details);
 
-        assertEquals(result.getState(), FinalOrderRequested);
+        assertEquals(FinalOrderRequested, result.getState());
     }
 
     @Test
@@ -44,7 +44,7 @@ class ProgressApplicant1FinalOrderStateTest {
         var details = CaseDetails.<CaseData, State>builder().data(caseData).state(AwaitingFinalOrder).build();
         var result = task.apply(details);
 
-        assertEquals(result.getState(), AwaitingJointFinalOrder);
+        assertEquals(AwaitingJointFinalOrder, result.getState());
     }
 
     @Test
@@ -57,6 +57,6 @@ class ProgressApplicant1FinalOrderStateTest {
         var details = CaseDetails.<CaseData, State>builder().data(caseData).state(AwaitingJointFinalOrder).build();
         var result = task.apply(details);
 
-        assertEquals(result.getState(), FinalOrderRequested);
+        assertEquals(FinalOrderRequested, result.getState());
     }
 }

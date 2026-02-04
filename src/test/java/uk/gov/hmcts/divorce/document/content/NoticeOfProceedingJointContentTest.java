@@ -93,7 +93,7 @@ class NoticeOfProceedingJointContentTest {
     private NoticeOfProceedingJointContent noticeOfProceedingJointContent;
 
     @Test
-    public void shouldSuccessfullyApplyDivorceContentForJointNoticeOfProceedings() {
+    void shouldSuccessfullyApplyDivorceContentForJointNoticeOfProceedings() {
         CaseData caseData = caseData();
         caseData.getApplicant2().setFirstName(TEST_FIRST_NAME);
         caseData.getApplicant2().setLastName(TEST_LAST_NAME);
@@ -162,7 +162,7 @@ class NoticeOfProceedingJointContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyCivilPartnershipContentForJointNoticeOfProceedings() {
+    void shouldSuccessfullyApplyCivilPartnershipContentForJointNoticeOfProceedings() {
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.getApplicant2().setFirstName(TEST_FIRST_NAME);

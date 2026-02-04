@@ -3,20 +3,24 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.notification.PaperApplicationReceivedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.testutil.ConfigTestUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerCreatePaperCase.CREATE_PAPER_CASE;
@@ -27,7 +31,12 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerCreatePaperCaseTest {
+class CaseworkerCreatePaperCaseTest {
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+    @Mock
+    private PaperApplicationReceivedNotification paperApplicationReceivedNotification;
     @InjectMocks
     private CaseworkerCreatePaperCase caseworkerCreatePaperCase;
 
@@ -43,7 +52,7 @@ public class CaseworkerCreatePaperCaseTest {
     }
 
     @Test
-    public void shouldSetHyphenatedCaseRefAndApplicant1Offline() {
+    void shouldSetHyphenatedCaseRefAndApplicant1Offline() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -86,7 +95,7 @@ public class CaseworkerCreatePaperCaseTest {
     }
 
     @Test
-    public void shouldSetApplicant1AndApplicant2OfflineWhenJointApplication() {
+    void shouldSetApplicant1AndApplicant2OfflineWhenJointApplication() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
 
@@ -101,7 +110,7 @@ public class CaseworkerCreatePaperCaseTest {
     }
 
     @Test
-    public void shouldSetApplicant2OfflineWhenSoleApplicationAndApplicant2HasNoEmailAddress() {
+    void shouldSetApplicant2OfflineWhenSoleApplicationAndApplicant2HasNoEmailAddress() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.getApplicant2().setEmail(null);
@@ -116,7 +125,7 @@ public class CaseworkerCreatePaperCaseTest {
     }
 
     @Test
-    public void shouldNotSetApplicant2OfflineWhenSoleApplicationAndApplicant2HasEmailAddress() {
+    void shouldNotSetApplicant2OfflineWhenSoleApplicationAndApplicant2HasEmailAddress() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.getApplicant2().setEmail("testapp2@test.com");
@@ -131,7 +140,7 @@ public class CaseworkerCreatePaperCaseTest {
     }
 
     @Test
-    public void shouldSetBothApplicantsOfflineWhenJudicialSeparation() {
+    void shouldSetBothApplicantsOfflineWhenJudicialSeparation() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
@@ -148,7 +157,7 @@ public class CaseworkerCreatePaperCaseTest {
     }
 
     @Test
-    public void shouldSetBothApplicantsOfflineWhenSeparation() {
+    void shouldSetBothApplicantsOfflineWhenSeparation() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setSupplementaryCaseType(SupplementaryCaseType.SEPARATION);
@@ -162,5 +171,17 @@ public class CaseworkerCreatePaperCaseTest {
 
         assertThat(submitResponse.getData().getApplicant1().getOffline()).isEqualTo(YES);
         assertThat(submitResponse.getData().getApplicant2().getOffline()).isEqualTo(YES);
+    }
+
+    @Test
+    void shouldSendNotificationInAboutToSubmitCallBack() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        caseworkerCreatePaperCase.aboutToSubmit(details, details);
+
+        verify(notificationDispatcher).send(paperApplicationReceivedNotification, caseData, TEST_CASE_ID);
     }
 }

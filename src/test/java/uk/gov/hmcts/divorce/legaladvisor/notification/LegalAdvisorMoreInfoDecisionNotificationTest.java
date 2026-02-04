@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
@@ -28,6 +29,7 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
@@ -157,7 +159,7 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
     }
 
     @Test
-    void shouldSendConditionalOrderRefusedEmailToApplicant1Solicitor() {
+    void shouldSendConditionalOrderRefusedEmailToApplicant1SolicitorInEnglish() {
 
         final var data = validApplicant1CaseData();
         data.setConditionalOrder(ConditionalOrder.builder()
@@ -183,7 +185,32 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
     }
 
     @Test
-    void shouldSendConditionalOrderRefusedEmailToApplicant2Solicitor() {
+    void shouldSendConditionalOrderRefusedEmailToApplicant1SolicitorInWelsh() {
+
+        final var data = validApplicant1CaseData();
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .refusalDecision(MORE_INFO)
+            .build());
+        data.getApplicant1().setSolicitor(Solicitor.builder()
+            .name("applicant solicitor")
+            .reference("sol1")
+            .email("sol1@gm.com")
+            .build());
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq("sol1@gm.com"),
+            eq(SOLICITOR_CO_REFUSED_SOLE_JOINT),
+            anyMap(),
+            eq(WELSH),
+            eq(TEST_CASE_ID)
+        );
+    }
+
+    @Test
+    void shouldSendConditionalOrderRefusedEmailToApplicant2SolicitorInEnglish() {
 
         final var data = validApplicant2CaseData();
         data.setApplicationType(JOINT_APPLICATION);
@@ -203,6 +230,33 @@ class LegalAdvisorMoreInfoDecisionNotificationTest {
             eq(SOLICITOR_CO_REFUSED_SOLE_JOINT),
             anyMap(),
             eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).getCoRefusedSolicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), MORE_INFO);
+    }
+
+    @Test
+    void shouldSendConditionalOrderRefusedEmailToApplicant2SolicitorInWelsh() {
+
+        final var data = validApplicant2CaseData();
+        data.setApplicationType(JOINT_APPLICATION);
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .refusalDecision(MORE_INFO)
+            .build());
+        data.getApplicant2().setSolicitor(Solicitor.builder()
+            .name("applicant2 solicitor")
+            .reference("sol2")
+            .email("sol2@gm.com")
+            .build());
+        data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq("sol2@gm.com"),
+            eq(SOLICITOR_CO_REFUSED_SOLE_JOINT),
+            anyMap(),
+            eq(WELSH),
             eq(TEST_CASE_ID)
         );
         verify(commonContent).getCoRefusedSolicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), MORE_INFO);

@@ -30,7 +30,7 @@ class CaseTaskRunnerTest {
             .extracting(Applicant::getFirstName, Applicant::getLastName)
             .contains("first name", "last name");
     }
-    
+
     public static class TestCaseTask implements CaseTask {
 
         @Override

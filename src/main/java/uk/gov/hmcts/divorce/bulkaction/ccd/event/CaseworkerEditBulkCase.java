@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.ccd.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -28,23 +28,24 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, BulkActionState, UserRole> {
 
     public static final String CASEWORKER_EDIT_BULK_CASE = "caseworker-edit-bulk-case";
 
-    @Autowired
-    private ScheduleCaseService scheduleCaseService;
+    private static final String EDIT_BULK_CASE = " Edit bulk case";
 
-    @Autowired
-    private PronouncementListDocService pronouncementListDocService;
+    private final ScheduleCaseService scheduleCaseService;
+
+    private final PronouncementListDocService pronouncementListDocService;
 
     @Override
     public void configure(final ConfigBuilder<BulkActionCaseData, BulkActionState, UserRole> configBuilder) {
         new BulkActionPageBuilder(configBuilder
             .event(CASEWORKER_EDIT_BULK_CASE)
             .forStates(Created, Listed)
-            .name("Edit bulk case")
-            .description("Edit bulk case")
+            .name(EDIT_BULK_CASE)
+            .description(EDIT_BULK_CASE)
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
@@ -52,7 +53,7 @@ public class CaseworkerEditBulkCase implements CCDConfig<BulkActionCaseData, Bul
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SYSTEMUPDATE)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
             .page("editBulkCase")
-            .pageLabel("Edit bulk case")
+            .pageLabel(EDIT_BULK_CASE)
             .mandatory(BulkActionCaseData::getCourt)
             .mandatory(BulkActionCaseData::getDateAndTimeOfHearing);
     }

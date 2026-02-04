@@ -25,7 +25,6 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import static java.util.Collections.singletonList;
@@ -40,13 +39,12 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceGeneralOrderListValue;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerPrepareGeneralEmailAttachmentsTest {
+class CaseworkerPrepareGeneralEmailAttachmentsTest {
     @InjectMocks
     private CaseworkerPrepareGeneralEmailAttachments generalEmail;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
-        final Set<State> stateSet = Set.of(State.class.getEnumConstants());
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = ConfigTestUtil.createCaseDataConfigBuilder();
 
         generalEmail.configure(configBuilder);
@@ -92,7 +90,7 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
 
         assertThat(response.getData().getGeneralEmail().getGeScannedDocumentNames()).isNotNull();
         assertThat(response.getData().getGeneralEmail().getGeScannedDocumentNames()
-            .getListItems().size()).isEqualTo(1);
+            .getListItems()).hasSize(1);
     }
 
     @Test
@@ -109,7 +107,7 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
 
         assertThat(response.getData().getGeneralEmail().getGeUploadedDocumentNames()).isNotNull();
         assertThat(response.getData().getGeneralEmail().getGeUploadedDocumentNames()
-            .getListItems().size()).isEqualTo(1);
+            .getListItems()).hasSize(1);
     }
 
     @Test
@@ -130,7 +128,7 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
 
         assertThat(response.getData().getGeneralEmail().getGeUploadedDocumentNames()).isNotNull();
         assertThat(response.getData().getGeneralEmail().getGeUploadedDocumentNames()
-            .getListItems().size()).isEqualTo(1);
+            .getListItems()).hasSize(1);
     }
 
     @Test
@@ -151,7 +149,7 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
 
         assertThat(response.getData().getGeneralEmail().getGeScannedDocumentNames()).isNotNull();
         assertThat(response.getData().getGeneralEmail().getGeScannedDocumentNames()
-            .getListItems().size()).isEqualTo(1);
+            .getListItems()).hasSize(1);
     }
 
     @Test
@@ -168,7 +166,7 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
 
         assertThat(response.getData().getGeneralEmail().getGeGeneratedDocumentNames()).isNotNull();
         assertThat(response.getData().getGeneralEmail().getGeGeneratedDocumentNames()
-            .getListItems().size()).isEqualTo(1);
+            .getListItems()).hasSize(1);
     }
 
     @Test
@@ -185,7 +183,7 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
 
         assertThat(response.getData().getGeneralEmail().getGeApplicant1DocumentNames()).isNotNull();
         assertThat(response.getData().getGeneralEmail().getGeApplicant1DocumentNames()
-            .getListItems().size()).isEqualTo(1);
+            .getListItems()).hasSize(1);
     }
 
     @Test
@@ -202,7 +200,7 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
 
         assertThat(response.getData().getGeneralEmail().getGeApplicant2DocumentNames()).isNotNull();
         assertThat(response.getData().getGeneralEmail().getGeApplicant2DocumentNames()
-            .getListItems().size()).isEqualTo(1);
+            .getListItems()).hasSize(1);
     }
 
     @Test
@@ -229,7 +227,7 @@ public class CaseworkerPrepareGeneralEmailAttachmentsTest {
 
         assertThat(response.getData().getGeneralEmail().getGeGeneralOrderDocumentNames()).isNotNull();
         assertThat(response.getData().getGeneralEmail().getGeGeneralOrderDocumentNames()
-            .getListItems().size()).isEqualTo(1);
+            .getListItems()).hasSize(1);
     }
 
     @Test

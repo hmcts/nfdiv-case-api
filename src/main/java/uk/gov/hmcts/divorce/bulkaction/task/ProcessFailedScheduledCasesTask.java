@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
@@ -15,16 +15,14 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemUpdateCaseWithCourtH
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ProcessFailedScheduledCasesTask implements BulkCaseTask {
 
-    @Autowired
-    protected IdamService idamService;
+    protected final IdamService idamService;
 
-    @Autowired
-    protected AuthTokenGenerator authTokenGenerator;
+    protected final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private BulkCaseTaskUtil bulkCaseTaskUtil;
+    protected final BulkCaseTaskUtil bulkCaseTaskUtil;
 
     @Override
     public CaseDetails<BulkActionCaseData, BulkActionState> apply(final CaseDetails<BulkActionCaseData, BulkActionState> details) {

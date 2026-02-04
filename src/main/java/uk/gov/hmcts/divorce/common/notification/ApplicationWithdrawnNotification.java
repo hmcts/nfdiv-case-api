@@ -1,13 +1,16 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.isNull;
@@ -15,21 +18,24 @@ import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLICATION_WITHDRAWN;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_APPLICATION_WITHDRAWN;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ApplicationWithdrawnNotification implements ApplicantNotification {
     private static final String IS_RESPONDENT = "isRespondent";
     private static final String RESPONDENT_PARTNER = "respondentPartner";
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
     @Override
-    public void sendToApplicant1(final CaseData caseData, final Long id) {
+    public void sendToApplicant1(final CaseDetails<CaseData, State> caseDetails) {
+        long id = caseDetails.getId();
+        CaseData caseData = caseDetails.getData();
+
         log.info("Sending application withdrawn notification to applicant 1 for: {}", id);
         final Map<String, String> templateVars =
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
@@ -46,8 +52,11 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
     }
 
     @Override
-    public void sendToApplicant2(final CaseData caseData, final Long id) {
-        if (shouldSendNotificationToApplicant2(caseData)) {
+    public void sendToApplicant2(final CaseDetails<CaseData, State> caseDetails) {
+        long id = caseDetails.getId();
+        CaseData caseData = caseDetails.getData();
+
+        if (shouldSendNotificationToApplicant2(caseData, caseDetails.getState())) {
             log.info("Sending application withdrawn notification to applicant 2 for: {}", id);
             final Map<String, String> templateVars =
                 commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
@@ -73,8 +82,62 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
         }
     }
 
-    private boolean shouldSendNotificationToApplicant2(final CaseData caseData) {
-        return isNotEmpty(caseData.getApplicant2().getEmail()) && (!caseData.getApplicationType().isSole()
-            || caseData.getApplicationType().isSole() && !isNull(caseData.getApplication().getIssueDate()));
+    @Override
+    public void sendToApplicant1Solicitor(final CaseDetails<CaseData, State> caseDetails) {
+        final long caseId = caseDetails.getId();
+        final CaseData caseData = caseDetails.getData();
+
+        log.info("Sending application withdrawn notification to applicant 1 solicitor for case : {}", caseId);
+
+        String solicitorEmail = caseData.getApplicant1().getSolicitor().getEmail();
+        final Map<String, String> templateVars =
+            commonContent.solicitorTemplateVarsPreIssue(caseData, caseDetails.getId(), caseData.getApplicant1());
+
+        notificationService.sendEmail(
+            solicitorEmail,
+            SOLICITOR_APPLICATION_WITHDRAWN,
+            templateVars,
+            caseData.getApplicant1().getLanguagePreference(),
+            caseId
+        );
+    }
+
+    @Override
+    public void sendToApplicant2Solicitor(final CaseDetails<CaseData, State> caseDetails) {
+        final long caseId = caseDetails.getId();
+        final CaseData caseData = caseDetails.getData();
+
+        if (!shouldSendNotificationToApplicant2(caseData, caseDetails.getState())) {
+            return;
+        }
+
+        log.info("Sending application withdrawn notification to applicant 2 solicitor for case : {}", caseId);
+
+        String solicitorEmail = caseData.getApplicant2().getSolicitor().getEmail();
+        final Map<String, String> templateVars =
+            commonContent.solicitorTemplateVarsPreIssue(caseData, caseDetails.getId(), caseData.getApplicant2());
+
+        notificationService.sendEmail(
+            solicitorEmail,
+            SOLICITOR_APPLICATION_WITHDRAWN,
+            templateVars,
+            caseData.getApplicant2().getLanguagePreference(),
+            caseId
+        );
+    }
+
+    private boolean shouldSendNotificationToApplicant2(final CaseData caseData, final State state) {
+        return isNotEmpty(caseData.getApplicant2().getCorrespondenceEmail())
+            && (jointApp2Invited(caseData, state) || soleRespondentInvited(caseData));
+    }
+
+    private boolean jointApp2Invited(final CaseData caseData, final State state) {
+        List<State> preInviteStates = List.of(State.Draft, State.Archived);
+
+        return !caseData.getApplicationType().isSole() && !preInviteStates.contains(state);
+    }
+
+    private boolean soleRespondentInvited(final CaseData caseData) {
+        return caseData.getApplicationType().isSole() && !isNull(caseData.getApplication().getIssueDate());
     }
 }

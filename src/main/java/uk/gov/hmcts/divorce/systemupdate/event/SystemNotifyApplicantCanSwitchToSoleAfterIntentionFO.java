@@ -1,16 +1,20 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.ApplicantSwitchToSoleAfterIntentionFONotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+
+import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.FinalOrder.IntendsToSwitchToSole.I_INTEND_TO_SWITCH_TO_SOLE;
@@ -21,18 +25,18 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService.CASE_ALREADY_PROCESSED_ERROR;
 
 @Component
+@RequiredArgsConstructor
 public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFO implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION
         = "system-notify-applicant-can-switch-to-sole-after-intention-fo";
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private ApplicantSwitchToSoleAfterIntentionFONotification applicantSwitchToSoleAfterIntentionFONotification;
+    private final ApplicantSwitchToSoleAfterIntentionFONotification applicantSwitchToSoleAfterIntentionFONotification;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -51,15 +55,23 @@ public class SystemNotifyApplicantCanSwitchToSoleAfterIntentionFO implements CCD
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         CaseData data = details.getData();
+        FinalOrder finalOrder = data.getFinalOrder();
+        boolean applicant1Notified = YesOrNo.YES.equals(finalOrder.getFinalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention());
+        boolean applicant2Notified = YesOrNo.YES.equals(finalOrder.getFinalOrderApplicant2NotifiedCanSwitchToSoleAfterIntention());
+        if (applicant1Notified || applicant2Notified) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(CASE_ALREADY_PROCESSED_ERROR))
+                .build();
+        }
 
         notificationDispatcher.send(applicantSwitchToSoleAfterIntentionFONotification, data, details.getId());
 
-        if (data.getFinalOrder().getApplicant1IntendsToSwitchToSole() != null
-            && data.getFinalOrder().getApplicant1IntendsToSwitchToSole().contains(I_INTEND_TO_SWITCH_TO_SOLE)) {
-            data.getFinalOrder().setFinalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention(YES);
-        } else if (data.getFinalOrder().getApplicant2IntendsToSwitchToSole() != null
-            && data.getFinalOrder().getApplicant2IntendsToSwitchToSole().contains(I_INTEND_TO_SWITCH_TO_SOLE)) {
-            data.getFinalOrder().setFinalOrderApplicant2NotifiedCanSwitchToSoleAfterIntention(YES);
+        if (finalOrder.getApplicant1IntendsToSwitchToSole() != null
+            && finalOrder.getApplicant1IntendsToSwitchToSole().contains(I_INTEND_TO_SWITCH_TO_SOLE)) {
+            finalOrder.setFinalOrderApplicant1NotifiedCanSwitchToSoleAfterIntention(YES);
+        } else if (finalOrder.getApplicant2IntendsToSwitchToSole() != null
+            && finalOrder.getApplicant2IntendsToSwitchToSole().contains(I_INTEND_TO_SWITCH_TO_SOLE)) {
+            finalOrder.setFinalOrderApplicant2NotifiedCanSwitchToSoleAfterIntention(YES);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

@@ -23,7 +23,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class CitizenApplicant2UpdateApplicationTest {
+class CitizenApplicant2UpdateApplicationTest {
 
     @InjectMocks
     private CitizenApplicant2UpdateApplication citizenApplicant2UpdateApplication;

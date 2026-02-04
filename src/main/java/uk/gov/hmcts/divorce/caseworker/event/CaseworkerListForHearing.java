@@ -24,6 +24,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class CaseworkerListForHearing implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_LIST_FOR_HEARING = "caseworker-list-for-hearing";
+    private static final String LIST_FOR_HEARING = "List for hearing";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -32,8 +33,8 @@ public class CaseworkerListForHearing implements CCDConfig<CaseData, State, User
             .forStateTransition(
                 PendingHearingDate, PendingHearingOutcome
             )
-            .name("List for hearing")
-            .description("List for hearing")
+            .name(LIST_FOR_HEARING)
+            .description(LIST_FOR_HEARING)
             .showEventNotes()
             .showSummary()
             .aboutToStartCallback(this::aboutToStart)
@@ -41,7 +42,7 @@ public class CaseworkerListForHearing implements CCDConfig<CaseData, State, User
             .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
             .page("listForHearing")
-            .pageLabel("List for hearing")
+            .pageLabel(LIST_FOR_HEARING)
             .complex(CaseData::getHearing)
             .mandatory(Hearing::getDateOfHearing)
             .mandatory(Hearing::getVenueOfHearing)

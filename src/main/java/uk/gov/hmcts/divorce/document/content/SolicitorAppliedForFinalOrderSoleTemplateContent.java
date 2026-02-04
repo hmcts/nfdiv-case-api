@@ -57,7 +57,7 @@ public class SolicitorAppliedForFinalOrderSoleTemplateContent implements Templat
         templateContent.put(SOLICITOR_NAME,  applicant.getSolicitor().getName());
         templateContent.put(IS_OVERDUE,  YesOrNo.YES == caseData.getFinalOrder().getIsFinalOrderOverdue());
         templateContent.put(DIVORCE_OR_END_CIVIL_PARTNERSHIP,  caseData.isDivorce() ? "marriage" : "civil partnership");
-        templateContent.put(SOLICITOR_ADDRESS,  applicant.getSolicitor().getAddress());
+        templateContent.put(SOLICITOR_ADDRESS,  applicant.getSolicitor().getFirmAndAddress());
         templateContent.put(SOLICITOR_REFERENCE,  isNotEmpty(applicant.getSolicitor().getReference())
                 ? applicant.getSolicitor().getReference() : NOT_PROVIDED);
 

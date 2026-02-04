@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
-public class Applicant2RequestChangesTest {
+class Applicant2RequestChangesTest {
 
     @Mock
     private Applicant2RequestChangesNotification applicant2RequestChangesNotification;

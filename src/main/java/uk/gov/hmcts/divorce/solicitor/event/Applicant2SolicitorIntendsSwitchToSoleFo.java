@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -33,25 +33,22 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorIntendsSwitchToSoleFo.INTEND_TO_SWITCHED_TO_SOLE_FO_ERROR;
 import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorIntendsSwitchToSoleFo.getIntendsToSwitchToSoleInformationLabel;
-import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorIntendsSwitchToSoleFo.getOtherApplicantIsNotRepresentedLabel;
-import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorIntendsSwitchToSoleFo.getOtherApplicantIsRepresentedLabel;
+import static uk.gov.hmcts.divorce.solicitor.event.Applicant1SolicitorIntendsSwitchToSoleFo.getOtherApplicantCanStillApplyLabel;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class Applicant2SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APPLICANT_2_INTENDS_TO_SWITCH_TO_SOLE_FO = "applicant2-intends-switch-to-sole-fo";
     private static final String NEVER_SHOW = "applicant2IntendsToSwitchToSole=\"NEVER_SHOW\"";
     private static final String BLANK_LABEL = " ";
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private SolicitorIntendsToSwitchToSoleFoNotification solicitorIntendsToSwitchToSoleFoNotification;
+    private final SolicitorIntendsToSwitchToSoleFoNotification solicitorIntendsToSwitchToSoleFoNotification;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -77,10 +74,7 @@ public class Applicant2SolicitorIntendsSwitchToSoleFo implements CCDConfig<CaseD
             .complex(CaseData::getApplicant1)
                 .readonlyNoSummary(Applicant::getSolicitorRepresented, NEVER_SHOW)
             .done()
-            .label("app2OtherApplicantIsRepresented",
-                getOtherApplicantIsRepresentedLabel(), "applicant1SolicitorRepresented=\"Yes\"")
-            .label("app2OtherApplicantIsNotRepresented",
-                getOtherApplicantIsNotRepresentedLabel(),"applicant1SolicitorRepresented=\"No\"")
+            .label("app2OtherApplicantCanStillApply", getOtherApplicantCanStillApplyLabel())
             .label("app2IntendsSwitchToSoleFoInfo", getIntendsToSwitchToSoleInformationLabel())
             .complex(CaseData::getFinalOrder)
                 .optionalNoSummary(FinalOrder::getApplicant2IntendsToSwitchToSole, null, BLANK_LABEL)

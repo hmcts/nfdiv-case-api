@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,7 +74,7 @@ class CaseworkerRemoveScannedDocumentTest {
             caseworkerRemoveScannedDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
         final List<ListValue<ScannedDocument>> actualDocuments = response.getData().getDocuments().getScannedDocuments();
-        assertThat(actualDocuments.size()).isEqualTo(1);
+        assertThat(actualDocuments).hasSize(1);
         assertThat(actualDocuments.get(0).getValue()).isSameAs(doc2.getValue());
     }
 
@@ -102,6 +103,24 @@ class CaseworkerRemoveScannedDocumentTest {
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0))
             .isEqualTo("Scanned documents cannot be added by 'Remove scanned documents'");
+    }
+
+    @Test
+    void shouldDeleteDocumentsByDelegatingToDocRemovalService() {
+        final ListValue<ScannedDocument> doc1 =
+            getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "d9d.pdf", FORM);
+
+        final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
+        final CaseData previousCaseData = caseData();
+        previousCaseData.getDocuments().setScannedDocuments(List.of(doc1));
+        previousCaseDetails.setData(previousCaseData);
+
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.getDocuments().setScannedDocuments(Collections.emptyList());
+        updatedCaseDetails.setData(caseData);
+
+        caseworkerRemoveScannedDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
     }
 
     private ListValue<ScannedDocument> getDocumentListValue(final String url,

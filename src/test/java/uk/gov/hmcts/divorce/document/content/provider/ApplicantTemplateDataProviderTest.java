@@ -295,7 +295,7 @@ class ApplicantTemplateDataProviderTest {
     }
 
     @Test
-    public void shouldMapApplicantContactDetailsWhenApplicantContactIsNotPrivateAndIsRepresented() {
+    void shouldMapApplicantContactDetailsWhenApplicantContactIsNotPrivateAndIsRepresented() {
         Applicant applicant1 = buildApplicant(YES, ContactDetailsType.PUBLIC);
         Applicant applicant2 = buildApplicant(YES, ContactDetailsType.PUBLIC);
 
@@ -316,7 +316,7 @@ class ApplicantTemplateDataProviderTest {
     }
 
     @Test
-    public void shouldMapSolicitorContactDetailsWhenApplicantContactIsPrivateAndIsRepresented() {
+    void shouldMapSolicitorContactDetailsWhenApplicantContactIsPrivateAndIsRepresented() {
         Applicant applicant1 = buildApplicant(YES, ContactDetailsType.PRIVATE);
         Applicant applicant2 = buildApplicant(YES, ContactDetailsType.PRIVATE);
 
@@ -337,7 +337,7 @@ class ApplicantTemplateDataProviderTest {
     }
 
     @Test
-    public void shouldMapSolicitorContactDetailsWhenApplicantContactIsPrivateAndIsNotRepresented() {
+    void shouldMapSolicitorContactDetailsWhenApplicantContactIsPrivateAndIsNotRepresented() {
         Applicant applicant1 = buildApplicant(NO, ContactDetailsType.PRIVATE);
         Applicant applicant2 = buildApplicant(YES, ContactDetailsType.PRIVATE);
 
@@ -358,7 +358,7 @@ class ApplicantTemplateDataProviderTest {
     }
 
     @Test
-    public void shouldMapApplicantContactDetailsWhenApplicantContactIsNotPrivateAndIsNotRepresented() {
+    void shouldMapApplicantContactDetailsWhenApplicantContactIsNotPrivateAndIsNotRepresented() {
         Applicant applicant1 = buildApplicant(NO, ContactDetailsType.PUBLIC);
         Applicant applicant2 = buildApplicant(NO, ContactDetailsType.PUBLIC);
 

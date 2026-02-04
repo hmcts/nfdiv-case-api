@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.systemupdate.schedule;
 
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
@@ -11,6 +10,7 @@ import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.LocalDate;
@@ -35,14 +35,23 @@ public class SystemNotifyApplicantDisputeFormOverdueTask extends AbstractTaskEve
     private static final String TASK_CONFLICT_ERROR =
         "NotifyApplicantDisputeFormOverdue scheduled task stopping due to conflict with another running task";
 
-    @Autowired
-    private CcdSearchService ccdSearchService;
+    private final CcdSearchService ccdSearchService;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
+
+    public SystemNotifyApplicantDisputeFormOverdueTask(
+        CcdSearchService ccdSearchService,
+        IdamService idamService,
+        AuthTokenGenerator authTokenGenerator,
+        CcdUpdateService ccdUpdateService
+    ) {
+        super(ccdUpdateService);
+        this.ccdSearchService = ccdSearchService;
+        this.idamService = idamService;
+        this.authTokenGenerator = authTokenGenerator;
+    }
 
     @Value("${submit_aos.dispute_offset_days}")
     private int disputeDueDateOffsetDays;

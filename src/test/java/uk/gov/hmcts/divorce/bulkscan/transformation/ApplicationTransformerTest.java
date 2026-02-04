@@ -36,7 +36,7 @@ import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTi
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 
 @ExtendWith(MockitoExtension.class)
-public class ApplicationTransformerTest {
+class ApplicationTransformerTest {
     @InjectMocks
     private ApplicationTransformer applicationTransformer;
 

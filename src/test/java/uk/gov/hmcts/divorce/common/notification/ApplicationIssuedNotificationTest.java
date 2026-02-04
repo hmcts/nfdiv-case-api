@@ -66,6 +66,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDEN
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.WELSH_DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -86,7 +87,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssue
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class ApplicationIssuedNotificationTest {
+class ApplicationIssuedNotificationTest {
 
     private static final String CASE_ID = "case id";
 
@@ -117,6 +118,39 @@ public class ApplicationIssuedNotificationTest {
             .thenReturn(divorceTemplateVars);
         when(holdingPeriodService.getRespondByDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(16));
+        when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
+            .thenReturn(data.getApplication().getIssueDate().plusDays(141));
+
+        notification.sendToApplicant1(data, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(SOLE_APPLICANT_APPLICATION_ACCEPTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                hasEntry(SUBMISSION_RESPONSE_DATE, data.getApplication().getIssueDate().plusDays(141).format(DATE_TIME_FORMATTER)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO)
+            )),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldUseReissueDateInCalculationsWhenCaseHasBeenReissued() {
+        CaseData data = validCaseDataForIssueApplication();
+        data.getApplication().setReissueDate(LocalDate.of(2022, 1, 1));
+        data.setDueDate(LocalDate.now().plusDays(141));
+        data.getApplication().setIssueDate(LocalDate.now());
+
+        Map<String, String> divorceTemplateVars = new HashMap<>();
+        divorceTemplateVars.putAll(getMainTemplateVars());
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(divorceTemplateVars);
+        when(holdingPeriodService.getRespondByDateFor(data.getApplication().getReissueDate()))
+            .thenReturn(data.getApplication().getReissueDate().plusDays(16));
         when(holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate()))
             .thenReturn(data.getApplication().getIssueDate().plusDays(141));
 
@@ -419,7 +453,8 @@ public class ApplicationIssuedNotificationTest {
 
         when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
 
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(commonTemplateVars());
 
         notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
@@ -449,7 +484,8 @@ public class ApplicationIssuedNotificationTest {
 
         when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
 
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(commonTemplateVars());
 
         notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
@@ -478,7 +514,8 @@ public class ApplicationIssuedNotificationTest {
 
         when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
 
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(commonTemplateVars());
 
         notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
@@ -505,7 +542,8 @@ public class ApplicationIssuedNotificationTest {
             .application(Application.builder().serviceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
             .build();
 
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2().getLanguagePreference()))
+                .thenReturn(commonTemplateVars());
 
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
@@ -534,7 +572,8 @@ public class ApplicationIssuedNotificationTest {
 
         caseData.getApplicant2().getSolicitor().setReference("TEST");
 
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2().getLanguagePreference()))
+                .thenReturn(commonTemplateVars());
 
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
@@ -550,7 +589,7 @@ public class ApplicationIssuedNotificationTest {
     }
 
     @Test
-    void shouldSendNotificationToApplicant2SolicitorIfJointApplicationAndNotSolicitorService() {
+    void shouldSendNotificationInEnglishToApplicant2SolicitorIfJointApplicationAndNotSolicitorService() {
 
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DIVORCE)
@@ -565,7 +604,8 @@ public class ApplicationIssuedNotificationTest {
 
         when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
 
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2().getLanguagePreference()))
+                .thenReturn(commonTemplateVars());
 
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
@@ -574,6 +614,71 @@ public class ApplicationIssuedNotificationTest {
             JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
             nopSolicitorTemplateVars(caseData.getApplicant2()),
             ENGLISH,
+            TEST_CASE_ID
+        );
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendNotificationInEnglishToApplicant1SolicitorIfJointApplicationAndNotSolicitorService() {
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicantRepresentedBySolicitor())
+            .applicant2(applicantRepresentedBySolicitor())
+            .applicationType(JOINT_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .dueDate(LOCAL_DATE.plusDays(7))
+            .application(Application.builder().serviceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
+            .build();
+        caseData.getApplicant1().setGender(MALE);
+
+        when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
+
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+            .thenReturn(commonTemplateVars());
+
+        notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            TEST_SOLICITOR_EMAIL,
+            JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+            nopSolicitorTemplateVars(caseData.getApplicant1()),
+            ENGLISH,
+            TEST_CASE_ID
+        );
+
+        verifyNoMoreInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendNotificationInWelshToApplicant2SolicitorIfJointApplicationAndNotSolicitorService() {
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicant1(applicantRepresentedBySolicitor())
+            .applicant2(applicantRepresentedBySolicitor())
+            .applicationType(JOINT_APPLICATION)
+            .divorceOrDissolution(DIVORCE)
+            .dueDate(LOCAL_DATE.plusDays(7))
+            .application(Application.builder().serviceMethod(COURT_SERVICE).issueDate(LOCAL_DATE).build())
+            .build();
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(holdingPeriodService.getDueDateFor(LOCAL_DATE)).thenReturn(caseData.getApplication().getIssueDate().plusDays(141));
+
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2().getLanguagePreference()))
+            .thenReturn(commonTemplateVars());
+
+        notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            TEST_SOLICITOR_EMAIL,
+            JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
+            nopSolicitorTemplateVars(caseData.getApplicant2()),
+            WELSH,
             TEST_CASE_ID
         );
 
@@ -629,7 +734,8 @@ public class ApplicationIssuedNotificationTest {
                 .build())
             .build();
 
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(commonTemplateVars());
         when(commonContent.getUnionType(caseData, ENGLISH)).thenReturn("divorce");
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/" + TEST_CASE_ID);
@@ -667,7 +773,8 @@ public class ApplicationIssuedNotificationTest {
                 .build())
             .build();
 
-        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID)).thenReturn(commonTemplateVars());
+        when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference()))
+                .thenReturn(commonTemplateVars());
         when(commonContent.getUnionType(caseData, ENGLISH)).thenReturn("dissolution");
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/" + TEST_CASE_ID);
@@ -808,12 +915,14 @@ public class ApplicationIssuedNotificationTest {
         final Map<String, String> templateVars = solicitorTemplateVars();
 
         templateVars.put(SOLICITOR_REFERENCE, NOT_PROVIDED);
-        templateVars.put(DUE_DATE, LOCAL_DATE.plusDays(7).format(DATE_TIME_FORMATTER));
-        templateVars.put(ISSUE_DATE, LOCAL_DATE.format(DATE_TIME_FORMATTER));
+        templateVars.put(DUE_DATE, LOCAL_DATE.plusDays(7)
+            .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
+        templateVars.put(ISSUE_DATE, LOCAL_DATE.format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         templateVars.put(SIGN_IN_URL, null);
         templateVars.put(IS_DISSOLUTION, NO);
         templateVars.put(IS_DIVORCE, YES);
-        templateVars.put(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.plusDays(141).format(DATE_TIME_FORMATTER));
+        templateVars.put(SUBMISSION_RESPONSE_DATE, LOCAL_DATE.plusDays(141)
+            .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         return templateVars;
     }
 

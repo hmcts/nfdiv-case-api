@@ -23,7 +23,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKE
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
-public class PbaServiceTest {
+class PbaServiceTest {
 
     @Mock
     private HttpServletRequest httpServletRequest;

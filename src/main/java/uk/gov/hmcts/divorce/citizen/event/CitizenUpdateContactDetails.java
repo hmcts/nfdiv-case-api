@@ -1,13 +1,14 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -24,15 +25,14 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CitizenUpdateContactDetails implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CITIZEN_UPDATE_CONTACT_DETAILS = "citizen-update-contact-details";
 
-    @Autowired
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
-    @Autowired
-    private CcdAccessService ccdAccessService;
+    private final CcdAccessService ccdAccessService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -59,10 +59,14 @@ public class CitizenUpdateContactDetails implements CCDConfig<CaseData, State, U
             data.getApplicant1().setAddress(updatedData.getApplicant1().getAddress());
             data.getApplicant1().setPhoneNumber(updatedData.getApplicant1().getPhoneNumber());
             data.getApplicant1().setContactDetailsType(updatedData.getApplicant1().getContactDetailsType());
+            data.getApplicant1().setInRefuge(updatedData.getApplicant1().isConfidentialContactDetails()
+                ? updatedData.getApplicant1().getInRefuge() : YesOrNo.NO);
         } else {
             data.getApplicant2().setAddress(updatedData.getApplicant2().getAddress());
             data.getApplicant2().setPhoneNumber(updatedData.getApplicant2().getPhoneNumber());
             data.getApplicant2().setContactDetailsType(updatedData.getApplicant2().getContactDetailsType());
+            data.getApplicant2().setInRefuge(updatedData.getApplicant2().isConfidentialContactDetails()
+                ? updatedData.getApplicant1().getInRefuge() : YesOrNo.NO);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

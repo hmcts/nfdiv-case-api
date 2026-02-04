@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
@@ -18,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.testutil.TestConstants;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +47,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDa
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class CitizenPaymentMadeTest {
+class CitizenPaymentMadeTest {
 
     private static final String STATEMENT_OF_TRUTH_ERROR_MESSAGE =
         "Statement of truth must be accepted by the person making the application";
@@ -58,6 +60,9 @@ public class CitizenPaymentMadeTest {
 
     @Mock
     private PaymentValidatorService paymentValidatorService;
+
+    @Mock
+    private CaseFlagsService caseFlagsService;
 
     @InjectMocks
     private CitizenPaymentMade citizenPaymentMade;
@@ -190,5 +195,17 @@ public class CitizenPaymentMadeTest {
         assertThat(result.getData()).isSameAs(expectedCaseData);
         assertThat(result.getState()).isSameAs(AwaitingDocuments);
         verify(submissionService).submitApplication(details);
+    }
+
+    @Test
+    void shouldCallCaseFlagsServiceToSetHmctsServiceId() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TestConstants.TEST_CASE_ID);
+
+        citizenPaymentMade.submitted(caseDetails, null);
+
+        verify(caseFlagsService).setSupplementaryDataForCaseFlags(TestConstants.TEST_CASE_ID);
     }
 }

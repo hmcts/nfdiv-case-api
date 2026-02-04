@@ -115,7 +115,7 @@ class SendAosPackToApplicantTest {
     }
 
     @Test
-    public void shouldSendAosPackToApplicantWithoutNopForApp2WhenJoint() {
+    void shouldSendAosPackToApplicantWithoutNopForApp2WhenJoint() {
         final var caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);

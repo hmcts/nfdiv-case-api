@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.common.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -18,7 +18,6 @@ import static uk.gov.hmcts.divorce.common.notification.Applicant2RemindAwaitingJ
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_OR_FO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONSE_DUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT_OTHER_PARTY_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_ONE_APPLICANT_APPLIED_FOR_FINAL_ORDER;
@@ -34,6 +33,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class Applicant2AppliedForFinalOrderNotification implements ApplicantNotification {
 
     private static final String APP_2_OVERDUE_CONTENT = "They applied more than 12 months after the conditional order "
@@ -41,14 +41,11 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
 
     private static final String DELAY_REASON = "delayReason";
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private FinalOrderNotificationCommonContent finalOrderNotificationCommonContent;
+    private final FinalOrderNotificationCommonContent finalOrderNotificationCommonContent;
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long caseId) {
@@ -162,7 +159,6 @@ public class Applicant2AppliedForFinalOrderNotification implements ApplicantNoti
         // https://tools.hmcts.net/jira/browse/NFDIV-3687
         templateVars.put(IS_OVERDUE, YES);
         templateVars.put(IN_TIME, NO);
-        templateVars.put(SMART_SURVEY, commonContent.getSmartSurvey());
 
         return templateVars;
     }

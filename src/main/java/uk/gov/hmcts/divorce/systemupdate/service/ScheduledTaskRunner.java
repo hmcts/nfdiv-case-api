@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.systemupdate.service;
 
 import jakarta.annotation.Nullable;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +10,10 @@ import static java.lang.Character.toLowerCase;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ScheduledTaskRunner {
 
-    @Autowired
-    ApplicationContext context;
+    private final ApplicationContext context;
 
     public void run(String taskName) {
         final var beanName = toLowerCase(taskName.charAt(0)) + taskName.substring(1);

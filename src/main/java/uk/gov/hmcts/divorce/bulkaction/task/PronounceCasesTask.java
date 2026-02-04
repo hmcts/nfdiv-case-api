@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.bulkaction.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
@@ -20,19 +20,17 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.SeparationOrderGrante
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class PronounceCasesTask implements BulkCaseTask {
 
     final EnumSet<State> awaitingPronouncement = EnumSet.of(AwaitingPronouncement, OfflineDocumentReceived);
     final EnumSet<State> postStates = EnumSet.of(ConditionalOrderPronounced, SeparationOrderGranted);
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    BulkCaseTaskUtil bulkCaseTaskUtil;
+    private final BulkCaseTaskUtil bulkCaseTaskUtil;
 
     @Override
     public CaseDetails<BulkActionCaseData, BulkActionState> apply(final CaseDetails<BulkActionCaseData, BulkActionState> details) {

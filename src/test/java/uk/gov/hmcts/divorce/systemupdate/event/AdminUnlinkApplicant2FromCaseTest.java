@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
-public class AdminUnlinkApplicant2FromCaseTest {
+class AdminUnlinkApplicant2FromCaseTest {
 
     @Mock
     private CcdAccessService ccdAccessService;
@@ -48,7 +48,7 @@ public class AdminUnlinkApplicant2FromCaseTest {
     }
 
     @Test
-    public void shouldUnlinkApplicant2() {
+    void shouldUnlinkApplicant2() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         var caseData = caseData();
         caseDetails.setData(caseData);

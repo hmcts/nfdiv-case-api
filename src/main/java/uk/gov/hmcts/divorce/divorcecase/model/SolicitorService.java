@@ -38,7 +38,8 @@ public class SolicitorService {
 
     @CCD(
         label = "What Documents did you serve?",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String documentsServed;
 
@@ -77,7 +78,8 @@ public class SolicitorService {
     @CCD(
         label = "Give the address where you served the documents?",
         hint = "Include the fax or DX number, e-mail address or other electronic identification",
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String addressServed;
 
@@ -109,6 +111,25 @@ public class SolicitorService {
 
     @CCD(label = " ")
     private String truthStatement;
+
+    @CCD(label = "Is this the first attempt to serve the documents?")
+    private YesOrNo firstAttemptToServe;
+
+    @CCD(label = "Were the documents served previously returned by the post office as undelivered?")
+    private YesOrNo documentsPreviouslyReturned;
+
+    @CCD(
+        label = "Date the previous service was returned as undelivered",
+        typeOverride = Date
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate datePreviousServiceReturned;
+
+    @CCD(
+        label = "Please enter further details of the previous service that was returned as undelivered.",
+        typeOverride = TextArea
+    )
+    private String detailsOfPreviousService;
 
     public String getTruthStatement() {
         return "I believe that the facts stated in the application are true.";

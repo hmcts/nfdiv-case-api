@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -36,25 +36,20 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEED
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class GenerateApplicant1NoticeOfProceeding implements CaseTask {
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final CaseDataDocumentService caseDataDocumentService;
 
-    @Autowired
-    private NoticeOfProceedingContent templateContent;
+    private final NoticeOfProceedingContent templateContent;
 
-    @Autowired
-    private NoticeOfProceedingJointContent jointTemplateContent;
+    private final NoticeOfProceedingJointContent jointTemplateContent;
 
-    @Autowired
-    private NoticeOfProceedingSolicitorContent solicitorContent;
+    private final NoticeOfProceedingSolicitorContent solicitorContent;
 
-    @Autowired
-    private NoticeOfProceedingJointJudicialSeparationContent jointContentJudicialSeparationContent;
+    private final NoticeOfProceedingJointJudicialSeparationContent jointContentJudicialSeparationContent;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {

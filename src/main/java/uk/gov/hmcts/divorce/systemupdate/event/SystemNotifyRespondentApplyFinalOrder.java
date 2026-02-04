@@ -1,17 +1,23 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.RespondentApplyForFinalOrderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
+
+import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
@@ -22,18 +28,20 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService.CASE_ALREADY_PROCESSED_ERROR;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SystemNotifyRespondentApplyFinalOrder implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER = "system-notify-respondent-apply-final-order";
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private RespondentApplyForFinalOrderNotification respondentApplyForFinalOrderNotification;
+    private final RespondentApplyForFinalOrderNotification respondentApplyForFinalOrderNotification;
+
+    private final PaymentSetupService paymentSetupService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -53,14 +61,39 @@ public class SystemNotifyRespondentApplyFinalOrder implements CCDConfig<CaseData
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
         final Long caseId = details.getId();
+        if (YesOrNo.YES.equals(caseData.getFinalOrder().getFinalOrderReminderSentApplicant2())) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(CASE_ALREADY_PROCESSED_ERROR))
+                .build();
+        }
+
         log.info("A period of 3 months has elapsed since applicant became eligible to apply for final order for case {}. "
             + "Triggering notificationDispatcher...", caseId);
 
         notificationDispatcher.send(respondentApplyForFinalOrderNotification, caseData, caseId);
 
         caseData.getFinalOrder().setFinalOrderReminderSentApplicant2(YES);
+
+        if (caseData.getApplicant2().isRepresented()) {
+            prepareCaseDataForFinalOrderPbaPayment(caseData, caseId);
+        }
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
+    }
+
+    private void prepareCaseDataForFinalOrderPbaPayment(CaseData data, long caseId) {
+        FinalOrder finalOrder = data.getFinalOrder();
+
+        OrderSummary orderSummary = paymentSetupService.createFinalOrderFeeOrderSummary(data, caseId);
+
+        String serviceRequest = paymentSetupService.createFinalOrderFeeServiceRequest(
+            data, caseId, orderSummary
+        );
+
+        finalOrder.setApplicant2FinalOrderFeeOrderSummary(orderSummary);
+        finalOrder.setApplicant2SolFinalOrderFeeOrderSummary(orderSummary);
+        finalOrder.setApplicant2FinalOrderFeeServiceRequestReference(serviceRequest);
     }
 }

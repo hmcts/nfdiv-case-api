@@ -36,7 +36,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOK
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-public class SystemProcessFailedScheduledCasesTaskTest {
+class SystemProcessFailedScheduledCasesTaskTest {
     @Mock
     private CcdSearchService ccdSearchService;
 

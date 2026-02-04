@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorAppliedForConditionalOrderNotification;
 
 import java.time.Clock;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,7 +49,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class SubmitJointConditionalOrderTest {
+class SubmitJointConditionalOrderTest {
 
     @Mock
     private Clock clock;
@@ -143,12 +144,28 @@ public class SubmitJointConditionalOrderTest {
     }
 
     @Test
-    void shouldSetStateToConditionalOrderPendingOnAboutToSubmit() {
+    void shouldSetStateToConditionalOrderPendingOnAboutToSubmitWhenTheStateWasConditionalOrderDrafted() {
         setMockClock(clock);
 
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.ConditionalOrderDrafted).id(TEST_CASE_ID).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = submitJointConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(ConditionalOrderPending);
+
+        verifyNoInteractions(documentGenerator);
+    }
+
+    @Test
+    void shouldSetStateToConditionalOrderPendingOnAboutToSubmitWhenApplicant1HasNotSubmittedCO() {
+        setMockClock(clock);
+
+        final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
+        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setIsSubmitted(YesOrNo.NO);
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData).state(ConditionalOrderPending).id(TEST_CASE_ID).build();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = submitJointConditionalOrder.aboutToSubmit(caseDetails, caseDetails);
 
@@ -175,6 +192,7 @@ public class SubmitJointConditionalOrderTest {
 
         final CaseData caseData = CaseData.builder().applicationType(ApplicationType.JOINT_APPLICATION).build();
         caseData.getApplicant2().setLanguagePreferenceWelsh(NO);
+        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(LocalDateTime.now());
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .data(caseData).state(State.ConditionalOrderPending).id(TEST_CASE_ID).build();
 

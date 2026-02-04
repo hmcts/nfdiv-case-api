@@ -34,9 +34,9 @@ class SetApplicantGenderTest {
         var details = CaseDetails.<CaseData, State>builder().data(data).build();
         var result = task.apply(details).getData();
 
-        assertEquals(result.getApplicant1().getGender(), MALE);
-        assertEquals(result.getApplicant2().getGender(), FEMALE);
-        assertEquals(result.getApplication().getDivorceWho(), WIFE);
+        assertEquals(MALE, result.getApplicant1().getGender());
+        assertEquals(FEMALE, result.getApplicant2().getGender());
+        assertEquals(WIFE, result.getApplication().getDivorceWho());
     }
 
     @Test
@@ -45,9 +45,9 @@ class SetApplicantGenderTest {
         var details = CaseDetails.<CaseData, State>builder().data(data).build();
         var result = task.apply(details).getData();
 
-        assertEquals(result.getApplicant1().getGender(), MALE);
-        assertEquals(result.getApplicant2().getGender(), MALE);
-        assertEquals(result.getApplication().getDivorceWho(), HUSBAND);
+        assertEquals(MALE, result.getApplicant1().getGender());
+        assertEquals(MALE, result.getApplicant2().getGender());
+        assertEquals(HUSBAND, result.getApplication().getDivorceWho());
     }
 
     @Test
@@ -56,9 +56,9 @@ class SetApplicantGenderTest {
         var details = CaseDetails.<CaseData, State>builder().data(data).build();
         var result = task.apply(details).getData();
 
-        assertEquals(result.getApplicant1().getGender(), MALE);
-        assertEquals(result.getApplicant2().getGender(), FEMALE);
-        assertEquals(result.getApplication().getDivorceWho(), WIFE);
+        assertEquals(MALE, result.getApplicant1().getGender());
+        assertEquals(FEMALE, result.getApplicant2().getGender());
+        assertEquals(WIFE, result.getApplication().getDivorceWho());
     }
 
     @Test
@@ -67,9 +67,9 @@ class SetApplicantGenderTest {
         var details = CaseDetails.<CaseData, State>builder().data(data).build();
         var result = task.apply(details).getData();
 
-        assertEquals(result.getApplicant1().getGender(), FEMALE);
-        assertEquals(result.getApplicant2().getGender(), FEMALE);
-        assertEquals(result.getApplication().getDivorceWho(), WIFE);
+        assertEquals(FEMALE, result.getApplicant1().getGender());
+        assertEquals(FEMALE, result.getApplicant2().getGender());
+        assertEquals(WIFE, result.getApplication().getDivorceWho());
     }
 
     private CaseData createCaseData(final DivorceOrDissolution type,

@@ -87,7 +87,7 @@ class ConditionalOrderPronouncedPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo(LETTER_TYPE_CO_PRONOUNCED);
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(coGrantedCoversheetValue);
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(coGrantedDocValue);
     }
@@ -127,7 +127,7 @@ class ConditionalOrderPronouncedPrinterTest {
         assertThat(print.getCaseId()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getCaseRef()).isEqualTo(TEST_CASE_ID.toString());
         assertThat(print.getLetterType()).isEqualTo(LETTER_TYPE_CO_PRONOUNCED);
-        assertThat(print.getLetters().size()).isEqualTo(2);
+        assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(coGrantedCoversheetValueApp2);
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(coGrantedDocValue);
         assertThat(print.getRecipients()).isEqualTo(recipient);

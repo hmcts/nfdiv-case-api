@@ -34,12 +34,12 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_
 import static uk.gov.hmcts.divorce.document.model.DocumentType.SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
-public class ConditionalOrderRefusalDocumentPackTest {
+class ConditionalOrderRefusalDocumentPackTest {
 
     private final ConditionalOrderRefusalDocumentPack conditionalOrderRefusalDocumentPack = new ConditionalOrderRefusalDocumentPack();
 
     @Test
-    public void shouldFetchCorrectPackForClarificationJudicialSeparationWithRepresentedApplicant() {
+    void shouldFetchCorrectPackForClarificationJudicialSeparationWithRepresentedApplicant() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
         data.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
@@ -64,7 +64,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
     }
 
     @Test
-    public void shouldFetchCorrectPackForClarificationSeparationOrderWithRepresentedApplicant() {
+    void shouldFetchCorrectPackForClarificationSeparationOrderWithRepresentedApplicant() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
         data.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
@@ -89,7 +89,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
     }
 
     @Test
-    public void shouldFetchCorrectPackForClarificationJudicialSeparationWithUnrepresentedApplicant() {
+    void shouldFetchCorrectPackForClarificationJudicialSeparationWithUnrepresentedApplicant() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
         data.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
@@ -113,7 +113,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
     }
 
     @Test
-    public void shouldFetchCorrectPackForClarificationSeparationOrderWithUnrepresentedApplicant() {
+    void shouldFetchCorrectPackForClarificationSeparationOrderWithUnrepresentedApplicant() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
         data.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
@@ -137,7 +137,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
     }
 
     @Test
-    public void shouldFetchCorrectPackForClarificationDivorceWithUnrepresentedApplicant() {
+    void shouldFetchCorrectPackForClarificationDivorceWithUnrepresentedApplicant() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
         data.setSupplementaryCaseType(SupplementaryCaseType.NA);
@@ -159,7 +159,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
     }
 
     @Test
-    public void shouldFetchCorrectPackForAmendmentJudicialSeparationWithRepresentedApplicant() {
+    void shouldFetchCorrectPackForAmendmentJudicialSeparationWithRepresentedApplicant() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
         data.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
@@ -183,7 +183,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
     }
 
     @Test
-    public void shouldFetchCorrectPackForAmendmentSeparationOrderWithRepresentedApplicant() {
+    void shouldFetchCorrectPackForAmendmentSeparationOrderWithRepresentedApplicant() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
         data.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
@@ -207,7 +207,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
     }
 
     @Test
-    public void shouldFetchCorrectPackForAmendmentJudicialSeparationWithUnrepresentedApplicant() {
+    void shouldFetchCorrectPackForAmendmentJudicialSeparationWithUnrepresentedApplicant() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
         data.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
@@ -231,7 +231,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
     }
 
     @Test
-    public void shouldFetchCorrectPackForAmendmentSeparationOrderWithUnrepresentedApplicant() {
+    void shouldFetchCorrectPackForAmendmentSeparationOrderWithUnrepresentedApplicant() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
         data.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
@@ -254,7 +254,7 @@ public class ConditionalOrderRefusalDocumentPackTest {
     }
 
     @Test
-    public void shouldFetchCorrectPackForAmendmentDivorceWithUnrepresentedApplicant() {
+    void shouldFetchCorrectPackForAmendmentDivorceWithUnrepresentedApplicant() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
         data.setSupplementaryCaseType(SupplementaryCaseType.NA);

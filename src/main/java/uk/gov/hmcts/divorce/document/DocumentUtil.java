@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.document.model.DocumentInfo;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.ofNullable;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
@@ -108,12 +108,14 @@ public final class DocumentUtil {
 
         final AtomicInteger letterIndex = new AtomicInteger();
 
-        return ofNullable(documents)
-            .flatMap(Collection::stream)
-            .map(ListValue::getValue)
-            .filter(document -> documentType.equals(document.getDocumentType()))
-            .map(divorceDocument -> new Letter(divorceDocument, letterIndex.incrementAndGet()))
-            .collect(toList());
+        return new ArrayList<>(
+            ofNullable(documents)
+                .flatMap(Collection::stream)
+                .map(ListValue::getValue)
+                .filter(document -> documentType.equals(document.getDocumentType()))
+                .map(divorceDocument -> new Letter(divorceDocument, letterIndex.incrementAndGet()))
+                .toList()
+        );
     }
 
     public static List<Letter> lettersWithConfidentialDocumentType(final List<ListValue<ConfidentialDivorceDocument>> documents,
@@ -121,27 +123,31 @@ public final class DocumentUtil {
 
         final AtomicInteger letterIndex = new AtomicInteger();
 
-        return ofNullable(documents)
-            .flatMap(Collection::stream)
-            .map(ListValue::getValue)
-            .filter(document -> documentType.equals(document.getConfidentialDocumentsReceived()))
-            .map(confidentialDivorceDocument -> new Letter(confidentialDivorceDocument, letterIndex.incrementAndGet()))
-            .collect(toList());
+        return new ArrayList<>(
+            ofNullable(documents)
+                .flatMap(Collection::stream)
+                .map(ListValue::getValue)
+                .filter(document -> documentType.equals(document.getConfidentialDocumentsReceived()))
+                .map(confidentialDivorceDocument -> new Letter(confidentialDivorceDocument, letterIndex.incrementAndGet()))
+                .toList()
+        );
     }
 
     public static List<Letter> mapToLetters(final List<ListValue<Document>> documents, final DocumentType documentType) {
 
         final AtomicInteger letterIndex = new AtomicInteger();
 
-        return ofNullable(documents)
-            .flatMap(Collection::stream)
-            .map(ListValue::getValue)
-            .map(document -> new Letter(DivorceDocument.builder()
-                .documentType(documentType)
-                .documentFileName(document.getFilename())
-                .documentLink(document)
-                .build(), letterIndex.incrementAndGet()))
-            .collect(toList());
+        return new ArrayList<>(
+            ofNullable(documents)
+                .flatMap(Collection::stream)
+                .map(ListValue::getValue)
+                .map(document -> new Letter(DivorceDocument.builder()
+                    .documentType(documentType)
+                    .documentFileName(document.getFilename())
+                    .documentLink(document)
+                    .build(), letterIndex.incrementAndGet()))
+                .toList()
+        );
     }
 
     public static boolean isConfidential(final CaseData caseData, final DocumentType documentType) {

@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.notification;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -18,6 +18,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
+@RequiredArgsConstructor
 public class FinalOrderNotificationCommonContent {
 
     public static final String WILL_BE_CHECKED_WITHIN_2_DAYS = "will be checked within 2 days";
@@ -31,11 +32,9 @@ public class FinalOrderNotificationCommonContent {
     public static final String DELAY_REASON_STATIC_CONTENT = "They applied more than 12 months after the conditional order "
         + "was made and gave the following reason:\n%s";
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     public Map<String, String> jointApplicantTemplateVars(CaseData caseData, Long id, Applicant applicant, Applicant partner,
                                                           boolean isReminder) {

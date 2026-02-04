@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.bulkscan.endpoint;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,10 +24,10 @@ import static org.apache.commons.lang3.EnumUtils.isValidEnum;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class ValidationController {
 
-    @Autowired
-    private OcrValidator validator;
+    private final OcrValidator validator;
 
     @PostMapping(
         value = "/forms/{form-type}/validate-ocr",

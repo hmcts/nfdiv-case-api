@@ -12,6 +12,7 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID;
 
 @Component
@@ -24,12 +25,14 @@ public class CertificateOfEntitlementCoverLetterTemplateContent implements Templ
     public List<String> getSupportedTemplates() {
         return List.of(CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID,
                 CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID,
-                CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID);
+                CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID, CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT_TEMPLATE_ID);
     }
 
     @Override
     public Map<String, Object> getTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
+        var applicant1 = caseData.getApplicant1();
+        var partner = applicant1.equals(applicant) ? caseData.getApplicant2() : applicant1;
         return generateCertificateOfEntitlementHelper.getTemplateContent(
-                caseData, caseId, applicant, caseData.getApplicant2());
+                caseData, caseId, applicant, partner);
     }
 }

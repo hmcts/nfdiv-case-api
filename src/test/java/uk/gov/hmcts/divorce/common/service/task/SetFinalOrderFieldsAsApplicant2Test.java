@@ -108,7 +108,7 @@ class SetFinalOrderFieldsAsApplicant2Test {
 
         CaseDetails<CaseData, State> result = setFinalOrderFieldsAsApplicant2.apply(details);
         assertThat(result.getData().getFinalOrder().getApplicant2FinalOrderStatementOfTruth()).isEqualTo(YesOrNo.YES);
-        assertThat(result.getData().getFinalOrder().getApplicant1FinalOrderStatementOfTruth()).isEqualTo(null);
+        assertThat(result.getData().getFinalOrder().getApplicant1FinalOrderStatementOfTruth()).isNull();
     }
 
     @Test
@@ -122,7 +122,7 @@ class SetFinalOrderFieldsAsApplicant2Test {
             .build();
 
         CaseDetails<CaseData, State> result = setFinalOrderFieldsAsApplicant2.apply(details);
-        assertThat(result.getData().getFinalOrder().getApplicant2FinalOrderStatementOfTruth()).isEqualTo(null);
-        assertThat(result.getData().getFinalOrder().getApplicant1FinalOrderStatementOfTruth()).isEqualTo(null);
+        assertThat(result.getData().getFinalOrder().getApplicant2FinalOrderStatementOfTruth()).isNull();
+        assertThat(result.getData().getFinalOrder().getApplicant1FinalOrderStatementOfTruth()).isNull();
     }
 }

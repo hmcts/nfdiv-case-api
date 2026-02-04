@@ -118,8 +118,6 @@ class SetApplicant2EmailTest {
     @Test
     void shouldNotSetApplicant2EmailIfCaseInviteIsNull() {
 
-        final String email = "app2@email";
-
         final CaseData caseData = CaseData.builder()
             .applicant2(Applicant.builder()
                 .email("")

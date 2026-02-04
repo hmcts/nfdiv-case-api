@@ -27,6 +27,8 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_BAILIFF_SERVICE;
 import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_DEEMED_SERVICE;
 import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_DISPENSE_SERVICE;
+import static uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification.IS_ALTERNATIVE_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.ALTERNATIVE_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
@@ -87,7 +89,29 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_DEEMED_SERVICE, YES),
                 hasEntry(IS_DISPENSE_SERVICE, NO),
-                hasEntry(IS_BAILIFF_SERVICE, NO)
+                hasEntry(IS_BAILIFF_SERVICE, NO),
+                hasEntry(IS_ALTERNATIVE_SERVICE, NO)
+            )),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+    }
+
+    @Test
+    void shouldSendAlternativeServiceApplicationRejectedEmailToSoleApplicantWithDivorceContent() {
+        sendNotification(ALTERNATIVE_SERVICE, DIVORCE, NOT_GRANTED);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(SERVICE_APPLICATION_REJECTED),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(ID)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(IS_DEEMED_SERVICE, NO),
+                hasEntry(IS_DISPENSE_SERVICE, NO),
+                hasEntry(IS_BAILIFF_SERVICE, NO),
+                hasEntry(IS_ALTERNATIVE_SERVICE, YES)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -107,7 +131,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(IS_DEEMED_SERVICE, YES),
                 hasEntry(IS_DISPENSE_SERVICE, NO),
-                hasEntry(IS_BAILIFF_SERVICE, NO)
+                hasEntry(IS_BAILIFF_SERVICE, NO),
+                hasEntry(IS_ALTERNATIVE_SERVICE, NO)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -127,7 +152,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_DEEMED_SERVICE, NO),
                 hasEntry(IS_DISPENSE_SERVICE, YES),
-                hasEntry(IS_BAILIFF_SERVICE, NO)
+                hasEntry(IS_BAILIFF_SERVICE, NO),
+                hasEntry(IS_ALTERNATIVE_SERVICE, NO)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -157,7 +183,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_DEEMED_SERVICE, NO),
                 hasEntry(IS_DISPENSE_SERVICE, YES),
-                hasEntry(IS_BAILIFF_SERVICE, NO)
+                hasEntry(IS_BAILIFF_SERVICE, NO),
+                hasEntry(IS_ALTERNATIVE_SERVICE, NO)
             )),
             eq(WELSH),
             eq(TEST_CASE_ID)
@@ -177,7 +204,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(IS_DEEMED_SERVICE, NO),
                 hasEntry(IS_DISPENSE_SERVICE, YES),
-                hasEntry(IS_BAILIFF_SERVICE, NO)
+                hasEntry(IS_BAILIFF_SERVICE, NO),
+                hasEntry(IS_ALTERNATIVE_SERVICE, NO)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -197,7 +225,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_DEEMED_SERVICE, NO),
                 hasEntry(IS_DISPENSE_SERVICE, NO),
-                hasEntry(IS_BAILIFF_SERVICE, YES)
+                hasEntry(IS_BAILIFF_SERVICE, YES),
+                hasEntry(IS_ALTERNATIVE_SERVICE, NO)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -217,7 +246,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(IS_DEEMED_SERVICE, NO),
                 hasEntry(IS_DISPENSE_SERVICE, NO),
-                hasEntry(IS_BAILIFF_SERVICE, YES)
+                hasEntry(IS_BAILIFF_SERVICE, YES),
+                hasEntry(IS_ALTERNATIVE_SERVICE, NO)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -237,7 +267,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_DEEMED_SERVICE, NO),
                 hasEntry(IS_DISPENSE_SERVICE, NO),
-                hasEntry(IS_BAILIFF_SERVICE, YES)
+                hasEntry(IS_BAILIFF_SERVICE, YES),
+                hasEntry(IS_ALTERNATIVE_SERVICE, NO)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -269,6 +300,7 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DEEMED_SERVICE, NO),
                 hasEntry(IS_DISPENSE_SERVICE, NO),
                 hasEntry(IS_BAILIFF_SERVICE, YES),
+                hasEntry(IS_ALTERNATIVE_SERVICE, NO),
                 hasEntry(PARTNER, "gŵr")
             )),
             eq(WELSH),
@@ -333,6 +365,7 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_DEEMED_SERVICE, NO),
                 hasEntry(IS_DISPENSE_SERVICE, NO),
                 hasEntry(IS_BAILIFF_SERVICE, YES),
+                hasEntry(IS_ALTERNATIVE_SERVICE, NO),
                 hasEntry(IS_SOLE, YES),
                 hasEntry(IS_JOINT, NO),
                 hasEntry(SOLICITOR_REFERENCE, NOT_PROVIDED)
@@ -366,7 +399,8 @@ class ServiceApplicationNotificationTest {
                 hasEntry(IS_BAILIFF_SERVICE, NO),
                 hasEntry(IS_SOLE, YES),
                 hasEntry(IS_JOINT, NO),
-                hasEntry(SOLICITOR_REFERENCE, NOT_PROVIDED)
+                hasEntry(SOLICITOR_REFERENCE, NOT_PROVIDED),
+                hasEntry(IS_ALTERNATIVE_SERVICE, NO)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)

@@ -83,7 +83,7 @@ class ApplicationJointTemplateContentTest {
     private ApplicationJointTemplateContent applicationJointTemplateContent;
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForJointApplicationWithTypeDivorce() {
+    void shouldSuccessfullyApplyContentFromCaseDataForJointApplicationWithTypeDivorce() {
 
         CaseData caseData = buildCaseData(DIVORCE, NO, NO);
 
@@ -122,7 +122,7 @@ class ApplicationJointTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForJointApplicationWithTypeDissolution() {
+    void shouldSuccessfullyApplyContentFromCaseDataForJointApplicationWithTypeDissolution() {
 
         CaseData caseData = buildCaseData(DISSOLUTION, NO, NO);
 
@@ -159,7 +159,7 @@ class ApplicationJointTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentInWelshFromCaseDataForJointApplicationWithTypeDivorce() {
+    void shouldSuccessfullyApplyContentInWelshFromCaseDataForJointApplicationWithTypeDivorce() {
 
         CaseData caseData = buildCaseData(DIVORCE, YES, YES);
 
@@ -197,7 +197,7 @@ class ApplicationJointTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentInWelshFromCaseDataForJointApplicationWithTypeDissolution() {
+    void shouldSuccessfullyApplyContentInWelshFromCaseDataForJointApplicationWithTypeDissolution() {
 
         CaseData caseData = buildCaseData(DISSOLUTION, YES, YES);
 

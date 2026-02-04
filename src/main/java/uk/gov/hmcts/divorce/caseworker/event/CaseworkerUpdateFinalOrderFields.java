@@ -26,21 +26,22 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CaseworkerUpdateFinalOrderFields implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_UPDATE_FINAL_ORDER_FIELDS = "caseworker-update-final-order-fields";
+    private static final String UPDATE_FO_FIELDS = "Update FO fields";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_UPDATE_FINAL_ORDER_FIELDS)
             .forStates(ConditionalOrderPronounced)
-            .name("Update FO fields")
-            .description("Update FO fields")
+            .name(UPDATE_FO_FIELDS)
+            .description(UPDATE_FO_FIELDS)
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR))
             .page("updateFinalOrderFields")
-            .pageLabel("Update FO fields")
+            .pageLabel(UPDATE_FO_FIELDS)
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getDateAndTimeOfHearing)
             .done();

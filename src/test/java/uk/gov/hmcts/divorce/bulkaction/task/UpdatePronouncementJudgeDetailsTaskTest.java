@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetail
 
 @ExtendWith(MockitoExtension.class)
 
-public class UpdatePronouncementJudgeDetailsTaskTest {
+class UpdatePronouncementJudgeDetailsTaskTest {
 
     @Mock
     private BulkTriggerService bulkTriggerService;
@@ -82,8 +82,7 @@ public class UpdatePronouncementJudgeDetailsTaskTest {
         when(bulkCaseTaskUtil.processCases(bulkActionCaseDetails, bulkListCaseDetails,
                 SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE, user, SERVICE_AUTHORIZATION)).thenReturn(bulkActionCaseDetails);
 
-        final CaseDetails<BulkActionCaseData, BulkActionState> result =
-            updatePronouncementJudgeDetailsTask.apply(bulkActionCaseDetails);
+        updatePronouncementJudgeDetailsTask.apply(bulkActionCaseDetails);
 
         verify(bulkCaseTaskUtil).processCases(bulkActionCaseDetails, bulkListCaseDetails,
                 SYSTEM_UPDATE_CASE_PRONOUNCEMENT_JUDGE, user, SERVICE_AUTHORIZATION);

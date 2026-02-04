@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.bulkscan.validation.data.OcrDataFields.transf
 
 
 @ExtendWith(MockitoExtension.class)
-public class MarriageDetailsTransformerTest {
+class MarriageDetailsTransformerTest {
 
     @InjectMocks
     private MarriageDetailsTransformer marriageDetailsTransformer;

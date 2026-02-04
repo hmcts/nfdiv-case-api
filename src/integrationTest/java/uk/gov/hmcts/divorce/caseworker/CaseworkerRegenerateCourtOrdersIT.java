@@ -12,9 +12,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.ccd.sdk.type.Document;
@@ -26,6 +26,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -38,6 +39,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
@@ -56,6 +58,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -100,28 +103,28 @@ public class CaseworkerRegenerateCourtOrdersIT {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private BulkPrintService bulkPrintService;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private RequestInterceptor requestInterceptor;
 
-    @MockBean
+    @MockitoBean
     private NotificationService notificationService;
 
-    @MockBean
+    @MockitoBean
     private WebMvcConfig webMvcConfig;
 
-    @MockBean
+    @MockitoBean
     private AuthTokenGenerator serviceTokenGenerator;
 
     @Autowired
     private NotificationDispatcher notificationDispatcher;
 
-    @MockBean
+    @MockitoBean
     private Clock clock;
 
     @BeforeAll
@@ -166,6 +169,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
             "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx");
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
             "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
+        stubForDocAssemblyWith("6dd725e8-f053-4493-9cbe-bb69d1905a12",
+                "FL-NFD-GOR-ENG-Do-Not-Attend-Court-CO-Granted-Letter.docx");
         stubForDocAssemblyWith("ea114af6-ed73-476b-8cc6-41ec8eb4f0b3",
             "FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter_V2.docx");
         stubForDocAssemblyWith("b3d8d9de-8706-4b6e-881c-d8b400d6c533",
@@ -219,7 +224,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
                     .builder()
                     .documentsGenerated(documentsGenerated)
                     .build()
-            )
+            ).finalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build())
             .build();
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -290,11 +295,13 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .conditionalOrder(
                 ConditionalOrder.builder()
                     .dateAndTimeOfHearing(LocalDateTime.now())
+                    .court(BIRMINGHAM)
+                    .grantedDate(LocalDate.now())
                     .certificateOfEntitlementDocument(
                         divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
                     )
                     .build()
-            )
+            ).finalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build())
             .documents(
                 CaseDocuments
                     .builder()
@@ -364,11 +371,13 @@ public class CaseworkerRegenerateCourtOrdersIT {
             .conditionalOrder(
                 ConditionalOrder.builder()
                     .dateAndTimeOfHearing(LocalDateTime.now())
+                    .court(BIRMINGHAM)
+                    .grantedDate(LocalDate.now())
                     .certificateOfEntitlementDocument(
                         divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
                     )
                     .build()
-            )
+            ).finalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build())
             .documents(
                 CaseDocuments
                     .builder()
@@ -457,7 +466,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
                         divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
                     )
                     .build()
-            )
+            ).finalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build())
             .documents(
                 CaseDocuments
                     .builder()
@@ -554,7 +563,7 @@ public class CaseworkerRegenerateCourtOrdersIT {
                         divorceDocumentWithFileName("certificateOfEntitlement-1641906321238843-2022-02-22:16:06.pdf")
                     )
                     .build()
-            )
+            ).finalOrder(FinalOrder.builder().grantedDate(LocalDateTime.now()).build())
             .documents(
                 CaseDocuments
                     .builder()

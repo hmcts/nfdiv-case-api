@@ -16,7 +16,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfi
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(SpringExtension.class)
-public class SystemMigrateBulkCaseTest {
+class SystemMigrateBulkCaseTest {
 
     @InjectMocks
     private SystemMigrateBulkCase systemMigrateBulkCase;

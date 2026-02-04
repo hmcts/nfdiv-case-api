@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.document.content;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
@@ -27,6 +27,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
+@RequiredArgsConstructor
 public class ConditionalOrderRefusedForClarificationContent implements ConditionalOrderRefusedTemplateContent {
 
     public static final String LEGAL_ADVISOR_COMMENTS = "legalAdvisorComments";
@@ -34,18 +35,16 @@ public class ConditionalOrderRefusedForClarificationContent implements Condition
     private static final String IS_JOINT = "isJoint";
     public static final String JUDICIAL_SEPARATION = "judicialSeparation";
     public static final String REASON_JURISDICTION_DETAILS = "jurisdictionDetails";
+    public static final String REASON_LEGAL_NAME_DIFFERENT = "legalNameDifferentToCertificate";
     public static final String REASON_MARRIAGE_CERT_TRANSLATION = "marriageCertTranslation";
     public static final String REASON_MARRIAGE_CERTIFICATE = "marriageCertificate";
     public static final String REASON_PREVIOUS_PROCEEDINGS_DETAILS = "previousProceedingDetails";
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
-    @Autowired
-    private ConditionalOrderCommonContent conditionalOrderCommonContent;
+    private final ConditionalOrderCommonContent conditionalOrderCommonContent;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     @Override
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
@@ -76,6 +75,8 @@ public class ConditionalOrderRefusedForClarificationContent implements Condition
             clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE));
         templateContent.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS,
             clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
+        templateContent.put(REASON_LEGAL_NAME_DIFFERENT,
+            clarificationReasons.contains(ClarificationReason.LEGAL_NAME_DIFFERENT_TO_CERTIFICATE));
 
         templateContent.put(LEGAL_ADVISOR_COMMENTS, conditionalOrderCommonContent.generateLegalAdvisorComments(conditionalOrder));
 

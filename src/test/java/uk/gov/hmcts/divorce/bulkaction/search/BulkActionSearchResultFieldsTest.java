@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.tuple;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createBulkActionConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getSearchResultFields;
 
-public class BulkActionSearchResultFieldsTest {
+class BulkActionSearchResultFieldsTest {
     private BulkActionSearchResultFields searchResultFields;
 
     @BeforeEach

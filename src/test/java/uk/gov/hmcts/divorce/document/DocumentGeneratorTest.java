@@ -78,7 +78,7 @@ class DocumentGeneratorTest {
     private DocumentGenerator documentGenerator;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         documentGenerator = new DocumentGenerator(
             Arrays.asList(templateContent1, templateContent2, templateContent3),
             caseDataDocumentService,
@@ -123,7 +123,7 @@ class DocumentGeneratorTest {
     }
 
     @Test
-    public void shouldThrowIllegalStateExceptionWhenLocatingCorrectTemplateContentBeanFailsToYieldOneResult() {
+    void shouldThrowIllegalStateExceptionWhenLocatingCorrectTemplateContentBeanFailsToYieldOneResult() {
         CaseData data = validApplicant1CaseData();
 
         data.getDocuments().setDocumentsGenerated(List.of(
@@ -146,7 +146,7 @@ class DocumentGeneratorTest {
     }
 
     @Test
-    public void shouldReturnListWithNullsRemovedIfDocTypeMissingFromCaseData() {
+    void shouldReturnListWithNullsRemovedIfDocTypeMissingFromCaseData() {
         setMockClock(clock, LocalDate.of(2022, 3, 16));
         CaseData data = validApplicant1CaseData();
 
@@ -168,7 +168,7 @@ class DocumentGeneratorTest {
     }
 
     @Test
-    public void shouldGenerateAndStoreCaseDocument() {
+    void shouldGenerateAndStoreCaseDocument() {
         setMockClock(clock, LocalDate.of(2022, 3, 16));
 
         Document foDocument = Document.builder()

@@ -6,7 +6,7 @@
   ],
   "packageRules": [
     {
-      "packageNames": ["com.github.hmcts:fortify-client"],
+      "packageNames": ["com.github.hmcts:fortify-client", "com.github.hmcts.rse-cft-lib"],
       "enabled": false
     }
   ]

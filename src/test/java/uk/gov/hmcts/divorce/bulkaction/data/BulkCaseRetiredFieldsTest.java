@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
 
-public class BulkCaseRetiredFieldsTest {
+class BulkCaseRetiredFieldsTest {
 
     @Test
     void migrateShouldMigrateSomeFieldsAndLeaveOthersAlone() {

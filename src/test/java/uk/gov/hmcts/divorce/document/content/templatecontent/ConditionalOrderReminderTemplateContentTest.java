@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.ConditionalOrderReminderTemplateContent;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
 import java.time.Clock;
 import java.util.LinkedHashMap;
@@ -33,25 +34,28 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class ConditionalOrderReminderTemplateContentTest {
+class ConditionalOrderReminderTemplateContentTest {
 
-    public static final String DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION = "divorceOrEndCivilPartnershipApplication";
-    public static final String DIVORCE_OR_END_CIVIL_PARTNERSHIP = "divorceOrEndCivilPartnership";
-    public static final String APPLICANT_FIRST_NAME = "applicantFirstName";
-    public static final String APPLICANT_LAST_NAME = "applicantLastName";
-    public static final String APPLICANT_ADDRESS = "applicantAddress";
+    static final String DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION = "divorceOrEndCivilPartnershipApplication";
+    static final String DIVORCE_OR_END_CIVIL_PARTNERSHIP = "divorceOrEndCivilPartnership";
+    static final String APPLICANT_FIRST_NAME = "applicantFirstName";
+    static final String APPLICANT_LAST_NAME = "applicantLastName";
+    static final String APPLICANT_ADDRESS = "applicantAddress";
 
-    public static final String DIVORCE = "get a divorce";
-    public static final String END_THE_CIVIL_PARTNERSHIP = "end the civil partnership";
+    static final String DIVORCE = "get a divorce";
+    static final String END_THE_CIVIL_PARTNERSHIP = "end the civil partnership";
 
     @Mock
     private Clock clock;
+
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
     private ConditionalOrderReminderTemplateContent conditionalOrderReminderTemplateContent;
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForConditionalOrderReminderDocumentDivorceSole() {
+    void shouldSuccessfullyApplyContentFromCaseDataForConditionalOrderReminderDocumentDivorceSole() {
 
         CaseData caseData = caseData();
 
@@ -81,7 +85,7 @@ public class ConditionalOrderReminderTemplateContentTest {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForConditionalOrderReminderDocumentCivilPartnershipJoint() {
+    void shouldSuccessfullyApplyContentFromCaseDataForConditionalOrderReminderDocumentCivilPartnershipJoint() {
 
         CaseData caseData = caseData();
         caseData.setDivorceOrDissolution(DISSOLUTION);
@@ -111,7 +115,7 @@ public class ConditionalOrderReminderTemplateContentTest {
     }
 
     @Test
-    public void shouldReturnSupportedTemplates() {
+    void shouldReturnSupportedTemplates() {
         assertThat(conditionalOrderReminderTemplateContent.getSupportedTemplates())
             .isEqualTo(List.of(CONDITIONAL_ORDER_REMINDER_TEMPLATE_ID));
     }

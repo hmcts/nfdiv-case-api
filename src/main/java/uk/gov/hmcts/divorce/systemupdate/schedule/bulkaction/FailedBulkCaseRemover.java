@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule.bulkaction;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -15,17 +15,16 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemEmptyCase.SYSTEM_EMPTY_CASE;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemRemoveFailedCases.SYSTEM_REMOVE_FAILED_CASES;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class FailedBulkCaseRemover {
 
-    @Autowired
-    private CcdUpdateService ccdUpdateService;
+    private final CcdUpdateService ccdUpdateService;
 
     public void removeFailedCasesFromBulkListCaseDetails(final List<ListValue<BulkListCaseDetails>> unprocessedBulkCases,
                                                          final CaseDetails<BulkActionCaseData, BulkActionState> caseDetailsBulkCase,
@@ -36,7 +35,7 @@ public class FailedBulkCaseRemover {
 
         final List<Long> failedCaseIds = unprocessedBulkCases.stream()
             .map(listValue -> Long.valueOf(listValue.getValue().getCaseReference().getCaseReference()))
-            .collect(toList());
+            .toList();
 
         if (!isEmpty(unprocessedBulkCases)) {
             log.info(

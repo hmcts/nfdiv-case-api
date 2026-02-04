@@ -170,7 +170,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
     }
 
     @Test
-    public void verifyApplicant1TemplateVarsWhenFinalOrderEligible() {
+    void verifyApplicant1TemplateVarsWhenFinalOrderEligible() {
         setupMocks(clock);
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
@@ -199,7 +199,7 @@ class Applicant1AppliedForFinalOrderNotificationTest {
     }
 
     @Test
-    public void verifyApplicant1TemplateVarsWhenFinalOrderNotEligible() {
+    void verifyApplicant1TemplateVarsWhenFinalOrderNotEligible() {
         setupMocks(clock);
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);

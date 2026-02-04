@@ -29,6 +29,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.event.DraftAos.validateConditionalOrderStatus;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
@@ -51,6 +52,7 @@ import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueAosUnDisputed.S
 public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SUBMIT_AOS = "submit-aos";
+    public static final String AOS_ALREADY_SUBMITTED_ERROR = "The Acknowledgement Of Service has already been submitted";
 
     private final List<CcdPageConfiguration> pages = List.of(
         new Applicant2SolStatementOfTruth(),
@@ -76,9 +78,10 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
 
         if (null != acknowledgementOfService && null != acknowledgementOfService.getDateAosSubmitted()) {
+            log.info(AOS_ALREADY_SUBMITTED_ERROR + "for Case Id: {}", details.getId());
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(Collections.singletonList("The Acknowledgement Of Service has already been submitted."))
+                .errors(Collections.singletonList(AOS_ALREADY_SUBMITTED_ERROR))
                 .build();
         }
 
@@ -170,6 +173,8 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
         if (YES.equals(caseData.getApplicant2().getLegalProceedings()) && caseData.getApplicant2().getLegalProceedingsDetails() == null) {
             errors.add("The respondent must enter the details of their other legal proceedings.");
         }
+
+        errors.addAll(validateConditionalOrderStatus(caseData));
 
         return errors;
     }

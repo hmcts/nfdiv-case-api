@@ -44,7 +44,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddress;
 
 @ExtendWith(MockitoExtension.class)
-public class ApplyForConditionalOrderTemplateContentTest {
+class ApplyForConditionalOrderTemplateContentTest {
 
     @Mock
     private CommonContent commonContent;

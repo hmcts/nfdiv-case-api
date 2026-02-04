@@ -1,18 +1,21 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.task.SetDefaultOrganisationPolicies;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 
@@ -36,23 +39,27 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, UserRole> {
 
+    private static final String PROGRESS_PAPER_CASE = "Progress paper case";
     public static final String CASEWORKER_PROGRESS_PAPER_CASE = "caseworker-progress-paper-case";
 
-    @Autowired
-    private SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
+    private final CaseFlagsService caseFlagsService;
+
+    private final SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_PROGRESS_PAPER_CASE)
             .forState(NewPaperCase)
-            .name("Progress paper case")
-            .description("Progress paper case")
+            .name(PROGRESS_PAPER_CASE)
+            .description(PROGRESS_PAPER_CASE)
             .showEventNotes()
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER)
             .grant(CREATE_READ_UPDATE_DELETE,
@@ -61,8 +68,8 @@ public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, U
                 SOLICITOR,
                 LEGAL_ADVISOR,
                 JUDGE))
-            .page("Progress paper case")
-            .pageLabel("Progress paper case")
+            .page(PROGRESS_PAPER_CASE)
+            .pageLabel(PROGRESS_PAPER_CASE)
             .complex(CaseData::getApplication)
             .mandatory(Application::getProgressPaperCase)
             .done()
@@ -83,6 +90,9 @@ public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, U
                 .errors(submittedErrors)
                 .build();
         }
+
+        caseFlagsService.initialiseCaseFlags(caseData);
+        caseData.setCaseFlagsSetupComplete(YesOrNo.YES);
 
         if (caseData.getApplication().getProgressPaperCase().equals(SUBMITTED)) {
             final CaseDetails<CaseData, State> result = caseTasks(setDefaultOrganisationPolicies).run(details);
@@ -107,5 +117,12 @@ public class CaseworkerProgressPaperCase implements CCDConfig<CaseData, State, U
                 .state(AwaitingPayment)
                 .build();
         }
+    }
+
+    public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,
+                                               final CaseDetails<CaseData, State> beforeDetails) {
+        log.info("Add payment submitted callback invoked CaseID: {}", details.getId());
+        caseFlagsService.setSupplementaryDataForCaseFlags(details.getId());
+        return SubmittedCallbackResponse.builder().build();
     }
 }

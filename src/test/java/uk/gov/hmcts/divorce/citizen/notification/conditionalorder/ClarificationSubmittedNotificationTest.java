@@ -54,7 +54,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class ClarificationSubmittedNotificationTest {
+class ClarificationSubmittedNotificationTest {
 
     @Mock
     private NotificationService notificationService;

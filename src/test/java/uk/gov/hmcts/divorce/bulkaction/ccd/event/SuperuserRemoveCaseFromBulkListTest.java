@@ -85,7 +85,7 @@ class SuperuserRemoveCaseFromBulkListTest {
             superuserRemoveCaseFromBulkList.aboutToStart(details);
 
         assertThat(result.getData().getCasesAcceptedToListForHearing()).isNotNull();
-        assertThat(result.getData().getCasesAcceptedToListForHearing()).hasSize(0);
+        assertThat(result.getData().getCasesAcceptedToListForHearing()).isEmpty();
     }
 
     @Test
@@ -99,7 +99,7 @@ class SuperuserRemoveCaseFromBulkListTest {
             superuserRemoveCaseFromBulkList.aboutToStart(details);
 
         assertThat(result.getData().getCasesAcceptedToListForHearing()).isNotNull();
-        assertThat(result.getData().getCasesAcceptedToListForHearing()).hasSize(0);
+        assertThat(result.getData().getCasesAcceptedToListForHearing()).isEmpty();
     }
 
     @Test

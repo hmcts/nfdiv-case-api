@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -29,18 +29,16 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class Applicant1ResubmitNotification implements ApplicantNotification {
 
     public static final String THEIR_EMAIL_ADDRESS = "their email address";
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private EmailTemplatesConfig configVars;
+    private final EmailTemplatesConfig configVars;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -115,11 +113,12 @@ public class Applicant1ResubmitNotification implements ApplicantNotification {
     }
 
     private Map<String, String> applicant2SolicitorTemplateVars(CaseData caseData, Long id) {
-        var templateVars = commonContent.basicTemplateVars(caseData, id);
+        Applicant applicant2 = caseData.getApplicant2();
+        var templateVars = commonContent.basicTemplateVars(caseData, id, applicant2.getLanguagePreference());
 
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
-        templateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
+        templateVars.put(SOLICITOR_NAME, applicant2.getSolicitor().getName());
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
         return templateVars;

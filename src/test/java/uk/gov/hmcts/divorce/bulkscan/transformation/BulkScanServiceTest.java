@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class BulkScanServiceTest {
+class BulkScanServiceTest {
     @Mock
     private BulkScanFormTransformerFactory bulkScanFormTransformerFactory;
 

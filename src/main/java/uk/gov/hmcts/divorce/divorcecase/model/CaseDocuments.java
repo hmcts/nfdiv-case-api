@@ -56,7 +56,8 @@ public class CaseDocuments {
         label = "Applicant 1 uploaded documents",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> applicant1DocumentsUploaded;
 
@@ -64,7 +65,8 @@ public class CaseDocuments {
         label = "Applicant 2 Documents uploaded",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {Applicant2Access.class}
+        access = {Applicant2Access.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> applicant2DocumentsUploaded;
 
@@ -72,7 +74,8 @@ public class CaseDocuments {
         label = "Documents uploaded",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> documentsUploaded;
 
@@ -80,7 +83,8 @@ public class CaseDocuments {
         label = "Confidential documents uploaded",
         typeOverride = Collection,
         typeParameterOverride = "ConfidentialDivorceDocument",
-        access = {CaseworkerCourtAdminWithSolicitorAccess.class}
+        access = {CaseworkerCourtAdminWithSolicitorAccess.class},
+        searchable = false
     )
     private List<ListValue<ConfidentialDivorceDocument>> confidentialDocumentsUploaded;
 
@@ -88,7 +92,8 @@ public class CaseDocuments {
         label = "Confidential documents generated",
         typeOverride = Collection,
         typeParameterOverride = "ConfidentialDivorceDocument",
-        access = {CaseworkerCourtAdminWithSolicitorAccess.class}
+        access = {CaseworkerCourtAdminWithSolicitorAccess.class},
+        searchable = false
     )
     private List<ListValue<ConfidentialDivorceDocument>> confidentialDocumentsGenerated;
 
@@ -96,7 +101,8 @@ public class CaseDocuments {
         label = "Documents generated",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> documentsGenerated;
 
@@ -112,19 +118,22 @@ public class CaseDocuments {
         label = "Upload Answer Received supporting documents",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> answerReceivedSupportingDocuments;
 
     @CCD(
         label = "Select scanned document name",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private DynamicList scannedDocumentNames;
 
     @CCD(
         label = "Select general order document name",
-        access = {CaseworkerAccessOnlyAccess.class}
+        access = {CaseworkerAccessOnlyAccess.class},
+        searchable = false
     )
     private DynamicList generalOrderDocumentNames;
 
@@ -132,7 +141,8 @@ public class CaseDocuments {
         label = "Amended applications",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> amendedApplications;
 
@@ -140,7 +150,8 @@ public class CaseDocuments {
         label = "Documents uploaded",
         typeOverride = Collection,
         typeParameterOverride = "DivorceDocument",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private List<ListValue<DivorceDocument>> documentsUploadedOnConfirmService;
 
@@ -148,7 +159,8 @@ public class CaseDocuments {
         label = "Documents uploaded",
         typeOverride = Collection,
         typeParameterOverride = "LetterPack",
-        access = {CaseworkerCourtAdminWithSolicitorAccess.class}
+        access = {CaseworkerCourtAdminWithSolicitorAccess.class},
+        searchable = false
     )
     private List<ListValue<LetterPack>> letterPacks;
 
@@ -189,7 +201,10 @@ public class CaseDocuments {
         D84NVA("D84NVA"),
 
         @JsonProperty("D36N")
-        D36N("D36N");
+        D36N("D36N"),
+
+        @JsonProperty("RFIR")
+        RFIR("RFIR");
 
         private final String label;
     }
@@ -207,6 +222,9 @@ public class CaseDocuments {
         @JsonProperty("D36")
         FO_D36("Application for a final order (D36)"),
 
+        @JsonProperty("RFIR")
+        RFI_RESPONSE("Request for Information Response"),
+
         @JsonProperty("Other")
         OTHER("Other");
 
@@ -219,7 +237,7 @@ public class CaseDocuments {
 
     public static <T> List<ListValue<T>> addDocumentToTop(final List<ListValue<T>> documents, final T value, final String id) {
         final var listItemId = isBlank(id) ? String.valueOf(randomUUID()) : id;
-        final var listValue = new ListValue<T>(listItemId, value);
+        final var listValue = new ListValue<>(listItemId, value);
         final List<ListValue<T>> list = isEmpty(documents) ? new ArrayList<>() : new ArrayList<>(documents);
 
         list.add(0, listValue);
@@ -252,14 +270,14 @@ public class CaseDocuments {
         final var previousDocuments = documentsWithoutIds.getOrDefault(false, new ArrayList<>());
 
         if (null != newDocuments) {
-            sortedDocuments.addAll(0, newDocuments); // add new documents to start of the list
-            sortedDocuments.addAll(1, previousDocuments);
+            sortedDocuments.addAll(newDocuments);
+            sortedDocuments.addAll(previousDocuments);
+
             sortedDocuments.forEach(
                 uploadedDocumentListValue -> uploadedDocumentListValue.setId(String.valueOf(randomUUID()))
             );
             return sortedDocuments;
         }
-
         return previousDocuments;
     }
 
@@ -275,6 +293,20 @@ public class CaseDocuments {
         return !after.stream()
             .allMatch(afterValue -> before.stream()
                 .anyMatch(beforeValue -> Objects.equals(beforeValue.getId(), afterValue.getId())));
+    }
+
+    public static <T> boolean hasDeletedDocuments(final List<ListValue<T>> after,
+                                                final List<ListValue<T>> before) {
+
+        if (isNull(after) && !before.isEmpty()) {
+            return true;
+        } else if (isNull(before)) {
+            return false;
+        }
+
+        return !before.stream()
+            .allMatch(beforeValue -> after.stream()
+                .anyMatch(afterValue -> Objects.equals(beforeValue.getId(), afterValue.getId())));
     }
 
     public static Optional<Document> getFirstDocumentLink(final List<ListValue<DivorceDocument>> documents,

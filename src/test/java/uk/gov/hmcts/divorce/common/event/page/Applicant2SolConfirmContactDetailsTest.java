@@ -18,12 +18,12 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant2SolConfirmContactDetailsTest {
+class Applicant2SolConfirmContactDetailsTest {
 
     private final Applicant2SolConfirmContactDetails page = new Applicant2SolConfirmContactDetails();
 
     @Test
-    public void shouldReturnErrorIfEmailValidationFailsForNonSolicitorCase() {
+    void shouldReturnErrorIfEmailValidationFailsForNonSolicitorCase() {
         final CaseData caseData = caseData();
         caseData.setApplicant2(Applicant.builder()
                 .solicitorRepresented(YES)
@@ -37,11 +37,11 @@ public class Applicant2SolConfirmContactDetailsTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
-        assertEquals(response.getErrors().size(), 1);
+        assertEquals(1, response.getErrors().size());
     }
 
     @Test
-    public void shouldReturnNoErrorsIfEmailValidationPasses() {
+    void shouldReturnNoErrorsIfEmailValidationPasses() {
         final CaseData caseData = caseData();
         caseData.setApplicant2(Applicant.builder()
             .solicitorRepresented(YES)
@@ -57,6 +57,6 @@ public class Applicant2SolConfirmContactDetailsTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
-        assertEquals(response.getErrors(), null);
+        assertEquals(null, response.getErrors());
     }
 }

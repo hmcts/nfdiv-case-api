@@ -38,7 +38,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class Applicant2SolicitorSwitchToSoleCoTest {
+class Applicant2SolicitorSwitchToSoleCoTest {
 
     @Mock
     private SwitchToSoleService switchToSoleService;

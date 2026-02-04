@@ -31,7 +31,7 @@ class CaseworkerListForHearingTest {
     private CaseworkerListForHearing caseworkerListForHearing;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerListForHearing.configure(configBuilder);

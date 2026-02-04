@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -120,7 +120,7 @@ public abstract class FunctionalTestSuite {
     protected Response triggerCallback(Map<String, Object> caseData, String eventId, String url) throws IOException {
 
         // Add random Long generation of 16 digits to avoid duplicate case id
-        long caseId = Math.abs(new Random().nextLong());
+        long caseId = ThreadLocalRandom.current().nextLong(1_000_000_000_000_000L, 10_000_000_000_000_000L);
 
         return triggerCallback(caseData, eventId, url, caseId);
     }

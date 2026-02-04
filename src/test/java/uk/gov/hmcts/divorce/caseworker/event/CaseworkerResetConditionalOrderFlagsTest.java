@@ -26,7 +26,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerResetConditionalOrderFlagsTest {
+class CaseworkerResetConditionalOrderFlagsTest {
     @Mock
     private ResetConditionalOrderFlags resetConditionalOrderFlags;
 
@@ -34,7 +34,7 @@ public class CaseworkerResetConditionalOrderFlagsTest {
     private CaseworkerResetConditionalOrderFlags caseworkerResetConditionalOrderFlags;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerResetConditionalOrderFlags.configure(configBuilder);

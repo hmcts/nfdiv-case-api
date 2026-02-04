@@ -1,10 +1,22 @@
 package uk.gov.hmcts.divorce.testutil;
 
+import com.google.common.collect.ImmutableMap;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
+
+import java.util.Optional;
+
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_RESPONSE_LETTER_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.REQUEST_FOR_INFORMATION_RESPONSE_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.REQUEST_FOR_INFORMATION_RESPONSE;
 
 public final class TestConstants {
     public static final String TEST_APPLICANT_2_USER_EMAIL = "applicant2@test.com";
+    public static final String TEST_APPLICANT_1_ADDRESS_LINE_1 = "line1 applicant1";
+    public static final String TEST_APPLICANT_2_ADDRESS_LINE_1 = "line1 applicant2";
     public static final String TEST_USER_EMAIL = "test@test.com";
+    public static final String TEST_USER_PHONE = "0000";
+    public static final String TEST_OTHER_PHONE = "1111";
     public static final String TEST_SOLICITOR_EMAIL = "solicitor@test.com";
     public static final String TEST_SOLICITOR_NAME = "The Solicitor";
     public static final String TEST_SOLICITOR_ADDRESS = "The Solicitor's Address";
@@ -12,10 +24,13 @@ public final class TestConstants {
     public static final String TEST_FIRST_NAME = "test_first_name";
     public static final String TEST_MIDDLE_NAME = "test_middle_name";
     public static final String TEST_LAST_NAME = "test_last_name";
+    public static final String TEST_OTHER_NAME = "test_other_name";
+    public static final String TEST_OTHER_EMAIL = "test_other@test.com";
     public static final String TEST_APP2_FIRST_NAME = "test_app2_first_name";
     public static final String TEST_APP2_MIDDLE_NAME = "test_app2_middle_name";
     public static final String TEST_APP2_LAST_NAME = "test_app2_last_name";
     public static final String TEST_REFERENCE = "test_ref";
+    public static final String TEST_VALIDATION_ERROR = "test_validation_error";
 
     public static final String APPLICANT_2_FIRST_NAME = "applicant_2_first_name";
     public static final String APPLICANT_2_LAST_NAME = "applicant_2last_name";
@@ -31,6 +46,7 @@ public final class TestConstants {
     public static final String APP2_SOLICITOR_UPDATE_CONTACT_DETAILS_MID_EVENT_URL =
         "/callbacks/mid-event?page=Applicant2SolUpdateContactDetails";
     public static final String CREATE_GENERAL_ORDER_MID_EVENT_URL = "/callbacks/mid-event?page=CreateGeneralOrder";
+    public static final String GENERAL_APPLICATION_SELECT_FEE_MID_EVENT_URL = "/callbacks/mid-event?page=generalApplicationSelectFeeType";
     public static final String CO_REFUSAL_ORDER_WITH_MORE_INFO_MID_EVENT_URL = "/callbacks/mid-event?page=refusalOrderClarification";
     public static final String CO_REFUSAL_ORDER_WITH_AMENDMENTS_MID_EVENT_URL = "/callbacks/mid-event?page=amendApplication";
 
@@ -53,6 +69,8 @@ public final class TestConstants {
     public static final String APP_2_CITIZEN_USER_ID = "3";
     public static final String SYSTEM_USER_USER_ID = "4";
     public static final String SUPER_USER_USER_ID = "5";
+    public static final String TEST_SERVICE_REFERENCE = "test-service-reference";
+    public static final String TEST_PAYMENT_CALLBACK_URL = "/payment-callback";
 
     public static final String TEST_SOL_USER_EMAIL = "testsol@test.com";
     public static final String TEST_APPLICANT_2_EMAIL = "testsol@test.com";
@@ -87,8 +105,10 @@ public final class TestConstants {
 
     public static final String SIGN_IN_DIVORCE_TEST_URL = "divorceTestUrl";
     public static final String APPLICANT_2_SIGN_IN_DIVORCE_TEST_URL = "applicant2DivorceTestUrl";
+    public static final String RESPONDENT_SIGN_IN_DIVORCE_TEST_URL = "respondentDivorceTestUrl";
     public static final String SIGN_IN_DISSOLUTION_TEST_URL = "dissolutionTestUrl";
     public static final String APPLICANT_2_SIGN_IN_DISSOLUTION_TEST_URL = "applicant2DissolutionTestUrl";
+    public static final String RESPONDENT_SIGN_IN_DISSOLUTION_TEST_URL = "respondentDissolutionTestUrl";
 
     public static final String EMPTY_STRING = "";
 
@@ -98,6 +118,23 @@ public final class TestConstants {
     public static final String TEST_FINANCIAL_ORDER_POLICY_HEADER_TEXT = "The applicant wants to apply for a financial order.";
     public static final String TEST_FINANCIAL_ORDER_POLICY_HINT_TEXT = "A financial order is a legal document that describes how the "
         + "money and property will be divided. The application will be done separately.";
+
+    public static final String TEST_TEXT = "Test";
+
+    public static final String SMART_SURVEY_TEST_URL = "smartSurveyTestUrl";
+    public static final String WEBFORM_TEST_URL = "englishWebformUrl";
+    public static final String WEBFORM_TEST_URL_CY = "welshWebformUrl";
+
+    public static final DocumentPackInfo TEST_DOCUMENT_PACK = new DocumentPackInfo(
+        ImmutableMap.of(
+            REQUEST_FOR_INFORMATION_RESPONSE, Optional.of(REQUEST_FOR_INFORMATION_RESPONSE_LETTER_TEMPLATE_ID)
+        ),
+        ImmutableMap.of(
+            REQUEST_FOR_INFORMATION_RESPONSE_LETTER_TEMPLATE_ID, REQUEST_FOR_INFORMATION_RESPONSE_LETTER_DOCUMENT_NAME
+        )
+    );
+
+    public static final String TEST_LETTER_ID = "TestLetterId";
 
     private TestConstants() {
     }

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 
 @ExtendWith(MockitoExtension.class)
-public class BulkTriggerServiceTest {
+class BulkTriggerServiceTest {
 
     @Mock
     private CaseTriggerService caseTriggerService;

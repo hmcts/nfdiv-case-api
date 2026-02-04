@@ -19,17 +19,18 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class ManuallyHandleExceptionRecord implements CCDConfig<ExceptionRecord, ExceptionRecordState, UserRole> {
 
     public static final String UPDATE_MANUALLY = "updateManually";
+    private static final String MANUALLY_HANDLE_RECORD = "Manually handle record";
 
     @Override
     public void configure(final ConfigBuilder<ExceptionRecord, ExceptionRecordState, UserRole> configBuilder) {
         new ExceptionRecordPageBuilder(configBuilder
             .event(UPDATE_MANUALLY)
             .forStateTransition(ScannedRecordReceived, ScannedRecordManuallyHandled)
-            .name("Manually handle record")
-            .description("Manually handle record")
+            .name(MANUALLY_HANDLE_RECORD)
+            .description(MANUALLY_HANDLE_RECORD)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SYSTEMUPDATE))
-            .page("updateManually")
+            .page(UPDATE_MANUALLY)
             .pageLabel("Correspondence")
             .mandatory(ExceptionRecord::getScannedDocuments)
             .mandatory(ExceptionRecord::getScanOCRData);

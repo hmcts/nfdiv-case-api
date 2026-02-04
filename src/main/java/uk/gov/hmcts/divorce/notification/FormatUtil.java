@@ -14,7 +14,7 @@ public final class FormatUtil {
 
     public static final DateTimeFormatter DATE_TIME_FORMATTER = ofPattern("d MMMM yyyy", UK);
     public static final DateTimeFormatter WELSH_DATE_TIME_FORMATTER = ofPattern("d MMMM yyyy", new Locale("cy", "GB-WLS"));
-    public static final DateTimeFormatter FILE_NAME_DATE_FORMATTER = ofPattern("yyyy-MM-dd", UK);
+    public static final DateTimeFormatter ES_DATE_FORMATTER = ofPattern("yyyy-MM-dd", UK);
     public static final DateTimeFormatter TIME_FORMATTER = ofPattern("H:mm a", UK);
 
     private FormatUtil() {
@@ -27,4 +27,5 @@ public final class FormatUtil {
     public static DateTimeFormatter getDateTimeFormatterForPreferredLanguage(LanguagePreference languagePreference) {
         return ENGLISH.equals(languagePreference) ? DATE_TIME_FORMATTER : WELSH_DATE_TIME_FORMATTER;
     }
+
 }

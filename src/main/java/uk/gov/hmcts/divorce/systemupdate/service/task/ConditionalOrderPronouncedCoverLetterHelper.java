@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.systemupdate.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -58,23 +58,20 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 @Component
 @Slf4j
 @Deprecated
+@RequiredArgsConstructor
 public class ConditionalOrderPronouncedCoverLetterHelper {
 
     public static final String NAME = "name";
     public static final String ADDRESS = "address";
     public static final String PRONOUNCEMENT_DATE_PLUS_43 = "pronouncementDatePlus43";
 
-    @Autowired
-    private CaseDataDocumentService caseDataDocumentService;
+    private final CaseDataDocumentService caseDataDocumentService;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
-    @Autowired
-    private DocmosisCommonContent docmosisCommonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     public void generateConditionalOrderPronouncedCoversheet(final CaseData caseData,
                                                               final Long caseId,
@@ -115,6 +112,13 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
             formatDocumentName(caseId, getCoverLetterDocumentName(caseData, applicant.isRepresented()), now(clock))
         );
     }
+
+    /*
+    The below code to get the specific template id is out of date. NFDIV-4260 has introduced
+    solicitor specific templates for conditional order granted coversheet. tech-dent ticket
+    NFDIV-4363 has been created to ensure that the regeneration code is up to date and picks up
+    correct template to use and is tested for end use.
+     */
 
     private String getCoverLetterTemplateId(final boolean isJudicialSeparation,
                                             final boolean isRepresented,
@@ -208,7 +212,7 @@ public class ConditionalOrderPronouncedCoverLetterHelper {
         Applicant applicant2 = caseData.getApplicant2();
         templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateContent.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
-        templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getAddress());
+        templateContent.put(SOLICITOR_ADDRESS, applicant.getSolicitor().getFirmAndAddress());
         templateContent.put(DATE, LocalDate.now().format(DATE_TIME_FORMATTER));
         templateContent.put(CASE_REFERENCE, caseId != null ? formatId(caseId) : null);
         templateContent.put(IS_JOINT, !caseData.getApplicationType().isSole());

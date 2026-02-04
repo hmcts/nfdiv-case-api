@@ -31,7 +31,7 @@ class Applicant2SolReviewApplicant1ApplicationTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = page.midEvent(details, details);
 
-        assertThat(response.getErrors().size()).isEqualTo(1);
+        assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).containsExactly(
             "To continue,the respondent must have read the application in order to respond"
         );

@@ -1,10 +1,12 @@
 package uk.gov.hmcts.divorce.bulkaction.service.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
@@ -14,12 +16,16 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseProcessingStateFilter {
 
-    @Autowired
-    private CcdSearchService ccdSearchService;
+    private final CcdSearchService ccdSearchService;
+
+    private final ObjectMapper objectMapper;
 
     public CaseFilterProcessingState filterProcessingState(final List<ListValue<BulkListCaseDetails>> bulkListCaseDetails,
                                                            final User user,
@@ -35,7 +41,14 @@ public class CaseProcessingStateFilter {
 
         ccdSearchService.searchForCases(getCasesReferences(bulkListCaseDetails), user, serviceAuth)
             .forEach(caseDetails -> {
-                if (postStates.contains(State.valueOf(caseDetails.getState()))) {
+                State state = State.valueOf(caseDetails.getState());
+                CaseData caseData = objectMapper.convertValue(caseDetails.getData(), CaseData.class);
+
+                var caseIsAlreadyPronounced = !isEmpty(caseData.getFinalOrder())
+                        && !isEmpty(caseData.getFinalOrder().getDateFinalOrderEligibleFrom());
+
+                if (postStates.contains(state) || (!state.equals(State.AwaitingPronouncement) && caseIsAlreadyPronounced)) {
+
                     log.info(
                         "Case ID {} will be skipped and moved to processed list as already processed",
                         caseDetails.getId());

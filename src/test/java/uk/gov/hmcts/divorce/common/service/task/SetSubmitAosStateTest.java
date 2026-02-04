@@ -177,7 +177,7 @@ class SetSubmitAosStateTest {
 
     @ParameterizedTest
     @MethodSource("caseStateParameters")
-    public void shouldSetStateToHoldingIfPreviousStateIsInAnyOfTheServiceApplicationProcess(State aosValidState) {
+    void shouldSetStateToHoldingIfPreviousStateIsInAnyOfTheServiceApplicationProcess(State aosValidState) {
         final CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.setSupplementaryCaseType(NA);

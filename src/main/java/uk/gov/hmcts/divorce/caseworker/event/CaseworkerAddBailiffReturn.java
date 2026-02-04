@@ -1,12 +1,13 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetHoldingDueDate;
 import uk.gov.hmcts.divorce.citizen.notification.BailiffServiceSuccessfulNotification;
 import uk.gov.hmcts.divorce.citizen.notification.BailiffServiceUnsuccessfulNotification;
@@ -16,7 +17,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.Bailiff;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+
+import java.time.LocalDate;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
@@ -25,8 +29,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
@@ -36,24 +43,22 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_SERVICE;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_ADD_BAILIFF_RETURN = "caseworker-add-bailiff-return";
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
-    @Autowired
-    private BailiffServiceUnsuccessfulNotification unsuccessfulNotification;
+    private final BailiffServiceUnsuccessfulNotification unsuccessfulNotification;
 
-    @Autowired
-    private BailiffServiceSuccessfulNotification successfulNotification;
+    private final BailiffServiceSuccessfulNotification successfulNotification;
 
-    @Autowired
-    private SetHoldingDueDate setHoldingDueDate;
+    private final SetHoldingDueDate setHoldingDueDate;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -67,6 +72,9 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
                 Holding,
                 Submitted,
                 AwaitingDocuments,
+                AwaitingRequestedInformation,
+                InformationRequested,
+                RequestedInformationSubmitted,
                 AwaitingPayment)
             .name("Add bailiff return")
             .description("Add bailiff return")
@@ -80,6 +88,7 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
             .complex(CaseData::getAlternativeService)
                 .complex(AlternativeService::getBailiff)
                     .mandatory(Bailiff::getCertificateOfServiceDate)
+                    .mandatory(Bailiff::getCertificateOfServiceDocumentByBailiff)
                     .mandatory(Bailiff::getSuccessfulServedByBailiff)
                     .mandatory(Bailiff::getReasonFailureToServeByBailiff, "successfulServedByBailiff=\"No\"")
                 .done();
@@ -93,6 +102,21 @@ public class CaseworkerAddBailiffReturn implements CCDConfig<CaseData, State, Us
         final State state;
 
         log.info("Caseworker add bailiff return about to submit callback invoked for case id: {}", caseId);
+
+        Document returnedCoS = caseData.getAlternativeService().getBailiff().getCertificateOfServiceDocumentByBailiff();
+
+        if (returnedCoS != null) {
+            var cosDivorceDocument = DivorceDocument
+                .builder()
+                .documentLink(returnedCoS)
+                .documentFileName(returnedCoS.getFilename())
+                .documentType(CERTIFICATE_OF_SERVICE)
+                .documentDateAdded(LocalDate.now())
+                .build();
+
+            caseData.getAlternativeService().getBailiff().setCertificateOfServiceDocument(cosDivorceDocument);
+            caseData.getAlternativeService().getBailiff().setCertificateOfServiceDocumentByBailiff(null);
+        }
 
         if (YES == caseData.getAlternativeService().getBailiff().getSuccessfulServedByBailiff()) {
             if (caseData.isJudicialSeparationCase()) {

@@ -8,9 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
@@ -30,7 +30,9 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
@@ -57,13 +59,13 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetail
 @ActiveProfiles("test")
 public class CasePronouncementServiceIT {
 
-    @MockBean
+    @MockitoBean
     private CoreCaseDataApi coreCaseDataApi;
 
-    @MockBean
+    @MockitoBean
     private IdamService idamService;
 
-    @MockBean
+    @MockitoBean
     private AuthTokenGenerator authTokenGenerator;
 
     @Autowired
@@ -104,6 +106,9 @@ public class CasePronouncementServiceIT {
             .from(0)
             .size(50);
 
+        Map<String, Object> caseData = new HashMap<>();
+        caseData.put("finalOrder", FinalOrder.builder().build());
+
         when(coreCaseDataApi.searchCases(
             SYSTEM_UPDATE_AUTH_TOKEN,
             TEST_SERVICE_AUTH_TOKEN,
@@ -114,6 +119,7 @@ public class CasePronouncementServiceIT {
                     .total(1)
                     .cases(List.of(uk.gov.hmcts.reform.ccd.client.model.CaseDetails.builder()
                         .id(TEST_CASE_ID)
+                        .data(caseData)
                         .state(AwaitingPronouncement.name())
                         .build()))
                     .build()

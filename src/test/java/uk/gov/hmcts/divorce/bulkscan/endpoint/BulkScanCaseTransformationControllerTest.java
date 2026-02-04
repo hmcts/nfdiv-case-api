@@ -22,7 +22,7 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 
 @ExtendWith(MockitoExtension.class)
-public class BulkScanCaseTransformationControllerTest {
+class BulkScanCaseTransformationControllerTest {
     @Mock
     private BulkScanService bulkScanService;
 

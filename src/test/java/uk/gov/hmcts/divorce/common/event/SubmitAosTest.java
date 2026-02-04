@@ -28,6 +28,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.event.DraftAos.CONDITIONAL_ORDER_ALREADY_SUBMITTED_ERROR;
+import static uk.gov.hmcts.divorce.common.event.SubmitAos.AOS_ALREADY_SUBMITTED_ERROR;
 import static uk.gov.hmcts.divorce.common.event.SubmitAos.SUBMIT_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
@@ -78,6 +80,9 @@ class SubmitAosTest {
             .build();
 
         final CaseData caseData = caseData();
+        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(
+            LocalDateTime.of(2022, 1, 1, 1, 1)
+        );
         caseData.getApplicant2().setLegalProceedings(null);
         caseData.setAcknowledgementOfService(acknowledgementOfService);
 
@@ -94,7 +99,8 @@ class SubmitAosTest {
                 "The respondent must have read the application.",
                 "The respondent must agree or disagree to claimed jurisdiction.",
                 "The respondent must answer how they want to respond to the application.",
-                "The respondent must confirm if they have any other legal proceedings.");
+                "The respondent must confirm if they have any other legal proceedings.",
+                CONDITIONAL_ORDER_ALREADY_SUBMITTED_ERROR);
     }
 
     @Test
@@ -240,7 +246,6 @@ class SubmitAosTest {
 
         assertThat(response.getData()).isSameAs(caseData);
         assertThat(response.getErrors())
-            .containsExactly(
-                "The Acknowledgement Of Service has already been submitted.");
+            .containsExactly(AOS_ALREADY_SUBMITTED_ERROR);
     }
 }

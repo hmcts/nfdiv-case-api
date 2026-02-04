@@ -16,13 +16,13 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseworkerAwaitingJudgeClarificationTest {
+class CaseworkerAwaitingJudgeClarificationTest {
 
     @InjectMocks
     private CaseworkerAwaitingJudgeClarification caseworkerAwaitingJudgeClarification;
 
     @Test
-    void shouldAddConfigurationToConfigBuilder() throws Exception {
+    void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         caseworkerAwaitingJudgeClarification.configure(configBuilder);

@@ -17,6 +17,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2Access;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant2DeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SystemUpdateAndSuperUserAccess;
 
@@ -144,13 +145,15 @@ public class FinalOrder {
             + "Explain to the court why you did not apply for a final order earlier. "
             + "Your answer will be reviewed as part of your application",
         access = {DefaultAccess.class},
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String applicant1FinalOrderLateExplanation;
 
     @CCD(
         label = "${labelContentApplicantsOrApplicant1s} final order late explanation (translated)",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private String applicant1FinalOrderLateExplanationTranslated;
 
@@ -158,23 +161,26 @@ public class FinalOrder {
         label = "${labelContentApplicantsOrApplicant1s} final order late explanation translated to?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "TranslatedToLanguage",
-        access = {SystemUpdateAndSuperUserAccess.class}
+        access = {SystemUpdateAndSuperUserAccess.class},
+        searchable = false
     )
     private TranslatedToLanguage applicant1FinalOrderLateExplanationTranslatedTo;
 
     @CCD(
-            label = "${labelContentTheApplicant2UC} final order late explanation",
-            hint = "You are making this application for a final order over one year from when the conditional order was made. "
-                    + "Explain to the court why you did not apply for a final order earlier. "
-                    + "Your answer will be reviewed as part of your application",
-            access = {Applicant2Access.class},
-            typeOverride = TextArea
+        label = "${labelContentTheApplicant2UC} final order late explanation",
+        hint = "You are making this application for a final order over one year from when the conditional order was made. "
+                + "Explain to the court why you did not apply for a final order earlier. "
+                + "Your answer will be reviewed as part of your application",
+        access = {Applicant2Access.class},
+        typeOverride = TextArea,
+        searchable = false
     )
     private String applicant2FinalOrderLateExplanation;
 
     @CCD(
         label = "${labelContentRespondentsOrApplicant2s} final order late explanation (translated)",
-        access = {Applicant2Access.class}
+        access = {Applicant2Access.class},
+        searchable = false
     )
     private String applicant2FinalOrderLateExplanationTranslated;
 
@@ -182,14 +188,16 @@ public class FinalOrder {
         label = "${labelContentRespondentsOrApplicant2s} final order late explanation translated to?",
         typeOverride = FixedRadioList,
         typeParameterOverride = "TranslatedToLanguage",
-        access = {SystemUpdateAndSuperUserAccess.class}
+        access = {SystemUpdateAndSuperUserAccess.class},
+        searchable = false
     )
     private TranslatedToLanguage applicant2FinalOrderLateExplanationTranslatedTo;
 
     @CCD(
         label = "Explain why you need to apply for the final order",
         access = {Applicant2Access.class},
-        typeOverride = TextArea
+        typeOverride = TextArea,
+        searchable = false
     )
     private String applicant2SolFinalOrderWhyNeedToApply;
 
@@ -227,7 +235,7 @@ public class FinalOrder {
 
     @CCD(
         label = "Here are your order details",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class, Applicant2DeleteAccess.class}
     )
     private OrderSummary applicant2SolFinalOrderFeeOrderSummary;
 
@@ -239,9 +247,15 @@ public class FinalOrder {
 
     @CCD(
         label = "Here are your order details",
-        access = {DefaultAccess.class, Applicant2Access.class}
+        access = {DefaultAccess.class, Applicant2DeleteAccess.class}
     )
     private OrderSummary applicant2FinalOrderFeeOrderSummary;
+
+    @CCD(
+        label = "Final Order Fee Service Request Reference",
+        access = {DefaultAccess.class, Applicant2DeleteAccess.class}
+    )
+    private String applicant2FinalOrderFeeServiceRequestReference;
 
     @CCD(
         label = "Respondent final order fee (in pounds)",
@@ -264,7 +278,8 @@ public class FinalOrder {
 
     @CCD(
         label = "Account number",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private DynamicList finalOrderPbaNumbers;
 
@@ -285,7 +300,8 @@ public class FinalOrder {
         label = "Payments",
         typeOverride = Collection,
         typeParameterOverride = "Payment",
-        access = {DefaultAccess.class, Applicant2Access.class}
+        access = {DefaultAccess.class, Applicant2Access.class},
+        searchable = false
     )
     private List<ListValue<Payment>> finalOrderPayments;
 
@@ -301,6 +317,7 @@ public class FinalOrder {
             .amount(parseInt(finalOrderFeeOrderSummary.getPaymentTotal()))
             .channel("online")
             .feeCode(finalOrderFeeOrderSummary.getFees().get(0).getValue().getCode())
+            .serviceRequestReference(applicant2FinalOrderFeeServiceRequestReference)
             .reference(paymentReference)
             .status(SUCCESS)
             .build();

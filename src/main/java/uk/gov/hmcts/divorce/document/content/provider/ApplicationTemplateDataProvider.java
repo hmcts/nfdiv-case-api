@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.lang.Character.toLowerCase;
 import static java.util.Optional.ofNullable;
@@ -73,7 +72,7 @@ public class ApplicationTemplateDataProvider {
             .filter(connections::contains)
             .map(jurisdictionConnection ->
                 new Connection(toLowerCase(jurisdictionConnection.getLabel().charAt(0)) + jurisdictionConnection.getLabel().substring(1)))
-            .collect(Collectors.toList());
+            .toList();
     }
 
     public List<Connection> deriveJurisdictionList(final Application application, final Long caseId,
@@ -94,7 +93,7 @@ public class ApplicationTemplateDataProvider {
                     ? jurisdictionConnection.getLabelCy() : jurisdictionConnection.getLabel();
                 return new Connection(toLowerCase(label.charAt(0)) + label.substring(1));
             })
-            .collect(Collectors.toList());
+            .toList();
     }
 
     public void mapMarriageDetails(Map<String, Object> templateContent, final Application application) {

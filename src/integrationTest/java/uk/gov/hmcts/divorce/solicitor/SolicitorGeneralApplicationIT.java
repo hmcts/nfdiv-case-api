@@ -9,10 +9,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
@@ -30,6 +31,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.model.CreditAccountPaymentResponse;
+import uk.gov.hmcts.divorce.payment.service.ServiceRequestSearchService;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationContactInformation;
 import uk.gov.hmcts.divorce.solicitor.client.organisation.OrganisationsResponse;
 import uk.gov.hmcts.divorce.testutil.CdamWireMock;
@@ -46,6 +48,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,6 +57,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PA
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorGeneralApplication.SOLICITOR_GENERAL_APPLICATION;
+import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.buildServiceReferenceRequest;
+import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubCreateServiceRequest;
 import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubCreditAccountPayment;
 import static uk.gov.hmcts.divorce.testutil.PrdOrganisationWireMock.stubGetOrganisationEndpoint;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
@@ -61,9 +66,9 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_ORG_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getListOfDivorceDocumentListValue;
@@ -96,11 +101,14 @@ public class SolicitorGeneralApplicationIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private AuthTokenGenerator serviceTokenGenerator;
 
-    @MockBean
+    @MockitoBean
     private WebMvcConfig webMvcConfig;
+
+    @MockitoBean
+    private ServiceRequestSearchService serviceRequestSearchService;
 
     @BeforeAll
     static void setUp() {
@@ -155,25 +163,26 @@ public class SolicitorGeneralApplicationIT {
         docs.get(0).getValue().setDocumentFileName("Testfile");
         docs.get(0).getValue().setDocumentDateAdded(LOCAL_DATE);
 
+        OrderSummary orderSummary = OrderSummary.builder()
+            .paymentTotal("1000")
+            .fees(List.of(ListValue
+                .<Fee>builder()
+                .id("1")
+                .value(Fee.builder()
+                    .code("FEECODE1")
+                    .description("fees for divorce")
+                    .version("1")
+                    .build())
+                .build())
+            ).build();
+
         final CaseData caseData = CaseData.builder()
             .documents(CaseDocuments.builder().documentsUploaded(new ArrayList<>()).build())
             .generalApplication(GeneralApplication.builder()
                 .generalApplicationDocuments(docs)
                 .generalApplicationFee(
                     FeeDetails.builder()
-                        .orderSummary(
-                            OrderSummary.builder()
-                                .paymentTotal("55000")
-                                .fees(List.of(ListValue
-                                    .<Fee>builder()
-                                    .id("1")
-                                    .value(Fee.builder()
-                                        .code("FEE002")
-                                        .description("fees for divorce")
-                                        .build())
-                                    .build())
-                                )
-                                .build())
+                        .orderSummary(orderSummary)
                         .pbaNumbers(
                             DynamicList.builder()
                                 .value(
@@ -215,13 +224,14 @@ public class SolicitorGeneralApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubGetOrganisationEndpoint(getOrganisationResponseWith("App1OrgPolicy"));
+        stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData, TEST_ORG_NAME));
         stubCreditAccountPayment(
             CREATED,
             CreditAccountPaymentResponse
                 .builder()
                 .status(SUCCESS.toString())
-                .caseReference(TEST_CASE_ID.toString())
-                .build()
+                .build(),
+            orderSummary
         );
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -231,6 +241,9 @@ public class SolicitorGeneralApplicationIT {
                 .content(objectMapper.writeValueAsString(request))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.data.generalApplicationFeeServiceRequestReference")
+                .value(TEST_SERVICE_REFERENCE)
+            )
             .andReturn()
             .getResponse()
             .getContentAsString();

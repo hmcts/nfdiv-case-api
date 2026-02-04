@@ -29,6 +29,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_JURISDICTION_DETAILS;
+import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_LEGAL_NAME_DIFFERENT;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_MARRIAGE_CERT_TRANSLATION;
 import static uk.gov.hmcts.divorce.document.content.ConditionalOrderRefusedForClarificationContent.REASON_PREVIOUS_PROCEEDINGS_DETAILS;
@@ -45,6 +46,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CT
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FAMILY_COURT_LOGO;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HMCTS_LOGO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_OFFLINE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_OR_CIVIL_PARTNERSHIP;
@@ -120,6 +123,8 @@ public class ConditionalOrderRefusedForClarificationContentIT {
             clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE));
         expectedEntries.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS,
             clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
+        expectedEntries.put(REASON_LEGAL_NAME_DIFFERENT,
+            clarificationReasons.contains(ClarificationReason.LEGAL_NAME_DIFFERENT_TO_CERTIFICATE));
 
         expectedEntries.put("legalAdvisorComments", emptyList());
         expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
@@ -127,6 +132,8 @@ public class ConditionalOrderRefusedForClarificationContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(HMCTS_LOGO,  "[userImage:hmcts_logo_nfd_en.png]");
+        expectedEntries.put(FAMILY_COURT_LOGO, "[userImage:family_court_logo_nfd_en.png]");
 
         Map<String, Object> templateContent = conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID);
 
@@ -188,6 +195,8 @@ public class ConditionalOrderRefusedForClarificationContentIT {
             clarificationReasons.contains(ClarificationReason.MARRIAGE_CERTIFICATE));
         expectedEntries.put(REASON_PREVIOUS_PROCEEDINGS_DETAILS,
             clarificationReasons.contains(ClarificationReason.PREVIOUS_PROCEEDINGS_DETAILS));
+        expectedEntries.put(REASON_LEGAL_NAME_DIFFERENT,
+            clarificationReasons.contains(ClarificationReason.LEGAL_NAME_DIFFERENT_TO_CERTIFICATE));
 
         expectedEntries.put("legalAdvisorComments", emptyList());
 
@@ -196,7 +205,8 @@ public class ConditionalOrderRefusedForClarificationContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
-
+        expectedEntries.put(HMCTS_LOGO,  "[userImage:hmcts_logo_nfd_en.png]");
+        expectedEntries.put(FAMILY_COURT_LOGO, "[userImage:family_court_logo_nfd_en.png]");
         Map<String, Object> templateContent = conditionalOrderRefusedForClarificationContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);

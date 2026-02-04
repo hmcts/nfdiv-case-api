@@ -34,7 +34,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 
 @ExtendWith(MockitoExtension.class)
-public class PartnerNotAppliedForFinalOrderNotificationTest {
+class PartnerNotAppliedForFinalOrderNotificationTest {
 
     @Mock
     private NotificationService notificationService;

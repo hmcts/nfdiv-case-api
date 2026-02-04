@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
@@ -14,13 +14,12 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OTHER_APPLICAN
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SolicitorIntendsToSwitchToSoleFoNotification implements ApplicantNotification {
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    SwitchToSoleSolicitorTemplateContent solicitorTemplateContent;
+    private final SwitchToSoleSolicitorTemplateContent solicitorTemplateContent;
 
     @Override
     public void sendToApplicant1Solicitor(CaseData caseData, Long caseId) {

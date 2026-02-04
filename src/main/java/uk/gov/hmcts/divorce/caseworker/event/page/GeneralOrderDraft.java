@@ -11,7 +11,8 @@ public class GeneralOrderDraft implements CcdPageConfiguration {
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder.page("generalOrderDraft")
             .complex(CaseData::getGeneralOrder)
-                .readonly(GeneralOrder::getGeneralOrderDraft)
-                .done();
+                .readonly(GeneralOrder::getGeneralOrderDraft, "scannedGeneralOrderOrGeneratedGeneralOrder=\"generated\"")
+                .readonly(GeneralOrder::getGeneralOrderScannedDraft, "scannedGeneralOrderOrGeneratedGeneralOrder=\"scanned\"")
+            .done();
     }
 }

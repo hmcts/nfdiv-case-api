@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.service.task;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.notification.ApplicationIssuedNotification;
@@ -13,16 +13,14 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 
 @Component
+@RequiredArgsConstructor
 public class SendApplicationIssueNotifications implements CaseTask {
 
-    @Autowired
-    private ApplicationIssuedNotification applicationIssuedNotification;
+    private final ApplicationIssuedNotification applicationIssuedNotification;
 
-    @Autowired
-    private ApplicationIssuedOverseasNotification applicationIssuedOverseasNotification;
+    private final ApplicationIssuedOverseasNotification applicationIssuedOverseasNotification;
 
-    @Autowired
-    private NotificationDispatcher notificationDispatcher;
+    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {

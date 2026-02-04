@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.notification;
 
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
@@ -20,13 +20,12 @@ import static java.lang.String.format;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class NotificationService {
 
-    @Autowired
-    private NotificationClient notificationClient;
+    private final NotificationClient notificationClient;
 
-    @Autowired
-    private EmailTemplatesConfig emailTemplatesConfig;
+    private final EmailTemplatesConfig emailTemplatesConfig;
 
     @Value("${uk.gov.notify.email.replyToId}")
     private String replyToId;
@@ -38,8 +37,18 @@ public class NotificationService {
         LanguagePreference languagePreference,
         Long caseId
     ) {
-        String referenceId = String.format("%s-%s", caseId, UUID.randomUUID());
-        Map<String,Object> templateVarsObj = (templateVars != null) ? new HashMap<>(templateVars) : null;
+        sendEmailWithString(destinationAddress, template, templateVars, languagePreference, String.valueOf(caseId));
+    }
+
+    public void sendEmailWithString(
+        String destinationAddress,
+        EmailTemplateName template,
+        Map<? extends String, ? extends Object> templateVars,
+        LanguagePreference languagePreference,
+        String identifierString
+    ) {
+        String referenceId = String.format("%s-%s", identifierString, UUID.randomUUID());
+        Map<String, Object> templateVarsObj = (templateVars != null) ? new HashMap<>(templateVars) : null;
 
         try {
             String templateId = emailTemplatesConfig.getTemplates().get(languagePreference).get(template.name());
@@ -67,7 +76,7 @@ public class NotificationService {
                 notificationClientException
             );
             final String message = notificationClientException.getMessage()
-                + format(" Exception for Case ID: %s", caseId);
+                + format(" Exception for Case ID: %s", identifierString);
             throw new NotificationException(message, notificationClientException);
         }
     }

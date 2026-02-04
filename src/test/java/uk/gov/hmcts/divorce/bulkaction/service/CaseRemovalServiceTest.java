@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBulkListCaseDetail
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getCaseLinkListValue;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseRemovalServiceTest {
+class CaseRemovalServiceTest {
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;

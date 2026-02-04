@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -16,13 +16,18 @@ import uk.gov.hmcts.divorce.common.event.page.Applicant2SolAosJurisdiction;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolAosOtherProceedings;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolConfirmContactDetails;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolReviewApplicant1Application;
+import uk.gov.hmcts.divorce.common.notification.RespondentDraftAosStartedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
@@ -45,9 +50,15 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String DRAFT_AOS = "draft-aos";
+    public static final String DRAFT_AOS_ALREADY_SUBMITTED_ERROR
+        = "The Acknowledgement Of Service has already been submitted.";
+    public static final String CONDITIONAL_ORDER_ALREADY_SUBMITTED_ERROR
+        = "A conditional order application has been made for this case and the AoS can no longer be submitted.";
+
     protected static final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
         new Applicant2SolReviewApplicant1Application(),
@@ -56,8 +67,10 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
         new Applicant2SolAosAskCourtToDelay(),
         new Applicant2SolAosOtherProceedings()
     );
-    @Autowired
-    private AddMiniApplicationLink addMiniApplicationLink;
+
+    private final AddMiniApplicationLink addMiniApplicationLink;
+    private final NotificationDispatcher notificationDispatcher;
+    private final RespondentDraftAosStartedNotification respondentDraftAosStartedNotification;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -115,6 +128,8 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
 
         details.getData().getAcknowledgementOfService().setAosIsDrafted(YES);
 
+        notificationDispatcher.send(respondentDraftAosStartedNotification, details.getData(), details.getId());
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .state(state)
@@ -125,6 +140,10 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
         final List<String> errors = new ArrayList<>();
 
+        if (null != acknowledgementOfService && null != acknowledgementOfService.getDateAosSubmitted()) {
+            errors.add(DRAFT_AOS_ALREADY_SUBMITTED_ERROR);
+        }
+
         if (!isNull(acknowledgementOfService) && YES.equals(acknowledgementOfService.getConfirmReadPetition())) {
             errors.add("The Acknowledgement Of Service has already been drafted.");
         }
@@ -133,6 +152,19 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
             errors.add("You cannot draft the AoS until the case has been issued. Please wait for the case to be issued.");
         }
 
+        errors.addAll(validateConditionalOrderStatus(caseData));
+
         return errors;
+    }
+
+    public static List<String> validateConditionalOrderStatus(CaseData caseData) {
+        final ConditionalOrderQuestions app1Questions = caseData.getConditionalOrder().getConditionalOrderApplicant1Questions();
+        final boolean conditionalOrderHasBeenSubmitted = Objects.nonNull(app1Questions.getSubmittedDate());
+
+        if (conditionalOrderHasBeenSubmitted) {
+            return List.of(CONDITIONAL_ORDER_ALREADY_SUBMITTED_ERROR);
+        }
+
+        return Collections.emptyList();
     }
 }

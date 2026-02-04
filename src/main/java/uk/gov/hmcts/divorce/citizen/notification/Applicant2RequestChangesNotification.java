@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.citizen.notification;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -24,17 +24,16 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_APPL
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class Applicant2RequestChangesNotification implements ApplicantNotification {
 
     public static final String APPLICANT_2_COMMENTS = "applicant 2 comments";
     public static final String PARTNER_IS_REPRESENTED = "partner is represented";
     public static final String REQUESTED_CHANGES = "requested changes explanation";
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @Autowired
-    private CommonContent commonContent;
+    private final CommonContent commonContent;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -59,7 +58,7 @@ public class Applicant2RequestChangesNotification implements ApplicantNotificati
         log.info("Notifying applicant 1 solicitor that applicant 2 has requested changes: {}", id);
 
         final Applicant applicant1 = caseData.getApplicant1();
-        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id);
+        final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id, applicant1.getLanguagePreference());
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(SOLICITOR_NAME, applicant1.getSolicitor().getName());

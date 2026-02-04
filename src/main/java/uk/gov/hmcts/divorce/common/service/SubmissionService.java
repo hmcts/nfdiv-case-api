@@ -1,6 +1,6 @@
 package uk.gov.hmcts.divorce.common.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.service.task.SendSubmissionNotifications;
@@ -9,30 +9,28 @@ import uk.gov.hmcts.divorce.common.service.task.SetApplicantOfflineStatus;
 import uk.gov.hmcts.divorce.common.service.task.SetDateSubmitted;
 import uk.gov.hmcts.divorce.common.service.task.SetDefaultOrganisationPolicies;
 import uk.gov.hmcts.divorce.common.service.task.SetStateAfterSubmission;
+import uk.gov.hmcts.divorce.common.service.task.SetupCaseFlags;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner;
 
 @Service
+@RequiredArgsConstructor
 public class SubmissionService {
 
-    @Autowired
-    private SetStateAfterSubmission setStateAfterSubmission;
+    private final SetStateAfterSubmission setStateAfterSubmission;
 
-    @Autowired
-    private SetDateSubmitted setDateSubmitted;
+    private final SetDateSubmitted setDateSubmitted;
 
-    @Autowired
-    private SetApplicantOfflineStatus setApplicantOfflineStatus;
+    private final SetApplicantOfflineStatus setApplicantOfflineStatus;
 
-    @Autowired
-    private SetApplicant2Email setApplicant2Email;
+    private final SetApplicant2Email setApplicant2Email;
 
-    @Autowired
-    private SendSubmissionNotifications sendSubmissionNotifications;
+    private final SendSubmissionNotifications sendSubmissionNotifications;
 
-    @Autowired
-    private SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
+    private final SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
+
+    private final SetupCaseFlags setupCaseFlags;
 
     public CaseDetails<CaseData, State> submitApplication(final CaseDetails<CaseData, State> caseDetails) {
 
@@ -42,7 +40,8 @@ public class SubmissionService {
             setApplicant2Email,
             setApplicantOfflineStatus,
             setDefaultOrganisationPolicies,
-            sendSubmissionNotifications
+            sendSubmissionNotifications,
+            setupCaseFlags
         ).run(caseDetails);
     }
 }

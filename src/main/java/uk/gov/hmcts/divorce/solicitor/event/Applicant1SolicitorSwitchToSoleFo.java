@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -7,10 +8,12 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -28,9 +31,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class Applicant1SolicitorSwitchToSoleFo implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_FO = "app1-sol-switch-to-sole-fo";
+
+    private final GeneralReferralService generalReferralService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -48,11 +54,16 @@ public class Applicant1SolicitorSwitchToSoleFo implements CCDConfig<CaseData, St
             .showSummary()
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
-            .aboutToSubmitCallback(this::aboutToSubmit))
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted))
             .page("App1SolSwitchToSoleFO", this::midEvent)
             .pageLabel(APPLY_FOR_FINAL_ORDER)
             .complex(CaseData::getFinalOrder)
-            .mandatory(FinalOrder::getDoesApplicant1WantToApplyForFinalOrder)
+            .readonlyNoSummary(FinalOrder::getIsFinalOrderOverdue, "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .done()
+            .complex(CaseData::getFinalOrder)
+                .mandatory(FinalOrder::getDoesApplicant1WantToApplyForFinalOrder)
+                .mandatory(FinalOrder::getApplicant1FinalOrderLateExplanation, "isFinalOrderOverdue=\"Yes\"")
             .done();
     }
 
@@ -100,5 +111,15 @@ public class Applicant1SolicitorSwitchToSoleFo implements CCDConfig<CaseData, St
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+        Long caseId = details.getId();
+        log.info("Applicant 1 Solicitor Switched To Sole FO submitted callback invoked for Case Id: {}", caseId);
+
+        generalReferralService.caseWorkerGeneralReferral(details);
+
+        return SubmittedCallbackResponse.builder().build();
     }
 }

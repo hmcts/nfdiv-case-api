@@ -17,6 +17,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListItem;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
 import uk.gov.hmcts.divorce.citizen.notification.NocCitizenToSolsNotifications;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -29,6 +30,7 @@ import uk.gov.hmcts.divorce.noticeofchange.client.AssignCaseAccessClient;
 import uk.gov.hmcts.divorce.noticeofchange.model.AcaRequest;
 import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.AboutToStartOrSubmitCallbackResponse;
@@ -39,6 +41,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -83,11 +86,14 @@ class SystemApplyNoticeOfChangeTest {
     @Mock
     private NocCitizenToSolsNotifications nocCitizenToSolsNotifications;
 
+    @Mock
+    private CaseFlagsService caseFlagsService;
+
 
     @InjectMocks
     private SystemApplyNoticeOfChange systemApplyNoticeOfChange;
 
-    public void setup() {
+    void setup() {
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -129,6 +135,7 @@ class SystemApplyNoticeOfChangeTest {
         verify(changeOfRepresentativeService).buildChangeOfRepresentative(caseData, null, SOLICITOR_NOTICE_OF_CHANGE.getValue(), true);
         verify(notificationDispatcher).sendNOC(nocCitizenToSolsNotifications, caseData, null,
                 TEST_CASE_ID, true, NEW_DIGITAL_SOLICITOR_NEW_ORG);
+        verify(caseFlagsService).resetSolicitorCaseFlags(caseData,true);
 
         assertEquals(NO, caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted());
         assertEquals(NO, caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted());
@@ -155,6 +162,7 @@ class SystemApplyNoticeOfChangeTest {
 
         verify(assignCaseAccessClient).applyNoticeOfChange(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest);
         verify(changeOfRepresentativeService).buildChangeOfRepresentative(caseData, null, SOLICITOR_NOTICE_OF_CHANGE.getValue(), false);
+        verify(caseFlagsService).resetSolicitorCaseFlags(caseData,false);
         assertEquals(NO, caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted());
         assertEquals(NO, caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted());
     }
@@ -182,6 +190,39 @@ class SystemApplyNoticeOfChangeTest {
         );
     }
 
+    @Test
+    void shouldNotFailEventWhenNotificationsFail() {
+        setup();
+        Applicant applicant = TestDataHelper.applicantRepresentedBySolicitor();
+        final ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequest = getChangeOrganisationRequestField("[APPONESOLICITOR]",
+            "APPLICANT_1_SOLICITOR");
+
+        CaseData caseData = CaseData.builder().applicant1(applicant).changeOrganisationRequestField(changeOrganisationRequest).build();
+
+        var details =  CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
+        AcaRequest acaRequest = AcaRequest.acaRequest(details);
+        Map<String, Object> expectedData = expectedData(caseData);
+        when(objectMapper.convertValue(expectedData, CaseData.class)).thenReturn(caseData);
+        doThrow(new NotificationTemplateException("some error"))
+            .when(notificationDispatcher).sendNOC(nocCitizenToSolsNotifications, caseData, null,
+                TEST_CASE_ID, true, NEW_DIGITAL_SOLICITOR_NEW_ORG);
+
+        AboutToStartOrSubmitCallbackResponse response = AboutToStartOrSubmitCallbackResponse
+            .builder().data(expectedData).build();
+        when(assignCaseAccessClient.applyNoticeOfChange(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest))
+            .thenReturn(response);
+
+        systemApplyNoticeOfChange.aboutToStart(details);
+
+        verify(assignCaseAccessClient).applyNoticeOfChange(TEST_AUTHORIZATION_TOKEN, TEST_SERVICE_AUTH_TOKEN, acaRequest);
+        verify(changeOfRepresentativeService).buildChangeOfRepresentative(caseData, null, SOLICITOR_NOTICE_OF_CHANGE.getValue(), true);
+        verify(notificationDispatcher).sendNOC(nocCitizenToSolsNotifications, caseData, null,
+            TEST_CASE_ID, true, NEW_DIGITAL_SOLICITOR_NEW_ORG);
+
+        assertEquals(NO, caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted());
+        assertEquals(NO, caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsDrafted());
+    }
+    
     private Map<String, Object> expectedData(final CaseData caseData) {
 
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build();

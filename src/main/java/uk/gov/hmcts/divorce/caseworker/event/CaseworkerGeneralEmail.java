@@ -1,8 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -57,11 +57,14 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.EMAIL;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRole> {
 
     public static final int MAX_NUMBER_GENERAL_EMAIL_ATTACHMENTS = 10;
 
     public static final String CASEWORKER_CREATE_GENERAL_EMAIL = "caseworker-create-general-email";
+
+    private static final String CREATE_GENERAL_EMAIL = "Create general email";
 
     private static final String NO_VALID_EMAIL_ERROR
         = "You cannot send an email because no email address has been provided for this party.";
@@ -69,20 +72,15 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
     private static final String WARNING_ATTACHMENTS
         = "\n ### WARNING: Please check that you have uploaded/selected the correct documents and recipient. \n";
 
-    @Autowired
-    private DocumentIdProvider documentIdProvider;
+    private final DocumentIdProvider documentIdProvider;
 
-    @Autowired
-    private GeneralEmailNotification generalEmailNotification;
+    private final GeneralEmailNotification generalEmailNotification;
 
-    @Autowired
-    private IdamService idamService;
+    private final IdamService idamService;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     private static final String NEVER_SHOW = "generalEmailParties=\"NEVER\"";
 
@@ -91,8 +89,8 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         new PageBuilder(configBuilder
             .event(CASEWORKER_CREATE_GENERAL_EMAIL)
             .forStates(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED)
-            .name("Create general email")
-            .description("Create general email")
+            .name(CREATE_GENERAL_EMAIL)
+            .description(CREATE_GENERAL_EMAIL)
             .showSummary()
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
@@ -100,7 +98,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE, SOLICITOR, CITIZEN, JUDGE))
             .page("createGeneralEmail", this::midEvent)
-            .pageLabel("Create general email")
+            .pageLabel(CREATE_GENERAL_EMAIL)
             .complex(CaseData::getGeneralEmail)
             .mandatory(GeneralEmail::getGeneralEmailParties)
             .mandatory(GeneralEmail::getGeneralEmailOtherRecipientEmail, "generalEmailParties=\"other\"")

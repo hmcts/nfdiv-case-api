@@ -23,7 +23,7 @@ import static uk.gov.hmcts.divorce.document.print.documentpack.AosResponseDocume
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-public class AosResponseDocumentPackTest {
+class AosResponseDocumentPackTest {
 
     @Mock
     private GenerateD10Form generateD10Form;
@@ -36,7 +36,7 @@ public class AosResponseDocumentPackTest {
 
 
     @Test
-    public void shouldReturnCorrectPackWhenDisputedDivorce() {
+    void shouldReturnCorrectPackWhenDisputedDivorce() {
         CaseData data = validApplicant1CaseData();
         data.getAcknowledgementOfService().setHowToRespondApplication(HowToRespondApplication.DISPUTE_DIVORCE);
         data.setSupplementaryCaseType(SupplementaryCaseType.NA);
@@ -47,7 +47,7 @@ public class AosResponseDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnCorrectPackWhenUnDisputedDivorce() {
+    void shouldReturnCorrectPackWhenUnDisputedDivorce() {
         CaseData data = validApplicant1CaseData();
         data.getAcknowledgementOfService().setHowToRespondApplication(HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE);
         data.setSupplementaryCaseType(SupplementaryCaseType.NA);
@@ -58,7 +58,7 @@ public class AosResponseDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnCorrectPackWhenJSDisputedDivorce() {
+    void shouldReturnCorrectPackWhenJSDisputedDivorce() {
         CaseData data = validApplicant1CaseData();
         data.getAcknowledgementOfService().setHowToRespondApplication(HowToRespondApplication.DISPUTE_DIVORCE);
         data.setSupplementaryCaseType(SupplementaryCaseType.JUDICIAL_SEPARATION);
@@ -70,7 +70,7 @@ public class AosResponseDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnCorrectPackWhenJSUnDisputedApp1Represented() {
+    void shouldReturnCorrectPackWhenJSUnDisputedApp1Represented() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
         data.getAcknowledgementOfService().setHowToRespondApplication(HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE);
@@ -84,7 +84,7 @@ public class AosResponseDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnCorrectPackWhenJSUnDisputedUnRepresentedApp2Offline() {
+    void shouldReturnCorrectPackWhenJSUnDisputedUnRepresentedApp2Offline() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
         data.getApplicant1().setOffline(YesOrNo.YES);
@@ -99,7 +99,7 @@ public class AosResponseDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnCorrectPackWhenJSUnDisputedUnRepresentedApp1Offline() {
+    void shouldReturnCorrectPackWhenJSUnDisputedUnRepresentedApp1Offline() {
         CaseData data = validApplicant1CaseData();
         data.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
         data.getApplicant1().setOffline(YesOrNo.YES);

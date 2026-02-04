@@ -31,7 +31,7 @@ public enum GeneralApplicationType implements HasLabel {
     PERMISSION_ON_DA_OOT("Permission on FO OOT"),
 
     @JsonProperty("disclosureViaDwp")
-    DISCLOSURE_VIA_DWP("Disclosure via DWP"),
+    DISCLOSURE_VIA_DWP("Search Government Records"),
 
     @JsonProperty("amendApplication")
     AMEND_APPLICATION("Amend Application"),

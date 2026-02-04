@@ -1,14 +1,16 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -31,21 +33,18 @@ import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CITIZEN_APPLICANT2_UPDATE_CONTACT_DETAILS = "citizen-applicant2-update-contact-details";
 
-    @Autowired
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
-    @Autowired
-    private CcdAccessService ccdAccessService;
+    private final CcdAccessService ccdAccessService;
 
-    @Autowired
-    private DivorceApplicationRemover divorceApplicationRemover;
+    private final DivorceApplicationRemover divorceApplicationRemover;
 
-    @Autowired
-    private GenerateApplication generateApplication;
+    private final GenerateApplication generateApplication;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -69,17 +68,10 @@ public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData
         CaseData data = beforeDetails.getData();
 
         if (!ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId())) {
-
-            data.getApplicant2().setPhoneNumber(updatedData.getApplicant2().getPhoneNumber());
-
-            boolean contactPrivacyChanged = updatedData.getApplicant2().isConfidentialContactDetails()
-                != data.getApplicant2().isConfidentialContactDetails();
-            data.getApplicant2().setContactDetailsType(updatedData.getApplicant2().getContactDetailsType());
-
-            boolean addressChanged = isAddressChanged(data, updatedData);
-            data.getApplicant2().setAddress(updatedData.getApplicant2().getAddress());
-
-            if ((addressChanged || contactPrivacyChanged) && isValidState(details.getState())) {
+            boolean hasChanged = isAddressChanged(data, updatedData)
+                || updatedData.getApplicant2().isConfidentialContactDetails() != data.getApplicant2().isConfidentialContactDetails();
+            updateApplicant2(data.getApplicant2(),updatedData.getApplicant2());
+            if (hasChanged && isValidState(details.getState())) {
                 log.info("Regenerating divorce application");
                 caseTasks(
                     divorceApplicationRemover,
@@ -93,6 +85,14 @@ public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
             .build();
+    }
+
+    private void updateApplicant2(Applicant dataApplicant2, Applicant updatedApplicant2) {
+        dataApplicant2.setPhoneNumber(updatedApplicant2.getPhoneNumber());
+        dataApplicant2.setContactDetailsType(updatedApplicant2.getContactDetailsType());
+        dataApplicant2.setAddress(updatedApplicant2.getAddress());
+        dataApplicant2.setInRefuge(updatedApplicant2.isConfidentialContactDetails()
+            ? updatedApplicant2.getInRefuge() : YesOrNo.NO);
     }
 
     private boolean isAddressChanged(CaseData data, CaseData updatedData) {

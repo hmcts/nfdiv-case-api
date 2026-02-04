@@ -14,7 +14,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANT
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
-public class FinalOrderGrantedDocumentPackTest {
+class FinalOrderGrantedDocumentPackTest {
 
     private static final String LETTER_TYPE_FINAL_ORDER_GRANTED = "final-order-granted-letter";
 
@@ -41,7 +41,7 @@ public class FinalOrderGrantedDocumentPackTest {
     private final FinalOrderGrantedDocumentPack finalOrderGrantedDocumentPack = new FinalOrderGrantedDocumentPack();
 
     @Test
-    public void shouldReturnApplicant1DocumentPackWhenPassedApplicant1() {
+    void shouldReturnApplicant1DocumentPackWhenPassedApplicant1() {
         CaseData data = validApplicant1CaseData();
         var documentPack = finalOrderGrantedDocumentPack.getDocumentPack(data, data.getApplicant1());
 
@@ -49,7 +49,7 @@ public class FinalOrderGrantedDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnApplicant2DocumentPackWhenPassedApplicant2() {
+    void shouldReturnApplicant2DocumentPackWhenPassedApplicant2() {
         CaseData data = validApplicant1CaseData();
         var documentPack = finalOrderGrantedDocumentPack.getDocumentPack(data, data.getApplicant2());
 
@@ -57,7 +57,7 @@ public class FinalOrderGrantedDocumentPackTest {
     }
 
     @Test
-    public void shouldReturnCorrectLetterId() {
+    void shouldReturnCorrectLetterId() {
         assertThat(finalOrderGrantedDocumentPack.getLetterId()).isEqualTo(LETTER_TYPE_FINAL_ORDER_GRANTED);
     }
 

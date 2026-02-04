@@ -124,7 +124,6 @@ class AwaitingFinalOrderNotificationTest {
         final var applicant2 = getApplicant2(MALE);
         data.setApplicant2(applicant2);
         data.setApplicationType(JOINT_APPLICATION);
-
         when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
 
@@ -255,7 +254,6 @@ class AwaitingFinalOrderNotificationTest {
         data.setApplicant2(applicant2);
         data.setApplicationType(JOINT_APPLICATION);
         data.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
-
         when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getConditionalOrderTemplateVars(JOINT_APPLICATION));
 
@@ -317,9 +315,10 @@ class AwaitingFinalOrderNotificationTest {
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         LocalDate coGrantedDate = LocalDate.of(2021, 10, 18);
-        data.getFinalOrder().setDateFinalOrderEligibleFrom(coGrantedDate);
+        data.getConditionalOrder().setGrantedDate(coGrantedDate);
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
+                .thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
 
         awaitingFinalOrderNotification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
@@ -356,9 +355,10 @@ class AwaitingFinalOrderNotificationTest {
             .build();
         data.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
         LocalDate coGrantedDate = LocalDate.of(2021, 10, 18);
-        data.getFinalOrder().setDateFinalOrderEligibleFrom(coGrantedDate);
+        data.getConditionalOrder().setGrantedDate(coGrantedDate);
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID)).thenReturn(getBasicTemplateVars());
+        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
+                .thenReturn(getBasicTemplateVars());
         when(commonContent.getUnionType(data)).thenReturn(DIVORCE);
 
         awaitingFinalOrderNotification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
@@ -438,6 +438,7 @@ class AwaitingFinalOrderNotificationTest {
         caseData.setApplicationType(SOLE_APPLICATION);
 
         awaitingFinalOrderNotification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
+        verifyNoInteractions(applyForFinalOrderDocumentPack);
     }
 
 }

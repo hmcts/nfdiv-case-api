@@ -16,7 +16,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(SpringExtension.class)
-public class SystemMigrateOrgPoliciesTest {
+class SystemMigrateOrgPoliciesTest {
 
     @InjectMocks
     private SystemMigrateOrgPolicies systemMigrateOrgPolicies;

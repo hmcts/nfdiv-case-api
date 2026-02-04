@@ -37,7 +37,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigB
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 
 @ExtendWith(MockitoExtension.class)
-public class CitizenApplicant2UpdateContactDetailsTest {
+class CitizenApplicant2UpdateContactDetailsTest {
 
     private static final AddressGlobalUK ADDRESS1 = AddressGlobalUK.builder()
         .addressLine1("100 The Street")

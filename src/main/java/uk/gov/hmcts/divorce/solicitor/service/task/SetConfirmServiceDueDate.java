@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.service.task;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -15,13 +15,13 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SetConfirmServiceDueDate implements CaseTask {
 
     @Value("${aos_pack.due_date_offset_days}")
     private long dueDateOffsetDays;
 
-    @Autowired
-    private HoldingPeriodService holdingPeriodService;
+    private final HoldingPeriodService holdingPeriodService;
 
     /**
      * For solicitor service the dueDate is set to 16 days after the date the solicitor says the served the respondent.

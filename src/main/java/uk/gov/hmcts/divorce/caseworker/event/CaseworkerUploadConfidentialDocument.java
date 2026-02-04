@@ -17,6 +17,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATE
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.RPA_ROBOT;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 
@@ -35,7 +36,7 @@ public class CaseworkerUploadConfidentialDocument implements CCDConfig<CaseData,
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showSummary(false)
             .showEventNotes()
-            .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER)
+            .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER, RPA_ROBOT)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE))
             .page("uploadConfidentialDocuments")
             .pageLabel("Upload Confidential Documents")

@@ -1,7 +1,7 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
@@ -21,10 +21,10 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CertificateOfServiceContent {
 
-    @Autowired
-    private Clock clock;
+    private final Clock clock;
 
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
