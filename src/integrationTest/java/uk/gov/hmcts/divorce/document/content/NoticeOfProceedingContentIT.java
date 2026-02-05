@@ -49,8 +49,10 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FAMILY_COURT_LOGO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HMCTS_LOGO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
@@ -152,6 +154,10 @@ public class NoticeOfProceedingContentIT {
 
     private static final String APPLICANT_2_FULL_NAME_TXT = "applicant2FirstName applicant2LastName";
     private static final String APPLICANT_1_FULL_NAME_TXT = "test_first_name test_middle_name test_last_name";
+    private static final String HMCTS_LOGO_TEXT = "[userImage:hmcts_logo_nfd_en.png]";
+    private static final String FAMILY_COURT_LOGO_TEXT = "[userImage:family_court_logo_nfd_en.png]";
+    private static final String HMCTS_LOGO_TEXT_CY = "[userImage:hmcts_logo_nfd_cy.png]";
+    private static final String FAMILY_COURT_LOGO_TEXT_CY = "[userImage:family_court_logo_nfd_cy.png]";
 
     @Autowired
     private NoticeOfProceedingContent noticeOfProceedingContent;
@@ -241,6 +247,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
         expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -333,6 +341,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
         expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT_CY);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT_CY);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -433,6 +443,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
         expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -538,6 +550,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
         expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -631,6 +645,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
         expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -724,6 +740,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
         expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT_CY);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT_CY);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -835,6 +853,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
         expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -951,6 +971,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
         expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
@@ -1056,6 +1078,8 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
         expectedEntries.put(IS_RESPONDENT_EMAIL_PRESENT, false);
         expectedEntries.put(IS_REISSUED_OFFLINE_AS_AOS, false);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = noticeOfProceedingContent.apply(
             caseData,
