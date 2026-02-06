@@ -169,13 +169,10 @@ dependencyCheck {
   scanConfigurations = ['runtimeClasspath']
 
   analyzers {
-    // Disable scanning of .NET related binaries
     assemblyEnabled = false
-    nodeEnabled = false
-    nodeAuditEnabled = false
-    yarnEnabled = false
-    yarnAuditEnabled = false
-    pnpmEnabled = false
+    nodeAudit {
+      yarnEnabled = false
+    }
   }
 }
 
