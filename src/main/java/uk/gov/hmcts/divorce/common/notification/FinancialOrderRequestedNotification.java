@@ -9,12 +9,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
 
 import java.util.Map;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_CONSENT_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_FINANCIAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FINANCIAL_ORDER_NOT_REQUESTED;
@@ -65,38 +65,23 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long caseId) {
 
-        final String email = caseData.getApplicant2EmailAddress();
         final LanguagePreference languagePreference = caseData.getApplicant2().getLanguagePreference();
-        boolean isApplicant = false;
-
+        final boolean isApplicant = false;
+        final EmailTemplateName template = caseData.getApplicationType().isSole()
+            ? RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION
+            : FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
         final Map<String, String> templateVars =
             populateTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1(), isApplicant);
 
-        if (caseData.getApplicationType().isSole()) {
-            if (isNotBlank(email)) {
-                log.info("Sending financial order requested notification to respondent for case : {}", caseId);
+        log.info("Sending financial order requested notification to respondent/applicant2 for case : {}", caseId);
 
-                notificationService.sendEmail(
-                    email,
-                    RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION,
-                    templateVars,
-                    languagePreference,
-                    caseId
-                );
-            } else {
-                log.info("Respondent email is blank. Financial Order Notification will not be sent.");
-            }
-        } else {
-            log.info("Sending financial order requested notification to applicant 2 for case : {}", caseId);
-
-            notificationService.sendEmail(
-                email,
-                FINANCIAL_ORDER_REQUESTED_NOTIFICATION,
-                templateVars,
-                languagePreference,
-                caseId
-            );
-        }
+        notificationService.sendEmail(
+            caseData.getApplicant2EmailAddress(),
+            template,
+            templateVars,
+            languagePreference,
+            caseId
+        );
     }
 
     public Map<String, String> populateTemplateVars(final CaseData caseData,
