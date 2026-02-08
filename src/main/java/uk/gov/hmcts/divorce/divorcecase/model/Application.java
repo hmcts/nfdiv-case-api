@@ -284,6 +284,13 @@ public class Application {
     private YesOrNo applicant1KnowsApplicant2Address;
 
     @CCD(
+        label = "Have you been able to find your partner’s address?",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private YesOrNo applicant1FoundApplicant2Address;
+
+    @CCD(
         label = "Applicant 2 is using digital channel?",
         access = {DefaultAccess.class}
     )
@@ -632,10 +639,14 @@ public class Application {
     }
 
     @JsonIgnore
-    public boolean hasAwaitingApplicant1Documents() {
+    public boolean applicant1ServedPapersAnotherWay() {
         return applicant1WantsToHavePapersServedAnotherWay != null
-            && applicant1WantsToHavePapersServedAnotherWay.toBoolean()
-            || !isEmpty(applicant1CannotUploadSupportingDocument);
+            && applicant1WantsToHavePapersServedAnotherWay.toBoolean();
+    }
+
+    @JsonIgnore
+    public boolean hasAwaitingApplicant1Documents() {
+        return applicant1ServedPapersAnotherWay() || !isEmpty(applicant1CannotUploadSupportingDocument);
     }
 
     @JsonIgnore
@@ -717,4 +728,8 @@ public class Application {
             .map(dynamicList -> dynamicList.getValue().getLabel());
     }
 
+    @JsonIgnore
+    public boolean knowsRespondentAddress() {
+        return (YES.equals(applicant1KnowsApplicant2Address) || YES.equals(applicant1FoundApplicant2Address));
+    }
 }

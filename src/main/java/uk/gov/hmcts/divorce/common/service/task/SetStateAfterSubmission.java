@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static java.util.Objects.nonNull;
-import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
@@ -31,7 +30,7 @@ public class SetStateAfterSubmission implements CaseTask {
         final boolean isHWFApplicant2 = application.isHelpWithFeesApplicationApplicant2();
         final boolean isSoleApplication =  nonNull(caseData.getApplicationType())
             && caseData.getApplicationType().isSole();
-        final boolean isApplicant1AwaitingDocuments = !isEmpty(application.getApplicant1CannotUploadSupportingDocument())
+        final boolean isApplicant1AwaitingDocuments = application.hasAwaitingApplicant1Documents()
             || isSoleApplication && application.isPersonalServiceMethod();
         final boolean isApplicant2AwaitingDocuments = application.hasAwaitingApplicant2Documents();
 
@@ -41,9 +40,11 @@ public class SetStateAfterSubmission implements CaseTask {
             || (!isSoleApplication && isHWFApplicant1 && isHWFApplicant2);
         boolean applicationHasBeenPaidFor = application.hasBeenPaidFor();
 
+        boolean hasProvidedAddressForService = caseData.getApplication().knowsRespondentAddress();
+
         if (applicantNeedsHelpWithFees && !applicationHasBeenPaidFor) {
             caseDetails.setState(AwaitingHWFDecision);
-        } else if (applicantIsAwaitingDocuments) {
+        } else if (applicantIsAwaitingDocuments || (caseData.getApplicationType().isSole() && !hasProvidedAddressForService)) {
             caseDetails.setState(AwaitingDocuments);
         } else if (!applicationHasBeenPaidFor) {
             caseDetails.setState(AwaitingPayment);
