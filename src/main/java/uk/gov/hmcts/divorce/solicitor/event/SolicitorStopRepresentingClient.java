@@ -141,7 +141,10 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
 
         caseFlagsService.resetSolicitorCaseFlags(details.getData(), isRepresentingApplicant1);
 
-        NoticeType.ORG_REMOVED.applyNoticeOfChange(
+        NoticeType noticeType = NoticeType.ORG_REMOVED;
+        details.getData().getNoticeOfChange().setNoticeType(noticeType);
+
+        noticeType.applyNoticeOfChange(
             applicant.apply(details.getData()),
             applicant.apply(beforeDetails.getData()),
             rolesToRemove,
