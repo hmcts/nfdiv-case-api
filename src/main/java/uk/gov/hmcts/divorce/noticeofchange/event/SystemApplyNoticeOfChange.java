@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.noticeofchange.event;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +21,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.AboutToStartOrSubmitCallbackResponse;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -67,7 +67,8 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
             .name("Notice Of Change Applied")
             .grant(CREATE_READ_UPDATE, NOC_APPROVER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE, CASE_WORKER, SUPER_USER)
-            .aboutToStartCallback(this::aboutToStart));
+            .aboutToStartCallback(this::aboutToStart)
+            .submittedCallback(this::submitted));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
@@ -76,9 +77,6 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
         var changeOrganisationRequest = details.getData().getChangeOrganisationRequestField();
         boolean isApplicant1 = APPLICANT_1_SOLICITOR.getRole().equals(changeOrganisationRequest.getCaseRoleId().getRole());
         CaseData caseData = details.getData();
-
-        Map<String, Object> copyCaseDataMap = objectMapper.convertValue(caseData, new TypeReference<>() {});
-        final CaseData beforeCaseData = objectMapper.convertValue(copyCaseDataMap, CaseData.class);
 
         changeOfRepresentativeService.buildChangeOfRepresentative(caseData, null,
                 SOLICITOR_NOTICE_OF_CHANGE.getValue(), isApplicant1);
@@ -108,17 +106,29 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
 
         CaseData responseData = objectMapper.convertValue(data, CaseData.class);
 
-        try {
-            notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, responseData,
-                beforeCaseData, details.getId(), isApplicant1, NEW_DIGITAL_SOLICITOR_NEW_ORG);
-        } catch (final NotificationTemplateException e) {
-            log.error(NOTIFICATION_FAILED_ERROR, details.getId(), e.getMessage(), e);
-        }
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(responseData)
             .state(details.getState())
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+        log.info("Apply Notice of change submitted callback invoked for case id: {}", details.getId());
+
+        CaseData data = details.getData();
+        CaseData beforeData = beforeDetails.getData();
+        var changeOrganisationRequest = details.getData().getChangeOrganisationRequestField();
+        boolean isApplicant1 = APPLICANT_1_SOLICITOR.getRole().equals(changeOrganisationRequest.getCaseRoleId().getRole());
+
+        try {
+            notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, data,
+                beforeData, details.getId(), isApplicant1, NEW_DIGITAL_SOLICITOR_NEW_ORG);
+        } catch (final NotificationTemplateException e) {
+            log.error(NOTIFICATION_FAILED_ERROR, details.getId(), e.getMessage(), e);
+        }
+
+        return SubmittedCallbackResponse.builder().build();
     }
 
     public static void resetConditionalOrderFields(CaseData data) {
