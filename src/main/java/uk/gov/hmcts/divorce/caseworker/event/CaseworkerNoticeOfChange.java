@@ -224,15 +224,15 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
 
         //could get which applicant from case data but use param to avoid mishap
         //this can move to submitted once we have more NOC data on casedata
-//        notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, details.getData(),
-//            beforeData, details.getId(), isApplicant1, noticeType);
+        //notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, details.getData(),
+        //    beforeData, details.getId(), isApplicant1, noticeType);
 
         if (hasRepresentationBeenRemoved(isApplicant1, data, beforeData)
             && shouldSendInviteToParty(data, isApplicant1)) {
             //Send email to party with case invites
             generateCaseInvite(data, isApplicant1, applicant);
-//            notificationDispatcher.sendNOCCaseInvite(nocSolsToCitizenNotifications, details.getData(), details.getId(),
-//                isApplicant1);
+            //notificationDispatcher.sendNOCCaseInvite(nocSolsToCitizenNotifications, details.getData(), details.getId(),
+            //    isApplicant1);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

@@ -171,7 +171,7 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
         boolean wasRepresentingApplicant1 = data.getNoticeOfChange().getWhichApplicant() == WhichApplicant.APPLICANT_1;
 
         notificationDispatcher.sendNOC(nocSolRemovedSelfNotifications, details.getData(),
-            beforeDetails.getData(), details.getId(), wasRepresentingApplicant1, NoticeType.ORG_REMOVED);
+            beforeDetails.getData(), details.getId(), wasRepresentingApplicant1, data.getNoticeOfChange().getNoticeType());
 
         if (shouldSendInviteToParty(details.getData(), wasRepresentingApplicant1)) {
             notificationDispatcher.sendNOCCaseInvite(nocSolsToCitizenNotifications, details.getData(), details.getId(),
