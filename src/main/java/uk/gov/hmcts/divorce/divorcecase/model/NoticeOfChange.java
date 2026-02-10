@@ -44,6 +44,12 @@ public class NoticeOfChange {
     )
     private YesOrNo areTheyDigital;
 
+    @CCD(
+        label = "Notice Type",
+        access = {DefaultAccess.class}
+    )
+    private NoticeType noticeType;
+
     @Getter
     @AllArgsConstructor
     public enum WhichApplicant implements HasLabel {
@@ -54,12 +60,6 @@ public class NoticeOfChange {
 
         private final String label;
     }
-
-    @CCD(
-        label = "Notice Type",
-        access = {DefaultAccess.class}
-    )
-    private NoticeType noticeType;
 
     @JsonIgnore
     public boolean isNotAddingNewDigitalSolicitor() {
