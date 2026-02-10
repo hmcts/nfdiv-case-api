@@ -31,8 +31,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -444,14 +442,13 @@ class CaseworkerNoticeOfChangeTest {
     @Test
     void shouldSendNotificationWhenNewDigitalSolicitorInNewOrg() {
         CaseData caseData = createCaseData(APPLICANT_1, true, true, TEST_ORG_ID);
+        caseData.getNoticeOfChange().setNoticeType(NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG);
         CaseData beforeCaseData = createCaseData(APPLICANT_1, true, true, "OldOrgId");
 
         CaseDetails<CaseData, State> details = createCaseDetails(caseData);
         CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
 
-        doNothing().when(noticeOfChangeService).applyNocDecisionAndGrantAccessToNewSol(any(), any(), any(), any(), any());
-
-        noticeOfChange.aboutToSubmit(details, beforeDetails);
+        noticeOfChange.submitted(details, beforeDetails);
 
         verify(notificationDispatcher, times(1)).sendNOC(nocCitizenToSolsNotifications,
             caseData, beforeCaseData, details.getId(), true, NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG);
@@ -565,7 +562,7 @@ class CaseworkerNoticeOfChangeTest {
         CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
         CaseDetails<CaseData, State> details = createCaseDetails(caseData);
 
-        noticeOfChange.aboutToSubmit(details, beforeDetails);
+        noticeOfChange.submitted(details, beforeDetails);
 
         verify(notificationDispatcher, times(1)).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             caseData, details.getId(),false);
