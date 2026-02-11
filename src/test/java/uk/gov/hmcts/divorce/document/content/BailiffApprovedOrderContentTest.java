@@ -46,6 +46,9 @@ class BailiffApprovedOrderContentTest {
     @Mock
     private Clock clock;
 
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
+
     @InjectMocks
     private BailiffApprovedOrderContent templateContent;
 

@@ -91,6 +91,9 @@ class DraftApplicationSoleTemplateContentTest {
     @Mock
     private ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
+
     @InjectMocks
     private DraftApplicationTemplateContent draftApplicationTemplateContent;
 

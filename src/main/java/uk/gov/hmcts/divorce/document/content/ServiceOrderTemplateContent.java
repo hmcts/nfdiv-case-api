@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -60,6 +59,7 @@ public class ServiceOrderTemplateContent {
     private String phoneNumber;
 
     private final CommonContent commonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference) {
@@ -67,7 +67,9 @@ public class ServiceOrderTemplateContent {
         log.info("Generating service order template content for case reference {} and application type {} ",
             ccdCaseReference, caseData.getDivorceOrDissolution());
 
-        Map<String, Object> templateContent = new HashMap<>();
+        Map<String, Object> templateContent =
+            docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference());
+
         var alternativeService = caseData.getAlternativeService();
 
         LocalDate serviceApplicationDecisionDate;
