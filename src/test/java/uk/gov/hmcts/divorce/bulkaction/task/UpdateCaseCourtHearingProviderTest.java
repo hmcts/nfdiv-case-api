@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
@@ -55,7 +56,7 @@ class UpdateCaseCourtHearingProviderTest {
         final ConditionalOrder resultConditionalOrder = resultCaseDetails.getData().getConditionalOrder();
 
         assertThat(resultConditionalOrder.getDateAndTimeOfHearing()).isEqualTo(localDateTime);
-        assertThat(resultConditionalOrder.getCourt()).isEqualTo(BIRMINGHAM);
+        assertThat(resultConditionalOrder.getCourt()).isEqualTo(ConditionalOrderCourt.BIRMINGHAM);
         assertThat(resultConditionalOrder.hasOfflineCertificateOfEntitlementBeenSentToApplicant1()).isFalse();
         assertThat(resultConditionalOrder.hasOfflineCertificateOfEntitlementBeenSentToApplicant2()).isFalse();
     }
