@@ -29,4 +29,8 @@ public class PageBuilder {
     public static String andShowCondition(final String... caseFieldConditions) {
         return String.join(" AND ", caseFieldConditions);
     }
+
+    public static String orShowCondition(final String... caseFieldConditions) {
+        return String.join(" OR ", caseFieldConditions);
+    }
 }
