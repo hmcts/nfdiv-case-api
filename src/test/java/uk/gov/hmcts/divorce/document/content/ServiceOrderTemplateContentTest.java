@@ -65,6 +65,9 @@ class ServiceOrderTemplateContentTest {
     @Mock
     private CommonContent commonContent;
 
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
+
     @InjectMocks
     private ServiceOrderTemplateContent serviceOrderTemplateContent;
 

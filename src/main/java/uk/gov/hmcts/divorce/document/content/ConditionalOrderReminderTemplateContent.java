@@ -7,7 +7,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.templatecontent.TemplateContent;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
