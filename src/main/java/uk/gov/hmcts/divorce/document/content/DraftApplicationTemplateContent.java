@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicantTemplateDataProvider;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicationTemplateDataProvider;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Objects.isNull;
@@ -64,6 +63,8 @@ public class DraftApplicationTemplateContent {
 
     private final ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
+    private final DocmosisCommonContent docmosisCommonContent;
+
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
         final var application = caseData.getApplication();
@@ -71,7 +72,8 @@ public class DraftApplicationTemplateContent {
         final var applicant1 = caseData.getApplicant1();
         final var applicant2 = caseData.getApplicant2();
         final var applicant2Solicitor = caseData.getApplicant2().getSolicitor();
-        final Map<String, Object> templateContent = new HashMap<>();
+        Map<String, Object> templateContent =
+            docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference());
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 

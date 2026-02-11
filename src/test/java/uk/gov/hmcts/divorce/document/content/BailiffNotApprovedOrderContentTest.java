@@ -52,6 +52,9 @@ class BailiffNotApprovedOrderContentTest {
     @Mock
     private CommonContent commonContent;
 
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
+
     @InjectMocks
     private BailiffNotApprovedOrderContent templateContent;
 
