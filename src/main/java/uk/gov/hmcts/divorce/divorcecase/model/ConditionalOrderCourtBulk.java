@@ -6,17 +6,19 @@ import lombok.Getter;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 import static uk.gov.hmcts.divorce.divorcecase.constant.ConditionalOrderCourtConstants.birmingham;
+import static uk.gov.hmcts.divorce.divorcecase.constant.ConditionalOrderCourtConstants.birminghamCourtId;
 import static uk.gov.hmcts.divorce.divorcecase.constant.ConditionalOrderCourtConstants.buryStEdmunds;
+import static uk.gov.hmcts.divorce.divorcecase.constant.ConditionalOrderCourtConstants.buryStEdmundsCourtId;
 
 @Getter
 @AllArgsConstructor
 public enum ConditionalOrderCourtBulk implements HasLabel {
 
-    @JsonProperty("birmingham")
-    BIRMINGHAM("birmingham", birmingham),
+    @JsonProperty(birminghamCourtId)
+    BIRMINGHAM(birminghamCourtId, birmingham),
 
-    @JsonProperty("buryStEdmunds")
-    BURY_ST_EDMUNDS("buryStEdmunds", buryStEdmunds);
+    @JsonProperty(buryStEdmundsCourtId)
+    BURY_ST_EDMUNDS(buryStEdmundsCourtId, buryStEdmunds);
 
     private String courtId;
     private String label;
