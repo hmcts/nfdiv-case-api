@@ -147,8 +147,8 @@ class SystemApplyNoticeOfChangeTest {
 
         final ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequest = getChangeOrganisationRequestField("[APPONESOLICITOR]",
             "APPLICANT_1_SOLICITOR");
-        CaseData caseData = CaseData.builder().applicant1(applicant).changeOrganisationRequestField(changeOrganisationRequest).build();
-        CaseData beforeData = CaseData.builder().applicant1(beforeApplicant).build();
+        CaseData caseData = CaseData.builder().applicant1(applicant).build();
+        CaseData beforeData = CaseData.builder().applicant1(beforeApplicant).changeOrganisationRequestField(changeOrganisationRequest).build();
         var details =  CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
         var beforeDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(beforeData).build();
 
@@ -192,8 +192,8 @@ class SystemApplyNoticeOfChangeTest {
 
         final ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequest = getChangeOrganisationRequestField("[APPTWOSOLICITOR]",
             "APPLICANT_2_SOLICITOR");
-        CaseData caseData = CaseData.builder().applicant2(applicant).changeOrganisationRequestField(changeOrganisationRequest).build();
-        CaseData beforeData = CaseData.builder().applicant2(beforeApplicant).build();
+        CaseData caseData = CaseData.builder().applicant2(applicant).build();
+        CaseData beforeData = CaseData.builder().applicant2(beforeApplicant).changeOrganisationRequestField(changeOrganisationRequest).build();
         var details =  CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
         var beforeDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(beforeData).build();
 
@@ -235,8 +235,8 @@ class SystemApplyNoticeOfChangeTest {
         final ChangeOrganisationRequest<CaseRoleID> changeOrganisationRequest = getChangeOrganisationRequestField("[APPONESOLICITOR]",
             "APPLICANT_1_SOLICITOR");
 
-        CaseData caseData = CaseData.builder().applicant1(applicant).changeOrganisationRequestField(changeOrganisationRequest).build();
-        CaseData beforeData = CaseData.builder().applicant1(beforeApplicant).build();
+        CaseData caseData = CaseData.builder().applicant1(applicant).build();
+        CaseData beforeData = CaseData.builder().applicant1(beforeApplicant).changeOrganisationRequestField(changeOrganisationRequest).build();
 
         var details =  CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
         var beforeDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(beforeData).build();

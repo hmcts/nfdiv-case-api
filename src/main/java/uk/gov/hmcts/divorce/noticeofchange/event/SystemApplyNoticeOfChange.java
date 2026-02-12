@@ -118,7 +118,7 @@ public class SystemApplyNoticeOfChange implements CCDConfig<CaseData, State, Use
 
         CaseData data = details.getData();
         CaseData beforeData = beforeDetails.getData();
-        var changeOrganisationRequest = details.getData().getChangeOrganisationRequestField();
+        var changeOrganisationRequest = beforeData.getChangeOrganisationRequestField();
         boolean isApplicant1 = APPLICANT_1_SOLICITOR.getRole().equals(changeOrganisationRequest.getCaseRoleId().getRole());
 
         try {
