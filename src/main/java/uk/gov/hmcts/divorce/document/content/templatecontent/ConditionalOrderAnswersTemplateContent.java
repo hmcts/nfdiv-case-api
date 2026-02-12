@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -38,6 +39,7 @@ public class ConditionalOrderAnswersTemplateContent implements TemplateContent {
     public static final String CO_CONFIRM_INFO_STILL_CORRECT = "confirmInformationStillCorrect";
 
     private final Clock clock;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     @Override
     public List<String> getSupportedTemplates() {
@@ -56,7 +58,8 @@ public class ConditionalOrderAnswersTemplateContent implements TemplateContent {
         final var applicant1 = caseData.getApplicant1();
         final var applicant2 = caseData.getApplicant2();
 
-        Map<String, Object> templateContent = new HashMap<>();
+        final Map<String, Object> templateContent = docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference());
 
         templateContent.put("isSole", isSole);
         templateContent.put("isDivorce", isDivorce);
