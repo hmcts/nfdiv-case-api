@@ -9,6 +9,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.EnumSet;
+
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingServiceAppResponse;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -28,7 +31,10 @@ public class CaseworkerAwaitingServiceApplicationClarification implements CCDCon
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_AWAITING_SERVICE_APP_CLARIFICATION)
-            .forStateTransition(ServiceAdminRefusal, PendingServiceAppResponse)
+            .forStateTransition(
+                EnumSet.of(ServiceAdminRefusal, GeneralConsiderationComplete),
+                PendingServiceAppResponse
+            )
             .showEventNotes()
             .name("Pending service app response")
             .description("Pending service app response")
