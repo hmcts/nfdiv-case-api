@@ -50,6 +50,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FAMILY_COURT_LOGO;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HMCTS_LOGO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_REPRESENTED;
@@ -86,8 +88,8 @@ class DocmosisCommonContentTest {
     private static final String POSTCODE = "CM20 9UG";
     private static final String PHONE_NUMBER = "0300 303 0642";
 
-    private static final int EXPECTED_ENTRY_SIZE = 5;
-    private static final int EXPECTED_SOLICITOR_ENTRY_SIZE = 19;
+    private static final int EXPECTED_ENTRY_SIZE = 7;
+    private static final int EXPECTED_SOLICITOR_ENTRY_SIZE = 21;
 
     private static final CtscContactDetails CTSC_CONTACT = CtscContactDetails
         .builder()
@@ -121,7 +123,9 @@ class DocmosisCommonContentTest {
                 entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT),
                 entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
                 entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT),
-                entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT));
+                entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT),
+                entry(HMCTS_LOGO, "[userImage:hmcts_logo_nfd_en.png]"),
+                entry(FAMILY_COURT_LOGO, "[userImage:family_court_logo_nfd_en.png]"));
     }
 
     @Test
@@ -137,7 +141,9 @@ class DocmosisCommonContentTest {
                 entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY),
                 entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
                 entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY),
-                entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT));
+                entry(CTSC_CONTACT_DETAILS, CTSC_CONTACT),
+                entry(HMCTS_LOGO, "[userImage:hmcts_logo_nfd_cy.png]"),
+                entry(FAMILY_COURT_LOGO, "[userImage:family_court_logo_nfd_cy.png]"));
     }
 
     @Test
