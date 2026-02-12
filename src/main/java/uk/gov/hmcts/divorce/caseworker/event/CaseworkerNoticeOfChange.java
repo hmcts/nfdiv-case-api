@@ -222,9 +222,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
                 ChangeOfRepresentationAuthor.CASEWORKER_NOTICE_OF_CHANGE.getValue(), isApplicant1);
 
 
-        if (hasRepresentationBeenRemoved(isApplicant1, data, beforeData)
-            && shouldSendInviteToParty(data, isApplicant1)) {
-            //Send email to party with case invites
+        if (representationRemovedShouldSendInvite(isApplicant1, data, beforeData)) {
             generateCaseInvite(data, isApplicant1, applicant);
         }
 
@@ -246,9 +244,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         //could get which applicant from case data but use param to avoid mishap
         notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, data, beforeData, details.getId(), isApplicant1, noticeType);
 
-        if (hasRepresentationBeenRemoved(isApplicant1, data, beforeData)
-            && shouldSendInviteToParty(data, isApplicant1)) {
-            //Send email to party with case invites
+        if (representationRemovedShouldSendInvite(isApplicant1, data, beforeData)) {
             notificationDispatcher.sendNOCCaseInvite(nocSolsToCitizenNotifications, data, details.getId(), isApplicant1);
         }
 
@@ -366,15 +362,6 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         return solicitor;
     }
 
-    private boolean shouldSendInviteToParty(final CaseData data, boolean isApplicant1) {
-        Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
-        boolean hasEmailAddressOnCase = StringUtils.isNotEmpty(applicant.getEmail());
-
-        return (hasEmailAddressOnCase
-            && (data.getApplicationType() == ApplicationType.SOLE_APPLICATION)
-            && (isApplicant1 || (!isApplicant1 && ObjectUtils.isNotEmpty(data.getApplication().getIssueDate()))));
-    }
-
     private void generateCaseInvite(final CaseData data, boolean isApplicant1, Applicant applicant) {
         if (isApplicant1) {
             CaseInviteApp1 invite = CaseInviteApp1.builder()
@@ -391,12 +378,19 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         }
     }
 
-    private boolean hasRepresentationBeenRemoved(final  boolean isApplicant1,
-                                                 final CaseData caseData,
-                                                 final CaseData previousCaseData) {
+    private boolean representationRemovedShouldSendInvite(final  boolean isApplicant1,
+                                                          final CaseData caseData,
+                                                          final CaseData previousCaseData) {
         Applicant beforeApplicant = isApplicant1 ? previousCaseData.getApplicant1() : previousCaseData.getApplicant2();
         Applicant afterApplicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
 
-        return beforeApplicant.isRepresented() && !afterApplicant.isRepresented();
+        boolean hasRepresentationBeenRemoved = beforeApplicant.isRepresented() && !afterApplicant.isRepresented();
+        boolean shouldSendInviteToParty = (
+            StringUtils.isNotEmpty(afterApplicant.getEmail())
+            && (caseData.getApplicationType() == ApplicationType.SOLE_APPLICATION)
+            && (isApplicant1 || ObjectUtils.isNotEmpty(caseData.getApplication().getIssueDate()))
+        );
+
+        return hasRepresentationBeenRemoved && shouldSendInviteToParty;
     }
 }
