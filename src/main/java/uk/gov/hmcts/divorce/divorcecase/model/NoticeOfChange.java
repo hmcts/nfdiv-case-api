@@ -46,7 +46,8 @@ public class NoticeOfChange {
 
     @CCD(
         label = "Notice Type",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private NoticeType noticeType;
 
