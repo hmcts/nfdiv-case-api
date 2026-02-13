@@ -138,15 +138,23 @@ task contract(type: Test) {
 task runAndPublishPactConsumerContractTests(type: Test, description: 'Publish pact contract tests to broker.', group: 'Verification') {
   testClassesDirs = sourceSets.contractTest.output.classesDirs
   classpath = sourceSets.contractTest.runtimeClasspath
+  environment 'FEE_API_URL', 'http://localhost:4411'
 }
 
 pact {
+  broker {
+    pactBrokerUrl = System.getenv("PACT_BROKER_FULL_URL") ?: 'http://localhost:80'
+  }
   publish {
     pactDirectory = 'pacts'
-    pactBrokerUrl = System.getenv("PACT_BROKER_FULL_URL") ?: 'http://localhost:9292'
+    pactBrokerUrl = System.getenv("PACT_BROKER_FULL_URL") ?: 'http://localhost:80'
     tags = ['Dev']
     version = "1.0"
   }
+}
+
+pactPublish {
+  pactPublish = project.pact.publish
 }
 
 runAndPublishPactConsumerContractTests.finalizedBy pactPublish
@@ -356,8 +364,7 @@ dependencies {
   functionalTestImplementation sourceSets.test.runtimeClasspath
   functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.2'
 
-  contractTestImplementation "au.com.dius.pact:junit:${versions.pact}"
-  contractTestImplementation "au.com.dius.pact.consumer:junit:${versions.pact}"
+  contractTestImplementation "au.com.dius.pact.consumer:junit5:${versions.pact}"
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
