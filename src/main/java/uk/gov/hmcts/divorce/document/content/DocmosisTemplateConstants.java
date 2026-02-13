@@ -254,6 +254,9 @@ public final class DocmosisTemplateConstants {
     public static final String HMCTS_LOGO = "hmctsLogo";
     public static final String FAMILY_COURT_LOGO = "familyCourtLogo";
 
+    public static final String HMCTS_LOGO = "hmctsLogo";
+    public static final String FAMILY_COURT_LOGO = "familyCourtLogo";
+
     private DocmosisTemplateConstants() {
     }
 }

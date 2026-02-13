@@ -43,6 +43,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.Applicant2SolicitorApplyForFinalOrder.FINAL_ORDER_REQUESTED_APP2_SOL;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -255,5 +256,21 @@ class Applicant2SolicitorApplyForFinalOrderTest {
         applicant2SolicitorApplyForFinalOrder.submitted(caseDetails, null);
 
         verify(notificationDispatcher).send(applicant2SolicitorAppliedForFinalOrderNotification, caseData, caseDetails.getId());
+    }
+
+    @Test
+    void shouldGenerateRespondentFinalOrderAnswersDocument() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = validCaseDataForAwaitingFinalOrder();
+        caseData.getFinalOrder().setApplicant2SolPaymentHowToPay(FEES_HELP_WITH);
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        when(applyForFinalOrderService.applyForFinalOrderAsApplicant2Sol(caseDetails)).thenReturn(caseDetails);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant2SolicitorApplyForFinalOrder.aboutToSubmit(caseDetails, new CaseDetails<>());
+
+        verify(applyForFinalOrderService).generateAndStoreRespondentFinalOrderAnswersDocument(caseData, TEST_CASE_ID);
     }
 }
