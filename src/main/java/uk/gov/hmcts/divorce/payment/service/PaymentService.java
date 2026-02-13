@@ -53,7 +53,7 @@ import static uk.gov.hmcts.divorce.payment.model.PbaErrorMessage.NOT_FOUND;
 @RequiredArgsConstructor
 public class PaymentService {
 
-    private static final String DEFAULT_CHANNEL = "default";
+    public static final String DEFAULT_CHANNEL = "default";
     private static final String ERROR_GENERIC = "Sorry, there is a problem with the service.\n"
         + "Try again later.";
     public static final String EVENT_ENFORCEMENT = "enforcement";
@@ -72,8 +72,8 @@ public class PaymentService {
     public static final String KEYWORD_WITHOUT_NOTICE = "GeneralAppWithoutNotice";
     public static final String KEYWORD_COPIES = "CopyElectronic";
 
-    private static final String FAMILY = "family";
-    private static final String FAMILY_COURT = "family court";
+    public static final String FAMILY = "family";
+    public static final String FAMILY_COURT = "family court";
     private static final String DIVORCE_SERVICE = "DIVORCE";
     private static final String GBP = "GBP";
     public static final String CA_E0001 = "CA-E0001";
