@@ -106,13 +106,21 @@ public class CcdSearchService {
                                                         final User user,
                                                         final String serviceAuth,
                                                         final State... states) {
+        return searchForAllCasesWithQuery(query, user, serviceAuth, totalMaxResults, states);
+    }
+
+    public List<CaseDetails> searchForAllCasesWithQuery(final BoolQueryBuilder query,
+                                                        final User user,
+                                                        final String serviceAuth,
+                                                        final int maxResults,
+                                                        final State... states) {
 
         final Set<CaseDetails> allCaseDetails = new HashSet<>();
         int from = 0;
         int totalResults = pageSize;
 
         try {
-            while (totalResults == pageSize && allCaseDetails.size() <= totalMaxResults) {
+            while (totalResults == pageSize && allCaseDetails.size() <= maxResults) {
                 final SearchResult searchResult = searchForCasesWithQuery(from, pageSize, query, user, serviceAuth);
 
                 final List<CaseDetails> pageResults = searchResult.getCases();
