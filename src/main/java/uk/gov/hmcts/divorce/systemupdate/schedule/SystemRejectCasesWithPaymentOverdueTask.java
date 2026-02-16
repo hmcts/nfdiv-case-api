@@ -66,6 +66,9 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
             final List<CaseDetails> casesInAwaitingPaymentStateForPaymentOverdue =
                 ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, MAX_CASES_TO_FETCH, AwaitingPayment);
 
+            log.info("Total cases found in AwaitingPayment state for payment overdue:"
+                + casesInAwaitingPaymentStateForPaymentOverdue.size());
+
             casesInAwaitingPaymentStateForPaymentOverdue.stream()
                 .map(caseDetailsConverter::convertToCaseDetailsFromReformModel)
                 .forEach(caseDetails -> {
