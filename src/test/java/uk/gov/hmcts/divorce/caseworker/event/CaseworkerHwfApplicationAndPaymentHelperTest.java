@@ -14,10 +14,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -81,6 +83,56 @@ class CaseworkerHwfApplicationAndPaymentHelperTest {
         final State response = caseworkerHwfApplicationAndPaymentHelper.getState(caseData);
 
         assertThat(response).isEqualTo(Submitted);
+    }
+
+    @Test
+    void shouldSetCaseStatusToAwaitingDocumentsWhenSoleCaseAndApplicantDoesNotKnowRespondentAddress() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(YesOrNo.NO);
+
+        final State response = caseworkerHwfApplicationAndPaymentHelper.getState(caseData);
+
+        assertThat(response).isEqualTo(AwaitingDocuments);
+    }
+
+    @Test
+    void shouldSetCaseStatusToSubmittedWhenSoleCaseAndApplicantKnowsRespondentAddress() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setApplicant1FoundApplicant2Address(YesOrNo.YES);
+
+        final State response = caseworkerHwfApplicationAndPaymentHelper.getState(caseData);
+
+        assertThat(response).isEqualTo(Submitted);
+    }
+
+    @Test
+    void shouldSetCaseStatusToAwaitingDocumentsWhenSoleCaseAndApplicantHasNotFoundRespondentAddress() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setApplicant1FoundApplicant2Address(YesOrNo.NO);
+
+        final State response = caseworkerHwfApplicationAndPaymentHelper.getState(caseData);
+
+        assertThat(response).isEqualTo(AwaitingDocuments);
+    }
+
+    @Test
+    void shouldSetCaseStatusToSubmittedWhenSoleCaseAndApplicantFoundRespondentAddress() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setApplicant1FoundApplicant2Address(YesOrNo.YES);
+
+        final State response = caseworkerHwfApplicationAndPaymentHelper.getState(caseData);
+
+        assertThat(response).isEqualTo(Submitted);
+    }
+
+    @Test
+    void shouldSetCaseStatusToAwaitingDocumentsWhenSoleCaseAndApplicantNeedsToUploadDocuments() {
+        final CaseData caseData = caseData();
+        caseData.getApplication().setApplicant1CannotUploadSupportingDocument(Set.of(DocumentType.CORRESPONDENCE));
+
+        final State response = caseworkerHwfApplicationAndPaymentHelper.getState(caseData);
+
+        assertThat(response).isEqualTo(AwaitingDocuments);
     }
 
     @Test
