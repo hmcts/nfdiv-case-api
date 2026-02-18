@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
@@ -87,7 +88,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
             .forStates(AwaitingFinalOrder, AwaitingFinalOrderPayment)
             .name(APPLY_FOR_FINAL_ORDER)
             .description(APPLY_FOR_FINAL_ORDER)
-            .showCondition("applicationType=\"soleApplication\" AND finalOrderReminderSentApplicant2=\"Yes\"")
+            .showCondition("applicationType=\"soleApplication\"")
             .showSummary()
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
@@ -105,6 +106,13 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         log.info("{} about to start callback invoked for Case Id: {}", FINAL_ORDER_REQUESTED_APP2_SOL, details.getId());
+
+        List<String> validationErrors = FinalOrderValidation.validateCanApplyRespondentFinalOrder(details.getData());
+        if (!validationErrors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(validationErrors)
+                .build();
+        }
 
         prepareOrderSummary(details.getData(), details.getId());
 
