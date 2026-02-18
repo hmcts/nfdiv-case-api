@@ -109,7 +109,11 @@ public class CitizenSaveAndCloseIT {
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(objectMapper.writeValueAsString(callbackRequest(caseDataWithOrderSummary(), CITIZEN_SAVE_AND_CLOSE, Draft.toString())))
+                .content(
+                    objectMapper.writeValueAsString(
+                        callbackRequest(caseDataWithOrderSummary(), CITIZEN_SAVE_AND_CLOSE, Draft.toString())
+                    )
+                )
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
