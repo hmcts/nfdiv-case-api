@@ -324,7 +324,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 return Collections.singletonList(NO_REQUEST_FOR_INFORMATION_POST_ISSUE_ERROR);
             }
         } else if (FO_D36.equals(documentType)) {
-            boolean respondentRequested = OfflineWhoApplying.APPLICANT_2.equals(data.getFinalOrder().getD36WhoApplying())
+            final boolean respondentRequested = OfflineWhoApplying.APPLICANT_2.equals(data.getFinalOrder().getD36WhoApplying())
                 && ApplicationType.SOLE_APPLICATION.equals(data.getApplicationType());
 
             if (respondentRequested) {
