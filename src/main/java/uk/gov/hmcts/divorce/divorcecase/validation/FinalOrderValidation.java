@@ -17,11 +17,11 @@ public final class FinalOrderValidation {
         "It’s too early to apply for a final order on behalf of the respondent. You will be able to apply from %s.";
 
     public static List<String> validateCanRespondentApplyFinalOrder(CaseData caseData) {
-        LocalDate currentDate = LocalDate.now();
-        LocalDate dateFinalOrderEligible = caseData.getFinalOrder().getDateFinalOrderEligibleToRespondent();
+        final LocalDate currentDate = LocalDate.now();
+        final LocalDate dateFinalOrderEligible = caseData.getFinalOrder().getDateFinalOrderEligibleToRespondent();
 
         if (dateFinalOrderEligible == null || dateFinalOrderEligible.isAfter(currentDate)) {
-            String formattedDate = dateFinalOrderEligible == null ? "" : DATE_TIME_FORMATTER.format(dateFinalOrderEligible);
+            final String formattedDate = dateFinalOrderEligible == null ? "" : DATE_TIME_FORMATTER.format(dateFinalOrderEligible);
 
             return List.of(String.format(ERROR_TOO_EARLY_FOR_RESPONDENT_FINAL_ORDER, formattedDate));
         }

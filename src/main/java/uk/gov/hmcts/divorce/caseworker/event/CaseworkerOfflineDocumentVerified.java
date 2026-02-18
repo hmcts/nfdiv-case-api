@@ -311,7 +311,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     }
 
     private List<String> validateDocumentVerification(CaseData data) {
-        CaseDocuments.OfflineDocumentReceived documentType = data.getDocuments().getTypeOfDocumentAttached();
+        final CaseDocuments.OfflineDocumentReceived documentType = data.getDocuments().getTypeOfDocumentAttached();
 
         if (RFI_RESPONSE.equals(documentType)) {
             if (data.getRequestForInformationList().getRequestsForInformation() == null

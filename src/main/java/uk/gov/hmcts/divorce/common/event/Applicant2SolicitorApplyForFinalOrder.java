@@ -107,7 +107,7 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         log.info("{} about to start callback invoked for Case Id: {}", FINAL_ORDER_REQUESTED_APP2_SOL, details.getId());
 
-        List<String> validationErrors = FinalOrderValidation.validateCanRespondentApplyFinalOrder(details.getData());
+        final List<String> validationErrors = FinalOrderValidation.validateCanRespondentApplyFinalOrder(details.getData());
         if (!validationErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(validationErrors)
