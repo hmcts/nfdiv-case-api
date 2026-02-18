@@ -23,7 +23,7 @@ class FinalOrderValidationTest {
         caseData.getFinalOrder().setDateFinalOrderEligibleToRespondent(futureDate);
 
         final List<String> result =
-            FinalOrderValidation.validateCanApplyRespondentFinalOrder(caseData);
+            FinalOrderValidation.validateCanRespondentApplyFinalOrder(caseData);
 
         assertThat(result)
             .containsExactly(
@@ -40,7 +40,7 @@ class FinalOrderValidationTest {
         caseData.getFinalOrder().setDateFinalOrderEligibleToRespondent(LocalDate.now());
 
         final List<String> result =
-            FinalOrderValidation.validateCanApplyRespondentFinalOrder(caseData);
+            FinalOrderValidation.validateCanRespondentApplyFinalOrder(caseData);
 
         assertThat(result).isEmpty();
     }
@@ -51,7 +51,7 @@ class FinalOrderValidationTest {
         caseData.getFinalOrder().setDateFinalOrderEligibleToRespondent(LocalDate.now().minusDays(1));
 
         final List<String> result =
-            FinalOrderValidation.validateCanApplyRespondentFinalOrder(caseData);
+            FinalOrderValidation.validateCanRespondentApplyFinalOrder(caseData);
 
         assertThat(result).isEmpty();
     }

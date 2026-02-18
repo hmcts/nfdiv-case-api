@@ -884,7 +884,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         AboutToStartOrSubmitResponse<CaseData, State> response;
         try (MockedStatic<FinalOrderValidation> classMock = mockStatic(FinalOrderValidation.class)) {
 
-            classMock.when(() -> FinalOrderValidation.validateCanApplyRespondentFinalOrder(Mockito.any(CaseData.class)))
+            classMock.when(() -> FinalOrderValidation.validateCanRespondentApplyFinalOrder(Mockito.any(CaseData.class)))
                 .thenReturn(Collections.emptyList());
 
             response = caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
@@ -943,7 +943,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         AboutToStartOrSubmitResponse<CaseData, State> response;
         try (MockedStatic<FinalOrderValidation> classMock = mockStatic(FinalOrderValidation.class)) {
 
-            classMock.when(() -> FinalOrderValidation.validateCanApplyRespondentFinalOrder(Mockito.any(CaseData.class)))
+            classMock.when(() -> FinalOrderValidation.validateCanRespondentApplyFinalOrder(Mockito.any(CaseData.class)))
                 .thenReturn(Collections.emptyList());
 
             response = caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
@@ -1392,7 +1392,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         try (MockedStatic<FinalOrderValidation> classMock = mockStatic(FinalOrderValidation.class)) {
 
             classMock.when(() ->
-                FinalOrderValidation.validateCanApplyRespondentFinalOrder(caseData)
+                FinalOrderValidation.validateCanRespondentApplyFinalOrder(caseData)
             ).thenReturn(List.of(ERROR_TOO_EARLY_FOR_RESPONDENT_FINAL_ORDER));
 
             response = caseworkerOfflineDocumentVerified.aboutToSubmit(caseDetails, caseDetails);

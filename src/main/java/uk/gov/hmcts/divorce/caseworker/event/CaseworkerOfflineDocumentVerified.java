@@ -328,7 +328,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 && ApplicationType.SOLE_APPLICATION.equals(data.getApplicationType());
 
             if (respondentRequested) {
-                return FinalOrderValidation.validateCanApplyRespondentFinalOrder(data);
+                return FinalOrderValidation.validateCanRespondentApplyFinalOrder(data);
             }
         }
 

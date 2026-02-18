@@ -116,7 +116,7 @@ class Applicant2SolicitorApplyForFinalOrderTest {
         try (MockedStatic<FinalOrderValidation> classMock =
                  mockStatic(FinalOrderValidation.class)) {
 
-            classMock.when(() -> FinalOrderValidation.validateCanApplyRespondentFinalOrder(caseData))
+            classMock.when(() -> FinalOrderValidation.validateCanRespondentApplyFinalOrder(caseData))
                 .thenReturn(List.of(ERROR_TOO_EARLY_FOR_RESPONDENT_FINAL_ORDER));
 
             response = applicant2SolicitorApplyForFinalOrder.aboutToStart(caseDetails);
@@ -146,7 +146,7 @@ class Applicant2SolicitorApplyForFinalOrderTest {
                  mockStatic(FinalOrderValidation.class)) {
 
             classMock.when(() ->
-                FinalOrderValidation.validateCanApplyRespondentFinalOrder(caseData)
+                FinalOrderValidation.validateCanRespondentApplyFinalOrder(caseData)
             ).thenReturn(Collections.emptyList());
 
             response =
