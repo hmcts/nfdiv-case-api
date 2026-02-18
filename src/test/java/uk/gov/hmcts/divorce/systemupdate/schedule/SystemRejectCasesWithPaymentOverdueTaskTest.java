@@ -56,7 +56,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOK
 class SystemRejectCasesWithPaymentOverdueTaskTest {
     private static final String LAST_STATE_MODIFIED_DATE = "last_state_modified_date";
     private static final String NEW_PAPER_CASE = "newPaperCase";
-    private static final int MAX_CASES_TO_FETCH = 50;
 
     private BoolQueryBuilder query;
     private User user;
@@ -129,7 +128,7 @@ class SystemRejectCasesWithPaymentOverdueTaskTest {
         final List<CaseDetails> matchingCases = List.of(cd);
 
         when(ccdSearchService.searchForAllCasesWithQuery(
-            query, user, SERVICE_AUTHORIZATION, MAX_CASES_TO_FETCH, AwaitingPayment)).thenReturn(matchingCases);
+            query, user, SERVICE_AUTHORIZATION, AwaitingPayment)).thenReturn(matchingCases);
 
         when(caseDetailsConverter.convertToCaseDetailsFromReformModel(same(cd))).thenReturn(caseDetails.getFirst());
 
@@ -143,7 +142,7 @@ class SystemRejectCasesWithPaymentOverdueTaskTest {
     @Test
     void shouldNotSubmitEventIfSearchFailsWithCCDSearchCaseException() {
         doThrow(CcdSearchCaseException.class).when(ccdSearchService).searchForAllCasesWithQuery(
-                query, user, SERVICE_AUTHORIZATION, MAX_CASES_TO_FETCH, AwaitingPayment);
+                query, user, SERVICE_AUTHORIZATION, AwaitingPayment);
 
         task.run();
 
@@ -153,7 +152,7 @@ class SystemRejectCasesWithPaymentOverdueTaskTest {
     @Test
     void shouldNotSubmitEventIfSearchFailsWithCCDConflictException() {
         doThrow(CcdConflictException.class).when(ccdSearchService).searchForAllCasesWithQuery(
-            query, user, SERVICE_AUTHORIZATION, MAX_CASES_TO_FETCH, AwaitingPayment);
+            query, user, SERVICE_AUTHORIZATION, AwaitingPayment);
 
         task.run();
 

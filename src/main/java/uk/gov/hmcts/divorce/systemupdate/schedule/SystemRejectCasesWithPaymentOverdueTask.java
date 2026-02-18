@@ -34,7 +34,6 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
 
     private static final String LAST_STATE_MODIFIED_DATE = "last_state_modified_date";
     private static final String NEW_PAPER_CASE = "newPaperCase";
-    private static final int MAX_CASES_TO_FETCH = 50;
     private final CcdSearchService ccdSearchService;
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
@@ -64,16 +63,16 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
                 .filter(rangeQuery(LAST_STATE_MODIFIED_DATE).lte(LocalDate.now().minusDays(14)));
 
             final List<CaseDetails> casesInAwaitingPaymentStateForPaymentOverdue =
-                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, MAX_CASES_TO_FETCH, AwaitingPayment);
+                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPayment);
 
-            log.info("Total cases found in AwaitingPayment state for payment overdue:"
-                + casesInAwaitingPaymentStateForPaymentOverdue.size());
+            log.info("Total cases returned in AwaitingPayment state for payment overdue:{}"
+                , casesInAwaitingPaymentStateForPaymentOverdue.size());
 
-            casesInAwaitingPaymentStateForPaymentOverdue.stream()
-                .map(caseDetailsConverter::convertToCaseDetailsFromReformModel)
-                .forEach(caseDetails -> {
-                    paymentStatusService.processPaymentRejection(caseDetails, user, serviceAuth);
-                });
+//            casesInAwaitingPaymentStateForPaymentOverdue.stream()
+//                .map(caseDetailsConverter::convertToCaseDetailsFromReformModel)
+//                .forEach(caseDetails -> {
+//                    paymentStatusService.processPaymentRejection(caseDetails, user, serviceAuth);
+//                });
 
             log.info("SystemRejectCasesWithPaymentOverdueTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
