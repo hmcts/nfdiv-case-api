@@ -32,6 +32,7 @@ public class CaseworkerRemoveGeneralEmails implements CCDConfig<CaseData, State,
             .page("removeGeneralEmails")
             .pageLabel(REMOVE_GENERAL_EMAILS)
             .optional(CaseData::getGeneralEmails)
+            .optional(CaseData::getConfidentialGeneralEmails)
             .done();
     }
 }
