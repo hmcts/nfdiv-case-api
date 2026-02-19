@@ -115,7 +115,11 @@ public class CommonContent {
     public static final String DATE_PLUS_14_DAYS = "date plus 14 days";
 
     public static final String DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS = "date final order eligible from plus 3 months";
+    public static final String FEES_CONSENT_ORDER = "consentOrderFees";
+    public static final String FEES_FINANCIAL_ORDER = "financialOrderFees";
     public static final String FINAL_ORDER_OVERDUE_DATE = "finalOrderOverdueDate";
+    public static final String FINANCIAL_ORDER_NOT_REQUESTED = "financialOrderNotRequested";
+    public static final String FINANCIAL_ORDER_REQUESTED = "financialOrderRequested";
 
     public static final String IS_SOLE = "isSole";
     public static final String IS_JOINT = "isJoint";
