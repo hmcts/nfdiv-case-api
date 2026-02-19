@@ -120,6 +120,9 @@ public class Applicant2SolicitorApplyForFinalOrder implements CCDConfig<CaseData
 
         CaseDetails<CaseData, State> updatedDetails = applyForFinalOrderService.applyForFinalOrderAsApplicant2Sol(details);
         CaseData updatedData = updatedDetails.getData();
+
+        applyForFinalOrderService.generateAndStoreRespondentFinalOrderAnswersDocument(updatedData, updatedDetails.getId());
+
         var updatedFo = updatedData.getFinalOrder();
 
         final var finalOrderFeeOrderSummary = updatedFo.getApplicant2SolFinalOrderFeeOrderSummary();

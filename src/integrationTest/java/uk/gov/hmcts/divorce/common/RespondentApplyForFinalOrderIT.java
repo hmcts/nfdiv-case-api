@@ -25,7 +25,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.NotificationService;
+import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
+import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -38,6 +40,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -53,15 +56,23 @@ import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_NOTICE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
+import static uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock.stubForDocAssemblyWith;
 import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesLookup;
+import static uk.gov.hmcts.divorce.testutil.IdamWireMock.SYSTEM_USER_ROLE;
+import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamDetails;
+import static uk.gov.hmcts.divorce.testutil.IdamWireMock.stubForIdamToken;
 import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.buildServiceReferenceRequest;
 import static uk.gov.hmcts.divorce.testutil.PaymentWireMock.stubCreateServiceRequest;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SYSTEM_AUTHORISATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 
 @ExtendWith(SpringExtension.class)
@@ -70,7 +81,9 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 @DirtiesContext
 @ContextConfiguration(initializers = {
     PaymentWireMock.PropertiesInitializer.class,
-    FeesWireMock.PropertiesInitializer.class
+    DocAssemblyWireMock.PropertiesInitializer.class,
+    FeesWireMock.PropertiesInitializer.class,
+    IdamWireMock.PropertiesInitializer.class
 })
 public class RespondentApplyForFinalOrderIT {
 
@@ -95,22 +108,34 @@ public class RespondentApplyForFinalOrderIT {
     @BeforeAll
     static void setUp() {
         PaymentWireMock.start();
+        DocAssemblyWireMock.start();
         FeesWireMock.start();
+        IdamWireMock.start();
     }
 
     @AfterAll
     static void tearDown() {
         PaymentWireMock.stopAndReset();
         FeesWireMock.stopAndReset();
+        IdamWireMock.stopAndReset();
+        DocAssemblyWireMock.stopAndReset();
     }
 
     @Test
     void shouldChangeStateToAwaitingFinalOrderPaymentIfRespondentWillMakePayment() throws Exception {
+        setMockClock(clock);
         final CaseDetails<CaseData, State> caseDetails = buildTestDataWithHwfAnswer(YesOrNo.NO);
         final CaseData data = caseDetails.getData();
 
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson(), EVENT_GENERAL, SERVICE_OTHER, KEYWORD_NOTICE);
         stubCreateServiceRequest(OK, buildServiceReferenceRequest(data, data.getApplicant2().getFullName()));
+
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "FL-NFD-GOR-ENG-Respondent_Final_Order_Answers_V1.docx");
 
         performRespondentApplyForFinalRequest(caseDetails.getData(), ABOUT_TO_SUBMIT_URL)
             .andExpect(status().isOk())
@@ -136,6 +161,13 @@ public class RespondentApplyForFinalOrderIT {
 
         final CaseDetails<CaseData, State> caseDetails = buildTestDataWithHwfAnswer(YesOrNo.YES);
 
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "FL-NFD-GOR-ENG-Respondent_Final_Order_Answers_V1.docx");
+
         performRespondentApplyForFinalRequest(caseDetails.getData(), ABOUT_TO_SUBMIT_URL)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.state").value(RespondentFinalOrderRequested.name()))
@@ -149,6 +181,13 @@ public class RespondentApplyForFinalOrderIT {
 
         final CaseDetails<CaseData, State> caseDetails = buildTestDataWithHwfAnswer(YesOrNo.YES);
 
+        when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
+        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "FL-NFD-GOR-ENG-Respondent_Final_Order_Answers_V1.docx");
+
         performRespondentApplyForFinalRequest(caseDetails.getData(), SUBMITTED_URL).andExpect(status().isOk());
 
         verify(notificationService).sendEmail(
@@ -161,6 +200,7 @@ public class RespondentApplyForFinalOrderIT {
         return mockMvc.perform(MockMvcRequestBuilders.post(url)
             .contentType(APPLICATION_JSON)
             .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
+            .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
             .content(objectMapper.writeValueAsString(
                 callbackRequest(caseData, RESPONDENT_APPLY_FINAL_ORDER, "AwaitingFinalOrder"))
             )
