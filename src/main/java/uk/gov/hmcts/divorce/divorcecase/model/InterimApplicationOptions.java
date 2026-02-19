@@ -36,6 +36,14 @@ public class InterimApplicationOptions {
 
     @JsonUnwrapped
     @CCD(
+        label = "No Respondent Address Options",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private NoRespondentAddressJourneyOptions noRespAddressJourneyOptions;
+
+    @JsonUnwrapped
+    @CCD(
         label = "Deemed Service Journey Options",
         access = {DefaultAccess.class},
         searchable = false

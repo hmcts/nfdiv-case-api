@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.ServiceApplicationRejectedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -22,17 +23,26 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.CASE_ALREADY_ISSUED_ERROR;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.CASE_MUST_BE_ISSUED_ERROR;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.INVALID_STATE_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectServiceApplication.CASEWORKER_REJECT_SERVICE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithMarriageDate;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getDivorceDocumentListValue;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,6 +69,92 @@ class CaseworkerRejectServiceApplicationTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(CASEWORKER_REJECT_SERVICE_APPLICATION);
+    }
+
+    @Test
+    void shouldPopulateStateToTransitionToAsAwaitingAosInAboutToStart() {
+        final CaseData caseData = caseDataWithMarriageDate();
+        caseData.getApplication().setIssueDate(LocalDate.now());
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingServiceConsideration);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRejectServiceApplication.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getWarnings()).isNull();
+        assertThat(response.getData().getApplication().getStateToTransitionApplicationTo()).isEqualTo(AwaitingAos);
+        assertThat(response.getData().getApplication().getCurrentState()).isEqualTo(AwaitingServiceConsideration);
+    }
+
+    @Test
+    void shouldPopulateStateToTransitionToAsAwaitingDocumentsInAboutToStart() {
+        final CaseData caseData = caseDataWithMarriageDate();
+        caseData.getApplication().setIssueDate(null);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingServiceConsideration);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRejectServiceApplication.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getWarnings()).isNull();
+        assertThat(response.getData().getApplication().getStateToTransitionApplicationTo()).isEqualTo(AwaitingDocuments);
+        assertThat(response.getData().getApplication().getCurrentState()).isEqualTo(AwaitingServiceConsideration);
+    }
+
+    @Test
+    void shouldReturnValidationErrorWhenPreSubmissionStateSelectedByCaseworker() {
+        CaseData caseData = CaseData.builder()
+            .application(Application.builder()
+                .stateToTransitionApplicationTo(AwaitingApplicant1Response)
+                .build()
+            ).build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRejectServiceApplication.midEvent(details, null);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors().getFirst()).isEqualTo(INVALID_STATE_ERROR);
+    }
+
+    @Test
+    void shouldReturnValidationErrorWhenMovingToPostIssuedStateWhenNoIssueDate() {
+        CaseData caseData = CaseData.builder()
+            .application(Application.builder()
+                .stateToTransitionApplicationTo(Holding)
+                .build()
+            ).build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRejectServiceApplication.midEvent(details, null);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors().getFirst()).isEqualTo(CASE_MUST_BE_ISSUED_ERROR);
+    }
+
+    @Test
+    void shouldReturnValidationErrorWhenMovingToPreIssuedStateWhenCaseAlreadyIssued() {
+        CaseData caseData = CaseData.builder()
+            .application(Application.builder()
+                .stateToTransitionApplicationTo(Submitted)
+                .issueDate(LocalDate.now())
+                .build()
+            ).build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRejectServiceApplication.midEvent(details, null);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors().getFirst()).isEqualTo(CASE_ALREADY_ISSUED_ERROR);
     }
 
     @Test
@@ -160,11 +256,13 @@ class CaseworkerRejectServiceApplicationTest {
     }
 
     @Test
-    void shouldSetCaseStateToAwaitingAos() {
+    void shouldSetCaseStateToSelectedState() {
         final CaseData caseData = CaseData.builder().build();
         caseData.setAlternativeService(AlternativeService.builder()
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
             .build());
+
+        caseData.getApplication().setStateToTransitionApplicationTo(AwaitingDocuments);
 
         final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
@@ -175,7 +273,7 @@ class CaseworkerRejectServiceApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerRejectServiceApplication.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getState()).isEqualTo(AwaitingAos);
+        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
     }
 
     @Test
