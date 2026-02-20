@@ -25,7 +25,10 @@ public enum InterimApplicationType implements HasLabel {
     SEARCH_GOV_RECORDS("Search government records", null, GeneralApplicationType.DISCLOSURE_VIA_DWP, "chwilio cofnodion y llywodraeth"),
 
     @JsonProperty("processServerService")
-    PROCESS_SERVER_SERVICE("Process server service", null, null, "cyflwyno gan weinyddwr proses");
+    PROCESS_SERVER_SERVICE("Process server service", null, null, "cyflwyno gan weinyddwr proses"),
+
+    @JsonProperty("digitisedGeneralApplication")
+    DIGITISED_GENERAL_APPLICATION("Digitised general application", null, null, "cais cyffredinol digidol");
 
     private final String label;
     private final AlternativeServiceType serviceType;

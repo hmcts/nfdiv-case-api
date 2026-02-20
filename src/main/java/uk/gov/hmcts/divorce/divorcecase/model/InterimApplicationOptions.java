@@ -66,6 +66,14 @@ public class InterimApplicationOptions {
     )
     private AlternativeServiceJourneyOptions alternativeServiceJourneyOptions;
 
+    @JsonUnwrapped(prefix = "GenApp")
+    @CCD(
+        label = "General Application Journey Options",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private GeneralApplicationJourneyOptions generalApplicationJourneyOptions;
+
     @CCD(
         label = "Active Interim Application Type",
         typeOverride = FixedList,
