@@ -27,8 +27,8 @@ public enum InterimApplicationType implements HasLabel {
     @JsonProperty("processServerService")
     PROCESS_SERVER_SERVICE("Process server service", null, null, "cyflwyno gan weinyddwr proses"),
 
-    @JsonProperty("digitisedGeneralApplication")
-    DIGITISED_GENERAL_APPLICATION("Digitised general application", null, null, "cais cyffredinol digidol");
+    @JsonProperty("digitisedGeneralApplicationD11")
+    DIGITISED_GENERAL_APPLICATION_D11("Digitised general application D11", null, null, "cais cyffredinol digidol");
 
     private final String label;
     private final AlternativeServiceType serviceType;
