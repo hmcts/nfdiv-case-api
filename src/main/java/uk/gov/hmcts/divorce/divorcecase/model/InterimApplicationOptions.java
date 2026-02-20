@@ -72,7 +72,7 @@ public class InterimApplicationOptions {
         access = {DefaultAccess.class},
         searchable = false
     )
-    private GeneralApplicationJourneyOptions generalApplicationJourneyOptions;
+    private GeneralApplicationD11JourneyOptions generalApplicationD11JourneyOptions;
 
     @CCD(
         label = "Active Interim Application Type",

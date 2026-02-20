@@ -23,7 +23,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
-public class GeneralApplicationJourneyOptions implements ApplicationAnswers {
+public class GeneralApplicationD11JourneyOptions implements ApplicationAnswers {
 
     @CCD(
         label = "Can the application be dealt with without a hearing?",
