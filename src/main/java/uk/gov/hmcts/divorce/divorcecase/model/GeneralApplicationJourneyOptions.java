@@ -81,25 +81,10 @@ public class GeneralApplicationJourneyOptions implements ApplicationAnswers {
     private String reason;
 
     @CCD(
-        label = "Statement",
+        label = "Statement of evidence",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
     )
-    private String statement;
-
-    @CCD(
-        label = "Evidence that partner agrees hearing is not required",
-        typeOverride = Collection,
-        typeParameterOverride = "DivorceDocument",
-        searchable = false
-    )
-    private List<ListValue<DivorceDocument>> evidenceDocs;
-
-    @CCD(
-        label = "Cannot upload some or all evidence",
-        access = {DefaultAccess.class},
-        searchable = false
-    )
-    private YesOrNo cannotUploadEvidence;
+    private String statementOfEvidence;
 }
