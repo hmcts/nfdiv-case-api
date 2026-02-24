@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -31,6 +32,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
@@ -171,12 +173,12 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .mandatory(ConditionalOrder::getD84WhoApplying, "coD84ApplicationType=\"switchToSole\"")
             .done()
             .complex(CaseData::getFinalOrder)
-                .readonlyNoSummary(FinalOrder::getFinalOrderReminderSentApplicant2, ALWAYS_HIDE)
+                .readonlyNoSummary(FinalOrder::getDateFinalOrderEligibleToRespondent, ALWAYS_HIDE)
                 .label("scannedFoLabel", "Final Order", "scannedSubtypeReceived=\"D36\"")
                 .mandatory(FinalOrder::getD36ApplicationType,
                     "typeOfDocumentAttached=\"D36\" OR scannedSubtypeReceived=\"D36\"")
                 .mandatory(FinalOrder::getD36WhoApplying, "d36ApplicationType=\"switchToSole\" "
-                    + "OR (d36ApplicationType=\"sole\" AND finalOrderReminderSentApplicant2=\"Yes\")")
+                    + "OR (d36ApplicationType=\"sole\" AND dateFinalOrderEligibleToRespondent=\"*\")")
             .done()
             .page("selectSenderOfDocument")
             .showCondition("typeOfDocumentAttached=\"RFIR\"")
@@ -309,7 +311,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     }
 
     private List<String> validateDocumentVerification(CaseData data) {
-        if (RFI_RESPONSE.equals(data.getDocuments().getTypeOfDocumentAttached())) {
+        final CaseDocuments.OfflineDocumentReceived documentType = data.getDocuments().getTypeOfDocumentAttached();
+
+        if (RFI_RESPONSE.equals(documentType)) {
             if (data.getRequestForInformationList().getRequestsForInformation() == null
                 || data.getRequestForInformationList().getRequestsForInformation().isEmpty()
             ) {
@@ -318,6 +322,13 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             if (data.getApplication().getIssueDate() != null) {
                 return Collections.singletonList(NO_REQUEST_FOR_INFORMATION_POST_ISSUE_ERROR);
+            }
+        } else if (FO_D36.equals(documentType)) {
+            final boolean respondentRequested = OfflineWhoApplying.APPLICANT_2.equals(data.getFinalOrder().getD36WhoApplying())
+                && ApplicationType.SOLE_APPLICATION.equals(data.getApplicationType());
+
+            if (respondentRequested) {
+                return FinalOrderValidation.validateCanRespondentApplyFinalOrder(data);
             }
         }
 
