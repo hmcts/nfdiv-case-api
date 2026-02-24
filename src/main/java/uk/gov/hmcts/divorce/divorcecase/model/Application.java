@@ -643,7 +643,7 @@ public class Application {
     public boolean applicant1ServedPapersAnotherWay() {
         return (applicant1WantsToHavePapersServedAnotherWay != null
             && applicant1WantsToHavePapersServedAnotherWay.toBoolean())
-            || NO.equals(applicant1KnowsApplicant2Address) || NO.equals(applicant1FoundApplicant2Address);
+            || !YES.equals(applicant1KnowsApplicant2Address) || !YES.equals(applicant1FoundApplicant2Address);
     }
 
     @JsonIgnore
