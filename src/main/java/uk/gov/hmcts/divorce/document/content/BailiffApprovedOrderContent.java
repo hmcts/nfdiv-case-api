@@ -33,13 +33,16 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 public class BailiffApprovedOrderContent {
 
     private final Clock clock;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
-        final Map<String, Object> templateContent = new HashMap<>();
         final var applicant1 = caseData.getApplicant1();
         final var applicant2 = caseData.getApplicant2();
         final var applicant1LanguagePreference = applicant1.getLanguagePreference();
+
+        Map<String, Object> templateContent = docmosisCommonContent
+            .getBasicDocmosisTemplateContent(applicant1LanguagePreference);
 
         if (caseData.getDivorceOrDissolution().isDivorce()) {
             templateContent.put(

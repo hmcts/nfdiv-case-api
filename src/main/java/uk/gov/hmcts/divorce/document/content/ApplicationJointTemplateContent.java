@@ -57,9 +57,9 @@ public class ApplicationJointTemplateContent {
 
     private final ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
-    public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
+    private final DocmosisCommonContent docmosisCommonContent;
 
-        final Map<String, Object> templateContent = new HashMap<>();
+    public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", caseId, caseData.getDivorceOrDissolution());
 
@@ -68,6 +68,9 @@ public class ApplicationJointTemplateContent {
         final Applicant applicant2 = caseData.getApplicant2();
         final boolean isWelsh = YES.equals(applicant1.getLanguagePreferenceWelsh()) && YES.equals(applicant2.getLanguagePreferenceWelsh());
         final boolean isDivorce = caseData.getDivorceOrDissolution().isDivorce();
+
+        final Map<String, Object> templateContent = docmosisCommonContent
+            .getBasicDocmosisTemplateContent(applicant1.getLanguagePreference());
 
         if (isDivorce) {
             templateContent.put(CONDITIONAL_ORDER_DIVORCE_OR_CIVIL_PARTNERSHIP, isWelsh

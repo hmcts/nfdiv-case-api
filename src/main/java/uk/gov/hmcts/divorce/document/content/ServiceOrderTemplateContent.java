@@ -60,6 +60,7 @@ public class ServiceOrderTemplateContent {
     private String phoneNumber;
 
     private final CommonContent commonContent;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     public Map<String, Object> apply(final CaseData caseData,
                                      final Long ccdCaseReference) {
@@ -67,7 +68,9 @@ public class ServiceOrderTemplateContent {
         log.info("Generating service order template content for case reference {} and application type {} ",
             ccdCaseReference, caseData.getDivorceOrDissolution());
 
-        Map<String, Object> templateContent = new HashMap<>();
+        Map<String, Object> templateContent = docmosisCommonContent
+            .getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference());
+
         var alternativeService = caseData.getAlternativeService();
 
         LocalDate serviceApplicationDecisionDate;

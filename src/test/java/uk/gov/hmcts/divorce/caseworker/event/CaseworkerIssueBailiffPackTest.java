@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.CertificateOfServiceContent;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.util.ArrayList;
@@ -47,6 +48,9 @@ class CaseworkerIssueBailiffPackTest {
 
     @Mock
     private CertificateOfServiceContent certificateOfServiceContent;
+
+    @Mock
+    private  DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
     private CaseworkerIssueBailiffPack issueBailiffPack;

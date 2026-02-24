@@ -72,9 +72,9 @@ public class ApplicationSoleTemplateContent {
 
     private final ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
-    public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
+    private final DocmosisCommonContent docmosisCommonContent;
 
-        final Map<String, Object> templateContent = new HashMap<>();
+    public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
 
         var isJudicialSeparationCase = caseData.isJudicialSeparationCase();
         var divorceOrCivilPartnershipJS = isJudicialSeparationCase ?  "judicial separation" : "separation";
@@ -91,6 +91,9 @@ public class ApplicationSoleTemplateContent {
         final Applicant applicant2 = caseData.getApplicant2();
 
         LanguagePreference languagePreference = applicant1.getLanguagePreference();
+
+        final Map<String, Object> templateContent = docmosisCommonContent
+            .getBasicDocmosisTemplateContent(languagePreference);
 
         templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
 

@@ -79,6 +79,10 @@ class ApplicationJointTemplateContentTest {
     @Mock
     private ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
+
+
     @InjectMocks
     private ApplicationJointTemplateContent applicationJointTemplateContent;
 

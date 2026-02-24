@@ -1,11 +1,13 @@
 package uk.gov.hmcts.divorce.document.content.templatecontent;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +44,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class RespondentAnswersTemplateContent implements TemplateContent {
 
     private static final String RESP_JURISDICTION_AGREE = "respJurisdictionAgree";
@@ -51,6 +54,8 @@ public class RespondentAnswersTemplateContent implements TemplateContent {
     private static final String RESP_LEGAL_PROCEEDINGS_DESCRIPTION = "respLegalProceedingsDescription";
     private static final String RESP_SOLICITOR_REPRESENTED = "respSolicitorRepresented";
     private static final String INTEND_TO_DELAY = "intendToDelay";
+
+    private final DocmosisCommonContent docmosisCommonContent;
 
     @Override
     public List<String> getSupportedTemplates() {
@@ -69,7 +74,9 @@ public class RespondentAnswersTemplateContent implements TemplateContent {
 
         final LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
 
-        Map<String, Object> templateContent = new HashMap<>();
+        final Map<String, Object> templateContent = docmosisCommonContent
+            .getBasicDocmosisTemplateContent(languagePreference);
+
         templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
         templateContent.put(CCD_CASE_REFERENCE, formatId(ccdCaseReference));
 

@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.BailiffNotApprovedOrderContent;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.LocalDate;
@@ -56,6 +57,9 @@ class CaseworkerConfirmBailiffRefusalTest {
     @Mock
     private NotificationDispatcher notificationDispatcher;
 
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
+    
     @InjectMocks
     private CaseworkerConfirmBailiffRefusal confirmBailiffRefusal;
 
