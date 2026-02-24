@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.common.notification.ApplicationWithdrawnNotification
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.WithdrawApplicationReasonType;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
@@ -18,6 +19,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -91,5 +93,19 @@ class WithdrawCaseServiceTest {
         )));
         verify(notificationDispatcher).send(applicationWithdrawnNotification, caseDetails);
         verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldNotSendNotificationsToApplicantWhenCwTriggersWithdraw() {
+        final var caseDetails = new CaseDetails<CaseData, State>();
+        var caseData = validApplicant2CaseData();
+        caseData.setCaseInvite(new CaseInvite(caseData.getCaseInvite().applicant2InviteEmailAddress(), "12345", "12"));
+        caseData.getApplication().setCwWithdrawApplicationReason(WithdrawApplicationReasonType.REFUND_PROCESSED);
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        withdrawCaseService.withdraw(caseDetails);
+
+        verifyNoInteractions(notificationDispatcher);
     }
 }
