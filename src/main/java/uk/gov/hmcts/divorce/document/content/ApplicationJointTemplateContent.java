@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicantTemplateDataProvider;
 import uk.gov.hmcts.divorce.document.content.provider.ApplicationTemplateDataProvider;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;

@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.document.content.provider.ApplicationTemplateDataPro
 import uk.gov.hmcts.divorce.notification.FormatUtil;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
