@@ -115,7 +115,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             serviceFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF);
             serviceFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
 
-            details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServicePayment);
+            details.setState(userOptions.isAwaitingDocuments() ? AwaitingDocuments : AwaitingServicePayment);
 
             if (data.isWelshApplication()) {
                 data.getApplication().setWelshPreviousState(details.getState());
@@ -156,10 +156,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
     }
 
     private AlternativeService buildServiceApplication(InterimApplicationOptions userOptions) {
-        boolean evidenceNotSubmitted = YesOrNo.NO.equals(userOptions.getInterimAppsCanUploadEvidence())
-            && userOptions.getInterimAppsEvidenceDocs() != null;
-
-        if (evidenceNotSubmitted && !CollectionUtils.isEmpty(userOptions.getInterimAppsEvidenceDocs())) {
+        if (userOptions.hasUploadedSupportingDocuments() && !CollectionUtils.isEmpty(userOptions.getInterimAppsEvidenceDocs())) {
             documentRemovalService.deleteDocument(userOptions.getInterimAppsEvidenceDocs());
         }
 
@@ -168,9 +165,9 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .receivedServiceApplicationDate(LocalDate.now(clock))
             .receivedServiceAddedDate(LocalDate.now(clock))
             .alternativeServiceType(userOptions.getInterimApplicationType().getServiceType())
-            .serviceApplicationDocsUploadedPreSubmission(userOptions.awaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
+            .serviceApplicationDocsUploadedPreSubmission(userOptions.isAwaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
-            .serviceApplicationDocuments(evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs())
+            .serviceApplicationDocuments(userOptions.hasUploadedSupportingDocuments() ? null : userOptions.getInterimAppsEvidenceDocs())
             .alternativeServiceFeeRequired(YesOrNo.YES)
             .build();
     }

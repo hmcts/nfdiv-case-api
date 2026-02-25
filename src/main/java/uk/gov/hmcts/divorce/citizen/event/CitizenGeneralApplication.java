@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -17,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
@@ -38,8 +40,9 @@ import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0228;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
@@ -106,7 +109,7 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
 
         InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
 
-        if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(userOptions.getInterimApplicationType().getGeneralApplicationType())) {
+        if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(userOptions.getGeneralApplicationType())) {
             List<String> errors = validateAosSubmitted(data);
             if (!errors.isEmpty()) {
                 log.info("{} failed since partner has already responded for {} ", CITIZEN_GENERAL_APPLICATION, caseId);
@@ -120,19 +123,17 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
 
         FeeDetails applicationFee = newGeneralApplication.getGeneralApplicationFee();
         if (userOptions.willMakePayment()) {
-            applicationFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_CARD);
-            applicationFee.setHasCompletedOnlinePayment(YesOrNo.NO);
+            newGeneralApplication.setGeneralApplicationFeeType(userOptions.isHearingRequired() ? FEE0227 : FEE0228);
+            
             String serviceRequest = prepareGeneralApplicationForPayment(newGeneralApplication, applicant, caseId);
             applicant.setActiveGeneralApplication(serviceRequest);
-
-            details.setState(AwaitingGeneralApplicationPayment);
         } else {
             applicationFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF);
             applicationFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
             GeneralReferral automaticReferral = generalReferralService.buildGeneralReferral(newGeneralApplication);
             data.setGeneralReferral(automaticReferral);
 
-            details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingGeneralReferralPayment);
+            details.setState(userOptions.isAwaitingDocuments() ? AwaitingDocuments : AwaitingGeneralReferralPayment);
 
             if (data.isWelshApplication()) {
                 data.getApplication().setWelshPreviousState(details.getState());
@@ -187,13 +188,36 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         return GeneralApplication.builder()
             .generalApplicationParty(isApplicant1 ? GeneralParties.APPLICANT : GeneralParties.RESPONDENT)
             .generalApplicationReceivedDate(LocalDateTime.now(clock))
-            .generalApplicationType(userOptions.getInterimApplicationType().getGeneralApplicationType())
+            .generalApplicationType(userOptions.getGeneralApplicationType())
             .generalApplicationSubmittedOnline(YesOrNo.YES)
+            .generalApplicationDocuments(collectSupportingDocuments(userOptions))
             .build();
     }
 
+    private List<ListValue<DivorceDocument>> collectSupportingDocuments(InterimApplicationOptions userOptions) {
+        final GeneralApplicationD11JourneyOptions d11JourneyOptions = userOptions.getGeneralApplicationD11JourneyOptions();
+        if (d11JourneyOptions == null) return Collections.emptyList();
+
+        List<ListValue<DivorceDocument>> documents = new ArrayList<>();
+        if (d11JourneyOptions.evidenceOfPartnerSupportRequired() && d11JourneyOptions.getPartnerAgreesDocs() != null) {
+            documents.addAll(d11JourneyOptions.getPartnerAgreesDocs());
+        }
+
+        if (userOptions.hasUploadedSupportingDocuments()) {
+            documents.addAll(d11JourneyOptions.getPartnerAgreesDocs());
+        }
+
+        return documents;
+    }
+
     private String prepareGeneralApplicationForPayment(GeneralApplication generalApplication, Applicant applicant, long caseId) {
-        OrderSummary orderSummary = paymentSetupService.createGeneralApplicationOrderSummary(caseId);
+        FeeDetails applicationFee = generalApplication.getGeneralApplicationFee();
+        applicationFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_CARD);
+        applicationFee.setHasCompletedOnlinePayment(YesOrNo.NO);
+
+        OrderSummary orderSummary = paymentSetupService.createGeneralApplicationOrderSummary(
+            caseId, generalApplication.getGeneralApplicationFeeType()
+        );
         String serviceRequest = paymentSetupService.createGeneralApplicationPaymentServiceRequest(
             orderSummary, caseId, applicant.getFullName()
         );

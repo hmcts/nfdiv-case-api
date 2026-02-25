@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -87,4 +88,15 @@ public class GeneralApplicationD11JourneyOptions implements ApplicationAnswers {
         searchable = false
     )
     private String statementOfEvidence;
+
+    @JsonIgnore
+    public boolean evidenceOfPartnerSupportRequired() {
+        return GeneralApplicationHearingNotRequired.YES_PARTNER_AGREES_WITH_APPLICATION.equals(hearingNotRequired)
+            || GeneralApplicationHearingNotRequired.YES_PARTNER_AGREES_WITH_NO_HEARING.equals(hearingNotRequired);
+    }
+
+    @JsonIgnore
+    public boolean awaitingEvidenceOfPartnerSupport() {
+        return evidenceOfPartnerSupportRequired() && YesOrNo.YES.equals(cannotUploadAgreedEvidence);
+    }
 }
