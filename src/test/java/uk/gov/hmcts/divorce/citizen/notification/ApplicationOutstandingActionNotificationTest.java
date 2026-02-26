@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
-import uk.gov.hmcts.divorce.payment.service.PaymentService;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -66,9 +65,6 @@ class ApplicationOutstandingActionNotificationTest {
 
     @Mock
     private CommonContent commonContent;
-
-    @Mock
-    private PaymentService paymentService;
 
     @InjectMocks
     private ApplicationOutstandingActionNotification notification;

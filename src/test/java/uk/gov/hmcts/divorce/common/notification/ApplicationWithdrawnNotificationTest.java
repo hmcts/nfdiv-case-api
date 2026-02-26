@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -36,10 +37,13 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLICATION_WITHDRAWN;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_APPLICATION_WITHDRAWN;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
@@ -222,6 +226,7 @@ class ApplicationWithdrawnNotificationTest {
     void shouldSendEmailToJointApplicant2WithDivorceContent() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setState(State.Submitted);
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(JOINT_APPLICATION);
         data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
@@ -252,6 +257,7 @@ class ApplicationWithdrawnNotificationTest {
     @Test
     void shouldSendEmailToJointApplicant2WithDissolutionContent() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(State.Submitted);
         caseDetails.setId(TEST_CASE_ID);
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(JOINT_APPLICATION);
@@ -375,6 +381,7 @@ class ApplicationWithdrawnNotificationTest {
     @Test
     void shouldSendEmailToJointApplicant2IfNotIssued() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(State.Submitted);
         caseDetails.setId(TEST_CASE_ID);
         CaseData data = validCaseDataForIssueApplication();
         data.setApplicationType(JOINT_APPLICATION);
@@ -394,5 +401,123 @@ class ApplicationWithdrawnNotificationTest {
             data.getApplicant2().getLanguagePreference(),
             TEST_CASE_ID
         );
+    }
+
+    @Test
+    void shouldSendEmailToSoleApplicant1Solicitor() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(State.Submitted);
+        caseDetails.setId(TEST_CASE_ID);
+        CaseData data = validCaseDataForIssueApplication();
+        caseDetails.setData(data);
+
+        Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
+        when(commonContent.solicitorTemplateVarsPreIssue(data, TEST_CASE_ID, data.getApplicant1()))
+            .thenReturn(divorceTemplateVars);
+
+        applicationWithdrawnNotification.sendToApplicant1Solicitor(caseDetails);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(SOLICITOR_APPLICATION_WITHDRAWN),
+            eq(divorceTemplateVars),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).solicitorTemplateVarsPreIssue(data, TEST_CASE_ID, data.getApplicant1());
+    }
+
+    @Test
+    void shouldSendEmailToSoleApplicant2SolicitorIfCaseHasBeenIssued() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(State.Submitted);
+        caseDetails.setId(TEST_CASE_ID);
+        CaseData data = caseData();
+        data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
+        data.getApplicant2().setSolicitor(
+            Solicitor.builder()
+                .email(TEST_SOLICITOR_EMAIL)
+                .build()
+        );
+        data.getApplication().setIssueDate(LocalDate.now());
+        caseDetails.setData(data);
+
+        Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
+        when(commonContent.solicitorTemplateVarsPreIssue(data, TEST_CASE_ID, data.getApplicant2()))
+            .thenReturn(divorceTemplateVars);
+
+        applicationWithdrawnNotification.sendToApplicant2Solicitor(caseDetails);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(SOLICITOR_APPLICATION_WITHDRAWN),
+            eq(divorceTemplateVars),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).solicitorTemplateVarsPreIssue(data, TEST_CASE_ID, data.getApplicant2());
+    }
+
+    @Test
+    void shouldNotSendEmailToSoleApplicant2SolicitorIfCaseIsNotIssued() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(State.Submitted);
+        caseDetails.setId(TEST_CASE_ID);
+        CaseData data = caseData();
+        data.getApplicant2().setSolicitor(
+            Solicitor.builder()
+                .email(TEST_SOLICITOR_EMAIL)
+                .build()
+        );
+        data.getApplication().setIssueDate(LocalDate.now());
+        caseDetails.setData(data);
+
+        applicationWithdrawnNotification.sendToApplicant2Solicitor(caseDetails);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendEmailToJointApplicant1Solicitor() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(State.Submitted);
+        caseDetails.setId(TEST_CASE_ID);
+        CaseData data = validCaseDataForIssueApplication();
+        caseDetails.setData(data);
+        data.setApplicationType(JOINT_APPLICATION);
+
+        Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
+        when(commonContent.solicitorTemplateVarsPreIssue(data, TEST_CASE_ID, data.getApplicant1()))
+            .thenReturn(divorceTemplateVars);
+
+        applicationWithdrawnNotification.sendToApplicant1Solicitor(caseDetails);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(SOLICITOR_APPLICATION_WITHDRAWN),
+            eq(divorceTemplateVars),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).solicitorTemplateVarsPreIssue(data, TEST_CASE_ID, data.getApplicant1());
+    }
+
+    @Test
+    void shouldNotSendEmailToJointApplicant2SolicitorIfCaseIsADraft() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(State.Draft);
+        caseDetails.setId(TEST_CASE_ID);
+        CaseData data = caseData();
+        data.setApplicationType(JOINT_APPLICATION);
+        data.getApplicant2().setSolicitor(
+            Solicitor.builder()
+                .email(TEST_SOLICITOR_EMAIL)
+                .build()
+        );
+        caseDetails.setData(data);
+
+        applicationWithdrawnNotification.sendToApplicant2Solicitor(caseDetails);
+
+        verifyNoInteractions(notificationService);
     }
 }
