@@ -101,7 +101,7 @@ class D11GeneralApplicationTemplateContentTest {
         expectedEntries.put("applicant1FullName", TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME);
         expectedEntries.put("applicant2FullName", caseData.getApplicant2().getFullName());
         expectedEntries.put("applicationDate", "1 August 2025");
-        expectedEntries.put("applicationType", "Other");
+        expectedEntries.put("applicationType", "Something else");
         expectedEntries.put("applicationTypeOtherDetails", "Other details");
         expectedEntries.put("applicationReason", "I need to apply");
         expectedEntries.put("statementOfEvidence", "statement");
@@ -137,5 +137,8 @@ class D11GeneralApplicationTemplateContentTest {
         final Map<String, Object> basicDocmosisTemplateContent = getBasicDocmosisTemplateContent(ENGLISH);
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(
             caseData.getApplicant1().getLanguagePreference())).thenReturn(basicDocmosisTemplateContent);
+        when(docmosisCommonContent.getGeneralApplicationTypeLabel(
+            GeneralApplicationType.OTHER, true
+        )).thenReturn("Something else");
     }
 }

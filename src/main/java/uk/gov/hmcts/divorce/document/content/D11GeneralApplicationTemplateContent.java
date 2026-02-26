@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -81,21 +82,29 @@ public class D11GeneralApplicationTemplateContent {
         templateContent.put(CASE_RESPONDENT_OR_APPLICANT2_LABEL, caseRespondentOrApplicant2Label);
         templateContent.put(GENERAL_APPLICANT_LABEL, isApplicant1 ? caseApplicantLabel : caseRespondentOrApplicant2Label);
         templateContent.put(GENERAL_APPLICANT_FULL_NAME, isApplicant1 ? applicant1.getFullName() : applicant2.getFullName());
-        templateContent.put(APPLICATION_DATE, dateTimeFormatter.format(generalApplication.getGeneralApplicationReceivedDate().toLocalDate()));
+        templateContent.put(
+            APPLICATION_DATE,
+            dateTimeFormatter.format(generalApplication.getGeneralApplicationReceivedDate().toLocalDate())
+        );
 
         GeneralApplicationD11JourneyOptions applicationAnswers = applicant.getInterimApplicationOptions()
             .getGeneralApplicationD11JourneyOptions();
 
-        return generalApplicationD11Content(templateContent, applicationAnswers, applicant);
+        templateContent.putAll(generalApplicationD11Content(
+            applicationAnswers, applicant, caseData.isDivorce()
+        ));
+
+        return templateContent;
     }
 
     private Map<String, Object>  generalApplicationD11Content(
-        Map<String, Object> templateContent,
-        GeneralApplicationD11JourneyOptions applicationAnswers,
-        Applicant applicant
+            GeneralApplicationD11JourneyOptions applicationAnswers,
+            Applicant applicant,
+            boolean isDivorce
     ) {
-        final InterimApplicationOptions interimApplicationOptions = applicant.getInterimApplicationOptions();
+        final Map<String, Object> templateContent = new HashMap<>();
 
+        final InterimApplicationOptions interimApplicationOptions = applicant.getInterimApplicationOptions();
         templateContent.put(HEARING_NOT_REQUIRED_DETAILS, applicationAnswers.getHearingNotRequired().getLabel());
         templateContent.put(
             EVIDENCE_PARTNER_AGREES_REQUIRED,
@@ -108,8 +117,8 @@ public class D11GeneralApplicationTemplateContent {
         templateContent.put(PARTNER_DETAILS_CORRECT, applicationAnswers.getPartnerDetailsCorrect().getValue());
         templateContent.put(APPLICATION_REASON, applicationAnswers.getReason());
 
-        boolean hasProvidedEvidence = YesOrNo.YES.equals(interimApplicationOptions.getInterimAppsCanUploadEvidence());
-        boolean hasUploadedAllSupportingEvidence = hasProvidedEvidence
+        final boolean hasProvidedEvidence = YesOrNo.YES.equals(interimApplicationOptions.getInterimAppsCanUploadEvidence());
+        final boolean hasUploadedAllSupportingEvidence = hasProvidedEvidence
             && !YesOrNo.YES.equals(interimApplicationOptions.getInterimAppsCannotUploadDocs());
         templateContent.put(HAS_PROVIDED_EVIDENCE, YesOrNo.from(hasProvidedEvidence).getValue());
         templateContent.put(
@@ -119,9 +128,14 @@ public class D11GeneralApplicationTemplateContent {
         templateContent.put(STATEMENT_OF_EVIDENCE, applicationAnswers.getStatementOfEvidence());
         templateContent.put(SUPPORTING_EVIDENCE_UPLOADED, YesOrNo.from(hasUploadedAllSupportingEvidence).getValue());
 
-        GeneralApplicationType applicationType = applicationAnswers.getType();
-        templateContent.put(APPLICATION_TYPE, applicationType.getLabel());
-        templateContent.put(IS_OTHER_APPLICATION_TYPE, YesOrNo.from(GeneralApplicationType.OTHER.equals(applicationType)).getValue());
+        final GeneralApplicationType applicationType = applicationAnswers.getType();
+        templateContent.put(
+                APPLICATION_TYPE,
+                docmosisCommonContent.getGeneralApplicationTypeLabel(applicationType, isDivorce)
+        );
+        templateContent.put(
+            IS_OTHER_APPLICATION_TYPE, YesOrNo.from(GeneralApplicationType.OTHER.equals(applicationType)).getValue()
+        );
         templateContent.put(APPLICATION_TYPE_OTHER_DETAILS, applicationAnswers.getTypeOtherDetails());
 
 

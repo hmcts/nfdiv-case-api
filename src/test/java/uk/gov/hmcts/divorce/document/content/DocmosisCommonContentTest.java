@@ -3,6 +3,9 @@ package uk.gov.hmcts.divorce.document.content;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -11,8 +14,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -391,5 +397,68 @@ class DocmosisCommonContentTest {
         caseData.getApplicant2().setLastName(TEST_APP2_LAST_NAME);
 
         return caseData;
+    }
+
+    @ParameterizedTest
+    @MethodSource("labelProvider")
+    void shouldReturnCorrectGeneralApplicationTypeLabels(
+        GeneralApplicationType type,
+        boolean isDivorce,
+        String expected
+    ) {
+
+        String result = docmosisCommonContent.getGeneralApplicationTypeLabel(type, isDivorce);
+
+        assert(expected).equals(result);
+    }
+
+    private static Stream<Arguments> labelProvider() {
+        return Stream.of(
+            Arguments.of(
+                GeneralApplicationType.WITHDRAW_POST_ISSUE,
+                true,
+                "Withdraw the divorce application"
+            ),
+            Arguments.of(
+                GeneralApplicationType.WITHDRAW_POST_ISSUE,
+                false,
+                "Withdraw the application to end the civil partnership"
+            ),
+            Arguments.of(
+                GeneralApplicationType.DELAY,
+                true,
+                "Delay or pause (or ‘put a stay on’) an application"
+            ),
+            Arguments.of(
+                GeneralApplicationType.EXTEND,
+                true,
+                "More time to serve an application (or ‘extend service’))"
+            ),
+            Arguments.of(
+                GeneralApplicationType.ISSUE_DIVORCE_WITHOUT_CERT,
+                true,
+                "Continue without a marriage certificate"
+            ),
+            Arguments.of(
+                GeneralApplicationType.ISSUE_DIVORCE_WITHOUT_CERT,
+                false,
+                "Continue without a civil partnership certificate"
+            ),
+            Arguments.of(
+                GeneralApplicationType.EXPEDITE,
+                true,
+                "Complete a divorce or end a civil partnership more quickly (or ‘expedite’ an application"
+            ),
+            Arguments.of(
+                GeneralApplicationType.AMEND_APPLICATION,
+                true,
+                "Amend an existing application"
+            ),
+            Arguments.of(
+                GeneralApplicationType.OTHER,
+                true,
+                "Something else"
+            )
+        );
     }
 }
