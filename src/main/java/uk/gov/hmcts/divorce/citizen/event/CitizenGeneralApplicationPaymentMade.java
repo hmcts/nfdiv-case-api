@@ -34,6 +34,7 @@ import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType.DISCLOSURE_VIA_DWP;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
@@ -114,7 +115,8 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
         generalApplication.recordPayment(paymentReference, LocalDate.now(clock));
         applicant.setActiveGeneralApplication(null);
 
-        if (hasGeneralReferralInProgress(data.getGeneralReferral())) {
+        boolean isSearchGovRecordsApplication = DISCLOSURE_VIA_DWP.equals(generalApplication.getGeneralApplicationType());
+        if (hasGeneralReferralInProgress(data.getGeneralReferral()) || !isSearchGovRecordsApplication) {
             details.setState(GeneralApplicationReceived);
         } else {
             GeneralReferral automaticReferral = generalReferralService.buildGeneralReferral(generalApplication);

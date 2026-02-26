@@ -42,6 +42,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0228;
+import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
@@ -124,7 +125,7 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         FeeDetails applicationFee = newGeneralApplication.getGeneralApplicationFee();
         if (userOptions.willMakePayment()) {
             newGeneralApplication.setGeneralApplicationFeeType(userOptions.isHearingRequired() ? FEE0227 : FEE0228);
-            
+
             String serviceRequest = prepareGeneralApplicationForPayment(newGeneralApplication, applicant, caseId);
             applicant.setActiveGeneralApplication(serviceRequest);
         } else {
@@ -195,9 +196,10 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
     }
 
     private List<ListValue<DivorceDocument>> collectSupportingDocuments(InterimApplicationOptions userOptions) {
-        final GeneralApplicationD11JourneyOptions d11JourneyOptions = userOptions.getGeneralApplicationD11JourneyOptions();
-        if (d11JourneyOptions == null) return Collections.emptyList();
+        boolean isD11GeneralApplication = DIGITISED_GENERAL_APPLICATION_D11.equals(userOptions.getInterimApplicationType());
+        if (!isD11GeneralApplication) return Collections.emptyList();
 
+        final GeneralApplicationD11JourneyOptions d11JourneyOptions = userOptions.getGeneralApplicationD11JourneyOptions();
         List<ListValue<DivorceDocument>> documents = new ArrayList<>();
         if (d11JourneyOptions.evidenceOfPartnerSupportRequired() && d11JourneyOptions.getPartnerAgreesDocs() != null) {
             documents.addAll(d11JourneyOptions.getPartnerAgreesDocs());
