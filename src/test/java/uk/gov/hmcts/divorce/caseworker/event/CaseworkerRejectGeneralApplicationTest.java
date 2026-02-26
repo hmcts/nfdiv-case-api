@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -12,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.GeneralApplicationRejectedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
@@ -27,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.CASEWORKER_REJECT_GENERAL_APPLICATION;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.CASE_ALREADY_ISSUED_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.CASE_MUST_BE_ISSUED_ERROR;
@@ -38,11 +42,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithMarriageDate;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerRejectGeneralApplicationTest {
+    @Mock
+    private GeneralApplicationRejectedNotification generalApplicationRejectedNotification;
+
     @InjectMocks
     private CaseworkerRejectGeneralApplication caseworkerRejectGeneralApplication;
 
@@ -151,6 +159,63 @@ class CaseworkerRejectGeneralApplicationTest {
 
         assertThat(response.getData().getGeneralApplications().size()).isEqualTo(1);
         assertThat(response.getData().getApplicant1().getGeneralAppServiceRequest()).isNull();
+    }
+
+    @Test
+    void shouldSendNotificationInSubmittedCallbackIfOnlineSearchGovRecordsGenAppIsRejected() {
+        final CaseData beforeCaseData = caseDataWithMarriageDate();
+        List<ListValue<GeneralApplication>> beforeGeneralApplications = buildListOfGeneralApplications();
+        var generalApplicationList = new ArrayList<>(beforeGeneralApplications);
+
+        beforeCaseData.setGeneralApplications(generalApplicationList);
+
+        final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
+        beforeCaseDetails.setData(beforeCaseData);
+        beforeCaseDetails.setId(TEST_CASE_ID);
+
+        final CaseData afterCaseData = caseDataWithMarriageDate();
+        List<ListValue<GeneralApplication>> afterGeneralApplications = buildListOfGeneralApplications();
+        var newGeneralApplicationList = new ArrayList<>(afterGeneralApplications);
+        newGeneralApplicationList.remove(1);
+
+        afterCaseData.setGeneralApplications(newGeneralApplicationList);
+
+        final CaseDetails<CaseData, State> afterCaseDetails = new CaseDetails<>();
+        afterCaseDetails.setData(afterCaseData);
+        afterCaseDetails.setId(TEST_CASE_ID);
+
+        caseworkerRejectGeneralApplication.submitted(afterCaseDetails, beforeCaseDetails);
+
+        verify(generalApplicationRejectedNotification).send(afterCaseData, TEST_CASE_ID, true);
+    }
+
+    @Test
+    void shouldSendNotificationInSubmittedCallbackIfOfflineSearchGovRecordsGenAppIsRejected() {
+        final CaseData beforeCaseData = caseDataWithMarriageDate();
+        List<ListValue<GeneralApplication>> beforeGeneralApplications = buildListOfGeneralApplications();
+        beforeGeneralApplications.get(1).getValue().setGeneralApplicationSubmittedOnline(YesOrNo.NO);
+        var generalApplicationList = new ArrayList<>(beforeGeneralApplications);
+
+        beforeCaseData.setGeneralApplications(generalApplicationList);
+
+        final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
+        beforeCaseDetails.setData(beforeCaseData);
+        beforeCaseDetails.setId(TEST_CASE_ID);
+
+        final CaseData afterCaseData = caseDataWithMarriageDate();
+        List<ListValue<GeneralApplication>> afterGeneralApplications = buildListOfGeneralApplications();
+        var newGeneralApplicationList = new ArrayList<>(afterGeneralApplications);
+        newGeneralApplicationList.remove(1);
+
+        afterCaseData.setGeneralApplications(newGeneralApplicationList);
+
+        final CaseDetails<CaseData, State> afterCaseDetails = new CaseDetails<>();
+        afterCaseDetails.setData(afterCaseData);
+        afterCaseDetails.setId(TEST_CASE_ID);
+
+        caseworkerRejectGeneralApplication.submitted(afterCaseDetails, beforeCaseDetails);
+
+        verifyNoInteractions(generalApplicationRejectedNotification);
     }
 
     private List<ListValue<GeneralApplication>> buildListOfGeneralApplications() {
