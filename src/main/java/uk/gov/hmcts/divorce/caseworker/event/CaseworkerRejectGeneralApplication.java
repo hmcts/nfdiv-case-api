@@ -22,10 +22,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.generalApplicationLabels;
@@ -177,8 +179,10 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
                                                CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} submitted callback invoked for case id: {}", CASEWORKER_REJECT_GENERAL_APPLICATION, details.getId());
 
-        List<ListValue<GeneralApplication>> oldGeneralApplications = beforeDetails.getData().getGeneralApplications();
-        List<ListValue<GeneralApplication>> newGeneralApplications = details.getData().getGeneralApplications();
+        List<ListValue<GeneralApplication>> oldGeneralApplications = Optional.ofNullable(beforeDetails.getData().getGeneralApplications())
+            .orElse(Collections.emptyList());
+        List<ListValue<GeneralApplication>> newGeneralApplications = Optional.ofNullable(details.getData().getGeneralApplications())
+            .orElse(Collections.emptyList());
 
         GeneralApplication missingApplication = oldGeneralApplications.stream()
             .filter(old -> newGeneralApplications.stream()
