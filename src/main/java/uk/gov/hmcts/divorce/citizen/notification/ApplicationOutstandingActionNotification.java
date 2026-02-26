@@ -112,7 +112,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
         boolean addressNotProvided = caseData.getApplication().applicant1ServedPapersAnotherWay();
 
-        templateVars.put(ADDRESS_NOT_PROVIDED_SIGN_IN_URL, commonContent.getSignInUrl(caseData));
+        templateVars.put(ADDRESS_NOT_PROVIDED_SIGN_IN_URL, addressNotProvided ? commonContent.getSignInUrl(caseData) : "");
         templateVars.put(ADDRESS_NOT_PROVIDED, addressNotProvided ? YES : NO);
 
         templateVars.putAll(missingDocsTemplateVars(caseData, needsToSendDocuments));
