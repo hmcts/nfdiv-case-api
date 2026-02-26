@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.AlternativeServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.BailiffServiceApplicationSubmittedNotification;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.D11GeneralApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DeemedServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.DispenseServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.SearchGovRecordsApplicationSubmittedNotification;
@@ -20,6 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.generator.AlternativeServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.BailiffServiceApplicationGenerator;
+import uk.gov.hmcts.divorce.document.print.generator.D11GeneralApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.DeemedServiceApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.SearchGovRecordsApplicationGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
@@ -63,6 +65,12 @@ class InterimApplicationSubmissionServiceTest {
 
     @Mock
     private SearchGovRecordsApplicationGenerator searchGovRecordsApplicationGenerator;
+
+    @Mock
+    private D11GeneralApplicationGenerator d11GeneralApplicationGenerator;
+
+    @Mock
+    private D11GeneralApplicationSubmittedNotification d11GeneralApplicationSubmittedNotification;
 
     @InjectMocks
     private InterimApplicationSubmissionService interimApplicationSubmissionService;
@@ -254,5 +262,59 @@ class InterimApplicationSubmissionServiceTest {
         interimApplicationSubmissionService.sendGeneralApplicationNotifications(caseId, generalApplication, caseData);
 
         verify(searchGovRecordsApplicationSubmittedNotification).sendToApplicant1(caseData, caseId, generalApplication);
+    }
+
+    @Test
+    void shouldDelegateToD11ApplicationGeneratorWhenApplicationTypeIsD11GeneralApplication() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11)
+                            .build())
+                    .build()
+            ).build();
+
+        GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationReceivedDate(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+            .generalApplicationType(GeneralApplicationType.AMEND_APPLICATION)
+            .build();
+
+        DivorceDocument generatedDocument = DivorceDocument.builder().build();
+        when(d11GeneralApplicationGenerator.generateDocument(
+            caseId, caseData.getApplicant1(), caseData, generalApplication
+        )).thenReturn(generatedDocument);
+
+        DivorceDocument result = interimApplicationSubmissionService
+            .generateGeneralApplicationAnswerDocument(caseId, caseData.getApplicant1(), caseData, generalApplication);
+
+        verify(d11GeneralApplicationGenerator)
+            .generateDocument(caseId, caseData.getApplicant1(), caseData, generalApplication);
+        assertThat(result).isEqualTo(generatedDocument);
+    }
+
+    @Test
+    void shouldDelegateToD11NotificationWhenApplicationTypeIsD11GeneralApplication() {
+        long caseId = TEST_CASE_ID;
+        CaseData caseData = CaseData.builder()
+            .applicant1(
+                Applicant.builder()
+                    .interimApplicationOptions(
+                        InterimApplicationOptions.builder()
+                            .interimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11)
+                            .build())
+                    .build()
+            ).build();
+
+        GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationReceivedDate(LocalDateTime.of(2020, 1, 1, 1, 1, 1))
+            .generalApplicationType(GeneralApplicationType.AMEND_APPLICATION)
+            .build();
+
+        interimApplicationSubmissionService.sendGeneralApplicationNotifications(caseId, generalApplication, caseData);
+
+        verify(d11GeneralApplicationSubmittedNotification).sendToApplicant1(caseData, caseId, generalApplication);
     }
 }

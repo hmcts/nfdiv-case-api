@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
@@ -210,7 +211,7 @@ class CitizenGeneralApplicationTest {
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(AUTHORIZATION);
         when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
-        when(paymentSetupService.createGeneralApplicationOrderSummary(TEST_CASE_ID))
+        when(paymentSetupService.createGeneralApplicationOrderSummary(TEST_CASE_ID, GeneralApplicationFee.FEE0227))
             .thenReturn(orderSummary);
         when(paymentSetupService.createGeneralApplicationPaymentServiceRequest(
             orderSummary, TEST_CASE_ID, TEST_FIRST_NAME

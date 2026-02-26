@@ -16,7 +16,7 @@ public enum ServiceApplicationRefusalReason implements HasLabel {
     REFUSAL_ORDER_TO_APPLICANT("Refusal order to applicant"),
 
     @JsonProperty("otherResponse")
-    OTHER_RESPONSE("Get more information");
+    OTHER_RESPONSE("Other reason");
 
     private final String label;
 }
