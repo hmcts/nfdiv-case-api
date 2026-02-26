@@ -165,9 +165,8 @@ public class InterimApplicationOptions {
     @JsonIgnore
     public boolean isAwaitingDocuments() {
         return YesOrNo.YES.equals(interimAppsCannotUploadDocs) || (
-                DIGITISED_GENERAL_APPLICATION_D11.equals(interimApplicationType)
-                    && generalApplicationD11JourneyOptions.awaitingEvidenceOfPartnerSupport()
-        );
+            DIGITISED_GENERAL_APPLICATION_D11.equals(interimApplicationType)
+                && generalApplicationD11JourneyOptions.awaitingEvidenceOfPartnerSupport());
     }
 
     @JsonIgnore

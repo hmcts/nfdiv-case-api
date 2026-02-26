@@ -197,7 +197,9 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
 
     private List<ListValue<DivorceDocument>> collectSupportingDocuments(InterimApplicationOptions userOptions) {
         boolean isD11GeneralApplication = DIGITISED_GENERAL_APPLICATION_D11.equals(userOptions.getInterimApplicationType());
-        if (!isD11GeneralApplication) return Collections.emptyList();
+        if (!isD11GeneralApplication) {
+            return Collections.emptyList();
+        }
 
         final GeneralApplicationD11JourneyOptions d11JourneyOptions = userOptions.getGeneralApplicationD11JourneyOptions();
         List<ListValue<DivorceDocument>> documents = new ArrayList<>();

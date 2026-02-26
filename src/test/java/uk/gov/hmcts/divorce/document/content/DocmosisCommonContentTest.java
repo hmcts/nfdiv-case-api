@@ -406,10 +406,9 @@ class DocmosisCommonContentTest {
         boolean isDivorce,
         String expected
     ) {
-
         String result = docmosisCommonContent.getGeneralApplicationTypeLabel(type, isDivorce);
 
-        assert(expected).equals(result);
+        assertThat(expected).isEqualTo(result);
     }
 
     private static Stream<Arguments> labelProvider() {
