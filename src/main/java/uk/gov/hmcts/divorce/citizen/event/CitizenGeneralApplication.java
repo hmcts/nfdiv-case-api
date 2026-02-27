@@ -8,17 +8,15 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
-import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
@@ -42,11 +40,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0228;
-import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -68,8 +62,6 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
 
     private final PaymentSetupService paymentSetupService;
 
-    private final InterimApplicationSubmissionService interimApplicationSubmissionService;
-
     private final Clock clock;
 
     private final CcdAccessService ccdAccessService;
@@ -77,6 +69,8 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
     private final HttpServletRequest request;
 
     private final GeneralReferralService generalReferralService;
+
+    private final CitizenGeneralApplicationSubmissionService submissionService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -109,8 +103,11 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         }
 
         InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
+        GeneralApplicationType generalApplicationType = userOptions.getGeneralApplicationType();
+        boolean isSearchGovernmentRecords = GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(
+            userOptions.getGeneralApplicationType());
 
-        if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(userOptions.getGeneralApplicationType())) {
+        if (isSearchGovernmentRecords) {
             List<String> errors = validateAosSubmitted(data);
             if (!errors.isEmpty()) {
                 log.info("{} failed since partner has already responded for {} ", CITIZEN_GENERAL_APPLICATION, caseId);
@@ -131,25 +128,21 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         } else {
             applicationFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF);
             applicationFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
-            GeneralReferral automaticReferral = generalReferralService.buildGeneralReferral(newGeneralApplication);
-            data.setGeneralReferral(automaticReferral);
 
-            details.setState(userOptions.isAwaitingDocuments() ? AwaitingDocuments : AwaitingGeneralReferralPayment);
-
-            if (data.isWelshApplication()) {
-                data.getApplication().setWelshPreviousState(details.getState());
-                details.setState(WelshTranslationReview);
-                log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
-                    data.getApplication().getWelshPreviousState(), details.getId());
+            if (submissionService.canBeAutoReferred(data, generalApplicationType)) {
+                GeneralReferral automaticReferral = generalReferralService.buildGeneralReferral(newGeneralApplication);
+                data.setGeneralReferral(automaticReferral);
             }
+
+            submissionService.setEndState(details, newGeneralApplication);
         }
 
-        DivorceDocument applicationDocument = interimApplicationSubmissionService
-                .generateGeneralApplicationAnswerDocument(caseId, applicant, data, newGeneralApplication);
+        DivorceDocument applicationDocument = submissionService.generateGeneralApplicationAnswerDocument(
+            caseId, applicant, data, newGeneralApplication
+        );
         newGeneralApplication.setGeneralApplicationDocument(applicationDocument);
 
         data.updateCaseWithGeneralApplication(newGeneralApplication);
-
         applicant.archiveInterimApplicationOptions();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -177,7 +170,7 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         ServicePaymentMethod paymentMethod = newGeneralApplication.getGeneralApplicationFee().getPaymentMethod();
 
         if (ServicePaymentMethod.FEE_PAY_BY_HWF.equals(paymentMethod)) {
-            interimApplicationSubmissionService.sendGeneralApplicationNotifications(
+            submissionService.sendNotifications(
                 details.getId(), newGeneralApplication, details.getData()
             );
         }
@@ -191,27 +184,9 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
             .generalApplicationReceivedDate(LocalDateTime.now(clock))
             .generalApplicationType(userOptions.getGeneralApplicationType())
             .generalApplicationSubmittedOnline(YesOrNo.YES)
-            .generalApplicationDocuments(collectSupportingDocuments(userOptions))
+            .generalApplicationDocuments(submissionService.collectSupportingDocuments(userOptions))
+            .generalApplicationDocsUploadedPreSubmission(userOptions.isAwaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
             .build();
-    }
-
-    private List<ListValue<DivorceDocument>> collectSupportingDocuments(InterimApplicationOptions userOptions) {
-        boolean isD11GeneralApplication = DIGITISED_GENERAL_APPLICATION_D11.equals(userOptions.getInterimApplicationType());
-        if (!isD11GeneralApplication) {
-            return Collections.emptyList();
-        }
-
-        final GeneralApplicationD11JourneyOptions d11JourneyOptions = userOptions.getGeneralApplicationD11JourneyOptions();
-        List<ListValue<DivorceDocument>> documents = new ArrayList<>();
-        if (d11JourneyOptions.evidenceOfPartnerSupportRequired() && d11JourneyOptions.getPartnerAgreesDocs() != null) {
-            documents.addAll(d11JourneyOptions.getPartnerAgreesDocs());
-        }
-
-        if (userOptions.hasUploadedSupportingDocuments()) {
-            documents.addAll(d11JourneyOptions.getPartnerAgreesDocs());
-        }
-
-        return documents;
     }
 
     private String prepareGeneralApplicationForPayment(GeneralApplication generalApplication, Applicant applicant, long caseId) {

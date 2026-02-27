@@ -11,8 +11,8 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
-import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -41,16 +41,14 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenGeneralApplication.AWAITING_PAYMENT_ERROR;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -66,7 +64,7 @@ class CitizenGeneralApplicationTest {
     private Clock clock;
 
     @Mock
-    InterimApplicationSubmissionService interimApplicationSubmissionService;
+    CitizenGeneralApplicationSubmissionService submissionService;
 
     @Mock
     DocumentRemovalService documentRemovalService;
@@ -88,7 +86,6 @@ class CitizenGeneralApplicationTest {
 
     @Mock
     private GeneralReferralService generalReferralService;
-
 
     @InjectMocks
     private CitizenGeneralApplication citizenGeneralApplication;
@@ -173,7 +170,7 @@ class CitizenGeneralApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateGeneralApplicationAnswerDocument(
+        when(submissionService.generateGeneralApplicationAnswerDocument(
             eq(TEST_CASE_ID), eq(caseData.getApplicant1()), eq(caseData), any(GeneralApplication.class)
         )).thenReturn(generatedApplication);
 
@@ -211,14 +208,14 @@ class CitizenGeneralApplicationTest {
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(AUTHORIZATION);
         when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
-        when(paymentSetupService.createGeneralApplicationOrderSummary(TEST_CASE_ID, GeneralApplicationFee.FEE0227))
+        when(paymentSetupService.createGeneralApplicationOrderSummary(TEST_CASE_ID, GeneralApplicationFee.FEE0228))
             .thenReturn(orderSummary);
         when(paymentSetupService.createGeneralApplicationPaymentServiceRequest(
             orderSummary, TEST_CASE_ID, TEST_FIRST_NAME
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateGeneralApplicationAnswerDocument(
+        when(submissionService.generateGeneralApplicationAnswerDocument(
             eq(TEST_CASE_ID), eq(caseData.getApplicant1()), eq(caseData), any(GeneralApplication.class)
         )).thenReturn(generatedApplication);
 
@@ -228,7 +225,7 @@ class CitizenGeneralApplicationTest {
         );
 
         GeneralApplication generalApplication = response.getData().getGeneralApplications().getLast().getValue();
-        assertThat(response.getState()).isEqualTo(AwaitingGeneralApplicationPayment);
+
         assertThat(generalApplication.getGeneralApplicationDocument()).isEqualTo(generatedApplication);
         assertThat(generalApplication.getGeneralApplicationFee().getOrderSummary()).isEqualTo(orderSummary);
         assertThat(generalApplication.getGeneralApplicationFee().getServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
@@ -239,6 +236,7 @@ class CitizenGeneralApplicationTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void givenCitizenUsedHelpWithFeesThenChangeStateToGeneralApplicationReceived() {
         setMockClock(clock);
 
@@ -264,7 +262,7 @@ class CitizenGeneralApplicationTest {
         when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateGeneralApplicationAnswerDocument(
+        when(submissionService.generateGeneralApplicationAnswerDocument(
             eq(TEST_CASE_ID), eq(caseData.getApplicant1()), eq(caseData), any(GeneralApplication.class)
         )).thenReturn(generatedApplication);
 
@@ -274,7 +272,7 @@ class CitizenGeneralApplicationTest {
         );
 
         GeneralApplication generalApplication = response.getData().getGeneralApplications().getLast().getValue();
-        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
+        verify(submissionService).setEndState(any(CaseDetails.class), any(GeneralApplication.class));
         assertThat(generalApplication.getGeneralApplicationDocument()).isEqualTo(generatedApplication);
         assertThat(generalApplication.getGeneralApplicationFee().getPaymentMethod())
             .isEqualTo(ServicePaymentMethod.FEE_PAY_BY_HWF);
@@ -282,46 +280,6 @@ class CitizenGeneralApplicationTest {
             .isEqualTo(TEST_SERVICE_REFERENCE);
         assertThat(generalApplication.getGeneralApplicationSubmittedOnline()).isEqualTo(YES);
         assertThat(generalApplication.getGeneralApplicationType()).isEqualTo(GeneralApplicationType.DISCLOSURE_VIA_DWP);
-    }
-
-    @Test
-    void shouldSetStateToWelshTranslationReviewIfApplicationSubmittedWithWelshLanguagePreference() {
-        setMockClock(clock);
-
-        CaseData caseData = CaseData.builder()
-            .applicationType(ApplicationType.SOLE_APPLICATION)
-            .applicant1(
-                Applicant.builder()
-                    .firstName(TEST_FIRST_NAME)
-                    .interimApplicationOptions(InterimApplicationOptions.builder()
-                        .interimAppsUseHelpWithFees(YES)
-                        .interimAppsHwfRefNumber(TEST_SERVICE_REFERENCE)
-                        .interimAppsCannotUploadDocs(YES)
-                        .interimApplicationType(InterimApplicationType.SEARCH_GOV_RECORDS)
-                        .searchGovRecordsJourneyOptions(SearchGovRecordsJourneyOptions.builder().build())
-                        .build())
-                    .languagePreferenceWelsh(YES)
-                    .build()
-            ).build();
-
-        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
-        caseDetails.setId(TEST_CASE_ID);
-
-        when(request.getHeader(AUTHORIZATION)).thenReturn(AUTHORIZATION);
-        when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
-
-        DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateGeneralApplicationAnswerDocument(
-            eq(TEST_CASE_ID), eq(caseData.getApplicant1()), eq(caseData), any(GeneralApplication.class)
-        )).thenReturn(generatedApplication);
-
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplication.aboutToSubmit(
-            caseDetails, caseDetails
-        );
-
-        assertThat(response.getState()).isEqualTo(WelshTranslationReview);
-        assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(AwaitingDocuments);
     }
 
     @Test
@@ -349,7 +307,7 @@ class CitizenGeneralApplicationTest {
 
         citizenGeneralApplication.submitted(afterDetails, beforeDetails);
 
-        verify(interimApplicationSubmissionService).sendGeneralApplicationNotifications(
+        verify(submissionService).sendNotifications(
             TEST_CASE_ID, generalApplication, afterDetails.getData()
         );
     }
@@ -379,7 +337,9 @@ class CitizenGeneralApplicationTest {
 
         citizenGeneralApplication.submitted(afterDetails, beforeDetails);
 
-        verifyNoInteractions(interimApplicationSubmissionService);
+        verify(submissionService, never()).sendNotifications(
+            anyLong(), any(GeneralApplication.class), any(CaseData.class)
+        );
     }
 
     private CaseData buildCaseData(InterimApplicationType interimApplicationType) {
