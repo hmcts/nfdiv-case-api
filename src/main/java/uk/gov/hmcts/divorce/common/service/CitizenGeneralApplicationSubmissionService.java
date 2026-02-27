@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.generator.D11GeneralApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.SearchGovRecordsApplicationGenerator;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class CitizenGeneralApplicationSubmissionService {
 
     private final SearchGovRecordsApplicationGenerator searchGovRecordsApplicationGenerator;
     private final SearchGovRecordsApplicationSubmittedNotification searchGovApplicationSubmittedNotification;
+    private final D11GeneralApplicationGenerator d11GeneralApplicationGenerator;
 
     public boolean canBeAutoReferred(CaseData caseData, GeneralApplicationType generalApplicationType) {
         GeneralReferral generalReferral = caseData.getGeneralReferral();
@@ -101,7 +103,7 @@ public class CitizenGeneralApplicationSubmissionService {
         if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplicationType)) {
             return searchGovRecordsApplicationGenerator.generateDocument(caseId, applicant, caseData, generalApplication);
         } else if (generalApplicationType != null) {
-            return DivorceDocument.builder().build();
+            return d11GeneralApplicationGenerator.generateDocument(caseId, applicant, caseData, generalApplication);
         } else {
             throw new UnsupportedOperationException();
         }
