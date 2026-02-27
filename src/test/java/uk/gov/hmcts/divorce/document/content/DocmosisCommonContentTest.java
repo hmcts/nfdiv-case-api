@@ -431,7 +431,7 @@ class DocmosisCommonContentTest {
             Arguments.of(
                 GeneralApplicationType.EXTEND,
                 true,
-                "More time to serve an application (or ‘extend service’))"
+                "More time to serve an application (or ‘extend service’)"
             ),
             Arguments.of(
                 GeneralApplicationType.ISSUE_DIVORCE_WITHOUT_CERT,
@@ -446,7 +446,7 @@ class DocmosisCommonContentTest {
             Arguments.of(
                 GeneralApplicationType.EXPEDITE,
                 true,
-                "Complete a divorce or end a civil partnership more quickly (or ‘expedite’ an application"
+                "Complete a divorce or end a civil partnership more quickly (or ‘expedite’ an application)"
             ),
             Arguments.of(
                 GeneralApplicationType.AMEND_APPLICATION,

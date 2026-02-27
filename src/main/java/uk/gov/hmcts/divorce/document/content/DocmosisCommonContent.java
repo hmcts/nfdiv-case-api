@@ -205,7 +205,7 @@ public class DocmosisCommonContent {
                 "Continue without a %s certificate", isDivorce ? "marriage" : "civil partnership"
             );
             case GeneralApplicationType.EXPEDITE ->
-                "Complete a divorce or end a civil partnership more quickly (or ‘expedite’ an application";
+                "Complete a divorce or end a civil partnership more quickly (or ‘expedite’ an application)";
             case GeneralApplicationType.AMEND_APPLICATION -> "Amend an existing application";
             case GeneralApplicationType.OTHER -> "Something else";
             default -> applicationType.getLabel();
