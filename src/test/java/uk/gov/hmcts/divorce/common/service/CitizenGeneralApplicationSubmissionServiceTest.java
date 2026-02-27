@@ -23,7 +23,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.document.print.generator.D11GeneralApplicationGenerator;
+import uk.gov.hmcts.divorce.document.print.generator.GeneralApplicationD11Generator;
 import uk.gov.hmcts.divorce.document.print.generator.SearchGovRecordsApplicationGenerator;
 
 import java.time.LocalDateTime;
@@ -52,7 +52,7 @@ class CitizenGeneralApplicationSubmissionServiceTest {
     private SearchGovRecordsApplicationGenerator searchGovRecordsGenerator;
 
     @Mock
-    private D11GeneralApplicationGenerator d11Generator;
+    private GeneralApplicationD11Generator d11Generator;
 
     @InjectMocks
     private CitizenGeneralApplicationSubmissionService submissionService;

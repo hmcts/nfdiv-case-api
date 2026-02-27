@@ -230,8 +230,8 @@ public final class DocumentConstants {
     public static final String BAILIFF_SERVICE_APPLICATION_DOCUMENT_NAME = "BailiffServiceApplication";
     public static final String SEARCH_GOV_RECORDS_APPLICATION_TEMPLATE_ID = "SEARCH_GOV_RECORDS_APPLICATION";
     public static final String SEARCH_GOV_RECORDS_APPLICATION_DOCUMENT_NAME = "SearchGovRecordsApplication";
-    public static final String D11_GENERAL_APPLICATION_TEMPLATE_ID = "D11_GENERAL_APPLICATION";
-    public static final String D11_GENERAL_APPLICATION_DOCUMENT_NAME = "D11GeneralApplication";
+    public static final String GENERAL_APPLICATION_D11_TEMPLATE_ID = "D11_GENERAL_APPLICATION";
+    public static final String GENERAL_APPLICATION_D11_DOCUMENT_NAME = "D11GeneralApplication";
     public static final String DISPENSE_WITH_SERVICE_APPLICATION_TEMPLATE_ID = "DISPENSE_WITH_SERVICE_APPLICATION";
     public static final String DISPENSE_WITH_SERVICE_APPLICATION_DOCUMENT_NAME = "DispenseWithServiceApplication";
 

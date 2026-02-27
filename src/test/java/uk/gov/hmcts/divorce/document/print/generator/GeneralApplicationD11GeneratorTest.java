@@ -11,7 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.D11GeneralApplicationTemplateContent;
+import uk.gov.hmcts.divorce.document.content.GeneralApplicationD11TemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDateTime;
@@ -21,22 +21,22 @@ import java.util.Map;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.D11_GENERAL_APPLICATION_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.D11_GENERAL_APPLICATION_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_APPLICATION_D11_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_APPLICATION_D11_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_REFERENCE;
 
 @ExtendWith(MockitoExtension.class)
-class D11GeneralApplicationGeneratorTest {
+class GeneralApplicationD11GeneratorTest {
     @Mock
     private CaseDataDocumentService caseDataDocumentService;
 
     @Mock
-    private D11GeneralApplicationTemplateContent templateContent;
+    private GeneralApplicationD11TemplateContent templateContent;
 
     @InjectMocks
-    private D11GeneralApplicationGenerator applicationGenerator;
+    private GeneralApplicationD11Generator applicationGenerator;
 
     @Test
     void shouldRenderDocumentWithD11GeneralAppTemplateVariables() {
@@ -58,9 +58,9 @@ class D11GeneralApplicationGeneratorTest {
         when(caseDataDocumentService.renderDocument(
             templateVariables,
             TEST_CASE_ID,
-            D11_GENERAL_APPLICATION_TEMPLATE_ID,
+            GENERAL_APPLICATION_D11_TEMPLATE_ID,
             caseData.getApplicant1().getLanguagePreference(),
-            D11_GENERAL_APPLICATION_DOCUMENT_NAME
+            GENERAL_APPLICATION_D11_DOCUMENT_NAME
         )).thenReturn(generatedDocument);
 
         DivorceDocument result = applicationGenerator.generateDocument(
@@ -70,9 +70,9 @@ class D11GeneralApplicationGeneratorTest {
         verify(caseDataDocumentService).renderDocument(
             templateVariables,
             TEST_CASE_ID,
-            D11_GENERAL_APPLICATION_TEMPLATE_ID,
+            GENERAL_APPLICATION_D11_TEMPLATE_ID,
             caseData.getApplicant1().getLanguagePreference(),
-            D11_GENERAL_APPLICATION_DOCUMENT_NAME
+            GENERAL_APPLICATION_D11_DOCUMENT_NAME
         );
         assertThat(result.getDocumentLink()).isEqualTo(generatedDocument);
         assertThat(result.getDocumentType()).isEqualTo(GENERAL_APPLICATION);

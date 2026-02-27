@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.D11_GENERAL_APPLICATION_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_APPLICATION_D11_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LABEL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class D11GeneralApplicationTemplateContent {
+public class GeneralApplicationD11TemplateContent {
 
     private final DocmosisCommonContent docmosisCommonContent;
 
@@ -55,10 +55,10 @@ public class D11GeneralApplicationTemplateContent {
     public static final String SUPPORTING_EVIDENCE_UPLOADED = "supportingEvidenceUploaded";
     public static final String GENERAL_APPLICANT_FULL_NAME = "generalApplicantFullName";
 
-    private static final String CONFIDENTIAL_PARTNER_PLACEHOLDER = "Their partner's details are confidential";
+    private static final String CONFIDENTIAL_PARTNER_PLACEHOLDER = "Details are confidential";
 
     public List<String> getSupportedTemplates() {
-        return List.of(D11_GENERAL_APPLICATION_TEMPLATE_ID);
+        return List.of(GENERAL_APPLICATION_D11_TEMPLATE_ID);
     }
 
     public Map<String, Object> getTemplateContent(

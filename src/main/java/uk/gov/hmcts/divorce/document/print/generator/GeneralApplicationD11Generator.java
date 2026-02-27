@@ -8,21 +8,21 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.D11GeneralApplicationTemplateContent;
+import uk.gov.hmcts.divorce.document.content.GeneralApplicationD11TemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 
-import static uk.gov.hmcts.divorce.document.DocumentConstants.D11_GENERAL_APPLICATION_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.D11_GENERAL_APPLICATION_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_APPLICATION_D11_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_APPLICATION_D11_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_APPLICATION;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class D11GeneralApplicationGenerator {
+public class GeneralApplicationD11Generator {
     private final CaseDataDocumentService caseDataDocumentService;
-    private final D11GeneralApplicationTemplateContent templateContent;
+    private final GeneralApplicationD11TemplateContent templateContent;
 
     public DivorceDocument generateDocument(final long caseId,
                                             final Applicant applicant,
@@ -33,9 +33,9 @@ public class D11GeneralApplicationGenerator {
         Document document = caseDataDocumentService.renderDocument(
             templateContent.getTemplateContent(caseData, caseId, applicant, generalApplication),
             caseId,
-            D11_GENERAL_APPLICATION_TEMPLATE_ID,
+            GENERAL_APPLICATION_D11_TEMPLATE_ID,
             applicant.getLanguagePreference(),
-            D11_GENERAL_APPLICATION_DOCUMENT_NAME
+            GENERAL_APPLICATION_D11_DOCUMENT_NAME
         );
 
         return DivorceDocument

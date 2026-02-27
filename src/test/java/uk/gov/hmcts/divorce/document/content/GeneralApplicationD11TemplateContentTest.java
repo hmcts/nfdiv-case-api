@@ -20,7 +20,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.D11_GENERAL_APPLICATION_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.GENERAL_APPLICATION_D11_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -30,13 +30,13 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 
 @ExtendWith(MockitoExtension.class)
-class D11GeneralApplicationTemplateContentTest {
+class GeneralApplicationD11TemplateContentTest {
 
     @Mock
     private DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
-    private D11GeneralApplicationTemplateContent templateContent;
+    private GeneralApplicationD11TemplateContent templateContent;
 
     private CaseData caseData;
     private Map<String,Object> expectedEntries;
@@ -77,7 +77,7 @@ class D11GeneralApplicationTemplateContentTest {
 
     @Test
     void shouldGetSupportedTemplates() {
-        assertThat(templateContent.getSupportedTemplates()).containsOnly(D11_GENERAL_APPLICATION_TEMPLATE_ID);
+        assertThat(templateContent.getSupportedTemplates()).containsOnly(GENERAL_APPLICATION_D11_TEMPLATE_ID);
     }
 
     private void buildD11GeneralApplication(CaseData caseData) {
