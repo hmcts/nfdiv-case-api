@@ -1,9 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
-<<<<<<< HEAD
 import com.fasterxml.jackson.annotation.JsonIgnore;
-=======
->>>>>>> NFDIV-5132
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
