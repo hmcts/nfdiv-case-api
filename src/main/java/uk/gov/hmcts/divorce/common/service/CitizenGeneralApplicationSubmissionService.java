@@ -57,9 +57,8 @@ public class CitizenGeneralApplicationSubmissionService {
         final FeeDetails feeDetails = generalApplication.getGeneralApplicationFee();
         final ServicePaymentMethod paymentMethod = feeDetails.getPaymentMethod();
 
-
         final boolean isHwfApplication = ServicePaymentMethod.FEE_PAY_BY_HWF.equals(paymentMethod);
-        final boolean isAwaitingDocuments = !YesOrNo.NO.equals(generalApplication.getGeneralApplicationDocsUploadedPreSubmission());
+        final boolean isAwaitingDocuments = YesOrNo.NO.equals(generalApplication.getGeneralApplicationDocsUploadedPreSubmission());
 
         if (data.isWelshApplication()) {
             data.getApplication().setWelshPreviousState(details.getState());

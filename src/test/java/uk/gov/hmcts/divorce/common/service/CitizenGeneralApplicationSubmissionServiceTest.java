@@ -138,7 +138,7 @@ class CitizenGeneralApplicationSubmissionServiceTest {
         void shouldMoveToAwaitingDocuments() {
             CaseDetails<CaseData, State> details = new CaseDetails<>();
             details.setData(caseData());
-            GeneralApplication application = buildApplication(FEE_PAY_BY_CARD, YesOrNo.YES, YesOrNo.YES);
+            GeneralApplication application = buildApplication(FEE_PAY_BY_CARD, YesOrNo.YES, YesOrNo.NO);
 
             submissionService.setEndState(details, application);
 
@@ -149,7 +149,7 @@ class CitizenGeneralApplicationSubmissionServiceTest {
         void shouldMoveToAwaitingGeneralReferralPaymentWhenNotCardPayment() {
             CaseDetails<CaseData, State> details = new CaseDetails<>();
             details.setData(caseData());
-            GeneralApplication application = buildApplication(FEE_PAY_BY_HWF, null, YesOrNo.NO);
+            GeneralApplication application = buildApplication(FEE_PAY_BY_HWF, null, YesOrNo.YES);
 
             submissionService.setEndState(details, application);
 

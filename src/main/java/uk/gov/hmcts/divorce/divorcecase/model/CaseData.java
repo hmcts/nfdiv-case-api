@@ -701,11 +701,6 @@ public class CaseData {
 
     @JsonIgnore
     public void updateCaseWithGeneralApplication(GeneralApplication generalApplication) {
-        if (generalApplication.getGeneralApplicationDocument() != null) {
-            this.getDocuments().setDocumentsUploaded(
-                addDocumentToTop(this.getDocuments().getDocumentsUploaded(), generalApplication.getGeneralApplicationDocument()));
-        }
-
         final ListValue<GeneralApplication> generalApplicationListValue = ListValue.<GeneralApplication>builder()
             .id(UUID.randomUUID().toString())
             .value(generalApplication.toBuilder().build())
