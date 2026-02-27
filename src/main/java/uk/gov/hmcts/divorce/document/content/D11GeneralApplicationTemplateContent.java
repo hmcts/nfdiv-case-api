@@ -55,6 +55,8 @@ public class D11GeneralApplicationTemplateContent {
     public static final String SUPPORTING_EVIDENCE_UPLOADED = "supportingEvidenceUploaded";
     public static final String GENERAL_APPLICANT_FULL_NAME = "generalApplicantFullName";
 
+    private static final String CONFIDENTIAL_PARTNER_PLACEHOLDER = "Their partner's details are confidential";
+
     public List<String> getSupportedTemplates() {
         return List.of(D11_GENERAL_APPLICATION_TEMPLATE_ID);
     }
@@ -86,25 +88,22 @@ public class D11GeneralApplicationTemplateContent {
             APPLICATION_DATE,
             dateTimeFormatter.format(generalApplication.getGeneralApplicationReceivedDate().toLocalDate())
         );
-
-        GeneralApplicationD11JourneyOptions applicationAnswers = applicant.getInterimApplicationOptions()
-            .getGeneralApplicationD11JourneyOptions();
-
+        
         templateContent.putAll(generalApplicationD11Content(
-            applicationAnswers, applicant, caseData.isDivorce()
+            isApplicant1, caseData
         ));
 
         return templateContent;
     }
 
-    private Map<String, Object>  generalApplicationD11Content(
-            GeneralApplicationD11JourneyOptions applicationAnswers,
-            Applicant applicant,
-            boolean isDivorce
-    ) {
+    private Map<String, Object>  generalApplicationD11Content(boolean isApplicant1, CaseData caseData) {
         final Map<String, Object> templateContent = new HashMap<>();
-
+        final Applicant applicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
+        final Applicant partner = isApplicant1 ? caseData.getApplicant2() : caseData.getApplicant1();
         final InterimApplicationOptions interimApplicationOptions = applicant.getInterimApplicationOptions();
+        final GeneralApplicationD11JourneyOptions applicationAnswers = interimApplicationOptions.getGeneralApplicationD11JourneyOptions();
+        final boolean isDivorce = caseData.isDivorce();
+
         templateContent.put(HEARING_NOT_REQUIRED_DETAILS, applicationAnswers.getHearingNotRequired().getLabel());
         templateContent.put(
             EVIDENCE_PARTNER_AGREES_REQUIRED,
@@ -114,7 +113,12 @@ public class D11GeneralApplicationTemplateContent {
             HAS_UPLOADED_PARTNER_AGREES_DOCS,
             YesOrNo.from(!YesOrNo.YES.equals(applicationAnswers.getCannotUploadAgreedEvidence())).getValue()
         );
-        templateContent.put(PARTNER_DETAILS_CORRECT, applicationAnswers.getPartnerDetailsCorrect().getValue());
+        templateContent.put(
+            PARTNER_DETAILS_CORRECT,
+            partner.isConfidentialContactDetails() ?
+                CONFIDENTIAL_PARTNER_PLACEHOLDER :
+                applicationAnswers.getPartnerDetailsCorrect().getValue()
+        );
         templateContent.put(APPLICATION_REASON, applicationAnswers.getReason());
 
         final boolean hasProvidedEvidence = YesOrNo.YES.equals(interimApplicationOptions.getInterimAppsCanUploadEvidence());
