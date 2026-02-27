@@ -87,7 +87,7 @@ public class CitizenGeneralApplicationSubmissionService {
         }
 
         if (userOptions.hasUploadedSupportingDocuments()) {
-            documents.addAll(d11JourneyOptions.getPartnerAgreesDocs());
+            documents.addAll(userOptions.getInterimAppsEvidenceDocs());
         }
 
         return documents;
