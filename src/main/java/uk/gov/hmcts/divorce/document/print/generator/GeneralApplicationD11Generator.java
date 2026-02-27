@@ -28,7 +28,7 @@ public class GeneralApplicationD11Generator {
                                             final Applicant applicant,
                                             final CaseData caseData,
                                             final GeneralApplication generalApplication) {
-        log.info("Generating D11 general application document for {}", caseId);
+        log.info("Generating general application D11 document for {}", caseId);
 
         Document document = caseDataDocumentService.renderDocument(
             templateContent.getTemplateContent(caseData, caseId, applicant, generalApplication),
