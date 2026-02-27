@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -115,7 +116,9 @@ class CaseTerminationServiceTest {
         verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
                 CREATOR.getRole(),
-                APPLICANT_2.getRole()
+                APPLICANT_2.getRole(),
+                APPLICANT_1_SOLICITOR.getRole(),
+                APPLICANT_2_SOLICITOR.getRole()
             )
         ));
         verify(notificationDispatcher).send(applicationRejectedFeeNotPaidNotification, caseDetails);
@@ -132,7 +135,7 @@ class CaseTerminationServiceTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        withdrawCaseService.withdraw(caseDetails);
+        caseTerminationService.withdraw(caseDetails);
 
         verifyNoInteractions(notificationDispatcher);
     }
