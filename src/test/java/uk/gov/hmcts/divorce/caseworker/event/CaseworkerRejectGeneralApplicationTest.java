@@ -218,6 +218,37 @@ class CaseworkerRejectGeneralApplicationTest {
         verifyNoInteractions(generalApplicationRejectedNotification);
     }
 
+    @Test
+    void shouldHandleNullGeneralAppListInSubmittedCallback() {
+        final CaseData beforeCaseData = caseDataWithMarriageDate();
+        List<ListValue<GeneralApplication>> beforeGeneralApplications = buildListOfGeneralApplications();
+        beforeGeneralApplications.get(1).getValue().setGeneralApplicationSubmittedOnline(YesOrNo.NO);
+        var generalApplicationList = new ArrayList<>(beforeGeneralApplications);
+        generalApplicationList.remove(0);
+
+        beforeCaseData.setGeneralApplications(generalApplicationList);
+
+        final CaseDetails<CaseData, State> beforeCaseDetails = new CaseDetails<>();
+        beforeCaseDetails.setData(beforeCaseData);
+        beforeCaseDetails.setId(TEST_CASE_ID);
+
+        final CaseData afterCaseData = caseDataWithMarriageDate();
+        List<ListValue<GeneralApplication>> afterGeneralApplications = buildListOfGeneralApplications();
+        var newGeneralApplicationList = new ArrayList<>(afterGeneralApplications);
+        newGeneralApplicationList.remove(1);
+        newGeneralApplicationList.remove(0);
+
+        afterCaseData.setGeneralApplications(newGeneralApplicationList);
+
+        final CaseDetails<CaseData, State> afterCaseDetails = new CaseDetails<>();
+        afterCaseDetails.setData(afterCaseData);
+        afterCaseDetails.setId(TEST_CASE_ID);
+
+        caseworkerRejectGeneralApplication.submitted(afterCaseDetails, beforeCaseDetails);
+
+        verifyNoInteractions(generalApplicationRejectedNotification);
+    }
+
     private List<ListValue<GeneralApplication>> buildListOfGeneralApplications() {
         return List.of(
             ListValue.<GeneralApplication>builder().value(
