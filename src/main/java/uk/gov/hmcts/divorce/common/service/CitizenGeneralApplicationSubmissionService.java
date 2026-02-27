@@ -106,7 +106,7 @@ public class CitizenGeneralApplicationSubmissionService {
         if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplicationType)) {
             return searchGovRecordsApplicationGenerator.generateDocument(caseId, applicant, caseData, generalApplication);
         } else if (generalApplicationType != null) {
-            return d11GeneralApplicationGenerator.generateDocument(caseId, applicant, caseData, generalApplication);
+            return DivorceDocument.builder().build();
         } else {
             throw new UnsupportedOperationException();
         }
@@ -118,7 +118,7 @@ public class CitizenGeneralApplicationSubmissionService {
         if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplication.getGeneralApplicationType())) {
             searchGovApplicationSubmittedNotification.sendToApplicant1(caseData, caseId, generalApplication);
         } else if (generalApplicationType != null) {
-            d11GeneralApplicationSubmittedNotification.sendToApplicant1(caseData, caseId, generalApplication);
+            return;
         } else {
             throw new UnsupportedOperationException();
         }

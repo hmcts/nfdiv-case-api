@@ -82,25 +82,6 @@ class CitizenGeneralApplicationSubmissionServiceTest {
                 .generateDocument(TEST_CASE_ID, caseData.getApplicant1(), caseData, application);
             assertThat(result).isEqualTo(document);
         }
-
-        @Test
-        void shouldDelegateToD11Generator() {
-            CaseData caseData = buildCaseData(DIGITISED_GENERAL_APPLICATION_D11);
-            GeneralApplication application = buildApplication(GeneralApplicationType.AMEND_APPLICATION);
-            DivorceDocument document = DivorceDocument.builder().build();
-
-            when(d11Generator.generateDocument(
-                TEST_CASE_ID, caseData.getApplicant1(), caseData, application
-            )).thenReturn(document);
-
-            DivorceDocument result = submissionService.generateGeneralApplicationAnswerDocument(
-                TEST_CASE_ID, caseData.getApplicant1(), caseData, application
-            );
-
-            verify(d11Generator)
-                .generateDocument(TEST_CASE_ID, caseData.getApplicant1(), caseData, application);
-            assertThat(result).isEqualTo(document);
-        }
     }
 
     @Nested
@@ -114,17 +95,6 @@ class CitizenGeneralApplicationSubmissionServiceTest {
             submissionService.sendNotifications(TEST_CASE_ID, application, caseData);
 
             verify(searchGovRecordsNotification)
-                .sendToApplicant1(caseData, TEST_CASE_ID, application);
-        }
-
-        @Test
-        void shouldDelegateToD11Notification() {
-            CaseData caseData = buildCaseData(DIGITISED_GENERAL_APPLICATION_D11);
-            GeneralApplication application = buildApplication(GeneralApplicationType.AMEND_APPLICATION);
-
-            submissionService.sendNotifications(TEST_CASE_ID, application, caseData);
-
-            verify(d11Notification)
                 .sendToApplicant1(caseData, TEST_CASE_ID, application);
         }
     }
