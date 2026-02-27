@@ -200,7 +200,7 @@ public class DocmosisCommonContent {
                 "Withdraw the %s", isDivorce ? "divorce application" : "application to end the civil partnership"
             );
             case GeneralApplicationType.DELAY -> "Delay or pause (or ‘put a stay on’) an application";
-            case GeneralApplicationType.EXTEND -> "More time to serve an application (or ‘extend service’))";
+            case GeneralApplicationType.EXTEND -> "More time to serve an application (or ‘extend service’)";
             case GeneralApplicationType.ISSUE_DIVORCE_WITHOUT_CERT -> String.format(
                 "Continue without a %s certificate", isDivorce ? "marriage" : "civil partnership"
             );
