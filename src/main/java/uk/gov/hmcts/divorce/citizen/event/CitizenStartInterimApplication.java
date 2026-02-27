@@ -81,6 +81,11 @@ public class CitizenStartInterimApplication implements CCDConfig<CaseData, State
             documentRemovalService.deleteDocument(options.getInterimAppsEvidenceDocs());
         }
 
+        if (options.getGeneralApplicationD11JourneyOptions() != null
+            && !CollectionUtils.isEmpty(options.getGeneralApplicationD11JourneyOptions().getPartnerAgreesDocs())) {
+            documentRemovalService.deleteDocument(options.getGeneralApplicationD11JourneyOptions().getPartnerAgreesDocs());
+        }
+
         applicant.setInterimApplicationOptions(
             options.toBuilder()
                 .interimAppsUseHelpWithFees(null)
@@ -89,6 +94,7 @@ public class CitizenStartInterimApplication implements CCDConfig<CaseData, State
                 .interimAppsCanUploadEvidence(null)
                 .interimAppsCannotUploadDocs(null)
                 .interimAppsEvidenceDocs(null)
+                .generalApplicationD11JourneyOptions(null)
                 .build()
         );
     }

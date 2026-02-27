@@ -12,6 +12,9 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationHearingNotRequired;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
@@ -117,6 +120,34 @@ class CitizenStartInterimApplicationTest {
         verifyNoInteractions(documentRemovalService);
     }
 
+    @Test
+    void shouldDeleteAnyD11UploadedDocumentsAndAnswersIfApplicationTypeChanged() {
+        InterimApplicationOptions beforeOptions = buildInterimApplicationOptionsForD11App();
+        beforeOptions.setInterimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11);
+
+        InterimApplicationOptions afterOptions = buildInterimApplicationOptionsForD11App();
+        afterOptions.setInterimApplicationType(InterimApplicationType.DEEMED_SERVICE);
+
+        final CaseDetails<CaseData, State> beforeDetails = buildCaseDetails(beforeOptions);
+        final CaseDetails<CaseData, State> afterDetails = buildCaseDetails(afterOptions);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = citizenStartInterimApplication.aboutToSubmit(
+            afterDetails, beforeDetails
+        );
+
+        verify(documentRemovalService).deleteDocument(beforeOptions.getGeneralApplicationD11JourneyOptions().getPartnerAgreesDocs());
+
+        InterimApplicationOptions responseApplicationOptions = response.getData().getApplicant1().getInterimApplicationOptions();
+        assertThat(responseApplicationOptions.getInterimApplicationType()).isEqualTo(InterimApplicationType.DEEMED_SERVICE);
+        assertThat(responseApplicationOptions.getInterimAppsUseHelpWithFees()).isNull();
+        assertThat(responseApplicationOptions.getInterimAppsHaveHwfReference()).isNull();
+        assertThat(responseApplicationOptions.getInterimAppsHwfRefNumber()).isNull();
+        assertThat(responseApplicationOptions.getInterimAppsCanUploadEvidence()).isNull();
+        assertThat(responseApplicationOptions.getInterimAppsCannotUploadDocs()).isNull();
+        assertThat(responseApplicationOptions.getInterimAppsEvidenceDocs()).isNull();
+        assertThat(responseApplicationOptions.getGeneralApplicationD11JourneyOptions()).isNull();
+    }
+
     private InterimApplicationOptions buildInterimApplicationOptions() {
         return InterimApplicationOptions.builder()
             .interimAppsHaveHwfReference(YesOrNo.YES)
@@ -134,6 +165,29 @@ class CitizenStartInterimApplicationTest {
                     .noResponseRespondentAddressInEnglandWales(YesOrNo.YES)
                     .build()
             ).build();
+    }
+
+    private InterimApplicationOptions buildInterimApplicationOptionsForD11App() {
+        return InterimApplicationOptions.builder()
+            .interimAppsHaveHwfReference(YesOrNo.YES)
+            .interimAppsHwfRefNumber("test number")
+            .interimAppsCanUploadEvidence(YesOrNo.YES)
+            .interimAppsCannotUploadDocs(YesOrNo.YES)
+            .generalApplicationD11JourneyOptions(
+                GeneralApplicationD11JourneyOptions.builder()
+                    .hearingNotRequired(GeneralApplicationHearingNotRequired.YES_DOES_NOT_NEED_CONSENT)
+                    .type(GeneralApplicationType.AMEND_APPLICATION)
+                    .reason("reason")
+                    .partnerAgreesDocs(List.of(
+                        ListValue.<DivorceDocument>builder().value(
+                            DivorceDocument.builder()
+                                .documentType(DocumentType.NAME_CHANGE_EVIDENCE)
+                                .build()
+                        ).build())
+                    )
+                    .build()
+            )
+            .build();
     }
 
     private CaseDetails<CaseData, State> buildCaseDetails(InterimApplicationOptions options) {
