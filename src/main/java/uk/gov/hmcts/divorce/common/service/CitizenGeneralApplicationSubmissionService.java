@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.interimapplications.D11GeneralApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.SearchGovRecordsApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -18,7 +17,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.document.print.generator.D11GeneralApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.SearchGovRecordsApplicationGenerator;
 
 import java.util.ArrayList;
@@ -42,8 +40,6 @@ public class CitizenGeneralApplicationSubmissionService {
 
     private final SearchGovRecordsApplicationGenerator searchGovRecordsApplicationGenerator;
     private final SearchGovRecordsApplicationSubmittedNotification searchGovApplicationSubmittedNotification;
-    private final D11GeneralApplicationGenerator d11GeneralApplicationGenerator;
-    private final D11GeneralApplicationSubmittedNotification d11GeneralApplicationSubmittedNotification;
 
     public boolean canBeAutoReferred(CaseData caseData, GeneralApplicationType generalApplicationType) {
         GeneralReferral generalReferral = caseData.getGeneralReferral();

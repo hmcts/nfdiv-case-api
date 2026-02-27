@@ -154,7 +154,10 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
     }
 
     private AlternativeService buildServiceApplication(InterimApplicationOptions userOptions) {
-        if (!userOptions.hasUploadedSupportingDocuments() && !CollectionUtils.isEmpty(userOptions.getInterimAppsEvidenceDocs())) {
+        boolean evidenceNotSubmitted = YesOrNo.NO.equals(userOptions.getInterimAppsCanUploadEvidence())
+            && userOptions.getInterimAppsEvidenceDocs() != null;
+
+        if (evidenceNotSubmitted && !CollectionUtils.isEmpty(userOptions.getInterimAppsEvidenceDocs())) {
             documentRemovalService.deleteDocument(userOptions.getInterimAppsEvidenceDocs());
         }
 
@@ -165,7 +168,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .alternativeServiceType(userOptions.getInterimApplicationType().getServiceType())
             .serviceApplicationDocsUploadedPreSubmission(userOptions.isAwaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
-            .serviceApplicationDocuments(userOptions.hasUploadedSupportingDocuments() ? null : userOptions.getInterimAppsEvidenceDocs())
+            .serviceApplicationDocuments(evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs())
             .alternativeServiceFeeRequired(YesOrNo.YES)
             .build();
     }

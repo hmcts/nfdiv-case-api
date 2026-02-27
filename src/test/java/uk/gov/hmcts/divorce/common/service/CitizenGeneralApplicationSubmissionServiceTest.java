@@ -9,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.citizen.notification.interimapplications.D11GeneralApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.SearchGovRecordsApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -24,7 +23,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.document.print.generator.D11GeneralApplicationGenerator;
 import uk.gov.hmcts.divorce.document.print.generator.SearchGovRecordsApplicationGenerator;
 
 import java.time.LocalDateTime;
@@ -51,12 +49,6 @@ class CitizenGeneralApplicationSubmissionServiceTest {
 
     @Mock
     private SearchGovRecordsApplicationGenerator searchGovRecordsGenerator;
-
-    @Mock
-    private D11GeneralApplicationGenerator d11Generator;
-
-    @Mock
-    private D11GeneralApplicationSubmittedNotification d11Notification;
 
     @InjectMocks
     private CitizenGeneralApplicationSubmissionService submissionService;

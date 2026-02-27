@@ -193,6 +193,6 @@ public class InterimApplicationOptions {
 
     @JsonIgnore
     public boolean hasUploadedSupportingDocuments() {
-        return YesOrNo.NO.equals(interimAppsCanUploadEvidence) && interimAppsEvidenceDocs != null;
+        return YesOrNo.YES.equals(interimAppsCanUploadEvidence) && interimAppsEvidenceDocs != null;
     }
 }
