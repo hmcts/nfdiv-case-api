@@ -88,7 +88,7 @@ public class D11GeneralApplicationTemplateContent {
             APPLICATION_DATE,
             dateTimeFormatter.format(generalApplication.getGeneralApplicationReceivedDate().toLocalDate())
         );
-        
+
         templateContent.putAll(generalApplicationD11Content(
             isApplicant1, caseData
         ));
@@ -115,9 +115,9 @@ public class D11GeneralApplicationTemplateContent {
         );
         templateContent.put(
             PARTNER_DETAILS_CORRECT,
-            partner.isConfidentialContactDetails() ?
-                CONFIDENTIAL_PARTNER_PLACEHOLDER :
-                applicationAnswers.getPartnerDetailsCorrect().getValue()
+            partner.isConfidentialContactDetails()
+                ? CONFIDENTIAL_PARTNER_PLACEHOLDER
+                : applicationAnswers.getPartnerDetailsCorrect().getValue()
         );
         templateContent.put(APPLICATION_REASON, applicationAnswers.getReason());
 
