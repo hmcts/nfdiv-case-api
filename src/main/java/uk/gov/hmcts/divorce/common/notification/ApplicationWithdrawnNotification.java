@@ -26,6 +26,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_APPL
 public class ApplicationWithdrawnNotification implements ApplicantNotification {
     private static final String IS_RESPONDENT = "isRespondent";
     private static final String RESPONDENT_PARTNER = "respondentPartner";
+    private static final String IS_PENDING_REFUND = "isPendingRefund";
 
     private final CommonContent commonContent;
 
@@ -41,6 +42,8 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(IS_RESPONDENT, NO);
         templateVars.put(RESPONDENT_PARTNER, "");
+        templateVars.put(IS_PENDING_REFUND, shouldAddRefundText(caseData, true) ? YES : NO);
+
 
         notificationService.sendEmail(
             caseData.getApplicant1().getEmail(),
@@ -60,6 +63,7 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
             log.info("Sending application withdrawn notification to applicant 2 for: {}", id);
             final Map<String, String> templateVars =
                 commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
+            templateVars.put(IS_PENDING_REFUND, shouldAddRefundText(caseData, false) ? YES : NO);
 
             if (caseData.getApplicationType().isSole()) {
                 templateVars.put(IS_RESPONDENT, YES);
@@ -139,5 +143,18 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
 
     private boolean soleRespondentInvited(final CaseData caseData) {
         return caseData.getApplicationType().isSole() && !isNull(caseData.getApplication().getIssueDate());
+    }
+
+    private boolean shouldAddRefundText(CaseData caseData, boolean isApplicant1) {
+        boolean isCaseSubmittedButNotIssued = caseData.getApplication().getDateSubmitted() != null
+            && caseData.getApplication().getIssueDate() == null;
+        if (isApplicant1 && isCaseSubmittedButNotIssued) {
+            return true;
+        }
+
+        if (!isApplicant1 && !caseData.getApplicationType().isSole() && isCaseSubmittedButNotIssued) {
+            return true;
+        }
+        return false;
     }
 }

@@ -48,6 +48,8 @@ import java.util.UUID;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.andShowCondition;
+import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.orShowCondition;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrderOffline.SWITCH_TO_SOLE_FO_OFFLINE;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
@@ -116,6 +118,16 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         "scannedSubtypeReceived!=\"*\" OR scannedSubtypeReceived=\"ConfidentialD10\" OR scannedSubtypeReceived=\"D10\"";
 
     private static final String DOCUMENT_TYPE_IS_D10 = "typeOfDocumentAttached=\"D10\"";
+    private static final String DOCUMENT_TYPE_IS_D84 = "typeOfDocumentAttached=\"D84\"";
+    private static final String DOCUMENT_TYPE_IS_D36 = "typeOfDocumentAttached=\"D36\"";
+    private static final String DOCUMENT_TYPE_IS_RFIR = "typeOfDocumentAttached=\"RFIR\"";
+
+    private static final String DOCUMENT_FILE_MUST_BE_SELECTED = orShowCondition(
+        DOCUMENT_TYPE_IS_D10,
+        DOCUMENT_TYPE_IS_D84,
+        DOCUMENT_TYPE_IS_D36,
+        DOCUMENT_TYPE_IS_RFIR
+    );
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -147,9 +159,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .done()
             .complex(CaseData::getDocuments)
                 .mandatory(CaseDocuments::getScannedDocumentNames,
-                    String.format("(%s)", SCANNED_DOC_MUST_BE_RECLASSIFIED_BY_CASEWORKER)
-                        + " AND (typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\")"
-                        + " OR typeOfDocumentAttached=\"RFIR\"")
+                    String.format(andShowCondition(
+                        String.format("(%s)", SCANNED_DOC_MUST_BE_RECLASSIFIED_BY_CASEWORKER),
+                        String.format("(%s)", DOCUMENT_FILE_MUST_BE_SELECTED))
+            ))
             .done()
             .complex(CaseData::getConditionalOrder)
                 .label("scannedCoLabel", "Conditional Order", "scannedSubtypeReceived=\"D84\"")

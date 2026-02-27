@@ -65,6 +65,10 @@ public class WithdrawCaseService {
     }
 
     private void notifyPartiesOfCaseWithdrawal(final CaseDetails<CaseData, State> details) {
-        notificationDispatcher.send(applicationWithdrawnNotification, details);
+        boolean isTriggeredByCaseworker = details.getData().getApplication().getCwWithdrawApplicationReason() != null;
+
+        if (!isTriggeredByCaseworker) {
+            notificationDispatcher.send(applicationWithdrawnNotification, details);
+        }
     }
 }
