@@ -90,7 +90,7 @@ class SystemAttachScannedDocumentsTest {
 
 
     @ParameterizedTest
-    @ValueSource(strings = {"D10", "D84", "D36"})
+    @ValueSource(strings = {"D84", "D36"})
     void shouldReclassifyScannedDocumentAndAddToDocumentsUploadedIfSubtypeIsValid(String subtype) {
         final List<ListValue<ScannedDocument>> afterScannedDocuments = scannedDocuments(singletonList(subtype));
         afterScannedDocuments.get(0).getValue().setDeliveryDate(now());
@@ -101,6 +101,20 @@ class SystemAttachScannedDocumentsTest {
 
         assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isEqualTo(valueOf(subtype));
         assertThat(response.getData().getDocuments().getDocumentsUploaded()).hasSize(1);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"D10_CONFIDENTIAL"})
+    void shouldNotReclassifyConfidentialScannedDocumentsAutomatically(String subtype) {
+        final List<ListValue<ScannedDocument>> afterScannedDocuments = scannedDocuments(singletonList(subtype));
+        afterScannedDocuments.get(0).getValue().setDeliveryDate(now());
+        afterScannedDocuments.addAll(BEFORE_SCANNED_DOCUMENTS);
+        final CaseDetails<CaseData, State> details = getCaseDetails(afterScannedDocuments);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = systemAttachScannedDocuments.aboutToSubmit(details, beforeDetails);
+
+        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isEqualTo(valueOf(subtype));
+        assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNull();
     }
 
 

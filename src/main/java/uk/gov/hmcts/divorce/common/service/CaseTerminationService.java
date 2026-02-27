@@ -17,7 +17,9 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import java.util.List;
 import java.util.Objects;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 
 @Service
@@ -41,7 +43,11 @@ public class CaseTerminationService {
 
         log.info("Case successfully withdrawn Case Id: {}", details.getId());
 
-        notifyApplicantsOfCase(applicationWithdrawnNotification, details);
+        boolean isTriggeredByCaseworker = details.getData().getApplication().getCwWithdrawApplicationReason() != null;
+
+        if (!isTriggeredByCaseworker) {
+            notifyApplicantsOfCase(applicationWithdrawnNotification, details);
+        }
     }
 
     public void reject(final CaseDetails<CaseData, State> details) {
@@ -66,8 +72,11 @@ public class CaseTerminationService {
         }
     }
 
-    private void unlinkApplicantsFromCcdCase(Long caseId) {
-        ccdAccessService.removeUsersWithRole(caseId, List.of(CREATOR.getRole(), APPLICANT_2.getRole()));
+    private void unlinkPartiesFromCcdCase(Long caseId) {
+        ccdAccessService.removeUsersWithRole(caseId, List.of(
+            CREATOR.getRole(), APPLICANT_2.getRole(),
+            APPLICANT_1_SOLICITOR.getRole(), APPLICANT_2_SOLICITOR.getRole()
+        ));
     }
 
     private void notifyApplicantsOfCase(ApplicantNotification notification, final CaseDetails<CaseData, State> details) {
@@ -80,6 +89,6 @@ public class CaseTerminationService {
         cancelInvitationToApplicant2(caseData);
         removeSolicitorOrganisationPolicy(caseData.getApplicant1());
         removeSolicitorOrganisationPolicy(caseData.getApplicant2());
-        unlinkApplicantsFromCcdCase(details.getId());
+        unlinkPartiesFromCcdCase(details.getId());
     }
 }

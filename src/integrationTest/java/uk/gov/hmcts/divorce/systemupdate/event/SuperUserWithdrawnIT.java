@@ -37,7 +37,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLICATION_WITHDRAWN;
 import static uk.gov.hmcts.divorce.systemupdate.event.SuperuserWithdrawn.SUPERUSER_WITHDRAWN;
@@ -115,7 +117,9 @@ public class SuperUserWithdrawnIT {
         verify(ccdAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
                 CREATOR.getRole(),
-                APPLICANT_2.getRole()
+                APPLICANT_2.getRole(),
+                APPLICANT_1_SOLICITOR.getRole(),
+                APPLICANT_2_SOLICITOR.getRole()
             )
         ));
 
@@ -166,7 +170,9 @@ public class SuperUserWithdrawnIT {
         verify(ccdAccessService).removeUsersWithRole(anyLong(), eq(
             List.of(
                 CREATOR.getRole(),
-                APPLICANT_2.getRole()
+                APPLICANT_2.getRole(),
+                APPLICANT_1_SOLICITOR.getRole(),
+                APPLICANT_2_SOLICITOR.getRole()
             )
         ));
 

@@ -28,6 +28,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -182,6 +183,9 @@ public class CaseDocuments {
     @AllArgsConstructor
     public enum ScannedDocumentSubtypes implements HasLabel {
 
+        @JsonProperty("ConfidentialD10")
+        D10_CONFIDENTIAL("D10 Confidential"),
+
         @JsonProperty("D10")
         D10("D10"),
 
@@ -207,6 +211,12 @@ public class CaseDocuments {
         RFIR("RFIR");
 
         private final String label;
+
+        private static final EnumSet<ScannedDocumentSubtypes> CONFIDENTIAL_SUBTYPES = EnumSet.of(D10_CONFIDENTIAL, D10);
+
+        public boolean isConfidential() {
+            return CONFIDENTIAL_SUBTYPES.contains(this);
+        }
     }
 
     @Getter
@@ -319,6 +329,10 @@ public class CaseDocuments {
             .findFirst();
     }
 
+    public static boolean scannedDocMustBeReclassifiedByCaseworker(ScannedDocumentSubtypes scannedDocumentSubtype) {
+        return scannedDocumentSubtype == null || scannedDocumentSubtype.isConfidential();
+    }
+
     @JsonIgnore
     public Optional<Document> getFirstGeneratedDocumentLinkWith(final DocumentType documentType) {
         return getFirstDocumentLink(getDocumentsGenerated(), documentType);
@@ -366,6 +380,24 @@ public class CaseDocuments {
             ? this.getDocumentsGenerated().stream()
             .filter(document -> documentType.equals(document.getValue().getDocumentType())).findFirst()
             : Optional.empty();
+    }
+
+    public boolean documentPresentInList(List<ListValue<DivorceDocument>> documents, DivorceDocument document) {
+        if (isEmpty(documents) || document == null) {
+            return false;
+        }
+
+        return documents.stream()
+            .filter(Objects::nonNull)
+            .map(ListValue::getValue)
+            .filter(Objects::nonNull)
+            .anyMatch(
+                divorceDocument ->
+                    divorceDocument.getDocumentLink() != null
+                        && divorceDocument.getDocumentLink().equals(document.getDocumentLink())
+                        && divorceDocument.getDocumentType() != null
+                        && divorceDocument.getDocumentType().equals(document.getDocumentType())
+            );
     }
 
     public boolean isGivenDocumentUnderConfidentialList(final DocumentType documentType) {
