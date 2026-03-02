@@ -628,6 +628,13 @@ public class TestDataHelper {
         return caseData;
     }
 
+    public static CaseData validCaseDataForFinancialOrder() {
+        CaseData caseData = validCaseDataForIssueApplication();
+
+        caseData.getApplicant1().setFinancialOrder(YES);
+        return caseData;
+    }
+
     public static CaseData validCaseWithCourtHearing() {
         final CaseData caseData = validApplicant2CaseData();
         caseData.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);

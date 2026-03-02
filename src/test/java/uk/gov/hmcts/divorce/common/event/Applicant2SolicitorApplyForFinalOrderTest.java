@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
@@ -22,6 +23,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
@@ -30,6 +32,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolFinalOrderPayment;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +40,7 @@ import static java.lang.Integer.parseInt;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -45,6 +49,7 @@ import static uk.gov.hmcts.divorce.common.event.Applicant2SolicitorApplyForFinal
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_TOO_EARLY_FOR_RESPONDENT_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -102,6 +107,25 @@ class Applicant2SolicitorApplyForFinalOrderTest {
     }
 
     @Test
+    void shouldReturnValidationErrorsWhenValidationFails() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = CaseData.builder().build();
+        caseDetails.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response;
+        try (MockedStatic<FinalOrderValidation> classMock =
+                 mockStatic(FinalOrderValidation.class)) {
+
+            classMock.when(() -> FinalOrderValidation.validateCanRespondentApplyFinalOrder(caseData))
+                .thenReturn(List.of(ERROR_TOO_EARLY_FOR_RESPONDENT_FINAL_ORDER));
+
+            response = applicant2SolicitorApplyForFinalOrder.aboutToStart(caseDetails);
+        }
+
+        assertThat(response.getErrors()).containsExactly(ERROR_TOO_EARLY_FOR_RESPONDENT_FINAL_ORDER);
+    }
+
+    @Test
     void shouldSetOrderSummaryAndSolicitorFeesInPoundsAndSolicitorRolesAndPbaNumbersWhenAboutToStartIsInvoked() {
 
         final long caseId = TEST_CASE_ID;
@@ -117,9 +141,19 @@ class Applicant2SolicitorApplyForFinalOrderTest {
         var midEventCaseData = caseData();
         midEventCaseData.getApplication().setPbaNumbers(getPbaNumbersForAccount("PBA0012345"));
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            applicant2SolicitorApplyForFinalOrder.aboutToStart(caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response;
+        try (MockedStatic<FinalOrderValidation> classMock =
+                 mockStatic(FinalOrderValidation.class)) {
 
+            classMock.when(() ->
+                FinalOrderValidation.validateCanRespondentApplyFinalOrder(caseData)
+            ).thenReturn(Collections.emptyList());
+
+            response =
+                applicant2SolicitorApplyForFinalOrder.aboutToStart(caseDetails);
+        }
+
+        assertThat(response.getErrors()).isNullOrEmpty();
         assertThat(response.getData().getFinalOrder().getApplicant2SolFinalOrderFeeOrderSummary()).isEqualTo(orderSummary);
         assertThat(response.getData().getFinalOrder().getApplicant2SolFinalOrderFeeInPounds()).isEqualTo("167");
     }
