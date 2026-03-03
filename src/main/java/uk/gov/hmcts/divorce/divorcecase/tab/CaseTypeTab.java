@@ -256,7 +256,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("documentsGenerated")
             .field("applicant1DocumentsUploaded", APPLICANT_1_CONTACT_DETAILS_PUBLIC)
             .field("applicant2DocumentsUploaded", APPLICANT_2_CONTACT_DETAILS_PUBLIC)
-            .field("scannedDocuments", APPLICANTS_CONTACT_DETAILS_PUBLIC)
             .field(CaseData::getGeneralOrders)
             .field("documentsUploaded")
             .field(CaseData::getGeneralEmails)
@@ -395,7 +394,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("confidentialDocumentsUploaded")
             .field("applicant1DocumentsUploaded", APPLICANT_1_CONTACT_DETAILS_PRIVATE)
             .field("applicant2DocumentsUploaded", APPLICANT_2_CONTACT_DETAILS_PRIVATE)
-            .field("scannedDocuments", APPLICANTS_CONTACT_DETAILS_PRIVATE)
+            .field("scannedDocuments")
             .field(CaseData::getConfidentialGeneralEmails)
             .field(CaseData::getGeneralLetters, APPLICANTS_CONTACT_DETAILS_PRIVATE);
     }

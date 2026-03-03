@@ -43,6 +43,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FAMILY_COURT_LOGO;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HMCTS_LOGO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_SOLE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE_CY;
@@ -64,6 +66,11 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class ConditionalOrderRefusedForAmendmentContentIT {
+
+    private static final String HMCTS_LOGO_TEXT = "[userImage:hmcts_logo_nfd_en.png]";
+    private static final String FAMILY_COURT_LOGO_TEXT = "[userImage:family_court_logo_nfd_en.png]";
+    private static final String HMCTS_LOGO_TEXT_CY = "[userImage:hmcts_logo_nfd_cy.png]";
+    private static final String FAMILY_COURT_LOGO_TEXT_CY = "[userImage:family_court_logo_nfd_cy.png]";
 
     @Autowired
     private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
@@ -116,6 +123,8 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
@@ -171,6 +180,8 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
@@ -228,6 +239,8 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
@@ -287,6 +300,8 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
@@ -343,6 +358,8 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT_CY);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT_CY);
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
@@ -400,6 +417,8 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT_CY);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT_CY);
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
@@ -460,6 +479,8 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
+        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT_CY);
+        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT_CY);
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 

@@ -115,7 +115,11 @@ public class CommonContent {
     public static final String DATE_PLUS_14_DAYS = "date plus 14 days";
 
     public static final String DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS = "date final order eligible from plus 3 months";
+    public static final String FEES_CONSENT_ORDER = "consentOrderFees";
+    public static final String FEES_FINANCIAL_ORDER = "financialOrderFees";
     public static final String FINAL_ORDER_OVERDUE_DATE = "finalOrderOverdueDate";
+    public static final String FINANCIAL_ORDER_NOT_REQUESTED = "financialOrderNotRequested";
+    public static final String FINANCIAL_ORDER_REQUESTED = "financialOrderRequested";
 
     public static final String IS_SOLE = "isSole";
     public static final String IS_JOINT = "isJoint";
@@ -216,6 +220,8 @@ public class CommonContent {
         final Applicant respondent = caseData.getApplicant2();
 
         templateVars.put(APPLICANT_NAME, join(" ", applicant1.getFirstName(), applicant1.getLastName()));
+        templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
+        templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(RESPONDENT_NAME, join(" ", respondent.getFirstName(), respondent.getLastName()));
         templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
         templateVars.put(COURT_EMAIL,

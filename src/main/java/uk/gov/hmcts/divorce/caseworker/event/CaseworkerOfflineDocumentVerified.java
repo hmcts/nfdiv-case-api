@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -31,6 +32,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
@@ -46,9 +48,10 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
-import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.andShowCondition;
+import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.orShowCondition;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrderOffline.SWITCH_TO_SOLE_FO_OFFLINE;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.AOS_D10;
@@ -56,9 +59,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.RFI_RESPONSE;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10_CONFIDENTIAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.RFIR;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.scannedDocMustBeReclassifiedByCaseworker;
 import static uk.gov.hmcts.divorce.divorcecase.model.OfflineApplicationType.SWITCH_TO_SOLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.BOTH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties.OTHER;
@@ -111,6 +116,21 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     public static final String REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR
         = "Request for Information Response Partner Notification for Case Id {} failed with message: {}";
 
+    private static final String SCANNED_DOC_MUST_BE_RECLASSIFIED_BY_CASEWORKER =
+        "scannedSubtypeReceived!=\"*\" OR scannedSubtypeReceived=\"ConfidentialD10\" OR scannedSubtypeReceived=\"D10\"";
+
+    private static final String DOCUMENT_TYPE_IS_D10 = "typeOfDocumentAttached=\"D10\"";
+    private static final String DOCUMENT_TYPE_IS_D84 = "typeOfDocumentAttached=\"D84\"";
+    private static final String DOCUMENT_TYPE_IS_D36 = "typeOfDocumentAttached=\"D36\"";
+    private static final String DOCUMENT_TYPE_IS_RFIR = "typeOfDocumentAttached=\"RFIR\"";
+
+    private static final String DOCUMENT_FILE_MUST_BE_SELECTED = orShowCondition(
+        DOCUMENT_TYPE_IS_D10,
+        DOCUMENT_TYPE_IS_D84,
+        DOCUMENT_TYPE_IS_D36,
+        DOCUMENT_TYPE_IS_RFIR
+    );
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -130,18 +150,21 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             .complex(CaseData::getDocuments)
                 .readonlyNoSummary(CaseDocuments::getScannedSubtypeReceived, ALWAYS_HIDE)
-                .mandatory(CaseDocuments::getTypeOfDocumentAttached, "scannedSubtypeReceived!=\"*\"", true)
+                .mandatory(CaseDocuments::getTypeOfDocumentAttached,
+                    SCANNED_DOC_MUST_BE_RECLASSIFIED_BY_CASEWORKER,
+                    true
+                )
             .done()
             .complex(CaseData::getAcknowledgementOfService)
-                .label("scannedAosLabel", "Acknowledgement Of Service", "scannedSubtypeReceived=\"D10\"")
-                .mandatory(AcknowledgementOfService::getHowToRespondApplication,
-                    "typeOfDocumentAttached=\"D10\" OR scannedSubtypeReceived=\"D10\"")
+                .label("scannedAosLabel", "Acknowledgement Of Service", DOCUMENT_TYPE_IS_D10)
+                .mandatory(AcknowledgementOfService::getHowToRespondApplication, DOCUMENT_TYPE_IS_D10)
             .done()
             .complex(CaseData::getDocuments)
                 .mandatory(CaseDocuments::getScannedDocumentNames,
-                        "scannedSubtypeReceived!=\"*\" "
-                            + "AND (typeOfDocumentAttached=\"D10\" OR typeOfDocumentAttached=\"D84\" OR typeOfDocumentAttached=\"D36\") "
-                            + "OR typeOfDocumentAttached=\"RFIR\"")
+                    String.format(andShowCondition(
+                        String.format("(%s)", SCANNED_DOC_MUST_BE_RECLASSIFIED_BY_CASEWORKER),
+                        String.format("(%s)", DOCUMENT_FILE_MUST_BE_SELECTED))
+            ))
             .done()
             .complex(CaseData::getConditionalOrder)
                 .label("scannedCoLabel", "Conditional Order", "scannedSubtypeReceived=\"D84\"")
@@ -150,12 +173,12 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .mandatory(ConditionalOrder::getD84WhoApplying, "coD84ApplicationType=\"switchToSole\"")
             .done()
             .complex(CaseData::getFinalOrder)
-                .readonlyNoSummary(FinalOrder::getFinalOrderReminderSentApplicant2, ALWAYS_HIDE)
+                .readonlyNoSummary(FinalOrder::getDateFinalOrderEligibleToRespondent, ALWAYS_HIDE)
                 .label("scannedFoLabel", "Final Order", "scannedSubtypeReceived=\"D36\"")
                 .mandatory(FinalOrder::getD36ApplicationType,
                     "typeOfDocumentAttached=\"D36\" OR scannedSubtypeReceived=\"D36\"")
                 .mandatory(FinalOrder::getD36WhoApplying, "d36ApplicationType=\"switchToSole\" "
-                    + "OR (d36ApplicationType=\"sole\" AND finalOrderReminderSentApplicant2=\"Yes\")")
+                    + "OR (d36ApplicationType=\"sole\" AND dateFinalOrderEligibleToRespondent=\"*\")")
             .done()
             .page("selectSenderOfDocument")
             .showCondition("typeOfDocumentAttached=\"RFIR\"")
@@ -201,7 +224,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         var caseData = details.getData();
         CaseDocuments.ScannedDocumentSubtypes scannedSubtypeReceived = caseData.getDocuments().getScannedSubtypeReceived();
 
-        if (D10.equals(scannedSubtypeReceived)) {
+        if (D10.equals(scannedSubtypeReceived) || D10_CONFIDENTIAL.equals(scannedSubtypeReceived)) {
             caseData.getDocuments().setTypeOfDocumentAttached(AOS_D10);
         } else if (D84.equals(scannedSubtypeReceived)) {
             caseData.getDocuments().setTypeOfDocumentAttached(CO_D84);
@@ -211,7 +234,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             caseData.getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
         }
 
-        if (isEmpty(caseData.getDocuments().getScannedSubtypeReceived())) {
+        if (scannedDocMustBeReclassifiedByCaseworker(scannedSubtypeReceived)) {
             List<DynamicListElement> scannedDocumentNames =
                 emptyIfNull(caseData.getDocuments().getScannedDocuments())
                     .stream()
@@ -288,7 +311,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     }
 
     private List<String> validateDocumentVerification(CaseData data) {
-        if (RFI_RESPONSE.equals(data.getDocuments().getTypeOfDocumentAttached())) {
+        final CaseDocuments.OfflineDocumentReceived documentType = data.getDocuments().getTypeOfDocumentAttached();
+
+        if (RFI_RESPONSE.equals(documentType)) {
             if (data.getRequestForInformationList().getRequestsForInformation() == null
                 || data.getRequestForInformationList().getRequestsForInformation().isEmpty()
             ) {
@@ -297,6 +322,13 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             if (data.getApplication().getIssueDate() != null) {
                 return Collections.singletonList(NO_REQUEST_FOR_INFORMATION_POST_ISSUE_ERROR);
+            }
+        } else if (FO_D36.equals(documentType)) {
+            final boolean respondentRequested = OfflineWhoApplying.APPLICANT_2.equals(data.getFinalOrder().getD36WhoApplying())
+                && ApplicationType.SOLE_APPLICATION.equals(data.getApplicationType());
+
+            if (respondentRequested) {
+                return FinalOrderValidation.validateCanRespondentApplyFinalOrder(data);
             }
         }
 
@@ -421,7 +453,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     }
 
     private void reclassifyScannedDocumentToChosenDocumentType(CaseData caseData, DocumentType documentType) {
-        if (isEmpty(caseData.getDocuments().getScannedSubtypeReceived())) {
+        CaseDocuments.ScannedDocumentSubtypes scannedDocumentSubtype = caseData.getDocuments().getScannedSubtypeReceived();
+
+        if (scannedDocMustBeReclassifiedByCaseworker(scannedDocumentSubtype)) {
             String filename = caseData.getDocuments().getScannedDocumentNames().getValueLabel();
 
             log.info("Reclassifying scanned doc {} to {} doc type", filename, documentType);
