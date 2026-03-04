@@ -59,7 +59,6 @@ public class RespondentFinalOrderAnswersTemplateContent implements TemplateConte
 
         templateContent.put(APPLICANT_1_FULL_NAME, applicant1.getFullName());
         templateContent.put(APPLICANT_2_FULL_NAME, applicant2.getFullName());
-        templateContent.put(CCD_CASE_REFERENCE, formatId(caseId));
 
         FinalOrder finalOrder = caseData.getFinalOrder();
 

@@ -99,7 +99,7 @@ class RespondentApplyForFinalOrderTest {
 
         when(applyForFinalOrderService.applyForFinalOrderAsApplicant2(caseDetails)).thenReturn(caseDetails);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = respondentApplyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
+        respondentApplyForFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
         verify(applyForFinalOrderService).generateAndStoreRespondentFinalOrderAnswersDocument(caseData, caseId);
     }
