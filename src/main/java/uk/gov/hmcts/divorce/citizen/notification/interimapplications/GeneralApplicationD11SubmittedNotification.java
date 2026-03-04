@@ -17,9 +17,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.MADE_PAYMENT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.USED_HELP_WITH_FEES;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_APPLICATION_D11_AWAITING_DOCUMENTS;
@@ -70,7 +70,7 @@ public class GeneralApplicationD11SubmittedNotification implements ApplicantNoti
             LocalDate submittedDate = generalApplication.getGeneralApplicationFee().getDateOfPayment();
             LocalDate responseDate = submittedDate.plusDays(interimApplicationResponseOffsetDays);
 
-            templateVars.put(DATE, responseDate.format(dateTimeFormatter));
+            templateVars.put(SUBMISSION_RESPONSE_DATE, responseDate.format(dateTimeFormatter));
         }
 
         return templateVars;
