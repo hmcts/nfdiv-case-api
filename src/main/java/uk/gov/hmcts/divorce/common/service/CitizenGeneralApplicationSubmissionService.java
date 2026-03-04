@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.GeneralApplicationD11SubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.SearchGovRecordsApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -40,6 +41,8 @@ public class CitizenGeneralApplicationSubmissionService {
 
     private final SearchGovRecordsApplicationGenerator searchGovRecordsApplicationGenerator;
     private final SearchGovRecordsApplicationSubmittedNotification searchGovApplicationSubmittedNotification;
+
+    private final GeneralApplicationD11SubmittedNotification d11Notification;
 
     public boolean canBeAutoReferred(CaseData caseData, GeneralApplicationType generalApplicationType) {
         GeneralReferral generalReferral = caseData.getGeneralReferral();
@@ -113,7 +116,7 @@ public class CitizenGeneralApplicationSubmissionService {
         if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplication.getGeneralApplicationType())) {
             searchGovApplicationSubmittedNotification.sendToApplicant1(caseData, caseId, generalApplication);
         } else if (generalApplicationType != null) {
-            return;
+            d11Notification.sendToApplicant1(caseData, caseId, generalApplication);
         } else {
             throw new UnsupportedOperationException();
         }

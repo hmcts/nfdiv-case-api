@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.GeneralApplicationD11SubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.SearchGovRecordsApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -50,6 +51,9 @@ class CitizenGeneralApplicationSubmissionServiceTest {
     @Mock
     private SearchGovRecordsApplicationGenerator searchGovRecordsGenerator;
 
+    @Mock
+    private GeneralApplicationD11SubmittedNotification d11Notification;
+
     @InjectMocks
     private CitizenGeneralApplicationSubmissionService submissionService;
 
@@ -87,6 +91,17 @@ class CitizenGeneralApplicationSubmissionServiceTest {
             submissionService.sendNotifications(TEST_CASE_ID, application, caseData);
 
             verify(searchGovRecordsNotification)
+                .sendToApplicant1(caseData, TEST_CASE_ID, application);
+        }
+
+        @Test
+        void shouldDelegateToD11GeneralApplicationNotification() {
+            CaseData caseData = buildCaseData(DIGITISED_GENERAL_APPLICATION_D11);
+            GeneralApplication application = buildApplication(GeneralApplicationType.AMEND_APPLICATION);
+
+            submissionService.sendNotifications(TEST_CASE_ID, application, caseData);
+
+            verify(d11Notification)
                 .sendToApplicant1(caseData, TEST_CASE_ID, application);
         }
     }
