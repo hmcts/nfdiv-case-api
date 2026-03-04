@@ -68,11 +68,14 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
             log.info("Total cases returned in AwaitingPayment state for payment overdue:{}",
                 casesInAwaitingPaymentStateForPaymentOverdue.size());
 
-            //            casesInAwaitingPaymentStateForPaymentOverdue.stream()
-            //                .map(caseDetailsConverter::convertToCaseDetailsFromReformModel)
-            //                .forEach(caseDetails -> {
-            //                    paymentStatusService.processPaymentRejection(caseDetails, user, serviceAuth);
-            //                });
+            log.info("Total cases returned in AwaitingPayment state for payment overdue:{}",
+                casesInAwaitingPaymentStateForPaymentOverdue.size());
+
+            casesInAwaitingPaymentStateForPaymentOverdue.stream()
+                .map(caseDetailsConverter::convertToCaseDetailsFromReformModel)
+                .forEach(caseDetails -> {
+                    paymentStatusService.processPaymentRejection(caseDetails, user, serviceAuth);
+                });
 
             log.info("SystemRejectCasesWithPaymentOverdueTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {

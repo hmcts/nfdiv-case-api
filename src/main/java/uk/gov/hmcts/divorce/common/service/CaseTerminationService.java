@@ -80,7 +80,7 @@ public class CaseTerminationService {
     }
 
     private void notifyApplicantsOfCase(ApplicantNotification notification, final CaseDetails<CaseData, State> details) {
-        notificationDispatcher.send(notification, details);
+        notificationDispatcher.send(notification, details.getData(), details.getId());
     }
 
     private void removeAccessToCase(CaseDetails<CaseData, State> details) {
