@@ -71,6 +71,8 @@ public class GeneralApplicationD11SubmittedNotification implements ApplicantNoti
             LocalDate responseDate = submittedDate.plusDays(interimApplicationResponseOffsetDays);
 
             templateVars.put(SUBMISSION_RESPONSE_DATE, responseDate.format(dateTimeFormatter));
+        } else {
+            templateVars.put(SUBMISSION_RESPONSE_DATE, "");
         }
 
         return templateVars;
