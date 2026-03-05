@@ -208,14 +208,12 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
     }
 
     private void triggerNotification(CaseData caseData, Long caseId, GeneralApplication generalApplication) {
-        boolean isOnlineSearchGovRecordsApplication = generalApplication.getGeneralApplicationSubmittedOnline() == YesOrNo.YES
-            && generalApplication.getGeneralApplicationType() != null
-            && generalApplication.getGeneralApplicationType().equals(GeneralApplicationType.DISCLOSURE_VIA_DWP);
-
-        if (isOnlineSearchGovRecordsApplication) {
+        if (generalApplication.getGeneralApplicationSubmittedOnline().toBoolean()) {
             boolean isApplicant1 = generalApplication.getGeneralApplicationParty() != null
                 && generalApplication.getGeneralApplicationParty().equals(GeneralParties.APPLICANT);
-            generalApplicationRejectedNotification.send(caseData, caseId, isApplicant1);
+            boolean isSearchGovRecords = generalApplication.getGeneralApplicationType() != null
+                && generalApplication.getGeneralApplicationType().equals(GeneralApplicationType.DISCLOSURE_VIA_DWP);
+            generalApplicationRejectedNotification.send(caseData, caseId, isApplicant1, isSearchGovRecords);
         }
     }
 }

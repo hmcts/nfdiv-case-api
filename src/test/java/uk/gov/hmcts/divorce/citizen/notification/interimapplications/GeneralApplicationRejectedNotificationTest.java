@@ -14,7 +14,11 @@ import java.util.Map;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.citizen.notification.interimapplications.GeneralApplicationRejectedNotification.IS_OTHER_D11_APP;
+import static uk.gov.hmcts.divorce.citizen.notification.interimapplications.GeneralApplicationRejectedNotification.IS_SEARCH_GOV_RECORDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_APPLICATION_REJECTED_BY_CASEWORKER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -43,7 +47,10 @@ class GeneralApplicationRejectedNotificationTest {
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
 
-        notification.send(data, TEST_CASE_ID, true);
+        templateVars.put(IS_OTHER_D11_APP, NO);
+        templateVars.put(IS_SEARCH_GOV_RECORDS, YES);
+
+        notification.send(data, TEST_CASE_ID, true, true);
 
         verify(notificationService).sendEmail(
             TEST_USER_EMAIL,
@@ -63,7 +70,10 @@ class GeneralApplicationRejectedNotificationTest {
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(templateVars);
 
-        notification.send(data, TEST_CASE_ID, false);
+        templateVars.put(IS_OTHER_D11_APP, YES);
+        templateVars.put(IS_SEARCH_GOV_RECORDS, NO);
+
+        notification.send(data, TEST_CASE_ID, false, false);
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,

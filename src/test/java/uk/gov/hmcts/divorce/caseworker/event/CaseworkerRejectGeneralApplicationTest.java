@@ -162,7 +162,7 @@ class CaseworkerRejectGeneralApplicationTest {
     }
 
     @Test
-    void shouldSendNotificationInSubmittedCallbackIfOnlineSearchGovRecordsGenAppIsRejected() {
+    void shouldSendNotificationInSubmittedCallbackIfOnlineGenAppIsRejected() {
         final CaseData beforeCaseData = caseDataWithMarriageDate();
         List<ListValue<GeneralApplication>> beforeGeneralApplications = buildListOfGeneralApplications();
         var generalApplicationList = new ArrayList<>(beforeGeneralApplications);
@@ -186,11 +186,11 @@ class CaseworkerRejectGeneralApplicationTest {
 
         caseworkerRejectGeneralApplication.submitted(afterCaseDetails, beforeCaseDetails);
 
-        verify(generalApplicationRejectedNotification).send(afterCaseData, TEST_CASE_ID, true);
+        verify(generalApplicationRejectedNotification).send(afterCaseData, TEST_CASE_ID, true, true);
     }
 
     @Test
-    void shouldSendNotificationInSubmittedCallbackIfOfflineSearchGovRecordsGenAppIsRejected() {
+    void shouldNotSendNotificationInSubmittedCallbackIfOfflineGenAppIsRejected() {
         final CaseData beforeCaseData = caseDataWithMarriageDate();
         List<ListValue<GeneralApplication>> beforeGeneralApplications = buildListOfGeneralApplications();
         beforeGeneralApplications.get(1).getValue().setGeneralApplicationSubmittedOnline(YesOrNo.NO);
