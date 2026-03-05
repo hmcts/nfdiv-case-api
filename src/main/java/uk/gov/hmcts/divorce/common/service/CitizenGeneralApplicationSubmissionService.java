@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGenAppDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
@@ -66,7 +66,7 @@ public class CitizenGeneralApplicationSubmissionService {
             data.getApplication().setWelshPreviousState(details.getState());
             details.setState(WelshTranslationReview);
         } else if (isAwaitingDocuments) {
-            details.setState(AwaitingDocuments);
+            details.setState(AwaitingGenAppDocuments);
         } else if (isHwfApplication) {
             details.setState(AwaitingGeneralReferralPayment);
         } else {

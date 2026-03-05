@@ -37,7 +37,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.DIGI
 import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.SEARCH_GOV_RECORDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_CARD;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_HWF;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGenAppDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -165,7 +165,7 @@ class CitizenGeneralApplicationSubmissionServiceTest {
 
             submissionService.setEndState(details, application);
 
-            assertThat(details.getState()).isEqualTo(AwaitingDocuments);
+            assertThat(details.getState()).isEqualTo(AwaitingGenAppDocuments);
         }
 
         @Test
