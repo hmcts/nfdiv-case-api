@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
@@ -91,7 +92,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
                     .mandatory(FinalOrderAuthorisation::getFinalOrderJudgeName)
                 .done()
             .done()
-            .page("grantFinalOrder")
+            .page("grantFinalOrder", this::midEvent)
             .pageLabel("Grant Final Order")
             .complex(CaseData::getFinalOrder)
                 .mandatory(FinalOrder::getGranted)
@@ -149,6 +150,21 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
+            .build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails
+    ) {
+        log.info("Caseworker grant final order midEvent callback invoked for Case Id: {}", details.getId());
+
+        ValidationUtil.ErrorsAndWarnings errorsAndWarnings = ValidationUtil.validateFinalOrderGrantedDate(details);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .warnings(errorsAndWarnings.warnings)
+            .errors(errorsAndWarnings.errors)
             .build();
     }
 
