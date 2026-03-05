@@ -12,6 +12,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -19,6 +21,7 @@ import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -43,6 +46,10 @@ public final class ValidationUtil {
     public static final String CONNECTION = "Connection ";
     public static final String CANNOT_EXIST = " cannot exist";
     public static final String SOT_REQUIRED = "Statement of truth must be accepted by the person making the application";
+    public static final String WARNING_FO_GRANTED_NOT_WITHIN_CURRENT_CALENDAR_YEAR =
+        "The Final Order Granted date is not within the current year. Please verify the date before submitting.";
+    public static final String ERROR_FO_GRANTED_EARLIER_THAN_CO_GRANTED =
+        "The Final Order Granted date must be more recent than the Conditional Order Granted date.";
 
     private ValidationUtil() {
     }
@@ -274,6 +281,33 @@ public final class ValidationUtil {
             return singletonList("Partner has responded to application.");
         }
         return emptyList();
+    }
+
+    public static class ErrorsAndWarnings {
+        public List<String> errors = new ArrayList<>();
+        public List<String> warnings = new ArrayList<>();
+    }
+
+    public static ErrorsAndWarnings validateFinalOrderGrantedDate(CaseDetails<CaseData, State> details) {
+        FinalOrder finalOrder = details.getData().getFinalOrder();
+        ConditionalOrder conditionalOrder = details.getData().getConditionalOrder();
+        ErrorsAndWarnings errorsAndWarnings = new ErrorsAndWarnings();
+        errorsAndWarnings.errors = flattenLists(
+            !conditionalOrder.hasConditionalOrderBeenGranted() ? singletonList("Conditional Order has not been granted") : emptyList(),
+            notNull(conditionalOrder.getGrantedDate(), "conditionalOrderGrantedDate"),
+            !finalOrder.hasFinalOrderBeenGranted() ? singletonList("Final Order has not been granted") : emptyList(),
+            notNull(finalOrder.getGrantedDate(), "finalOrderGrantedDate")
+        );
+
+        if (errorsAndWarnings.errors.isEmpty()) {
+            if (finalOrder.getGrantedDate().toLocalDate().isBefore(conditionalOrder.getGrantedDate())) {
+                errorsAndWarnings.errors.add(ERROR_FO_GRANTED_EARLIER_THAN_CO_GRANTED);
+            } else if (finalOrder.getGrantedDate().getYear() != LocalDate.now().getYear()) {
+                errorsAndWarnings.warnings.add(WARNING_FO_GRANTED_NOT_WITHIN_CURRENT_CALENDAR_YEAR);
+            }
+        }
+
+        return errorsAndWarnings;
     }
 
 }
