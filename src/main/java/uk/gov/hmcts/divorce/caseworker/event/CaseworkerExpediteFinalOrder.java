@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ExpeditedFinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
@@ -73,7 +74,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR, JUDGE))
-            .page("expediteFinalOrder")
+            .page("expediteFinalOrder", this::midEvent)
             .pageLabel("Expedite Final Order")
             .complex(CaseData::getDocuments)
                 .mandatory(CaseDocuments::getGeneralOrderDocumentNames)
@@ -130,6 +131,21 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
+            .build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails
+    ) {
+        log.info("Caseworker expedite final order midEvent callback invoked for Case Id: {}", details.getId());
+
+        ValidationUtil.ErrorsAndWarnings errorsAndWarnings = ValidationUtil.validateFinalOrderGrantedDate(details);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .warnings(errorsAndWarnings.warnings)
+            .errors(errorsAndWarnings.errors)
             .build();
     }
 
