@@ -135,10 +135,9 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
             .build();
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
-        final CaseDetails<CaseData, State> details,
-        final CaseDetails<CaseData, State> beforeDetails
-    ) {
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
+                                                                  CaseDetails<CaseData, State> beforeDetails) {
+
         log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_EXPEDITE_FINAL_ORDER, details.getId());
 
         ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(details);
