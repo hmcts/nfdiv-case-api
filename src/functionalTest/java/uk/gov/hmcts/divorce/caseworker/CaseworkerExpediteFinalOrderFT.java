@@ -33,9 +33,6 @@ public class CaseworkerExpediteFinalOrderFT extends FunctionalTestSuite {
     public static final String REQUEST_CASEWORKER_EXPEDITE_FINAL_ORDER_OFFLINE_JSON =
         "classpath:request/casedata/ccd-callback-caseworker-expedite-final-order-offline.json";
 
-    private static final String REQUEST_CASEWORKER_EXPEDITE_FINAL_ORDER_SOLICITOR_JSON =
-        "classpath:request/casedata/ccd-callback-caseworker-expedite-final-order-solicitor.json";
-
     @Test
     public void shouldGenerateGrantFinalOrderDocumentAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvokedForDivorce() throws Exception {
         final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_EXPEDITE_FINAL_ORDER_JSON);
