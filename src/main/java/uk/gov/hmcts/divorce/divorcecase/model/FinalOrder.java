@@ -557,6 +557,6 @@ public class FinalOrder {
 
     @JsonIgnore
     public boolean hasFinalOrderBeenGranted() {
-        return granted.equals(Set.of(Granted.YES));
+        return granted != null;
     }
 }
