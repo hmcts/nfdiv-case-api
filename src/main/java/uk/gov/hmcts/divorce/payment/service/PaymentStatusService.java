@@ -175,7 +175,7 @@ public class PaymentStatusService {
     private boolean canServiceRequestBeCancelled(ServiceRequestDto serviceRequest) {
         ServiceRequestStatus serviceRequestStatus = serviceRequest.getServiceRequestStatus();
         boolean hasServiceRequestBeenPaid = !ServiceRequestStatus.NOT_PAID.equals(serviceRequestStatus);
-        boolean isServiceRequestWithinGracePeriod = isDateWithinGracePeriod(serviceRequest.getDateCreated());
+        boolean isServiceRequestWithinGracePeriod = isDateWithinGracePeriod(serviceRequest.getDateUpdated());
 
         if (isServiceRequestWithinGracePeriod || hasServiceRequestBeenPaid) {
             return false;
