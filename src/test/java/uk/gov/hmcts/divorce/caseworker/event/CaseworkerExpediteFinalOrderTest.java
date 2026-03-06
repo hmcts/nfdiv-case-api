@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -26,6 +27,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -121,6 +123,34 @@ class CaseworkerExpediteFinalOrderTest {
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .isEqualTo(Collections.singletonList(ERROR_NO_CO_GRANTED_DATE));
+    }
+
+    @Test
+    void shouldValidateFoGrantedDateIfFoGranted() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+
+        LocalDateTime foGrantedDate = LocalDateTime.of(2026, 1, 1, 12, 0);
+        LocalDate coGrantedDate = foGrantedDate.toLocalDate();
+        final ConditionalOrder conditionalOrder = ConditionalOrder.builder()
+            .granted(YesOrNo.YES)
+            .grantedDate(coGrantedDate)
+            .build();
+        final FinalOrder finalOrder = FinalOrder.builder()
+            .granted(Set.of(FinalOrder.Granted.YES))
+            .grantedDate(foGrantedDate)
+            .build();
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(conditionalOrder)
+            .finalOrder(finalOrder)
+            .build();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerExpediteFinalOrder.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isEmpty();
+        assertThat(response.getWarnings()).isEmpty();
     }
 
     @Test

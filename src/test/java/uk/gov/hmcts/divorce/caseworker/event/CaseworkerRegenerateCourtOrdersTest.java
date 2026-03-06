@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
@@ -28,9 +29,11 @@ import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPr
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateConditionalOrderPronouncedDocument;
 import uk.gov.hmcts.divorce.systemupdate.service.task.RemoveExistingConditionalOrderPronouncedDocument;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -85,6 +88,34 @@ class CaseworkerRegenerateCourtOrdersTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(CASEWORKER_REGENERATE_COURT_ORDERS);
+    }
+
+    @Test
+    void shouldValidateFoGrantedDateIfFoGranted() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+
+        LocalDateTime foGrantedDate = LocalDateTime.of(2026, 1, 1, 12, 0);
+        LocalDate coGrantedDate = foGrantedDate.toLocalDate();
+        final ConditionalOrder conditionalOrder = ConditionalOrder.builder()
+            .granted(YesOrNo.YES)
+            .grantedDate(coGrantedDate)
+            .build();
+        final FinalOrder finalOrder = FinalOrder.builder()
+            .granted(Set.of(FinalOrder.Granted.YES))
+            .grantedDate(foGrantedDate)
+            .build();
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(conditionalOrder)
+            .finalOrder(finalOrder)
+            .build();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerRegenerateCourtOrders.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isEmpty();
+        assertThat(response.getWarnings()).isEmpty();
     }
 
     @Test
