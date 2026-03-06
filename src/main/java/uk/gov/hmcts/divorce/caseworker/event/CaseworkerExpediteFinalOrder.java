@@ -75,7 +75,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR, JUDGE))
-            .page("expediteFinalOrder", this::midEvent)
+            .page("expediteFinalOrder")
             .pageLabel("Expedite Final Order")
             .complex(CaseData::getDocuments)
                 .mandatory(CaseDocuments::getGeneralOrderDocumentNames)
@@ -135,20 +135,6 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
             .build();
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
-                                                                  CaseDetails<CaseData, State> beforeDetails) {
-
-        log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_EXPEDITE_FINAL_ORDER, details.getId());
-
-        ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(details);
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .warnings(errorsAndWarnings.warnings)
-            .errors(errorsAndWarnings.errors)
-            .build();
-    }
-
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
 
@@ -159,6 +145,14 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
 
         if (isEmpty(finalOrder.getGrantedDate())) {
             finalOrder.setGrantedDate(LocalDateTime.now(clock));
+        }
+
+        ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(details);
+        if (!errorsAndWarnings.errors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(errorsAndWarnings.errors)
+                .build();
         }
 
         finalOrder.setDateFinalOrderEligibleFrom(LocalDate.now(clock));
@@ -187,6 +181,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
+            .warnings(errorsAndWarnings.warnings)
             .state(FinalOrderComplete)
             .build();
     }
