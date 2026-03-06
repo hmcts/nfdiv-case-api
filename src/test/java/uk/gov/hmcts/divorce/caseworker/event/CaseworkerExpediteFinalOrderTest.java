@@ -12,7 +12,6 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -245,7 +244,6 @@ class CaseworkerExpediteFinalOrderTest {
             .getGeneralOrders().get(0).getValue().getGeneralOrderDocument().getDocumentFileName();
         caseData.setConditionalOrder(
             ConditionalOrder.builder()
-                .granted(YesOrNo.YES)
                 .grantedDate(LocalDate.now())
                 .build()
         );
