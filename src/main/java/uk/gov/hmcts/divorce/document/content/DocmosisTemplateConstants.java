@@ -249,6 +249,10 @@ public final class DocmosisTemplateConstants {
     public static final String RESPONDENT_CY = "Atebydd:";
     public static final String APPLICANT_2 = "Applicant 2:";
     public static final String APPLICANT_2_CY = "Ceisydd 2:";
+    public static final String APPLICANT_LABEL = "Applicant";
+    public static final String APPLICANT_1_LABEL = "Applicant 1";
+    public static final String APPLICANT_2_LABEL = "Applicant 2";
+    public static final String RESPONDENT_LABEL = "Respondent";
 
     public static final String REQUEST_FOR_INFORMATION_DETAILS = "requestForInformationDetails";
     public static final String HMCTS_LOGO = "hmctsLogo";
