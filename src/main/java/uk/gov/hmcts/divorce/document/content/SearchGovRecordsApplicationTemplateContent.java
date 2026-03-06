@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.document.content;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -14,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.SearchGovRecordsWhichDepartment;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
@@ -49,6 +49,7 @@ public class SearchGovRecordsApplicationTemplateContent {
     public static final String KNOW_ADDITIONAL_ADDRESSES_FOR_PARTNER = "knowAdditionalAddressesForPartner";
     public static final String ADDITIONAL_ADDRESS1 = "additionalAddress1";
     public static final String ADDITIONAL_ADDRESS_1_DATES_LIVED_THERE = "additionalAddress1DatesLivedThere";
+    public static final String PROVIDES_ADDRESS2 = "providesAddress2";
     public static final String ADDITIONAL_ADDRESS2 = "additionalAddress2";
     public static final String ADDITIONAL_ADDRESS_2_DATES_LIVED_THERE = "additionalAddress2DatesLivedThere";
 
@@ -90,8 +91,7 @@ public class SearchGovRecordsApplicationTemplateContent {
     ) {
         templateContent.put(WHY_SEARCH_GOV_RECORDS, applicationAnswers.getReasonForApplying());
         templateContent.put(DEPARTMENTS_TO_SEARCH, applicationAnswers.getWhichDepartments().stream()
-            .filter(Predicate.not(SearchGovRecordsWhichDepartment.OTHER::equals))
-                .map(SearchGovRecordsWhichDepartment::getLabel).collect(Collectors.toSet()).toString());
+            .map(SearchGovRecordsWhichDepartment::getLabel).collect(Collectors.toSet()).toString());
 
         if (applicationAnswers.getWhichDepartments()
             .contains(SearchGovRecordsWhichDepartment.OTHER)) {
@@ -130,6 +130,7 @@ public class SearchGovRecordsApplicationTemplateContent {
             ? getWelshText(knownAdditionalAddresses) : knownAdditionalAddresses);
         templateContent.put(ADDITIONAL_ADDRESS1, applicationAnswers.getPartnerAdditionalAddress1());
         templateContent.put(ADDITIONAL_ADDRESS_1_DATES_LIVED_THERE, applicationAnswers.getPartnerAdditionalAddressDates1());
+        templateContent.put(PROVIDES_ADDRESS2, StringUtils.isEmpty(applicationAnswers.getPartnerAdditionalAddress2()) ? "No" : "Yes");
         templateContent.put(ADDITIONAL_ADDRESS2, applicationAnswers.getPartnerAdditionalAddress2());
         templateContent.put(ADDITIONAL_ADDRESS_2_DATES_LIVED_THERE, applicationAnswers.getPartnerAdditionalAddressDates2());
 
