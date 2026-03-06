@@ -838,8 +838,8 @@ class ValidationUtilTest {
 
     @Test
     void shouldReturnErrorsWhenCoHasNotBeenSubmitted() {
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = caseData();
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
@@ -858,10 +858,10 @@ class ValidationUtilTest {
     void shouldReturnErrorsWhenFoHasNotBeenSubmitted() {
         LocalDate coGrantedDate = LocalDate.now();
 
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = caseData();
         caseData.getConditionalOrder().setGranted(YES);
         caseData.getConditionalOrder().setGrantedDate(coGrantedDate);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
@@ -879,12 +879,12 @@ class ValidationUtilTest {
         LocalDate coGrantedDate = LocalDate.now();
         LocalDateTime foGrantedDate = LocalDateTime.now().minusDays(1);
 
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = caseData();
         caseData.getConditionalOrder().setGranted(YES);
         caseData.getConditionalOrder().setGrantedDate(coGrantedDate);
         caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
         caseData.getFinalOrder().setGrantedDate(foGrantedDate);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
@@ -901,12 +901,12 @@ class ValidationUtilTest {
         LocalDate coGrantedDate = LocalDate.now();
         LocalDateTime foGrantedDate = LocalDateTime.now().plusYears(1);
 
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         CaseData caseData = caseData();
         caseData.getConditionalOrder().setGranted(YES);
         caseData.getConditionalOrder().setGrantedDate(coGrantedDate);
         caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
         caseData.getFinalOrder().setGrantedDate(foGrantedDate);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
