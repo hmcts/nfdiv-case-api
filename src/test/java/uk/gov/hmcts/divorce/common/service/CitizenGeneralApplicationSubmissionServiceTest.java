@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.generator.GeneralApplicationD11Generator;
 import uk.gov.hmcts.divorce.document.print.generator.SearchGovRecordsApplicationGenerator;
 
 import java.time.LocalDateTime;
@@ -37,7 +38,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.DIGI
 import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.SEARCH_GOV_RECORDS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_CARD;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_HWF;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGenAppDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -53,6 +54,9 @@ class CitizenGeneralApplicationSubmissionServiceTest {
 
     @Mock
     private GeneralApplicationD11SubmittedNotification d11Notification;
+
+    @Mock
+    private GeneralApplicationD11Generator d11Generator;
 
     @InjectMocks
     private CitizenGeneralApplicationSubmissionService submissionService;
@@ -75,6 +79,25 @@ class CitizenGeneralApplicationSubmissionServiceTest {
             );
 
             verify(searchGovRecordsGenerator)
+                .generateDocument(TEST_CASE_ID, caseData.getApplicant1(), caseData, application);
+            assertThat(result).isEqualTo(document);
+        }
+
+        @Test
+        void shouldDelegateToD11Generator() {
+            CaseData caseData = buildCaseData(DIGITISED_GENERAL_APPLICATION_D11);
+            GeneralApplication application = buildApplication(GeneralApplicationType.AMEND_APPLICATION);
+            DivorceDocument document = DivorceDocument.builder().build();
+
+            when(d11Generator.generateDocument(
+                TEST_CASE_ID, caseData.getApplicant1(), caseData, application
+            )).thenReturn(document);
+
+            DivorceDocument result = submissionService.generateGeneralApplicationAnswerDocument(
+                TEST_CASE_ID, caseData.getApplicant1(), caseData, application
+            );
+
+            verify(d11Generator)
                 .generateDocument(TEST_CASE_ID, caseData.getApplicant1(), caseData, application);
             assertThat(result).isEqualTo(document);
         }
@@ -157,7 +180,7 @@ class CitizenGeneralApplicationSubmissionServiceTest {
 
             submissionService.setEndState(details, application);
 
-            assertThat(details.getState()).isEqualTo(AwaitingDocuments);
+            assertThat(details.getState()).isEqualTo(AwaitingGenAppDocuments);
         }
 
         @Test

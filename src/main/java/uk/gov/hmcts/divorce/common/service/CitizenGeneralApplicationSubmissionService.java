@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.generator.GeneralApplicationD11Generator;
 import uk.gov.hmcts.divorce.document.print.generator.SearchGovRecordsApplicationGenerator;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGenAppDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
@@ -41,6 +42,7 @@ public class CitizenGeneralApplicationSubmissionService {
 
     private final SearchGovRecordsApplicationGenerator searchGovRecordsApplicationGenerator;
     private final SearchGovRecordsApplicationSubmittedNotification searchGovApplicationSubmittedNotification;
+    private final GeneralApplicationD11Generator generalApplicationD11Generator;
 
     private final GeneralApplicationD11SubmittedNotification d11Notification;
 
@@ -67,7 +69,7 @@ public class CitizenGeneralApplicationSubmissionService {
             data.getApplication().setWelshPreviousState(details.getState());
             details.setState(WelshTranslationReview);
         } else if (isAwaitingDocuments) {
-            details.setState(AwaitingDocuments);
+            details.setState(AwaitingGenAppDocuments);
         } else if (isHwfApplication) {
             details.setState(AwaitingGeneralReferralPayment);
         } else {
@@ -104,7 +106,7 @@ public class CitizenGeneralApplicationSubmissionService {
         if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplicationType)) {
             return searchGovRecordsApplicationGenerator.generateDocument(caseId, applicant, caseData, generalApplication);
         } else if (generalApplicationType != null) {
-            return DivorceDocument.builder().build();
+            return generalApplicationD11Generator.generateDocument(caseId, applicant, caseData, generalApplication);
         } else {
             throw new UnsupportedOperationException();
         }
