@@ -159,7 +159,9 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
         final CaseDetails<CaseData, State> beforeDetails
     ) {
         log.info("Caseworker grant final order midEvent callback invoked for Case Id: {}", details.getId());
+
         ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(details);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
             .warnings(errorsAndWarnings.warnings)
