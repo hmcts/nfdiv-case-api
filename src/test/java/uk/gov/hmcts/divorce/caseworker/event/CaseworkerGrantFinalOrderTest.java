@@ -186,7 +186,6 @@ class CaseworkerGrantFinalOrderTest {
         LocalDateTime foGrantedDate = LocalDateTime.of(2026, 1, 1, 12, 0);
         LocalDate coGrantedDate = foGrantedDate.toLocalDate();
         final ConditionalOrder conditionalOrder = ConditionalOrder.builder()
-            .granted(YesOrNo.YES)
             .grantedDate(coGrantedDate)
             .build();
         final FinalOrder finalOrder = FinalOrder.builder()

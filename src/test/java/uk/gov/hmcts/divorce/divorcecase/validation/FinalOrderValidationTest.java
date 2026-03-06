@@ -15,7 +15,6 @@ import java.util.Set;
 
 import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_CO_NOT_GRANTED;
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_FO_GRANTED_EARLIER_THAN_CO_GRANTED;
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_FO_NOT_GRANTED;
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_TOO_EARLY_FOR_RESPONDENT_FINAL_ORDER;
@@ -81,8 +80,7 @@ class FinalOrderValidationTest {
 
         assertThat(errorsAndWarnings.warnings).isEmpty();
         assertThat(errorsAndWarnings.errors).isNotEmpty();
-        assertThat(errorsAndWarnings.errors.size()).isEqualTo(4);
-        assertThat(errorsAndWarnings.errors).contains(ERROR_CO_NOT_GRANTED);
+        assertThat(errorsAndWarnings.errors.size()).isEqualTo(3);
         assertThat(errorsAndWarnings.errors).contains("conditionalOrderGrantedDate" + EMPTY);
         assertThat(errorsAndWarnings.errors).contains(ERROR_FO_NOT_GRANTED);
         assertThat(errorsAndWarnings.errors).contains("finalOrderGrantedDate" + EMPTY);
