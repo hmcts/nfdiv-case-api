@@ -43,6 +43,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ErrorsAndWarnings;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.validateFinalOrderGrantedDate;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
@@ -91,7 +93,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
                     .mandatory(FinalOrderAuthorisation::getFinalOrderJudgeName)
                 .done()
             .done()
-            .page("grantFinalOrder")
+            .page("grantFinalOrder", this::midEvent)
             .pageLabel("Grant Final Order")
             .complex(CaseData::getFinalOrder)
                 .mandatory(FinalOrder::getGranted)
@@ -149,6 +151,20 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
+            .build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
+                                                                  CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_GRANT_FINAL_ORDER, details.getId());
+
+        ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(details);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .warnings(errorsAndWarnings.warnings)
+            .errors(errorsAndWarnings.errors)
             .build();
     }
 
