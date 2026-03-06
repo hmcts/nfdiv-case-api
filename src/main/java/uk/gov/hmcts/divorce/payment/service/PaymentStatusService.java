@@ -168,7 +168,7 @@ public class PaymentStatusService {
         if (allServiceRequestsCanBeCancelled) {
             rejectCase(caseDetails, "no recent service requests and no successful payments found", user, serviceAuth);
         } else {
-            log.info("Skipping case {} - successful payment found", caseDetails.getId());
+            log.info("Skipping case {} - Successful payment or recent payment activity within 24 hours found", caseDetails.getId());
         }
     }
 
