@@ -50,6 +50,8 @@ public final class ValidationUtil {
         "The Final Order Granted date is not within the current year. Please verify the date before submitting.";
     public static final String ERROR_FO_GRANTED_EARLIER_THAN_CO_GRANTED =
         "The Final Order Granted date must be more recent than the Conditional Order Granted date.";
+    public static final String ERROR_CO_NOT_GRANTED = "Conditional Order has not been granted";
+    public static final String ERROR_FO_NOT_GRANTED = "Final Order has not been granted";
 
     private ValidationUtil() {
     }
@@ -293,9 +295,9 @@ public final class ValidationUtil {
         ConditionalOrder conditionalOrder = details.getData().getConditionalOrder();
         ErrorsAndWarnings errorsAndWarnings = new ErrorsAndWarnings();
         errorsAndWarnings.errors = flattenLists(
-            !conditionalOrder.hasConditionalOrderBeenGranted() ? singletonList("Conditional Order has not been granted") : emptyList(),
+            !conditionalOrder.hasConditionalOrderBeenGranted() ? singletonList(ERROR_CO_NOT_GRANTED) : emptyList(),
             notNull(conditionalOrder.getGrantedDate(), "conditionalOrderGrantedDate"),
-            !finalOrder.hasFinalOrderBeenGranted() ? singletonList("Final Order has not been granted") : emptyList(),
+            !finalOrder.hasFinalOrderBeenGranted() ? singletonList(ERROR_FO_NOT_GRANTED) : emptyList(),
             notNull(finalOrder.getGrantedDate(), "finalOrderGrantedDate")
         );
 
