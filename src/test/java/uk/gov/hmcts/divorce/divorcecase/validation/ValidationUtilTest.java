@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
-import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -48,11 +47,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.validateChangeServiceRequest;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.ERROR_CO_NOT_GRANTED;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.ERROR_FO_GRANTED_EARLIER_THAN_CO_GRANTED;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.ERROR_FO_NOT_GRANTED;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SUBMITTED_DATE_IS_NULL;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.WARNING_FO_GRANTED_NOT_WITHIN_CURRENT_CALENDAR_YEAR;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
@@ -834,88 +829,4 @@ class ValidationUtilTest {
         assertThat(errors.size()).isEqualTo(1);
         assertThat(errors).contains("Partner has responded to application.");
     }
-
-
-    @Test
-    void shouldReturnErrorsWhenCoHasNotBeenSubmitted() {
-        CaseData caseData = caseData();
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        ValidationUtil.ErrorsAndWarnings errorsAndWarnings = ValidationUtil.validateFinalOrderGrantedDate(caseDetails);
-
-        assertThat(errorsAndWarnings.warnings).isEmpty();
-        assertThat(errorsAndWarnings.errors).isNotEmpty();
-        assertThat(errorsAndWarnings.errors.size()).isEqualTo(4);
-        assertThat(errorsAndWarnings.errors).contains(ERROR_CO_NOT_GRANTED);
-        assertThat(errorsAndWarnings.errors).contains("conditionalOrderGrantedDate" + EMPTY);
-        assertThat(errorsAndWarnings.errors).contains(ERROR_FO_NOT_GRANTED);
-        assertThat(errorsAndWarnings.errors).contains("finalOrderGrantedDate" + EMPTY);
-    }
-
-    @Test
-    void shouldReturnErrorsWhenFoHasNotBeenSubmitted() {
-        LocalDate coGrantedDate = LocalDate.now();
-
-        CaseData caseData = caseData();
-        caseData.getConditionalOrder().setGranted(YES);
-        caseData.getConditionalOrder().setGrantedDate(coGrantedDate);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        ValidationUtil.ErrorsAndWarnings errorsAndWarnings = ValidationUtil.validateFinalOrderGrantedDate(caseDetails);
-
-        assertThat(errorsAndWarnings.warnings).isEmpty();
-        assertThat(errorsAndWarnings.errors).isNotEmpty();
-        assertThat(errorsAndWarnings.errors.size()).isEqualTo(2);
-        assertThat(errorsAndWarnings.errors).contains(ERROR_FO_NOT_GRANTED);
-        assertThat(errorsAndWarnings.errors).contains("finalOrderGrantedDate" + EMPTY);
-    }
-
-    @Test
-    void shouldReturnErrorWhenFoGrantedDateIsBeforeCoGrantedDate() {
-        LocalDate coGrantedDate = LocalDate.now();
-        LocalDateTime foGrantedDate = LocalDateTime.now().minusDays(1);
-
-        CaseData caseData = caseData();
-        caseData.getConditionalOrder().setGranted(YES);
-        caseData.getConditionalOrder().setGrantedDate(coGrantedDate);
-        caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
-        caseData.getFinalOrder().setGrantedDate(foGrantedDate);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        ValidationUtil.ErrorsAndWarnings errorsAndWarnings = ValidationUtil.validateFinalOrderGrantedDate(caseDetails);
-
-        assertThat(errorsAndWarnings.warnings).isEmpty();
-        assertThat(errorsAndWarnings.errors).isNotEmpty();
-        assertThat(errorsAndWarnings.errors.size()).isEqualTo(1);
-        assertThat(errorsAndWarnings.errors).contains(ERROR_FO_GRANTED_EARLIER_THAN_CO_GRANTED);
-    }
-
-    @Test
-    void shouldReturnWarningWhenFoGrantedDateNotInCurrentCalendarYear() {
-        LocalDate coGrantedDate = LocalDate.now();
-        LocalDateTime foGrantedDate = LocalDateTime.now().plusYears(1);
-
-        CaseData caseData = caseData();
-        caseData.getConditionalOrder().setGranted(YES);
-        caseData.getConditionalOrder().setGrantedDate(coGrantedDate);
-        caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
-        caseData.getFinalOrder().setGrantedDate(foGrantedDate);
-        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-
-        ValidationUtil.ErrorsAndWarnings errorsAndWarnings = ValidationUtil.validateFinalOrderGrantedDate(caseDetails);
-
-        assertThat(errorsAndWarnings.errors).isEmpty();
-        assertThat(errorsAndWarnings.warnings).isNotEmpty();
-        assertThat(errorsAndWarnings.warnings.size()).isEqualTo(1);
-        assertThat(errorsAndWarnings.warnings).contains(WARNING_FO_GRANTED_NOT_WITHIN_CURRENT_CALENDAR_YEAR);
-    }
-
 }
