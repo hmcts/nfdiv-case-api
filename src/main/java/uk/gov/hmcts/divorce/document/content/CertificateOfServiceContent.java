@@ -7,7 +7,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -25,10 +24,12 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 public class CertificateOfServiceContent {
 
     private final Clock clock;
+    private final DocmosisCommonContent docmosisCommonContent;
 
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
-        final Map<String, Object> templateContent = new HashMap<>();
+        final Map<String, Object> templateContent = docmosisCommonContent
+            .getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference());
 
         log.info("For ccd case reference {} and type(divorce/dissolution) {} ", ccdCaseReference, caseData.getDivorceOrDissolution());
 

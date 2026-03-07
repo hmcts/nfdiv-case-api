@@ -13,7 +13,6 @@ import uk.gov.hmcts.divorce.document.content.provider.ApplicationTemplateDataPro
 import uk.gov.hmcts.divorce.notification.FormatUtil;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -72,9 +71,9 @@ public class ApplicationSoleTemplateContent {
 
     private final ApplicationTemplateDataProvider applicationTemplateDataProvider;
 
-    public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
+    private final DocmosisCommonContent docmosisCommonContent;
 
-        final Map<String, Object> templateContent = new HashMap<>();
+    public Map<String, Object> apply(final CaseData caseData, final Long caseId) {
 
         var isJudicialSeparationCase = caseData.isJudicialSeparationCase();
         var divorceOrCivilPartnershipJS = isJudicialSeparationCase ?  "judicial separation" : "separation";
@@ -91,6 +90,9 @@ public class ApplicationSoleTemplateContent {
         final Applicant applicant2 = caseData.getApplicant2();
 
         LanguagePreference languagePreference = applicant1.getLanguagePreference();
+
+        final Map<String, Object> templateContent = docmosisCommonContent
+            .getBasicDocmosisTemplateContent(languagePreference);
 
         templateContent.put(IS_DIVORCE, caseData.getDivorceOrDissolution().isDivorce());
 
