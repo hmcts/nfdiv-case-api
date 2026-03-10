@@ -277,6 +277,8 @@ class ValidationUtilTest {
     void shouldReturnFalseWhenCaseDoesNotHaveAwaitingDocuments() {
         CaseData caseData = new CaseData();
         caseData.setDivorceOrDissolution(DIVORCE);
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(YES);
+        caseData.getApplication().setApplicant1FoundApplicant2Address(YES);
         assertFalse(caseData.getApplication().hasAwaitingApplicant1Documents());
     }
 
