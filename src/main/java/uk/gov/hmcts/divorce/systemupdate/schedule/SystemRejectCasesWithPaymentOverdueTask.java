@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.payment.service.PaymentStatusService;
@@ -31,6 +32,9 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.SUPPLEM
 @RequiredArgsConstructor
 @Slf4j
 public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
+
+    @Value("${core_case_data.search.total_max_results}")
+    private int totalMaxResults;
 
     private static final String LAST_STATE_MODIFIED_DATE = "last_state_modified_date";
     private static final String NEW_PAPER_CASE = "newPaperCase";
@@ -63,10 +67,11 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
                 .filter(rangeQuery(LAST_STATE_MODIFIED_DATE).lte(LocalDate.now().minusDays(14)));
 
             final List<CaseDetails> casesInAwaitingPaymentStateForPaymentOverdue =
-                ccdSearchService.searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPayment);
-
-            log.info("Total cases returned in AwaitingPayment state for payment overdue:{}",
-                casesInAwaitingPaymentStateForPaymentOverdue.size());
+                ccdSearchService
+                    .searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPayment)
+                    .stream()
+                    .limit(totalMaxResults)
+                    .toList();
 
             log.info("Total cases returned in AwaitingPayment state for payment overdue:{}",
                 casesInAwaitingPaymentStateForPaymentOverdue.size());
