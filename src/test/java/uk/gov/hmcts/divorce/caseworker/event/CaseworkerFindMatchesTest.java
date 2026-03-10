@@ -182,6 +182,38 @@ class CaseworkerFindMatchesTest {
             .isNull();
     }
 
+    @Test
+    void shouldNotAddMatchesThatAreInInappropriateCaseMatchesList() {
+        CaseData caseData = buildEmptyCaseData();
+        String inappropriateRef = "67890";
+        String appropriateRef = "12345";
+
+        ListValue<CaseMatch> inappropriateMatch = ListValue.<CaseMatch>builder()
+            .value(CaseMatch.builder()
+                .caseLink(CaseLink.builder().caseReference(inappropriateRef).build())
+                .build())
+            .build();
+        caseData.setInappropriateCaseMatches(new ArrayList<>(List.of(inappropriateMatch)));
+
+        List<CaseMatch> newMatches = List.of(
+            CaseMatch.builder()
+                .caseLink(CaseLink.builder().caseReference(inappropriateRef).build())
+                .build(),
+            CaseMatch.builder()
+                .caseLink(CaseLink.builder().caseReference(appropriateRef).build())
+                .build()
+        );
+
+        caseworkerFindMatches.setToNewMatches(caseData, newMatches);
+
+        assertThat(caseData.getCaseMatches())
+            .as("Should only add matches that are NOT in inappropriate case matches list")
+            .hasSize(1);
+
+        assertThat(caseData.getCaseMatches().get(0).getValue().getCaseLink().getCaseReference())
+            .isEqualTo(appropriateRef);
+    }
+
 
     private CaseDetails<CaseData, State> buildCaseDetails() {
         CaseData caseData = buildEmptyCaseData();
