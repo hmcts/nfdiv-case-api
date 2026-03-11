@@ -35,6 +35,7 @@ import java.util.Optional;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -74,7 +75,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .showCondition(NEVER_SHOW)
-            .grant(CREATE_READ_UPDATE, CREATOR)
+            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE));
     }
 
