@@ -8,9 +8,10 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
-import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.GeneralApplicationNotification;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.LocalDate;
@@ -29,7 +30,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class GeneralApplicationD11SubmittedNotification implements ApplicantNotification {
+public class GeneralApplicationD11SubmittedNotification implements GeneralApplicationNotification {
 
     @Value("${interim_application.response_offset_days}")
     private long interimApplicationResponseOffsetDays;
@@ -37,16 +38,20 @@ public class GeneralApplicationD11SubmittedNotification implements ApplicantNoti
     private final NotificationService notificationService;
     private final CommonContent commonContent;
 
-    public void sendToApplicant1(final CaseData caseData, final Long caseId, GeneralApplication generalApplication) {
-        log.info("Sending d11 general application submitted notification to applicant 1 on case id {}", caseId);
+    public void sendToApplicant(final CaseData caseData, final Long caseId, GeneralApplication generalApplication) {
+        final GeneralParties generalParties = generalApplication.getGeneralApplicationParty();
+        log.info("Sending d11 general application submitted notification to {} on case id {}", generalParties.getLabel(), caseId);
 
+        final boolean isApplicant1 = GeneralParties.APPLICANT.equals(generalApplication.getGeneralApplicationParty());
+        final Applicant applicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
+        final Applicant partner = isApplicant1 ? caseData.getApplicant2() : caseData.getApplicant1();
         boolean awaitingDocuments = YesOrNo.NO.equals(generalApplication.getGeneralApplicationDocsUploadedPreSubmission());
 
         notificationService.sendEmail(
-            caseData.getApplicant1().getEmail(),
+            applicant.getEmail(),
             awaitingDocuments ? GENERAL_APPLICATION_D11_AWAITING_DOCUMENTS : GENERAL_APPLICATION_D11_SUBMITTED,
-            templateVars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2(), generalApplication),
-            caseData.getApplicant1().getLanguagePreference(),
+            templateVars(caseData, caseId, applicant, partner, generalApplication),
+            applicant.getLanguagePreference(),
             caseId
         );
     }
