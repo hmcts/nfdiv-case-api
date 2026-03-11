@@ -13,7 +13,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
@@ -135,7 +134,7 @@ public class CitizenSubmitApplicationIT {
     public void givenValidCaseDataWithHwfThenSendEmailsToApplicant1AndReturnResponseWithNoErrors() throws Exception {
         CaseData caseData = validApplicant1CaseData();
         caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
-        caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YesOrNo.YES);
+        caseData.getApplication().getApplicant1HelpWithFees().setNeedHelp(YES);
 
         stubForFeesLookup(TestDataHelper.getFeeResponseAsJson());
         stubCreateServiceRequest(OK, buildServiceReferenceRequest(caseData, caseData.getApplicant1().getFullName()));
