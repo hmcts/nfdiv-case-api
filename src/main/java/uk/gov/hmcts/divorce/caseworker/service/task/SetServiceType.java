@@ -14,7 +14,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERV
 @Component
 @Slf4j
 public class SetServiceType implements CaseTask {
-
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> details) {
 

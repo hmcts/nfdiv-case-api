@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
@@ -52,6 +53,7 @@ class GeneralApplicationD11SubmittedNotificationTest {
             .generalApplicationD11JourneyOptions(GeneralApplicationD11JourneyOptions.builder().build())
             .build());
         GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationParty(GeneralParties.APPLICANT)
             .generalApplicationDocsUploadedPreSubmission(YesOrNo.NO)
             .generalApplicationFee(
                 FeeDetails.builder()
@@ -64,7 +66,7 @@ class GeneralApplicationD11SubmittedNotificationTest {
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
 
-        notification.sendToApplicant1(data, TEST_CASE_ID, generalApplication);
+        notification.sendToApplicant(data, TEST_CASE_ID, generalApplication);
 
         verify(notificationService).sendEmail(
             TEST_USER_EMAIL,
@@ -84,6 +86,7 @@ class GeneralApplicationD11SubmittedNotificationTest {
             .generalApplicationD11JourneyOptions(GeneralApplicationD11JourneyOptions.builder().build())
             .build());
         GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationParty(GeneralParties.APPLICANT)
             .generalApplicationFee(
                 FeeDetails.builder()
                     .dateOfPayment(LocalDate.of(2022, 1, 1))
@@ -96,7 +99,7 @@ class GeneralApplicationD11SubmittedNotificationTest {
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
 
-        notification.sendToApplicant1(data, TEST_CASE_ID, generalApplication);
+        notification.sendToApplicant(data, TEST_CASE_ID, generalApplication);
 
         verify(notificationService).sendEmail(
             TEST_USER_EMAIL,
