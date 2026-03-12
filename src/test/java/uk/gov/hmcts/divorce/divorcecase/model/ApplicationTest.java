@@ -187,6 +187,8 @@ class ApplicationTest {
 
         final var application = Application.builder()
             .applicant1WantsToHavePapersServedAnotherWay(NO)
+            .applicant1KnowsApplicant2Address(YES)
+            .applicant1FoundApplicant2Address(YES)
             .build();
 
         assertThat(application.hasAwaitingApplicant1Documents()).isFalse();
@@ -207,6 +209,7 @@ class ApplicationTest {
 
         final var application = Application.builder()
             .applicant1KnowsApplicant2Address(YES)
+            .applicant1FoundApplicant2Address(YES)
             .build();
 
         assertThat(application.hasAwaitingApplicant1Documents()).isFalse();
@@ -227,6 +230,7 @@ class ApplicationTest {
 
         final var application = Application.builder()
             .applicant1FoundApplicant2Address(YES)
+            .applicant1KnowsApplicant2Address(YES)
             .build();
 
         assertThat(application.hasAwaitingApplicant1Documents()).isFalse();
@@ -238,6 +242,8 @@ class ApplicationTest {
     void shouldReturnFalseIfApplicant1ServedPapersAnotherWayIsNull() {
 
         final var application = Application.builder()
+            .applicant1FoundApplicant2Address(YES)
+            .applicant1KnowsApplicant2Address(YES)
             .build();
 
         assertThat(application.hasAwaitingApplicant1Documents()).isFalse();

@@ -494,3 +494,9 @@ task fortifyScan(type: JavaExec) {
     classpath += sourceSets.test.runtimeClasspath
     jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
+
+task generateCCDConfigForDemo(type: Exec) {
+  group 'ccd tasks'
+  environment 'CASE_API_URL', 'http://nfdiv-case-api-demo.service.core-compute-demo.internal'
+  commandLine 'sh', '-c', './gradlew generateCCDConfig && ./gradlew buildCCDXlsx'
+}

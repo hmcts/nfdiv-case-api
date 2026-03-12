@@ -45,6 +45,7 @@ class SendSubmissionNotificationsTest {
     void shouldDispatchSubmittedNotificationsIfSubmittedState() {
         final CaseData caseData = caseData();
         caseData.getApplication().setApplicant1KnowsApplicant2Address(YesOrNo.YES);
+        caseData.getApplication().setApplicant1FoundApplicant2Address(YesOrNo.YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
@@ -60,6 +61,7 @@ class SendSubmissionNotificationsTest {
     void shouldDispatchSubmittedNotificationIfAwaitingHwfDecisionState() {
         final CaseData caseData = caseData();
         caseData.getApplication().setApplicant1KnowsApplicant2Address(YesOrNo.YES);
+        caseData.getApplication().setApplicant1FoundApplicant2Address(YesOrNo.YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
 
@@ -77,6 +79,7 @@ class SendSubmissionNotificationsTest {
         final CaseData caseData = caseData();
         caseData.getApplication().setWelshPreviousState(Submitted);
         caseData.getApplication().setApplicant1KnowsApplicant2Address(YesOrNo.YES);
+        caseData.getApplication().setApplicant1FoundApplicant2Address(YesOrNo.YES);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
@@ -92,6 +95,7 @@ class SendSubmissionNotificationsTest {
         final CaseData caseData = caseData();
         caseData.getApplication().setWelshPreviousState(AwaitingHWFDecision);
         caseData.getApplication().setApplicant1KnowsApplicant2Address(YesOrNo.YES);
+        caseData.getApplication().setApplicant1FoundApplicant2Address(YesOrNo.YES);
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setData(caseData);
