@@ -278,7 +278,10 @@ public enum DocumentType implements HasLabel {
     PAPER_APPLICATION_RECEIVED_LETTER("Paper Application Received Letter", true),
 
     @JsonProperty("bailiffServiceSuccessfulLetter")
-    BAILIFF_SERVICE_SUCCESSFUL_LETTER("Bailiff Service Successful Letter", true);
+    BAILIFF_SERVICE_SUCCESSFUL_LETTER("Bailiff Service Successful Letter", true),
+
+    @JsonProperty("respondentFinalOrderAnswers")
+    RESPONDENT_FINAL_ORDER_ANSWERS("Respondent final order answers", false);
 
     private final String label;
     private final boolean potentiallyConfidential;
