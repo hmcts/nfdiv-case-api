@@ -31,8 +31,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -444,14 +442,13 @@ class CaseworkerNoticeOfChangeTest {
     @Test
     void shouldSendNotificationWhenNewDigitalSolicitorInNewOrg() {
         CaseData caseData = createCaseData(APPLICANT_1, true, true, TEST_ORG_ID);
+        caseData.getNoticeOfChange().setNoticeType(NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG);
         CaseData beforeCaseData = createCaseData(APPLICANT_1, true, true, "OldOrgId");
 
         CaseDetails<CaseData, State> details = createCaseDetails(caseData);
         CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
 
-        doNothing().when(noticeOfChangeService).applyNocDecisionAndGrantAccessToNewSol(any(), any(), any(), any(), any());
-
-        noticeOfChange.aboutToSubmit(details, beforeDetails);
+        noticeOfChange.submitted(details, beforeDetails);
 
         verify(notificationDispatcher, times(1)).sendNOC(nocCitizenToSolsNotifications,
             caseData, beforeCaseData, details.getId(), true, NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG);
@@ -461,10 +458,11 @@ class CaseworkerNoticeOfChangeTest {
     void shouldSendNotificationWhenBecomeNotRepresentedApp1() {
         CaseData beforeCaseData = createCaseData(APPLICANT_1, false, true, TEST_ORG_ID);
         CaseData caseData = createCaseDataNoSols(APPLICANT_1);
+        caseData.getNoticeOfChange().setNoticeType(NoticeType.ORG_REMOVED);
         CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
         CaseDetails<CaseData, State> details = createCaseDetails(caseData);
 
-        noticeOfChange.aboutToSubmit(details, beforeDetails);
+        noticeOfChange.submitted(details, beforeDetails);
 
         verify(notificationDispatcher, times(1)).sendNOC(nocCitizenToSolsNotifications,
             caseData, beforeCaseData, details.getId(), true, NoticeType.ORG_REMOVED);
@@ -474,10 +472,11 @@ class CaseworkerNoticeOfChangeTest {
     void shouldSendNotificationWhenBecomeNotRepresentedApp2() {
         CaseData beforeCaseData = createCaseData(APPLICANT_2, false, true, TEST_ORG_ID);
         CaseData caseData = createCaseDataNoSols(APPLICANT_2);
+        caseData.getNoticeOfChange().setNoticeType(NoticeType.ORG_REMOVED);
         CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
         CaseDetails<CaseData, State> details = createCaseDetails(caseData);
 
-        noticeOfChange.aboutToSubmit(details, beforeDetails);
+        noticeOfChange.submitted(details, beforeDetails);
 
         verify(notificationDispatcher, times(1)).sendNOC(nocCitizenToSolsNotifications,
             caseData, beforeCaseData, details.getId(), false, NoticeType.ORG_REMOVED);
@@ -487,12 +486,11 @@ class CaseworkerNoticeOfChangeTest {
     void shouldSendNotificationWhenNewDigitalSolicitorInNewOrgApp2() {
         CaseData beforeCaseData = createCaseData(APPLICANT_2, true, true, "OldOrgId");
         CaseData caseData = createCaseData(APPLICANT_2, true, true, TEST_ORG_ID);
+        caseData.getNoticeOfChange().setNoticeType(NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG);
         CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
         CaseDetails<CaseData, State> details = createCaseDetails(caseData);
 
-        doNothing().when(noticeOfChangeService).applyNocDecisionAndGrantAccessToNewSol(any(), any(), any(), any(), any());
-
-        noticeOfChange.aboutToSubmit(details, beforeDetails);
+        noticeOfChange.submitted(details, beforeDetails);
 
         verify(notificationDispatcher, times(1)).sendNOC(nocCitizenToSolsNotifications,
             caseData, beforeCaseData, details.getId(), false, NoticeType.NEW_DIGITAL_SOLICITOR_NEW_ORG);
@@ -502,10 +500,11 @@ class CaseworkerNoticeOfChangeTest {
     void shouldSendNotificationWhenNoNewDigitalSolicitorInNewOrg() {
         CaseData beforeCaseData = createCaseData(APPLICANT_1, true, false, "OldOrgId");
         CaseData caseData = createCaseData(APPLICANT_1, true, false, TEST_ORG_ID);
+        caseData.getNoticeOfChange().setNoticeType(NoticeType.ORG_REMOVED);
         CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
         CaseDetails<CaseData, State> details = createCaseDetails(caseData);
 
-        noticeOfChange.aboutToSubmit(details, beforeDetails);
+        noticeOfChange.submitted(details, beforeDetails);
 
         verify(notificationDispatcher, times(1)).sendNOC(nocCitizenToSolsNotifications,
             caseData, beforeCaseData, details.getId(),true, NoticeType.ORG_REMOVED);
@@ -547,7 +546,7 @@ class CaseworkerNoticeOfChangeTest {
         CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
         CaseDetails<CaseData, State> details = createCaseDetails(caseData);
 
-        noticeOfChange.aboutToSubmit(details, beforeDetails);
+        noticeOfChange.submitted(details, beforeDetails);
 
         verify(notificationDispatcher, times(1)).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             caseData, details.getId(),true);
@@ -563,7 +562,7 @@ class CaseworkerNoticeOfChangeTest {
         CaseDetails<CaseData, State> beforeDetails = createCaseDetails(beforeCaseData);
         CaseDetails<CaseData, State> details = createCaseDetails(caseData);
 
-        noticeOfChange.aboutToSubmit(details, beforeDetails);
+        noticeOfChange.submitted(details, beforeDetails);
 
         verify(notificationDispatcher, times(1)).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             caseData, details.getId(),false);

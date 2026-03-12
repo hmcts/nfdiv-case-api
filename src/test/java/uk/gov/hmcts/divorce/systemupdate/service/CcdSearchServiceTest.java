@@ -14,6 +14,8 @@ import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.User;
@@ -60,6 +62,7 @@ import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServiceConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -1008,9 +1011,18 @@ class CcdSearchServiceTest {
             .lastStateModifiedDate(LocalDateTime.of(2023, 8, 20, 16, 0))
             .build();
 
+        ReturnedCaseDetails case4 = ReturnedCaseDetails.builder()
+            .id(3L)
+            .state(AwaitingServiceConsideration)
+            .lastModified(LocalDateTime.of(2023, 10, 20, 16, 0))
+            .lastStateModifiedDate(LocalDateTime.of(2023, 8, 20, 16, 0))
+            .data(CaseData.builder().alternativeService(
+                AlternativeService.builder().alternativeServiceType(AlternativeServiceType.DEEMED).build()).build())
+            .build();
+
         ReturnedCases returnedCases = ReturnedCases.builder()
-            .total(3)
-            .cases(List.of(case1, case2, case3))
+            .total(4)
+            .cases(List.of(case1, case2, case3, case4))
             .build();
 
         BoolQueryBuilder boolQueryBuilder = boolQuery();
@@ -1031,7 +1043,7 @@ class CcdSearchServiceTest {
         Map<String, Map<String, Long>> result = ccdSearchService.countAllCasesByStateAndLastModifiedDate(
             boolQueryBuilder, user, SERVICE_AUTHORIZATION);
 
-        assertThat(result).hasSize(2);
+        assertThat(result).hasSize(3);
 
         // Check 'Submitted' state
         assertThat(result.get("Submitted")).hasSize(2);
@@ -1041,6 +1053,10 @@ class CcdSearchServiceTest {
         // Check 'AwaitingAos' state
         assertThat(result.get("AwaitingAos")).hasSize(1);
         assertThat(result.get("AwaitingAos")).containsEntry("2023-08-20",1L);
+
+        // Check 'AwaitingServiceConsideration' state
+        assertThat(result.get("AwaitingServiceConsideration-DEEMED")).hasSize(1);
+        assertThat(result.get("AwaitingServiceConsideration-DEEMED")).containsEntry("2023-08-20",1L);
     }
 
     @Test

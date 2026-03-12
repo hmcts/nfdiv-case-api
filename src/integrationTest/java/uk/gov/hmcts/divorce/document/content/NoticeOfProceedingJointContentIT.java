@@ -33,8 +33,10 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FAMILY_COURT_LOGO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FOR_A_DIVORCE_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HMCTS_LOGO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
@@ -153,14 +155,14 @@ public class NoticeOfProceedingJointContentIT {
         expectedEntries.put(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE);
         expectedEntries.put(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE);
-        expectedEntries.put("ctscContactDetails", ctscContactDetails);
         expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
         expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
-        expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, true);
+        expectedEntries.put(HMCTS_LOGO,  "[userImage:hmcts_logo_nfd_en.png]");
+        expectedEntries.put(FAMILY_COURT_LOGO, "[userImage:family_court_logo_nfd_en.png]");
 
         Map<String, Object> templateContent =
             noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
@@ -228,7 +230,8 @@ public class NoticeOfProceedingJointContentIT {
         expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
-        expectedEntries.put(DISPLAY_EMAIL_CONFIRMATION, false);
+        expectedEntries.put(HMCTS_LOGO,  "[userImage:hmcts_logo_nfd_en.png]");
+        expectedEntries.put(FAMILY_COURT_LOGO, "[userImage:family_court_logo_nfd_en.png]");
 
         Map<String, Object> templateContent =
             noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1());

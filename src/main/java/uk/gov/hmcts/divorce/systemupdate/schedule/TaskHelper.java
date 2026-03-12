@@ -34,7 +34,7 @@ public class TaskHelper {
     }
 
 
-    /** CSV format: one line per bulk case -> "bulkRef, caseRef1, caseRef2, ..." */
+    /** CSV format: one line per bulk case -> "bulkRef, caseRef1, caseRef2, ...". */
     public List<BulkRectifySpec> loadRectifyBatches(final String csvFile) throws IOException {
         try {
             ClassPathResource resource = new ClassPathResource(csvFile);
