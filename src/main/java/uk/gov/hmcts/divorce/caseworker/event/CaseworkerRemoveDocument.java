@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -65,6 +66,9 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
             .done()
             .complex(CaseData::getAlternativeService)
                 .optionalWithLabel(AlternativeService::getServiceApplicationDocuments, "Service application documents")
+            .done()
+            .complex(CaseData::getGeneralReferral)
+            .   optional(GeneralReferral::getGeneralReferralDocuments)
             .done();
     }
 
