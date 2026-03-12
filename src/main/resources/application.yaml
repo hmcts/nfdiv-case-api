@@ -25,9 +25,6 @@ spring:
     allow-bean-definition-overriding: true
   lifecycle:
     timeout-per-shutdown-phase: 2m
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
 
 springdoc:
   packagesToScan: uk.gov.hmcts.divorce,uk.gov.hmcts.ccd.sdk.runtime
