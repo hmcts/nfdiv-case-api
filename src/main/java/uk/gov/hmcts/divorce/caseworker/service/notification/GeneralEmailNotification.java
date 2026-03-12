@@ -62,9 +62,6 @@ public class GeneralEmailNotification {
     public void send(final CaseData caseData, final Long caseId) throws NotificationClientException, IOException {
         log.info("Sending General Email Notification for case id: {}", caseId);
 
-        String emailTo = null;
-        EmailTemplateName templateId;
-
         List<ListValue<Document>> documents = new ArrayList<>();
 
         GeneralEmail generalEmail = caseData.getGeneralEmail();
@@ -93,6 +90,9 @@ public class GeneralEmailNotification {
 
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, generalEmail.getGeneralEmailOtherRecipientName());
         templateVars.put(GENERAL_EMAIL_DETAILS, generalEmail.getGeneralEmailDetails());
+
+        String emailTo = null;
+        EmailTemplateName templateId;
 
         if (APPLICANT.equals(parties)) {
             if (caseData.getApplicant1().isRepresented()) {
