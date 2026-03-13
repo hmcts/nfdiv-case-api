@@ -3,12 +3,14 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.jackson.Jacksonized;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -43,8 +45,9 @@ import static uk.gov.hmcts.divorce.divorcecase.util.AddressUtil.isEnglandOrWales
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 @Builder
+@Jacksonized
+@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class Applicant {
 
     @CCD(label = "First name")
@@ -169,6 +172,28 @@ public class Applicant {
         searchable = false
     )
     private AddressGlobalUK nonConfidentialAddress;
+
+    public static class ApplicantBuilder {
+        @JsonProperty("Address")
+        public ApplicantBuilder address(Object address) {
+            if (address instanceof java.util.Map) {
+                this.address = new ObjectMapper().findAndRegisterModules().convertValue(address, AddressGlobalUK.class);
+            } else if (address instanceof AddressGlobalUK) {
+                this.address = (AddressGlobalUK) address;
+            }
+            return this;
+        }
+
+        @JsonProperty("NonConfidentialAddress")
+        public ApplicantBuilder nonConfidentialAddress(Object address) {
+            if (address instanceof java.util.Map) {
+                this.nonConfidentialAddress = new ObjectMapper().findAndRegisterModules().convertValue(address, AddressGlobalUK.class);
+            } else if (address instanceof AddressGlobalUK) {
+                this.nonConfidentialAddress = (AddressGlobalUK) address;
+            }
+            return this;
+        }
+    }
 
     @CCD(
         label = "Non-Confidential Phone number",
