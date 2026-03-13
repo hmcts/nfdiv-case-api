@@ -228,7 +228,7 @@ def versions = [
   jackson      : '2.18.3',
   junit        : '5.11.4',
   junitPlatform: '1.11.4',
-  lombok       : '1.18.42',
+  lombok       : '1.18.44',
   springBoot   : springBoot.class.package.implementationVersion
 ]
 
