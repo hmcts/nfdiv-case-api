@@ -7,20 +7,27 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.GeneralApplicationRejectedNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.generalApplicationLabels;
@@ -48,6 +55,8 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
     public static final String CASE_ALREADY_ISSUED_ERROR
         = "You cannot move this case into a pre-issue state as it has already been issued";
 
+    private final GeneralApplicationRejectedNotification generalApplicationRejectedNotification;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -56,6 +65,7 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
             .forStates(POST_SUBMISSION_STATES)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .aboutToStartCallback(this::aboutToStart)
+            .submittedCallback(this::submitted)
             .name(REJECT_GENERAL_APPLICATION)
             .description(REJECT_GENERAL_APPLICATION)
             .showEventNotes()
@@ -165,6 +175,29 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
             .build();
     }
 
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+        log.info("{} submitted callback invoked for case id: {}", CASEWORKER_REJECT_GENERAL_APPLICATION, details.getId());
+
+        List<ListValue<GeneralApplication>> oldGeneralApplications = Optional.ofNullable(beforeDetails.getData().getGeneralApplications())
+            .orElse(Collections.emptyList());
+        List<ListValue<GeneralApplication>> newGeneralApplications = Optional.ofNullable(details.getData().getGeneralApplications())
+            .orElse(Collections.emptyList());
+
+        GeneralApplication missingApplication = oldGeneralApplications.stream()
+            .filter(old -> newGeneralApplications.stream()
+                .noneMatch(newApp -> Objects.equals(old.getValue(), newApp.getValue())))
+            .map(ListValue::getValue)
+            .findFirst()
+            .orElse(null);
+
+        if (missingApplication != null) {
+            triggerNotification(details.getData(), details.getId(), missingApplication);
+        }
+
+        return SubmittedCallbackResponse.builder().build();
+    }
+
     private void resetApplicationFields(CaseData caseData, CaseDetails<CaseData, State> details) {
         caseData.getGeneralReferral().setSelectedGeneralApplication(null);
         if (YesOrNo.YES.equals(caseData.getGeneralReferral().getRejectGeneralReferral())) {
@@ -172,5 +205,15 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
         }
         caseData.getApplication().setPreviousState(details.getState());
         caseData.getApplication().setStateToTransitionApplicationTo(null);
+    }
+
+    private void triggerNotification(CaseData caseData, Long caseId, GeneralApplication generalApplication) {
+        if (generalApplication.getGeneralApplicationSubmittedOnline().toBoolean()) {
+            boolean isApplicant1 = generalApplication.getGeneralApplicationParty() != null
+                && generalApplication.getGeneralApplicationParty().equals(GeneralParties.APPLICANT);
+            boolean isSearchGovRecords = generalApplication.getGeneralApplicationType() != null
+                && generalApplication.getGeneralApplicationType().equals(GeneralApplicationType.DISCLOSURE_VIA_DWP);
+            generalApplicationRejectedNotification.send(caseData, caseId, isApplicant1, isSearchGovRecords);
+        }
     }
 }
