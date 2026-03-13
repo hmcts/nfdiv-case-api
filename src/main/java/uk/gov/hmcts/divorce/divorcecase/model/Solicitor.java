@@ -112,7 +112,10 @@ public class Solicitor {
                 this.organisationPolicy = new ObjectMapper().findAndRegisterModules()
                     .configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                     .configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-                    .convertValue(organisationPolicy, new com.fasterxml.jackson.core.type.TypeReference<OrganisationPolicy<UserRole>>() { });
+                    .convertValue(
+                        organisationPolicy,
+                        new com.fasterxml.jackson.core.type.TypeReference<OrganisationPolicy<UserRole>>() { }
+                    );
             } else if (organisationPolicy instanceof OrganisationPolicy) {
                 @SuppressWarnings("unchecked")
                 OrganisationPolicy<UserRole> policy = (OrganisationPolicy<UserRole>) organisationPolicy;
