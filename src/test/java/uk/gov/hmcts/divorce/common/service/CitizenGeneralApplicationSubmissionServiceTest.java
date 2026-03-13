@@ -114,7 +114,7 @@ class CitizenGeneralApplicationSubmissionServiceTest {
             submissionService.sendNotifications(TEST_CASE_ID, application, caseData);
 
             verify(searchGovRecordsNotification)
-                .sendToApplicant1(caseData, TEST_CASE_ID, application);
+                .sendToApplicant(caseData, TEST_CASE_ID, application);
         }
 
         @Test
@@ -125,7 +125,7 @@ class CitizenGeneralApplicationSubmissionServiceTest {
             submissionService.sendNotifications(TEST_CASE_ID, application, caseData);
 
             verify(d11Notification)
-                .sendToApplicant1(caseData, TEST_CASE_ID, application);
+                .sendToApplicant(caseData, TEST_CASE_ID, application);
         }
     }
 

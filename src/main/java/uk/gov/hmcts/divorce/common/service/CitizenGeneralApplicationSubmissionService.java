@@ -116,9 +116,9 @@ public class CitizenGeneralApplicationSubmissionService {
         GeneralApplicationType generalApplicationType = generalApplication.getGeneralApplicationType();
 
         if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplication.getGeneralApplicationType())) {
-            searchGovApplicationSubmittedNotification.sendToApplicant1(caseData, caseId, generalApplication);
+            searchGovApplicationSubmittedNotification.sendToApplicant(caseData, caseId, generalApplication);
         } else if (generalApplicationType != null) {
-            d11Notification.sendToApplicant1(caseData, caseId, generalApplication);
+            d11Notification.sendToApplicant(caseData, caseId, generalApplication);
         } else {
             throw new UnsupportedOperationException();
         }
