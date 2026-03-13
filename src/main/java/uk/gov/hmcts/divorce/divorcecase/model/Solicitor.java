@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.micrometer.common.util.StringUtils;
@@ -36,8 +37,9 @@ import static uk.gov.hmcts.divorce.divorcecase.util.SolicitorAddressPopulator.pa
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 @Builder
+@lombok.extern.jackson.Jacksonized
+@JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class Solicitor {
 
     @CCD(
@@ -102,6 +104,21 @@ public class Solicitor {
         access = {OrganisationPolicyAccess.class}
     )
     private OrganisationPolicy<UserRole> organisationPolicy;
+
+    public static class SolicitorBuilder {
+        @JsonProperty("OrganisationPolicy")
+        public SolicitorBuilder organisationPolicy(Object organisationPolicy) {
+            if (organisationPolicy instanceof java.util.Map) {
+                this.organisationPolicy = new ObjectMapper().findAndRegisterModules()
+                    .convertValue(organisationPolicy, new com.fasterxml.jackson.core.type.TypeReference<OrganisationPolicy<UserRole>>() { });
+            } else if (organisationPolicy instanceof OrganisationPolicy) {
+                @SuppressWarnings("unchecked")
+                OrganisationPolicy<UserRole> policy = (OrganisationPolicy<UserRole>) organisationPolicy;
+                this.organisationPolicy = policy;
+            }
+            return this;
+        }
+    }
 
     @JsonIgnore
     public boolean hasOrgId() {
