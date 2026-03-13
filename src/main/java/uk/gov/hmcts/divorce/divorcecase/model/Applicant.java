@@ -177,7 +177,12 @@ public class Applicant {
         @JsonProperty("Address")
         public ApplicantBuilder address(Object address) {
             if (address instanceof java.util.Map) {
-                this.address = new ObjectMapper().findAndRegisterModules().convertValue(address, AddressGlobalUK.class);
+                this.address = new ObjectMapper()
+                    .findAndRegisterModules()
+                    .setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.UPPER_CAMEL_CASE)
+                    .configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+                    .convertValue(address, AddressGlobalUK.class);
             } else if (address instanceof AddressGlobalUK) {
                 this.address = (AddressGlobalUK) address;
             }
@@ -187,7 +192,12 @@ public class Applicant {
         @JsonProperty("NonConfidentialAddress")
         public ApplicantBuilder nonConfidentialAddress(Object address) {
             if (address instanceof java.util.Map) {
-                this.nonConfidentialAddress = new ObjectMapper().findAndRegisterModules().convertValue(address, AddressGlobalUK.class);
+                this.nonConfidentialAddress = new ObjectMapper()
+                    .findAndRegisterModules()
+                    .setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.UPPER_CAMEL_CASE)
+                    .configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+                    .convertValue(address, AddressGlobalUK.class);
             } else if (address instanceof AddressGlobalUK) {
                 this.nonConfidentialAddress = (AddressGlobalUK) address;
             }
