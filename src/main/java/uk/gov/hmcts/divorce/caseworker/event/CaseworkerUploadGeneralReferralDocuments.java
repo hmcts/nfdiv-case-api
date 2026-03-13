@@ -32,7 +32,7 @@ public class CaseworkerUploadGeneralReferralDocuments implements CCDConfig<CaseD
     private static final String NEVER_SHOW = "generalReferralDocuments=\"NEVER_SHOW\"";
     public static final String UPLOAD_GENERAL_REFERRAL_DOCS = "cw-upload-gen-referral-docs";
     private static final String UPLOAD_GENERAL_REFERRAL_DOCS_NAME = "Upload general referral docs";
-    public static final String CANNOT_REMOVE_REMOVE_DOCUMENTS = "Already uploaded documents cannot be removed. "
+    public static final String CANNOT_REMOVE_PREVIOUS_DOCUMENTS = "Already uploaded documents cannot be removed. "
         + "Use 'Remove documents' to remove documents from general referral.";
 
     @Override
@@ -71,7 +71,7 @@ public class CaseworkerUploadGeneralReferralDocuments implements CCDConfig<CaseD
         if (hasDeletedDocuments(after, before)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(List.of(CANNOT_REMOVE_REMOVE_DOCUMENTS))
+                .errors(List.of(CANNOT_REMOVE_PREVIOUS_DOCUMENTS))
                 .build();
         }
 

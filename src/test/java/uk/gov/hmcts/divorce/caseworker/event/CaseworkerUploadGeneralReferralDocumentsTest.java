@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUploadGeneralReferralDocuments.CANNOT_REMOVE_REMOVE_DOCUMENTS;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUploadGeneralReferralDocuments.CANNOT_REMOVE_PREVIOUS_DOCUMENTS;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUploadGeneralReferralDocuments.UPLOAD_GENERAL_REFERRAL_DOCS;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.BAILIFF_SERVICE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D9D;
@@ -70,7 +70,7 @@ class CaseworkerUploadGeneralReferralDocumentsTest {
                 caseworkerUploadGeneralReferralDocuments.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains(CANNOT_REMOVE_REMOVE_DOCUMENTS);
+        assertThat(response.getErrors()).contains(CANNOT_REMOVE_PREVIOUS_DOCUMENTS);
     }
 
     private ListValue<DivorceDocument> getDocumentListValue(
