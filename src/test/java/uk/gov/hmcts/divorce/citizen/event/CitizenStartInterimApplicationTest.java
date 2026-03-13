@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,16 +24,19 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenStartInterimApplication.CITIZEN_START_INTERIM_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -41,6 +45,12 @@ class CitizenStartInterimApplicationTest {
 
     @Mock
     DocumentRemovalService documentRemovalService;
+
+    @Mock
+    CcdAccessService ccdAccessService;
+
+    @Mock
+    HttpServletRequest request;
 
     @InjectMocks
     private CitizenStartInterimApplication citizenStartInterimApplication;
@@ -64,6 +74,9 @@ class CitizenStartInterimApplicationTest {
         final CaseDetails<CaseData, State> beforeDetails = buildCaseDetails(options);
         final CaseDetails<CaseData, State> afterDetails = buildCaseDetails(options);
 
+        when(request.getHeader(AUTHORIZATION)).thenReturn(AUTHORIZATION);
+        when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
+
         AboutToStartOrSubmitResponse<CaseData, State> response = citizenStartInterimApplication.aboutToSubmit(
             afterDetails, beforeDetails
         );
@@ -84,6 +97,9 @@ class CitizenStartInterimApplicationTest {
 
         final CaseDetails<CaseData, State> beforeDetails = buildCaseDetails(beforeOptions);
         final CaseDetails<CaseData, State> afterDetails = buildCaseDetails(afterOptions);
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(AUTHORIZATION);
+        when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = citizenStartInterimApplication.aboutToSubmit(
             afterDetails, beforeDetails
@@ -113,6 +129,9 @@ class CitizenStartInterimApplicationTest {
         final CaseDetails<CaseData, State> beforeDetails = buildCaseDetails(beforeOptions);
         final CaseDetails<CaseData, State> afterDetails = buildCaseDetails(afterOptions);
 
+        when(request.getHeader(AUTHORIZATION)).thenReturn(AUTHORIZATION);
+        when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
+
         citizenStartInterimApplication.aboutToSubmit(
             afterDetails, beforeDetails
         );
@@ -130,6 +149,9 @@ class CitizenStartInterimApplicationTest {
 
         final CaseDetails<CaseData, State> beforeDetails = buildCaseDetails(beforeOptions);
         final CaseDetails<CaseData, State> afterDetails = buildCaseDetails(afterOptions);
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(AUTHORIZATION);
+        when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = citizenStartInterimApplication.aboutToSubmit(
             afterDetails, beforeDetails

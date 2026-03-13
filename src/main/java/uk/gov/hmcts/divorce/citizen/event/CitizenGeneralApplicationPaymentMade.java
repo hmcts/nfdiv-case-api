@@ -12,8 +12,8 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
-import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -34,10 +34,8 @@ import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -55,7 +53,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
     private final PaymentValidatorService paymentValidatorService;
 
-    private final InterimApplicationSubmissionService interimApplicationSubmissionService;
+    private final CitizenGeneralApplicationSubmissionService submissionService;
 
     private final CcdAccessService ccdAccessService;
 
@@ -77,7 +75,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .showCondition(NEVER_SHOW)
-            .grant(CREATE_READ_UPDATE, CREATOR)
+            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE));
     }
 
@@ -114,21 +112,12 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
         generalApplication.recordPayment(paymentReference, LocalDate.now(clock));
         applicant.setActiveGeneralApplication(null);
 
-        if (hasGeneralReferralInProgress(data.getGeneralReferral())) {
-            details.setState(GeneralApplicationReceived);
-        } else {
+        if (submissionService.canBeAutoReferred(data, generalApplication.getGeneralApplicationType())) {
             GeneralReferral automaticReferral = generalReferralService.buildGeneralReferral(generalApplication);
             data.setGeneralReferral(automaticReferral);
-
-            details.setState(AwaitingGeneralConsideration);
         }
 
-        if (details.getData().isWelshApplication()) {
-            details.getData().getApplication().setWelshPreviousState(details.getState());
-            details.setState(WelshTranslationReview);
-            log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
-                details.getData().getApplication().getWelshPreviousState(), details.getId());
-        }
+        submissionService.setEndState(details, generalApplication);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
@@ -148,7 +137,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
         Optional<GeneralApplication> generalAppOptional = findActiveGeneralApplication(data, beforeApplicant);
 
         generalAppOptional.ifPresent(generalApplication ->
-            interimApplicationSubmissionService.sendGeneralApplicationNotifications(
+            submissionService.sendNotifications(
                 details.getId(), generalAppOptional.get(), data
             ));
 
@@ -178,9 +167,5 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
         return applicationFee != null && applicationFee.getServiceRequestReference() != null
             && serviceRequest.equals(applicationFee.getServiceRequestReference());
-    }
-
-    private boolean hasGeneralReferralInProgress(GeneralReferral generalReferral) {
-        return generalReferral != null && generalReferral.getGeneralReferralReason() != null;
     }
 }
