@@ -44,6 +44,7 @@ public class GeneralReferralDetails implements CcdPageConfiguration {
         GeneralApplication generalApplication = getSelectedGeneralApplication(data);
         if (generalApplication != null) {
             data.getGeneralReferral().setGeneralReferralDocuments(generalApplication.getGeneralApplicationDocuments());
+            data.getGeneralReferral().setGeneralReferralDocument(generalApplication.getGeneralApplicationDocument());
         }
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
