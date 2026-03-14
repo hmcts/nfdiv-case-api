@@ -75,9 +75,13 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
             .showEventNotes()
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
-            .page("findmatch")
+            .page("findmatch", this::midEvent)
             .pageLabel("Search for matching cases which have same marriage date and full names")
             .readonlyNoSummary(CaseData::getCaseMatches)
+            .page("inappropriatematches")
+            .pageLabel("Inappropriate matches")
+            .readonlyNoSummary(CaseData::getInappropriateCaseMatches)
+            .readonlyNoSummary(CaseData::getCaseMatchesDifferential)
             .done();
     }
 
@@ -104,10 +108,36 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         newMatches.addAll(transformOldCaseToMatchingCasesList(oldcaseMatchDetails));
 
         setToNewMatches(caseData, newMatches);
+
+//        log.info("New matches count: " + newMatches.size());
+//        log.info("Stored matches count: " + caseData.getCaseMatches().size());
+//        log.info("Differential matches count: " + caseData.getCaseMatchesDifferential().size());
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
 
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details, final CaseDetails<CaseData, State> beforeDetails) {
+        final CaseData caseData = details.getData();
+
+        // Affected by EXUI-3839? Field set in aboutToStart not set in midEvent (caseMatchesDifferential is null here)
+//        log.info("Stored matches count: " + caseData.getCaseMatches().size());
+//        log.info("Differential matches count: " + caseData.getCaseMatchesDifferential().size());
+
+        List<ListValue<CaseMatch>> caseMatches = caseData.getCaseMatches();
+        List<ListValue<CaseMatch>> differentialMatches = caseData.getCaseMatchesDifferential();
+
+        List<ListValue<CaseMatch>> removedMatches = differentialMatches.stream()
+            .filter(match -> !caseMatches.contains(match)).toList();
+
+        if (!removedMatches.isEmpty()) {
+            caseData.getInappropriateCaseMatches().addAll(removedMatches);
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 
     public String[] normalizeAndSplit(String name) {
@@ -244,12 +274,18 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         storedMatches.clear();
 
         if (!newMatches.isEmpty()) {
+            List<CaseMatch> inappropriateMatches = data.fromListValueToList(data.getInappropriateCaseMatches());
+
             storedMatches.addAll(newMatches.stream()
+                .filter(match -> !inappropriateMatches.contains(match))
                 .map(match -> ListValue.<CaseMatch>builder().value(match).build())
                 .toList());
+
+            data.setCaseMatchesDifferential(storedMatches);
         }
         if (storedMatches.isEmpty()) {
             data.setCaseMatches(null);
+            data.setCaseMatchesDifferential(null);
         }
     }
 
