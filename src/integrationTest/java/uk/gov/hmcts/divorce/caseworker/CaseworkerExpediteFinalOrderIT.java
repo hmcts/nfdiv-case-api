@@ -670,6 +670,7 @@ public class CaseworkerExpediteFinalOrderIT {
         caseData.setFinalOrder(
             FinalOrder.builder()
                 .granted(Set.of(FinalOrder.Granted.YES))
+                .grantedDate(LocalDateTime.now())
                 .dateFinalOrderEligibleFrom(LocalDate.now(clock))
                 .expeditedFinalOrderAuthorisation(ExpeditedFinalOrderAuthorisation.builder()
                     .expeditedFinalOrderJudgeName("JudgeName")

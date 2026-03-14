@@ -41,6 +41,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ErrorsAndWarnings;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.validateFinalOrderGrantedDate;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
@@ -145,6 +147,14 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
             finalOrder.setGrantedDate(LocalDateTime.now(clock));
         }
 
+        ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(details);
+        if (!errorsAndWarnings.errors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(errorsAndWarnings.errors)
+                .build();
+        }
+
         finalOrder.setDateFinalOrderEligibleFrom(LocalDate.now(clock));
         final String expeditedFinalOrderGeneralOrderDocumentName = caseData.getDocuments()
             .getGeneralOrderDocumentNames().getValue().getLabel();
@@ -171,6 +181,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
+            .warnings(errorsAndWarnings.warnings)
             .state(FinalOrderComplete)
             .build();
     }

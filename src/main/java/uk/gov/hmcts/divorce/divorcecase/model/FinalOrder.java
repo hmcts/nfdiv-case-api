@@ -554,4 +554,9 @@ public class FinalOrder {
             || nonNull(applicant1FinalOrderLateExplanationTranslated)
             || nonNull(applicant2FinalOrderLateExplanationTranslated);
     }
+
+    @JsonIgnore
+    public boolean hasFinalOrderBeenGranted() {
+        return granted != null;
+    }
 }

@@ -28,6 +28,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -176,6 +177,33 @@ class CaseworkerGrantFinalOrderTest {
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .isEqualTo(Collections.singletonList(ERROR_NO_CO_GRANTED_DATE));
+    }
+
+    @Test
+    void shouldValidateFoGrantedDate() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+
+        LocalDateTime foGrantedDate = LocalDateTime.of(2026, 1, 1, 12, 0);
+        LocalDate coGrantedDate = foGrantedDate.toLocalDate();
+        final ConditionalOrder conditionalOrder = ConditionalOrder.builder()
+            .grantedDate(coGrantedDate)
+            .build();
+        final FinalOrder finalOrder = FinalOrder.builder()
+            .granted(Set.of(FinalOrder.Granted.YES))
+            .grantedDate(foGrantedDate)
+            .build();
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(conditionalOrder)
+            .finalOrder(finalOrder)
+            .build();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerGrantFinalOrder.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isEmpty();
+        assertThat(response.getWarnings()).isEmpty();
     }
 
     @Test
