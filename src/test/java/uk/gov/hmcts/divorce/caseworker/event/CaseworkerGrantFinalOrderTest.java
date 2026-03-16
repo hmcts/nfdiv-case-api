@@ -39,11 +39,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.CASEWORKER_GRANT_FINAL_ORDER;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.ERROR_CASE_NOT_ELIGIBLE;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.ERROR_NO_CO_GRANTED_DATE;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.EMPTY;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_CASE_NOT_ELIGIBLE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
@@ -247,6 +245,35 @@ class CaseworkerGrantFinalOrderTest {
     }
 
     @Test
+    void shouldReturnErrorIfFinalOrderGrantedDateIsBeforeEligibleDate() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        LocalDateTime foGrantedDate = LocalDateTime.now();
+        LocalDate coGrantedDate = foGrantedDate.toLocalDate().minusDays(1);
+        LocalDate foEligibleDate = foGrantedDate.toLocalDate().plusDays(1);
+        final ConditionalOrder conditionalOrder = ConditionalOrder.builder()
+            .grantedDate(coGrantedDate)
+            .build();
+        final FinalOrder finalOrder = FinalOrder.builder()
+            .dateFinalOrderEligibleFrom(foEligibleDate)
+            .granted(Set.of(FinalOrder.Granted.YES))
+            .grantWithDifferentDate(YesOrNo.YES)
+            .grantedDate(foGrantedDate)
+            .build();
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(conditionalOrder)
+            .finalOrder(finalOrder)
+            .build();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerGrantFinalOrder.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(ERROR_CASE_NOT_ELIGIBLE);
+    }
+
+    @Test
     void shouldValidateFoGrantedDate() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
 
@@ -256,6 +283,7 @@ class CaseworkerGrantFinalOrderTest {
             .grantedDate(coGrantedDate)
             .build();
         final FinalOrder finalOrder = FinalOrder.builder()
+            .dateFinalOrderEligibleFrom(coGrantedDate)
             .granted(Set.of(FinalOrder.Granted.YES))
             .grantedDate(foGrantedDate)
             .build();
@@ -274,12 +302,13 @@ class CaseworkerGrantFinalOrderTest {
     }
 
     @Test
-    void shouldPopulateFinalOrderGrantedDateAndSendEmailIfFinalOrderIsEligible() {
+    void shouldSendEmailWhenSubmitting() {
         final CaseData caseData = caseData();
         caseData.setFinalOrder(
             FinalOrder.builder()
                 .granted(Set.of(FinalOrder.Granted.YES))
                 .dateFinalOrderEligibleFrom(LocalDate.now())
+                .grantedDate(LocalDateTime.now())
                 .build()
         );
 
@@ -287,12 +316,7 @@ class CaseworkerGrantFinalOrderTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        setMockClock(clock);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToSubmit(details, details);
-
-        assertThat(response.getData().getFinalOrder().getGrantedDate()).isNotNull();
-        assertThat(response.getData().getFinalOrder().getGrantedDate()).isEqualTo(getExpectedLocalDateTime());
+        caseworkerGrantFinalOrder.aboutToSubmit(details, details);
 
         verify(documentGenerator).generateAndStoreCaseDocument(eq(FINAL_ORDER_GRANTED),
             eq(FINAL_ORDER_TEMPLATE_ID),
@@ -311,6 +335,7 @@ class CaseworkerGrantFinalOrderTest {
             FinalOrder.builder()
                 .granted(Set.of(FinalOrder.Granted.YES))
                 .dateFinalOrderEligibleFrom(LocalDate.now())
+                .grantedDate(LocalDateTime.now())
                 .build()
         );
 
@@ -318,12 +343,7 @@ class CaseworkerGrantFinalOrderTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        setMockClock(clock);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToSubmit(details, details);
-
-        assertThat(response.getData().getFinalOrder().getGrantedDate()).isNotNull();
-        assertThat(response.getData().getFinalOrder().getGrantedDate()).isEqualTo(getExpectedLocalDateTime());
+        caseworkerGrantFinalOrder.aboutToSubmit(details, details);
 
         verify(documentGenerator).generateAndStoreCaseDocument(eq(FINAL_ORDER_GRANTED),
             eq(FINAL_ORDER_TEMPLATE_ID),
@@ -333,35 +353,13 @@ class CaseworkerGrantFinalOrderTest {
     }
 
     @Test
-    void shouldReturnErrorsIfDateFinalOrderEligibleFromIsInFuture() {
-        final CaseData caseData = caseData();
-        caseData.setFinalOrder(
-            FinalOrder.builder()
-                .granted(Set.of(FinalOrder.Granted.YES))
-                .dateFinalOrderEligibleFrom(LocalDate.now().plusDays(1))
-                .build()
-        );
-
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-
-        setMockClock(clock);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToSubmit(details, details);
-
-        assertThat(response.getData().getFinalOrder().getGrantedDate()).isNull();
-        assertThat(response.getErrors()).contains(ERROR_CASE_NOT_ELIGIBLE);
-
-        verifyNoInteractions(documentGenerator);
-    }
-
-    @Test
     void shouldSetGeneralOrderGrantingFinalOrderWhenFinalOrderIsOverdue() {
         final CaseData caseData = caseData();
         caseData.setFinalOrder(
             FinalOrder.builder()
                 .isFinalOrderOverdue(YesOrNo.YES)
                 .granted(Set.of(FinalOrder.Granted.YES))
+                .grantedDate(LocalDateTime.now())
                 .dateFinalOrderEligibleFrom(LocalDate.now())
                 .build()
         );
@@ -396,12 +394,8 @@ class CaseworkerGrantFinalOrderTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        setMockClock(clock);
-
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getFinalOrder().getGrantedDate()).isNotNull();
-        assertThat(response.getData().getFinalOrder().getGrantedDate()).isEqualTo(getExpectedLocalDateTime());
         assertThat(response.getData().getFinalOrder()
             .getOverdueFinalOrderAuthorisation()
             .getFinalOrderGeneralOrder()
@@ -423,7 +417,6 @@ class CaseworkerGrantFinalOrderTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
-        setMockClock(clock);
 
         caseworkerGrantFinalOrder.aboutToSubmit(details, details);
 

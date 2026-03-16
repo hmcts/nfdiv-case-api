@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -88,6 +89,7 @@ public class CaseworkerGrantFinalOrderFT extends FunctionalTestSuite {
         final Map<String, Object> caseData = caseData(
             REQUEST_CASEWORKER_GRANT_FINAL_ORDER_OFFLINE_JSON);
         caseData.put("finalOrderSwitchedToSole", YES);
+        caseData.put("grantedDate", "2026-03-16T17:15:00.000");
 
         final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
 

@@ -25,14 +25,11 @@ import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static java.util.Collections.singletonList;
-import static org.springframework.util.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
@@ -44,7 +41,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ErrorsAndWarnings;
-import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.validateFinalOrderGrantedDate;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.validateFinalOrderGrantedDateWithEligibility;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
@@ -58,7 +55,6 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
     private static final String ALWAYS_HIDE = "generalOrderDocumentNames=\"ALWAYS_HIDE\"";
     public static final String ERROR_NO_CO_GRANTED_DATE = "No Conditional Order Granted Date found.  Unable to continue.";
     public static final String ERROR_NO_GENERAL_ORDER = "No general order documents found.  Unable to continue.";
-    public static final String ERROR_CASE_NOT_ELIGIBLE = "Case is not yet eligible for Final Order";
 
     private final Clock clock;
     private final DocumentGenerator documentGenerator;
@@ -162,11 +158,14 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
         log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_GRANT_FINAL_ORDER, details.getId());
 
-        if (YesOrNo.NO.equals(details.getData().getFinalOrder().getGrantWithDifferentDate())) {
-            details.getData().getFinalOrder().setGrantedDate(LocalDateTime.now(clock));
+        CaseData caseData = details.getData();
+        FinalOrder finalOrder = caseData.getFinalOrder();
+
+        if (YesOrNo.NO.equals(finalOrder.getGrantWithDifferentDate())) {
+            finalOrder.setGrantedDate(LocalDateTime.now(clock));
         }
 
-        ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(details);
+        ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDateWithEligibility(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
@@ -182,22 +181,6 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
         CaseData caseData = details.getData();
         FinalOrder finalOrder = caseData.getFinalOrder();
-
-        LocalDate dateFinalOrderEligibleFrom = finalOrder.getDateFinalOrderEligibleFrom();
-
-        LocalDateTime currentDateTime = LocalDateTime.now(clock);
-
-        if (dateFinalOrderEligibleFrom != null
-            && dateFinalOrderEligibleFrom.isAfter(currentDateTime.toLocalDate())) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(singletonList(ERROR_CASE_NOT_ELIGIBLE))
-                .build();
-        }
-
-        if (isEmpty(finalOrder.getGrantedDate())) {
-            finalOrder.setGrantedDate(currentDateTime);
-        }
 
         if (YesOrNo.YES.equals(finalOrder.getIsFinalOrderOverdue())) {
             final String foGrantingGeneralOrderName = caseData.getDocuments()
