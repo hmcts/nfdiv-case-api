@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +30,7 @@ public final class FinalOrderValidation {
     public static final String ERROR_FO_NOT_GRANTED = "Final Order has not been granted";
     public static final String WARNING_FO_GRANTED_NOT_WITHIN_CURRENT_CALENDAR_YEAR =
         "The Final Order Granted date is not within the current year. Please verify the date before submitting.";
+    public static final String ERROR_FO_DATE_IN_FUTURE = "The Final Order Granted date cannot be in the future.";
 
     public static List<String> validateCanRespondentApplyFinalOrder(CaseData caseData) {
         final LocalDate currentDate = LocalDate.now();
@@ -61,6 +63,8 @@ public final class FinalOrderValidation {
         if (errorsAndWarnings.errors.isEmpty()) {
             if (finalOrder.getGrantedDate().toLocalDate().isBefore(conditionalOrder.getGrantedDate())) {
                 errorsAndWarnings.errors.add(ERROR_FO_GRANTED_EARLIER_THAN_CO_GRANTED);
+            } else if (finalOrder.getGrantedDate().isAfter(LocalDateTime.now())) {
+                errorsAndWarnings.errors.add(ERROR_FO_DATE_IN_FUTURE);
             } else if (finalOrder.getGrantedDate().getYear() != LocalDate.now().getYear()) {
                 errorsAndWarnings.warnings.add(WARNING_FO_GRANTED_NOT_WITHIN_CURRENT_CALENDAR_YEAR);
             }

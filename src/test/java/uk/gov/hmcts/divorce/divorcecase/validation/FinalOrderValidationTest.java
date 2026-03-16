@@ -15,6 +15,7 @@ import java.util.Set;
 
 import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_FO_DATE_IN_FUTURE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_FO_GRANTED_EARLIER_THAN_CO_GRANTED;
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_FO_NOT_GRANTED;
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_TOO_EARLY_FOR_RESPONDENT_FINAL_ORDER;
@@ -129,9 +130,31 @@ class FinalOrderValidationTest {
     }
 
     @Test
+    void shouldReturnErrorWhenFoGrantedDateIsAfterCurrentDate() {
+        LocalDate coGrantedDate = LocalDate.now().minusDays(1);
+        LocalDateTime foGrantedDate = LocalDateTime.now().plusDays(1);
+
+        CaseData caseData = caseData();
+        caseData.getConditionalOrder().setGranted(YES);
+        caseData.getConditionalOrder().setGrantedDate(coGrantedDate);
+        caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
+        caseData.getFinalOrder().setGrantedDate(foGrantedDate);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(caseDetails);
+
+        assertThat(errorsAndWarnings.warnings).isEmpty();
+        assertThat(errorsAndWarnings.errors).isNotEmpty();
+        assertThat(errorsAndWarnings.errors.size()).isEqualTo(1);
+        assertThat(errorsAndWarnings.errors).contains(ERROR_FO_DATE_IN_FUTURE);
+    }
+
+    @Test
     void shouldReturnWarningWhenFoGrantedDateNotInCurrentCalendarYear() {
-        LocalDate coGrantedDate = LocalDate.now();
-        LocalDateTime foGrantedDate = LocalDateTime.now().plusYears(1);
+        LocalDate coGrantedDate = LocalDate.now().minusYears(2);
+        LocalDateTime foGrantedDate = LocalDateTime.now().minusYears(1);
 
         CaseData caseData = caseData();
         caseData.getConditionalOrder().setGranted(YES);
