@@ -15,6 +15,7 @@ import java.util.Set;
 
 import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_CASE_NOT_ELIGIBLE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_FO_DATE_IN_FUTURE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_FO_GRANTED_EARLIER_THAN_CO_GRANTED;
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_FO_NOT_GRANTED;
@@ -22,6 +23,7 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.E
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ErrorsAndWarnings;
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.WARNING_FO_GRANTED_NOT_WITHIN_CURRENT_CALENDAR_YEAR;
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.validateFinalOrderGrantedDate;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.validateFinalOrderGrantedDateWithEligibility;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.EMPTY;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -171,5 +173,51 @@ class FinalOrderValidationTest {
         assertThat(errorsAndWarnings.warnings).isNotEmpty();
         assertThat(errorsAndWarnings.warnings.size()).isEqualTo(1);
         assertThat(errorsAndWarnings.warnings).contains(WARNING_FO_GRANTED_NOT_WITHIN_CURRENT_CALENDAR_YEAR);
+    }
+
+    @Test
+    void shouldReturnErrorWhenFoGrantedDateIsBeforeEligibleDate() {
+        LocalDateTime foGrantedDate = LocalDateTime.now();
+        LocalDate coGrantedDate = foGrantedDate.toLocalDate().minusDays(1);
+        LocalDate foEligibleDate = foGrantedDate.toLocalDate().plusDays(1);
+
+        CaseData caseData = caseData();
+        caseData.getConditionalOrder().setGranted(YES);
+        caseData.getConditionalOrder().setGrantedDate(coGrantedDate);
+        caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
+        caseData.getFinalOrder().setGrantedDate(foGrantedDate);
+        caseData.getFinalOrder().setDateFinalOrderEligibleFrom(foEligibleDate);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDateWithEligibility(caseDetails);
+
+        assertThat(errorsAndWarnings.warnings).isEmpty();
+        assertThat(errorsAndWarnings.errors).isNotEmpty();
+        assertThat(errorsAndWarnings.errors.size()).isEqualTo(1);
+        assertThat(errorsAndWarnings.errors).contains(ERROR_CASE_NOT_ELIGIBLE);
+    }
+
+    @Test
+    void shouldReturnErrorWhenFoEligibleDateNotSet() {
+        LocalDate coGrantedDate = LocalDate.now().minusDays(1);
+        LocalDateTime foGrantedDate = LocalDateTime.now();
+
+        CaseData caseData = caseData();
+        caseData.getConditionalOrder().setGranted(YES);
+        caseData.getConditionalOrder().setGrantedDate(coGrantedDate);
+        caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
+        caseData.getFinalOrder().setGrantedDate(foGrantedDate);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDateWithEligibility(caseDetails);
+
+        assertThat(errorsAndWarnings.warnings).isEmpty();
+        assertThat(errorsAndWarnings.errors).isNotEmpty();
+        assertThat(errorsAndWarnings.errors.size()).isEqualTo(1);
+        assertThat(errorsAndWarnings.errors).contains("dateFinalOrderEligibleFrom" + EMPTY);
     }
 }
