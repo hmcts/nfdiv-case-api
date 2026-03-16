@@ -97,7 +97,8 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             .pageLabel("Grant Final Order")
             .complex(CaseData::getFinalOrder)
                 .mandatory(FinalOrder::getGranted)
-                .optional(FinalOrder::getGrantedDate, "granted=\"Yes\"")
+                .mandatory(FinalOrder::getGrantWithDifferentDate, "granted=\"Yes\"")
+                .optional(FinalOrder::getGrantedDate, "grantWithDifferentDate=\"Yes\"")
             .done();
     }
 
@@ -105,6 +106,8 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_GRANT_FINAL_ORDER, details.getId());
 
         var caseData = details.getData();
+
+        caseData.getFinalOrder().setGrantWithDifferentDate(null);
 
         if (caseData.getConditionalOrder().getGrantedDate() == null) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -158,6 +161,10 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
                                                                   CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_GRANT_FINAL_ORDER, details.getId());
+
+        if (YesOrNo.NO.equals(details.getData().getFinalOrder().getGrantWithDifferentDate())) {
+            details.getData().getFinalOrder().setGrantedDate(LocalDateTime.now(clock));
+        }
 
         ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(details);
 

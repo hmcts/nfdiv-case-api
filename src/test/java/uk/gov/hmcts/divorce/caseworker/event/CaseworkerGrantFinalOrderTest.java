@@ -43,6 +43,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.CASEWORKER_GRANT_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.ERROR_CASE_NOT_ELIGIBLE;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.ERROR_NO_CO_GRANTED_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.EMPTY;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
@@ -80,6 +81,19 @@ class CaseworkerGrantFinalOrderTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(CASEWORKER_GRANT_FINAL_ORDER);
+    }
+
+    @Test
+    void shouldNullGrantWithDifferentDate() {
+        final CaseData caseData = caseData();
+        caseData.setFinalOrder(FinalOrder.builder().grantWithDifferentDate(YesOrNo.YES).build());
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToStart(details);
+
+        assertThat(response.getData().getFinalOrder().getGrantWithDifferentDate()).isNull();
     }
 
     @Test
@@ -177,6 +191,59 @@ class CaseworkerGrantFinalOrderTest {
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors())
             .isEqualTo(Collections.singletonList(ERROR_NO_CO_GRANTED_DATE));
+    }
+
+    @Test
+    void shouldSetFinalOrderGrantedDateIfNotGrantedWithDifferentDate() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+
+        LocalDateTime foGrantedDate = LocalDateTime.now();
+        LocalDate coGrantedDate = foGrantedDate.toLocalDate();
+        final ConditionalOrder conditionalOrder = ConditionalOrder.builder()
+            .grantedDate(coGrantedDate)
+            .build();
+        final FinalOrder finalOrder = FinalOrder.builder()
+            .granted(Set.of(FinalOrder.Granted.YES))
+            .grantWithDifferentDate(YesOrNo.NO)
+            .build();
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(conditionalOrder)
+            .finalOrder(finalOrder)
+            .build();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        setMockClock(clock);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerGrantFinalOrder.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getData().getFinalOrder().getGrantedDate()).isEqualTo(getExpectedLocalDateTime());
+    }
+
+    @Test
+    void shouldNotSetFinalOrderGrantedDateIfGrantWithDifferentDate() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+
+        LocalDate coGrantedDate = LocalDate.now();
+        final ConditionalOrder conditionalOrder = ConditionalOrder.builder()
+            .grantedDate(coGrantedDate)
+            .build();
+        final FinalOrder finalOrder = FinalOrder.builder()
+            .granted(Set.of(FinalOrder.Granted.YES))
+            .grantWithDifferentDate(YesOrNo.YES)
+            .build();
+        final CaseData caseData = CaseData.builder()
+            .conditionalOrder(conditionalOrder)
+            .finalOrder(finalOrder)
+            .build();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerGrantFinalOrder.midEvent(caseDetails, caseDetails);
+
+        assertThat(response.getData().getFinalOrder().getGrantedDate()).isNull();
     }
 
     @Test

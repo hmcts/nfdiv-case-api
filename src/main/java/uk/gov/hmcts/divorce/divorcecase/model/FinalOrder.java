@@ -79,6 +79,12 @@ public class FinalOrder {
     )
     private Set<Granted> granted;
 
+    @CCD(
+        label = "Do you wish to grant the final order with a different date?",
+        access = {DefaultAccess.class}
+    )
+    private YesOrNo grantWithDifferentDate;
+
     @Getter
     @AllArgsConstructor
     public enum Granted implements HasLabel {
