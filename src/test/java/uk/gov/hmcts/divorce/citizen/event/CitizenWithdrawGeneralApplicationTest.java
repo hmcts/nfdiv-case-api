@@ -92,6 +92,7 @@ class CitizenWithdrawGeneralApplicationTest {
                 citizenWithdrawGeneralApplication.aboutToSubmit(details, details);
 
         verify(interimApplicationOptionsService).resetInterimApplicationOptions(caseData.getApplicant1());
+        assertThat(response.getData().getApplicant1().getInterimApplicationOptions().getInterimApplicationType()).isNull();
     }
 
     @Test

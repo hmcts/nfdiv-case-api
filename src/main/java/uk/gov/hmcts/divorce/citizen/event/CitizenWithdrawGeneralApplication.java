@@ -81,6 +81,7 @@ public class CitizenWithdrawGeneralApplication implements CCDConfig<CaseData, St
 
         if (StringUtils.isEmpty(applicant.getGeneralAppServiceRequest())) {
             interimApplicationOptionsService.resetInterimApplicationOptions(applicant);
+            applicant.getInterimApplicationOptions().setInterimApplicationType(null);
         } else {
             int genAppIndex = findActiveGeneralApplicationIndex(data, applicant);
             if (genAppIndex != -1) {
