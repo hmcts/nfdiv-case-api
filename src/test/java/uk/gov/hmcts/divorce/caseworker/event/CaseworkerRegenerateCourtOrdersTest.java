@@ -100,6 +100,7 @@ class CaseworkerRegenerateCourtOrdersTest {
             .grantedDate(coGrantedDate)
             .build();
         final FinalOrder finalOrder = FinalOrder.builder()
+            .dateFinalOrderEligibleFrom(coGrantedDate)
             .granted(Set.of(FinalOrder.Granted.YES))
             .grantedDate(foGrantedDate)
             .build();

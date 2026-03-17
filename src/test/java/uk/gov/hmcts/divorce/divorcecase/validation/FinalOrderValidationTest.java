@@ -23,7 +23,6 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.E
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ErrorsAndWarnings;
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.WARNING_FO_GRANTED_NOT_WITHIN_CURRENT_CALENDAR_YEAR;
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.validateFinalOrderGrantedDate;
-import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.validateFinalOrderGrantedDateWithEligibility;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.EMPTY;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -83,8 +82,9 @@ class FinalOrderValidationTest {
 
         assertThat(errorsAndWarnings.warnings).isEmpty();
         assertThat(errorsAndWarnings.errors).isNotEmpty();
-        assertThat(errorsAndWarnings.errors.size()).isEqualTo(3);
+        assertThat(errorsAndWarnings.errors.size()).isEqualTo(4);
         assertThat(errorsAndWarnings.errors).contains("conditionalOrderGrantedDate" + EMPTY);
+        assertThat(errorsAndWarnings.errors).contains("dateFinalOrderEligibleFrom" + EMPTY);
         assertThat(errorsAndWarnings.errors).contains(ERROR_FO_NOT_GRANTED);
         assertThat(errorsAndWarnings.errors).contains("finalOrderGrantedDate" + EMPTY);
     }
@@ -96,6 +96,7 @@ class FinalOrderValidationTest {
         CaseData caseData = caseData();
         caseData.getConditionalOrder().setGranted(YES);
         caseData.getConditionalOrder().setGrantedDate(coGrantedDate);
+        caseData.getFinalOrder().setDateFinalOrderEligibleFrom(coGrantedDate);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
@@ -117,6 +118,7 @@ class FinalOrderValidationTest {
         CaseData caseData = caseData();
         caseData.getConditionalOrder().setGranted(YES);
         caseData.getConditionalOrder().setGrantedDate(coGrantedDate);
+        caseData.getFinalOrder().setDateFinalOrderEligibleFrom(coGrantedDate);
         caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
         caseData.getFinalOrder().setGrantedDate(foGrantedDate);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -133,12 +135,14 @@ class FinalOrderValidationTest {
 
     @Test
     void shouldReturnErrorWhenFoGrantedDateIsAfterCurrentDate() {
-        LocalDate coGrantedDate = LocalDate.now().minusDays(1);
         LocalDateTime foGrantedDate = LocalDateTime.now().plusDays(1);
+        LocalDate foEligibleDate = foGrantedDate.toLocalDate().minusDays(1);
+        LocalDate coGrantedDate = foEligibleDate.minusDays(1);
 
         CaseData caseData = caseData();
         caseData.getConditionalOrder().setGranted(YES);
         caseData.getConditionalOrder().setGrantedDate(coGrantedDate);
+        caseData.getFinalOrder().setDateFinalOrderEligibleFrom(foEligibleDate);
         caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
         caseData.getFinalOrder().setGrantedDate(foGrantedDate);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -161,6 +165,7 @@ class FinalOrderValidationTest {
         CaseData caseData = caseData();
         caseData.getConditionalOrder().setGranted(YES);
         caseData.getConditionalOrder().setGrantedDate(coGrantedDate);
+        caseData.getFinalOrder().setDateFinalOrderEligibleFrom(coGrantedDate);
         caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
         caseData.getFinalOrder().setGrantedDate(foGrantedDate);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -191,7 +196,7 @@ class FinalOrderValidationTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDateWithEligibility(caseDetails);
+        ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(caseDetails);
 
         assertThat(errorsAndWarnings.warnings).isEmpty();
         assertThat(errorsAndWarnings.errors).isNotEmpty();
@@ -213,7 +218,7 @@ class FinalOrderValidationTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDateWithEligibility(caseDetails);
+        ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(caseDetails);
 
         assertThat(errorsAndWarnings.warnings).isEmpty();
         assertThat(errorsAndWarnings.errors).isNotEmpty();

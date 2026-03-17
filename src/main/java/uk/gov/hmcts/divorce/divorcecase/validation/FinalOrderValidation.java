@@ -52,55 +52,28 @@ public final class FinalOrderValidation {
         public List<String> warnings = new ArrayList<>();
     }
 
-    private static ErrorsAndWarnings validateFoGrantedDateRequiredFields(CaseDetails<CaseData, State> details) {
+    public static ErrorsAndWarnings validateFinalOrderGrantedDate(CaseDetails<CaseData, State> details) {
         FinalOrder finalOrder = details.getData().getFinalOrder();
         ConditionalOrder conditionalOrder = details.getData().getConditionalOrder();
         ErrorsAndWarnings errorsAndWarnings = new ErrorsAndWarnings();
         errorsAndWarnings.errors = flattenLists(
             notNull(conditionalOrder.getGrantedDate(), "conditionalOrderGrantedDate"),
+            notNull(finalOrder.getDateFinalOrderEligibleFrom(), "dateFinalOrderEligibleFrom"),
             !finalOrder.hasFinalOrderBeenGranted() ? singletonList(ERROR_FO_NOT_GRANTED) : emptyList(),
             notNull(finalOrder.getGrantedDate(), "finalOrderGrantedDate")
         );
 
-        return errorsAndWarnings;
-    }
-
-    private static void validateFoGrantedDateExtraChecks(CaseDetails<CaseData, State> details, ErrorsAndWarnings errorsAndWarnings) {
-        FinalOrder finalOrder = details.getData().getFinalOrder();
-        ConditionalOrder conditionalOrder = details.getData().getConditionalOrder();
-
         if (errorsAndWarnings.errors.isEmpty()) {
             if (finalOrder.getGrantedDate().toLocalDate().isBefore(conditionalOrder.getGrantedDate())) {
                 errorsAndWarnings.errors.add(ERROR_FO_GRANTED_EARLIER_THAN_CO_GRANTED);
+            } else if (finalOrder.getDateFinalOrderEligibleFrom().isAfter(finalOrder.getGrantedDate().toLocalDate())) {
+                errorsAndWarnings.errors.add(ERROR_CASE_NOT_ELIGIBLE);
             } else if (finalOrder.getGrantedDate().isAfter(LocalDateTime.now())) {
                 errorsAndWarnings.errors.add(ERROR_FO_DATE_IN_FUTURE);
             } else if (finalOrder.getGrantedDate().getYear() != LocalDate.now().getYear()) {
                 errorsAndWarnings.warnings.add(WARNING_FO_GRANTED_NOT_WITHIN_CURRENT_CALENDAR_YEAR);
             }
         }
-    }
-
-    public static ErrorsAndWarnings validateFinalOrderGrantedDate(CaseDetails<CaseData, State> details) {
-        final ErrorsAndWarnings errorsAndWarnings = validateFoGrantedDateRequiredFields(details);
-        validateFoGrantedDateExtraChecks(details, errorsAndWarnings);
-        return errorsAndWarnings;
-    }
-
-    public static ErrorsAndWarnings validateFinalOrderGrantedDateWithEligibility(CaseDetails<CaseData, State> details) {
-        final ErrorsAndWarnings errorsAndWarnings = validateFoGrantedDateRequiredFields(details);
-        FinalOrder finalOrder = details.getData().getFinalOrder();
-        LocalDate dateFinalOrderEligibleFrom = finalOrder.getDateFinalOrderEligibleFrom();
-        LocalDateTime finalOrderGrantedDate = finalOrder.getGrantedDate();
-
-        if (dateFinalOrderEligibleFrom == null) {
-            errorsAndWarnings.errors.add("dateFinalOrderEligibleFrom" + EMPTY);
-        }
-
-        if (errorsAndWarnings.errors.isEmpty() && dateFinalOrderEligibleFrom.isAfter(finalOrderGrantedDate.toLocalDate())) {
-            errorsAndWarnings.errors.add(ERROR_CASE_NOT_ELIGIBLE);
-        }
-
-        validateFoGrantedDateExtraChecks(details, errorsAndWarnings);
 
         return errorsAndWarnings;
     }
