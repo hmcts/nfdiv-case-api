@@ -6,7 +6,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -212,7 +211,7 @@ public final class ValidationUtil {
         final boolean courtServiceCheck = (caseData.getApplicationType() == ApplicationType.SOLE_APPLICATION)
             && (caseData.getApplication().isCourtServiceMethod())
             && !caseData.getApplicant2().isConfidentialContactDetails()
-            && (caseData.getApplicant2().getAddressOverseas() == YesOrNo.YES);
+            && (caseData.getApplicant2().mustBeServedOverseas());
         return courtServiceCheck
             ? singletonList("You may not select court service if respondent has an international address.")
             : emptyList();
