@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
@@ -42,6 +43,54 @@ class GeneralApplicationUtilsTest {
         assertThat(caseData.getGeneralReferral().getSelectedGeneralApplication().getListItems()).hasSize(2);
     }
 
+    @Test
+    void shouldReturnIndexOfActiveGeneralApplicationForGivenApplicant() {
+        Applicant applicant = Applicant.builder()
+            .generalAppServiceRequest(TEST_SERVICE_REFERENCE)
+            .build();
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(applicant)
+            .generalApplications(buildListOfGeneralApplications())
+            .build();
+
+        int activeGeneralApplicationIndex = GeneralApplicationUtils.findActiveGeneralApplicationIndex(caseData, applicant);
+
+        assertThat(activeGeneralApplicationIndex).isEqualTo(0);
+    }
+
+    @Test
+    void shouldReturnMinus1WhenGeneralApplicationIsNotFound() {
+        Applicant applicant = Applicant.builder()
+            .generalAppServiceRequest("invalidServiceRequest")
+            .build();
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(applicant)
+            .generalApplications(buildListOfGeneralApplications())
+            .build();
+
+        int activeGeneralApplicationIndex = GeneralApplicationUtils.findActiveGeneralApplicationIndex(caseData, applicant);
+
+        assertThat(activeGeneralApplicationIndex).isEqualTo(-1);
+    }
+
+    @Test
+    void shouldReturnMinus1WhenGeneralApplicationCollectionIsNull() {
+        Applicant applicant = Applicant.builder()
+            .generalAppServiceRequest("invalidServiceRequest")
+            .build();
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(applicant)
+            .generalApplications(null)
+            .build();
+
+        int activeGeneralApplicationIndex = GeneralApplicationUtils.findActiveGeneralApplicationIndex(caseData, applicant);
+
+        assertThat(activeGeneralApplicationIndex).isEqualTo(-1);
+    }
+
     private List<ListValue<GeneralApplication>> buildListOfGeneralApplications() {
         return List.of(
             ListValue.<GeneralApplication>builder().value(
@@ -63,7 +112,7 @@ class GeneralApplicationUtilsTest {
                     .generalApplicationParty(GeneralParties.APPLICANT)
                     .generalApplicationFee(
                         FeeDetails.builder()
-                            .serviceRequestReference(TEST_SERVICE_REFERENCE)
+                            .serviceRequestReference("dummyServiceRequest")
                             .build()
                     )
                     .generalApplicationReceivedDate(LocalDateTime.of(2022, 1, 1, 1, 1, 1))
