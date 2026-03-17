@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.divorce.testutil.FunctionalTestSuite;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.CASEWORKER_GRANT_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.JSON_DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.CaseDataUtil.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
@@ -88,7 +90,7 @@ public class CaseworkerGrantFinalOrderFT extends FunctionalTestSuite {
         final Map<String, Object> caseData = caseData(
             REQUEST_CASEWORKER_GRANT_FINAL_ORDER_OFFLINE_JSON);
         caseData.put("finalOrderSwitchedToSole", YES);
-        caseData.put("grantedDate", "2026-03-16T17:15:00.000");
+        caseData.put("grantedDate", LocalDateTime.now().format(JSON_DATE_TIME_FORMATTER));
 
         final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
 
