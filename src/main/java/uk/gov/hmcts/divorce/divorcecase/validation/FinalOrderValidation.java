@@ -14,7 +14,6 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.EMPTY;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.flattenLists;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
