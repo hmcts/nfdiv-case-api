@@ -49,7 +49,6 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLA
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -177,10 +176,9 @@ class CaseworkerExpediteFinalOrderTest {
     }
 
     @Test
-    void shouldPopulateFinalOrderGrantedDateAndSendEmail() {
+    void shouldPopulateFinalOrderEligibleDateAndSendEmail() {
         final CaseDetails<CaseData, State> details = getCaseDetailsWithSelectedGeneralOrderDocument();
-
-        setMockClock(clock);
+        details.getData().getFinalOrder().setGrantedDate(LocalDateTime.now());
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerExpediteFinalOrder.aboutToSubmit(details, details);
 
@@ -194,8 +192,7 @@ class CaseworkerExpediteFinalOrderTest {
             .isEqualTo("generalOrderDocumentName");
         assertThat(response.getData().getFinalOrder().getExpeditedFinalOrderAuthorisation().getExpeditedFinalOrderJudgeName())
             .isEqualTo("JudgeName");
-        assertThat(response.getData().getFinalOrder().getGrantedDate()).isNotNull();
-        assertThat(response.getData().getFinalOrder().getGrantedDate()).isEqualTo(getExpectedLocalDateTime());
+        assertThat(response.getData().getFinalOrder().getDateFinalOrderEligibleFrom()).isEqualTo(getExpectedLocalDateTime().toLocalDate());
 
         verify(documentGenerator).generateAndStoreCaseDocument(eq(FINAL_ORDER_GRANTED),
             eq(FINAL_ORDER_TEMPLATE_ID),
@@ -209,7 +206,7 @@ class CaseworkerExpediteFinalOrderTest {
     @Test
     void shouldSendNotificationWhenSubmittedCallbackIsInvoked() {
         final CaseDetails<CaseData, State> details = getCaseDetailsWithSelectedGeneralOrderDocument();
-        setMockClock(clock);
+        details.getData().getFinalOrder().setGrantedDate(LocalDateTime.now());
 
         caseworkerExpediteFinalOrder.aboutToSubmit(details, details);
 

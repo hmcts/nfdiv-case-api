@@ -23,13 +23,11 @@ import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.springframework.util.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
@@ -84,7 +82,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
                     .mandatory(ExpeditedFinalOrderAuthorisation::getExpeditedFinalOrderJudgeName)
                 .done()
                 .mandatory(FinalOrder::getGranted)
-                .optional(FinalOrder::getGrantedDate, "granted=\"Yes\"")
+                .mandatory(FinalOrder::getGrantedDate, "granted=\"Yes\"")
             .done();
     }
 
@@ -142,9 +140,6 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
         CaseData caseData = details.getData();
         FinalOrder finalOrder = caseData.getFinalOrder();
 
-        if (isEmpty(finalOrder.getGrantedDate())) {
-            finalOrder.setGrantedDate(LocalDateTime.now(clock));
-        }
         finalOrder.setDateFinalOrderEligibleFrom(finalOrder.getGrantedDate().toLocalDate());
 
         ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(details);
