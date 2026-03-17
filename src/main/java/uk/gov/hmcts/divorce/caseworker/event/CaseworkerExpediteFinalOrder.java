@@ -146,6 +146,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
         if (isEmpty(finalOrder.getGrantedDate())) {
             finalOrder.setGrantedDate(LocalDateTime.now(clock));
         }
+        finalOrder.setDateFinalOrderEligibleFrom(finalOrder.getGrantedDate().toLocalDate());
 
         ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(details);
         if (!errorsAndWarnings.errors.isEmpty()) {
@@ -155,7 +156,6 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
                 .build();
         }
 
-        finalOrder.setDateFinalOrderEligibleFrom(LocalDate.now(clock));
         final String expeditedFinalOrderGeneralOrderDocumentName = caseData.getDocuments()
             .getGeneralOrderDocumentNames().getValue().getLabel();
 

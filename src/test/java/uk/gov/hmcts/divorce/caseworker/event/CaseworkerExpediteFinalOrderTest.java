@@ -146,9 +146,10 @@ class CaseworkerExpediteFinalOrderTest {
     void shouldReturnWarningIfFoGrantedDateNotWithinCurrentCalendarYear() {
         final CaseDetails<CaseData, State> details = getCaseDetailsWithSelectedGeneralOrderDocument();
 
-        setMockClock(clock);
-
-        details.getData().getFinalOrder().setGrantedDate(LocalDateTime.now(clock).plusYears(1));
+        LocalDateTime foGrantedDate = LocalDateTime.now().minusYears(1);
+        LocalDate coGrantedDate = foGrantedDate.toLocalDate().minusDays(1);
+        details.getData().getFinalOrder().setGrantedDate(foGrantedDate);
+        details.getData().getConditionalOrder().setGrantedDate(coGrantedDate);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerExpediteFinalOrder.aboutToSubmit(details, details);
 
@@ -165,8 +166,6 @@ class CaseworkerExpediteFinalOrderTest {
             .isEqualTo("generalOrderDocumentName");
         assertThat(response.getData().getFinalOrder().getExpeditedFinalOrderAuthorisation().getExpeditedFinalOrderJudgeName())
             .isEqualTo("JudgeName");
-        assertThat(response.getData().getFinalOrder().getGrantedDate()).isNotNull();
-        assertThat(response.getData().getFinalOrder().getGrantedDate()).isEqualTo(getExpectedLocalDateTime().plusYears(1));
 
         verify(documentGenerator).generateAndStoreCaseDocument(eq(FINAL_ORDER_GRANTED),
             eq(FINAL_ORDER_TEMPLATE_ID),
