@@ -852,4 +852,5 @@ class ValidationUtilTest {
         assertThat(errors.size()).isEqualTo(1);
         assertThat(errors).contains("Partner has responded to application.");
     }
+
 }
