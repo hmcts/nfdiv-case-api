@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.divorce.citizen.notification.SaveAndSignOutNotificationHandler;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
@@ -38,8 +37,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.DRAFT_APPLICATION_SAVE_SIGN_OUT;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.INTERIM_APPLICATION_SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SUBMITTED_URL;
@@ -55,10 +54,6 @@ public class CitizenSaveAndCloseIT {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    @SuppressWarnings("PMD.UnusedPrivateField")
-    private SaveAndSignOutNotificationHandler saveAndSignOutNotificationHandler;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -98,7 +93,7 @@ public class CitizenSaveAndCloseIT {
             .andExpect(status().isOk());
 
         verify(notificationService)
-            .sendEmail(eq(TEST_USER_EMAIL), eq(SAVE_SIGN_OUT), anyMap(), eq(ENGLISH), anyLong());
+            .sendEmail(eq(TEST_USER_EMAIL), eq(INTERIM_APPLICATION_SAVE_SIGN_OUT), anyMap(), eq(ENGLISH), anyLong());
 
         verifyNoMoreInteractions(notificationService);
     }
@@ -158,7 +153,7 @@ public class CitizenSaveAndCloseIT {
         doThrow(new NotificationException(new NotificationClientException("All template params not passed")))
             .when(notificationService).sendEmail(
                 eq(TEST_USER_EMAIL),
-                eq(SAVE_SIGN_OUT),
+                eq(INTERIM_APPLICATION_SAVE_SIGN_OUT),
                 anyMap(),
                 eq(ENGLISH),
                 anyLong()

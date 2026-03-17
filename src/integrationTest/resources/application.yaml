@@ -30,9 +30,9 @@ uk:
           webformCyUrl: ${WEBFORM_CY_URL:https://contact-us-about-a-divorce-application-cy.form.service.justice.gov.uk/}
         templates:
           english:
-            SAVE_SIGN_OUT: '70dd0a1e-047f-4baa-993a-e722db17d8ac'
+            INTERIM_APPLICATION_SAVE_SIGN_OUT: 'a8db64b7-7cfd-45ba-86e8-1783420a56f9'
           welsh:
-            SAVE_SIGN_OUT: '70dd0a1e-047f-4baa-993a-e722db17d8ac'
+            INTERIM_APPLICATION_SAVE_SIGN_OUT: 'a8db64b7-7cfd-45ba-86e8-1783420a56f9'
 
 idam:
   s2s-auth:

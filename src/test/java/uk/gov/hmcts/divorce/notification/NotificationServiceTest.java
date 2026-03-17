@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SAVE_SIGN_OUT;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.INTERIM_APPLICATION_SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
@@ -64,7 +64,7 @@ class NotificationServiceTest {
         when(sendEmailResponse.getNotificationId()).thenReturn(UUID.randomUUID());
         when(emailTemplatesConfig.getTemplates()).thenReturn(
             Map.of(
-                ENGLISH, Map.of(SAVE_SIGN_OUT.name(), templateId)
+                ENGLISH, Map.of(INTERIM_APPLICATION_SAVE_SIGN_OUT.name(), templateId)
             ));
 
         when(notificationClient.sendEmail(
@@ -77,7 +77,7 @@ class NotificationServiceTest {
 
         notificationService.sendEmail(
             EMAIL_ADDRESS,
-            SAVE_SIGN_OUT,
+            INTERIM_APPLICATION_SAVE_SIGN_OUT,
             null,
             ENGLISH,
             TEST_CASE_ID
@@ -104,7 +104,7 @@ class NotificationServiceTest {
         when(sendEmailResponse.getNotificationId()).thenReturn(UUID.randomUUID());
         when(emailTemplatesConfig.getTemplates()).thenReturn(
             Map.of(
-                ENGLISH, Map.of(SAVE_SIGN_OUT.name(), templateId)
+                ENGLISH, Map.of(INTERIM_APPLICATION_SAVE_SIGN_OUT.name(), templateId)
             ));
 
         when(notificationClient.sendEmail(
@@ -118,7 +118,7 @@ class NotificationServiceTest {
         // Testing sendEmailWithString directly
         notificationService.sendEmailWithString(
             EMAIL_ADDRESS,
-            SAVE_SIGN_OUT,
+            INTERIM_APPLICATION_SAVE_SIGN_OUT,
             null,
             ENGLISH,
             String.valueOf(TEST_CASE_ID)
@@ -145,7 +145,7 @@ class NotificationServiceTest {
         when(sendEmailResponse.getNotificationId()).thenReturn(UUID.randomUUID());
         when(emailTemplatesConfig.getTemplates()).thenReturn(
             Map.of(
-                WELSH, Map.of(SAVE_SIGN_OUT.name(), templateId)
+                WELSH, Map.of(INTERIM_APPLICATION_SAVE_SIGN_OUT.name(), templateId)
             ));
 
         when(notificationClient.sendEmail(
@@ -158,7 +158,7 @@ class NotificationServiceTest {
 
         notificationService.sendEmail(
             EMAIL_ADDRESS,
-            SAVE_SIGN_OUT,
+            INTERIM_APPLICATION_SAVE_SIGN_OUT,
             null,
             WELSH,
             TEST_CASE_ID
@@ -187,12 +187,12 @@ class NotificationServiceTest {
 
         when(emailTemplatesConfig.getTemplates()).thenReturn(
             Map.of(
-                ENGLISH, Map.of(SAVE_SIGN_OUT.name(), templateId)
+                ENGLISH, Map.of(INTERIM_APPLICATION_SAVE_SIGN_OUT.name(), templateId)
             ));
 
         assertThatThrownBy(() -> notificationService.sendEmail(
             EMAIL_ADDRESS,
-            SAVE_SIGN_OUT,
+            INTERIM_APPLICATION_SAVE_SIGN_OUT,
             null,
             ENGLISH,
             TEST_CASE_ID
