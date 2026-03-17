@@ -80,10 +80,10 @@ public class FinalOrder {
     private Set<Granted> granted;
 
     @CCD(
-        label = "Do you wish to grant the final order with a different date?",
+        label = "Do you wish to grant the final order using the current date and time?",
         access = {DefaultAccess.class}
     )
-    private YesOrNo grantWithDifferentDate;
+    private YesOrNo grantWithCurrentDateTime;
 
     @Getter
     @AllArgsConstructor

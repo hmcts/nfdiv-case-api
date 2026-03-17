@@ -82,16 +82,16 @@ class CaseworkerGrantFinalOrderTest {
     }
 
     @Test
-    void shouldNullGrantWithDifferentDate() {
+    void shouldNullGrantWithCurrentDateTime() {
         final CaseData caseData = caseData();
-        caseData.setFinalOrder(FinalOrder.builder().grantWithDifferentDate(YesOrNo.YES).build());
+        caseData.setFinalOrder(FinalOrder.builder().grantWithCurrentDateTime(YesOrNo.YES).build());
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToStart(details);
 
-        assertThat(response.getData().getFinalOrder().getGrantWithDifferentDate()).isNull();
+        assertThat(response.getData().getFinalOrder().getGrantWithCurrentDateTime()).isNull();
     }
 
     @Test
@@ -202,7 +202,7 @@ class CaseworkerGrantFinalOrderTest {
             .build();
         final FinalOrder finalOrder = FinalOrder.builder()
             .granted(Set.of(FinalOrder.Granted.YES))
-            .grantWithDifferentDate(YesOrNo.NO)
+            .grantWithCurrentDateTime(YesOrNo.YES)
             .build();
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(conditionalOrder)
@@ -229,7 +229,7 @@ class CaseworkerGrantFinalOrderTest {
             .build();
         final FinalOrder finalOrder = FinalOrder.builder()
             .granted(Set.of(FinalOrder.Granted.YES))
-            .grantWithDifferentDate(YesOrNo.YES)
+            .grantWithCurrentDateTime(YesOrNo.NO)
             .build();
         final CaseData caseData = CaseData.builder()
             .conditionalOrder(conditionalOrder)
@@ -256,7 +256,7 @@ class CaseworkerGrantFinalOrderTest {
         final FinalOrder finalOrder = FinalOrder.builder()
             .dateFinalOrderEligibleFrom(foEligibleDate)
             .granted(Set.of(FinalOrder.Granted.YES))
-            .grantWithDifferentDate(YesOrNo.YES)
+            .grantWithCurrentDateTime(YesOrNo.NO)
             .grantedDate(foGrantedDate)
             .build();
         final CaseData caseData = CaseData.builder()
