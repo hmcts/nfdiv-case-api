@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.DRAFT_APPLICATION_SAVE_SIGN_OUT;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.INTERIM_APPLICATION_SAVE_SIGN_OUT;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT;
 
 @Component
@@ -45,7 +45,7 @@ public class SaveAndSignOutNotificationHandler {
         } else if (State.InformationRequested.equals(state)) {
             emailTemplate = REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT;
         } else {
-            emailTemplate = INTERIM_APPLICATION_SAVE_SIGN_OUT;
+            emailTemplate = SAVE_SIGN_OUT;
         }
 
         final var templateContent = commonContent.mainTemplateVars(caseData, caseId, applicant, partner);
