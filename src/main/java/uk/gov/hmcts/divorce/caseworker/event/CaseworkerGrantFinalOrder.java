@@ -94,7 +94,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             .complex(CaseData::getFinalOrder)
                 .mandatory(FinalOrder::getGranted)
                 .mandatory(FinalOrder::getGrantWithCurrentDateTime, "granted=\"Yes\"")
-                .optional(FinalOrder::getGrantedDate, "grantWithCurrentDateTime=\"No\"")
+                .mandatory(FinalOrder::getGrantedDate, "grantWithCurrentDateTime=\"No\"")
             .done();
     }
 
