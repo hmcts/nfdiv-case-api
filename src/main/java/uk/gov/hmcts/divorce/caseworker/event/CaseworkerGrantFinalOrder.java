@@ -89,7 +89,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
                     .mandatory(FinalOrderAuthorisation::getFinalOrderJudgeName)
                 .done()
             .done()
-            .page("grantFinalOrder", this::midEvent)
+            .page("grantFinalOrder")
             .pageLabel("Grant Final Order")
             .complex(CaseData::getFinalOrder)
                 .mandatory(FinalOrder::getGranted)
@@ -153,10 +153,10 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             .build();
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
-                                                                  CaseDetails<CaseData, State> beforeDetails) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
+                                                                       CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_GRANT_FINAL_ORDER, details.getId());
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_GRANT_FINAL_ORDER, details.getId());
 
         CaseData caseData = details.getData();
         FinalOrder finalOrder = caseData.getFinalOrder();
@@ -166,21 +166,12 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
         }
 
         ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(details);
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .warnings(errorsAndWarnings.warnings)
-            .errors(errorsAndWarnings.errors)
-            .build();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
-                                                                       CaseDetails<CaseData, State> beforeDetails) {
-
-        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_GRANT_FINAL_ORDER, details.getId());
-
-        CaseData caseData = details.getData();
-        FinalOrder finalOrder = caseData.getFinalOrder();
+        if (!errorsAndWarnings.errors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(errorsAndWarnings.errors)
+                .build();
+        }
 
         if (YesOrNo.YES.equals(finalOrder.getIsFinalOrderOverdue())) {
             final String foGrantingGeneralOrderName = caseData.getDocuments()
@@ -208,6 +199,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
+            .warnings(errorsAndWarnings.warnings)
             .state(FinalOrderComplete)
             .build();
     }
