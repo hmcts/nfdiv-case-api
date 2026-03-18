@@ -101,4 +101,27 @@ class InterimApplicationOptionsServiceTest {
         assertThat(applicant.getInterimApplicationOptions().getInterimAppsCanUploadEvidence()).isNull();
         assertThat(applicant.getInterimApplicationOptions().getInterimAppsCannotUploadDocs()).isNull();
     }
+
+    @Test
+    void shouldNotClearGeneralApplicationTypeField() {
+        GeneralApplicationD11JourneyOptions generalApplicationD11JourneyOptions = GeneralApplicationD11JourneyOptions.builder()
+            .type(GeneralApplicationType.AMEND_APPLICATION)
+            .build();
+
+        Applicant applicant = Applicant.builder()
+            .interimApplicationOptions(InterimApplicationOptions.builder()
+                .interimAppsHaveHwfReference(YesOrNo.YES)
+                .interimAppsHwfRefNumber("test number")
+                .interimAppsCanUploadEvidence(YesOrNo.YES)
+                .interimAppsCannotUploadDocs(YesOrNo.YES)
+                .interimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11)
+                .generalApplicationD11JourneyOptions(generalApplicationD11JourneyOptions)
+                .build())
+            .build();
+
+        interimApplicationOptionsService.resetInterimApplicationOptions(applicant);
+
+        assertThat(applicant.getInterimApplicationOptions().getGeneralApplicationD11JourneyOptions().getType())
+            .isEqualTo(GeneralApplicationType.AMEND_APPLICATION);
+    }
 }

@@ -22,9 +22,11 @@ public class InterimApplicationOptionsService {
             documentRemovalService.deleteDocument(options.getInterimAppsEvidenceDocs());
         }
 
-        if (options.getGeneralApplicationD11JourneyOptions() != null
-            && !CollectionUtils.isEmpty(options.getGeneralApplicationD11JourneyOptions().getPartnerAgreesDocs())) {
-            documentRemovalService.deleteDocument(options.getGeneralApplicationD11JourneyOptions().getPartnerAgreesDocs());
+        if (options.getGeneralApplicationD11JourneyOptions() != null) {
+            if (!CollectionUtils.isEmpty(options.getGeneralApplicationD11JourneyOptions().getPartnerAgreesDocs())) {
+                documentRemovalService.deleteDocument(options.getGeneralApplicationD11JourneyOptions().getPartnerAgreesDocs());
+            }
+            options.getGeneralApplicationD11JourneyOptions().setPartnerAgreesDocs(null);
         }
 
         applicant.setInterimApplicationOptions(
@@ -35,7 +37,6 @@ public class InterimApplicationOptionsService {
                 .interimAppsCanUploadEvidence(null)
                 .interimAppsCannotUploadDocs(null)
                 .interimAppsEvidenceDocs(null)
-                .generalApplicationD11JourneyOptions(null)
                 .build()
         );
     }
