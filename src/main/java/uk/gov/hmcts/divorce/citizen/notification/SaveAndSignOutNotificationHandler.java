@@ -13,8 +13,8 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.DRAFT_APPLICATION_SAVE_SIGN_OUT;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SAVE_SIGN_OUT;
 
 @Component
 @RequiredArgsConstructor
