@@ -22,6 +22,7 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.findActiveGeneralApplicationIndex;
@@ -79,21 +80,20 @@ public class CitizenWithdrawGeneralApplication implements CCDConfig<CaseData, St
         Applicant applicant = isApplicant2 ? details.getData().getApplicant2() : details.getData().getApplicant1();
         CaseData data = details.getData();
 
-        if (StringUtils.isEmpty(applicant.getGeneralAppServiceRequest())) {
+        OptionalInt genAppIndex = findActiveGeneralApplicationIndex(data, applicant);
+
+        if (genAppIndex.isPresent()) {
+            handleRemovalOfGeneralApplication(data, genAppIndex.getAsInt());
+            applicant.setActiveGeneralApplication(null);
+        } else {
             interimApplicationOptionsService.resetInterimApplicationOptions(applicant);
             applicant.getInterimApplicationOptions().setInterimApplicationType(null);
-        } else {
-            int genAppIndex = findActiveGeneralApplicationIndex(data, applicant);
-            if (genAppIndex != -1) {
-                handleRemovalOfGeneralApplication(data, genAppIndex);
-            }
-            applicant.setActiveGeneralApplication(null);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .state(details.getState())
-            .build();
+                .data(details.getData())
+                .state(details.getState())
+                .build();
     }
 
     private void handleRemovalOfGeneralApplication(CaseData data, int genAppIndex) {

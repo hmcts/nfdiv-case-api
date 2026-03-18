@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -63,12 +64,12 @@ public class GeneralApplicationUtils {
             && serviceRequest.equals(applicationFee.getServiceRequestReference());
     }
 
-    public static int findActiveGeneralApplicationIndex(CaseData caseData, Applicant applicant) {
+    public static OptionalInt findActiveGeneralApplicationIndex(CaseData caseData, Applicant applicant) {
         String serviceRequest = applicant.getGeneralAppServiceRequest();
 
         List<ListValue<GeneralApplication>> generalApplications = caseData.getGeneralApplications();
         if (CollectionUtils.isEmpty(generalApplications) || StringUtils.isBlank(serviceRequest)) {
-            return -1;
+            return OptionalInt.empty();
         }
 
         return IntStream.range(0, generalApplications.size())
@@ -76,7 +77,6 @@ public class GeneralApplicationUtils {
                 GeneralApplication app = generalApplications.get(i).getValue();
                 return app != null && isActiveGeneralApplication(app, serviceRequest);
             })
-            .findFirst()
-            .orElse(-1);
+            .findFirst();
     }
 }

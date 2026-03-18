@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.OptionalInt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.populateGeneralApplicationList;
@@ -54,9 +55,10 @@ class GeneralApplicationUtilsTest {
             .generalApplications(buildListOfGeneralApplications())
             .build();
 
-        int activeGeneralApplicationIndex = GeneralApplicationUtils.findActiveGeneralApplicationIndex(caseData, applicant);
+        OptionalInt activeGeneralApplicationIndex = GeneralApplicationUtils.findActiveGeneralApplicationIndex(caseData, applicant);
 
-        assertThat(activeGeneralApplicationIndex).isEqualTo(0);
+        assertThat(activeGeneralApplicationIndex.isPresent()).isTrue();
+        assertThat(activeGeneralApplicationIndex.getAsInt()).isEqualTo(0);
     }
 
     @Test
@@ -70,9 +72,9 @@ class GeneralApplicationUtilsTest {
             .generalApplications(buildListOfGeneralApplications())
             .build();
 
-        int activeGeneralApplicationIndex = GeneralApplicationUtils.findActiveGeneralApplicationIndex(caseData, applicant);
+        OptionalInt activeGeneralApplicationIndex = GeneralApplicationUtils.findActiveGeneralApplicationIndex(caseData, applicant);
 
-        assertThat(activeGeneralApplicationIndex).isEqualTo(-1);
+        assertThat(activeGeneralApplicationIndex.isPresent()).isFalse();
     }
 
     @Test
@@ -86,9 +88,9 @@ class GeneralApplicationUtilsTest {
             .generalApplications(null)
             .build();
 
-        int activeGeneralApplicationIndex = GeneralApplicationUtils.findActiveGeneralApplicationIndex(caseData, applicant);
+        OptionalInt activeGeneralApplicationIndex = GeneralApplicationUtils.findActiveGeneralApplicationIndex(caseData, applicant);
 
-        assertThat(activeGeneralApplicationIndex).isEqualTo(-1);
+        assertThat(activeGeneralApplicationIndex.isPresent()).isFalse();
     }
 
     private List<ListValue<GeneralApplication>> buildListOfGeneralApplications() {
