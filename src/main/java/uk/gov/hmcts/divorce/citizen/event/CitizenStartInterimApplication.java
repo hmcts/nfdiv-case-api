@@ -4,12 +4,12 @@ import com.google.common.base.Objects;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.service.InterimApplicationOptionsService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
@@ -33,6 +33,8 @@ public class CitizenStartInterimApplication implements CCDConfig<CaseData, State
     public static final String CITIZEN_START_INTERIM_APPLICATION = "citizen-start-interim-application";
 
     private final DocumentRemovalService documentRemovalService;
+
+    private final InterimApplicationOptionsService interimApplicationOptionsService;
 
     private final CcdAccessService ccdAccessService;
 
@@ -63,7 +65,7 @@ public class CitizenStartInterimApplication implements CCDConfig<CaseData, State
         final Applicant beforeApplicant = isApplicant1 ? beforeData.getApplicant1() : beforeData.getApplicant2();
 
         if (interimApplicationTypeHasChanged(afterApplicant, beforeApplicant)) {
-            resetApplicationOptions(afterApplicant);
+            interimApplicationOptionsService.resetInterimApplicationOptions(afterApplicant);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -87,31 +89,6 @@ public class CitizenStartInterimApplication implements CCDConfig<CaseData, State
         return !Objects.equal(
             beforeOptions.getInterimApplicationType(),
             afterOptions.getInterimApplicationType()
-        );
-    }
-
-    private void resetApplicationOptions(Applicant applicant) {
-        final InterimApplicationOptions options = applicant.getInterimApplicationOptions();
-
-        if (!CollectionUtils.isEmpty(options.getInterimAppsEvidenceDocs())) {
-            documentRemovalService.deleteDocument(options.getInterimAppsEvidenceDocs());
-        }
-
-        if (options.getGeneralApplicationD11JourneyOptions() != null
-            && !CollectionUtils.isEmpty(options.getGeneralApplicationD11JourneyOptions().getPartnerAgreesDocs())) {
-            documentRemovalService.deleteDocument(options.getGeneralApplicationD11JourneyOptions().getPartnerAgreesDocs());
-        }
-
-        applicant.setInterimApplicationOptions(
-            options.toBuilder()
-                .interimAppsUseHelpWithFees(null)
-                .interimAppsHwfRefNumber(null)
-                .interimAppsHaveHwfReference(null)
-                .interimAppsCanUploadEvidence(null)
-                .interimAppsCannotUploadDocs(null)
-                .interimAppsEvidenceDocs(null)
-                .generalApplicationD11JourneyOptions(null)
-                .build()
         );
     }
 }

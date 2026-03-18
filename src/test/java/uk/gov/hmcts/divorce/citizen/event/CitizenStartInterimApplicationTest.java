@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.citizen.service.InterimApplicationOptionsService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationHearingNotRequired;
@@ -52,6 +53,9 @@ class CitizenStartInterimApplicationTest {
     @Mock
     HttpServletRequest request;
 
+    @Mock
+    InterimApplicationOptionsService interimApplicationOptionsService;
+
     @InjectMocks
     private CitizenStartInterimApplication citizenStartInterimApplication;
 
@@ -81,7 +85,7 @@ class CitizenStartInterimApplicationTest {
             afterDetails, beforeDetails
         );
 
-        verifyNoInteractions(documentRemovalService);
+        verifyNoInteractions(interimApplicationOptionsService);
 
         InterimApplicationOptions responseApplicationOptions = response.getData().getApplicant1().getInterimApplicationOptions();
         assertThat(responseApplicationOptions).isEqualTo(options);
@@ -105,69 +109,7 @@ class CitizenStartInterimApplicationTest {
             afterDetails, beforeDetails
         );
 
-        verify(documentRemovalService).deleteDocument(beforeOptions.getInterimAppsEvidenceDocs());
-
-        InterimApplicationOptions responseApplicationOptions = response.getData().getApplicant1().getInterimApplicationOptions();
-        assertThat(responseApplicationOptions.getInterimApplicationType()).isEqualTo(InterimApplicationType.DEEMED_SERVICE);
-        assertThat(responseApplicationOptions.getInterimAppsUseHelpWithFees()).isNull();
-        assertThat(responseApplicationOptions.getInterimAppsHaveHwfReference()).isNull();
-        assertThat(responseApplicationOptions.getInterimAppsHwfRefNumber()).isNull();
-        assertThat(responseApplicationOptions.getInterimAppsCanUploadEvidence()).isNull();
-        assertThat(responseApplicationOptions.getInterimAppsCannotUploadDocs()).isNull();
-        assertThat(responseApplicationOptions.getInterimAppsEvidenceDocs()).isNull();
-    }
-
-    @Test
-    void shouldHandleBlankDocumentsList() {
-        InterimApplicationOptions beforeOptions = buildInterimApplicationOptions();
-        beforeOptions.setInterimApplicationType(InterimApplicationType.DISPENSE_WITH_SERVICE);
-
-        InterimApplicationOptions afterOptions = buildInterimApplicationOptions();
-        afterOptions.setInterimApplicationType(InterimApplicationType.DEEMED_SERVICE);
-        afterOptions.setInterimAppsEvidenceDocs(null);
-
-        final CaseDetails<CaseData, State> beforeDetails = buildCaseDetails(beforeOptions);
-        final CaseDetails<CaseData, State> afterDetails = buildCaseDetails(afterOptions);
-
-        when(request.getHeader(AUTHORIZATION)).thenReturn(AUTHORIZATION);
-        when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
-
-        citizenStartInterimApplication.aboutToSubmit(
-            afterDetails, beforeDetails
-        );
-
-        verifyNoInteractions(documentRemovalService);
-    }
-
-    @Test
-    void shouldDeleteAnyD11UploadedDocumentsAndAnswersIfApplicationTypeChanged() {
-        InterimApplicationOptions beforeOptions = buildInterimApplicationOptionsForD11App();
-        beforeOptions.setInterimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11);
-
-        InterimApplicationOptions afterOptions = buildInterimApplicationOptionsForD11App();
-        afterOptions.setInterimApplicationType(InterimApplicationType.DEEMED_SERVICE);
-
-        final CaseDetails<CaseData, State> beforeDetails = buildCaseDetails(beforeOptions);
-        final CaseDetails<CaseData, State> afterDetails = buildCaseDetails(afterOptions);
-
-        when(request.getHeader(AUTHORIZATION)).thenReturn(AUTHORIZATION);
-        when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response = citizenStartInterimApplication.aboutToSubmit(
-            afterDetails, beforeDetails
-        );
-
-        verify(documentRemovalService).deleteDocument(beforeOptions.getGeneralApplicationD11JourneyOptions().getPartnerAgreesDocs());
-
-        InterimApplicationOptions responseApplicationOptions = response.getData().getApplicant1().getInterimApplicationOptions();
-        assertThat(responseApplicationOptions.getInterimApplicationType()).isEqualTo(InterimApplicationType.DEEMED_SERVICE);
-        assertThat(responseApplicationOptions.getInterimAppsUseHelpWithFees()).isNull();
-        assertThat(responseApplicationOptions.getInterimAppsHaveHwfReference()).isNull();
-        assertThat(responseApplicationOptions.getInterimAppsHwfRefNumber()).isNull();
-        assertThat(responseApplicationOptions.getInterimAppsCanUploadEvidence()).isNull();
-        assertThat(responseApplicationOptions.getInterimAppsCannotUploadDocs()).isNull();
-        assertThat(responseApplicationOptions.getInterimAppsEvidenceDocs()).isNull();
-        assertThat(responseApplicationOptions.getGeneralApplicationD11JourneyOptions()).isNull();
+        verify(interimApplicationOptionsService).resetInterimApplicationOptions(afterDetails.getData().getApplicant1());
     }
 
     private InterimApplicationOptions buildInterimApplicationOptions() {
