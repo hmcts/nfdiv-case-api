@@ -140,8 +140,7 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
         CaseData caseData = details.getData();
         FinalOrder finalOrder = caseData.getFinalOrder();
 
-        finalOrder.setDateFinalOrderEligibleFrom(finalOrder.getGrantedDate().toLocalDate());
-
+        finalOrder.setDateFinalOrderEligibleFrom(details.getData().getConditionalOrder().getGrantedDate());
         ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(details);
         if (!errorsAndWarnings.errors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
