@@ -81,7 +81,8 @@ public class FinalOrder {
 
     @CCD(
         label = "Do you wish to grant the final order using the current date and time?",
-        access = {DefaultAccess.class}
+        access = {DefaultAccess.class},
+        searchable = false
     )
     private YesOrNo grantWithCurrentDateTime;
 
