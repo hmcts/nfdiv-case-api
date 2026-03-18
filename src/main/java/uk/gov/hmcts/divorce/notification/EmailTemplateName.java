@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.notification;
 public enum EmailTemplateName {
     REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT,
     SAVE_SIGN_OUT,
+    DRAFT_APPLICATION_SAVE_SIGN_OUT,
     INTERIM_APPLICATION_SAVE_SIGN_OUT,
     OUTSTANDING_ACTIONS,
     APPLICATION_SUBMITTED,
