@@ -76,5 +76,6 @@
     "warnings": [],
     "supplementaryCaseType": "notApplicable"
   },
-  "state": "FinalOrderComplete"
+  "state": "FinalOrderComplete",
+  "warnings": []
 }
