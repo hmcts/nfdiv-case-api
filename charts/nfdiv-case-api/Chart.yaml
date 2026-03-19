@@ -9,16 +9,16 @@ maintainers:
 dependencies:
   - name: java
     version: 5.3.0
-    repository: 'oci://hmctspublic.azurecr.io/helm'
+    repository: 'oci://hmctsprod.azurecr.io/helm'
   - name: idam-pr
     version: 2.3.1
-    repository: 'oci://hmctspublic.azurecr.io/helm'
+    repository: 'oci://hmctsprod.azurecr.io/helm'
     condition: idam-pr.enabled
   - name: nfdiv-frontend
     version: ~0.0.68
-    repository: 'oci://hmctspublic.azurecr.io/helm'
+    repository: 'oci://hmctsprod.azurecr.io/helm'
     condition: nfdiv-frontend.enabled
   - name: ccd-def-cleanup
     version: ~9.0.5
-    repository: 'oci://hmctspublic.azurecr.io/helm'
+    repository: 'oci://hmctsprod.azurecr.io/helm'
     condition: ccd-def-cleanup.enabled
