@@ -123,6 +123,12 @@ public class GeneralApplication {
     }
 
     @JsonIgnore
+    public void recordAlternatePayment(ServicePaymentMethod paymentMethod) {
+        generalApplicationFee.setPaymentMethod(paymentMethod);
+        generalApplicationFee.setHasCompletedOnlinePayment(YesOrNo.YES);
+    }
+
+    @JsonIgnore
     public String getLabel(int idx, DateTimeFormatter formatter) {
         return String.format(
             "General applications %d,%s,%s",
