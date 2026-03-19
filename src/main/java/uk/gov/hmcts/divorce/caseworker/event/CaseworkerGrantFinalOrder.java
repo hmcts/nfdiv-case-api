@@ -199,7 +199,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
-            .warnings(errorsAndWarnings.warnings)
+            .warnings(errorsAndWarnings.warnings.isEmpty() ? null : errorsAndWarnings.warnings)
             .state(FinalOrderComplete)
             .build();
     }
