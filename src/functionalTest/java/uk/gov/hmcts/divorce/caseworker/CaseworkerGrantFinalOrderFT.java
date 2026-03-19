@@ -44,6 +44,7 @@ public class CaseworkerGrantFinalOrderFT extends FunctionalTestSuite {
     public void shouldGenerateGrantFinalOrderDocumentAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvokedForDivorce() throws Exception {
         final Map<String, Object> caseData = caseData(REQUEST_CASEWORKER_GRANT_FINAL_ORDER_JSON);
         caseData.put("finalOrderSwitchedToSole", YES);
+        caseData.put("grantedDate", LocalDateTime.now().format(JSON_DATE_TIME_FORMATTER));
 
         final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
@@ -71,6 +72,7 @@ public class CaseworkerGrantFinalOrderFT extends FunctionalTestSuite {
             REQUEST_CASEWORKER_GRANT_FINAL_ORDER_JSON);
         caseData.put("divorceOrDissolution", "dissolution");
         caseData.put("finalOrderSwitchedToSole", YES);
+        caseData.put("grantedDate", LocalDateTime.now().format(JSON_DATE_TIME_FORMATTER));
 
         final Response response = triggerCallback(caseData, CASEWORKER_GRANT_FINAL_ORDER, ABOUT_TO_SUBMIT_URL);
         assertThat(response.getStatusCode()).isEqualTo(OK.value());
