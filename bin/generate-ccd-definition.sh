@@ -21,5 +21,5 @@ echo "Additional params: ${additionalParameters}"
 docker run --pull always --rm \
   -v ${definition_input_dir}:/tmp/ccd-definition \
   -v ${definition_output_file}:/tmp/ccd-definition.xlsx \
-  hmctspublic.azurecr.io/ccd/definition-processor:${definition_processor_version} \
+  hmctsprod.azurecr.io/ccd/definition-processor:${definition_processor_version} \
   json2xlsx -D /tmp/ccd-definition -o /tmp/ccd-definition.xlsx ${additionalParameters}
