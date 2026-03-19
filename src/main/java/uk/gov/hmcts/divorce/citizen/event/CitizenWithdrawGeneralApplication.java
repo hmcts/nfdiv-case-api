@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.citizen.notification.ApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.service.InterimApplicationOptionsService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -53,6 +54,7 @@ public class CitizenWithdrawGeneralApplication implements CCDConfig<CaseData, St
     private final InterimApplicationOptionsService interimApplicationOptionsService;
 
     private final DocumentRemovalService documentRemovalService;
+    private final ApplicationSubmittedNotification applicationSubmittedNotification;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -94,19 +96,24 @@ public class CitizenWithdrawGeneralApplication implements CCDConfig<CaseData, St
             applicant.getInterimApplicationOptions().setInterimApplicationType(null);
         }
 
-        final State searchGovApplicationStartState = data.getApplication().getIssueDate() != null
-            ? AwaitingAos : AwaitingDocuments;
-
-        removedApplication.ifPresent(application -> details.setState(
-            !GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(application.getGeneralApplicationType())
-                ? details.getState()
-                : searchGovApplicationStartState
-        ));
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(details.getData())
-                .state(details.getState())
+                .state(getEndState(details, removedApplication))
                 .build();
+    }
+
+    private State getEndState(CaseDetails<CaseData, State> details, Optional<GeneralApplication> generalApplication) {
+        if (generalApplication.isEmpty()) {
+            return details.getState();
+        }
+
+        final boolean isSearchGovApplication = GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(
+            generalApplication.get().getGeneralApplicationType()
+        );
+        final State searchGovApplicationStartState = details.getData().getApplication().getIssueDate() != null
+            ? AwaitingAos : AwaitingDocuments;
+
+        return isSearchGovApplication ? searchGovApplicationStartState : details.getState();
     }
 
     private Optional<GeneralApplication> handleRemovalOfGeneralApplication(CaseData data, int genAppIndex) {
