@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.caseworker.service;
 
 import io.micrometer.common.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
@@ -19,6 +20,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Slf4j
 public class GeneralApplicationUtils {
     public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, h:mm:ss a");
 
@@ -78,5 +80,59 @@ public class GeneralApplicationUtils {
                 return app != null && isActiveGeneralApplication(app, serviceRequest);
             })
             .findFirst();
+    }
+
+    public static OptionalInt findGeneralApplicationIndexByLabel(CaseData caseData, String label) {
+        List<ListValue<GeneralApplication>> generalApplications = caseData.getGeneralApplications();
+        if (CollectionUtils.isEmpty(generalApplications) || StringUtils.isBlank(label)) {
+            return OptionalInt.empty();
+        }
+
+        return IntStream.range(0, generalApplications.size())
+            .filter(i -> {
+                GeneralApplication app = generalApplications.get(i).getValue();
+                log.info(app.getLabel(i, formatter));
+                return app != null && label.equals(app.getLabel(i, formatter));
+            })
+            .findFirst();
+    }
+
+    public static void populateUnpaidGeneralApplicationList(CaseData caseData) {
+        List<DynamicListElement> generalApplicationNames = unpaidGeneralApplicationLabels(caseData)
+            .values().stream().map(label -> DynamicListElement
+                .builder()
+                .label(label)
+                .code(UUID.randomUUID())
+                .build()
+            ).toList();
+
+        caseData.getGeneralReferral().setSelectedGeneralApplication(
+            DynamicList.builder()
+                .listItems(generalApplicationNames)
+                .build()
+        );
+    }
+
+    public static Map<Integer, String> unpaidGeneralApplicationLabels(CaseData data) {
+        List<ListValue<GeneralApplication>> generalApplications = data.getGeneralApplications();
+
+        if (CollectionUtils.isEmpty(generalApplications)) {
+            return Collections.emptyMap();
+        }
+
+        return IntStream.range(0, generalApplications.size())
+            .filter(idx -> {
+                GeneralApplication app = generalApplications.get(idx).getValue();
+                return app != null
+                    && app.getGeneralApplicationSubmittedOnline() != null
+                    && app.getGeneralApplicationSubmittedOnline().toBoolean()
+                    && app.getGeneralApplicationFee() != null
+                    && app.getGeneralApplicationFee().getHasCompletedOnlinePayment() != null
+                    && !app.getGeneralApplicationFee().getHasCompletedOnlinePayment().toBoolean();
+            })
+            .boxed()
+            .collect(Collectors.toMap(
+                idx -> idx, idx -> generalApplications.get(idx).getValue().getLabel(idx, formatter)
+            ));
     }
 }
