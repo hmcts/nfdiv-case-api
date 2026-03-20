@@ -686,7 +686,7 @@ public class Application {
     public boolean applicant1ServedPapersAnotherWay() {
         return (applicant1WantsToHavePapersServedAnotherWay != null
             && applicant1WantsToHavePapersServedAnotherWay.toBoolean())
-            || YesOrNo.NO.equals(applicant1KnowsApplicant2Address) || YesOrNo.NO.equals(applicant1FoundApplicant2Address);
+            || (YesOrNo.NO.equals(applicant1KnowsApplicant2Address) && YesOrNo.NO.equals(applicant1FoundApplicant2Address));
     }
 
     @JsonIgnore
