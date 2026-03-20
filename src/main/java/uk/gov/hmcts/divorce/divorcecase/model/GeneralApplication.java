@@ -125,7 +125,7 @@ public class GeneralApplication {
     @JsonIgnore
     public void recordAlternatePayment(ServicePaymentMethod paymentMethod) {
         generalApplicationFee.setPaymentMethod(paymentMethod);
-        generalApplicationFee.setHasCompletedOnlinePayment(YesOrNo.YES);
+        recordPayment(null, null);
     }
 
     @JsonIgnore
