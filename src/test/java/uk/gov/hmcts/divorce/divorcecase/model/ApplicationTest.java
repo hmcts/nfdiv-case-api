@@ -195,16 +195,6 @@ class ApplicationTest {
     }
 
     @Test
-    void shouldReturnTrueIfApplicant1DoesNotKnowApplicant2Address() {
-
-        final var application = Application.builder()
-            .applicant1KnowsApplicant2Address(NO)
-            .build();
-
-        assertThat(application.hasAwaitingApplicant1Documents()).isTrue();
-    }
-
-    @Test
     void shouldReturnFalseIfApplicant1KnowsApplicant2Address() {
 
         final var application = Application.builder()
@@ -217,8 +207,8 @@ class ApplicationTest {
 
     @Test
     void shouldReturnTrueIfApplicant1DoesNotFindApplicant2Address() {
-
         final var application = Application.builder()
+            .applicant1KnowsApplicant2Address(NO)
             .applicant1FoundApplicant2Address(NO)
             .build();
 
