@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkListCaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -51,6 +52,7 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.SUBMITT
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.notNull;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateApplicant1BasicCase;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateBasicCase;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForCourtService;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForIssueApplication;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCasesAcceptedToListForHearing;
 import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCitizenResendInvite;
@@ -638,6 +640,27 @@ class ValidationUtilTest {
         List<String> errors = validateChangeServiceRequest(caseData);
 
         assertThat(errors).contains("You may not select court service if respondent has an international address.");
+    }
+
+    @Test
+    void shouldAllowCourtServiceWhenRespondentOverseasButHasUkSolicitor() {
+        final CaseData caseData = caseDataWithStatementOfTruth();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        final Applicant applicant2 = caseData.getApplicant2();
+        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
+        applicant2.setAddressOverseas(YES);
+        applicant2.setSolicitorRepresented(YesOrNo.YES);
+        applicant2.setSolicitor(
+            Solicitor.builder()
+                .addressOverseas(YesOrNo.NO)
+                .build()
+        );
+
+        caseData.getApplication().setServiceMethod(COURT_SERVICE);
+
+        List<String> errors = validateCaseFieldsForCourtService(caseData);
+
+        assertThat(errors).isEmpty();
     }
 
     @Test
