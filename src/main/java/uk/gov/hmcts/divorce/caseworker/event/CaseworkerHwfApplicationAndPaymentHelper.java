@@ -10,8 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import java.time.Clock;
 import java.time.LocalDateTime;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
@@ -25,13 +24,18 @@ public class CaseworkerHwfApplicationAndPaymentHelper {
     private final SetDefaultOrganisationPolicies setDefaultOrganisationPolicies;
 
     public State getState(CaseData caseData) {
-        if (caseData.getApplicationType().isSole()
-            && NO.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address())
-            && YES.equals(caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay())) {
-            return AwaitingDocuments;
-        } else {
-            return Submitted;
-        }
+        final boolean isSoleApplication =  nonNull(caseData.getApplicationType())
+            && caseData.getApplicationType().isSole();
+        final var application = caseData.getApplication();
+
+        final boolean isApplicant1AwaitingDocuments = application.hasAwaitingApplicant1Documents()
+            || isSoleApplication && application.isPersonalServiceMethod();
+        final boolean isApplicant2AwaitingDocuments = application.hasAwaitingApplicant2Documents();
+
+        boolean applicantIsAwaitingDocuments = isApplicant1AwaitingDocuments
+            || (!isSoleApplication && isApplicant2AwaitingDocuments);
+
+        return applicantIsAwaitingDocuments ? AwaitingDocuments : Submitted;
     }
 
     public CaseData setDateSubmittedAndDueDate(CaseData caseData) {
