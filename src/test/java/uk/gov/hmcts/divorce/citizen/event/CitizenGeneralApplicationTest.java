@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
@@ -48,7 +49,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenGeneralApplication.AWAITING_PAYMENT_ERROR;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -184,9 +187,8 @@ class CitizenGeneralApplicationTest {
         assertThat(applicant.getInterimApplications().getFirst().getValue().getOptions()).isEqualTo(applicationOptions);
     }
 
-
     @Test
-    void givenCitizenWillMakePaymentThenChangeStateToAwaitingGeneralApplicationPaymentAndSetOrderSummary() {
+    void givenCitizenWillMakePaymentForSearchGovThenChangeStateToAwaitingGeneralApplicationPayment() {
         setMockClock(clock);
 
         CaseData caseData = CaseData.builder()
@@ -226,6 +228,7 @@ class CitizenGeneralApplicationTest {
 
         GeneralApplication generalApplication = response.getData().getGeneralApplications().getLast().getValue();
 
+        assertThat(response.getState()).isEqualTo(AwaitingGeneralApplicationPayment);
         assertThat(generalApplication.getGeneralApplicationDocument()).isEqualTo(generatedApplication);
         assertThat(generalApplication.getGeneralApplicationFee().getOrderSummary()).isEqualTo(orderSummary);
         assertThat(generalApplication.getGeneralApplicationFee().getServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
@@ -233,6 +236,60 @@ class CitizenGeneralApplicationTest {
             .isEqualTo(ServicePaymentMethod.FEE_PAY_BY_CARD);
         assertThat(generalApplication.getGeneralApplicationSubmittedOnline()).isEqualTo(YES);
         assertThat(generalApplication.getGeneralApplicationType()).isEqualTo(GeneralApplicationType.DISCLOSURE_VIA_DWP);
+    }
+
+    @Test
+    void givenCitizenWillMakePaymentForD11GenAppThenDoNotChangeStateToAwaitingGeneralApplication() {
+        setMockClock(clock);
+
+        CaseData caseData = CaseData.builder()
+            .applicationType(ApplicationType.SOLE_APPLICATION)
+            .applicant1(
+                Applicant.builder()
+                    .firstName(TEST_FIRST_NAME)
+                    .interimApplicationOptions(InterimApplicationOptions.builder()
+                        .interimAppsUseHelpWithFees(YesOrNo.NO)
+                        .interimAppsCannotUploadDocs(YES)
+                        .interimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11)
+                        .generalApplicationD11JourneyOptions(
+                            GeneralApplicationD11JourneyOptions.builder()
+                                .type(GeneralApplicationType.DELAY)
+                                .build()
+                        ).build())
+                    .build()
+            ).build();
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setState(Holding);
+        caseDetails.setId(TEST_CASE_ID);
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(AUTHORIZATION);
+        when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
+        when(paymentSetupService.createGeneralApplicationOrderSummary(TEST_CASE_ID, GeneralApplicationFee.FEE0228))
+            .thenReturn(orderSummary);
+        when(paymentSetupService.createGeneralApplicationPaymentServiceRequest(
+            orderSummary, TEST_CASE_ID, TEST_FIRST_NAME
+        )).thenReturn(TEST_SERVICE_REFERENCE);
+
+        DivorceDocument generatedApplication = DivorceDocument.builder().build();
+        when(submissionService.generateGeneralApplicationAnswerDocument(
+            eq(TEST_CASE_ID), eq(caseData.getApplicant1()), eq(caseData), any(GeneralApplication.class)
+        )).thenReturn(generatedApplication);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplication.aboutToSubmit(
+            caseDetails, caseDetails
+        );
+
+        GeneralApplication generalApplication = response.getData().getGeneralApplications().getLast().getValue();
+
+        assertThat(response.getState()).isEqualTo(Holding);
+        assertThat(generalApplication.getGeneralApplicationDocument()).isEqualTo(generatedApplication);
+        assertThat(generalApplication.getGeneralApplicationFee().getOrderSummary()).isEqualTo(orderSummary);
+        assertThat(generalApplication.getGeneralApplicationFee().getServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
+        assertThat(generalApplication.getGeneralApplicationFee().getPaymentMethod())
+            .isEqualTo(ServicePaymentMethod.FEE_PAY_BY_CARD);
+        assertThat(generalApplication.getGeneralApplicationSubmittedOnline()).isEqualTo(YES);
+        assertThat(generalApplication.getGeneralApplicationType()).isEqualTo(GeneralApplicationType.DELAY);
     }
 
     @Test

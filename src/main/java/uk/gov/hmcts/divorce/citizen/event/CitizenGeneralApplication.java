@@ -40,6 +40,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0228;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -127,6 +128,10 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
 
             String serviceRequest = prepareGeneralApplicationForPayment(newGeneralApplication, applicant, caseId);
             applicant.setActiveGeneralApplication(serviceRequest);
+
+            if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplicationType)) {
+                details.setState(AwaitingGeneralApplicationPayment);
+            }
         } else {
             applicationFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF);
             applicationFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
