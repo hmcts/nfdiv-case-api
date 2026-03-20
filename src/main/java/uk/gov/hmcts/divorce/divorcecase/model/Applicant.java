@@ -370,7 +370,11 @@ public class Applicant {
 
     @JsonIgnore
     public boolean isBasedOverseas() {
-        return !isRepresented() && nonNull(address) && !isBlank(address.getCountry()) && !isEnglandOrWales(address);
+        if (isRepresented()) {
+            return false;
+        }
+
+        return (nonNull(address) && !isBlank(address.getCountry()) && !isEnglandOrWales(address)) || YesOrNo.YES.equals(addressOverseas);
     }
 
     @JsonIgnore
