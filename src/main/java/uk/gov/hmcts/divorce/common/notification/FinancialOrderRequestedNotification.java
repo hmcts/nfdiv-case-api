@@ -65,23 +65,29 @@ public class FinancialOrderRequestedNotification implements ApplicantNotificatio
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long caseId) {
 
-        final LanguagePreference languagePreference = caseData.getApplicant2().getLanguagePreference();
-        final boolean isApplicant = false;
-        final EmailTemplateName template = caseData.getApplicationType().isSole()
-            ? RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION
-            : FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
-        final Map<String, String> templateVars =
-            populateTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1(), isApplicant);
+        boolean shouldSendNotification = !caseData.getApplicationType().isSole()
+            || (caseData.getApplicationType().isSole() && caseData.getApplication().isCourtServiceMethod());
 
-        log.info("Sending financial order requested notification to respondent/applicant2 for case : {}", caseId);
+        if (shouldSendNotification) {
 
-        notificationService.sendEmail(
-            caseData.getApplicant2EmailAddress(),
-            template,
-            templateVars,
-            languagePreference,
-            caseId
-        );
+            final LanguagePreference languagePreference = caseData.getApplicant2().getLanguagePreference();
+            final boolean isApplicant = false;
+            final EmailTemplateName template = caseData.getApplicationType().isSole()
+                ? RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION
+                : FINANCIAL_ORDER_REQUESTED_NOTIFICATION;
+            final Map<String, String> templateVars =
+                populateTemplateVars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1(), isApplicant);
+
+            log.info("Sending financial order requested notification to respondent/applicant2 for case : {}", caseId);
+
+            notificationService.sendEmail(
+                caseData.getApplicant2EmailAddress(),
+                template,
+                templateVars,
+                languagePreference,
+                caseId
+            );
+        }
     }
 
     public Map<String, String> populateTemplateVars(final CaseData caseData,
