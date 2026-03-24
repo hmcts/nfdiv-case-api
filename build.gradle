@@ -226,17 +226,15 @@ repositories {
 
 def versions = [
   jackson      : '2.18.3',
-  junit        : '5.11.4',
-  junitPlatform: '1.11.4',
+  junit        : '5.14.3',
+  junitPlatform: '1.14.3',
   lombok       : '1.18.42',
   springBoot   : springBoot.class.package.implementationVersion
 ]
 
 ext.libraries = [
   junit5: [
-    "org.junit.jupiter:junit-jupiter-api:${versions.junit}",
-    "org.junit.jupiter:junit-jupiter-engine:${versions.junit}",
-    "org.junit.jupiter:junit-jupiter-params:${versions.junit}",
+    "org.junit.jupiter:junit-jupiter:${versions.junit}",
     "org.junit.platform:junit-platform-commons:${versions.junitPlatform}",
     "org.junit.platform:junit-platform-engine:${versions.junitPlatform}"
   ]
