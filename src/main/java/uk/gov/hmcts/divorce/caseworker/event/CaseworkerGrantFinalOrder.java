@@ -25,14 +25,11 @@ import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static java.util.Collections.singletonList;
-import static org.springframework.util.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
@@ -43,6 +40,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ErrorsAndWarnings;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.validateFinalOrderGrantedDate;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
@@ -56,7 +55,6 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
     private static final String ALWAYS_HIDE = "generalOrderDocumentNames=\"ALWAYS_HIDE\"";
     public static final String ERROR_NO_CO_GRANTED_DATE = "No Conditional Order Granted Date found.  Unable to continue.";
     public static final String ERROR_NO_GENERAL_ORDER = "No general order documents found.  Unable to continue.";
-    public static final String ERROR_CASE_NOT_ELIGIBLE = "Case is not yet eligible for Final Order";
 
     private final Clock clock;
     private final DocumentGenerator documentGenerator;
@@ -95,7 +93,8 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             .pageLabel("Grant Final Order")
             .complex(CaseData::getFinalOrder)
                 .mandatory(FinalOrder::getGranted)
-                .optional(FinalOrder::getGrantedDate, "granted=\"Yes\"")
+                .mandatory(FinalOrder::getGrantWithCurrentDateTime, "granted=\"Yes\"")
+                .mandatory(FinalOrder::getGrantedDate, "grantWithCurrentDateTime=\"No\"")
             .done();
     }
 
@@ -103,6 +102,8 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_GRANT_FINAL_ORDER, details.getId());
 
         var caseData = details.getData();
+
+        caseData.getFinalOrder().setGrantWithCurrentDateTime(null);
 
         if (caseData.getConditionalOrder().getGrantedDate() == null) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -160,20 +161,16 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
         CaseData caseData = details.getData();
         FinalOrder finalOrder = caseData.getFinalOrder();
 
-        LocalDate dateFinalOrderEligibleFrom = finalOrder.getDateFinalOrderEligibleFrom();
-
-        LocalDateTime currentDateTime = LocalDateTime.now(clock);
-
-        if (dateFinalOrderEligibleFrom != null
-            && dateFinalOrderEligibleFrom.isAfter(currentDateTime.toLocalDate())) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(singletonList(ERROR_CASE_NOT_ELIGIBLE))
-                .build();
+        if (YesOrNo.YES.equals(finalOrder.getGrantWithCurrentDateTime())) {
+            finalOrder.setGrantedDate(LocalDateTime.now(clock));
         }
 
-        if (isEmpty(finalOrder.getGrantedDate())) {
-            finalOrder.setGrantedDate(currentDateTime);
+        ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(details);
+        if (!errorsAndWarnings.errors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(errorsAndWarnings.errors)
+                .build();
         }
 
         if (YesOrNo.YES.equals(finalOrder.getIsFinalOrderOverdue())) {
@@ -202,6 +199,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
+            .warnings(errorsAndWarnings.warnings)
             .state(FinalOrderComplete)
             .build();
     }
