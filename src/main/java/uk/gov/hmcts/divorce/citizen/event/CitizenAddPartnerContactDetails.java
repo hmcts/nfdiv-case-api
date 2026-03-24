@@ -6,6 +6,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.NoRespondentAddressJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -58,14 +59,13 @@ public class CitizenAddPartnerContactDetails implements CCDConfig<CaseData, Stat
         CaseData caseData = details.getData();
         State currentState = details.getState();
 
-        caseData.getApplicant2().setAddress(
-            caseData.getApplicant1().getInterimApplicationOptions().getNoRespAddressJourneyOptions().getNoRespAddressAddress());
-        caseData.getApplicant2().setAddressOverseas(
-            caseData.getApplicant1().getInterimApplicationOptions().getNoRespAddressJourneyOptions().getNoRespAddressAddressOverseas());
-        caseData.getApplicant2().setEmail(
-            caseData.getApplicant1().getInterimApplicationOptions().getNoRespAddressJourneyOptions().getNoRespAddressEmail());
-        caseData.getApplication().setApplicant1KnowsApplicant2EmailAddress(
-            caseData.getApplicant1().getInterimApplicationOptions().getNoRespAddressJourneyOptions().getNoRespAddressKnowsEmail());
+        NoRespondentAddressJourneyOptions noRespAddressJourneyOptions =
+            caseData.getApplicant1().getInterimApplicationOptions().getNoRespAddressJourneyOptions();
+
+        caseData.getApplicant2().setAddress(noRespAddressJourneyOptions.getNoRespAddressAddress());
+        caseData.getApplicant2().setAddressOverseas(noRespAddressJourneyOptions.getNoRespAddressAddressOverseas());
+        caseData.getApplicant2().setEmail(noRespAddressJourneyOptions.getNoRespAddressEmail());
+        caseData.getApplication().setApplicant1KnowsApplicant2EmailAddress(noRespAddressJourneyOptions.getNoRespAddressKnowsEmail());
 
         caseData.getApplicant1().getInterimApplicationOptions().setNoRespAddressJourneyOptions(null);
 
