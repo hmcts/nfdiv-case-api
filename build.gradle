@@ -478,7 +478,6 @@ task installChromium(type: JavaExec) {
 
 configurations.all {
   exclude group: 'com.vaadin.external.google', module: 'android-json'
-  exclude group: 'org.springdoc', module: 'springdoc-openapi-ui'
 }
 
 tasks.cftlibTest.dependsOn(installChromium)
