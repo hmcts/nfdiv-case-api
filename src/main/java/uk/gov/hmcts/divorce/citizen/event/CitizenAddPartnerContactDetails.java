@@ -58,6 +58,17 @@ public class CitizenAddPartnerContactDetails implements CCDConfig<CaseData, Stat
         CaseData caseData = details.getData();
         State currentState = details.getState();
 
+        caseData.getApplicant2().setAddress(
+            caseData.getApplicant1().getInterimApplicationOptions().getNoRespAddressJourneyOptions().getNoRespAddressAddress());
+        caseData.getApplicant2().setAddressOverseas(
+            caseData.getApplicant1().getInterimApplicationOptions().getNoRespAddressJourneyOptions().getNoRespAddressAddressOverseas());
+        caseData.getApplicant2().setEmail(
+            caseData.getApplicant1().getInterimApplicationOptions().getNoRespAddressJourneyOptions().getNoRespAddressEmail());
+        caseData.getApplication().setApplicant1KnowsApplicant2EmailAddress(
+            caseData.getApplicant1().getInterimApplicationOptions().getNoRespAddressJourneyOptions().getNoRespAddressKnowsEmail());
+
+        caseData.getApplicant1().getInterimApplicationOptions().setNoRespAddressJourneyOptions(null);
+
         if (State.AwaitingDocuments.equals(currentState) && !caseData.getApplication().getApplicant1CannotUpload().toBoolean()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .data(caseData)
