@@ -168,7 +168,7 @@ class ApplicationTest {
             .applicant1WantsToHavePapersServedAnotherWay(YES)
             .build();
 
-        assertThat(application.hasAwaitingApplicant1Documents()).isTrue();
+        assertThat(application.mustServeAnotherWay(ApplicationType.SOLE_APPLICATION)).isTrue();
     }
 
     @Test
@@ -212,7 +212,7 @@ class ApplicationTest {
             .applicant1FoundApplicant2Address(NO)
             .build();
 
-        assertThat(application.hasAwaitingApplicant1Documents()).isTrue();
+        assertThat(application.mustServeAnotherWay(ApplicationType.SOLE_APPLICATION)).isTrue();
     }
 
     @Test
