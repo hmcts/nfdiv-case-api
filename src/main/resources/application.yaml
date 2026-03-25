@@ -534,10 +534,10 @@ docmosis:
       REQUEST_FOR_INFORMATION_PARTNER_SOLICITOR_RESPONSE_LETTER: FL-NFD-GOR-ENG-Request-For-Information-Partner-Solicitor-Response.docx
       RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-ENG-Respondent-Started-Drafting-AoS-Application.docx
       DEEMED_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Deemed-Service-Application_V1.docx
-      BAILIFF_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Bailiff-Service-Application_V1.docx
+      BAILIFF_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Bailiff-Service-Application_V3.docx
       ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Alternative-Service-Application_V1.docx
       DISPENSE_WITH_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Dispense-With-Service-Application_V1.docx
-      SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-ENG-Search-Government-Records-Application_V1.docx
+      SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-ENG-Search-Government-Records-Application_V3.docx
       BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-ENG-Bailiff-Service-Successful-Letter-V1.docx
       RESPONDENT_FINAL_ORDER_ANSWERS: FL-NFD-GOR-ENG-Respondent_Final_Order_Answers_V1.docx
     welsh:
@@ -636,7 +636,7 @@ docmosis:
       BAILIFF_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Bailiff-Service-Application_V1.docx
       ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Alternative-Service-Application_V1.docx
       DISPENSE_WITH_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Dispense-With-Service-Application_V1.docx
-      SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-WEL-Search-Government-Records-Application_V1.docx
+      SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-WEL-Search-Government-Records-Application_V3.docx
       BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-WEL-Bailiff-Service-Successful-Letter-V1.docx
       RESPONDENT_FINAL_ORDER_ANSWERS: FL-NFD-GOR-WEL-Respondent_Final_Order_Answers_V1.docx
   templateVars:
