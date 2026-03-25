@@ -9,8 +9,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.NoRespondentAddressJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 
 import java.util.EnumSet;
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
@@ -59,6 +61,14 @@ public class CitizenAddPartnerContactDetails implements CCDConfig<CaseData, Stat
         CaseData caseData = details.getData();
         State currentState = details.getState();
 
+        if (respondentAddressPresent(caseData)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .state(currentState)
+                .errors(List.of("Respondent address is present, cannot add partner contact details"))
+                .build();
+        }
+
         NoRespondentAddressJourneyOptions noRespAddressJourneyOptions =
             caseData.getApplicant1().getInterimApplicationOptions().getNoRespAddressJourneyOptions();
 
@@ -79,5 +89,10 @@ public class CitizenAddPartnerContactDetails implements CCDConfig<CaseData, Stat
                 .data(caseData)
                 .state(currentState)
                 .build();
+    }
+
+    private boolean respondentAddressPresent(final CaseData caseData) {
+        return caseData.getApplicant2().getAddress() != null
+            && !AddressUtil.getPostalAddress(caseData.getApplicant2().getAddress()).isEmpty();
     }
 }
