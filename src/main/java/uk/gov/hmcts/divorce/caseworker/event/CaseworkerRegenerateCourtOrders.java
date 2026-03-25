@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.RegenerateCourtOrdersNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
@@ -31,6 +32,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ErrorsAndWarnings;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.validateFinalOrderGrantedDate;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.removeExistingDocuments;
@@ -49,6 +52,19 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANT
 public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_REGENERATE_COURT_ORDERS = "caseworker-regenerate-court-orders";
     public static final String REGENERATE_COURT_ORDERS = "Regenerate court orders";
+    private static final String FO_GRANTED = "granted=\"Yes\"";
+    private static final String NEVER_SHOW = "coCourt=\"NEVER_SHOW\"";
+    private static final String warningLabel = """
+                Updating court orders recreates the Certificate of Entitlement,
+                Conditional Order, and Final Order,
+                based on the latest case data.
+                Any other court orders e.g. conditional order refusals, will remain unchanged.
+
+                If there have been updates to the case data e.g. change of applicant name, then these will be reflected in the updated
+                court orders.
+
+                Previous versions of court orders will not be stored against the case.
+                """;
 
     private final GenerateConditionalOrderPronouncedDocument generateConditionalOrderPronouncedDocument;
     private final RegenerateCourtOrdersNotification regenerateCourtOrdersNotification;
@@ -69,24 +85,40 @@ public class CaseworkerRegenerateCourtOrders implements CCDConfig<CaseData, Stat
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SOLICITOR))
-            .page("regenerateCourtOrderDocs")
+            .page("regenerateCourtOrderDocs", this::midEvent)
             .label("regeneratedConditionalOrderDetails", "# Conditional Order Details")
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getCourt)
                 .mandatory(ConditionalOrder::getPronouncementJudge)
             .done()
+            .label("regeneratedFinalOrderDetails", "# Final Order Granted Date", FO_GRANTED)
+            .complex(CaseData::getFinalOrder)
+                .readonlyNoSummary(FinalOrder::getGranted, NEVER_SHOW)
+                .mandatory(FinalOrder::getGrantedDate, FO_GRANTED)
+            .done()
             .pageLabel(REGENERATE_COURT_ORDERS)
-            .label("regenerateCourtOrdersWarningLabel", """
-                Updating court orders recreates the Certificate of Entitlement,
-                Conditional Order, and Final Order,
-                based on the latest case data.
-                Any other court orders e.g. conditional order refusals, will remain unchanged.
+            .label("regenerateCourtOrdersWarningLabel", warningLabel);
+    }
 
-                If there have been updates to the case data e.g. change of applicant name, then these will be reflected in the updated
-                court orders.
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails
+    ) {
+        log.info("Caseworker regenerate court orders midEvent callback invoked for Case Id: {}", details.getId());
 
-                Previous versions of court orders will not be stored against the case.
-                """);
+        if (details.getData().getFinalOrder().hasFinalOrderBeenGranted()) {
+            ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(details);
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(details.getData())
+                .warnings(errorsAndWarnings.warnings)
+                .errors(errorsAndWarnings.errors)
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
