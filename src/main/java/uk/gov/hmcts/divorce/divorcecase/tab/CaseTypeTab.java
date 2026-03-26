@@ -402,7 +402,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildServiceApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final Tab.TabBuilder<CaseData, UserRole> tabBuilder = configBuilder.tab("alternativeService", "Service Application")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER, APPLICANT_1_SOLICITOR)
-            .showCondition("receivedServiceApplicationDate=\"*\"");
+            .showCondition("receivedServiceApplicationDate=\"*\" OR alternativeServiceOutcomes=\"*\"");
         addServiceApplicationTabFields(tabBuilder);
     }
 
