@@ -37,11 +37,11 @@ public class SendSubmissionNotifications implements CaseTask {
         Application application = caseData.getApplication();
 
         EnumSet<State> submittedStates = EnumSet.of(Submitted, AwaitingHWFDecision);
-        boolean hasSubmittedDocuments = !application.hasAwaitingApplicant1Documents()
-            && (!application.hasAwaitingApplicant2Documents() || caseData.getApplicationType().isSole());
 
-        if ((submittedStates.contains(state) || submittedStates.contains(application.getWelshPreviousState()))
-            && hasSubmittedDocuments) {
+        boolean hasSubmittedState = submittedStates.contains(state) || submittedStates.contains(application.getWelshPreviousState());
+        boolean isAwaitingApplicant = application.isAwaitingApplicant(caseData.getApplicationType());
+
+        if (hasSubmittedState && !isAwaitingApplicant) {
             log.info("Sending application submitted notifications for case : {}", caseId);
             notificationDispatcher.send(applicationSubmittedNotification, caseData, caseId);
         } else {

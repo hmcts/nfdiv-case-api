@@ -699,7 +699,7 @@ public class Application {
         }
 
         final boolean hasNotProvidedAddress = YES.equals(applicant1WantsToHavePapersServedAnotherWay)
-            || (NO.equals(applicant1KnowsApplicant2Address) || NO.equals(applicant1FoundApplicant2Address));
+            || (NO.equals(applicant1KnowsApplicant2Address) && NO.equals(applicant1FoundApplicant2Address));
 
         return hasNotProvidedAddress || isPersonalServiceMethod();
     }
