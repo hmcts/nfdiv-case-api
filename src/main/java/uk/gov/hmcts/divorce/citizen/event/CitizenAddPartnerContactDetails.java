@@ -33,6 +33,9 @@ public class CitizenAddPartnerContactDetails implements CCDConfig<CaseData, Stat
 
     public static final String CITIZEN_ADD_PARTNER_DETAILS = "citizen-add-partner-details";
 
+    public static final String CANNOT_UPDATE_PARTNER_DETAILS_ERROR =
+        "Respondent address is present, cannot add partner contact details";
+
     private static final EnumSet<State> CITIZEN_UPDATE_STATES = EnumSet.complementOf(EnumSet.of(
         AwaitingPayment,
         NewPaperCase,
@@ -65,7 +68,7 @@ public class CitizenAddPartnerContactDetails implements CCDConfig<CaseData, Stat
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .state(currentState)
-                .errors(List.of("Respondent address is present, cannot add partner contact details"))
+                .errors(List.of(CANNOT_UPDATE_PARTNER_DETAILS_ERROR))
                 .build();
         }
 

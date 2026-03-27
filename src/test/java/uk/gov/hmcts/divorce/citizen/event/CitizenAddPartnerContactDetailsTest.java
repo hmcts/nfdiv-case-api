@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPartnerContactDetails.CANNOT_UPDATE_PARTNER_DETAILS_ERROR;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPartnerContactDetails.CITIZEN_ADD_PARTNER_DETAILS;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -83,7 +84,7 @@ class CitizenAddPartnerContactDetailsTest {
 
         var response = citizenAddPartnerContactDetails.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).contains("Respondent address is present, cannot add partner contact details");
+        assertThat(response.getErrors()).contains(CANNOT_UPDATE_PARTNER_DETAILS_ERROR);
     }
 
     @Test
