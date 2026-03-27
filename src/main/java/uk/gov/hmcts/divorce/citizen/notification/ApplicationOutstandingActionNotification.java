@@ -73,7 +73,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
                 OUTSTANDING_ACTIONS,
-                this.applicant2TemplateVars(caseData, id),
+                applicant2TemplateVars(caseData, id),
                 caseData.getApplicant2().getLanguagePreference(),
                 id
             );
