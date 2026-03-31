@@ -136,10 +136,11 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
         Applicant beforeApplicant = isApplicant1 ? beforeData.getApplicant1() : beforeData.getApplicant2();
         Optional<GeneralApplication> generalAppOptional = findActiveGeneralApplication(data, beforeApplicant);
 
+        data.getApplication().setPreviousState(beforeDetails.getState());
+
         generalAppOptional.ifPresent(generalApplication ->
-            submissionService.sendNotifications(
-                details.getId(), generalAppOptional.get(), data
-            ));
+            submissionService.sendNotifications(details.getId(), generalAppOptional.get(), data)
+        );
 
         return SubmittedCallbackResponse.builder().build();
     }
