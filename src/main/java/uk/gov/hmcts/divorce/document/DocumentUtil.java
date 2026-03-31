@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -161,7 +160,7 @@ public final class DocumentUtil {
         if (EMAIL.equals(documentType)) {
             GeneralParties generalParties = caseData.getGeneralEmail().getGeneralEmailParties();
 
-            if (Objects.equals(APPLICANT, generalParties)) {
+            if (APPLICANT.equals(generalParties)) {
                 return caseData.getApplicant1().isConfidentialContactDetails();
             } else if (APPLICANT2.equals(generalParties) || RESPONDENT.equals(generalParties)) {
                 return caseData.getApplicant2().isConfidentialContactDetails();
