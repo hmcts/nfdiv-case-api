@@ -18,7 +18,7 @@ echo "Definition input directory: ${definition_input_dir}"
 echo "Definition output file: ${definition_output_file}"
 echo "Additional params: ${additionalParameters}"
 
-az acr login --name hmctsprod --subscription DCD-CNP-Prod
+az acr login --name hmctsprod --subscription DCD-CNP-PROD
 
 docker run --pull always --rm \
   -v ${definition_input_dir}:/tmp/ccd-definition \
