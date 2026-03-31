@@ -4,6 +4,7 @@ import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDocumentsReceived;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -16,13 +17,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Stream.ofNullable;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_OVERDUE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
@@ -156,10 +160,11 @@ public final class DocumentUtil {
             || caseData.getApplicant2().isConfidentialContactDetails();
 
         if (EMAIL.equals(documentType)) {
-            if (APPLICANT.equals(caseData.getGeneralEmail().getGeneralEmailParties())) {
+            GeneralParties generalParties = caseData.getGeneralEmail().getGeneralEmailParties();
+
+            if (Objects.equals(APPLICANT, generalParties)) {
                 return caseData.getApplicant1().isConfidentialContactDetails();
-            }
-            if (RESPONDENT.equals(caseData.getGeneralEmail().getGeneralEmailParties())) {
+            } else if (generalParties != null && Set.of(APPLICANT2, RESPONDENT).contains(generalParties)) {
                 return caseData.getApplicant2().isConfidentialContactDetails();
             }
         }

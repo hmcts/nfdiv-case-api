@@ -42,7 +42,7 @@ public class GeneralApplicationD11SubmittedNotification implements GeneralApplic
         final GeneralParties generalParties = generalApplication.getGeneralApplicationParty();
         log.info("Sending d11 general application submitted notification to {} on case id {}", generalParties.getLabel(), caseId);
 
-        final boolean isApplicant1 = GeneralParties.APPLICANT.equals(generalApplication.getGeneralApplicationParty());
+        final boolean isApplicant1 = GeneralParties.APPLICANT.equals(generalParties);
         final Applicant applicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
         final Applicant partner = isApplicant1 ? caseData.getApplicant2() : caseData.getApplicant1();
         boolean awaitingDocuments = YesOrNo.NO.equals(generalApplication.getGeneralApplicationDocsUploadedPreSubmission());
