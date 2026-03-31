@@ -51,6 +51,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenGeneralApplication.AWAITING_PAYMENT_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
@@ -340,10 +341,11 @@ class CitizenGeneralApplicationTest {
     }
 
     @Test
-    void shouldTriggerSearchGovRecordsNotificationsIfApplicationSubmittedWithHelpWithFees() {
+    void shouldTriggerNotificationsIfApplicationSubmittedWithHelpWithFees() {
         final var beforeDetails = CaseDetails.<CaseData, State>builder().data(
             buildCaseData(InterimApplicationType.SEARCH_GOV_RECORDS)
         ).build();
+        beforeDetails.setState(AwaitingPronouncement);
         final var afterDetails = CaseDetails.<CaseData, State>builder().data(
             buildCaseData(InterimApplicationType.SEARCH_GOV_RECORDS)
         ).state(AwaitingGeneralReferralPayment).build();
@@ -364,13 +366,12 @@ class CitizenGeneralApplicationTest {
 
         citizenGeneralApplication.submitted(afterDetails, beforeDetails);
 
-        verify(submissionService).sendNotifications(
-            TEST_CASE_ID, generalApplication, afterDetails.getData()
-        );
+        verify(submissionService).sendNotifications(TEST_CASE_ID, generalApplication, afterDetails.getData());
+        assertThat(afterDetails.getData().getApplication().getPreviousState()).isEqualTo(AwaitingPronouncement);
     }
 
     @Test
-    void shouldNotTriggerSearchGovRecordsNotificationsIfApplicationSubmittedWithHelpWithFees() {
+    void shouldNotTriggerNotificationsIfApplicationSubmittedWithHelpWithFees() {
         final var beforeDetails = CaseDetails.<CaseData, State>builder().data(
             buildCaseData(InterimApplicationType.SEARCH_GOV_RECORDS)
         ).build();
