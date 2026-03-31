@@ -17,27 +17,14 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.MADE_PAYMENT;
-import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.USED_HELP_WITH_FEES;
-import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.ALTERNATIVE_SERVICE_APPLICATION_AWAITING_DOCUMENTS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.ALTERNATIVE_SERVICE_APPLICATION_SUBMITTED;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 
 @ExtendWith(SpringExtension.class)
@@ -66,28 +53,21 @@ class AlternativeServiceApplicationSubmittedNotificationTest {
                 .receivedServiceApplicationDate(LocalDate.of(2020, 1, 1))
             .build());
 
-        Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(divorceTemplateVars);
+        Map<String, String> templateVars = new HashMap<>();
+        when(commonContent.serviceApplicationTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
+            .thenReturn(templateVars);
 
         notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(ALTERNATIVE_SERVICE_APPLICATION_AWAITING_DOCUMENTS),
-            argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
-                hasEntry(CommonContent.FIRST_NAME, data.getApplicant1().getFirstName()),
-                hasEntry(LAST_NAME, data.getApplicant1().getLastName()),
-                hasEntry(MADE_PAYMENT, NO),
-                hasEntry(USED_HELP_WITH_FEES, YES),
-                hasEntry(SUBMISSION_RESPONSE_DATE, "")
-            )),
-            eq(ENGLISH),
-            eq(TEST_CASE_ID)
+            TEST_USER_EMAIL,
+            ALTERNATIVE_SERVICE_APPLICATION_AWAITING_DOCUMENTS,
+            templateVars,
+            ENGLISH,
+            TEST_CASE_ID
         );
 
-        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).serviceApplicationTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
     }
 
     @Test
@@ -99,28 +79,21 @@ class AlternativeServiceApplicationSubmittedNotificationTest {
             .receivedServiceApplicationDate(LocalDate.of(2020, 1, 1))
             .build());
 
-        Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(divorceTemplateVars);
+        Map<String, String> templateVars = new HashMap<>();
+        when(commonContent.serviceApplicationTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
+            .thenReturn(templateVars);
 
         notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(ALTERNATIVE_SERVICE_APPLICATION_SUBMITTED),
-            argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
-                hasEntry(CommonContent.FIRST_NAME, data.getApplicant1().getFirstName()),
-                hasEntry(LAST_NAME, data.getApplicant1().getLastName()),
-                hasEntry(MADE_PAYMENT, YES),
-                hasEntry(USED_HELP_WITH_FEES, NO),
-                hasEntry(SUBMISSION_RESPONSE_DATE, "29 January 2020")
-            )),
-            eq(ENGLISH),
-            eq(TEST_CASE_ID)
+            TEST_USER_EMAIL,
+            ALTERNATIVE_SERVICE_APPLICATION_SUBMITTED,
+            templateVars,
+            ENGLISH,
+            TEST_CASE_ID
         );
 
-        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).serviceApplicationTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
     }
 
     @Test
@@ -134,27 +107,20 @@ class AlternativeServiceApplicationSubmittedNotificationTest {
             .build());
         data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
-        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(divorceTemplateVars);
+        Map<String, String> templateVars = new HashMap<>();
+        when(commonContent.serviceApplicationTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
+            .thenReturn(templateVars);
 
         notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
-            eq(TEST_USER_EMAIL),
-            eq(ALTERNATIVE_SERVICE_APPLICATION_SUBMITTED),
-            argThat(allOf(
-                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
-                hasEntry(CommonContent.FIRST_NAME, data.getApplicant1().getFirstName()),
-                hasEntry(LAST_NAME, data.getApplicant1().getLastName()),
-                hasEntry(MADE_PAYMENT, YES),
-                hasEntry(USED_HELP_WITH_FEES, NO),
-                hasEntry(SUBMISSION_RESPONSE_DATE, "29 Ionawr 2020")
-            )),
-            eq(WELSH),
-            eq(TEST_CASE_ID)
+            TEST_USER_EMAIL,
+            ALTERNATIVE_SERVICE_APPLICATION_SUBMITTED,
+            templateVars,
+            WELSH,
+            TEST_CASE_ID
         );
 
-        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).serviceApplicationTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
     }
 }
