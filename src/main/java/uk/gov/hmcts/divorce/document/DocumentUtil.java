@@ -19,14 +19,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Stream.ofNullable;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.APPLICANT2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_OVERDUE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.AOS_RESPONSE_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_APP1;
@@ -164,7 +163,7 @@ public final class DocumentUtil {
 
             if (Objects.equals(APPLICANT, generalParties)) {
                 return caseData.getApplicant1().isConfidentialContactDetails();
-            } else if (generalParties != null && Set.of(APPLICANT2, RESPONDENT).contains(generalParties)) {
+            } else if (APPLICANT2.equals(generalParties) || RESPONDENT.equals(generalParties)) {
                 return caseData.getApplicant2().isConfidentialContactDetails();
             }
         }

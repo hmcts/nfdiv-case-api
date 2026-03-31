@@ -14,7 +14,6 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
@@ -121,8 +120,9 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
             }
         }
 
-        final GeneralParties generalParty =  getGeneralParty(isApplicant1, data.getApplicationType());
-        GeneralApplication newGeneralApplication = buildGeneralApplication(userOptions, generalParty);
+        GeneralApplication newGeneralApplication = buildGeneralApplication(
+            userOptions, GeneralParties.from(isApplicant1, data.getApplicationType())
+        );
 
         FeeDetails applicationFee = newGeneralApplication.getGeneralApplicationFee();
         if (userOptions.willMakePayment()) {
@@ -185,11 +185,6 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         }
 
         return SubmittedCallbackResponse.builder().build();
-    }
-
-    private GeneralParties getGeneralParty(boolean isApplicant1, ApplicationType applicationType) {
-        return isApplicant1 ? GeneralParties.APPLICANT
-            : (ApplicationType.SOLE_APPLICATION.equals(applicationType) ? GeneralParties.RESPONDENT : GeneralParties.APPLICANT2);
     }
 
     private GeneralApplication buildGeneralApplication(InterimApplicationOptions userOptions, GeneralParties generalParty) {

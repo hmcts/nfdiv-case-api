@@ -21,4 +21,12 @@ public enum GeneralParties implements HasLabel {
     OTHER("Other");
 
     private final String label;
+
+    public static GeneralParties from(boolean isApplicant1, ApplicationType applicationType) {
+        if (isApplicant1) {
+            return GeneralParties.APPLICANT;
+        } else {
+            return ApplicationType.SOLE_APPLICATION.equals(applicationType) ? GeneralParties.RESPONDENT : GeneralParties.APPLICANT2;
+        }
+    }
 }

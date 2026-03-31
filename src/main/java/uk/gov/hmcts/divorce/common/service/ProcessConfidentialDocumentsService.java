@@ -93,7 +93,8 @@ public class ProcessConfidentialDocumentsService {
         return ofNullable(caseData.getGeneralLetters())
             .flatMap(Collection::stream)
             .map(ListValue::getValue)
-            .anyMatch(generalLetterDetail -> parties.contains(generalLetterDetail.getGeneralLetterParties())
+            .anyMatch(generalLetterDetail -> generalLetterDetail.getGeneralLetterParties() != null
+                && parties.contains(generalLetterDetail.getGeneralLetterParties())
                 && generalLetterDetail.getGeneralLetterLink().getUrl().equals(generalLetterDocument.getDocumentLink().getUrl()));
     }
 
