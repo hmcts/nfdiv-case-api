@@ -32,7 +32,10 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
@@ -109,9 +112,10 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
         setToNewMatches(caseData, newMatches);
 
-//        log.info("New matches count: " + newMatches.size());
-//        log.info("Stored matches count: " + caseData.getCaseMatches().size());
-//        log.info("Differential matches count: " + caseData.getCaseMatchesDifferential().size());
+        log.info("New matches count: " + newMatches.size());
+        log.info("Stored matches count: " + caseData.getCaseMatches().size());
+        log.info("Differential matches count: " + caseData.getCaseMatchesDifferential().size());
+        log.info("Inappropriate matches count: " + caseData.getInappropriateCaseMatches().size());
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
@@ -121,19 +125,30 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details, final CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
 
-        // Affected by EXUI-3839? Field set in aboutToStart not set in midEvent (caseMatchesDifferential is null here)
-//        log.info("Stored matches count: " + caseData.getCaseMatches().size());
-//        log.info("Differential matches count: " + caseData.getCaseMatchesDifferential().size());
+        // Affected by EXUI-4347 - maybe related to EXUI-3839? Field set in aboutToStart not set in midEvent (caseMatchesDifferential is null here)
+        log.info("Stored matches count: " + caseData.getCaseMatches().size());
+        log.info("Differential matches count: " + caseData.getCaseMatchesDifferential().size());
 
         List<ListValue<CaseMatch>> caseMatches = caseData.getCaseMatches();
         List<ListValue<CaseMatch>> differentialMatches = caseData.getCaseMatchesDifferential();
 
+        Set<String> existingRefs = caseMatches.stream().map(
+            match -> match.getValue().getCaseLink().getCaseReference()
+        ).collect(Collectors.toSet());
+
         List<ListValue<CaseMatch>> removedMatches = differentialMatches.stream()
-            .filter(match -> !caseMatches.contains(match)).toList();
+            .filter(match -> {
+                String ref = match.getValue().getCaseLink().getCaseReference();
+                return !existingRefs.contains(ref);
+            }).toList();
+
+        log.info("Removed matches count: " + removedMatches.size());
 
         if (!removedMatches.isEmpty()) {
             caseData.getInappropriateCaseMatches().addAll(removedMatches);
         }
+
+        log.info("Inappropriate matches count: " + caseData.getInappropriateCaseMatches().size());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -274,12 +289,21 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         storedMatches.clear();
 
         if (!newMatches.isEmpty()) {
-            List<CaseMatch> inappropriateMatches = data.fromListValueToList(data.getInappropriateCaseMatches());
+            Set<String> inappropriateMatchRefs = data.fromListValueToList(data.getInappropriateCaseMatches()).stream()
+                .map(match -> match.getCaseLink().getCaseReference())
+                .collect(Collectors.toSet());
+
+            log.info("Inappropriate matches ref count: " + inappropriateMatchRefs.size());
 
             storedMatches.addAll(newMatches.stream()
-                .filter(match -> !inappropriateMatches.contains(match))
+                .filter(match -> {
+                    String ref = match.getCaseLink().getCaseReference();
+                    return !inappropriateMatchRefs.contains(ref);
+                })
                 .map(match -> ListValue.<CaseMatch>builder().value(match).build())
                 .toList());
+
+            log.info("Stored matches count: " + storedMatches.size());
 
             data.setCaseMatchesDifferential(storedMatches);
         }
