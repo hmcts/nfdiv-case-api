@@ -177,9 +177,9 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         ServicePaymentMethod paymentMethod = newGeneralApplication.getGeneralApplicationFee().getPaymentMethod();
 
         if (ServicePaymentMethod.FEE_PAY_BY_HWF.equals(paymentMethod)) {
-            submissionService.sendNotifications(
-                details.getId(), newGeneralApplication, details.getData()
-            );
+            details.getData().getApplication().setPreviousState(beforeDetails.getState());
+
+            submissionService.sendNotifications(details.getId(), newGeneralApplication, details.getData());
         }
 
         return SubmittedCallbackResponse.builder().build();

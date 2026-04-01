@@ -45,6 +45,7 @@ import static uk.gov.hmcts.divorce.common.service.PaymentValidatorService.ERROR_
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.DECLINED;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -214,12 +215,14 @@ class CitizenGeneralApplicationPaymentMadeTest {
             .data(beforeData)
             .id(TEST_CASE_ID)
             .build();
+        beforeDetails.setState(AwaitingPronouncement);
 
         citizenGeneralApplicationPayment.submitted(details, beforeDetails);
 
         verify(submissionService).sendNotifications(
             TEST_CASE_ID, caseData.getGeneralApplications().getFirst().getValue(), caseData
         );
+        assertThat(details.getData().getApplication().getPreviousState()).isEqualTo(AwaitingPronouncement);
     }
 
     private CaseData buildTestData() {
