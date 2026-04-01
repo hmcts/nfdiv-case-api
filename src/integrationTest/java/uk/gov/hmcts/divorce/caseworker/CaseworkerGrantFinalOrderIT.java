@@ -24,6 +24,7 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
@@ -44,6 +45,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Set;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
@@ -64,7 +66,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.CASEWORKER_GRANT_FINAL_ORDER;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.ERROR_CASE_NOT_ELIGIBLE;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.ERROR_NO_CO_GRANTED_DATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -166,6 +167,8 @@ public class CaseworkerGrantFinalOrderIT {
     @Test
     public void shouldGenerateGrantFinalOrderDocumentAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvoked() throws Exception {
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
+        caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
+        caseData.getFinalOrder().setGrantedDate(LocalDateTime.now());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -203,6 +206,8 @@ public class CaseworkerGrantFinalOrderIT {
         throws Exception {
 
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
+        caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
+        caseData.getFinalOrder().setGrantedDate(LocalDateTime.now());
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant2().setOffline(YES);
         caseData.getApplicant2().setEmail(null);
@@ -243,6 +248,8 @@ public class CaseworkerGrantFinalOrderIT {
 
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
         caseData.getFinalOrder().setIsFinalOrderOverdue(YES);
+        caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
+        caseData.getFinalOrder().setGrantedDate(LocalDateTime.now());
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant2().setOffline(YES);
         caseData.getApplicant2().setEmail(null);
@@ -311,6 +318,8 @@ public class CaseworkerGrantFinalOrderIT {
     @Test
     public void shouldGenerateGrantFinalOrderDocumentInWelshAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvoked() throws Exception {
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
+        caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
+        caseData.getFinalOrder().setGrantedDate(LocalDateTime.now());
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
@@ -376,38 +385,10 @@ public class CaseworkerGrantFinalOrderIT {
     }
 
     @Test
-    public void shouldFailValidationWhenAboutToSubmitCallbackIsInvokedAndNotYetEligibleFinalOrder() throws Exception {
-        final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
-        caseData.getFinalOrder().setDateFinalOrderEligibleFrom(LocalDate.of(2022, 3, 1));
-
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(
-                        callbackRequest(
-                            caseData,
-                            CASEWORKER_GRANT_FINAL_ORDER)
-                    )
-                )
-                .accept(APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(
-                status().isOk())
-            .andExpect(
-                jsonPath("$.errors").value(ERROR_CASE_NOT_ELIGIBLE));
-
-        verifyNoInteractions(notificationService);
-    }
-
-    @Test
     void shouldReturn401UnauthorizedWhenAboutToSubmitCallbackIsInvokedAndAuthorizationFailsForDocAssembly() throws Exception {
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
+        caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
+        caseData.getFinalOrder().setGrantedDate(LocalDateTime.now());
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -434,6 +415,8 @@ public class CaseworkerGrantFinalOrderIT {
     @Test
     public void shouldGenerateFinalOrderAndSendNotificationToSolicitorsWhenAboutToSubmitCallbackIsInvoked() throws Exception {
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
+        caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
+        caseData.getFinalOrder().setGrantedDate(LocalDateTime.now());
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(
@@ -487,6 +470,8 @@ public class CaseworkerGrantFinalOrderIT {
     @Test
     public void shouldSendNotificationToSolicitorsWhenAboutToSubmitCallbackIsInvoked() throws Exception {
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
+        caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
+        caseData.getFinalOrder().setGrantedDate(LocalDateTime.now());
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
         caseData.getApplicant1().setSolicitorRepresented(YES);
         caseData.getApplicant1().setSolicitor(
@@ -550,6 +535,10 @@ public class CaseworkerGrantFinalOrderIT {
     public void shouldSendNotificationToApplicantAndRespondentWhenAboutToSubmitCallbackIsInvokedForASoleCase() throws Exception {
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
+        caseData.getConditionalOrder().setGrantedDate(LocalDate.now());
+        caseData.getFinalOrder().setDateFinalOrderEligibleFrom(LocalDate.now());
+        caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
+        caseData.getFinalOrder().setGrantedDate(LocalDateTime.now());
         caseData.getApplicant1().setEmail("applicant@email.com");
 
         final Applicant applicant2 = getApplicant();
@@ -600,6 +589,8 @@ public class CaseworkerGrantFinalOrderIT {
     @Test
     public void shouldSendWelshNotificationToApplicantAndRespondentWhenAboutToSubmitCallbackIsInvokedForASoleCase() throws Exception {
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
+        caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
+        caseData.getFinalOrder().setGrantedDate(LocalDateTime.now());
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
         caseData.getApplicant1().setEmail("applicant@email.com");
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
@@ -653,6 +644,8 @@ public class CaseworkerGrantFinalOrderIT {
     @Test
     public void shouldSendBulkPrintNotificationToOfflineApplicantAndOfflineRespondentWhenSubmittedCallbackIsInvoked() throws Exception {
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
+        caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
+        caseData.getFinalOrder().setGrantedDate(LocalDateTime.now());
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
         caseData.getApplicant1().setOffline(YES);
 

@@ -52,6 +52,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssue
 class ApplicationWithdrawnNotificationTest {
     private static final String IS_RESPONDENT = "isRespondent";
     private static final String RESPONDENT_PARTNER = "respondentPartner";
+    private static final String IS_PENDING_REFUND = "isPendingRefund";
 
     @Mock
     private NotificationService notificationService;
@@ -83,6 +84,38 @@ class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_RESPONDENT, NO),
+                hasEntry(IS_PENDING_REFUND, YES),
+                hasEntry(RESPONDENT_PARTNER, "")
+            )),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
+    }
+
+    @Test
+    void shouldSendEmailToSoleApplicant1WithDivorceContentButNoRefundTextIfCaseIssued() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        CaseData data = validCaseDataForIssueApplication();
+        data.getApplication().setIssueDate(LocalDate.of(2022, 8, 10));
+        caseDetails.setData(data);
+
+        Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(divorceTemplateVars);
+
+        applicationWithdrawnNotification.sendToApplicant1(caseDetails);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_APPLICATION_WITHDRAWN),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(IS_RESPONDENT, NO),
+                hasEntry(IS_PENDING_REFUND, NO),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
             eq(ENGLISH),
@@ -114,6 +147,7 @@ class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(IS_RESPONDENT, NO),
+                hasEntry(IS_PENDING_REFUND, YES),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
             eq(ENGLISH),
@@ -144,6 +178,7 @@ class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_RESPONDENT, NO),
+                hasEntry(IS_PENDING_REFUND, YES),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
             eq(WELSH),
@@ -177,6 +212,7 @@ class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_RESPONDENT, YES),
+                hasEntry(IS_PENDING_REFUND, NO),
                 hasEntry(RESPONDENT_PARTNER, "husband")
             )),
             eq(ENGLISH),
@@ -213,6 +249,7 @@ class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(IS_RESPONDENT, YES),
+                hasEntry(IS_PENDING_REFUND, NO),
                 hasEntry(RESPONDENT_PARTNER, "husband")
             )),
             eq(ENGLISH),
@@ -246,6 +283,7 @@ class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_RESPONDENT, NO),
+                hasEntry(IS_PENDING_REFUND, NO),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
             eq(ENGLISH),
@@ -279,6 +317,7 @@ class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_DIVORCE, NO),
                 hasEntry(IS_DISSOLUTION, YES),
                 hasEntry(IS_RESPONDENT, NO),
+                hasEntry(IS_PENDING_REFUND, YES),
                 hasEntry(RESPONDENT_PARTNER, "")
             )),
             eq(ENGLISH),
@@ -314,6 +353,7 @@ class ApplicationWithdrawnNotificationTest {
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
                 hasEntry(IS_RESPONDENT, YES),
+                hasEntry(IS_PENDING_REFUND, NO),
                 hasEntry(RESPONDENT_PARTNER, "gŵr")
             )),
             eq(WELSH),
