@@ -79,8 +79,8 @@ public class SolicitorSubmitJointApplication implements CCDConfig<CaseData, Stat
 
         return new PageBuilder(configBuilder.event(SOLICITOR_SUBMIT_JOINT_APPLICATION)
             .forStates(AwaitingApplicant2Response, Draft)
-            .name("Submit joint application")
-            .description("Submit joint application")
+            .name("Review and submit application")
+            .description("Review and submit application")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)

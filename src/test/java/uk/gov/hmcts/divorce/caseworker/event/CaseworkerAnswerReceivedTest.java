@@ -35,7 +35,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
-import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DEF;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE_ANSWERS;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -83,7 +83,9 @@ class CaseworkerAnswerReceivedTest {
 
         caseworkerAnswerReceived.aboutToStart(caseDetails);
 
-        verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DEF);
+        verify(paymentService).getOrderSummaryByServiceEvent(
+            SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DIVORCE_ANSWERS
+        );
     }
 
     @Test
