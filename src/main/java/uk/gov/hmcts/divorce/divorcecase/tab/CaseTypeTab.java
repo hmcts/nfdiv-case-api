@@ -400,8 +400,14 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     }
 
     private void buildServiceApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        configBuilder.tab("alternativeService", "Service Application")
+        final Tab.TabBuilder<CaseData, UserRole> tabBuilder = configBuilder.tab("alternativeService", "Service Application")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER, APPLICANT_1_SOLICITOR)
+            .showCondition("receivedServiceApplicationDate=\"*\" OR alternativeServiceOutcomes=\"*\"");
+        addServiceApplicationTabFields(tabBuilder);
+    }
+
+    private void addServiceApplicationTabFields(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+        tabBuilder
             .field("receivedServiceApplicationDate")
             .field("receivedServiceAddedDate")
             .field("alternativeServiceType")
@@ -417,8 +423,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("servicePaymentFeeHasCompletedOnlinePayment")
             .field("servicePaymentFeePaymentReference")
             .field(
-              "servicePaymentFeeDateOfPayment",
-              "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\" OR servicePaymentFeePaymentReference=\"*\"")
+                "servicePaymentFeeDateOfPayment",
+                "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\" OR servicePaymentFeePaymentReference=\"*\"")
             .field("servicePaymentFeeAccountNumber",
                 "servicePaymentFeePaymentMethod=\"feePayByAccount\" AND alternativeServiceFeeRequired=\"Yes\"")
             .field("servicePaymentFeeAccountReferenceNumber",
