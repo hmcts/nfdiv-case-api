@@ -120,7 +120,9 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
             }
         }
 
-        GeneralApplication newGeneralApplication = buildGeneralApplication(userOptions, isApplicant1);
+        GeneralApplication newGeneralApplication = buildGeneralApplication(
+            userOptions, GeneralParties.from(isApplicant1, data.getApplicationType())
+        );
 
         FeeDetails applicationFee = newGeneralApplication.getGeneralApplicationFee();
         if (userOptions.willMakePayment()) {
@@ -185,9 +187,9 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
         return SubmittedCallbackResponse.builder().build();
     }
 
-    private GeneralApplication buildGeneralApplication(InterimApplicationOptions userOptions, boolean isApplicant1) {
+    private GeneralApplication buildGeneralApplication(InterimApplicationOptions userOptions, GeneralParties generalParty) {
         return GeneralApplication.builder()
-            .generalApplicationParty(isApplicant1 ? GeneralParties.APPLICANT : GeneralParties.RESPONDENT)
+            .generalApplicationParty(generalParty)
             .generalApplicationReceivedDate(LocalDateTime.now(clock))
             .generalApplicationType(userOptions.getGeneralApplicationType())
             .generalApplicationSubmittedOnline(YesOrNo.YES)
