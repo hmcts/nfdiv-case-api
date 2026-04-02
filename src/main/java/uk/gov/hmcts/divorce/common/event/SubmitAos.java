@@ -29,6 +29,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.event.DraftAos.validateConditionalOrderStatus;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
@@ -172,6 +173,8 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
         if (YES.equals(caseData.getApplicant2().getLegalProceedings()) && caseData.getApplicant2().getLegalProceedingsDetails() == null) {
             errors.add("The respondent must enter the details of their other legal proceedings.");
         }
+
+        errors.addAll(validateConditionalOrderStatus(caseData));
 
         return errors;
     }

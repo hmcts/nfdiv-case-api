@@ -18,13 +18,16 @@ import uk.gov.hmcts.divorce.common.event.page.Applicant2SolConfirmContactDetails
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolReviewApplicant1Application;
 import uk.gov.hmcts.divorce.common.notification.RespondentDraftAosStartedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.task.AddMiniApplicationLink;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
@@ -53,6 +56,9 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
     public static final String DRAFT_AOS = "draft-aos";
     public static final String DRAFT_AOS_ALREADY_SUBMITTED_ERROR
         = "The Acknowledgement Of Service has already been submitted.";
+    public static final String CONDITIONAL_ORDER_ALREADY_SUBMITTED_ERROR
+        = "A conditional order application has been made for this case and the AoS can no longer be submitted.";
+
     protected static final List<CcdPageConfiguration> pages = asList(
         new Applicant2SolConfirmContactDetails(),
         new Applicant2SolReviewApplicant1Application(),
@@ -146,6 +152,19 @@ public class DraftAos implements CCDConfig<CaseData, State, UserRole> {
             errors.add("You cannot draft the AoS until the case has been issued. Please wait for the case to be issued.");
         }
 
+        errors.addAll(validateConditionalOrderStatus(caseData));
+
         return errors;
+    }
+
+    public static List<String> validateConditionalOrderStatus(CaseData caseData) {
+        final ConditionalOrderQuestions app1Questions = caseData.getConditionalOrder().getConditionalOrderApplicant1Questions();
+        final boolean conditionalOrderHasBeenSubmitted = Objects.nonNull(app1Questions.getSubmittedDate());
+
+        if (conditionalOrderHasBeenSubmitted) {
+            return List.of(CONDITIONAL_ORDER_ALREADY_SUBMITTED_ERROR);
+        }
+
+        return Collections.emptyList();
     }
 }

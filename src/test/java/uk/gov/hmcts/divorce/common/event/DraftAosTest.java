@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.common.event.DraftAos.CONDITIONAL_ORDER_ALREADY_SUBMITTED_ERROR;
 import static uk.gov.hmcts.divorce.common.event.DraftAos.DRAFT_AOS;
 import static uk.gov.hmcts.divorce.common.event.DraftAos.DRAFT_AOS_ALREADY_SUBMITTED_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
@@ -121,6 +122,27 @@ class DraftAosTest {
         assertThat(response.getErrors())
             .containsExactly(
                 "The Acknowledgement Of Service has already been drafted.");
+    }
+
+    @Test
+    void shouldThrowErrorIfConditionalOrderHasBeenSubmitted() {
+        final CaseData caseData = CaseData.builder().build();
+        final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
+            .build();
+        caseData.setAcknowledgementOfService(acknowledgementOfService);
+        caseData.setApplication(Application.builder().issueDate(LocalDate.of(2022, 1, 1)).build());
+        caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().setSubmittedDate(
+            LocalDateTime.of(2022, 1, 1, 1, 1)
+        );
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setState(AwaitingAos);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = draftAos.aboutToStart(caseDetails);
+
+        assertThat(response.getData()).isSameAs(caseData);
+        assertThat(response.getErrors())
+            .containsExactly(CONDITIONAL_ORDER_ALREADY_SUBMITTED_ERROR);
     }
 
     @Test

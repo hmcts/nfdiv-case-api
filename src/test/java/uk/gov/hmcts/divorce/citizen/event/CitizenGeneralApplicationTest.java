@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
@@ -26,8 +27,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -42,8 +46,9 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenGeneralApplication.AWAITING_PAYMENT_ERROR;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
@@ -70,6 +75,19 @@ class CitizenGeneralApplicationTest {
 
     @Mock
     HttpServletRequest request;
+
+    @Mock
+    private CcdUpdateService ccdUpdateService;
+
+    @Mock
+    private AuthTokenGenerator authTokenGenerator;
+
+    @Mock
+    private IdamService idamService;
+
+    @Mock
+    private GeneralReferralService generalReferralService;
+
 
     @InjectMocks
     private CitizenGeneralApplication citizenGeneralApplication;
@@ -255,7 +273,7 @@ class CitizenGeneralApplicationTest {
         );
 
         GeneralApplication generalApplication = response.getData().getGeneralApplications().getLast().getValue();
-        assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
+        assertThat(response.getState()).isEqualTo(AwaitingDocuments);
         assertThat(generalApplication.getGeneralApplicationDocument()).isEqualTo(generatedApplication);
         assertThat(generalApplication.getGeneralApplicationFee().getPaymentMethod())
             .isEqualTo(ServicePaymentMethod.FEE_PAY_BY_HWF);
@@ -302,7 +320,7 @@ class CitizenGeneralApplicationTest {
         );
 
         assertThat(response.getState()).isEqualTo(WelshTranslationReview);
-        assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(GeneralApplicationReceived);
+        assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(AwaitingDocuments);
     }
 
     @Test
@@ -312,7 +330,7 @@ class CitizenGeneralApplicationTest {
         ).build();
         final var afterDetails = CaseDetails.<CaseData, State>builder().data(
             buildCaseData(InterimApplicationType.SEARCH_GOV_RECORDS)
-        ).build();
+        ).state(AwaitingGeneralReferralPayment).build();
         beforeDetails.setId(TEST_CASE_ID);
         afterDetails.setId(TEST_CASE_ID);
 

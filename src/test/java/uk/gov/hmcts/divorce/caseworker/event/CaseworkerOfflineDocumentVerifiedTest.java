@@ -7,6 +7,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -41,6 +43,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineRespon
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
@@ -53,13 +56,14 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -78,7 +82,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocume
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.FO_D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.OfflineDocumentReceived.RFI_RESPONSE;
-import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10;
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D10_CONFIDENTIAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D36;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes.D84NVA;
@@ -98,6 +102,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_TOO_EARLY_FOR_RESPONDENT_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
@@ -169,7 +174,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
-    void shouldSetStateToHoldingAndReclassifyAosScannedDocumentToRespondentAnswersIfD10DocumentSelectedAndFoundInScannedDocNames() {
+    void shouldSetStateToHoldingAndReclassifyAosScannedDocumentIfD10DocumentSelectedAndFoundInScannedDocNames() {
         setMockClock(clock);
         final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
             .value(
@@ -282,8 +287,8 @@ class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
-    void shouldSetStateToHoldingAndSkipDocumentReclassificationIfD10DocumentSelectedAndScannedSubtypeReceivedIsD10() {
-
+    void shouldSetStateToHoldingAndReclassifyConfidentialAosScannedDocumentIfD10SelectedAndFoundInScannedDocNames() {
+        setMockClock(clock);
         final ListValue<ScannedDocument> doc1 = ListValue.<ScannedDocument>builder()
             .value(
                 ScannedDocument
@@ -298,10 +303,38 @@ class CaseworkerOfflineDocumentVerifiedTest {
                     )
                     .fileName("doc1.pdf")
                     .type(ScannedDocumentType.OTHER)
-                    .subtype("d10")
+                    .subtype(D10_CONFIDENTIAL.getLabel())
                     .build()
             )
             .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+
+        CaseData caseData = CaseData.builder()
+            .documents(
+                CaseDocuments.builder()
+                    .typeOfDocumentAttached(AOS_D10)
+                    .scannedDocuments(singletonList(doc1))
+                    .scannedSubtypeReceived(D10_CONFIDENTIAL)
+                    .scannedDocumentNames(
+                        DynamicList
+                            .builder()
+                            .value(
+                                DynamicListElement
+                                    .builder()
+                                    .label("doc1.pdf")
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
+            .acknowledgementOfService(AcknowledgementOfService.builder()
+                .howToRespondApplication(DISPUTE_DIVORCE)
+                .build())
+            .build();
+
+        details.setData(caseData);
 
         final ListValue<DivorceDocument> doc = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
@@ -319,31 +352,14 @@ class CaseworkerOfflineDocumentVerifiedTest {
                 .build())
             .build();
 
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-
-        CaseData caseData = CaseData.builder()
-            .documents(
-                CaseDocuments.builder()
-                    .documentsUploaded(singletonList(doc))
-                    .scannedSubtypeReceived(D10)
-                    .scannedDocuments(singletonList(doc1))
-                    .typeOfDocumentAttached(AOS_D10)
-                    .build()
-            )
-            .acknowledgementOfService(AcknowledgementOfService.builder()
-                .howToRespondApplication(DISPUTE_DIVORCE)
-                .build())
-            .build();
-
-        details.setData(caseData);
+        List<ListValue<DivorceDocument>> documentsUploaded = new ArrayList<>();
+        documentsUploaded.add(doc);
 
         final CaseDetails<CaseData, State> updatedDetails = new CaseDetails<>();
         updatedDetails.setData(CaseData.builder()
             .documents(
                 CaseDocuments.builder()
-                    .documentsUploaded(singletonList(doc))
-                    .scannedSubtypeReceived(D10)
-                    .scannedDocuments(singletonList(doc1))
+                    .documentsUploaded(documentsUploaded)
                     .build()
             )
             .applicant2(Applicant.builder()
@@ -358,63 +374,31 @@ class CaseworkerOfflineDocumentVerifiedTest {
 
         assertThat(response.getState().name()).isEqualTo(Holding.name());
         assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YES);
-        assertThat(response.getData().getDocuments().getScannedSubtypeReceived()).isNull();
 
         verify(submitAosService).submitOfflineAos(details);
         verify(submitAosService).submitAosNotifications(details);
         verifyNoMoreInteractions(submitAosService);
-    }
 
-    @Test
-    void shouldSetStateToHoldingAndSkipReclassifyIfSelectedD10DocumentIsNotFoundInScannedDocNames() {
-        final ListValue<ScannedDocument> doc1 = scannedDocument("doc1.pdf");
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        Document ccdDocument = new Document(
+            "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d",
+            "doc1.pdf",
+            "http://localhost:8080/f62d42fd-a5f0-43ff-874b-d1666c1bf00d/binary"
+        );
 
-        CaseData caseData = CaseData.builder()
-            .documents(
-                CaseDocuments.builder()
-                    .typeOfDocumentAttached(AOS_D10)
-                    .scannedDocuments(singletonList(doc1))
-                    .scannedDocumentNames(
-                        DynamicList
-                            .builder()
-                            .value(
-                                DynamicListElement
-                                    .builder()
-                                    .label("doc2.pdf")
-                                    .build()
-                            )
-                            .build()
-                    )
-                    .build()
-            )
-            .acknowledgementOfService(AcknowledgementOfService.builder()
-                .howToRespondApplication(DISPUTE_DIVORCE)
-                .build())
+        var divorceDocument = DivorceDocument
+            .builder()
+            .documentLink(ccdDocument)
+            .documentFileName("doc1.pdf")
+            .documentComment("Reclassified scanned document")
+            .documentDateAdded(getExpectedLocalDate())
+            .documentType(RESPONDENT_ANSWERS)
             .build();
 
-        details.setData(caseData);
-
-
-        final CaseDetails<CaseData, State> updatedDetails = new CaseDetails<>();
-        updatedDetails.setData(CaseData.builder()
-            .applicant2(Applicant.builder()
-                .build())
-            .build());
-        updatedDetails.setState(Holding);
-
-        when(submitAosService.submitOfflineAos(details)).thenReturn(updatedDetails);
-
-        AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
-
-        assertThat(response.getState().name()).isEqualTo(Holding.name());
-        assertThat(response.getData().getApplicant2().getOffline()).isEqualTo(YES);
-        assertThat(response.getData().getDocuments().getDocumentsUploaded()).isNull();
-
-        verify(submitAosService).submitOfflineAos(details);
         verify(submitAosService).submitAosNotifications(details);
-        verifyNoMoreInteractions(submitAosService);
+        assertThat(response.getData().getDocuments().getDocumentsUploaded())
+            .extracting("value")
+            .containsExactly(divorceDocument);
+        assertThat(response.getData().getAcknowledgementOfService().getStatementOfTruth()).isEqualTo(YES);
     }
 
     @Test
@@ -897,8 +881,14 @@ class CaseworkerOfflineDocumentVerifiedTest {
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+        AboutToStartOrSubmitResponse<CaseData, State> response;
+        try (MockedStatic<FinalOrderValidation> classMock = mockStatic(FinalOrderValidation.class)) {
+
+            classMock.when(() -> FinalOrderValidation.validateCanRespondentApplyFinalOrder(Mockito.any(CaseData.class)))
+                .thenReturn(Collections.emptyList());
+
+            response = caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+        }
 
         assertThat(response.getData().getApplicant1().isApplicantOffline()).isFalse();
         assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
@@ -950,8 +940,14 @@ class CaseworkerOfflineDocumentVerifiedTest {
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+        AboutToStartOrSubmitResponse<CaseData, State> response;
+        try (MockedStatic<FinalOrderValidation> classMock = mockStatic(FinalOrderValidation.class)) {
+
+            classMock.when(() -> FinalOrderValidation.validateCanRespondentApplyFinalOrder(Mockito.any(CaseData.class)))
+                .thenReturn(Collections.emptyList());
+
+            response = caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+        }
 
         assertThat(response.getState()).isEqualTo(RespondentFinalOrderRequested);
     }
@@ -1226,27 +1222,6 @@ class CaseworkerOfflineDocumentVerifiedTest {
 
 
     @Test
-    void shouldSendOfflineNotifications() {
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        CaseData caseData = CaseData.builder()
-            .applicationType(JOINT_APPLICATION)
-            .documents(CaseDocuments.builder().typeOfDocumentAttached(AOS_D10).scannedSubtypeReceived(D10).build())
-            .application(Application.builder()
-                .issueDate(LocalDate.of(2022, 1, 1))
-                .stateToTransitionApplicationTo(Holding)
-                .build())
-            .build();
-        details.setData(caseData);
-
-        when(submitAosService.submitOfflineAos(any())).thenReturn(details);
-
-        caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
-
-        verify(submitAosService).submitAosNotifications(details);
-        verifyNoMoreInteractions(submitAosService);
-    }
-
-    @Test
     void shouldNotSetDynamicListWithScannedDocumentNamesIfScannedSubtypeReceivedIsPopulated() {
         final ListValue<ScannedDocument> doc1 = scannedDocument("doc1.pdf");
         final ListValue<ScannedDocument> doc2 = scannedDocument("doc2.pdf");
@@ -1405,13 +1380,35 @@ class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
+    void shouldThrowErrorIfValidationForRespondentFinalOrderFails() {
+        CaseData caseData = caseData();
+        caseData.getFinalOrder().setD36WhoApplying(OfflineWhoApplying.APPLICANT_2);
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getDocuments().setTypeOfDocumentAttached(FO_D36);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response;
+        try (MockedStatic<FinalOrderValidation> classMock = mockStatic(FinalOrderValidation.class)) {
+
+            classMock.when(() ->
+                FinalOrderValidation.validateCanRespondentApplyFinalOrder(caseData)
+            ).thenReturn(List.of(ERROR_TOO_EARLY_FOR_RESPONDENT_FINAL_ORDER));
+
+            response = caseworkerOfflineDocumentVerified.aboutToSubmit(caseDetails, caseDetails);
+        }
+
+        assertThat(response.getErrors()).containsExactly(ERROR_TOO_EARLY_FOR_RESPONDENT_FINAL_ORDER);
+    }
+
+    @Test
     void shouldThrowErrorIfNoRFIOnCaseWhenRequestForInformationResponseSelected() {
         CaseData caseData = caseData();
         caseData.getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.midEvent(caseDetails, caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).contains(NO_REQUEST_FOR_INFORMATION_ERROR);
@@ -1424,7 +1421,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         caseData.getApplication().setIssueDate(LocalDate.now());
         caseData.getDocuments().setTypeOfDocumentAttached(RFI_RESPONSE);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.midEvent(caseDetails, caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).contains(NO_REQUEST_FOR_INFORMATION_POST_ISSUE_ERROR);
