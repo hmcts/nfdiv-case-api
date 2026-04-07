@@ -34,20 +34,23 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
-            .event(CASEWORKER_DUMMY_EVENT_EXUI_4347)
-            .forAllStates()
-            .name("EXUI-3839-4347")
-            .description("EXUI-3839-4347")
-            .aboutToStartCallback(this::aboutToStart)
-            .aboutToSubmitCallback(this::aboutToSubmit)
-            .showEventNotes()
-            .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER, SUPER_USER)
-            .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
-            .page("dummyPage", this::midEvent)
-            .pageLabel("Dummy Page")
-            .mandatory(CaseData::getDummySetDateAutomatically)
-            .done();
+        final boolean dummyEventEnabled = Boolean.parseBoolean(System.getenv().get("EXUI_DUMMY_EVENTS_ENABLED"));
+        if (dummyEventEnabled) {
+            new PageBuilder(configBuilder
+                .event(CASEWORKER_DUMMY_EVENT_EXUI_4347)
+                .forAllStates()
+                .name("EXUI-3839-4347")
+                .description("EXUI-3839-4347")
+                .aboutToStartCallback(this::aboutToStart)
+                .aboutToSubmitCallback(this::aboutToSubmit)
+                .showEventNotes()
+                .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER, SUPER_USER)
+                .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
+                .page("dummyPage", this::midEvent)
+                .pageLabel("Dummy Page")
+                .mandatory(CaseData::getDummySetDateAutomatically)
+                .done();
+        }
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {

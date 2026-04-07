@@ -31,20 +31,23 @@ public class CaseworkerDummyEventEXUI4347NoMid implements CCDConfig<CaseData, St
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        new PageBuilder(configBuilder
-            .event(CASEWORKER_DUMMY_EVENT_EXUI_4347_NO_MID_EVENT)
-            .forAllStates()
-            .name("EXUI-4347 - No Mid Event")
-            .description("EXUI-4347 - No Mid Event")
-            .aboutToStartCallback(this::aboutToStart)
-            .aboutToSubmitCallback(this::aboutToSubmit)
-            .showEventNotes()
-            .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER, SUPER_USER)
-            .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
-            .page("dummyPage")
-            .pageLabel("Dummy Page")
-            .optional(CaseData::getDummySetDateAutomatically)
-            .done();
+        final boolean dummyEventEnabled = Boolean.parseBoolean(System.getenv().get("EXUI_DUMMY_EVENTS_ENABLED"));
+        if (dummyEventEnabled) {
+            new PageBuilder(configBuilder
+                .event(CASEWORKER_DUMMY_EVENT_EXUI_4347_NO_MID_EVENT)
+                .forAllStates()
+                .name("EXUI-4347 - No Mid Event")
+                .description("EXUI-4347 - No Mid Event")
+                .aboutToStartCallback(this::aboutToStart)
+                .aboutToSubmitCallback(this::aboutToSubmit)
+                .showEventNotes()
+                .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER, SUPER_USER)
+                .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
+                .page("dummyPage")
+                .pageLabel("Dummy Page")
+                .optional(CaseData::getDummySetDateAutomatically)
+                .done();
+        }
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
