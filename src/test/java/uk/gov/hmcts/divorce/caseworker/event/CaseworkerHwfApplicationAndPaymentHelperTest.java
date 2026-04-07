@@ -89,6 +89,7 @@ class CaseworkerHwfApplicationAndPaymentHelperTest {
     void shouldSetCaseStatusToAwaitingDocumentsWhenSoleCaseAndApplicantDoesNotKnowRespondentAddress() {
         final CaseData caseData = caseData();
         caseData.getApplication().setApplicant1KnowsApplicant2Address(YesOrNo.NO);
+        caseData.getApplication().setApplicant1FoundApplicant2Address(YesOrNo.NO);
 
         final State response = caseworkerHwfApplicationAndPaymentHelper.getState(caseData);
 
@@ -103,16 +104,6 @@ class CaseworkerHwfApplicationAndPaymentHelperTest {
         final State response = caseworkerHwfApplicationAndPaymentHelper.getState(caseData);
 
         assertThat(response).isEqualTo(Submitted);
-    }
-
-    @Test
-    void shouldSetCaseStatusToAwaitingDocumentsWhenSoleCaseAndApplicantHasNotFoundRespondentAddress() {
-        final CaseData caseData = caseData();
-        caseData.getApplication().setApplicant1FoundApplicant2Address(YesOrNo.NO);
-
-        final State response = caseworkerHwfApplicationAndPaymentHelper.getState(caseData);
-
-        assertThat(response).isEqualTo(AwaitingDocuments);
     }
 
     @Test

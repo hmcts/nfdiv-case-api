@@ -73,7 +73,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
                 OUTSTANDING_ACTIONS,
-                this.applicant2TemplateVars(caseData, id),
+                applicant2TemplateVars(caseData, id),
                 caseData.getApplicant2().getLanguagePreference(),
                 id
             );
@@ -110,7 +110,9 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
             ? "[upload your documents using our online form](https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/)."
             : "");
 
-        boolean addressNotProvided = caseData.getApplication().applicant1ServedPapersAnotherWay();
+        boolean addressNotProvided = caseData.getApplication().mustServeAnotherWay(
+            caseData.getApplicationType()
+        );
 
         templateVars.put(ADDRESS_NOT_PROVIDED_SIGN_IN_URL, addressNotProvided ? commonContent.getSignInUrl(caseData) : "");
         templateVars.put(ADDRESS_NOT_PROVIDED, addressNotProvided ? YES : NO);
