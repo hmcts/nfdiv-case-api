@@ -29,16 +29,16 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String EVENT_NAME = "caseworker-dummy-event-exui4347";
-    public static final String EXUI_ISSUE_ID = "EXUI4347";
+    public static final String CASEWORKER_DUMMY_EVENT_EXUI_4347 = "caseworker-dummy-event-exui4347";
+    public static final String EXUI_ISSUE_ID = "EXUI-3839-4347";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(EVENT_NAME)
+            .event(CASEWORKER_DUMMY_EVENT_EXUI_4347)
             .forAllStates()
-            .name("EXUI-4347")
-            .description("EXUI-4347")
+            .name("EXUI-3839-4347")
+            .description("EXUI-3839-4347")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .showEventNotes()
@@ -51,7 +51,7 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        log.info("{} about to start callback invoked for Case Id: {}", EVENT_NAME, details.getId());
+        log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_4347, details.getId());
         CaseData caseData = details.getData();
 
         log.info("Dummy String is: " + caseData.getDummyString());
@@ -66,7 +66,7 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details,
                                                                   final CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} midEvent callback invoked for Case Id: {}", EVENT_NAME, details.getId());
+        log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_4347, details.getId());
 
         CaseData caseData = details.getData();
         CaseData beforeCaseData = beforeDetails.getData();
@@ -93,7 +93,7 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                         final CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} about to submit callback invoked for Case Id: {}", EVENT_NAME, details.getId());
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_4347, details.getId());
         List<String> errors = new ArrayList<>();
         String alwaysThrowError = "Always Throw Error To Preserve Test Case Data";
         errors.add(alwaysThrowError);

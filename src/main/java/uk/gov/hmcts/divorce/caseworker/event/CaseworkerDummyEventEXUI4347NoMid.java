@@ -27,12 +27,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class CaseworkerDummyEventEXUI4347NoMid implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String EVENT_NAME = "caseworker-dummy-event-exui4347-no-mid-event";
+    public static final String CASEWORKER_DUMMY_EVENT_EXUI_4347_NO_MID_EVENT = "caseworker-dummy-event-exui4347-no-mid-event";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(EVENT_NAME)
+            .event(CASEWORKER_DUMMY_EVENT_EXUI_4347_NO_MID_EVENT)
             .forAllStates()
             .name("EXUI-4347 - No Mid Event")
             .description("EXUI-4347 - No Mid Event")
@@ -48,7 +48,7 @@ public class CaseworkerDummyEventEXUI4347NoMid implements CCDConfig<CaseData, St
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        log.info("{} about to start callback invoked for Case Id: {}", EVENT_NAME, details.getId());
+        log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_4347_NO_MID_EVENT, details.getId());
         CaseData caseData = details.getData();
 
         log.info("Dummy String is: " + caseData.getDummyString());
@@ -63,7 +63,7 @@ public class CaseworkerDummyEventEXUI4347NoMid implements CCDConfig<CaseData, St
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                         final CaseDetails<CaseData, State> beforeDetails) {
-        log.info("{} about to submit callback invoked for Case Id: {}", EVENT_NAME, details.getId());
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_4347_NO_MID_EVENT, details.getId());
         List<String> errors = new ArrayList<>();
         String alwaysThrowError = "Always Throw Error To Preserve Test Case Data";
         errors.add(alwaysThrowError);
