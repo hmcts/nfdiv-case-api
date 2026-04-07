@@ -122,7 +122,9 @@ class CaseworkerDummyEventEXUI4347Test {
 
         assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors().get(0)).isEqualTo("Always Throw Error To Preserve Test Case Data");
-        assertThat(response.getErrors().get(1)).isEqualTo("aboutToSubmit Callback: Dummy String Was Originally: null Dummy String is Now: null Dummy String Should Be: EXUI-3839-4347");
+        assertThat(response.getErrors().get(1)).isEqualTo(
+            "aboutToSubmit Callback: Dummy String Was Originally: null Dummy String is Now: null Dummy String Should Be: EXUI-3839-4347"
+        );
     }
 
     @Test
@@ -138,7 +140,9 @@ class CaseworkerDummyEventEXUI4347Test {
 
         assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors().get(0)).isEqualTo("Always Throw Error To Preserve Test Case Data");
-        assertThat(response.getErrors().get(1)).isEqualTo("aboutToSubmit Callback: Dummy Date Was Originally: null Dummy Date is Now: null Dummy Date Should Be: " + LocalDate.now());
+        assertThat(response.getErrors().get(1)).isEqualTo(
+            "aboutToSubmit Callback: Dummy Date Was Originally: null Dummy Date is Now: null Dummy Date Should Be: " + LocalDate.now()
+        );
     }
 
     @Test
@@ -153,7 +157,11 @@ class CaseworkerDummyEventEXUI4347Test {
 
         assertThat(response.getErrors()).hasSize(3);
         assertThat(response.getErrors().get(0)).isEqualTo("Always Throw Error To Preserve Test Case Data");
-        assertThat(response.getErrors().get(1)).isEqualTo("aboutToSubmit Callback: Dummy String Was Originally: null Dummy String is Now: null Dummy String Should Be: EXUI-3839-4347");
-        assertThat(response.getErrors().get(2)).isEqualTo("aboutToSubmit Callback: Dummy Date Was Originally: null Dummy Date is Now: null Dummy Date Should Be: " + LocalDate.now());
+        assertThat(response.getErrors().get(1)).isEqualTo(
+            "aboutToSubmit Callback: Dummy String Was Originally: null Dummy String is Now: null Dummy String Should Be: EXUI-3839-4347"
+        );
+        assertThat(response.getErrors().get(2)).isEqualTo(
+            "aboutToSubmit Callback: Dummy Date Was Originally: null Dummy Date is Now: null Dummy Date Should Be: " + LocalDate.now()
+        );
     }
 }

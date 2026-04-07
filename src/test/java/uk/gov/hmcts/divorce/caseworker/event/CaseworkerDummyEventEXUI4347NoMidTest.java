@@ -66,7 +66,8 @@ class CaseworkerDummyEventEXUI4347NoMidTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerDummyEventEXUI4347NoMid.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerDummyEventEXUI4347NoMid.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().get(0)).isEqualTo("Always Throw Error To Preserve Test Case Data");
@@ -79,10 +80,13 @@ class CaseworkerDummyEventEXUI4347NoMidTest {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerDummyEventEXUI4347NoMid.aboutToSubmit(caseDetails, caseDetails);
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerDummyEventEXUI4347NoMid.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getErrors()).hasSize(2);
         assertThat(response.getErrors().get(0)).isEqualTo("Always Throw Error To Preserve Test Case Data");
-        assertThat(response.getErrors().get(1)).isEqualTo("aboutToSubmit Callback: Dummy String Was Originally: null Dummy String is Now: null Dummy String Should Be: EXUI-3839-4347");
+        assertThat(response.getErrors().get(1)).isEqualTo(
+            "aboutToSubmit Callback: Dummy String Was Originally: null Dummy String is Now: null Dummy String Should Be: EXUI-3839-4347"
+        );
     }
 }
