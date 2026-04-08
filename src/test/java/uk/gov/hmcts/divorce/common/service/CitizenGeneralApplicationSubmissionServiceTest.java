@@ -28,7 +28,9 @@ import uk.gov.hmcts.divorce.document.print.generator.GeneralApplicationD11Genera
 import uk.gov.hmcts.divorce.document.print.generator.SearchGovRecordsApplicationGenerator;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -228,6 +230,93 @@ class CitizenGeneralApplicationSubmissionServiceTest {
             List<ListValue<DivorceDocument>> result = submissionService.collectSupportingDocuments(options);
 
             assertThat(result).hasSize(1);
+        }
+    }
+
+    @Nested
+    class FindActiveGeneralApplication {
+        @Test
+        void shouldReturnEmptyWhenServiceRequestIsBlank() {
+            CaseData caseData = CaseData.builder()
+                .generalApplications(List.of(
+                    ListValue.<GeneralApplication>builder().value(
+                        buildApplication(GeneralApplicationType.AMEND_APPLICATION)
+                    ).build()))
+                .build();
+
+            Applicant applicant = Applicant.builder()
+                .generalAppServiceRequest(" ")
+                .build();
+
+            Optional<GeneralApplication> result =
+                submissionService.findActiveGeneralApplication(caseData, applicant);
+
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        void shouldReturnEmptyWhenGeneralApplicationsIsEmpty() {
+            CaseData caseData = CaseData.builder()
+                .generalApplications(Collections.emptyList())
+                .build();
+
+            Applicant applicant = Applicant.builder()
+                .generalAppServiceRequest("req-1")
+                .build();
+
+            Optional<GeneralApplication> result =
+                submissionService.findActiveGeneralApplication(caseData, applicant);
+
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        void shouldReturnEmptyWhenNoMatchingServiceRequest() {
+            CaseData caseData = CaseData.builder()
+                .generalApplications(List.of(
+                    ListValue.<GeneralApplication>builder().value(
+                        buildApplication(GeneralApplicationType.AMEND_APPLICATION)
+                    ).build()))
+                .build();
+
+            Applicant applicant = Applicant.builder()
+                .generalAppServiceRequest("req-1")
+                .build();
+
+            Optional<GeneralApplication> result =
+                submissionService.findActiveGeneralApplication(caseData, applicant);
+
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        void shouldReturnMatchingGeneralApplication() {
+            GeneralApplication matchingApp = GeneralApplication.builder()
+                .generalApplicationFee(
+                    FeeDetails.builder()
+                        .serviceRequestReference("req-1")
+                        .build()
+                )
+                .build();
+
+            ListValue<GeneralApplication> listValue = ListValue.<GeneralApplication>builder()
+                .value(matchingApp)
+                .build();
+
+            CaseData caseData = CaseData.builder()
+                .generalApplications(List.of(listValue))
+                .build();
+
+            Applicant applicant = Applicant.builder()
+                .generalAppServiceRequest("req-1")
+                .build();
+
+            Optional<GeneralApplication> result =
+                submissionService.findActiveGeneralApplication(caseData, applicant);
+
+            assertThat(result)
+                .isPresent()
+                .contains(matchingApp);
         }
     }
 

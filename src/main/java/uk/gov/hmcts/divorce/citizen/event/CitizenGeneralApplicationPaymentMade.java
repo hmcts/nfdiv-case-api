@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
-import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +16,6 @@ import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
@@ -29,7 +27,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -87,7 +84,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
         boolean isApplicant1 = isApplicant1(caseId);
         Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
-        Optional<GeneralApplication> generalAppOptional = findActiveGeneralApplication(data, applicant);
+        Optional<GeneralApplication> generalAppOptional = submissionService.findActiveGeneralApplication(data, applicant);
 
         if (generalAppOptional.isEmpty()) {
             log.info("Failed to find active general application for payment, party: {}, case id: {}",
@@ -134,7 +131,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
         boolean isApplicant1 = isApplicant1(details.getId());
         Applicant beforeApplicant = isApplicant1 ? beforeData.getApplicant1() : beforeData.getApplicant2();
-        Optional<GeneralApplication> generalAppOptional = findActiveGeneralApplication(data, beforeApplicant);
+        Optional<GeneralApplication> generalAppOptional = submissionService.findActiveGeneralApplication(data, beforeApplicant);
 
         generalAppOptional.ifPresent(generalApplication ->
             submissionService.sendNotifications(
@@ -146,26 +143,5 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
     private boolean isApplicant1(Long caseId) {
         return ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), caseId);
-    }
-
-    private Optional<GeneralApplication> findActiveGeneralApplication(CaseData caseData, Applicant applicant) {
-        String serviceRequest = applicant.getGeneralAppServiceRequest();
-
-        if (CollectionUtils.isEmpty(caseData.getGeneralApplications()) || StringUtils.isBlank(serviceRequest)) {
-            return Optional.empty();
-        }
-
-        return caseData.getGeneralApplications().stream()
-            .map(ListValue::getValue)
-            .filter(Objects::nonNull)
-            .filter(application -> isActiveGeneralApplication(application, serviceRequest))
-            .findFirst();
-    }
-
-    private boolean isActiveGeneralApplication(GeneralApplication generalApplication, String serviceRequest) {
-        FeeDetails applicationFee = generalApplication.getGeneralApplicationFee();
-
-        return applicationFee != null && applicationFee.getServiceRequestReference() != null
-            && serviceRequest.equals(applicationFee.getServiceRequestReference());
     }
 }

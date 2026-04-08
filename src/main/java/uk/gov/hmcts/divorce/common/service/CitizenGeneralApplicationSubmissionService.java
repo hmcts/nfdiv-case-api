@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce.common.service;
 
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -24,6 +26,8 @@ import uk.gov.hmcts.divorce.document.print.generator.SearchGovRecordsApplication
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11;
@@ -122,5 +126,26 @@ public class CitizenGeneralApplicationSubmissionService {
         } else {
             throw new UnsupportedOperationException();
         }
+    }
+
+    public Optional<GeneralApplication> findActiveGeneralApplication(CaseData caseData, Applicant applicant) {
+        String serviceRequest = applicant.getGeneralAppServiceRequest();
+
+        if (CollectionUtils.isEmpty(caseData.getGeneralApplications()) || StringUtils.isBlank(serviceRequest)) {
+            return Optional.empty();
+        }
+
+        return caseData.getGeneralApplications().stream()
+            .map(ListValue::getValue)
+            .filter(Objects::nonNull)
+            .filter(application -> isActiveGeneralApplication(application, serviceRequest))
+            .findFirst();
+    }
+
+    private boolean isActiveGeneralApplication(GeneralApplication generalApplication, String serviceRequest) {
+        FeeDetails applicationFee = generalApplication.getGeneralApplicationFee();
+
+        return applicationFee != null && applicationFee.getServiceRequestReference() != null
+            && serviceRequest.equals(applicationFee.getServiceRequestReference());
     }
 }
