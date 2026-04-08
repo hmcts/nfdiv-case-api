@@ -19,7 +19,7 @@ plugins {
   id 'org.springframework.boot' version '3.4.7'
   id 'com.github.ben-manes.versions' version '0.53.0'
   id 'hmcts.ccd.sdk' version '6.7.2'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.2062'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.2066'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -186,7 +186,9 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/divorce/common/config/**',
   '**/uk/gov/hmcts/divorce/divorcecase/model/**',
   '**/uk/gov/hmcts/divorce/divorcecase/tab/**',
-  '**/uk/gov/hmcts/divorce/systemupdate/event/SystemCorrectTtl.java'
+  '**/uk/gov/hmcts/divorce/systemupdate/event/SystemCorrectTtl.java',
+  '**/uk/gov/hmcts/divorce/caseworker/event/CaseworkerDummyEventEXUI4347.java',
+  '**/uk/gov/hmcts/divorce/caseworker/event/CaseworkerDummyEventEXUI4347NoMid.java'
 ]
 
 sonarqube {
@@ -419,6 +421,7 @@ bootWithCCD {
       environment key, value
     }
     environment 'CITIZEN_UPDATE_CASE_STATE_ENABLED', 'true'
+    environment 'EXUI_DUMMY_EVENTS_ENABLED', 'true'
     environment 'LOGGING_LEVEL_UK_GOV_HMCTS_DIVORCE', 'info'
     environment 'ROLE_ASSIGNMENT_URL', 'http://localhost:4096'
     environment 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
