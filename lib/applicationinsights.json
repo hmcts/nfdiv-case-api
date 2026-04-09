@@ -2,10 +2,5 @@
   "connectionString": "${file:/mnt/secrets/nfdiv/app-insights-connection-string}",
   "role": {
     "name": "nfdiv-case-api"
-  },
-  "sampling": [
-    {
-      "percentage": 100
-    }
-  ]
+  }
 }
