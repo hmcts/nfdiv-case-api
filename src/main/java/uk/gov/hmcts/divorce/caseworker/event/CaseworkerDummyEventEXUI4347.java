@@ -49,6 +49,8 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
                 .page("dummyPage", this::midEvent)
                 .pageLabel("Dummy Page")
                 .mandatory(CaseData::getDummySetDateAutomatically)
+                .mandatory(CaseData::getDummyString, "dummySetDateAutomatically=\"NEVER_SHOW\"", true)
+                .mandatory(CaseData::getDummyDate, "dummySetDateAutomatically=\"NEVER_SHOW\"", true)
                 .done();
         }
     }
@@ -111,17 +113,17 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
         String expectedDummyString = "Dummy String Should Be: " + EXUI_ISSUE_ID;
 
         String error = "aboutToSubmit Callback: " + originalDummyString + " " + currentDummyString + " " + expectedDummyString;
-        if (!EXUI_ISSUE_ID.equals(dummyString)) {
+//        if (!EXUI_ISSUE_ID.equals(dummyString)) {
             errors.add(error);
-        }
+//        }
 
-        if (YesOrNo.YES.equals(caseData.getDummySetDateAutomatically()) && !LocalDate.now().equals(caseData.getDummyDate())) {
+//        if (YesOrNo.YES.equals(caseData.getDummySetDateAutomatically()) && !LocalDate.now().equals(caseData.getDummyDate())) {
             String originalDummyDate = "Dummy Date Was Originally: " + beforeCaseData.getDummyDate();
             String currentDummyDate = "Dummy Date is Now: " + caseData.getDummyDate();
             String expectedDummyDate = "Dummy Date Should Be: " + LocalDate.now();
             String dateError = "aboutToSubmit Callback: " + originalDummyDate + " " + currentDummyDate + " " + expectedDummyDate;
             errors.add(dateError);
-        }
+//        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
