@@ -69,8 +69,6 @@ public class CaseworkerDummyEventEXUI3839NoMid implements CCDConfig<CaseData, St
                                                                         final CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_3839_NO_MID_EVENT, details.getId());
         List<String> errors = new ArrayList<>();
-        String alwaysThrowError = "Always Throw Error To Preserve Test Case Data";
-        errors.add(alwaysThrowError);
 
         CaseData caseData = details.getData();
         CaseData beforeCaseData = beforeDetails.getData();
@@ -82,9 +80,7 @@ public class CaseworkerDummyEventEXUI3839NoMid implements CCDConfig<CaseData, St
         String expectedDummyString = "Dummy String Should Be: " + EXUI_ISSUE_ID;
 
         String error = "aboutToSubmit Callback: " + originalDummyString + " " + currentDummyString + " " + expectedDummyString;
-//        if (!EXUI_ISSUE_ID.equals(dummyString)) {
-            errors.add(error);
-//        }
+        errors.add(error);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

@@ -100,8 +100,6 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
                                                                         final CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_4347, details.getId());
         List<String> errors = new ArrayList<>();
-        String alwaysThrowError = "Always Throw Error To Preserve Test Case Data";
-        errors.add(alwaysThrowError);
 
         CaseData caseData = details.getData();
         CaseData beforeCaseData = beforeDetails.getData();
@@ -113,17 +111,15 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
         String expectedDummyString = "Dummy String Should Be: " + EXUI_ISSUE_ID;
 
         String error = "aboutToSubmit Callback: " + originalDummyString + " " + currentDummyString + " " + expectedDummyString;
-//        if (!EXUI_ISSUE_ID.equals(dummyString)) {
-            errors.add(error);
-//        }
+        errors.add(error);
 
-//        if (YesOrNo.YES.equals(caseData.getDummySetDateAutomatically()) && !LocalDate.now().equals(caseData.getDummyDate())) {
+        if (YesOrNo.YES.equals(caseData.getDummySetDateAutomatically())) {
             String originalDummyDate = "Dummy Date Was Originally: " + beforeCaseData.getDummyDate();
             String currentDummyDate = "Dummy Date is Now: " + caseData.getDummyDate();
             String expectedDummyDate = "Dummy Date Should Be: " + LocalDate.now();
             String dateError = "aboutToSubmit Callback: " + originalDummyDate + " " + currentDummyDate + " " + expectedDummyDate;
             errors.add(dateError);
-//        }
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
