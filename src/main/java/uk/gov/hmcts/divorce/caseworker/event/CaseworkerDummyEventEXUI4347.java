@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DummyFields;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
@@ -48,24 +49,27 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
                 .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
                 .page("dummyPage", this::midEvent)
                 .pageLabel("Dummy Page")
-                .mandatory(CaseData::getDummySetDateAutomatically)
-                .mandatory(CaseData::getDummyString, "dummySetDateAutomatically=\"NEVER_SHOW\"", true)
-                .mandatory(CaseData::getDummyDate, "dummySetDateAutomatically=\"NEVER_SHOW\"", true)
+//                .complex(CaseData::getDummyFields)
+//                    .mandatory(DummyFields::getDummySetDateAutomatically)
+//                    .mandatory(DummyFields::getDummyString, "dummySetDateAutomatically=\"NEVER_SHOW\"", true)
+//                    .mandatory(DummyFields::getDummyDate, "dummySetDateAutomatically=\"NEVER_SHOW\"", true)
+//                    .mandatory(DummyFields::getDummyEnumField, "dummySetDateAutomatically=\"NEVER_SHOW\"", true)
+//                .done()
                 .done();
         }
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_4347, details.getId());
-        CaseData caseData = details.getData();
+        DummyFields dummyFields = details.getData().getExuiDummyFields();
 
-        log.info("Dummy String is: " + caseData.getDummyString());
-        caseData.setDummyString(EXUI_ISSUE_ID);
+        log.info("Dummy String is: " + dummyFields.getDummyString());
+        dummyFields.setDummyString(EXUI_ISSUE_ID);
 
-        log.info("Dummy String is Now: " + caseData.getDummyString());
+        log.info("Dummy String is Now: " + dummyFields.getDummyString());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(details.getData())
             .build();
     }
 
@@ -73,10 +77,10 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
                                                                   final CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_4347, details.getId());
 
-        CaseData caseData = details.getData();
-        CaseData beforeCaseData = beforeDetails.getData();
-        String dummyString = caseData.getDummyString();
-        String beforeDummyString = beforeCaseData.getDummyString();
+        DummyFields dummyFields = details.getData().getExuiDummyFields();
+        DummyFields beforeDummyFields = beforeDetails.getData().getExuiDummyFields();
+        String dummyString = dummyFields.getDummyString();
+        String beforeDummyString = beforeDummyFields.getDummyString();
 
         String originalDummyString = "Dummy String Was Originally: " + beforeDummyString;
         String currentDummyString = "Dummy String is Now: " + dummyString;
@@ -84,15 +88,15 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
 
         String warning = "midEvent Callback: " + originalDummyString + " " + currentDummyString + " " + expectedDummyString;
 
-        if (YesOrNo.YES.equals(caseData.getDummySetDateAutomatically())) {
-            log.info("Dummy Date is: " + caseData.getDummyDate());
-            caseData.setDummyDate(LocalDate.now());
-            log.info("Dummy Date is Now: " + caseData.getDummyDate());
+        if (YesOrNo.YES.equals(dummyFields.getDummySetDateAutomatically())) {
+            log.info("Dummy Date is: " + dummyFields.getDummyDate());
+            dummyFields.setDummyDate(LocalDate.now());
+            log.info("Dummy Date is Now: " + dummyFields.getDummyDate());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
-            .warnings(EXUI_ISSUE_ID.equals(caseData.getDummyString()) ? null : Collections.singletonList(warning))
+            .warnings(EXUI_ISSUE_ID.equals(dummyFields.getDummyString()) ? null : Collections.singletonList(warning))
             .build();
     }
 
@@ -101,10 +105,10 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_4347, details.getId());
         List<String> errors = new ArrayList<>();
 
-        CaseData caseData = details.getData();
-        CaseData beforeCaseData = beforeDetails.getData();
-        String dummyString = caseData.getDummyString();
-        String beforeDummyString = beforeCaseData.getDummyString();
+        DummyFields dummyFields = details.getData().getExuiDummyFields();
+        DummyFields beforeDummyFields = beforeDetails.getData().getExuiDummyFields();
+        String dummyString = dummyFields.getDummyString();
+        String beforeDummyString = beforeDummyFields.getDummyString();
 
         String originalDummyString = "Dummy String Was Originally: " + beforeDummyString;
         String currentDummyString = "Dummy String is Now: " + dummyString;
@@ -113,9 +117,9 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
         String error = "aboutToSubmit Callback: " + originalDummyString + " " + currentDummyString + " " + expectedDummyString;
         errors.add(error);
 
-        if (YesOrNo.YES.equals(caseData.getDummySetDateAutomatically())) {
-            String originalDummyDate = "Dummy Date Was Originally: " + beforeCaseData.getDummyDate();
-            String currentDummyDate = "Dummy Date is Now: " + caseData.getDummyDate();
+        if (YesOrNo.YES.equals(dummyFields.getDummySetDateAutomatically())) {
+            String originalDummyDate = "Dummy Date Was Originally: " + beforeDummyFields.getDummyDate();
+            String currentDummyDate = "Dummy Date is Now: " + dummyFields.getDummyDate();
             String expectedDummyDate = "Dummy Date Should Be: " + LocalDate.now();
             String dateError = "aboutToSubmit Callback: " + originalDummyDate + " " + currentDummyDate + " " + expectedDummyDate;
             errors.add(dateError);

@@ -9,16 +9,17 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DummyFields;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerDummyEventEXUI4347.EXUI_ISSUE_ID;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 
@@ -41,27 +42,35 @@ public class CaseworkerDummyEventEXUI3839NoMid implements CCDConfig<CaseData, St
                 .aboutToStartCallback(this::aboutToStart)
                 .aboutToSubmitCallback(this::aboutToSubmit)
                 .showEventNotes()
+                .showSummary()
                 .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER, SUPER_USER)
-                .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
+                .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR, JUDGE))
                 .page("dummyPage")
                 .pageLabel("Dummy Page")
-                .optional(CaseData::getDummySetDateAutomatically)
-                .mandatory(CaseData::getDummyString, "dummySetDateAutomatically=\"NEVER_SHOW\"", true)
+                .readonlyNoSummary(CaseData::getApplicationType, "dummySetDateAutomatically=\"NEVER_SHOW\"")
+                .complex(CaseData::getExuiDummyFields)
+                //Why is it forcing a show condition on the complex field during startup when this is not enforced elsewhere? (ie, offlineDocVerified event -> CaseData::docCollection
+                    .optional(DummyFields::getDummySetDateAutomatically)
+                    .mandatory(DummyFields::getDummyEnumField,
+                        "dummySetDateAutomatically=\"NEVER_SHOW\"",
+                        true
+                    )
+                .done()
                 .done();
         }
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_3839_NO_MID_EVENT, details.getId());
-        CaseData caseData = details.getData();
+        DummyFields dummyFields = details.getData().getExuiDummyFields();
 
-        log.info("Dummy String is: " + caseData.getDummyString());
-        caseData.setDummyString(EXUI_ISSUE_ID);
+        log.info("Dummy Enum is: " + dummyFields.getDummyEnumField());
+        dummyFields.setDummyEnumField(DummyFields.DummyEnum.DUMMY_ENUM_1);
 
-        log.info("Dummy String is Now: " + caseData.getDummyString());
+        log.info("Dummy Enum is Now: " + dummyFields.getDummyEnumField());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(details.getData())
             .build();
     }
 
@@ -70,16 +79,16 @@ public class CaseworkerDummyEventEXUI3839NoMid implements CCDConfig<CaseData, St
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_3839_NO_MID_EVENT, details.getId());
         List<String> errors = new ArrayList<>();
 
-        CaseData caseData = details.getData();
-        CaseData beforeCaseData = beforeDetails.getData();
-        String dummyString = caseData.getDummyString();
-        String beforeDummyString = beforeCaseData.getDummyString();
+        DummyFields dummyFields = details.getData().getExuiDummyFields();
+        DummyFields beforeDummyFields = beforeDetails.getData().getExuiDummyFields();
+        DummyFields.DummyEnum dummyEnum = dummyFields.getDummyEnumField();
+        DummyFields.DummyEnum beforeDummyEnum = beforeDummyFields.getDummyEnumField();
 
-        String originalDummyString = "Dummy String Was Originally: " + beforeDummyString;
-        String currentDummyString = "Dummy String is Now: " + dummyString;
-        String expectedDummyString = "Dummy String Should Be: " + EXUI_ISSUE_ID;
+        String originalDummyEnum = "Dummy Enum Was Originally: " + beforeDummyEnum;
+        String currentDummyEnum = "Dummy Enum is Now: " + dummyEnum;
+        String expectedDummyEnum = "Dummy Enum Should Be: " + DummyFields.DummyEnum.DUMMY_ENUM_1;
 
-        String error = "aboutToSubmit Callback: " + originalDummyString + " " + currentDummyString + " " + expectedDummyString;
+        String error = "aboutToSubmit Callback: " + originalDummyEnum + " " + currentDummyEnum + " " + expectedDummyEnum;
         errors.add(error);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
