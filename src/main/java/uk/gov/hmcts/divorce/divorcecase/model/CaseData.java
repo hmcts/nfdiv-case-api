@@ -88,26 +88,11 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWER
 public class CaseData {
 
     @CCD(
-        label = "EXUI4347 - Set Date Automatically?",
+        label = "Dummy Fields",
         access = {DefaultAccess.class},
         searchable = false
     )
-    private YesOrNo dummySetDateAutomatically;
-
-    @CCD(
-        label = "EXUI4347 - Dummy Date",
-        access = {DefaultAccess.class},
-        searchable = false
-    )
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate dummyDate;
-
-    @CCD(
-        label = "EXUI4347 - Dummy String",
-        access = {DefaultAccess.class},
-        searchable = false
-    )
-    private String dummyString;
+    private DummyFields exuiDummyFields;
 
     @CCD(
         label = "Application type",
