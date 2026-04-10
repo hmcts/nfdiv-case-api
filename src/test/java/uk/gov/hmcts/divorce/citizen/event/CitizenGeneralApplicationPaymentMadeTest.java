@@ -34,6 +34,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -107,6 +108,9 @@ class CitizenGeneralApplicationPaymentMadeTest {
         caseData.getApplicant1().setGeneralAppPayments(payments);
         caseDetails.setId(TEST_CASE_ID);
 
+        GeneralApplication generalApp = caseData.getGeneralApplications().getFirst().getValue();
+        when(submissionService.findActiveGeneralApplication(caseData, caseData.getApplicant1()))
+            .thenReturn(Optional.of(generalApp));
         when(paymentValidatorService.validatePayments(payments, TEST_CASE_ID))
             .thenReturn(Collections.singletonList(ERROR_PAYMENT_INCOMPLETE));
 
@@ -133,6 +137,9 @@ class CitizenGeneralApplicationPaymentMadeTest {
         details.setId(TEST_CASE_ID);
 
         GeneralApplication generalApp = caseData.getGeneralApplications().getFirst().getValue();
+        when(submissionService.findActiveGeneralApplication(caseData, caseData.getApplicant1()))
+            .thenReturn(Optional.of(generalApp));
+
         GeneralReferral genReferral = GeneralReferral.builder()
             .generalReferralReason(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL)
             .generalReferralFraudCase(YesOrNo.NO)
@@ -188,6 +195,10 @@ class CitizenGeneralApplicationPaymentMadeTest {
         );
         details.setId(TEST_CASE_ID);
 
+        GeneralApplication generalApp = caseData.getGeneralApplications().getFirst().getValue();
+        when(submissionService.findActiveGeneralApplication(caseData, caseData.getApplicant1()))
+            .thenReturn(Optional.of(generalApp));
+
         when(paymentValidatorService.validatePayments(payments, TEST_CASE_ID)).thenReturn(
             Collections.emptyList()
         );
@@ -217,10 +228,15 @@ class CitizenGeneralApplicationPaymentMadeTest {
             .build();
         beforeDetails.setState(AwaitingPronouncement);
 
+        GeneralApplication generalApplication = caseData.getGeneralApplications().getFirst().getValue();
+
+        when(submissionService.findActiveGeneralApplication(caseData, beforeData.getApplicant1()))
+            .thenReturn(Optional.of(generalApplication));
+
         citizenGeneralApplicationPayment.submitted(details, beforeDetails);
 
         verify(submissionService).sendNotifications(
-            TEST_CASE_ID, caseData.getGeneralApplications().getFirst().getValue(), caseData
+            TEST_CASE_ID, generalApplication, caseData
         );
         assertThat(details.getData().getApplication().getPreviousState()).isEqualTo(AwaitingPronouncement);
     }
