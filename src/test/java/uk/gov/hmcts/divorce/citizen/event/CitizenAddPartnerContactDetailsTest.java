@@ -21,6 +21,7 @@ import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPartnerContactDetails
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
 class CitizenAddPartnerContactDetailsTest {
@@ -126,5 +127,22 @@ class CitizenAddPartnerContactDetailsTest {
             .postTown("town")
             .postCode("postcode")
             .build();
+    }
+  
+    void shouldSetAddressKnownFlags() {
+        final var caseDetails = new CaseDetails<CaseData, State>();
+        caseDetails.setData(caseData());
+        caseDetails.setState(State.AwaitingDocuments);
+
+        var caseData = CaseData.builder().build();
+        caseData.getApplication().setApplicant1CannotUpload(YesOrNo.NO);
+
+        caseDetails.setData(caseData);
+
+        var response = citizenAddPartnerContactDetails.aboutToSubmit(caseDetails, caseDetails);
+        var application = response.getData().getApplication();
+
+        assertThat(application.getApplicant1KnowsApplicant2Address()).isEqualTo(YesOrNo.YES);
+        assertThat(application.getApplicant1FoundApplicant2Address()).isEqualTo(YesOrNo.YES);
     }
 }

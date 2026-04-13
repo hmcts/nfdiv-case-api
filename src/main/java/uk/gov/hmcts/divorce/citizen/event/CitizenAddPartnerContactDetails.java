@@ -5,6 +5,8 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.NoRespondentAddressJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -61,8 +63,10 @@ public class CitizenAddPartnerContactDetails implements CCDConfig<CaseData, Stat
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
-        CaseData caseData = details.getData();
-        State currentState = details.getState();
+        final CaseData caseData = details.getData();
+        final State currentState = details.getState();
+
+        setAddressKnownFlags(caseData);
 
         if (respondentAddressPresent(caseData)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -97,5 +101,12 @@ public class CitizenAddPartnerContactDetails implements CCDConfig<CaseData, Stat
     private boolean respondentAddressPresent(final CaseData caseData) {
         return caseData.getApplicant2().getAddress() != null
             && !AddressUtil.getPostalAddress(caseData.getApplicant2().getAddress()).isEmpty();
+    }
+  
+    private void setAddressKnownFlags(CaseData caseData) {
+        final Application application = caseData.getApplication();
+
+        application.setApplicant1KnowsApplicant2Address(YesOrNo.YES);
+        application.setApplicant1FoundApplicant2Address(YesOrNo.YES);
     }
 }

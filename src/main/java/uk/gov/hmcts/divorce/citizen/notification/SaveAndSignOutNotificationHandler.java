@@ -79,8 +79,7 @@ public class SaveAndSignOutNotificationHandler {
 
         InterimApplicationType interimApplicationType = interimApplicationOptions.getInterimApplicationType();
 
-        return (State.AosOverdue.equals(state) || State.AwaitingDocuments.equals(state))
-            && interimApplicationType != null
+        return interimApplicationType != null
             && !InterimApplicationType.PROCESS_SERVER_SERVICE.equals(interimApplicationOptions.getInterimApplicationType());
     }
 }

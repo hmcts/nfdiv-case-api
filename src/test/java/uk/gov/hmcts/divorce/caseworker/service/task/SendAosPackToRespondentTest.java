@@ -92,6 +92,37 @@ class SendAosPackToRespondentTest {
         verifyNoInteractions(aosPackPrinter);
     }
 
+    @Test
+    void shouldNotSendAosLetterToRespondentWhenAddressIsNotKnown() {
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(setCaseDataWithServiceMethod(SOLE_APPLICATION, null));
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+        caseDetails.getData().getApplication().setApplicant1KnowsApplicant2Address(YesOrNo.NO);
+        caseDetails.getData().getApplication().setApplicant1FoundApplicant2Address(YesOrNo.NO);
+
+        sendAosPackToRespondent.apply(caseDetails);
+
+        verifyNoInteractions(aosPackPrinter);
+    }
+
+    @Test
+    void shouldSendAosLetterToRespondentWhenAddressHasBeenFound() {
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = setCaseDataWithServiceMethod(SOLE_APPLICATION, null);
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+        caseDetails.getData().getApplication().setApplicant1KnowsApplicant2Address(YesOrNo.NO);
+        caseDetails.getData().getApplication().setApplicant1FoundApplicant2Address(YesOrNo.YES);
+
+        sendAosPackToRespondent.apply(caseDetails);
+
+        verify(aosPackPrinter).sendAosLetterToRespondent(caseData, TEST_CASE_ID);
+    }
+
     private CaseData setCaseDataWithServiceMethod(ApplicationType applicationType, YesOrNo yesOrNo) {
         final var caseData = caseData();
         caseData.setApplicationType(applicationType);
