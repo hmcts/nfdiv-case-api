@@ -8,10 +8,13 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.NoRespondentAddressJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 
 import java.util.EnumSet;
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
@@ -31,6 +34,9 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CitizenAddPartnerContactDetails implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CITIZEN_ADD_PARTNER_DETAILS = "citizen-add-partner-details";
+
+    public static final String CANNOT_UPDATE_PARTNER_DETAILS_ERROR =
+        "Respondent address is present, cannot add partner contact details";
 
     private static final EnumSet<State> CITIZEN_UPDATE_STATES = EnumSet.complementOf(EnumSet.of(
         AwaitingPayment,
@@ -62,6 +68,24 @@ public class CitizenAddPartnerContactDetails implements CCDConfig<CaseData, Stat
 
         setAddressKnownFlags(caseData);
 
+        if (respondentAddressPresent(caseData)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .state(currentState)
+                .errors(List.of(CANNOT_UPDATE_PARTNER_DETAILS_ERROR))
+                .build();
+        }
+
+        NoRespondentAddressJourneyOptions noRespAddressJourneyOptions =
+            caseData.getApplicant1().getInterimApplicationOptions().getNoRespAddressJourneyOptions();
+
+        caseData.getApplicant2().setAddress(noRespAddressJourneyOptions.getNoRespAddressAddress());
+        caseData.getApplicant2().setAddressOverseas(noRespAddressJourneyOptions.getNoRespAddressAddressOverseas());
+        caseData.getApplicant2().setEmail(noRespAddressJourneyOptions.getNoRespAddressEmail());
+        caseData.getApplication().setApplicant1KnowsApplicant2EmailAddress(noRespAddressJourneyOptions.getNoRespAddressKnowsEmail());
+
+        caseData.getApplicant1().getInterimApplicationOptions().setNoRespAddressJourneyOptions(null);
+
         if (State.AwaitingDocuments.equals(currentState) && !caseData.getApplication().getApplicant1CannotUpload().toBoolean()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                     .data(caseData)
@@ -74,6 +98,11 @@ public class CitizenAddPartnerContactDetails implements CCDConfig<CaseData, Stat
                 .build();
     }
 
+    private boolean respondentAddressPresent(final CaseData caseData) {
+        return caseData.getApplicant2().getAddress() != null
+            && !AddressUtil.getPostalAddress(caseData.getApplicant2().getAddress()).isEmpty();
+    }
+  
     private void setAddressKnownFlags(CaseData caseData) {
         final Application application = caseData.getApplication();
 

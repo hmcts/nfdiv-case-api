@@ -7,7 +7,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 
 @Data
 @Builder
@@ -33,4 +36,29 @@ public class NoRespondentAddressJourneyOptions {
         searchable = false
     )
     private YesOrNo noRespAddressWillApplyAltService;
+
+    @CCD(
+        label = "Address",
+        searchable = false
+    )
+    private AddressGlobalUK noRespAddressAddress;
+
+    @CCD(
+        label = "Is this an international address?",
+        searchable = false
+    )
+    private YesOrNo noRespAddressAddressOverseas;
+
+    @CCD(
+        label = "Email address",
+        typeOverride = Email,
+        searchable = false
+    )
+    private String noRespAddressEmail;
+
+    @CCD(
+        label = "Is the respondent's email address known?",
+        searchable = false
+    )
+    private YesOrNo noRespAddressKnowsEmail;
 }
