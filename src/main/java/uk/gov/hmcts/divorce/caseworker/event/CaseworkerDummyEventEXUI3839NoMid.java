@@ -47,9 +47,7 @@ public class CaseworkerDummyEventEXUI3839NoMid implements CCDConfig<CaseData, St
                 .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR, JUDGE))
                 .page("dummyPage")
                 .pageLabel("Dummy Page")
-                .readonlyNoSummary(CaseData::getApplicationType, "dummySetDateAutomatically=\"NEVER_SHOW\"")
                 .complex(CaseData::getExuiDummyFields)
-                //Why is it forcing a show condition on the complex field during startup when this is not enforced elsewhere? (ie, offlineDocVerified event -> CaseData::docCollection
                     .optional(DummyFields::getDummySetDateAutomatically)
                     .mandatory(DummyFields::getDummyEnumField,
                         "dummySetDateAutomatically=\"NEVER_SHOW\"",
@@ -64,10 +62,10 @@ public class CaseworkerDummyEventEXUI3839NoMid implements CCDConfig<CaseData, St
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_3839_NO_MID_EVENT, details.getId());
         DummyFields dummyFields = details.getData().getExuiDummyFields();
 
-        log.info("Dummy Enum is: " + dummyFields.getDummyEnumField());
+        log.info("Dummy Enum Field is: " + dummyFields.getDummyEnumField());
         dummyFields.setDummyEnumField(DummyFields.DummyEnum.DUMMY_ENUM_1);
 
-        log.info("Dummy Enum is Now: " + dummyFields.getDummyEnumField());
+        log.info("Dummy Enum Field is Now: " + dummyFields.getDummyEnumField());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
@@ -81,12 +79,12 @@ public class CaseworkerDummyEventEXUI3839NoMid implements CCDConfig<CaseData, St
 
         DummyFields dummyFields = details.getData().getExuiDummyFields();
         DummyFields beforeDummyFields = beforeDetails.getData().getExuiDummyFields();
-        DummyFields.DummyEnum dummyEnum = dummyFields.getDummyEnumField();
-        DummyFields.DummyEnum beforeDummyEnum = beforeDummyFields.getDummyEnumField();
+        DummyFields.DummyEnum dummyEnumField = dummyFields.getDummyEnumField();
+        DummyFields.DummyEnum beforeDummyEnumField = beforeDummyFields.getDummyEnumField();
 
-        String originalDummyEnum = "Dummy Enum Was Originally: " + beforeDummyEnum;
-        String currentDummyEnum = "Dummy Enum is Now: " + dummyEnum;
-        String expectedDummyEnum = "Dummy Enum Should Be: " + DummyFields.DummyEnum.DUMMY_ENUM_1;
+        String originalDummyEnum = "Dummy Enum Field Was Originally: " + beforeDummyEnumField;
+        String currentDummyEnum = "Dummy Enum Field is Now: " + dummyEnumField;
+        String expectedDummyEnum = "Dummy Enum Field Should Be: " + DummyFields.DummyEnum.DUMMY_ENUM_1;
 
         String error = "aboutToSubmit Callback: " + originalDummyEnum + " " + currentDummyEnum + " " + expectedDummyEnum;
         errors.add(error);
