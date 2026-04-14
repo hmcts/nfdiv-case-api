@@ -29,7 +29,7 @@ public class DummyFields {
     private YesOrNo dummySetDateAutomatically;
 
     @CCD(
-        label = "EXUI4347 - Dummy Date",
+        label = "EXUI4347 - Dummy Date. Set to current date by Dummy Event if 'Set Date Automatically?' is Yes.",
         access = {DefaultAccess.class},
         searchable = false
     )
