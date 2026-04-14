@@ -20,6 +20,7 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerApplicantResponded
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2WithAddress;
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerApplicantRespondedTest {
@@ -60,5 +61,32 @@ class CaseworkerApplicantRespondedTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerApplicantResponded.aboutToStart(caseDetails);
 
         assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldNotChangeStateIfRespondentAddressNotProvided() {
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(State.AwaitingDocuments);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerApplicantResponded.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getState()).isEqualTo(State.AwaitingDocuments);
+    }
+
+    @Test
+    void shouldSetStateToSubmittedIfRespondentAddressProvided() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant2(getApplicant2WithAddress());
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(State.AwaitingDocuments);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerApplicantResponded.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getState()).isEqualTo(State.Submitted);
     }
 }
