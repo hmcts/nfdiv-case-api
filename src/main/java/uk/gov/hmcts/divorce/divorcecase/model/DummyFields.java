@@ -54,7 +54,7 @@ public class DummyFields {
     public enum DummyEnum implements HasLabel {
 
         @JsonProperty("DummyEnum1")
-        DUMMY_ENUM_1("Dummy Enum 1"),
+        DUMMY_ENUM_1("Dummy Enum 1 - Set By Dummy Event."),
 
         @JsonProperty("DummyEnum2")
         DUMMY_ENUM_2("Dummy Enum 2"),
