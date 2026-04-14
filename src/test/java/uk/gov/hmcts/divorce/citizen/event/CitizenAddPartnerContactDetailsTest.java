@@ -20,8 +20,8 @@ import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPartnerContactDetails
 import static uk.gov.hmcts.divorce.citizen.event.CitizenAddPartnerContactDetails.CITIZEN_ADD_PARTNER_DETAILS;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 
 @ExtendWith(SpringExtension.class)
 class CitizenAddPartnerContactDetailsTest {
@@ -128,7 +128,7 @@ class CitizenAddPartnerContactDetailsTest {
             .postCode("postcode")
             .build();
     }
-  
+
     void shouldSetAddressKnownFlags() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         caseDetails.setData(caseData());
