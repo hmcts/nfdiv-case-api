@@ -49,6 +49,13 @@ public class DummyFields {
     )
     private DummyEnum dummyEnumField;
 
+    @CCD(
+        label = "Null All Dummy Fields",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private YesOrNo nullAllDummyFields;
+
     @Getter
     @AllArgsConstructor
     public enum DummyEnum implements HasLabel {
