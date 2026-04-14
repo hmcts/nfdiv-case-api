@@ -37,13 +37,6 @@ public class DummyFields {
     private LocalDate dummyDate;
 
     @CCD(
-        label = "EXUI3839 - Dummy String",
-        access = {DefaultAccess.class},
-        searchable = false
-    )
-    private String dummyString;
-
-    @CCD(
         label = "EXUI3839 - Dummy Enum",
         access = {SystemUpdateAndSuperUserAccess.class}
     )

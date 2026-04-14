@@ -51,7 +51,6 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
                 .pageLabel("Dummy Page")
                 .complex(CaseData::getExuiDummyFields)
                     .mandatory(DummyFields::getDummySetDateAutomatically)
-                    .mandatory(DummyFields::getDummyString, "dummySetDateAutomatically=\"NEVER_SHOW\"", true)
                     .mandatory(DummyFields::getDummyDate, "dummySetDateAutomatically=\"NEVER_SHOW\"", true)
                     .mandatory(DummyFields::getDummyEnumField, "dummySetDateAutomatically=\"NEVER_SHOW\"", true)
                 .done()
@@ -62,11 +61,6 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_4347, details.getId());
         DummyFields dummyFields = details.getData().getExuiDummyFields();
-
-        log.info("Dummy String is: " + dummyFields.getDummyString());
-        dummyFields.setDummyString(EXUI_ISSUE_ID);
-
-        log.info("Dummy String is Now: " + dummyFields.getDummyString());
 
         log.info("Dummy Enum Field is: " + dummyFields.getDummyEnumField());
         dummyFields.setDummyEnumField(DummyFields.DummyEnum.DUMMY_ENUM_1);
@@ -85,15 +79,6 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
         DummyFields dummyFields = details.getData().getExuiDummyFields();
         DummyFields beforeDummyFields = beforeDetails.getData().getExuiDummyFields();
         List<String> warnings = new ArrayList<>();
-
-        String dummyString = dummyFields.getDummyString();
-        String beforeDummyString = beforeDummyFields.getDummyString();
-
-        String originalDummyString = "Dummy String Was Originally: " + beforeDummyString;
-        String currentDummyString = "Dummy String is Now: " + dummyString;
-        String expectedDummyString = "Dummy String Should Be: " + EXUI_ISSUE_ID;
-
-        warnings.add("midEvent Callback: " + originalDummyString + " " + currentDummyString + " " + expectedDummyString);
 
         DummyFields.DummyEnum dummyEnumField = dummyFields.getDummyEnumField();
         DummyFields.DummyEnum beforeDummyEnumField = beforeDummyFields.getDummyEnumField();
@@ -123,15 +108,6 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
 
         DummyFields dummyFields = details.getData().getExuiDummyFields();
         DummyFields beforeDummyFields = beforeDetails.getData().getExuiDummyFields();
-        String dummyString = dummyFields.getDummyString();
-        String beforeDummyString = beforeDummyFields.getDummyString();
-
-        String originalDummyString = "Dummy String Was Originally: " + beforeDummyString;
-        String currentDummyString = "Dummy String is Now: " + dummyString;
-        String expectedDummyString = "Dummy String Should Be: " + EXUI_ISSUE_ID;
-
-        errors.add("aboutToSubmit Callback: " + originalDummyString + " " + currentDummyString + " " + expectedDummyString);
-
         DummyFields.DummyEnum dummyEnumField = dummyFields.getDummyEnumField();
         DummyFields.DummyEnum beforeDummyEnumField = beforeDummyFields.getDummyEnumField();
 

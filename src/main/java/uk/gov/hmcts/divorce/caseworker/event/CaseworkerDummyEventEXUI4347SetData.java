@@ -46,7 +46,6 @@ public class CaseworkerDummyEventEXUI4347SetData implements CCDConfig<CaseData, 
                 .page("dummyPage")
                 .pageLabel("Dummy Page - Set Dummy Data")
                 .complex(CaseData::getExuiDummyFields)
-                    .optional(DummyFields::getDummyString)
                     .optional(DummyFields::getDummyDate)
                     .optional(DummyFields::getDummyEnumField)
                     .optional(DummyFields::getNullAllDummyFields)
