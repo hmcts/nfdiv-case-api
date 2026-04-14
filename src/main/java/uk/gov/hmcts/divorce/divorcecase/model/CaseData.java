@@ -87,12 +87,9 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWER
 @Builder(toBuilder = true)
 public class CaseData {
 
-    @CCD(
-        label = "Dummy Fields",
-        access = {DefaultAccess.class},
-        searchable = false
-    )
-    private DummyFields exuiDummyFields;
+    @JsonUnwrapped
+    @Builder.Default
+    private DummyFields exuiDummyFields = new DummyFields();
 
     @CCD(
         label = "Application type",
