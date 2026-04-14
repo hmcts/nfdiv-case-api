@@ -57,7 +57,10 @@ public class DummyFields {
         DUMMY_ENUM_1("Dummy Enum 1"),
 
         @JsonProperty("DummyEnum2")
-        DUMMY_ENUM_2("Dummy Enum 2");
+        DUMMY_ENUM_2("Dummy Enum 2"),
+
+        @JsonProperty("DummyEnum3")
+        DUMMY_ENUM_3("Dummy Enum 3");
 
         private final String label;
     }
