@@ -30,8 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_DUMMY_EVENT_EXUI_4347 = "caseworker-dummy-event-exui4347";
-    public static final String EXUI_ISSUE_ID = "EXUI-3839-4347";
-
+    
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final boolean dummyEventEnabled = Boolean.parseBoolean(System.getenv().get("EXUI_DUMMY_EVENTS_ENABLED"));
