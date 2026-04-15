@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -80,11 +81,12 @@ public class CaseworkerApplicantResponded implements CCDConfig<CaseData, State, 
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_APPLICANT_RESPONDED, details.getId());
 
         final State currentState = details.getState();
-        final AddressGlobalUK respondentAddress = details.getData().getApplicant2().getAddress();
+        final Applicant applicant2 = details.getData().getApplicant2();
+        final boolean noRespondentAddress = applicant2.getAddress() == null || applicant2.getApplicantAddress().isEmpty();
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
-            .state(respondentAddress == null ? currentState : Submitted)
+            .state(noRespondentAddress ? currentState : Submitted)
             .build();
     }
 }
