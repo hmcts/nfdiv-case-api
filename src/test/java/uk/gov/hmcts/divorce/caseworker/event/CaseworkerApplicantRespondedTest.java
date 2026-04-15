@@ -17,9 +17,11 @@ import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerApplicantResponded.CASEWORKER_APPLICANT_RESPONDED;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerApplicantResponded.ERROR_ALREADY_ISSUED;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2WithAddress;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,7 +56,6 @@ class CaseworkerApplicantRespondedTest {
 
     @Test
     void shouldNotThrowIfCaseNotIssued() {
-        final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData());
 
@@ -66,6 +67,28 @@ class CaseworkerApplicantRespondedTest {
     @Test
     void shouldNotChangeStateIfRespondentAddressNotProvided() {
         final CaseData caseData = caseData();
+        caseData.setApplicant2(getApplicant2(MALE));
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(State.AwaitingDocuments);
+        caseDetails.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerApplicantResponded.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getState()).isEqualTo(State.AwaitingDocuments);
+    }
+
+    @Test
+    void shouldNotChangeStateIfEmptyRespondentAddressProvided() {
+        final CaseData caseData = caseData();
+        caseData.setApplicant2(getApplicant2WithAddress());
+        caseData.getApplicant2().getAddress().setAddressLine1("");
+        caseData.getApplicant2().getAddress().setAddressLine2("");
+        caseData.getApplicant2().getAddress().setAddressLine3("");
+        caseData.getApplicant2().getAddress().setPostTown("");
+        caseData.getApplicant2().getAddress().setPostCode("");
+        caseData.getApplicant2().getAddress().setCounty("");
+        caseData.getApplicant2().getAddress().setCountry("");
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setState(State.AwaitingDocuments);
         caseDetails.setData(caseData);
