@@ -110,6 +110,13 @@ public enum State {
     AwaitingDocuments,
 
     @CCD(
+        label = "Application Stayed",
+        hint = CASE_TITLE,
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    ApplicationStayed,
+
+    @CCD(
         label = "Awaiting applicant 1 response",
         hint = CASE_TITLE,
         access = {PreSubmissionStateAccess.class, SolicitorAccess.class}
@@ -164,6 +171,13 @@ public enum State {
         access = {DefaultStateAccess.class}
     )
     AwaitingFinalOrder,
+
+    @CCD(
+        label = "Awaiting GenApp Documents",
+        hint = CASE_TITLE,
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    AwaitingGenAppDocuments,
 
     @CCD(
         label = "Awaiting GenAppHWF evidence",
@@ -601,7 +615,8 @@ public enum State {
         AwaitingServiceConsideration, LAServiceReview, AwaitingServicePayment, AwaitingAlternativeService, AwaitingDwpResponse,
         AwaitingJudgeClarification, PendingServiceAppResponse, GeneralConsiderationComplete, AwaitingGeneralReferralPayment,
         AwaitingGeneralConsideration, GeneralApplicationReceived, PendingHearingOutcome, PendingHearingDate,
-        AwaitingGeneralApplicationPayment, AwaitingDocuments, AwaitingGenAppHWFPartPayment, AwaitingGenAppHWFEvidence
+        AwaitingGeneralApplicationPayment, AwaitingDocuments, AwaitingGenAppHWFPartPayment, AwaitingGenAppHWFEvidence,
+        AwaitingGenAppDocuments, ApplicationStayed
     };
 
     public static final State[] POST_SUBMISSION_PRE_AWAITING_CO_STATES = {
