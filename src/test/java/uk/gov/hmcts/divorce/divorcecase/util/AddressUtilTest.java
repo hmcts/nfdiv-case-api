@@ -81,7 +81,7 @@ class AddressUtilTest {
             .postCode(null)
             .build();
 
-        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(true));
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(true));
     }
 
     @Test
@@ -92,7 +92,7 @@ class AddressUtilTest {
             .postCode(null)
             .build();
 
-        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(true));
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(true));
     }
 
     @Test
@@ -103,7 +103,7 @@ class AddressUtilTest {
             .postCode(null)
             .build();
 
-        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(true));
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(true));
     }
 
     @Test
@@ -114,7 +114,7 @@ class AddressUtilTest {
             .postCode(null)
             .build();
 
-        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(true));
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(true));
     }
 
     @Test
@@ -125,7 +125,7 @@ class AddressUtilTest {
             .postCode(null)
             .build();
 
-        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(true));
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(true));
     }
 
     @Test
@@ -136,7 +136,7 @@ class AddressUtilTest {
             .postCode("SW1A 1AA")
             .build();
 
-        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(true));
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(true));
     }
 
     @Test
@@ -147,7 +147,7 @@ class AddressUtilTest {
             .postCode("W1J7NT")
             .build();
 
-        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(true));
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(true));
     }
 
     @Test
@@ -158,7 +158,7 @@ class AddressUtilTest {
             .postCode("EH43 6BD")
             .build();
 
-        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(false));
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(false));
     }
 
     @Test
@@ -169,7 +169,7 @@ class AddressUtilTest {
             .postCode("FK20HF")
             .build();
 
-        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(false));
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(false));
     }
 
     @Test
@@ -180,7 +180,7 @@ class AddressUtilTest {
             .postCode("75005")
             .build();
 
-        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(false));
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(false));
     }
 
     @Test
@@ -191,7 +191,7 @@ class AddressUtilTest {
             .postCode("AB24 1AW")
             .build();
 
-        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(false));
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(false));
     }
 
     @Test
@@ -202,7 +202,7 @@ class AddressUtilTest {
             .postCode("BT31 1RE")
             .build();
 
-        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(false));
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(false));
     }
 
     @Test
@@ -213,7 +213,7 @@ class AddressUtilTest {
             .postCode(null)
             .build();
 
-        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(false));
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(false));
     }
 
     @Test
@@ -224,7 +224,7 @@ class AddressUtilTest {
             .postCode(null)
             .build();
 
-        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(false));
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(false));
     }
 
     @Test
@@ -235,12 +235,12 @@ class AddressUtilTest {
             .postCode(null)
             .build();
 
-        assertThat(AddressUtil.isEnglandOrWales(addressGlobalUK), is(false));
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(false));
     }
 
     @Test
     void shouldThrowIllegalArgumentExceptionIfAddressIsNull() {
-        assertThatThrownBy(() -> AddressUtil.isEnglandOrWales(null))
+        assertThatThrownBy(() -> AddressUtil.isUnitedKingdom(null))
             .isExactlyInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining(TEST_OVERSEAS_EXCEPTION_MESSAGE);
     }
@@ -252,7 +252,7 @@ class AddressUtilTest {
             .postCode("SW1A1BB")
             .build();
 
-        assertThatThrownBy(() -> AddressUtil.isEnglandOrWales(addressGlobalUK))
+        assertThatThrownBy(() -> AddressUtil.isUnitedKingdom(addressGlobalUK))
             .isExactlyInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining(TEST_OVERSEAS_EXCEPTION_MESSAGE);
     }
