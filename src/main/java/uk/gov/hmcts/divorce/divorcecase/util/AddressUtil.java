@@ -6,7 +6,6 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
@@ -20,7 +19,9 @@ public final class AddressUtil {
 
     private static final String COMMA_SEPARATOR = ",";
     private static final int ADDRESS_LINE_MAX_CHARS = 25;
-    private static final List<String> UK_TERMS = Arrays.asList("unitedkingdom", "uk", "england", "wales", "scotland", "northernireland", "greatbritain");
+    private static final List<String> UK_TERMS = Arrays.asList(
+        "unitedkingdom", "uk", "england", "wales", "scotland", "northernireland", "greatbritain"
+    );
     private static final String OVERSEAS_EXCEPTION_MESSAGE =
         "Cannot assert whether address is overseas or not due to null address or blank/null country";
 
