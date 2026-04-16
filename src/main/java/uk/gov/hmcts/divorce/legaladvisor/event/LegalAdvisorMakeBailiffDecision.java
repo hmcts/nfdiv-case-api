@@ -42,7 +42,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.BAILIFF_SERVICE;
 @RequiredArgsConstructor
 public class LegalAdvisorMakeBailiffDecision implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String LEGAL_ADVISOR_BAILIFF_DECISION = "caseworker-advisor-bailiff-decision";
+    public static final String LEGAL_ADVISOR_BAILIFF_DECISION = "caseworker-bailiff-decision";
 
     private final CaseDataDocumentService caseDataDocumentService;
 
