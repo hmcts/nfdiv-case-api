@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -18,15 +19,11 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.MultiSelectList;
 @Builder(toBuilder = true)
 public class Hearing {
 
-    @CCD(
-        label = "Date of hearing"
-    )
+    @CCD(label = "Date of hearing")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime dateOfHearing;
 
-    @CCD(
-        label = "Venue of hearing"
-    )
+    @CCD(label = "Venue of hearing")
     private String venueOfHearing;
 
     @CCD(
@@ -36,4 +33,7 @@ public class Hearing {
         typeParameterOverride = "HearingAttendance"
     )
     private Set<HearingAttendance> hearingAttendance;
+
+    @CCD(label = "Hearing reminder notification has been sent")
+    private YesOrNo hasHearingReminderBeenSent;
 }

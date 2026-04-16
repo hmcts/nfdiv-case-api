@@ -38,15 +38,15 @@ public class CaseworkerListForHearing implements CCDConfig<CaseData, State, User
             .showEventNotes()
             .showSummary()
             .aboutToStartCallback(this::aboutToStart)
-            .grant(CREATE_READ_UPDATE, CASE_WORKER)
-            .grant(CREATE_READ_UPDATE, SUPER_USER)
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
             .page("listForHearing")
             .pageLabel(LIST_FOR_HEARING)
             .complex(CaseData::getHearing)
-            .mandatory(Hearing::getDateOfHearing)
-            .mandatory(Hearing::getVenueOfHearing)
-            .mandatory(Hearing::getHearingAttendance)
+                .mandatory(Hearing::getDateOfHearing)
+                .mandatory(Hearing::getVenueOfHearing)
+                .mandatory(Hearing::getHearingAttendance)
             .done();
     }
 
@@ -56,6 +56,19 @@ public class CaseworkerListForHearing implements CCDConfig<CaseData, State, User
         final CaseData data = details.getData();
 
         data.setHearing(Hearing.builder().build());
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(data)
+            .build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_LIST_FOR_HEARING, details.getId());
+        final CaseData data = details.getData();
+
+        data.getHearing().setHasHearingReminderBeenSent(null);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

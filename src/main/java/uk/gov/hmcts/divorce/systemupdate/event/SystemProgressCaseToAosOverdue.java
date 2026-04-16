@@ -41,8 +41,8 @@ public class SystemProgressCaseToAosOverdue implements CCDConfig<CaseData, State
             .forStateTransition(of(AwaitingAos, AosDrafted), AosOverdue)
             .name("AoS not received within SLA")
             .description("AoS not received within SLA")
-            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
-            .grantHistoryOnly(SOLICITOR, CASE_WORKER, SUPER_USER, LEGAL_ADVISOR)
+            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE, CASE_WORKER)
+            .grantHistoryOnly(SOLICITOR, SUPER_USER, LEGAL_ADVISOR)
             .aboutToSubmitCallback(this::aboutToSubmit));
     }
 
