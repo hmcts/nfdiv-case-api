@@ -52,8 +52,8 @@ public class SystemSendHearingRemindersTask implements Runnable {
                 boolQuery()
                     .must(matchQuery(STATE, PendingHearingOutcome))
                     .filter(rangeQuery(DATE_OF_HEARING_CASE_FIELD)
-                        .gte(LocalDate.now().minusDays(EARLIEST_REMINDER_DAYS_BEFORE_HEARING))
-                        .lte(LocalDate.now().minusDays(LATEST_REMINDER_DAYS_BEFORE_HEARING)))
+                        .gte(LocalDate.now().plusDays(LATEST_REMINDER_DAYS_BEFORE_HEARING))
+                        .lte(LocalDate.now().plusDays(EARLIEST_REMINDER_DAYS_BEFORE_HEARING)))
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
             final User user = idamService.retrieveSystemUpdateUserDetails();
