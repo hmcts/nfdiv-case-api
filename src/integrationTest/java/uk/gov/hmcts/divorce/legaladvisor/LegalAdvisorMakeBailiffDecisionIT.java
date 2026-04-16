@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.caseworker;
+package uk.gov.hmcts.divorce.legaladvisor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerMakeBailiffDecision.CASEWORKER_BAILIFF_DECISION;
+import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeBailiffDecision.LEGAL_ADVISOR_BAILIFF_DECISION;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
@@ -70,7 +70,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
     DocAssemblyWireMock.PropertiesInitializer.class,
     IdamWireMock.PropertiesInitializer.class
 })
-public class CaseworkerMakeBailiffDecisionIT {
+public class LegalAdvisorMakeBailiffDecisionIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -123,7 +123,7 @@ public class CaseworkerMakeBailiffDecisionIT {
                 .content(objectMapper.writeValueAsString(
                         callbackRequest(
                             caseData,
-                            CASEWORKER_BAILIFF_DECISION)
+                            LEGAL_ADVISOR_BAILIFF_DECISION)
                     )
                 )
                 .accept(APPLICATION_JSON))
@@ -161,7 +161,7 @@ public class CaseworkerMakeBailiffDecisionIT {
                 .content(objectMapper.writeValueAsString(
                         callbackRequest(
                             caseData,
-                            CASEWORKER_BAILIFF_DECISION)
+                            LEGAL_ADVISOR_BAILIFF_DECISION)
                     )
                 )
                 .accept(APPLICATION_JSON))
@@ -194,7 +194,7 @@ public class CaseworkerMakeBailiffDecisionIT {
                 .content(objectMapper.writeValueAsString(
                         callbackRequest(
                             caseData,
-                            CASEWORKER_BAILIFF_DECISION)
+                            LEGAL_ADVISOR_BAILIFF_DECISION)
                     )
                 )
                 .accept(APPLICATION_JSON))
