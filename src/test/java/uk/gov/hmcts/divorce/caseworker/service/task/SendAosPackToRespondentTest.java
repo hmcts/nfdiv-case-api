@@ -15,9 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
@@ -34,34 +32,6 @@ class SendAosPackToRespondentTest {
 
     @InjectMocks
     private SendAosPackToRespondent sendAosPackToRespondent;
-
-    @Test
-    void shouldSendAosLetterToRespondentWhenSoleAndCourtService() {
-        final var caseData = setCaseDataWithServiceMethod(SOLE_APPLICATION, NO);
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-
-        sendAosPackToRespondent.apply(caseDetails);
-
-        verify(aosPackPrinter).sendAosLetterToRespondent(caseData, TEST_CASE_ID);
-    }
-
-    @Test
-    void shouldSendAosLetterToApplicant2WhenJointAndCourtService() {
-        final var caseData = setCaseDataWithServiceMethod(JOINT_APPLICATION, NO);
-
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
-        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
-
-        sendAosPackToRespondent.apply(caseDetails);
-
-        verify(aosPackPrinter).sendAosLetterToRespondent(caseData, TEST_CASE_ID);
-    }
 
     @Test
     void shouldNotSendAosLetterToRespondentWhenNotACourtService() {

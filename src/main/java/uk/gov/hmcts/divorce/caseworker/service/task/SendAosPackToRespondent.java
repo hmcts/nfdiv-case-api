@@ -10,7 +10,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 
 @Component
 @Slf4j
@@ -27,9 +26,7 @@ public class SendAosPackToRespondent implements CaseTask {
 
         var isCourtService = caseData.getApplication().isCourtServiceMethod();
 
-        if (isCourtService
-                && (!YES.equals(caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay())
-            || !isEmpty(caseData.getApplicant2().getAddress()))) {
+        if (isCourtService && !isEmpty(caseData.getApplicant2().getAddress())) {
             log.info("Sending respondent AoS pack to bulk print.  Case ID: {}", caseId);
             aosPackPrinter.sendAosLetterToRespondent(caseData, caseId);
         }
