@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.print.AosPackPrinter;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
@@ -90,6 +91,21 @@ class SendAosPackToRespondentTest {
         sendAosPackToRespondent.apply(caseDetails);
 
         verifyNoInteractions(aosPackPrinter);
+    }
+
+    @Test
+    void shouldSendAosLetterToApplicant2WhenApplicant1ServeAnotherWayYesAndRespondentAddressIsPresent() {
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        CaseData caseData = setCaseDataWithServiceMethod(SOLE_APPLICATION, YES);
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        sendAosPackToRespondent.apply(caseDetails);
+
+        verify(aosPackPrinter).sendAosLetterToRespondent(caseData, TEST_CASE_ID);
     }
 
     private CaseData setCaseDataWithServiceMethod(ApplicationType applicationType, YesOrNo yesOrNo) {
