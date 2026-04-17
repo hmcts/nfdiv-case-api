@@ -22,6 +22,7 @@ import java.util.List;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingHearingOutcome;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService.CASE_ALREADY_PROCESSED_ERROR;
@@ -44,8 +45,8 @@ public class SystemSendHearingReminder implements CCDConfig<CaseData, State, Use
             .description("Send Hearing Reminder")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
-            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE, CASE_WORKER)
-            .grantHistoryOnly(JUDGE));
+            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
+            .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,

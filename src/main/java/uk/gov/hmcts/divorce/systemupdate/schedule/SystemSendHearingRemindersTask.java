@@ -21,7 +21,7 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingHearingOutcome;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemProgressHeldCase.SYSTEM_PROGRESS_HELD_CASE;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemSendHearingReminder.SYSTEM_SEND_HEARING_REMINDER;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
@@ -74,7 +74,7 @@ public class SystemSendHearingRemindersTask implements Runnable {
 
     private void submitEvent(Long caseId, User user, String serviceAuth) {
         try {
-            ccdUpdateService.submitEvent(caseId, SYSTEM_PROGRESS_HELD_CASE, user, serviceAuth);
+            ccdUpdateService.submitEvent(caseId, SYSTEM_SEND_HEARING_REMINDER, user, serviceAuth);
         } catch (final CcdManagementException e) {
             log.error("Submit event failed for case id: {}, continuing to next case", caseId);
         } catch (final IllegalArgumentException e) {
