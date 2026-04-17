@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingHearingOutcome;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemSendHearingReminder.SYSTEM_SEND_HEARING_REMINDER;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
@@ -30,10 +29,10 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @RequiredArgsConstructor
 public class SystemSendHearingRemindersTask implements Runnable {
 
-    private static final int EARLIEST_REMINDER_DAYS_BEFORE_HEARING = 14;
-    private static final int LATEST_REMINDER_DAYS_BEFORE_HEARING = 7;
-    private static final String DATE_OF_HEARING_CASE_FIELD = "dateOfHearing";
-    private static final String NOTIFICATION_FLAG = "hasHearingReminderBeenSent";
+    public static final int EARLIEST_REMINDER_DAYS_BEFORE_HEARING = 14;
+    public static final int LATEST_REMINDER_DAYS_BEFORE_HEARING = 7;
+    public static final String DATE_OF_HEARING_CASE_FIELD = "dateOfHearing";
+    public static final String HEARING_REMINDER_NOTIFICATION_FLAG = "hasHearingReminderBeenSent";
 
     private final CcdSearchService ccdSearchService;
 
@@ -54,13 +53,13 @@ public class SystemSendHearingRemindersTask implements Runnable {
                     .filter(rangeQuery(DATE_OF_HEARING_CASE_FIELD)
                         .gte(LocalDate.now().plusDays(LATEST_REMINDER_DAYS_BEFORE_HEARING))
                         .lte(LocalDate.now().plusDays(EARLIEST_REMINDER_DAYS_BEFORE_HEARING)))
-                    .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
+                    .mustNot(matchQuery(String.format(DATA, HEARING_REMINDER_NOTIFICATION_FLAG), YesOrNo.YES));
 
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuth = authTokenGenerator.generate();
 
             ccdSearchService
-                .searchForAllCasesWithQuery(query, user, serviceAuth, Holding)
+                .searchForAllCasesWithQuery(query, user, serviceAuth, PendingHearingOutcome)
                 .forEach(caseDetails -> submitEvent(caseDetails.getId(), user, serviceAuth));
 
             log.info("SystemSendHearingRemindersTask scheduled task complete.");
