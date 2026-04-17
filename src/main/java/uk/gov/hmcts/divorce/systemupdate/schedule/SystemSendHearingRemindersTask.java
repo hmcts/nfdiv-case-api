@@ -31,7 +31,7 @@ public class SystemSendHearingRemindersTask implements Runnable {
 
     public static final int EARLIEST_REMINDER_DAYS_BEFORE_HEARING = 14;
     public static final int LATEST_REMINDER_DAYS_BEFORE_HEARING = 7;
-    public static final String DATE_OF_HEARING_CASE_FIELD = "dateOfHearing";
+    public static final String DATE_OF_HEARING_CASE_FIELD = "data.dateOfHearing";
     public static final String HEARING_REMINDER_NOTIFICATION_FLAG = "hasHearingReminderBeenSent";
 
     private final CcdSearchService ccdSearchService;
