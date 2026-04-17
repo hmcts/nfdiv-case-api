@@ -46,14 +46,13 @@ public class HearingReminderNotification implements ApplicantNotification {
     private final NotificationService notificationService;
     private final CaseDataDocumentService caseDataDocumentService;
     private final BulkPrintService bulkPrintService;
-
-    private static final String HEARING_DATE = "hearingDate";
-    private static final String HEARING_TIME = "hearingTime";
-    private static final String HEARING_VENUE = "hearingVenue";
-    private static final String HEARING_ATTENDANCE_MODE = "hearingAttendanceMode";
-
-    private static final String LETTER_TYPE = "hearing-reminder-letter";
     private final DocmosisCommonContent docmosisCommonContent;
+
+    public static final String HEARING_DATE = "hearingDate";
+    public static final String HEARING_TIME = "hearingTime";
+    public static final String HEARING_VENUE = "hearingVenue";
+    public static final String HEARING_ATTENDANCE_MODE = "hearingAttendanceMode";
+    public static final String HEARING_REMINDER_LETTER_TYPE = "hearing-reminder-letter";
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -152,7 +151,7 @@ public class HearingReminderNotification implements ApplicantNotification {
             List.of(letter),
             caseIdString,
             caseIdString,
-            LETTER_TYPE,
+            HEARING_REMINDER_LETTER_TYPE,
             applicant.getFullName(),
             applicant.getAddressOverseas()
         );
@@ -168,7 +167,7 @@ public class HearingReminderNotification implements ApplicantNotification {
             caseId,
             HEARING_REMINDER,
             applicant.getLanguagePreference(),
-            LETTER_TYPE
+            HEARING_REMINDER_LETTER_TYPE
         );
     }
 
