@@ -155,15 +155,13 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void buildInternalUserAosTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         addAosTabFields(configBuilder.tab("aosDetailsInternal", "AoS").forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER))
-            .field("noticeOfProceedingsEmail",
-                "applicant2ContactDetailsType!=\"private\" AND applicant2SolicitorRepresented!=\"Yes\""
-            );
+            .field("noticeOfProceedingsEmail", "applicant2ContactDetailsType!=\"private\" AND applicant2SolicitorRepresented!=\"Yes\"");
     }
 
     private Tab.TabBuilder<CaseData, UserRole> addAosTabFields(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         return tabBuilder
             .showCondition("dateAosSubmitted=\"*\" AND applicationType=\"soleApplication\" AND coSwitchedToSole!=\"Yes\" AND "
-                    + notShowForState(
+                + notShowForState(
                     Draft,
                     AwaitingHWFDecision,
                     AwaitingPayment,
