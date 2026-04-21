@@ -105,7 +105,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildWarningsTab(configBuilder);
         buildMatchesTab(configBuilder);
         buildStateTab(configBuilder);
-        buildAosTab(configBuilder);
+        buildSolicitorAosTab(configBuilder);
+        buildInternalUserAosTab(configBuilder);
         buildConditionalOrderTab(configBuilder);
         buildConditionalOrderTabForApp2Sol(configBuilder);
         buildOutcomeOfConditionalOrderTab(configBuilder);
@@ -146,12 +147,24 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("LabelState", null, "#### Case State:  ${[STATE]}");
     }
 
-    private void buildAosTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        configBuilder.tab("aosDetails", "AoS")
-            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE,
-                SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
+    private void buildSolicitorAosTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        addAosTabFields(
+            configBuilder.tab("aosDetails", "AoS")
+                .forRoles(APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
+        );
+    }
+
+    private void buildInternalUserAosTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        addAosTabFields(configBuilder.tab("aosDetails", "AoS").forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER))
+            .field("noticeOfProceedingsEmail",
+                "applicant2ContactDetailsType!=\"private\" AND applicant2SolicitorRepresented!=\"Yes\""
+            );
+    }
+
+    private Tab.TabBuilder<CaseData, UserRole> addAosTabFields(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+        return tabBuilder
             .showCondition("dateAosSubmitted=\"*\" AND applicationType=\"soleApplication\" AND coSwitchedToSole!=\"Yes\" AND "
-                + notShowForState(
+                    + notShowForState(
                     Draft,
                     AwaitingHWFDecision,
                     AwaitingPayment,
@@ -184,8 +197,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2LanguagePreferenceWelsh")
             .field("applicant2SolicitorRepresented")
             .field("applicant2SolicitorEmail","applicant2SolicitorRepresented=\"Yes\"")
-            .field("noticeOfProceedingsEmail",
-                "applicant2ContactDetailsType!=\"private\" AND applicant2SolicitorRepresented!=\"Yes\"")
             .field("noticeOfProceedingsSolicitorFirm")
             .field("applicant2SolicitorRepresented", NEVER_SHOW)
             .field("statementOfTruth")
