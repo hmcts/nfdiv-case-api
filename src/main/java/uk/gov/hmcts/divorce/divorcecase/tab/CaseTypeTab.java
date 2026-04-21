@@ -148,14 +148,13 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     }
 
     private void buildSolicitorAosTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        addAosTabFields(
-            configBuilder.tab("aosDetails", "AoS")
-                .forRoles(APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
+        addAosTabFields(configBuilder.tab("aosDetailsSolicitor", "AoS")
+            .forRoles(APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
         );
     }
 
     private void buildInternalUserAosTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        addAosTabFields(configBuilder.tab("aosDetails", "AoS").forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER))
+        addAosTabFields(configBuilder.tab("aosDetailsInternal", "AoS").forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER))
             .field("noticeOfProceedingsEmail",
                 "applicant2ContactDetailsType!=\"private\" AND applicant2SolicitorRepresented!=\"Yes\""
             );
