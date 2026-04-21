@@ -32,7 +32,7 @@ public class SystemSendHearingRemindersTask implements Runnable {
     public static final int EARLIEST_REMINDER_DAYS_BEFORE_HEARING = 14;
     public static final int LATEST_REMINDER_DAYS_BEFORE_HEARING = 7;
     public static final String DATE_OF_HEARING_CASE_FIELD = "data.dateOfHearing";
-    public static final String HEARING_REMINDER_NOTIFICATION_FLAG = "hasHearingReminderBeenSent";
+    public static final String HEARING_REMINDER_NOTIFICATION_FLAG = "data.hasHearingReminderBeenSent";
 
     private final CcdSearchService ccdSearchService;
 
@@ -51,9 +51,9 @@ public class SystemSendHearingRemindersTask implements Runnable {
                 boolQuery()
                     .must(matchQuery(STATE, PendingHearingOutcome))
                     .filter(rangeQuery(DATE_OF_HEARING_CASE_FIELD)
-                        .gte(LocalDate.now().plusDays(LATEST_REMINDER_DAYS_BEFORE_HEARING))
-                        .lte(LocalDate.now().plusDays(EARLIEST_REMINDER_DAYS_BEFORE_HEARING)))
-                    .mustNot(matchQuery(String.format(DATA, HEARING_REMINDER_NOTIFICATION_FLAG), YesOrNo.YES));
+                        .lte(LocalDate.now().plusDays(EARLIEST_REMINDER_DAYS_BEFORE_HEARING))
+                        .gte(LocalDate.now().plusDays(LATEST_REMINDER_DAYS_BEFORE_HEARING)))
+                    .mustNot(matchQuery(HEARING_REMINDER_NOTIFICATION_FLAG, YesOrNo.YES));
 
             final User user = idamService.retrieveSystemUpdateUserDetails();
             final String serviceAuth = authTokenGenerator.generate();
