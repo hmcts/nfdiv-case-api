@@ -21,7 +21,6 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingHearingOutcome;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemSendHearingReminder.SYSTEM_SEND_HEARING_REMINDER;
-import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 
 @Component

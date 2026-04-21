@@ -30,7 +30,6 @@ import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemSendHearingRemind
 import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemSendHearingRemindersTask.EARLIEST_REMINDER_DAYS_BEFORE_HEARING;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemSendHearingRemindersTask.HEARING_REMINDER_NOTIFICATION_FLAG;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemSendHearingRemindersTask.LATEST_REMINDER_DAYS_BEFORE_HEARING;
-import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
@@ -63,7 +62,7 @@ class SystemSendHearingRemindersTaskTest {
                 .gte(LocalDate.now().plusDays(LATEST_REMINDER_DAYS_BEFORE_HEARING))
                 .lte(LocalDate.now().plusDays(EARLIEST_REMINDER_DAYS_BEFORE_HEARING))
             )
-            .mustNot(matchQuery(String.format(DATA, HEARING_REMINDER_NOTIFICATION_FLAG), YesOrNo.YES));
+            .mustNot(matchQuery(HEARING_REMINDER_NOTIFICATION_FLAG, YesOrNo.YES));
 
     @BeforeEach
     void setUp() {
