@@ -39,7 +39,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
-import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DEF;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE_ANSWERS;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 
 @Component
@@ -87,7 +87,7 @@ public class CaseworkerAnswerReceived implements CCDConfig<CaseData, State, User
         log.info("CASEWORKER_ADD_ANSWER aboutToStart-callback invoked for case id: {}", details.getId());
         final CaseData caseData = details.getData();
 
-        OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DEF);
+        OrderSummary orderSummary = paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DIVORCE_ANSWERS);
         caseData.getAcknowledgementOfService().getDisputingFee().setOrderSummary(orderSummary);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

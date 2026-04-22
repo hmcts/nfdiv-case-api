@@ -14,12 +14,12 @@ plugins {
   id 'idea'
   id 'pmd'
   id 'jacoco'
-  id 'org.owasp.dependencycheck' version '12.2.0'
+  id 'org.owasp.dependencycheck' version '12.2.1'
   id 'org.sonarqube' version '7.2.3.7755'
-  id 'org.springframework.boot' version '3.4.5'
-  id 'com.github.ben-manes.versions' version '0.53.0'
-  id 'hmcts.ccd.sdk' version '6.7.1'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.2026'
+  id 'org.springframework.boot' version '3.4.7'
+  id 'com.github.ben-manes.versions' version '0.54.0'
+  id 'hmcts.ccd.sdk' version '6.7.2'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.2097'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -137,7 +137,7 @@ task highLevelDataSetup(type: JavaExec) {
 
 checkstyle {
   maxWarnings = 0
-  toolVersion = '13.3.0'
+  toolVersion = '13.4.0'
   getConfigDirectory().set(new File(projectDir, 'config/checkstyle'))
 }
 
@@ -186,7 +186,9 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/divorce/common/config/**',
   '**/uk/gov/hmcts/divorce/divorcecase/model/**',
   '**/uk/gov/hmcts/divorce/divorcecase/tab/**',
-  '**/uk/gov/hmcts/divorce/systemupdate/event/SystemCorrectTtl.java'
+  '**/uk/gov/hmcts/divorce/systemupdate/event/SystemCorrectTtl.java',
+  '**/uk/gov/hmcts/divorce/caseworker/event/CaseworkerDummyEventEXUI4347.java',
+  '**/uk/gov/hmcts/divorce/caseworker/event/CaseworkerDummyEventEXUI4347SetData.java'
 ]
 
 sonarqube {
@@ -226,17 +228,15 @@ repositories {
 
 def versions = [
   jackson      : '2.18.3',
-  junit        : '5.11.4',
-  junitPlatform: '1.11.4',
+  junit        : '5.14.3',
+  junitPlatform: '1.14.3',
   lombok       : '1.18.42',
   springBoot   : springBoot.class.package.implementationVersion
 ]
 
 ext.libraries = [
   junit5: [
-    "org.junit.jupiter:junit-jupiter-api:${versions.junit}",
-    "org.junit.jupiter:junit-jupiter-engine:${versions.junit}",
-    "org.junit.jupiter:junit-jupiter-params:${versions.junit}",
+    "org.junit.jupiter:junit-jupiter:${versions.junit}",
     "org.junit.platform:junit-platform-commons:${versions.junitPlatform}",
     "org.junit.platform:junit-platform-engine:${versions.junitPlatform}"
   ]
@@ -246,15 +246,15 @@ dependencies {
 // uncomment for local version
 //  implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '9.0'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.25.3'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.25.3'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.25.3'
-  implementation group: 'com.google.guava', name: 'guava', version: '33.5.0-jre'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.25.4'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.25.4'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.25.4'
+  implementation group: 'com.google.guava', name: 'guava', version: '33.6.0-jre'
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
-  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.13.0'
+  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.13.2'
   implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.4') {
     exclude group: 'org.apache.commons', module: 'commons-compress'
     exclude group: 'com.google.guava', module: 'guava'
@@ -264,13 +264,13 @@ dependencies {
   }
   implementation group: 'com.github.hmcts', name: 'core-case-data-store-client', version: '5.1.0'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.4'
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.1.9'
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '8.0.0'
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '5.0.3'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.2'
   implementation group: 'com.github.hmcts', name: 'ccd-case-document-am-client', version: '1.59.2'
 
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core'
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.8.14'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.8.17'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
@@ -321,7 +321,7 @@ dependencies {
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
-  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.58.0'
+  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.59.0'
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:2.3.0'
 }
 
@@ -421,6 +421,7 @@ bootWithCCD {
       environment key, value
     }
     environment 'CITIZEN_UPDATE_CASE_STATE_ENABLED', 'true'
+    environment 'EXUI_DUMMY_EVENTS_ENABLED', 'true'
     environment 'LOGGING_LEVEL_UK_GOV_HMCTS_DIVORCE', 'info'
     environment 'ROLE_ASSIGNMENT_URL', 'http://localhost:4096'
     environment 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
