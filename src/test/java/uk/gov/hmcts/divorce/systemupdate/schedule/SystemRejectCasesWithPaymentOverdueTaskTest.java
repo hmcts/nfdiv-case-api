@@ -9,11 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.payment.service.PaymentStatusService;
@@ -81,8 +78,6 @@ class SystemRejectCasesWithPaymentOverdueTaskTest {
     @InjectMocks
     private SystemRejectCasesWithPaymentOverdueTask task;
 
-
-    private List<uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State>> caseDetails;
     private String reference;
 
     @BeforeEach
@@ -106,14 +101,6 @@ class SystemRejectCasesWithPaymentOverdueTaskTest {
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
         reference = UUID.randomUUID().toString();
-
-        caseDetails = List.of(
-            uk.gov.hmcts.ccd.sdk.api.CaseDetails.<CaseData, State>builder().id(1L)
-                .state(AwaitingPayment)
-                .data(CaseData.builder().application(
-                    Application.builder().applicationPayments(getPayments()).build()).build())
-                .lastModified(LocalDateTime.now().minusDays(18))
-                .build());
     }
 
     @Test
