@@ -26,6 +26,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -37,15 +38,17 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.CASEWORKER_EXPEDITE_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.ERROR_NO_CO_GRANTED_DATE;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerExpediteFinalOrder.ERROR_NO_GENERAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_FO_GRANTED_EARLIER_THAN_CO_GRANTED;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.WARNING_FO_GRANTED_NOT_WITHIN_CURRENT_CALENDAR_YEAR;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_ORDER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -124,10 +127,58 @@ class CaseworkerExpediteFinalOrderTest {
     }
 
     @Test
-    void shouldPopulateFinalOrderGrantedDateAndSendEmail() {
+    void shouldReturnErrorIfFoGrantedDateValidationFails() {
+        final CaseDetails<CaseData, State> details = getCaseDetailsWithSelectedGeneralOrderDocument();
+        details.getData().getFinalOrder().setGrantedDate(LocalDateTime.now().minusDays(1));
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerExpediteFinalOrder.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).isNotNull();
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(ERROR_FO_GRANTED_EARLIER_THAN_CO_GRANTED);
+
+        verifyNoInteractions(documentGenerator);
+        verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldReturnWarningIfFoGrantedDateNotWithinCurrentCalendarYear() {
         final CaseDetails<CaseData, State> details = getCaseDetailsWithSelectedGeneralOrderDocument();
 
-        setMockClock(clock);
+        LocalDateTime foGrantedDate = LocalDateTime.now().minusYears(1);
+        LocalDate coGrantedDate = foGrantedDate.toLocalDate().minusDays(1);
+        details.getData().getFinalOrder().setGrantedDate(foGrantedDate);
+        details.getData().getConditionalOrder().setGrantedDate(coGrantedDate);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerExpediteFinalOrder.aboutToSubmit(details, details);
+
+        assertThat(response.getWarnings()).isNotNull();
+        assertThat(response.getWarnings()).hasSize(1);
+        assertThat(response.getWarnings()).contains(WARNING_FO_GRANTED_NOT_WITHIN_CURRENT_CALENDAR_YEAR);
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getData()
+            .getFinalOrder()
+            .getExpeditedFinalOrderAuthorisation()
+            .getExpeditedFinalOrderGeneralOrder()
+            .getGeneralOrderDocument()
+            .getDocumentFileName())
+            .isEqualTo("generalOrderDocumentName");
+        assertThat(response.getData().getFinalOrder().getExpeditedFinalOrderAuthorisation().getExpeditedFinalOrderJudgeName())
+            .isEqualTo("JudgeName");
+
+        verify(documentGenerator).generateAndStoreCaseDocument(eq(FINAL_ORDER_GRANTED),
+            eq(FINAL_ORDER_TEMPLATE_ID),
+            eq(FINAL_ORDER_DOCUMENT_NAME),
+            any(),
+            anyLong());
+
+        verify(notificationDispatcher).send(finalOrderGrantedNotification, details.getData(), TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldPopulateFinalOrderEligibleDateAndSendEmail() {
+        final CaseDetails<CaseData, State> details = getCaseDetailsWithSelectedGeneralOrderDocument();
+        details.getData().getFinalOrder().setGrantedDate(LocalDateTime.now());
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerExpediteFinalOrder.aboutToSubmit(details, details);
 
@@ -141,20 +192,21 @@ class CaseworkerExpediteFinalOrderTest {
             .isEqualTo("generalOrderDocumentName");
         assertThat(response.getData().getFinalOrder().getExpeditedFinalOrderAuthorisation().getExpeditedFinalOrderJudgeName())
             .isEqualTo("JudgeName");
-        assertThat(response.getData().getFinalOrder().getGrantedDate()).isNotNull();
-        assertThat(response.getData().getFinalOrder().getGrantedDate()).isEqualTo(getExpectedLocalDateTime());
+        assertThat(response.getData().getFinalOrder().getDateFinalOrderEligibleFrom()).isEqualTo(getExpectedLocalDateTime().toLocalDate());
 
         verify(documentGenerator).generateAndStoreCaseDocument(eq(FINAL_ORDER_GRANTED),
             eq(FINAL_ORDER_TEMPLATE_ID),
             eq(FINAL_ORDER_DOCUMENT_NAME),
             any(),
             anyLong());
+
+        verify(notificationDispatcher).send(finalOrderGrantedNotification, details.getData(), TEST_CASE_ID);
     }
 
     @Test
     void shouldSendNotificationWhenSubmittedCallbackIsInvoked() {
         final CaseDetails<CaseData, State> details = getCaseDetailsWithSelectedGeneralOrderDocument();
-        setMockClock(clock);
+        details.getData().getFinalOrder().setGrantedDate(LocalDateTime.now());
 
         caseworkerExpediteFinalOrder.aboutToSubmit(details, details);
 
@@ -186,6 +238,11 @@ class CaseworkerExpediteFinalOrderTest {
         final CaseData caseData = details.getData();
         final String generalOrderDocumentFilename = caseData
             .getGeneralOrders().get(0).getValue().getGeneralOrderDocument().getDocumentFileName();
+        caseData.setConditionalOrder(
+            ConditionalOrder.builder()
+                .grantedDate(LocalDate.now())
+                .build()
+        );
         caseData.setFinalOrder(
             FinalOrder.builder()
                 .granted(Set.of(FinalOrder.Granted.YES))

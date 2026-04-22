@@ -10,7 +10,7 @@ ccd-def-cleanup:
 
 java:
   applicationPort: 4013
-  image: 'hmctspublic.azurecr.io/nfdiv/case-api:latest'
+  image: 'hmctsprod.azurecr.io/nfdiv/case-api:latest'
   ingressHost: nfdiv-case-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   aadIdentityName: nfdiv
   terminationGracePeriodSeconds: 120
@@ -60,6 +60,7 @@ java:
     SEND_LETTER_SERVICE_BASEURL: "http://rpe-send-letter-service-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
     PAYMENT_API_BASEURL: "http://payment-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
     CITIZEN_UPDATE_CASE_STATE_ENABLED: false
+    EXUI_DUMMY_EVENTS_ENABLED: false
     ADMIN_UNLINK_APPLICANT_2_ENABLED: false
     SERVICE_AUTH_MICROSERVICE: nfdiv_case_api
     SERVICE_AUTH_PROVIDER_URL: http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal

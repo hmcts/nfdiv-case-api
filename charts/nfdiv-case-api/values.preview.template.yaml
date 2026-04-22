@@ -5,6 +5,7 @@ java:
   environment:
     CHANGE_ID: ${CHANGE_ID}
     CITIZEN_UPDATE_CASE_STATE_ENABLED: true
+    EXUI_DUMMY_EVENTS_ENABLED: true
     CREATE_PAPER_CASE_MOCK_NOTIFICATION: true
     CASE_API_URL: https://nfdiv-case-api-pr-${CHANGE_ID}.preview.platform.hmcts.net
   keyVaults:
@@ -35,7 +36,7 @@ nfdiv-frontend:
       enabled: false
     imagePullPolicy: Always
     releaseNameOverride: ${SERVICE_NAME}-frontend
-    image: hmctspublic.azurecr.io/nfdiv/frontend:latest #pr-xxxx
+    image: hmctsprod.azurecr.io/nfdiv/frontend:latest #pr-xxxx
     ingressHost: frontend-${SERVICE_FQDN}
     environment:
       CASE_TYPE: NFD-${CHANGE_ID}
