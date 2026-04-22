@@ -70,7 +70,7 @@ class CaseTerminationServiceTest {
                 APPLICANT_1_SOLICITOR.getRole(),
                 APPLICANT_2_SOLICITOR.getRole()
             )));
-        verify(notificationDispatcher).send(applicationWithdrawnNotification, caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(applicationWithdrawnNotification, caseDetails);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
@@ -96,7 +96,7 @@ class CaseTerminationServiceTest {
                 APPLICANT_1_SOLICITOR.getRole(),
                 APPLICANT_2_SOLICITOR.getRole()
         )));
-        verify(notificationDispatcher).send(applicationWithdrawnNotification, caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(applicationWithdrawnNotification, caseDetails);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
@@ -121,7 +121,7 @@ class CaseTerminationServiceTest {
                 APPLICANT_2_SOLICITOR.getRole()
             )
         ));
-        verify(notificationDispatcher).send(applicationRejectedFeeNotPaidNotification, caseData, TEST_CASE_ID);
+        verify(notificationDispatcher).send(applicationRejectedFeeNotPaidNotification, caseDetails);
         verifyNoMoreInteractions(notificationDispatcher);
     }
 
