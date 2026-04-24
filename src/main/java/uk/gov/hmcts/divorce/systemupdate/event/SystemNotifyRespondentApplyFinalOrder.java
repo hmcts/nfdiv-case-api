@@ -67,7 +67,7 @@ public class SystemNotifyRespondentApplyFinalOrder implements CCDConfig<CaseData
                 .build();
         }
 
-        log.info("A period of 3 months has elapsed since applicant became eligible to apply for final order for case {}. "
+        log.info("A period of 12 months has elapsed since the CO was granted, so the respondent can now apply for final order for case {}. "
             + "Triggering notificationDispatcher...", caseId);
 
         notificationDispatcher.send(respondentApplyForFinalOrderNotification, caseData, caseId);
