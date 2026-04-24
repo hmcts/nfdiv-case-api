@@ -15,6 +15,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.SwitchedToSole;
@@ -30,9 +32,11 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResource;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -55,6 +59,12 @@ public class SwitchToSoleService {
     private final AuthTokenGenerator authTokenGenerator;
 
     private final CaseFlagsService caseFlagsService;
+
+    public void switchApplicationType(final CaseData caseData) {
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getLabelContent().setApplicationType(SOLE_APPLICATION);
+        resetInterimApplications(caseData);
+    }
 
     public void switchUserRoles(final CaseData caseData, final Long caseId) {
 
@@ -129,7 +139,29 @@ public class SwitchToSoleService {
         data.setCaseInvite(new CaseInvite(data.getApplicant2().getEmail(), null, null));
         switchFinalOrderAnswers(data.getFinalOrder());
 
+        switchGeneralApplicationParties(data.getGeneralApplications());
+
         caseFlagsService.switchCaseFlags(data);
+    }
+
+    public void resetInterimApplications(final CaseData caseData) {
+        caseData.getApplicant1().resetInterimApplications();
+        caseData.getApplicant2().resetInterimApplications();
+    }
+
+    private void switchGeneralApplicationParties(final List<ListValue<GeneralApplication>> generalApplicationValues) {
+        generalApplicationValues.stream()
+            .map(ListValue::getValue)
+            .filter(Objects::nonNull)
+            .forEach(generalApplication -> {
+                GeneralParties applicationParty = generalApplication.getGeneralApplicationParty();
+
+                if (GeneralParties.APPLICANT.equals(applicationParty)) {
+                    generalApplication.setGeneralApplicationParty(GeneralParties.RESPONDENT);
+                } else if (applicationParty != null) {
+                    generalApplication.setGeneralApplicationParty(GeneralParties.APPLICANT);
+                }
+            });
     }
 
     private void switchApplicationData(final CaseData data, final Application application, final Applicant applicant2) {

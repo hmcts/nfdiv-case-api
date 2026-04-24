@@ -80,9 +80,9 @@ public class SwitchedToSoleCo implements CCDConfig<CaseData, State, UserRole> {
         log.info("{} aboutToSubmit callback invoked for Case Id: {}", SWITCH_TO_SOLE_CO, caseId);
         CaseData data = details.getData();
 
-        data.setApplicationType(SOLE_APPLICATION);
+        switchToSoleService.switchApplicationType(data);
+
         data.getApplication().setSwitchedToSoleCo(YES);
-        data.getLabelContent().setApplicationType(SOLE_APPLICATION);
         data.getConditionalOrder().setSwitchedToSole(YES);
 
         // triggered by citizen users

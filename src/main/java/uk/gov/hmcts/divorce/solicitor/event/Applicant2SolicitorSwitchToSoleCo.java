@@ -95,9 +95,9 @@ public class Applicant2SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
                 .build();
         }
 
-        data.setApplicationType(SOLE_APPLICATION);
+        switchToSoleService.switchApplicationType(data);
+
         data.getApplication().setSwitchedToSoleCo(YES);
-        data.getLabelContent().setApplicationType(SOLE_APPLICATION);
         data.getConditionalOrder().setSwitchedToSole(YES);
 
         switchToSoleService.switchUserRoles(data, caseId);

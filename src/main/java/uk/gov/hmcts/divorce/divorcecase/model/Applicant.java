@@ -473,6 +473,13 @@ public class Applicant {
     }
 
     @JsonIgnore
+    public void resetInterimApplications() {
+        setActiveGeneralApplication(null);
+        setInterimApplications(null);
+        setInterimApplicationOptions(new InterimApplicationOptions());
+    }
+
+    @JsonIgnore
     public boolean mustBeServedOverseas() {
         boolean unrepresentedBasedOverseas = !isRepresented() && isBasedOverseas();
         boolean solicitorBasedOverseas = isRepresented() && YesOrNo.YES.equals(

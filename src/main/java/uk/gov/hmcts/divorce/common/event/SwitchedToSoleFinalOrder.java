@@ -82,8 +82,8 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
         log.info("Switched To Sole FO aboutToSubmit callback invoked for Case Id: {}", caseId);
         CaseData caseData = details.getData();
 
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getLabelContent().setApplicationType(SOLE_APPLICATION);
+        switchToSoleService.switchApplicationType(caseData);
+
         caseData.getFinalOrder().setFinalOrderSwitchedToSole(YES);
 
         // triggered by citizen users

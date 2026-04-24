@@ -65,8 +65,8 @@ public class SwitchedToSoleFinalOrderOffline implements CCDConfig<CaseData, Stat
         log.info("Switched To Sole FO Offline aboutToSubmit callback invoked for Case Id: {}", caseId);
         CaseData caseData = details.getData();
 
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getLabelContent().setApplicationType(SOLE_APPLICATION);
+        switchToSoleService.switchApplicationType(caseData);
+
         caseData.getFinalOrder().setFinalOrderSwitchedToSole(YES);
 
         // triggered by system update user coming from Offline Document Verified
