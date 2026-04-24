@@ -17,7 +17,9 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyFinalOrderOverdue.SYSTEM_FINAL_ORDER_OVERDUE;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -68,5 +70,18 @@ class SystemNotifyFinalOrderOverdueTest {
         systemNotifyFinalOrderOverdue.aboutToSubmit(details, details);
 
         verify(notificationDispatcher).send(applicantFinalOrderOverdueNotification, details.getData(), TEST_CASE_ID);
+    }
+
+    @Test
+    void shouldNotSendNotificationToJointApplicant() {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        systemNotifyFinalOrderOverdue.aboutToSubmit(details, details);
+
+        verifyNoInteractions(notificationDispatcher);
     }
 }
