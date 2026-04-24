@@ -15,12 +15,11 @@ class FinalOrderTest {
     @Test
     void shouldReturnDateUntilRespondentCanApplyForFinalOrder() {
 
-        final FinalOrder finalOrder = FinalOrder.builder()
-            .dateFinalOrderEligibleFrom(LocalDate.of(2021, 12, 7))
-            .build();
+        final LocalDate coGrantedDate = LocalDate.of(2021, 12, 7);
+        final FinalOrder finalOrder = FinalOrder.builder().build();
 
-        assertThat(finalOrder.calculateDateFinalOrderEligibleToRespondent())
-            .isEqualTo(LocalDate.of(2022, 3, 7));
+        assertThat(finalOrder.calculateDateFinalOrderEligibleToRespondent(coGrantedDate))
+            .isEqualTo(LocalDate.of(2022, 12, 7));
     }
 
     @Test

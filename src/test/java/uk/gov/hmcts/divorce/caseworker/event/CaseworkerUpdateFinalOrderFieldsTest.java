@@ -43,7 +43,7 @@ class CaseworkerUpdateFinalOrderFieldsTest {
         final var localDateTime = getExpectedLocalDateTime();
         final var expectedGrantedDate = getExpectedLocalDate();
         final var expectedFinalOrderEligibleFrom = FinalOrder.builder().build().getDateFinalOrderEligibleFrom(localDateTime);
-        final var expectedFinalOrderEligibleToRespondent = expectedFinalOrderEligibleFrom.plusMonths(3L);
+        final var expectedFinalOrderEligibleToRespondent = expectedGrantedDate.plusMonths(12L);
         final var expectedFinalOrderNoLongerEligible = expectedGrantedDate.plusMonths(12L);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();

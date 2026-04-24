@@ -294,7 +294,7 @@ class AwaitingFinalOrderNotificationTest {
                 hasEntry(IS_DIVORCE, CommonContent.YES),
                 hasEntry(IS_DISSOLUTION, CommonContent.NO),
                 hasEntry(IS_REMINDER, CommonContent.NO),
-                hasEntry(DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS, "21 March 2022")
+                hasEntry(DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS, "8 March 2021")
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)

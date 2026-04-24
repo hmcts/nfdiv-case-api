@@ -52,7 +52,7 @@ public class FinalOrder {
     private static final long FINAL_ORDER_OFFSET_DAYS = 1L;
 
     @JsonIgnore
-    private static final long MONTHS_UNTIL_RESPONDENT_CAN_APPLY_FOR_FINAL_ORDER = 3L;
+    private static final long MONTHS_UNTIL_RESPONDENT_CAN_APPLY_FOR_FINAL_ORDER = 12L;
 
     @JsonIgnore
     private static final long MONTHS_UNTIL_CASE_IS_NO_LONGER_ELIGIBLE_FOR_FINAL_ORDER = 12L;
@@ -525,8 +525,8 @@ public class FinalOrder {
     }
 
     @JsonIgnore
-    public LocalDate calculateDateFinalOrderEligibleToRespondent() {
-        return dateFinalOrderEligibleFrom.plusMonths(MONTHS_UNTIL_RESPONDENT_CAN_APPLY_FOR_FINAL_ORDER);
+    public LocalDate calculateDateFinalOrderEligibleToRespondent(final LocalDate coGrantedDate) {
+        return coGrantedDate.plusMonths(MONTHS_UNTIL_RESPONDENT_CAN_APPLY_FOR_FINAL_ORDER);
     }
 
     @JsonIgnore
