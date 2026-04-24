@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -150,6 +151,10 @@ public class SwitchToSoleService {
     }
 
     private void switchGeneralApplicationParties(final List<ListValue<GeneralApplication>> generalApplicationValues) {
+        if (isEmpty(generalApplicationValues)) {
+            return;
+        }
+
         generalApplicationValues.stream()
             .map(ListValue::getValue)
             .filter(Objects::nonNull)
