@@ -4,26 +4,16 @@ import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD11Form;
-import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD36Form;
 
 import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_CAN_APPLY_DOCUMENT_NAME;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_CAN_APPLY_RESPONDENT_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_CAN_APPLY_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SOLE_APPLICANT_FINAL_ORDER_OVERDUE_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SOLE_APPLICANT_FINAL_ORDER_OVERDUE_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.D11;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.D36;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP1;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP2;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_RESPONDENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.SOLE_APPLICANT_FINAL_ORDER_OVERDUE;
 
 @Component
