@@ -157,7 +157,7 @@ public class PaymentStatusService {
         if (caseServiceRequests.isEmpty()) {
             log.info("No payment service requests found for case id: {}", caseId);
 
-            return true;
+            return false;
         }
 
         boolean allServiceRequestsCanBeCancelled = caseServiceRequests.stream()
@@ -167,10 +167,10 @@ public class PaymentStatusService {
         if (allServiceRequestsCanBeCancelled) {
             log.info("No recent service requests or successful payments found for case id: {}", caseId);
 
-            return true;
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     private boolean canServiceRequestBeCancelled(ServiceRequestDto serviceRequest) {
