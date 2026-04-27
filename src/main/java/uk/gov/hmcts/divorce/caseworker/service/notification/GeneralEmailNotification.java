@@ -127,7 +127,7 @@ public class GeneralEmailNotification {
         if (null == emailTo) {
             log.info("Email address is not available for template id {} and case {} ", templateId, caseId);
         } else {
-            notificationService.sendEmail(
+            notificationService.sendEmailWithIdempotencyCheck(
                 emailTo,
                 templateId,
                 templateVarsObj,
