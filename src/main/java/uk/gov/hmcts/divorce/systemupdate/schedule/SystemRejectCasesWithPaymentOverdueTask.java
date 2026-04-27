@@ -94,7 +94,7 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
 
     private void rejectCase(Long caseId, User user, String serviceAuth) {
         try {
-            log.info("Submitting application-rejected-fee-not-paid event.");
+            log.info("Submitting {} event.", APPLICATION_REJECTED_FEE_NOT_PAID);
 
             ccdUpdateService.submitEvent(caseId, APPLICATION_REJECTED_FEE_NOT_PAID, user, serviceAuth);
         } catch (final CcdManagementException e) {
