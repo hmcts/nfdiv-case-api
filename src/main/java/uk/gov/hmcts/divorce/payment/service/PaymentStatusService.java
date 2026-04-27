@@ -33,7 +33,6 @@ import static uk.gov.hmcts.divorce.citizen.event.CitizenPaymentMade.CITIZEN_PAYM
 import static uk.gov.hmcts.divorce.citizen.event.RespondentFinalOrderPaymentMade.RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemRejectCasesWithPaymentOverdue.APPLICATION_REJECTED_FEE_NOT_PAID;
 
 @Service
 @RequiredArgsConstructor
@@ -152,13 +151,13 @@ public class PaymentStatusService {
         return SUCCESS.getLabel().equalsIgnoreCase(payment.getStatus());
     }
 
-    public void processPaymentRejection(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails, User user, String serviceAuth) {
-
-        List<ServiceRequestDto> caseServiceRequests = serviceRequestSearchService.getServiceRequestsForCase(caseDetails.getId());
+    public boolean hasRecentPayments(long caseId) {
+        List<ServiceRequestDto> caseServiceRequests = serviceRequestSearchService.getServiceRequestsForCase(caseId);
 
         if (caseServiceRequests.isEmpty()) {
-            rejectCase(caseDetails, "no service requests found", user, serviceAuth);
-            return;
+            log.info("No payment service requests found for case id: {}", caseId);
+
+            return true;
         }
 
         boolean allServiceRequestsCanBeCancelled = caseServiceRequests.stream()
@@ -166,10 +165,12 @@ public class PaymentStatusService {
             .allMatch(this::canServiceRequestBeCancelled);
 
         if (allServiceRequestsCanBeCancelled) {
-            rejectCase(caseDetails, "no recent service requests and no successful payments found", user, serviceAuth);
-        } else {
-            log.info("Skipping case {} - Successful payment or recent payment activity within 24 hours found", caseDetails.getId());
+            log.info("No recent service requests or successful payments found for case id: {}", caseId);
+
+            return true;
         }
+
+        return false;
     }
 
     private boolean canServiceRequestBeCancelled(ServiceRequestDto serviceRequest) {
@@ -208,11 +209,5 @@ public class PaymentStatusService {
         );
 
         return gracePeriodStart.isBefore(createdTime);
-    }
-
-    private void rejectCase(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
-                            String reason, User user, String serviceAuth) {
-        log.info("Rejecting case {} as {}", caseDetails.getId(), reason);
-        ccdUpdateService.submitEvent(caseDetails.getId(), APPLICATION_REJECTED_FEE_NOT_PAID, user, serviceAuth);
     }
 }

@@ -7,11 +7,13 @@ import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.payment.service.PaymentStatusService;
-import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
@@ -23,6 +25,7 @@ import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRejectCasesWithPaymentOverdue.APPLICATION_REJECTED_FEE_NOT_PAID;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.DATA;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
@@ -41,7 +44,7 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
     private final CcdSearchService ccdSearchService;
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
-    private final CaseDetailsConverter caseDetailsConverter;
+    private final CcdUpdateService ccdUpdateService;
     private final PaymentStatusService paymentStatusService;
 
     @Override
@@ -77,17 +80,27 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
                 casesInAwaitingPaymentStateForPaymentOverdue.size());
 
             casesInAwaitingPaymentStateForPaymentOverdue.stream()
-                .map(caseDetailsConverter::convertToCaseDetailsFromReformModel)
-                .forEach(caseDetails -> {
-                    //paymentStatusService.processPaymentRejection(caseDetails, user, serviceAuth);
-                    log.info("{} in {} state rejected for payment overdue", caseDetails.getId(), caseDetails.getState());
-                });
+                .map(CaseDetails::getId)
+                .filter(caseId -> !paymentStatusService.hasRecentPayments(caseId))
+                .forEach(caseId -> rejectCase(caseId, user, serviceAuth));
 
             log.info("SystemRejectCasesWithPaymentOverdueTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
             log.error("SystemRejectCasesWithPaymentOverdueTask schedule task stopped after search error", e);
         } catch (final CcdConflictException e) {
             log.info("SystemRejectCasesWithPaymentOverdueTask schedule task stopping due to conflict with another running task");
+        }
+    }
+
+    private void rejectCase(Long caseId, User user, String serviceAuth) {
+        try {
+            log.info("Submitting application-rejected-fee-not-paid event.");
+
+            ccdUpdateService.submitEvent(caseId, APPLICATION_REJECTED_FEE_NOT_PAID, user, serviceAuth);
+        } catch (final CcdManagementException e) {
+            log.error("Submit event failed for case id: {}, continuing to next case", caseId);
+        } catch (final IllegalArgumentException e) {
+            log.error("Deserialization failed for case id: {}, continuing to next case", caseId);
         }
     }
 }
