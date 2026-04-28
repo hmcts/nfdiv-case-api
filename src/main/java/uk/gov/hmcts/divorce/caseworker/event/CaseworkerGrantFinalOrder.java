@@ -53,6 +53,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
 
     public static final String CASEWORKER_GRANT_FINAL_ORDER = "caseworker-grant-final-order";
     private static final String ALWAYS_HIDE = "generalOrderDocumentNames=\"ALWAYS_HIDE\"";
+    public static final String ERROR_FINAL_ORDER_ALREADY_GRANTED = "Final Order has been granted already. This event cannot be used now.";
     public static final String ERROR_NO_CO_GRANTED_DATE = "No Conditional Order Granted Date found.  Unable to continue.";
     public static final String ERROR_NO_GENERAL_ORDER = "No general order documents found.  Unable to continue.";
 
@@ -102,6 +103,13 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_GRANT_FINAL_ORDER, details.getId());
 
         var caseData = details.getData();
+
+        if (caseData.getFinalOrder().getGrantedDate() != null) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(Collections.singletonList(ERROR_FINAL_ORDER_ALREADY_GRANTED))
+                .build();
+        }
 
         caseData.getFinalOrder().setGrantWithCurrentDateTime(null);
 
