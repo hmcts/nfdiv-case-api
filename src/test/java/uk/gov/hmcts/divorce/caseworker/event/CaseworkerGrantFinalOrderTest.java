@@ -82,6 +82,22 @@ class CaseworkerGrantFinalOrderTest {
     }
 
     @Test
+    void shouldReturnErrorWhenFinalOrderHasBeenGrantedAlready() {
+        final CaseData caseData = caseData();
+        caseData.setFinalOrder(FinalOrder.builder().grantedDate(
+            LocalDateTime.of(2022, 3, 16, 0, 0)).build());
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToStart(details);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors())
+            .isEqualTo(Collections.singletonList(CaseworkerGrantFinalOrder.ERROR_FINAL_ORDER_ALREADY_GRANTED));
+    }
+
+    @Test
     void shouldNullGrantWithCurrentDateTime() {
         final CaseData caseData = caseData();
         caseData.setFinalOrder(FinalOrder.builder().grantWithCurrentDateTime(YesOrNo.YES).build());
