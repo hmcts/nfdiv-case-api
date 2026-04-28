@@ -47,6 +47,19 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
     private final CcdUpdateService ccdUpdateService;
     private final PaymentStatusService paymentStatusService;
 
+    private static final MatchQueryBuilder AWAITING_PAYMENT_QUERY = matchQuery(STATE, AwaitingPayment);
+    private static final BoolQueryBuilder PAPER_OR_JUDICIAL_QUERY = boolQuery()
+        .should(matchQuery(String.format(DATA, SUPPLEMENTARY_CASE_TYPE), "judicialSeparation"))
+        .should(matchQuery(String.format(DATA, SUPPLEMENTARY_CASE_TYPE), "separation"))
+        .should(matchQuery(String.format(DATA, NEW_PAPER_CASE), "Yes"))
+        .minimumShouldMatch(1);
+    public static final BoolQueryBuilder CASE_ELIGIBLE_FOR_REJECTION_QUERY = boolQuery()
+        .must(AWAITING_PAYMENT_QUERY)
+        .mustNot(PAPER_OR_JUDICIAL_QUERY)
+        .mustNot(existsQuery(ISSUE_DATE))
+        .filter(rangeQuery(LAST_STATE_MODIFIED_DATE).lte(LocalDate.now().minusDays(14)));
+
+
     @Override
     public void run() {
         log.info("SystemRejectCasesWithPaymentOverdueTask scheduled task started");
@@ -55,23 +68,9 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
         final var serviceAuth = authTokenGenerator.generate();
 
         try {
-            final BoolQueryBuilder paperOrJudicialSeparationCases = boolQuery()
-                .should(matchQuery(String.format(DATA, SUPPLEMENTARY_CASE_TYPE), "judicialSeparation"))
-                .should(matchQuery(String.format(DATA, SUPPLEMENTARY_CASE_TYPE), "separation"))
-                .should(matchQuery(String.format(DATA, NEW_PAPER_CASE), "Yes"))
-                .minimumShouldMatch(1);
-
-            final MatchQueryBuilder awaitingPaymentQuery = matchQuery(STATE, AwaitingPayment);
-
-            final BoolQueryBuilder query = boolQuery()
-                .must(awaitingPaymentQuery)
-                .mustNot(paperOrJudicialSeparationCases)
-                .mustNot(existsQuery(ISSUE_DATE))
-                .filter(rangeQuery(LAST_STATE_MODIFIED_DATE).lte(LocalDate.now().minusDays(14)));
-
             final List<CaseDetails> casesInAwaitingPaymentStateForPaymentOverdue =
                 ccdSearchService
-                    .searchForAllCasesWithQuery(query, user, serviceAuth, AwaitingPayment)
+                    .searchForAllCasesWithQuery(CASE_ELIGIBLE_FOR_REJECTION_QUERY, user, serviceAuth, AwaitingPayment)
                     .stream()
                     .limit(totalMaxResults)
                     .toList();
