@@ -6,11 +6,9 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant;
-import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
-import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
+import uk.gov.hmcts.divorce.document.content.CourtOrderRegeneratedTemplateContent;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.print.documentpack.CertificateOfEntitlementDocumentPack;
@@ -23,28 +21,20 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.*;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_DIVORCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_SOLE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.COURT_ORDERS_REGENERATED_CITIZEN;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.COURT_ORDERS_REGENERATED_SOLICITOR;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @RequiredArgsConstructor
 @Component
@@ -58,11 +48,8 @@ public class RegenerateCourtOrdersNotification implements ApplicantNotification 
     private final CommonContent commonContent;
     private final BulkPrintService bulkPrintService;
     private final CaseDataDocumentService caseDataDocumentService;
-    private final DocmosisCommonContent docmosisCommonContent;
+    private final CourtOrderRegeneratedTemplateContent courtOrderRegeneratedTemplateContent;
 
-    public static final String HAS_CERTIFICATE_OF_ENTITLEMENT = "hasCertificateOfEntitlement";
-    public static final String HAS_FINAL_ORDER_GRANTED = "hasFinalOrderGranted";
-    public static final String HAS_CONDITIONAL_ORDER_GRANTED = "hasConditionalOrderGranted";
     public static final String LETTER_TYPE_COURT_ORDERS_REGENERATED = "court-order-regenerated";
     public static final String DOCUMENT_NAME_COURT_ORDERS_REGENERATED = "Court Orders Regenerated Letter";
 
@@ -194,7 +181,7 @@ public class RegenerateCourtOrdersNotification implements ApplicantNotification 
         final Applicant partner = isApplicant1 ? data.getApplicant2() : data.getApplicant1();
 
         final Map<String, String> templateVars = commonContent.mainTemplateVars(data, caseId, applicant, partner);
-        templateVars.putAll(regenerateTemplateContent(data, applicant));
+        templateVars.putAll(courtOrderRegeneratedTemplateContent.regenerateTemplateContent(data));
 
         notificationService.sendEmail(
             applicant.getEmail(),
@@ -210,7 +197,7 @@ public class RegenerateCourtOrdersNotification implements ApplicantNotification 
         final Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
 
         final Map<String, String> templateVars = commonContent.solicitorTemplateVars(data, caseId, applicant);
-        templateVars.putAll(regenerateTemplateContent(data, applicant));
+        templateVars.putAll(courtOrderRegeneratedTemplateContent.regenerateTemplateContent(data));
         templateVars.put(IS_SOLE, data.getApplicationType().isSole() ? YES : NO);
         templateVars.put(IS_JOINT, !data.getApplicationType().isSole() ? YES : NO);
 
@@ -226,7 +213,7 @@ public class RegenerateCourtOrdersNotification implements ApplicantNotification 
     private void generateAndSendCourtOrdersRegeneratedLetter(CaseData caseData, Long caseId, boolean isApplicant1) {
 
         if (isNotificationRequired(caseData)) {
-            log.info("Sending court orders regenerated letter to {} for case : {}",isApplicant1 ? "applicant1" : "applicant2" , caseId);
+            log.info("Sending court orders regenerated letter to {} for case : {}", isApplicant1 ? "applicant1" : "applicant2", caseId);
 
             Applicant applicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
 
@@ -253,51 +240,11 @@ public class RegenerateCourtOrdersNotification implements ApplicantNotification 
     private Document generateDocument(final long caseId,
                                       final Applicant applicant,
                                       final CaseData caseData) {
-        return caseDataDocumentService.renderDocument(getLetterTemplateContent(caseData, caseId, applicant),
+        return caseDataDocumentService.renderDocument(courtOrderRegeneratedTemplateContent.getTemplateContent(caseData, caseId, applicant),
             caseId,
             CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID,
             applicant.getLanguagePreference(),
             DOCUMENT_NAME_COURT_ORDERS_REGENERATED);
-    }
-
-    public Map<String, Object> getLetterTemplateContent(CaseData caseData, Long caseId, Applicant applicant) {
-        Map<String, Object> templateContent = docmosisCommonContent
-            .getBasicDocmosisTemplateContent(applicant.getLanguagePreference());
-
-        templateContent.put(CASE_REFERENCE, formatId(caseId));
-        templateContent.put(FIRST_NAME, applicant.getFirstName());
-        templateContent.put(LAST_NAME, applicant.getLastName());
-        templateContent.put(RECIPIENT_ADDRESS,  AddressUtil.getPostalAddress(applicant.getAddress()));
-        templateContent.put(IS_DIVORCE, caseData.isDivorce());
-        templateContent.putAll(regenerateTemplateContent(caseData, applicant));
-        templateContent.put(DATE, LocalDate.now().format(getDateTimeFormatterForPreferredLanguage(LanguagePreference.ENGLISH)));
-
-        log.info("Letter template content for case {} is {}", caseId, templateContent);
-        return templateContent;
-    }
-
-    private Map<String, String> regenerateTemplateContent(final CaseData data, final Applicant applicant) {
-        final Map<String,String> templateContent = new HashMap<>();
-        templateContent.put(HAS_CERTIFICATE_OF_ENTITLEMENT,
-            data.getConditionalOrder().getCertificateOfEntitlementDocument() != null ? "Yes" : "No");
-        templateContent.put(HAS_FINAL_ORDER_GRANTED,
-            data.getDocuments().getDocumentGeneratedWithType(FINAL_ORDER_GRANTED).isPresent() ? "Yes" : "No");
-        templateContent.put(HAS_CONDITIONAL_ORDER_GRANTED,
-            data.getDocuments().getDocumentGeneratedWithType(CONDITIONAL_ORDER_GRANTED).isPresent() ? "Yes" : "No");
-        templateContent.put(THE_APPLICATION, getApplicationName(data, applicant));
-        return templateContent;
-    }
-
-    private String getApplicationName(CaseData data, Applicant applicant) {
-        boolean prefersWelsh = false;
-
-        if (data.isJudicialSeparationCase()) {
-            return prefersWelsh ? JUDICIAL_SEPARATION_APPLICATION_CY : JUDICIAL_SEPARATION_APPLICATION;
-        } else if (data.isDivorce()) {
-            return prefersWelsh ? DIVORCE_APPLICATION_CY : DIVORCE_APPLICATION;
-        } else {
-            return prefersWelsh ? END_CIVIL_PARTNERSHIP_CY : END_CIVIL_PARTNERSHIP;
-        }
     }
 
     private boolean isNotificationRequired(CaseData caseData) {
