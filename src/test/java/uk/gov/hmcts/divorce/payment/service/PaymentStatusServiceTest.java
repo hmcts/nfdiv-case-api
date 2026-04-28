@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static java.util.Collections.emptyList;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
@@ -44,7 +45,6 @@ import static uk.gov.hmcts.divorce.citizen.event.RespondentFinalOrderPaymentMade
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
-import static uk.gov.hmcts.divorce.systemupdate.event.SystemRejectCasesWithPaymentOverdue.APPLICATION_REJECTED_FEE_NOT_PAID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -222,63 +222,37 @@ class PaymentStatusServiceTest {
     }
 
     @Test
-    void shouldRejectCaseInStateAwaitingPaymentWhenPaymentOverdueAfter14Days() {
-        final CaseDetails cd = CaseDetails.builder().data(Map.of(APPLICATION_PAYMENTS, ""))
-            .id(TEST_CASE_ID).state(AWAITING_PAYMENT).build();
-
-        caseDetails.setLastModified(LocalDateTime.now().minusDays(15));
-        paymentStatusService.processPaymentRejection(caseDetails, user, SERVICE_AUTHORIZATION);
-
-        verify(ccdUpdateService).submitEvent(TEST_CASE_ID,
-            APPLICATION_REJECTED_FEE_NOT_PAID, user, SERVICE_AUTHORIZATION);
-    }
-
-    @Test
-    void shouldRejectCaseInStateAwaitingPaymentWhenServiceRequestHasNotBeenPaidOrNotWithinGracePeriod() {
-        final CaseDetails cd = CaseDetails.builder().data(Map.of(APPLICATION_PAYMENTS, ""))
-            .id(TEST_CASE_ID).state(AWAITING_PAYMENT).build();
-
+    void shouldReturnFalseWhenServiceRequestHasNotBeenPaidOrNotWithinGracePeriod() {
         ServiceRequestDto serviceRequestDto = ServiceRequestDto.builder().payments(
             List.of(ServiceRequestDto.PaymentDto.builder().build())).serviceRequestStatus(ServiceRequestStatus.NOT_PAID).build();
         List<ServiceRequestDto> caseServiceRequests = List.of(serviceRequestDto);
         stubServiceRequestSearch(caseServiceRequests);
 
         caseDetails.setLastModified(LocalDateTime.now().minusDays(15));
-        paymentStatusService.processPaymentRejection(caseDetails, user, SERVICE_AUTHORIZATION);
 
-        verify(ccdUpdateService).submitEvent(TEST_CASE_ID,
-            APPLICATION_REJECTED_FEE_NOT_PAID, user, SERVICE_AUTHORIZATION);
+        assertThat(paymentStatusService.hasRecentPayments(TEST_CASE_ID)).isFalse();
     }
 
     @Test
     void shouldRejectCaseInStateAwaitingPaymentWhenNoPaymentMade() {
-        final CaseDetails cd = CaseDetails.builder().data(Map.of(APPLICATION_PAYMENTS, ""))
-            .id(TEST_CASE_ID).state(AWAITING_PAYMENT).build();
-
         stubServiceRequestSearch(List.of(ServiceRequestDto.builder().serviceRequestStatus(ServiceRequestStatus.NOT_PAID).build()));
 
         caseDetails.setLastModified(LocalDateTime.now().minusDays(15));
-        paymentStatusService.processPaymentRejection(caseDetails, user, SERVICE_AUTHORIZATION);
 
-        verify(ccdUpdateService).submitEvent(TEST_CASE_ID,
-            APPLICATION_REJECTED_FEE_NOT_PAID, user, SERVICE_AUTHORIZATION);
+        assertThat(paymentStatusService.hasRecentPayments(TEST_CASE_ID)).isFalse();
     }
 
     @Test
     void shouldNotRejectCaseInStateAwaitingPaymentWhenPaymentServiceRequestCreatedWithinLast24Hours() {
-        final CaseDetails cd = CaseDetails.builder().data(Map.of(APPLICATION_PAYMENTS, ""))
-            .id(TEST_CASE_ID).state(AWAITING_PAYMENT).build();
-
         ServiceRequestDto serviceRequestDto = ServiceRequestDto.builder().payments(
-            List.of(ServiceRequestDto.PaymentDto.builder().build())).dateCreated(Date.from(
+            List.of(ServiceRequestDto.PaymentDto.builder().build())).dateUpdated(Date.from(
                 new Date().toInstant().minus(3, ChronoUnit.HOURS))).build();
         List<ServiceRequestDto> caseServiceRequests = List.of(serviceRequestDto);
         stubServiceRequestSearch(caseServiceRequests);
 
         caseDetails.setLastModified(LocalDateTime.now().minusDays(15));
-        paymentStatusService.processPaymentRejection(caseDetails, user, SERVICE_AUTHORIZATION);
 
-        verifyNoInteractions(ccdUpdateService);
+        assertThat(paymentStatusService.hasRecentPayments(TEST_CASE_ID)).isTrue();
     }
 
     private List<ListValue<Payment>> getPayments() {

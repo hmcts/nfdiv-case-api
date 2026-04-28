@@ -12,6 +12,11 @@ import uk.gov.hmcts.divorce.common.service.CaseTerminationService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.payment.service.PaymentStatusService;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
@@ -30,7 +35,12 @@ public class SystemRejectCasesWithPaymentOverdue implements CCDConfig<CaseData, 
     public static final String APPLICATION_REJECTED_FEE_NOT_PAID = "application-rejected-fee-not-paid";
     private static final String APPLICATION_REJECTED = "Application rejected";
 
+    public static final String ERROR_CASE_HAS_SUCCESSFUL_PAYMENT = "Case has successful payment";
+
     private final CaseTerminationService caseTerminationService;
+    private final PaymentStatusService paymentStatusService;
+    private final IdamService idamService;
+    private final AuthTokenGenerator authTokenGenerator;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -42,8 +52,7 @@ public class SystemRejectCasesWithPaymentOverdue implements CCDConfig<CaseData, 
             .description(APPLICATION_REJECTED)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .ttlIncrement(180)
-            .grant(CREATE_READ_UPDATE,
-                SYSTEMUPDATE)
+            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
             .grantHistoryOnly(
                 CASE_WORKER,
                 SUPER_USER,
@@ -56,6 +65,15 @@ public class SystemRejectCasesWithPaymentOverdue implements CCDConfig<CaseData, 
         final CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("{} aboutToSubmit callback invoked for case id: {}", APPLICATION_REJECTED_FEE_NOT_PAID, details.getId());
+
+        final var user = idamService.retrieveSystemUpdateUserDetails();
+        final var serviceAuth = authTokenGenerator.generate();
+
+        if (paymentStatusService.hasSuccessfulPayment(details, user.getAuthToken(), serviceAuth)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(ERROR_CASE_HAS_SUCCESSFUL_PAYMENT))
+                .build();
+        }
 
         caseTerminationService.reject(details);
 
