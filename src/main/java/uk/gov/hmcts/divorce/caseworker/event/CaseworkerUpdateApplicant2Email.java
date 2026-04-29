@@ -17,7 +17,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.ArrayList;
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUpdateApplicant1Email.doesEmailUpdateNeedFurtherProcessing;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -41,7 +42,7 @@ public class CaseworkerUpdateApplicant2Email implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_UPDATE_APP2_EMAIL)
-            .forStates(POST_SUBMISSION_STATES)
+            .forStates(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED)
             .name("Update Resp or App 2 Email")
             .description("Update respondent/applicant2 email")
             .aboutToSubmitCallback(this::aboutToSubmit)
@@ -76,6 +77,12 @@ public class CaseworkerUpdateApplicant2Email implements CCDConfig<CaseData, Stat
         final CaseDetails<CaseData, State> beforeDetails
     ) {
         log.info("{} aboutToSubmit callback invoked for Case Id: {}", CASEWORKER_UPDATE_APP2_EMAIL, details.getId());
+
+        if (!doesEmailUpdateNeedFurtherProcessing(details)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(details.getData())
+                .build();
+        }
 
         final CaseDetails<CaseData, State> result = emailUpdateService.processEmailUpdate(details, beforeDetails, false);
 
