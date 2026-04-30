@@ -13,50 +13,54 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.PRE_SUBMISSION_STATES;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class SuperuserWithdrawn implements CCDConfig<CaseData, State, UserRole> {
-    public static final String SUPERUSER_WITHDRAWN = "superuser-withdrawn";
+public class SystemRejectCasesWithPaymentOverdue implements CCDConfig<CaseData, State, UserRole> {
+
+    public static final String APPLICATION_REJECTED_FEE_NOT_PAID = "application-rejected-fee-not-paid";
+    private static final String APPLICATION_REJECTED = "Application rejected";
 
     private final CaseTerminationService caseTerminationService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+
         new PageBuilder(configBuilder
-            .event(SUPERUSER_WITHDRAWN)
-            .forStateTransition(PRE_SUBMISSION_STATES, Withdrawn)
-            .name("Withdraw")
-            .description("Withdrawn")
-            .showEventNotes()
-            .grant(CREATE_READ_UPDATE, SUPER_USER)
+            .event(APPLICATION_REJECTED_FEE_NOT_PAID)
+            .forStateTransition(AwaitingPayment, Rejected)
+            .name(APPLICATION_REJECTED)
+            .description(APPLICATION_REJECTED)
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .ttlIncrement(180)
+            .grant(CREATE_READ_UPDATE,
+                SYSTEMUPDATE)
             .grantHistoryOnly(
-                SOLICITOR,
                 CASE_WORKER,
+                SUPER_USER,
                 LEGAL_ADVISOR,
-                JUDGE)
-            .aboutToSubmitCallback(this::aboutToSubmit));
+                JUDGE));
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
-                                                                       final CaseDetails<CaseData, State> beforeDetails) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("Superuser withdrawn about to submit callback invoked for Case Id: {}", details.getId());
+        log.info("{} aboutToSubmit callback invoked for case id: {}", APPLICATION_REJECTED_FEE_NOT_PAID, details.getId());
 
-        caseTerminationService.withdraw(details);
+        caseTerminationService.reject(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
-            .state(details.getState())
             .build();
     }
 }
