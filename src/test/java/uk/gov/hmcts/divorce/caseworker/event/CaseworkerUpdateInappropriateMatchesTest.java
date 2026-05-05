@@ -13,8 +13,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUpdateInappropriateMatches.NO_INAPPROPRIATE_MATCHES_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUpdateInappropriateMatches.UPDATE_INAPPROPRIATE_MATCHES;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
