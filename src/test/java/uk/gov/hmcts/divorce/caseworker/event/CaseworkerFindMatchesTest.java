@@ -183,6 +183,39 @@ class CaseworkerFindMatchesTest {
     }
 
     @Test
+    void shouldAddRemovedMatchesToInappropriateCaseMatchesList() {
+        CaseData caseData = buildEmptyCaseData();
+        String removedRef = "67890";
+        String newRef = "12345";
+
+        ListValue<CaseMatch> newMatch = ListValue.<CaseMatch>builder()
+            .value(CaseMatch.builder()
+                .caseLink(CaseLink.builder().caseReference(newRef).build())
+                .build())
+            .build();
+        ListValue<CaseMatch> removedMatch = ListValue.<CaseMatch>builder()
+            .value(CaseMatch.builder()
+                .caseLink(CaseLink.builder().caseReference(removedRef).build())
+                .build())
+            .build();
+        caseData.setCaseMatches(new ArrayList<>(List.of(newMatch)));
+
+        caseData.setNewCaseMatches(new ArrayList<>(List.of(newMatch, removedMatch)));
+
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        caseworkerFindMatches.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(caseData.getInappropriateCaseMatches())
+            .as("Should add removed matches to inappropriate case matches list")
+            .hasSize(1);
+
+        assertThat(caseData.getInappropriateCaseMatches().get(0).getValue().getCaseLink().getCaseReference())
+            .isEqualTo(removedRef);
+    }
+
+    @Test
     void shouldNotAddMatchesThatAreInInappropriateCaseMatchesList() {
         CaseData caseData = buildEmptyCaseData();
         String inappropriateRef = "67890";
