@@ -86,7 +86,7 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        log.info("{} about to start findmatches callback invoked for Case Id: {}", FIND_MATCHES, details.getId());
+        log.info("{} about to start callback invoked for Case Id: {}", FIND_MATCHES, details.getId());
         CaseData caseData = details.getData();
         MarriageDetails marriageDetails = caseData.getApplication().getMarriageDetails();
 
@@ -117,7 +117,9 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details, final CaseDetails<CaseData, State> beforeDetails) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
+        log.info("{} about to submit callback invoked for Case Id: {}", FIND_MATCHES, details.getId());
         final CaseData caseData = details.getData();
 
         List<ListValue<CaseMatch>> caseMatches = caseData.getCaseMatches();
