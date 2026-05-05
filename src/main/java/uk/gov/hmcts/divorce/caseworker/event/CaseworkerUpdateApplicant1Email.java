@@ -17,7 +17,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.ArrayList;
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -40,7 +42,7 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_UPDATE_APP1_EMAIL)
-            .forStates(POST_SUBMISSION_STATES)
+            .forStates(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED)
             .name("Update App or App1 Email")
             .description("Update applicant/applicant1 email")
             .aboutToSubmitCallback(this::aboutToSubmit)
@@ -76,6 +78,12 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
     ) {
         log.info("{} aboutToSubmit callback invoked for Case Id: {}", CASEWORKER_UPDATE_APP1_EMAIL, details.getId());
 
+        if (!doesEmailUpdateNeedFurtherProcessing(details)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(details.getData())
+                .build();
+        }
+
         final CaseDetails<CaseData, State> result = emailUpdateService.processEmailUpdate(details, beforeDetails, true);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -85,5 +93,9 @@ public class CaseworkerUpdateApplicant1Email implements CCDConfig<CaseData, Stat
 
     private String getLabel(final String label, final Object... value) {
         return String.format(label, value);
+    }
+
+    public static boolean doesEmailUpdateNeedFurtherProcessing(final CaseDetails<CaseData, State> details) {
+        return details.getState() != Withdrawn && details.getState() != Rejected;
     }
 }
