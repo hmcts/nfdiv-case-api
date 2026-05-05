@@ -181,6 +181,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
             "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx");
         stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
             "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "FL-NFD-GOR-ENG-Court-Orders-Regenerated-Citizen-V1.docx");
 
 
         byte[] byteArray = loadPdfAsBytes();
@@ -267,6 +269,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
             "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
         stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2", "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "FL-NFD-GOR-ENG-Court-Orders-Regenerated-Citizen-V1.docx");
 
         final ListValue<DivorceDocument> coGrantedDoc =
             getDivorceDocumentListValue(
@@ -343,6 +347,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
             "FL-NFD-GOR-ENG-Conditional-Order-Pronounced_V4.docx");
         stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
             "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "FL-NFD-GOR-ENG-Court-Orders-Regenerated-Citizen-V1.docx");
 
         final ListValue<DivorceDocument> coGrantedDoc =
             getDivorceDocumentListValue(
@@ -432,6 +438,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
             "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx");
         stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
             "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "FL-NFD-GOR-ENG-Court-Orders-Regenerated-Citizen-V1.docx");
 
         final ListValue<DivorceDocument> coGrantedDoc =
             getDivorceDocumentListValue(
@@ -522,6 +530,8 @@ public class CaseworkerRegenerateCourtOrdersIT {
             "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx");
         stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
             "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
+            "FL-NFD-GOR-ENG-Court-Orders-Regenerated-Citizen-V1.docx");
 
         String testString = "a simple test";
         // Convert the string to byte array

@@ -9,13 +9,16 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.content.CourtOrderRegeneratedTemplateContent;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.print.documentpack.CertificateOfEntitlementDocumentPack;
 import uk.gov.hmcts.divorce.document.print.documentpack.ConditionalOrderPronouncedDocumentPack;
@@ -24,7 +27,6 @@ import uk.gov.hmcts.divorce.document.print.documentpack.FinalOrderGrantedDocumen
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -35,9 +37,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.divorce.common.notification.RegenerateCourtOrdersNotification.DOCUMENT_NAME_COURT_ORDERS_REGENERATED;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.DocumentConstants.CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_COVER_LETTER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME;
@@ -49,21 +53,15 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_GRANTED_COVERSHEET_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
-import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
-import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_HEARING;
-import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
-import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REGENERATE_COURT_ORDERS_CO_PRONOUNCED;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_REGENERATE_COURT_ORDERS_CO_PRONOUNCED;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.COURT_ORDERS_REGENERATED_CITIZEN;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.COURT_ORDERS_REGENERATED_SOLICITOR;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedBySolicitor;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.jointCaseDataWithOrderSummary;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigitalSolicitor;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
 class RegenerateCourtOrdersNotificationTest {
@@ -85,6 +83,15 @@ class RegenerateCourtOrdersNotificationTest {
 
     @Mock
     private CommonContent commonContent;
+
+    @Mock
+    private CourtOrderRegeneratedTemplateContent courtOrderRegeneratedTemplateContent;
+
+    @Mock
+    private CaseDataDocumentService caseDataDocumentService;
+
+    @Mock
+    private BulkPrintService bulkPrintService;
 
     @InjectMocks
     private RegenerateCourtOrdersNotification notification;
@@ -174,6 +181,25 @@ class RegenerateCourtOrdersNotificationTest {
 
         when(certificateOfEntitlementDocPack.getDocumentPack(caseData, caseData.getApplicant1()))
             .thenReturn(APPLICANT_1_CERTIFICATE_OF_ENTITLEMENT_PACK);
+
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(courtOrderRegeneratedTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant1()))
+            .thenReturn(templateContent);
+        Document document =
+            Document.builder()
+                .url("testUrl")
+                .filename("testFileName")
+                .binaryUrl("binaryUrl")
+                .build();
+
+        when(caseDataDocumentService.renderDocument(
+            templateContent,
+            TEST_CASE_ID,
+            CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID,
+            ENGLISH,
+            DOCUMENT_NAME_COURT_ORDERS_REGENERATED))
+            .thenReturn(document);
+
         ArgumentCaptor<CaseData> captorData = ArgumentCaptor.forClass(CaseData.class);
         ArgumentCaptor<Long> captorCaseId = ArgumentCaptor.forClass(Long.class);
         ArgumentCaptor<Applicant> captorApplicant = ArgumentCaptor.forClass(Applicant.class);
@@ -194,6 +220,14 @@ class RegenerateCourtOrdersNotificationTest {
         Assertions.assertEquals(caseData.getApplicant1(), captorApplicant.getAllValues().get(0));
         Assertions.assertEquals(APPLICANT_1_CERTIFICATE_OF_ENTITLEMENT_PACK, captorDocumentPackInfo.getAllValues().get(0));
         Assertions.assertEquals(LETTER_ID, captorLetterId.getAllValues().get(0));
+
+        verify(caseDataDocumentService)
+            .renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID,
+                ENGLISH,
+                DOCUMENT_NAME_COURT_ORDERS_REGENERATED);
     }
 
     @Test
@@ -230,6 +264,24 @@ class RegenerateCourtOrdersNotificationTest {
             .thenReturn(APPLICANT_2_CERTIFICATE_OF_ENTITLEMENT_PACK);
         when(conditionalOrderPronouncedDocPack.getLetterId()).thenReturn(LETTER_ID);
 
+        final Map<String, Object> templateContent = new HashMap<>();
+        when(courtOrderRegeneratedTemplateContent.getTemplateContent(caseData, TEST_CASE_ID, caseData.getApplicant2()))
+            .thenReturn(templateContent);
+        Document document =
+            Document.builder()
+                .url("testUrl")
+                .filename("testFileName")
+                .binaryUrl("binaryUrl")
+                .build();
+
+        when(caseDataDocumentService.renderDocument(
+            templateContent,
+            TEST_CASE_ID,
+            CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID,
+            ENGLISH,
+            DOCUMENT_NAME_COURT_ORDERS_REGENERATED))
+            .thenReturn(document);
+
         ArgumentCaptor<CaseData> captorData = ArgumentCaptor.forClass(CaseData.class);
         ArgumentCaptor<Long> captorCaseId = ArgumentCaptor.forClass(Long.class);
         ArgumentCaptor<Applicant> captorApplicant = ArgumentCaptor.forClass(Applicant.class);
@@ -251,124 +303,176 @@ class RegenerateCourtOrdersNotificationTest {
         Assertions.assertEquals(caseData.getApplicant2(), captorApplicant.getValue());
         Assertions.assertEquals(APPLICANT_2_CERTIFICATE_OF_ENTITLEMENT_PACK, captorDocumentPackInfo.getValue());
         Assertions.assertEquals(LETTER_ID, captorLetterId.getValue());
+
+        verify(caseDataDocumentService)
+            .renderDocument(
+                templateContent,
+                TEST_CASE_ID,
+                CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID,
+                ENGLISH,
+                DOCUMENT_NAME_COURT_ORDERS_REGENERATED);
     }
 
     @Test
     void shouldNotSendIfDocumentIsNotPresentOnCaseToOfflineApplicant1() {
-        // Prepare test data, where the document is not present on the case
         CaseData caseData = new CaseData();
 
-        // Call the method under test
         notification.sendToApplicant1Offline(caseData, TEST_CASE_ID);
 
-        // Verify that the letterPrinter is not called
         verifyNoInteractions(letterPrinter);
+        verifyNoInteractions(caseDataDocumentService);
+        verifyNoInteractions(bulkPrintService);
     }
 
     @Test
     void shouldNotSendIfDocumentIsNotPresentOnCaseToOfflineApplicant2() {
-        // Prepare test data, where the document is not present on the case
         CaseData caseData = new CaseData();
 
-        // Call the method under test
         notification.sendToApplicant2Offline(caseData, TEST_CASE_ID);
 
-        // Verify that the letterPrinter is not called
         verifyNoInteractions(letterPrinter);
+        verifyNoInteractions(caseDataDocumentService);
+        verifyNoInteractions(bulkPrintService);
     }
 
     @Test
-    void shouldSendEmailToApplicant1ForRegenerateCourtOrders() {
-
-        LocalDateTime now = LocalDateTime.now();
+    void shouldSendEmailToApplicant1ForRegenerateCourtOrdersWhenAnOrderIsRegenerated() {
         CaseData data = caseData();
         data.setConditionalOrder(ConditionalOrder.builder()
-            .court(ConditionalOrderCourt.BIRMINGHAM)
-            .dateAndTimeOfHearing(now)
-            .grantedDate(now.toLocalDate())
+            .certificateOfEntitlementDocument(DivorceDocument.builder().build())
             .build()
         );
-        when(commonContent.coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
-            .thenReturn(getCoPronouncedTemplateVars());
+        final Map<String, String> templateContent = new HashMap<>();
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(templateContent);
+        when(courtOrderRegeneratedTemplateContent.regenerateTemplateContent(data))
+            .thenReturn(templateContent);
 
         notification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq(REGENERATE_COURT_ORDERS_CO_PRONOUNCED),
+            eq(COURT_ORDERS_REGENERATED_CITIZEN),
             any(),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     @Test
-    void shouldSendEmailToApplicant2ForRegenerateCourtOrdersOnJointCase() {
-
-        LocalDateTime hearingDate = LocalDateTime.of(2021, 1, 1, 12, 0);
-        CaseData data = jointCaseDataWithOrderSummary();
-        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
-        data.setConditionalOrder(ConditionalOrder.builder()
-            .court(ConditionalOrderCourt.BIRMINGHAM)
-            .dateAndTimeOfHearing(hearingDate)
-            .grantedDate(hearingDate.toLocalDate())
-            .build()
-        );
-
-        when(commonContent.coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(getCoPronouncedTemplateVars());
-
-        notification.sendToApplicant2(data, TEST_CASE_ID);
-
-        verify(notificationService).sendEmail(
-            eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(REGENERATE_COURT_ORDERS_CO_PRONOUNCED),
-            any(),
-            eq(ENGLISH),
-            eq(TEST_CASE_ID)
-        );
-        verify(commonContent).coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
-    }
-
-    @Test
-    void shouldSendEmailToRespondentForRegenerateCourtOrdersOnSoleCase() {
-
-        LocalDateTime now = LocalDateTime.now();
+    void shouldNotSendEmailToApplicant1ForRegenerateCourtOrdersWhenNoOrderIsRegenerated() {
         CaseData data = caseData();
-        data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
+
+        notification.sendToApplicant1(data, TEST_CASE_ID);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendEmailToApplicant2ForRegenerateCourtOrdersWhenAnOrderIsRegenerated() {
+        CaseData data = validApplicant2CaseData();
         data.setConditionalOrder(ConditionalOrder.builder()
-            .court(ConditionalOrderCourt.BIRMINGHAM)
-            .dateAndTimeOfHearing(now)
-            .grantedDate(now.toLocalDate())
+            .certificateOfEntitlementDocument(DivorceDocument.builder().build())
             .build()
         );
-        when(commonContent.coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(getCoPronouncedTemplateVars());
+        final Map<String, String> templateContent = new HashMap<>();
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(templateContent);
+        when(courtOrderRegeneratedTemplateContent.regenerateTemplateContent(data))
+            .thenReturn(templateContent);
 
         notification.sendToApplicant2(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
-            eq(TEST_APPLICANT_2_USER_EMAIL),
-            eq(SOLE_RESPONDENT_REGENERATE_COURT_ORDERS_CO_PRONOUNCED),
+            eq(TEST_USER_EMAIL),
+            eq(COURT_ORDERS_REGENERATED_CITIZEN),
             any(),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).coPronouncedTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
     }
 
-    private Map<String, String> getCoPronouncedTemplateVars() {
+    @Test
+    void shouldNotSendEmailToApplicant2ForRegenerateCourtOrdersWhenNoOrderIsRegenerated() {
+        CaseData data = validApplicant2CaseData();
 
-        Map<String, String> templateVars = new HashMap<>();
-        templateVars.put(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID);
-        templateVars.put(IS_DIVORCE, CommonContent.YES);
-        templateVars.put(IS_DISSOLUTION, CommonContent.NO);
-        templateVars.put(DATE_OF_HEARING, "1 January 2025");
-        templateVars.put(COURT_NAME, "Birmingham Civil and Family Justice Centre");
-        templateVars.put(PARTNER, "partner");
-        templateVars.put(COURT_EMAIL, "courtEmail");
-        return templateVars;
+        notification.sendToApplicant2(data, TEST_CASE_ID);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendEmailToApplicant1SolicitorForRegenerateCourtOrdersWhenAnOrderIsRegenerated() {
+        CaseData data = caseData();
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .certificateOfEntitlementDocument(DivorceDocument.builder().build())
+            .build()
+        );
+        data.setApplicant1(applicantRepresentedBySolicitor());
+        final Map<String, String> templateContent = new HashMap<>();
+        when(commonContent.solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
+            .thenReturn(templateContent);
+        when(courtOrderRegeneratedTemplateContent.regenerateTemplateContent(data))
+            .thenReturn(templateContent);
+
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(COURT_ORDERS_REGENERATED_SOLICITOR),
+            any(),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
+    }
+
+    @Test
+    void shouldNotSendEmailToApplicant1SolicitorForRegenerateCourtOrdersWhenNoOrderIsRegenerated() {
+        CaseData data = caseData();
+        data.setApplicant1(applicantRepresentedBySolicitor());
+
+        notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldSendEmailToApplicant2SolicitorForRegenerateCourtOrdersWhenAnOrderIsRegenerated() {
+        CaseData data = caseData();
+        data.setConditionalOrder(ConditionalOrder.builder()
+            .certificateOfEntitlementDocument(DivorceDocument.builder().build())
+            .build()
+        );
+        data.setApplicant2(respondentWithDigitalSolicitor());
+        final Map<String, String> templateContent = new HashMap<>();
+        when(commonContent.solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant2()))
+            .thenReturn(templateContent);
+        when(courtOrderRegeneratedTemplateContent.regenerateTemplateContent(data))
+            .thenReturn(templateContent);
+
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_SOLICITOR_EMAIL),
+            eq(COURT_ORDERS_REGENERATED_SOLICITOR),
+            any(),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant2());
+    }
+
+    @Test
+    void shouldNotSendEmailToApplicant2SolicitorForRegenerateCourtOrdersWhenNoOrderIsRegenerated() {
+        CaseData data = caseData();
+        data.setApplicant1(respondentWithDigitalSolicitor());
+
+        notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
+
+        verifyNoInteractions(notificationService);
     }
 }
 

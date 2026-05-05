@@ -205,6 +205,8 @@ public final class DocumentConstants {
 
     public static final String BAILIFF_SERVICE_SUCCESSFUL_TEMPLATE_ID = "BAILIFF_SERVICE_SUCCESSFUL_LETTER";
 
+    public static final String CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID = "CITIZEN_COURT_ORDERS_REGENERATED";
+
     public static final String APPLICANT1 = "applicant1";
     public static final String APPLICANT2 = "applicant2";
 
