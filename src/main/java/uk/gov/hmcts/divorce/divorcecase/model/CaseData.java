@@ -690,7 +690,6 @@ public class CaseData {
     @JsonIgnore
     public void updateCaseWithGeneralApplication() {
         GeneralApplication generalApplication = this.getGeneralApplication();
-        generalApplication.setGeneralApplicationSubmittedBeforeIssue(YesOrNo.from(application.hasBeenIssued()));
         generalApplication.setGeneralApplicationDocument(null);
 
         generalApplication.getGeneralApplicationDocuments().forEach(divorceDocumentListValue -> {
@@ -706,6 +705,8 @@ public class CaseData {
 
     @JsonIgnore
     public void updateCaseWithGeneralApplication(GeneralApplication generalApplication) {
+        generalApplication.setGeneralApplicationSubmittedBeforeIssue(YesOrNo.from(!application.hasBeenIssued()));
+
         final ListValue<GeneralApplication> generalApplicationListValue = ListValue.<GeneralApplication>builder()
             .id(UUID.randomUUID().toString())
             .value(generalApplication.toBuilder().build())

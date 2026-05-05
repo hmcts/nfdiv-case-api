@@ -183,7 +183,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
             .serviceApplicationDocuments(evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs())
             .alternativeServiceFeeRequired(YesOrNo.YES)
-            .serviceApplicationSubmittedBeforeIssue(YesOrNo.from(data.getApplication().hasBeenIssued()))
+            .serviceApplicationSubmittedBeforeIssue(YesOrNo.from(!data.getApplication().hasBeenIssued()))
             .build();
     }
 

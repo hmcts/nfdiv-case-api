@@ -16,6 +16,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -23,6 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -95,6 +97,50 @@ class CaseworkerAlternativeServiceApplicationTest {
         assertThat(response.getWarnings()).isNull();
 
         assertThat(response.getData().getAlternativeService().getReceivedServiceAddedDate()).isEqualTo(getExpectedLocalDate());
+    }
+
+    @Test
+    void shouldSetPreIssueFlagToNoForPostIssueGeneralApplication() {
+
+        setMockClock(clock);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = CaseData.builder().build();
+        caseData.setApplication(Application.builder().issueDate(null).build());
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerAlternativeServiceApplication.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getWarnings()).isNull();
+
+        final AlternativeService serviceApplication = response.getData().getAlternativeService();
+        assertThat(serviceApplication.getReceivedServiceAddedDate()).isEqualTo(getExpectedLocalDate());
+        assertThat(serviceApplication.getServiceApplicationSubmittedBeforeIssue()).isEqualTo(YesOrNo.YES);
+    }
+
+    @Test
+    void shouldSetPostIssueFlagToNoForPostIssueGeneralApplication() {
+
+        setMockClock(clock);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = CaseData.builder().build();
+        caseData.setApplication(Application.builder().issueDate(LocalDate.now()).build());
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerAlternativeServiceApplication.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getWarnings()).isNull();
+
+        final AlternativeService serviceApplication = response.getData().getAlternativeService();
+        assertThat(serviceApplication.getReceivedServiceAddedDate()).isEqualTo(getExpectedLocalDate());
+        assertThat(serviceApplication.getServiceApplicationSubmittedBeforeIssue()).isEqualTo(YesOrNo.NO);
     }
 
     static Stream<Arguments> provideTestArguments() {
