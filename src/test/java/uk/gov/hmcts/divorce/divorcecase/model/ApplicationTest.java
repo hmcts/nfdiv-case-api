@@ -6,6 +6,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -412,6 +413,24 @@ class ApplicationTest {
             .build();
 
         assertThat(application.getPbaNumber()).isEqualTo(Optional.of(pbaNumber));
+    }
+
+    @Test
+    void shouldReturnTrueIfApplicationHasBeenIssued() {
+        final Application application = Application.builder()
+            .issueDate(LocalDate.now())
+            .build();
+
+        assertThat(application.hasBeenIssued()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfApplicationHasNotBeenIssued() {
+        final Application application = Application.builder()
+            .issueDate(null)
+            .build();
+
+        assertThat(application.hasBeenIssued()).isFalse();
     }
 
     @Test
