@@ -116,7 +116,7 @@ public class HearingReminderNotification implements ApplicantNotification {
     private void sendSolicitorNotification(final CaseData data, final long caseId, final WhichApplicant whichApplicant) {
         final boolean isApplicant1 = WhichApplicant.APPLICANT_1.equals(whichApplicant);
         final Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
-        final Applicant partner =  isApplicant1 ? data.getApplicant1() : data.getApplicant2();
+        final Applicant partner =  isApplicant1 ? data.getApplicant2() : data.getApplicant1();
 
         final Map<String, String> templateVars = commonContent.solicitorTemplateVars(data, caseId, applicant);
         templateVars.putAll(hearingReminderVariables(data, applicant, partner));
