@@ -75,16 +75,13 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
             .name("Find matches")
             .description("Find matches")
             .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
-            .page("findmatch", this::midEvent)
+            .page("findmatch")
             .pageLabel("Search for matching cases which have same marriage date and full names")
             .readonlyNoSummary(CaseData::getCaseMatches)
-            .page("inappropriatematches")
-            .pageLabel("Inappropriate matches")
-            .readonlyNoSummary(CaseData::getInappropriateCaseMatches)
-            .readonlyNoSummary(CaseData::getCaseMatchesDifferential)
             .done();
     }
 
@@ -112,43 +109,38 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
         setToNewMatches(caseData, newMatches);
 
-        log.info("New matches count: " + newMatches.size());
-        log.info("Stored matches count: " + caseData.getCaseMatches().size());
-        log.info("Differential matches count: " + caseData.getCaseMatchesDifferential().size());
-        log.info("Inappropriate matches count: " + caseData.getInappropriateCaseMatches().size());
+        log.info("Case ID: " + details.getId() + " filtered cases matching search result: " + caseData.getCaseMatches().size());
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
 
     }
 
-    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details, final CaseDetails<CaseData, State> beforeDetails) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details, final CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
 
-        // Affected by EXUI-4347 - maybe related to EXUI-3839? Field set in aboutToStart not set in midEvent (caseMatchesDifferential is null here)
-        log.info("Stored matches count: " + caseData.getCaseMatches().size());
-        log.info("Differential matches count: " + caseData.getCaseMatchesDifferential().size());
-
         List<ListValue<CaseMatch>> caseMatches = caseData.getCaseMatches();
-        List<ListValue<CaseMatch>> differentialMatches = caseData.getCaseMatchesDifferential();
+        List<ListValue<CaseMatch>> newMatches = caseData.getNewCaseMatches();
 
         Set<String> existingRefs = caseMatches.stream().map(
             match -> match.getValue().getCaseLink().getCaseReference()
         ).collect(Collectors.toSet());
 
-        List<ListValue<CaseMatch>> removedMatches = differentialMatches.stream()
+        List<ListValue<CaseMatch>> removedMatches = newMatches.stream()
             .filter(match -> {
                 String ref = match.getValue().getCaseLink().getCaseReference();
                 return !existingRefs.contains(ref);
             }).toList();
 
-        log.info("Removed matches count: " + removedMatches.size());
+        log.info("Case ID: " + details.getId() + " removed case matches count: " + removedMatches.size());
 
         if (!removedMatches.isEmpty()) {
+            log.info("Updating inappropriate matches for Case ID: " + details.getId());
             caseData.getInappropriateCaseMatches().addAll(removedMatches);
         }
 
-        log.info("Inappropriate matches count: " + caseData.getInappropriateCaseMatches().size());
+        log.info("Case ID: " + details.getId() + " inappropriate matches count: " + caseData.getInappropriateCaseMatches().size());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -285,17 +277,21 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
     }
 
     public void setToNewMatches(CaseData data, List<CaseMatch> newMatches) {
-        List<ListValue<CaseMatch>> storedMatches = data.getCaseMatches();
-        storedMatches.clear();
+        List<ListValue<CaseMatch>> caseMatches = data.getCaseMatches();
+        caseMatches.clear();
 
         if (!newMatches.isEmpty()) {
+            data.setNewCaseMatches(newMatches.stream()
+                .map(match -> ListValue.<CaseMatch>builder().value(match).build())
+                .toList());
+
             Set<String> inappropriateMatchRefs = data.fromListValueToList(data.getInappropriateCaseMatches()).stream()
                 .map(match -> match.getCaseLink().getCaseReference())
                 .collect(Collectors.toSet());
 
             log.info("Inappropriate matches ref count: " + inappropriateMatchRefs.size());
 
-            storedMatches.addAll(newMatches.stream()
+            caseMatches.addAll(newMatches.stream()
                 .filter(match -> {
                     String ref = match.getCaseLink().getCaseReference();
                     return !inappropriateMatchRefs.contains(ref);
@@ -303,13 +299,10 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
                 .map(match -> ListValue.<CaseMatch>builder().value(match).build())
                 .toList());
 
-            log.info("Stored matches count: " + storedMatches.size());
-
-            data.setCaseMatchesDifferential(storedMatches);
-        }
-        if (storedMatches.isEmpty()) {
+            log.info("Stored case matches count: " + caseMatches.size());
+        } else {
             data.setCaseMatches(null);
-            data.setCaseMatchesDifferential(null);
+            data.setNewCaseMatches(null);
         }
     }
 
