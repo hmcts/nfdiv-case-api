@@ -423,7 +423,7 @@ public class CaseData {
     private List<ListValue<CaseMatch>> inappropriateCaseMatches = new ArrayList<>();
 
     @CCD(
-        label = "Case matches differential",
+        label = "New case matches",
         typeOverride = Collection,
         typeParameterOverride = "CaseMatch",
         access = {CaseworkerAccess.class, CaseworkerDeleteAccess.class},
@@ -431,7 +431,7 @@ public class CaseData {
     )
     @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
     @Builder.Default
-    private List<ListValue<CaseMatch>> caseMatchesDifferential = new ArrayList<>();
+    private List<ListValue<CaseMatch>> newCaseMatches = new ArrayList<>();
 
 
 
