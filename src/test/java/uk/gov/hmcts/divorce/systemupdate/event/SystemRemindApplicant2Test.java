@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -19,8 +19,6 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemindApplicant2.SYSTEM_REMIND_APPLICANT2;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService.CASE_ALREADY_PROCESSED_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -28,7 +26,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class SystemRemindApplicant2Test {
 
     @Mock
@@ -62,9 +60,6 @@ class SystemRemindApplicant2Test {
         details.setData(caseData);
         caseData.getApplication().setApplicant2ReminderSent(YesOrNo.YES);
 
-        when(httpServletRequest.getHeader(AUTHORIZATION))
-            .thenReturn("auth header");
-
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemRemindApplicant2.aboutToSubmit(details, details);
 
@@ -77,9 +72,6 @@ class SystemRemindApplicant2Test {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION))
-            .thenReturn("auth header");
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemRemindApplicant2.aboutToSubmit(details, details);

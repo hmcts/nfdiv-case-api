@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -38,7 +38,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class SystemUnlinkApplicantFromCaseTest {
 
     @Mock
@@ -88,10 +88,6 @@ class SystemUnlinkApplicantFromCaseTest {
         caseDetails.setState(Holding);
         caseDetails.setId(TEST_CASE_ID);
 
-        User user = new User("dummy-user-token", UserInfo.builder().uid(TEST_AUTHORIZATION_TOKEN).build());
-        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(user);
-
         final AboutToStartOrSubmitResponse<CaseData, State>  response =
             systemUnlinkApplicantFromCase.aboutToSubmit(caseDetails, caseDetails);
 
@@ -114,8 +110,6 @@ class SystemUnlinkApplicantFromCaseTest {
         caseDetails.setId(TEST_CASE_ID);
 
         User user = new User("dummy-user-token", UserInfo.builder().uid(TEST_AUTHORIZATION_TOKEN).build());
-        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(user);
 
         final AboutToStartOrSubmitResponse<CaseData, State>  response =
             systemUnlinkApplicantFromCase.aboutToSubmit(caseDetails, caseDetails);
