@@ -121,24 +121,25 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         log.info("{} about to submit callback invoked for Case Id: {}", FIND_MATCHES, details.getId());
         final CaseData caseData = details.getData();
 
-        List<ListValue<CaseMatch>> caseMatches = caseData.getCaseMatches();
-        List<ListValue<CaseMatch>> newMatches = caseData.getNewCaseMatches();
-
-        Set<String> existingRefs = caseMatches.stream().map(
+        Set<String> existingRefs = caseData.getCaseMatches().stream().map(
             match -> match.getValue().getCaseLink().getCaseReference()
         ).collect(Collectors.toSet());
 
-        List<ListValue<CaseMatch>> removedMatches = newMatches.stream()
+        Set<String> badMatchRefs = caseData.getBadCaseMatches().stream().map(
+            match -> match.getValue().getCaseLink().getCaseReference()
+        ).collect(Collectors.toSet());
+
+        List<ListValue<CaseMatch>> newBadMatches = caseData.getNewCaseMatches().stream()
             .filter(match -> {
                 String ref = match.getValue().getCaseLink().getCaseReference();
-                return !existingRefs.contains(ref);
+                return !existingRefs.contains(ref) && !badMatchRefs.contains(ref);
             }).toList();
 
-        log.info("Case ID: " + details.getId() + " removed case matches count: " + removedMatches.size());
+        log.info("Case ID: " + details.getId() + " new bad case matches count: " + newBadMatches.size());
 
-        if (!removedMatches.isEmpty()) {
+        if (!newBadMatches.isEmpty()) {
             log.info("Updating bad matches for Case ID: " + details.getId());
-            caseData.getBadCaseMatches().addAll(removedMatches);
+            caseData.getBadCaseMatches().addAll(newBadMatches);
         }
 
         log.info("Case ID: " + details.getId() + " bad matches count: " + caseData.getBadCaseMatches().size());

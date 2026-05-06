@@ -216,6 +216,51 @@ class CaseworkerFindMatchesTest {
     }
 
     @Test
+    void shouldNoAddRemovedMatchesToBadCaseMatchesListIfAlreadyPresent() {
+        CaseData caseData = buildEmptyCaseData();
+        String removedRef = "67890";
+        String removedRef2 = "101112";
+        String newRef = "12345";
+
+        ListValue<CaseMatch> newMatch = ListValue.<CaseMatch>builder()
+            .value(CaseMatch.builder()
+                .caseLink(CaseLink.builder().caseReference(newRef).build())
+                .build())
+            .build();
+        ListValue<CaseMatch> removedMatch = ListValue.<CaseMatch>builder()
+            .value(CaseMatch.builder()
+                .caseLink(CaseLink.builder().caseReference(removedRef).build())
+                .build())
+            .build();
+        ListValue<CaseMatch> removedMatch2 = ListValue.<CaseMatch>builder()
+            .value(CaseMatch.builder()
+                .caseLink(CaseLink.builder().caseReference(removedRef2).build())
+                .build())
+            .build();
+
+        caseData.setCaseMatches(new ArrayList<>(List.of(newMatch)));
+
+        caseData.setNewCaseMatches(new ArrayList<>(List.of(newMatch, removedMatch, removedMatch2)));
+
+        caseData.setBadCaseMatches(new ArrayList<>(List.of(removedMatch)));
+
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        caseworkerFindMatches.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(caseData.getBadCaseMatches())
+            .as("Should not add removed matches to bad case matches list if already present")
+            .hasSize(2);
+
+        assertThat(caseData.getBadCaseMatches().get(0).getValue().getCaseLink().getCaseReference())
+            .isEqualTo(removedRef);
+
+        assertThat(caseData.getBadCaseMatches().get(1).getValue().getCaseLink().getCaseReference())
+            .isEqualTo(removedRef2);
+    }
+
+    @Test
     void shouldNotAddMatchesThatAreInBadCaseMatchesList() {
         CaseData caseData = buildEmptyCaseData();
         String badRef = "67890";
