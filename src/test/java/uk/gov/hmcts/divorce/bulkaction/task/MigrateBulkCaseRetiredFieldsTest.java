@@ -11,7 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkCaseRetiredFields;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourtBulk;
 import uk.gov.hmcts.divorce.systemupdate.schedule.migration.task.MigrateBulkCaseRetiredFields;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,7 +28,7 @@ class MigrateBulkCaseRetiredFieldsTest {
 
         final CaseDetails<BulkActionCaseData, BulkActionState> caseDetails = new CaseDetails<>();
         final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder()
-            .court(ConditionalOrderCourt.BIRMINGHAM)
+            .court(ConditionalOrderCourtBulk.BIRMINGHAM)
             .retiredFields(new BulkCaseRetiredFields())
             .build();
         caseDetails.setData(bulkActionCaseData);
