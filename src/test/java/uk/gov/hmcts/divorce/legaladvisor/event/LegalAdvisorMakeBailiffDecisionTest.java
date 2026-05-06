@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.caseworker.event;
+package uk.gov.hmcts.divorce.legaladvisor.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,8 +28,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerMakeBailiffDecision.CASEWORKER_BAILIFF_DECISION;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerMakeBailiffDecision.ERROR_MUST_MAKE_SERVICE_DECISION;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -38,6 +36,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffRefused;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_FILE_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.BAILIFF_SERVICE;
+import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeBailiffDecision.ERROR_MUST_MAKE_SERVICE_DECISION;
+import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeBailiffDecision.LEGAL_ADVISOR_BAILIFF_DECISION;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -46,7 +46,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
-class CaseworkerMakeBailiffDecisionTest {
+class LegalAdvisorMakeBailiffDecisionTest {
 
     @Mock
     private Clock clock;
@@ -64,7 +64,7 @@ class CaseworkerMakeBailiffDecisionTest {
     private NotificationDispatcher notificationDispatcher;
 
     @InjectMocks
-    private CaseworkerMakeBailiffDecision makeBailiffDecision;
+    private LegalAdvisorMakeBailiffDecision makeBailiffDecision;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
@@ -74,7 +74,7 @@ class CaseworkerMakeBailiffDecisionTest {
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(CASEWORKER_BAILIFF_DECISION);
+            .contains(LEGAL_ADVISOR_BAILIFF_DECISION);
     }
 
     @Test
