@@ -230,6 +230,8 @@ uk:
             GENERAL_APPLICATION_REJECTED_BY_CASEWORKER: 'da01b9f2-4f1c-4838-8789-7d7324c1589b'
             FINANCIAL_ORDER_REQUESTED_NOTIFICATION: '740f2b58-6f72-4f07-8c85-26ccb06efd13'
             RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION: 'f0407ced-5060-4e4c-8a22-0852cb0bc66f'
+            HEARING_REMINDER_CITIZEN: '96ad6d01-49d0-4fd8-9119-c15a4cdef873'
+            HEARING_REMINDER_SOLICITOR: '95d52e90-216e-47bb-90b8-1a5ac2d0f053'
           welsh:
             REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT: '6fed53fd-8558-4f9a-8804-8b1004221083'
             SAVE_SIGN_OUT: '6f8b8605-64ab-47ca-b5a8-ee87f96be77d'
@@ -400,6 +402,8 @@ uk:
             GENERAL_APPLICATION_REJECTED_BY_CASEWORKER: 'a2bff369-1daa-4b18-8058-433ff3add380'
             FINANCIAL_ORDER_REQUESTED_NOTIFICATION: 'f94e22c4-42b4-4049-97d1-f47a68f7c466'
             RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION: '3d4436d2-6d50-4837-b81b-b03eba205a55'
+            HEARING_REMINDER_CITIZEN: '96ad6d01-49d0-4fd8-9119-c15a4cdef873'
+            HEARING_REMINDER_SOLICITOR: '95d52e90-216e-47bb-90b8-1a5ac2d0f053'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator,payment_app}
@@ -454,7 +458,7 @@ docmosis:
       JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Clarification-Refusal-Solicitor-Cover-Letter_V1.docx
       REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V2.docx
       DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V3.docx
-      RESPONDENT_ANSWERS: FL-NFD-GOR-ENG-Respondent-Answers-Eng-V2.docx #TODO: update content
+      RESPONDENT_ANSWERS: FL-NFD-GOR-ENG-Respondent-Answers-Eng-V3.docx #TODO: update content
       CERTIFICATE_OF_SERVICE: FL-NFD-GOR-ENG-Certificate_Of_Service_V2.docx
       SERVICE_ORDER: FL-NFD-GOR-ENG-Service-Order-V5.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: FL-NFD-GOR-ENG-Pronouncement-List-V3.docx
@@ -542,6 +546,7 @@ docmosis:
       SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-ENG-Search-Government-Records-Application_V3.docx
       BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-ENG-Bailiff-Service-Successful-Letter-V1.docx
       RESPONDENT_FINAL_ORDER_ANSWERS: FL-NFD-GOR-ENG-Respondent_Final_Order_Answers_V1.docx
+      HEARING_REMINDER: FL-NFD-GOR-ENG-Hearing-Reminder-V1.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V1.docx
@@ -549,7 +554,7 @@ docmosis:
       DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V3.docx #TODO: update template once available
       JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Solicitor-Cover-Letter-JS.docx
       CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V3.docx
-      RESPONDENT_ANSWERS: FL-NFD-GOR-WEL-Respondent-Answers-Cy-V2.docx
+      RESPONDENT_ANSWERS: FL-NFD-GOR-WEL-Respondent-Answers-Cy-V3.docx
       CERTIFICATE_OF_SERVICE: FL-NFD-GOR-WEL-Certificate-Of-Service-CY-V1.docx      #TODO: update content after changes made in NFDIV-3144
       SERVICE_ORDER: FL-NFD-GOR-WEL-Service-Order-V3-Cy.docx
       BULK_CASE_PRONOUNCEMENT: FL-NFD-GOR-ENG-Pronouncement-List-V3.docx  #TODO: update content
@@ -641,6 +646,7 @@ docmosis:
       SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-WEL-Search-Government-Records-Application_V3.docx
       BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-WEL-Bailiff-Service-Successful-Letter-V1.docx
       RESPONDENT_FINAL_ORDER_ANSWERS: FL-NFD-GOR-WEL-Respondent_Final_Order_Answers_V1.docx
+      HEARING_REMINDER: FL-NFD-GOR-ENG-Hearing-Reminder-V1.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}
