@@ -169,6 +169,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
 
         verify(submissionService).setEndState(any(CaseDetails.class), any(GeneralApplication.class));
         assertThat(generalApplication.getGeneralApplicationFee().getPaymentReference()).isEqualTo(TEST_REFERENCE);
+        assertThat(generalApplication.getGeneralApplicationReferralDate()).isEqualTo(generalReferral.getGeneralApplicationReferralDate());
         assertThat(generalReferral.getGeneralReferralReason()).isEqualTo(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL);
         assertThat(generalReferral.getGeneralReferralType()).isEqualTo(GeneralReferralType.DISCLOSURE_VIA_DWP);
         assertThat(generalReferral.getGeneralReferralDocument()).isEqualTo(generalApplication.getGeneralApplicationDocument());

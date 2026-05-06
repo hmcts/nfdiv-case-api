@@ -51,6 +51,12 @@ public class GeneralApplication {
     private LocalDateTime generalApplicationReceivedDate;
 
     @CCD(
+        label = "General application referral date"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate generalApplicationReferralDate;
+
+    @CCD(
         label = "Please provide more information about general application type",
         typeOverride = TextArea,
         searchable = false
