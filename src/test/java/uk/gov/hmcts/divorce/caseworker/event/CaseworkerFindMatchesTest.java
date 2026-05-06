@@ -216,7 +216,7 @@ class CaseworkerFindMatchesTest {
     }
 
     @Test
-    void shouldNoAddRemovedMatchesToBadCaseMatchesListIfAlreadyPresent() {
+    void shouldOnlyAddRemovedMatchesToBadCaseMatchesListIfNotAlreadyPresent() {
         CaseData caseData = buildEmptyCaseData();
         String removedRef = "67890";
         String removedRef2 = "101112";
