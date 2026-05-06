@@ -8,6 +8,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -49,6 +50,9 @@ class Applicant2ApprovedNotificationTest {
 
     @Mock
     private CommonContent commonContent;
+
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
     private Applicant2ApprovedNotification notification;

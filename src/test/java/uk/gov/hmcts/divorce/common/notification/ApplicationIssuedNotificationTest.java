@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -43,18 +44,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SER
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
-import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
-import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
-import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
+import static uk.gov.hmcts.divorce.notification.CommonContent.*;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT_SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICATION_ACCEPTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
@@ -96,6 +86,9 @@ class ApplicationIssuedNotificationTest {
 
     @Mock
     private CommonContent commonContent;
+
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
 
     @Mock
     private EmailTemplatesConfig emailTemplatesConfig;
@@ -739,6 +732,8 @@ class ApplicationIssuedNotificationTest {
         when(commonContent.getUnionType(caseData, ENGLISH)).thenReturn("divorce");
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/" + TEST_CASE_ID);
+        when(docmosisCommonContent.getSolicitorReference(caseData.getApplicant1().getSolicitor(),
+            caseData.getApplicant1().getLanguagePreference())).thenReturn("not provided");
 
         notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
@@ -747,6 +742,7 @@ class ApplicationIssuedNotificationTest {
         personalServiceTemplateVars.put(APPLICATION_REFERENCE, TEST_CASE_ID.toString());
         personalServiceTemplateVars.put("union type", "divorce");
         personalServiceTemplateVars.put("solicitor reference", "not provided");
+        personalServiceTemplateVars.put(DATE_OF_ISSUE, "");
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
@@ -778,6 +774,8 @@ class ApplicationIssuedNotificationTest {
         when(commonContent.getUnionType(caseData, ENGLISH)).thenReturn("dissolution");
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("https://manage-case.aat.platform.hmcts.net/cases/case-details/" + TEST_CASE_ID);
+        when(docmosisCommonContent.getSolicitorReference(caseData.getApplicant1().getSolicitor(),
+            caseData.getApplicant1().getLanguagePreference())).thenReturn("someRef");
 
         notification.sendToApplicant1Solicitor(caseData, TEST_CASE_ID);
 
@@ -786,6 +784,7 @@ class ApplicationIssuedNotificationTest {
         personalServiceTemplateVars.put(APPLICATION_REFERENCE, TEST_CASE_ID.toString());
         personalServiceTemplateVars.put("union type", "dissolution");
         personalServiceTemplateVars.put("solicitor reference", "someRef");
+        personalServiceTemplateVars.put(DATE_OF_ISSUE, "");
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
