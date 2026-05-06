@@ -208,7 +208,7 @@ public class CitizenPaymentMadeIT {
                 .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, CITIZEN_PAYMENT_MADE)))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.state").value("AwaitingDocuments"));
+            .andExpect(jsonPath("$.state").value("WelshTranslationReview"));
 
         verify(notificationService)
             .sendEmail(eq(TEST_USER_EMAIL), eq(OUTSTANDING_ACTIONS), anyMap(), eq(WELSH), anyLong());

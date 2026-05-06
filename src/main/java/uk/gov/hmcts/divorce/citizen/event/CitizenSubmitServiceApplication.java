@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -53,6 +54,10 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
     public static final String AWAITING_DECISION_ERROR = """
         A service application has already been submitted and is awaiting a decision.
+        """;
+
+    public static final String SERVICE_APPLICATION_NOT_ALLOWED = """
+        This service application is not allowed at this stage.
         """;
 
     private final PaymentSetupService paymentSetupService;
@@ -96,6 +101,12 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             log.info("{} failed since partner has already responded for {} ", CITIZEN_SERVICE_APPLICATION, caseId);
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(errors)
+                .build();
+        }
+
+        if (blockServiceApplicationForPreIssue(data)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(SERVICE_APPLICATION_NOT_ALLOWED))
                 .build();
         }
 
@@ -190,5 +201,14 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
     private boolean serviceAppAwaitingDecision(AlternativeService alternativeService) {
         return alternativeService != null && alternativeService.getAlternativeServiceType() != null;
+    }
+
+    private boolean blockServiceApplicationForPreIssue(CaseData data) {
+        InterimApplicationType type = data.getApplicant1().getInterimApplicationOptions().getInterimApplicationType();
+        boolean caseIssued = data.getApplication().getIssueDate() != null;
+        boolean isDeemedOrBailiffService = InterimApplicationType.DEEMED_SERVICE.equals(type)
+            || InterimApplicationType.BAILIFF_SERVICE.equals(type);
+
+        return !caseIssued && isDeemedOrBailiffService;
     }
 }

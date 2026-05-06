@@ -35,6 +35,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
@@ -282,6 +283,13 @@ public class Application {
         access = {DefaultAccess.class}
     )
     private YesOrNo applicant1KnowsApplicant2Address;
+
+    @CCD(
+        label = "Have you been able to find your partner’s address?",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private YesOrNo applicant1FoundApplicant2Address;
 
     @CCD(
         label = "Applicant 2 is using digital channel?",
@@ -676,10 +684,29 @@ public class Application {
     }
 
     @JsonIgnore
+    public boolean isAwaitingApplicant(ApplicationType applicationType) {
+        final boolean awaitingApplicant1 = hasAwaitingApplicant1Documents() || mustServeAnotherWay(applicationType);
+        final boolean awaitingApplicant2 = hasAwaitingApplicant2Documents() && !applicationType.isSole();
+
+        return awaitingApplicant1 || awaitingApplicant2;
+    }
+
+    @JsonIgnore
+    public boolean mustServeAnotherWay(ApplicationType applicationType) {
+        final boolean isJointApplication = !ApplicationType.SOLE_APPLICATION.equals(applicationType);
+        if (isJointApplication) {
+            return false;
+        }
+
+        final boolean hasNotProvidedAddress = YES.equals(applicant1WantsToHavePapersServedAnotherWay)
+            || (NO.equals(applicant1KnowsApplicant2Address) && NO.equals(applicant1FoundApplicant2Address));
+
+        return hasNotProvidedAddress || isPersonalServiceMethod();
+    }
+
+    @JsonIgnore
     public boolean hasAwaitingApplicant1Documents() {
-        return applicant1WantsToHavePapersServedAnotherWay != null
-            && applicant1WantsToHavePapersServedAnotherWay.toBoolean()
-            || !isEmpty(applicant1CannotUploadSupportingDocument);
+        return !isEmpty(applicant1CannotUploadSupportingDocument);
     }
 
     @JsonIgnore
@@ -760,5 +787,4 @@ public class Application {
         return Optional.ofNullable(pbaNumbers)
             .map(dynamicList -> dynamicList.getValue().getLabel());
     }
-
 }
