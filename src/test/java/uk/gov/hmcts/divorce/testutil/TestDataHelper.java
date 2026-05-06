@@ -658,7 +658,11 @@ public class TestDataHelper {
         FinalOrder finalOrder = caseData.getFinalOrder();
 
         finalOrder.setDateFinalOrderEligibleFrom(caseData.getFinalOrder().getDateFinalOrderEligibleFrom(dateAndTimeOfHearing));
-        finalOrder.setDateFinalOrderEligibleToRespondent(finalOrder.calculateDateFinalOrderEligibleToRespondent());
+        finalOrder.setDateFinalOrderEligibleToRespondent(
+            finalOrder.calculateDateFinalOrderEligibleToRespondent(
+                caseData.getConditionalOrder().getGrantedDate()
+            )
+        );
 
         return caseData;
     }

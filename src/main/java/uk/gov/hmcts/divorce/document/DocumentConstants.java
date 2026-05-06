@@ -200,6 +200,9 @@ public final class DocumentConstants {
     public static final String RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID = "RESPONDENT_FINAL_ORDER_ANSWERS";
     public static final String RESPONDENT_FINAL_ORDER_ANSWERS_DOCUMENT_NAME = "respondentFinalOrderAnswers";
 
+    public static final String SOLE_APPLICANT_FINAL_ORDER_OVERDUE_TEMPLATE_ID = "SOLE_APPLICANT_FINAL_ORDER_OVERDUE";
+    public static final String SOLE_APPLICANT_FINAL_ORDER_OVERDUE_DOCUMENT_NAME = "soleApplicantFinalOrderOverdue";
+
     public static final String NOC_CITIZEN_LETTER_TEMPLATE_ID = "NOC_TO_SOLS_CITIZEN_LETTER";
     public static final String NOC_CITIZEN_LETTER_DOCUMENT_NAME = "Noc";
 

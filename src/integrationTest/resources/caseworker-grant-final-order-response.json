@@ -57,7 +57,7 @@
     "dateFinalOrderEligibleFrom": "2021-12-21",
     "grantedDate": "${json-unit.any-string}",
     "granted": ["Yes"],
-    "dateFinalOrderEligibleToRespondent": "2022-03-21",
+    "dateFinalOrderEligibleToRespondent": "2021-03-08",
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",

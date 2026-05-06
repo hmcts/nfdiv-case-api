@@ -240,6 +240,9 @@ public enum DocumentType implements HasLabel {
     @Deprecated
     RESPONDENT_INVITATION("Respondent Invitation", false),
 
+    @JsonProperty("soleApplicantFinalOrderOverdue")
+    SOLE_APPLICANT_FINAL_ORDER_OVERDUE("Final order overdue notification for sole applicant", true),
+
     @JsonProperty("solicitorService")
     @JsonAlias({"serviceSolicitor"})
     SOLICITOR_SERVICE("Solicitor Service", false),
