@@ -7,12 +7,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AOS_SUBMITTED_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.A_DIVORCE_APPLICATION;
@@ -37,8 +39,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WITHOUT_DISPUTING_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WITHOUT_DISPUTING_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WITHOUT_DISPUTING_DIVORCE_CY;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -69,8 +71,11 @@ public class RespondentAnswersTemplateContent implements TemplateContent {
 
         final LanguagePreference languagePreference = caseData.getApplicant1().getLanguagePreference();
 
+        DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(languagePreference);
+
         Map<String, Object> templateContent = new HashMap<>();
-        templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(dateTimeFormatter));
+
         templateContent.put(CCD_CASE_REFERENCE, formatId(ccdCaseReference));
 
         templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
@@ -80,6 +85,7 @@ public class RespondentAnswersTemplateContent implements TemplateContent {
         templateContent.put(RESP_SOLICITOR_REPRESENTED, respSolicitorRepresented);
 
         var acknowledgementOfService = caseData.getAcknowledgementOfService();
+        templateContent.put(AOS_SUBMITTED_DATE, acknowledgementOfService.getDateAosSubmitted().format(dateTimeFormatter));
         templateContent.put(RESP_JURISDICTION_AGREE, acknowledgementOfService.getJurisdictionAgree().getValue());
         templateContent.put(REASON_HAVE_NO_JURISDICTION, acknowledgementOfService.getReasonCourtsOfEnglandAndWalesHaveNoJurisdiction());
         templateContent.put(IN_WHICH_COUNTRY_IS_YOUR_LIFE_MAINLY_BASED, acknowledgementOfService.getInWhichCountryIsYourLifeMainlyBased());
