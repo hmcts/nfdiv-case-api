@@ -211,6 +211,11 @@ public class Applicant {
     private ContactDetailsType contactDetailsType;
 
     @CCD(
+        label = "Are these details correct and up to date?"
+    )
+    private YesOrNo confirmContactDetails;
+
+    @CCD(
         label = "Is the Applicant currently resident in a refuge?"
     )
     private YesOrNo inRefuge;
