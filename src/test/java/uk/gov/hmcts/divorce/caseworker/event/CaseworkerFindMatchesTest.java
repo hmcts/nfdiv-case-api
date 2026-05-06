@@ -183,7 +183,7 @@ class CaseworkerFindMatchesTest {
     }
 
     @Test
-    void shouldAddRemovedMatchesToInappropriateCaseMatchesList() {
+    void shouldAddRemovedMatchesToBadCaseMatchesList() {
         CaseData caseData = buildEmptyCaseData();
         String removedRef = "67890";
         String newRef = "12345";
@@ -207,30 +207,30 @@ class CaseworkerFindMatchesTest {
 
         caseworkerFindMatches.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(caseData.getInappropriateCaseMatches())
-            .as("Should add removed matches to inappropriate case matches list")
+        assertThat(caseData.getBadCaseMatches())
+            .as("Should add removed matches to bad case matches list")
             .hasSize(1);
 
-        assertThat(caseData.getInappropriateCaseMatches().get(0).getValue().getCaseLink().getCaseReference())
+        assertThat(caseData.getBadCaseMatches().get(0).getValue().getCaseLink().getCaseReference())
             .isEqualTo(removedRef);
     }
 
     @Test
-    void shouldNotAddMatchesThatAreInInappropriateCaseMatchesList() {
+    void shouldNotAddMatchesThatAreInBadCaseMatchesList() {
         CaseData caseData = buildEmptyCaseData();
-        String inappropriateRef = "67890";
+        String badRef = "67890";
         String appropriateRef = "12345";
 
-        ListValue<CaseMatch> inappropriateMatch = ListValue.<CaseMatch>builder()
+        ListValue<CaseMatch> badMatch = ListValue.<CaseMatch>builder()
             .value(CaseMatch.builder()
-                .caseLink(CaseLink.builder().caseReference(inappropriateRef).build())
+                .caseLink(CaseLink.builder().caseReference(badRef).build())
                 .build())
             .build();
-        caseData.setInappropriateCaseMatches(new ArrayList<>(List.of(inappropriateMatch)));
+        caseData.setBadCaseMatches(new ArrayList<>(List.of(badMatch)));
 
         List<CaseMatch> newMatches = List.of(
             CaseMatch.builder()
-                .caseLink(CaseLink.builder().caseReference(inappropriateRef).build())
+                .caseLink(CaseLink.builder().caseReference(badRef).build())
                 .build(),
             CaseMatch.builder()
                 .caseLink(CaseLink.builder().caseReference(appropriateRef).build())
@@ -240,7 +240,7 @@ class CaseworkerFindMatchesTest {
         caseworkerFindMatches.setToNewMatches(caseData, newMatches);
 
         assertThat(caseData.getCaseMatches())
-            .as("Should only add matches that are NOT in inappropriate case matches list")
+            .as("Should only add matches that are NOT in bad case matches list")
             .hasSize(1);
 
         assertThat(caseData.getCaseMatches().get(0).getValue().getCaseLink().getCaseReference())

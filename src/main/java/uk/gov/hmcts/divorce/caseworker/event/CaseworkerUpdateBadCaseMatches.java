@@ -27,11 +27,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CaseworkerUpdateInappropriateMatches implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerUpdateBadCaseMatches implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String UPDATE_INAPPROPRIATE_MATCHES = "caseworker-update-inappropriate-matches";
+    public static final String UPDATE_BAD_CASE_MATCHES = "caseworker-update-bad-case-matches";
     private static final EnumSet<State> EVENT_STATES = EnumSet.copyOf(POST_SUBMISSION_STATES);
-    public static final String NO_INAPPROPRIATE_MATCHES_ERROR = "No inappropriate matches found";
+    public static final String NO_BAD_CASE_MATCHES_ERROR = "No bad case matches found";
 
     static {
         EVENT_STATES.remove(State.Archived);
@@ -40,27 +40,27 @@ public class CaseworkerUpdateInappropriateMatches implements CCDConfig<CaseData,
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(UPDATE_INAPPROPRIATE_MATCHES)
+            .event(UPDATE_BAD_CASE_MATCHES)
             .forStates(EVENT_STATES)
-            .name("Update inappropriate matches")
-            .description("Update inappropriate matches")
+            .name("Update bad case matches")
+            .description("Update bad case matches")
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
-            .page("inappropriatematch")
-            .pageLabel("Update inappropriate case matches")
-            .readonlyNoSummary(CaseData::getInappropriateCaseMatches)
+            .page("badcasematch")
+            .pageLabel("Update bad case matches")
+            .readonlyNoSummary(CaseData::getBadCaseMatches)
             .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        log.info("{} about to start callback invoked for Case Id: {}", UPDATE_INAPPROPRIATE_MATCHES, details.getId());
-        List<ListValue<CaseMatch>> inappropriateCaseMatches = details.getData().getInappropriateCaseMatches();
-        if (inappropriateCaseMatches == null || inappropriateCaseMatches.isEmpty()) {
+        log.info("{} about to start callback invoked for Case Id: {}", UPDATE_BAD_CASE_MATCHES, details.getId());
+        List<ListValue<CaseMatch>> badCaseMatches = details.getData().getBadCaseMatches();
+        if (badCaseMatches == null || badCaseMatches.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(details.getData())
-                .errors(List.of(NO_INAPPROPRIATE_MATCHES_ERROR))
+                .errors(List.of(NO_BAD_CASE_MATCHES_ERROR))
                 .build();
         }
 

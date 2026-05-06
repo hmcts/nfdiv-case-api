@@ -137,11 +137,11 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         log.info("Case ID: " + details.getId() + " removed case matches count: " + removedMatches.size());
 
         if (!removedMatches.isEmpty()) {
-            log.info("Updating inappropriate matches for Case ID: " + details.getId());
-            caseData.getInappropriateCaseMatches().addAll(removedMatches);
+            log.info("Updating bad matches for Case ID: " + details.getId());
+            caseData.getBadCaseMatches().addAll(removedMatches);
         }
 
-        log.info("Case ID: " + details.getId() + " inappropriate matches count: " + caseData.getInappropriateCaseMatches().size());
+        log.info("Case ID: " + details.getId() + " bad matches count: " + caseData.getBadCaseMatches().size());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -286,16 +286,16 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
                 .map(match -> ListValue.<CaseMatch>builder().value(match).build())
                 .toList());
 
-            Set<String> inappropriateMatchRefs = data.fromListValueToList(data.getInappropriateCaseMatches()).stream()
+            Set<String> badMatchRefs = data.fromListValueToList(data.getBadCaseMatches()).stream()
                 .map(match -> match.getCaseLink().getCaseReference())
                 .collect(Collectors.toSet());
 
-            log.info("Inappropriate matches ref count: " + inappropriateMatchRefs.size());
+            log.info("Bad matches ref count: " + badMatchRefs.size());
 
             caseMatches.addAll(newMatches.stream()
                 .filter(match -> {
                     String ref = match.getCaseLink().getCaseReference();
-                    return !inappropriateMatchRefs.contains(ref);
+                    return !badMatchRefs.contains(ref);
                 })
                 .map(match -> ListValue.<CaseMatch>builder().value(match).build())
                 .toList());
