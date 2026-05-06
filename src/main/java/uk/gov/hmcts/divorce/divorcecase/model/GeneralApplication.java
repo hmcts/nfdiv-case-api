@@ -51,6 +51,12 @@ public class GeneralApplication {
     private LocalDateTime generalApplicationReceivedDate;
 
     @CCD(
+        label = "General application referral date"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate generalApplicationReferralDate;
+
+    @CCD(
         label = "Please provide more information about general application type",
         typeOverride = TextArea,
         searchable = false
@@ -120,6 +126,12 @@ public class GeneralApplication {
         generalApplicationFee.setPaymentReference(paymentReference);
         generalApplicationFee.setHasCompletedOnlinePayment(YesOrNo.YES);
         generalApplicationFee.setDateOfPayment(dateOfPayment);
+    }
+
+    @JsonIgnore
+    public void recordAlternatePayment(ServicePaymentMethod paymentMethod) {
+        generalApplicationFee.setPaymentMethod(paymentMethod);
+        recordPayment(null, null);
     }
 
     @JsonIgnore

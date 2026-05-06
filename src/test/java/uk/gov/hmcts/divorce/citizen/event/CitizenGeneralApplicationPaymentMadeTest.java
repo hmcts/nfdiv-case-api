@@ -11,8 +11,8 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
-import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -34,19 +34,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.service.PaymentValidatorService.ERROR_PAYMENT_INCOMPLETE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.DECLINED;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralApplicationReceived;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -65,7 +65,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
     private CcdAccessService ccdAccessService;
 
     @Mock
-    private InterimApplicationSubmissionService interimApplicationSubmissionService;
+    private CitizenGeneralApplicationSubmissionService submissionService;
 
     @Mock
     private HttpServletRequest request;
@@ -108,6 +108,9 @@ class CitizenGeneralApplicationPaymentMadeTest {
         caseData.getApplicant1().setGeneralAppPayments(payments);
         caseDetails.setId(TEST_CASE_ID);
 
+        GeneralApplication generalApp = caseData.getGeneralApplications().getFirst().getValue();
+        when(submissionService.findActiveGeneralApplication(caseData, caseData.getApplicant1()))
+            .thenReturn(Optional.of(generalApp));
         when(paymentValidatorService.validatePayments(payments, TEST_CASE_ID))
             .thenReturn(Collections.singletonList(ERROR_PAYMENT_INCOMPLETE));
 
@@ -119,6 +122,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void givenValidPaymentMadeThenShouldSetPaymentDetailsAndMakeGeneralReferral() {
         setMockClock(clock);
 
@@ -133,6 +137,9 @@ class CitizenGeneralApplicationPaymentMadeTest {
         details.setId(TEST_CASE_ID);
 
         GeneralApplication generalApp = caseData.getGeneralApplications().getFirst().getValue();
+        when(submissionService.findActiveGeneralApplication(caseData, caseData.getApplicant1()))
+            .thenReturn(Optional.of(generalApp));
+
         GeneralReferral genReferral = GeneralReferral.builder()
             .generalReferralReason(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL)
             .generalReferralFraudCase(YesOrNo.NO)
@@ -151,6 +158,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
         when(paymentValidatorService.validatePayments(payments, TEST_CASE_ID)).thenReturn(
             Collections.emptyList()
         );
+        when(submissionService.canBeAutoReferred(any(CaseData.class), eq(GeneralApplicationType.DISCLOSURE_VIA_DWP))).thenReturn(true);
         when(paymentValidatorService.getLastPayment(payments)).thenReturn(payments.getLast().getValue());
         when(generalReferralService.buildGeneralReferral(generalApp)).thenReturn(genReferral);
 
@@ -159,8 +167,9 @@ class CitizenGeneralApplicationPaymentMadeTest {
         GeneralApplication generalApplication = response.getData().getGeneralApplications().getFirst().getValue();
         GeneralReferral generalReferral = response.getData().getGeneralReferral();
 
-        assertThat(response.getState()).isEqualTo(AwaitingGeneralConsideration);
+        verify(submissionService).setEndState(any(CaseDetails.class), any(GeneralApplication.class));
         assertThat(generalApplication.getGeneralApplicationFee().getPaymentReference()).isEqualTo(TEST_REFERENCE);
+        assertThat(generalApplication.getGeneralApplicationReferralDate()).isEqualTo(generalReferral.getGeneralApplicationReferralDate());
         assertThat(generalReferral.getGeneralReferralReason()).isEqualTo(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL);
         assertThat(generalReferral.getGeneralReferralType()).isEqualTo(GeneralReferralType.DISCLOSURE_VIA_DWP);
         assertThat(generalReferral.getGeneralReferralDocument()).isEqualTo(generalApplication.getGeneralApplicationDocument());
@@ -168,32 +177,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
     }
 
     @Test
-    void givenValidPaymentMadeForWelshApplicationThenShouldSetStateToWelshTranslationReview() {
-        setMockClock(clock);
-
-        List<ListValue<Payment>> payments = singletonList(new ListValue<>(
-            "1", Payment.builder().amount(6000).status(SUCCESS).reference(TEST_REFERENCE).build())
-        );
-
-        final var caseData = buildTestData();
-        final var details = CaseDetails.<CaseData, State>builder().data(caseData).build();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getApplicant1().setGeneralAppPayments(payments);
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
-        details.setId(TEST_CASE_ID);
-
-        when(paymentValidatorService.validatePayments(payments, TEST_CASE_ID)).thenReturn(
-            Collections.emptyList()
-        );
-        when(paymentValidatorService.getLastPayment(payments)).thenReturn(payments.getLast().getValue());
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplicationPayment.aboutToSubmit(details, details);
-
-        assertThat(response.getState()).isEqualTo(WelshTranslationReview);
-        assertThat(response.getData().getApplication().getWelshPreviousState()).isEqualTo(AwaitingGeneralConsideration);
-    }
-
-    @Test
+    @SuppressWarnings("unchecked")
     void givenGeneralReferralAlreadyInProgressThenShouldNotCreateNewReferral() {
         setMockClock(clock);
 
@@ -212,6 +196,10 @@ class CitizenGeneralApplicationPaymentMadeTest {
         );
         details.setId(TEST_CASE_ID);
 
+        GeneralApplication generalApp = caseData.getGeneralApplications().getFirst().getValue();
+        when(submissionService.findActiveGeneralApplication(caseData, caseData.getApplicant1()))
+            .thenReturn(Optional.of(generalApp));
+
         when(paymentValidatorService.validatePayments(payments, TEST_CASE_ID)).thenReturn(
             Collections.emptyList()
         );
@@ -222,7 +210,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
         GeneralApplication generalApplication = response.getData().getGeneralApplications().getFirst().getValue();
         GeneralReferral generalReferral = response.getData().getGeneralReferral();
 
-        assertThat(response.getState()).isEqualTo(GeneralApplicationReceived);
+        verify(submissionService).setEndState(any(CaseDetails.class), any(GeneralApplication.class));
         assertThat(generalApplication.getGeneralApplicationFee().getPaymentReference()).isEqualTo(TEST_REFERENCE);
         assertThat(generalReferral.getGeneralReferralReason()).isEqualTo(GeneralReferralReason.CASEWORKER_REFERRAL);
     }
@@ -239,12 +227,19 @@ class CitizenGeneralApplicationPaymentMadeTest {
             .data(beforeData)
             .id(TEST_CASE_ID)
             .build();
+        beforeDetails.setState(AwaitingPronouncement);
+
+        GeneralApplication generalApplication = caseData.getGeneralApplications().getFirst().getValue();
+
+        when(submissionService.findActiveGeneralApplication(caseData, beforeData.getApplicant1()))
+            .thenReturn(Optional.of(generalApplication));
 
         citizenGeneralApplicationPayment.submitted(details, beforeDetails);
 
-        verify(interimApplicationSubmissionService).sendGeneralApplicationNotifications(
-            TEST_CASE_ID, caseData.getGeneralApplications().getFirst().getValue(), caseData
+        verify(submissionService).sendNotifications(
+            TEST_CASE_ID, generalApplication, caseData
         );
+        assertThat(details.getData().getApplication().getPreviousState()).isEqualTo(AwaitingPronouncement);
     }
 
     private CaseData buildTestData() {
