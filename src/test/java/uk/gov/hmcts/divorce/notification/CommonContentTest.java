@@ -813,14 +813,22 @@ class CommonContentTest {
         Applicant applicant = Applicant.builder()
             .solicitor(solicitor)
             .build();
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(applicant)
+            .application(Application.builder().issueDate(LocalDate.now()).build())
+            .applicationType(SOLE_APPLICATION)
+            .build();
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SMART_SURVEY, "https://testsurveylink"));
         when(docmosisCommonContent.getSolicitorReference(any(), any())).thenReturn(solicitor.getReference());
 
-        Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, applicant);
+        Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, caseData, applicant);
 
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
         assertEquals("Solicitor Name", templateVars.get(CommonContent.NAME));
         assertEquals("SolRef", templateVars.get(CommonContent.SOLICITOR_REFERENCE));
+        assertEquals(CommonContent.APPLICANT, templateVars.get(CommonContent.APPLICANT1_LABEL));
+        assertEquals(CommonContent.RESPONDENT, templateVars.get(CommonContent.APPLICANT2_LABEL));
         assertThat(templateVars.get(CommonContent.SMART_SURVEY)).contains("https://testsurveylink");
     }
 
@@ -832,10 +840,15 @@ class CommonContentTest {
         Applicant applicant = Applicant.builder()
             .solicitor(solicitor)
             .build();
+        CaseData caseData = CaseData.builder()
+            .applicant1(applicant)
+            .application(Application.builder().issueDate(LocalDate.now()).build())
+            .applicationType(SOLE_APPLICATION)
+            .build();
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SMART_SURVEY, "https://testsurveylink"));
         when(docmosisCommonContent.getSolicitorReference(any(), any())).thenReturn(NOT_PROVIDED);
 
-        Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, applicant);
+        Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, caseData, applicant);
 
         assertEquals("7201-0001-0001-0001", templateVars.get(CommonContent.APPLICATION_REFERENCE));
         assertEquals("Solicitor Name", templateVars.get(CommonContent.NAME));
@@ -878,8 +891,13 @@ class CommonContentTest {
             .solicitor(solicitor)
             .languagePreferenceWelsh(NO)
             .build();
+        CaseData caseData = CaseData.builder()
+            .applicant1(applicant)
+            .application(Application.builder().issueDate(LocalDate.now()).build())
+            .applicationType(SOLE_APPLICATION)
+            .build();
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(WEBFORM_URL, "https://engUrl"));
-        Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, applicant);
+        Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, caseData, applicant);
 
         assertThat(templateVars.get(CommonContent.WEB_FORM_TEXT)).contains("https://engUrl");
     }
@@ -893,8 +911,13 @@ class CommonContentTest {
             .solicitor(solicitor)
             .languagePreferenceWelsh(YES)
             .build();
+        CaseData caseData = CaseData.builder()
+            .applicant1(applicant)
+            .application(Application.builder().issueDate(LocalDate.now()).build())
+            .applicationType(SOLE_APPLICATION)
+            .build();
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(WEBFORM_CY_URL, "https://welshUrl"));
-        Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, applicant);
+        Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, caseData , applicant);
 
         assertThat(templateVars.get(CommonContent.WEB_FORM_TEXT)).contains("https://welshUrl");
     }

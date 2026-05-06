@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -16,6 +17,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_NEED_TO_MAKE_CHANGES;
@@ -34,6 +36,8 @@ public class Applicant2RequestChangesNotification implements ApplicantNotificati
     private final NotificationService notificationService;
 
     private final CommonContent commonContent;
+
+    private final DocmosisCommonContent docmosisCommonContent;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -66,6 +70,10 @@ public class Applicant2RequestChangesNotification implements ApplicantNotificati
         templateVars.put(SIGN_IN_URL, commonContent.getSignInUrl(caseData));
         templateVars.put(REQUESTED_CHANGES,
             caseData.getApplication().getApplicant2ExplainsApplicant1IncorrectInformation());
+        templateVars.put(SOLICITOR_REFERENCE, docmosisCommonContent.getSolicitorReference(
+            applicant1.getSolicitor(),
+            applicant1.getLanguagePreference())
+        );
 
         notificationService.sendEmail(
             applicant1.getSolicitor().getEmail(),

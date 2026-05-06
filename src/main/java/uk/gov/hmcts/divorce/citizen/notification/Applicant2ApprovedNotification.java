@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
@@ -19,6 +20,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT2_APPROVED;
@@ -40,6 +42,8 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
     private final NotificationService notificationService;
 
     private final CommonContent commonContent;
+
+    private final DocmosisCommonContent docmosisCommonContent;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
@@ -126,6 +130,10 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
         templateVars.put(IS_APPLICANT2_REPRESENTED, caseData.getApplicant2().isRepresented() ? YES : NO);
         templateVars.put(IS_APPLICANT2_CITIZEN, !caseData.getApplicant2().isRepresented() ? YES : NO);
+        templateVars.put(SOLICITOR_REFERENCE, docmosisCommonContent.getSolicitorReference(
+            applicant1.getSolicitor(),
+            applicant1.getLanguagePreference())
+        );
 
         return templateVars;
     }
