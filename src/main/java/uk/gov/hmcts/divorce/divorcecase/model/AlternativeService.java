@@ -169,6 +169,7 @@ public class AlternativeService {
             .serviceApplicationDocsUploadedPreSubmission(serviceApplicationDocsUploadedPreSubmission)
             .paymentMethod(servicePaymentFee.getPaymentMethod())
             .serviceApplicationGranted(serviceApplicationGranted)
+            .alternativeServiceJudgeOrLegalAdvisorDetails(alternativeServiceJudgeOrLegalAdvisorDetails)
             .furtherDetails(serviceApplicationFurtherDetails)
             .refusalReason(refusalReason)
             .serviceApplicationRefusalReason(serviceApplicationRefusalReason)
