@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -23,7 +23,6 @@ import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyRespondentApplyFinalOrder.SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService.CASE_ALREADY_PROCESSED_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -33,7 +32,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class SystemNotifyRespondentApplyFinalOrderTest {
 
     @Mock
@@ -71,9 +70,6 @@ class SystemNotifyRespondentApplyFinalOrderTest {
         details.setData(caseData);
         caseData.getFinalOrder().setFinalOrderReminderSentApplicant2(YesOrNo.YES);
 
-        when(httpServletRequest.getHeader(AUTHORIZATION))
-            .thenReturn("auth header");
-
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemNotifyRespondentApplyFinalOrder.aboutToSubmit(details, details);
 
@@ -87,9 +83,6 @@ class SystemNotifyRespondentApplyFinalOrderTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION))
-            .thenReturn("auth header");
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemNotifyRespondentApplyFinalOrder.aboutToSubmit(details, details);
@@ -108,9 +101,6 @@ class SystemNotifyRespondentApplyFinalOrderTest {
         details.setData(caseData);
 
         OrderSummary orderSummary = new OrderSummary();
-
-        when(httpServletRequest.getHeader(AUTHORIZATION))
-            .thenReturn("auth header");
 
         when(paymentSetupService.createFinalOrderFeeOrderSummary(caseData, TEST_CASE_ID))
             .thenReturn(orderSummary);
@@ -136,9 +126,6 @@ class SystemNotifyRespondentApplyFinalOrderTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION))
-            .thenReturn("auth header");
 
         systemNotifyRespondentApplyFinalOrder.aboutToSubmit(details, details);
 
