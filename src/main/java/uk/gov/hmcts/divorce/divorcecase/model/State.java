@@ -627,5 +627,7 @@ public enum State {
         Rejected,
         Archived
     ));
+
+    public static final EnumSet<State> ALL_STATES_EXCEPT_PENDING_REFUND = EnumSet.complementOf(EnumSet.of(PendingRefund));
 }
 

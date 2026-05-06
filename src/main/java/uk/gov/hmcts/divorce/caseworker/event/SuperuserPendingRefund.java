@@ -10,7 +10,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ALL_STATES_EXCEPT_PENDING_REFUND;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -20,18 +21,17 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class SuperuserServiceApplicationRefund implements CCDConfig<CaseData, State, UserRole> {
-    public static final String SUPERUSER_SERVICE_APPLICATION_REFUND = "service-application-refund";
+public class SuperuserPendingRefund implements CCDConfig<CaseData, State, UserRole> {
+    public static final String SUPERUSER_PENDING_REFUND = "caseworker-pending-refund";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(SUPERUSER_SERVICE_APPLICATION_REFUND)
-            .forStates(POST_SUBMISSION_STATES)
-            .name("Service application refund")
-            .description("Service application refund")
+            .event(SUPERUSER_PENDING_REFUND)
+            .forStateTransition(ALL_STATES_EXCEPT_PENDING_REFUND, PendingRefund)
+            .name("Pending refund")
+            .description("Pending refund")
             .showEventNotes()
-            .showCondition("serviceApplicationGranted=\"Yes\"")
             .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE));
     }

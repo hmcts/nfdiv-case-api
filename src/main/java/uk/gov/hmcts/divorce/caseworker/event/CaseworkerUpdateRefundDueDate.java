@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -20,19 +20,22 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class SuperuserServiceApplicationRefund implements CCDConfig<CaseData, State, UserRole> {
-    public static final String SUPERUSER_SERVICE_APPLICATION_REFUND = "service-application-refund";
+public class CaseworkerUpdateRefundDueDate implements CCDConfig<CaseData, State, UserRole> {
+    public static final String CASEWORKER_UPDATE_REFUND_DUE_DATE = "caseworker-update-refund_due_date";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(SUPERUSER_SERVICE_APPLICATION_REFUND)
-            .forStates(POST_SUBMISSION_STATES)
-            .name("Service application refund")
-            .description("Service application refund")
+            .event(CASEWORKER_UPDATE_REFUND_DUE_DATE)
+            .forStates(PendingRefund)
+            .name("Update refund due date")
+            .description("Update refund due date")
             .showEventNotes()
-            .showCondition("serviceApplicationGranted=\"Yes\"")
-            .grant(CREATE_READ_UPDATE, SUPER_USER)
-            .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE));
+            .grant(CREATE_READ_UPDATE, CASE_WORKER)
+            .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE))
+            .page(CASEWORKER_UPDATE_REFUND_DUE_DATE)
+            .pageLabel("Update refund due date")
+            .mandatory(CaseData::getRefundDueDate)
+            .done();
     }
 }

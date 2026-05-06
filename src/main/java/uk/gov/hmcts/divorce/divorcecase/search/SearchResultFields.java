@@ -21,6 +21,7 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CCD_RE
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LAST_MODIFIED_DATE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LAST_STATE_MODIFIED_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.REFUND_DUE_DATE;
 
 @Component
 public class SearchResultFields implements CCDConfig<CaseData, State, UserRole> {
@@ -34,7 +35,8 @@ public class SearchResultFields implements CCDConfig<CaseData, State, UserRole> 
         SearchField.<UserRole>builder().id(APPLICANT_2_LAST_NAME).label("Respondent's Last Name").build(),
         SearchField.<UserRole>builder().id(DUE_DATE).label("Due Date").build(),
         SearchField.<UserRole>builder().id(LAST_MODIFIED_DATE).label("Last modified date").build(),
-        SearchField.<UserRole>builder().id(LAST_STATE_MODIFIED_DATE).label("Last state modified date").order(FIRST.ASCENDING).build()
+        SearchField.<UserRole>builder().id(LAST_STATE_MODIFIED_DATE).label("Last state modified date").order(FIRST.ASCENDING).build(),
+        SearchField.<UserRole>builder().id(REFUND_DUE_DATE).label("Refund due date").build()
     );
 
     @Override

@@ -4,7 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
+import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
@@ -22,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 
 @Component
@@ -57,13 +61,25 @@ public class SetSubmitAosState implements CaseTask {
     }
 
     private State getState(CaseData caseData) {
+        if (hasSuccessfulServicePayment(caseData.getAlternativeService())) {
+            return PendingRefund;
+        }
+
         boolean isSoleJsApplication = caseData.getApplicationType().isSole()
             && caseData.isJudicialSeparationCase();
         if (isSoleJsApplication) {
             caseData.setAwaitingJsAnswerStartDate(LocalDate.now());
             return caseData.getAcknowledgementOfService().isDisputed() ? AwaitingAnswer : AwaitingJsNullity;
-        } else {
-            return Holding;
         }
+        return Holding;
+    }
+
+    private boolean hasSuccessfulServicePayment(AlternativeService alternativeService) {
+        var servicePaymentMethod = alternativeService != null ? alternativeService.getServicePaymentFee().getPaymentMethod() : null;
+        return alternativeService != null && (servicePaymentMethod == ServicePaymentMethod.FEE_PAY_BY_ACCOUNT
+            || servicePaymentMethod == ServicePaymentMethod.FEE_PAY_BY_CARD)
+            && alternativeService.getServicePayments() != null
+            && alternativeService.getServicePayments().stream()
+            .anyMatch(payment -> payment.getValue().getStatus() == PaymentStatus.SUCCESS);
     }
 }
