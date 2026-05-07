@@ -106,6 +106,13 @@ public class AlternativeServiceOutcome {
     )
     private String furtherDetails;
 
+    @CCD(
+        label = "Further details for Judge or Legal Advisor",
+        typeOverride = TextArea,
+        searchable = false
+    )
+    private String alternativeServiceJudgeOrLegalAdvisorDetails;
+
     /*
     Deemed or Dispensed Fields
      */

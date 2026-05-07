@@ -28,6 +28,8 @@ public final class DocumentConstants {
     public static final String NFD_NOTICE_OF_CHANGE_APP_INVITE_DOCUMENT_NAME = "Case invitation to Citizen";
     public static final String NFD_NOP_APP1_JS_SOLE_UNDISPUTED = "NFD_NOP_APP1_JS_SOLE_UNDISPUTED";
 
+    public static final String HEARING_REMINDER = "HEARING_REMINDER";
+
     public static final String PRONOUNCEMENT_LIST_TEMPLATE_ID = "BULK_CASE_PRONOUNCEMENT";
     public static final String PRONOUNCEMENT_LIST_DOCUMENT_NAME = "NFD_Pronouncement_List";
 
