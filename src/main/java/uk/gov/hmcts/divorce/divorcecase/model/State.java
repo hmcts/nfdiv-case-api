@@ -628,6 +628,14 @@ public enum State {
         Archived
     ));
 
-    public static final EnumSet<State> ALL_STATES_EXCEPT_PENDING_REFUND = EnumSet.complementOf(EnumSet.of(PendingRefund));
+    public static final EnumSet<State> PENDING_REFUND_STATES = EnumSet.complementOf(EnumSet.of(
+        Draft,
+        AwaitingApplicant1Response,
+        AwaitingApplicant2Response,
+        Applicant2Approved,
+        AwaitingClarification,
+        AwaitingAmendedApplication,
+        PendingRefund
+    ));
 }
 

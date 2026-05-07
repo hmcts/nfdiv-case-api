@@ -31,7 +31,7 @@ public class SuperuserServiceApplicationRefund implements CCDConfig<CaseData, St
             .name("Service application refund")
             .description("Service application refund")
             .showEventNotes()
-            .showCondition("serviceApplicationGranted=\"Yes\"")
+            .showCondition("serviceApplicationGranted!=\"*\"")
             .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE));
     }

@@ -36,7 +36,9 @@ public class SearchResultFields implements CCDConfig<CaseData, State, UserRole> 
         SearchField.<UserRole>builder().id(DUE_DATE).label("Due Date").build(),
         SearchField.<UserRole>builder().id(LAST_MODIFIED_DATE).label("Last modified date").build(),
         SearchField.<UserRole>builder().id(LAST_STATE_MODIFIED_DATE).label("Last state modified date").order(FIRST.ASCENDING).build(),
-        SearchField.<UserRole>builder().id(REFUND_DUE_DATE).label("Refund due date").build()
+        SearchField.<UserRole>builder().id(REFUND_DUE_DATE).userRole(UserRole.CASE_WORKER).label("Refund due date").build(),
+        SearchField.<UserRole>builder().id(REFUND_DUE_DATE).userRole(UserRole.SUPER_USER).label("Refund due date").build(),
+        SearchField.<UserRole>builder().id(REFUND_DUE_DATE).userRole(UserRole.JUDGE).label("Refund due date").build()
     );
 
     @Override

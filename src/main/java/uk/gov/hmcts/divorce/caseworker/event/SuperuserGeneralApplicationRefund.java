@@ -30,7 +30,6 @@ public class SuperuserGeneralApplicationRefund implements CCDConfig<CaseData, St
             .forStates(POST_SUBMISSION_STATES)
             .name("General application refund")
             .description("General application Refund")
-            .showCondition("generalReferralReason=\"*\"")
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE));

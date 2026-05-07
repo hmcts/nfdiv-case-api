@@ -10,8 +10,13 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType;
 import uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
@@ -31,6 +36,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
@@ -173,6 +179,46 @@ class SetSubmitAosStateTest {
         final CaseDetails<CaseData, State> result = setSubmitAosState.apply(caseDetails);
 
         assertThat(result.getState()).isEqualTo(Holding);
+    }
+
+    @Test
+    void shouldSetStateToPendingRefundIfActiveServiceApplicationIsPresent() {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.setAlternativeService(AlternativeService.builder()
+            .alternativeServiceType(AlternativeServiceType.ALTERNATIVE_SERVICE)
+                .servicePaymentFee(FeeDetails.builder().paymentReference("123").build())
+            .build());
+
+
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData)
+            .state(OfflineDocumentReceived)
+            .build();
+
+        final CaseDetails<CaseData, State> result = setSubmitAosState.apply(caseDetails);
+
+        assertThat(result.getState()).isEqualTo(PendingRefund);
+    }
+
+    @Test
+    void shouldSetStateToPendingRefundIfActiveGeneralApplicationWithAutoGeneralReferralIsPresent() {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.setGeneralReferral(GeneralReferral.builder()
+            .generalReferralType(GeneralReferralType.DISCLOSURE_VIA_DWP)
+            .generalReferralFee(FeeDetails.builder().paymentReference("123").build())
+            .build());
+
+
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData)
+            .state(OfflineDocumentReceived)
+            .build();
+
+        final CaseDetails<CaseData, State> result = setSubmitAosState.apply(caseDetails);
+
+        assertThat(result.getState()).isEqualTo(PendingRefund);
     }
 
     @ParameterizedTest

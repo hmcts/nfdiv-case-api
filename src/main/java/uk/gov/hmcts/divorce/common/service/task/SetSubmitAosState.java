@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
-import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
@@ -61,7 +62,8 @@ public class SetSubmitAosState implements CaseTask {
     }
 
     private State getState(CaseData caseData) {
-        if (hasSuccessfulServicePayment(caseData.getAlternativeService())) {
+        if (hasSuccessfulServicePayment(caseData.getAlternativeService())
+            || hasSuccessfulGeneralApplicationAutomaticReferralPayment(caseData.getGeneralReferral())) {
             return PendingRefund;
         }
 
@@ -75,11 +77,15 @@ public class SetSubmitAosState implements CaseTask {
     }
 
     private boolean hasSuccessfulServicePayment(AlternativeService alternativeService) {
-        var servicePaymentMethod = alternativeService != null ? alternativeService.getServicePaymentFee().getPaymentMethod() : null;
-        return alternativeService != null && (servicePaymentMethod == ServicePaymentMethod.FEE_PAY_BY_ACCOUNT
-            || servicePaymentMethod == ServicePaymentMethod.FEE_PAY_BY_CARD)
-            && alternativeService.getServicePayments() != null
-            && alternativeService.getServicePayments().stream()
-            .anyMatch(payment -> payment.getValue().getStatus() == PaymentStatus.SUCCESS);
+        var servicePaymentFee = alternativeService != null ? alternativeService.getServicePaymentFee() : null;
+
+        return servicePaymentFee != null && !isEmpty(servicePaymentFee.getPaymentReference());
+    }
+
+    private boolean hasSuccessfulGeneralApplicationAutomaticReferralPayment(GeneralReferral generalReferral) {
+        var generalReferralPaymentFee = generalReferral != null ? generalReferral.getGeneralReferralFee() : null;
+        return generalReferralPaymentFee != null
+            && generalReferral.getGeneralReferralType() == GeneralReferralType.DISCLOSURE_VIA_DWP
+            && !isEmpty(generalReferralPaymentFee.getPaymentReference());
     }
 }

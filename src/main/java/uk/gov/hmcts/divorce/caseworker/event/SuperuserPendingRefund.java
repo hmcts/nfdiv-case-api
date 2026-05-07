@@ -10,7 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ALL_STATES_EXCEPT_PENDING_REFUND;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PENDING_REFUND_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -28,7 +28,7 @@ public class SuperuserPendingRefund implements CCDConfig<CaseData, State, UserRo
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SUPERUSER_PENDING_REFUND)
-            .forStateTransition(ALL_STATES_EXCEPT_PENDING_REFUND, PendingRefund)
+            .forStateTransition(PENDING_REFUND_STATES, PendingRefund)
             .name("Pending refund")
             .description("Pending refund")
             .showEventNotes()
