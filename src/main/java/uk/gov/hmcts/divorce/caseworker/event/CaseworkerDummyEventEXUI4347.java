@@ -10,12 +10,12 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DummyFields;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -30,8 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String CASEWORKER_DUMMY_EVENT_EXUI_4347 = "caseworker-dummy-event-exui4347";
-    public static final String EXUI_ISSUE_ID = "EXUI-3839-4347";
-
+    
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final boolean dummyEventEnabled = Boolean.parseBoolean(System.getenv().get("EXUI_DUMMY_EVENTS_ENABLED"));
@@ -48,22 +47,26 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
                 .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
                 .page("dummyPage", this::midEvent)
                 .pageLabel("Dummy Page")
-                .mandatory(CaseData::getDummySetDateAutomatically)
+                .complex(CaseData::getExuiDummyFields)
+                    .mandatory(DummyFields::getDummySetDateAutomatically)
+                    .mandatory(DummyFields::getDummyDate, "dummySetDateAutomatically=\"NEVER_SHOW\"", true)
+                    .mandatory(DummyFields::getDummyEnumField, "dummySetDateAutomatically=\"NEVER_SHOW\"", true)
+                .done()
                 .done();
         }
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_4347, details.getId());
-        CaseData caseData = details.getData();
+        DummyFields dummyFields = details.getData().getExuiDummyFields();
 
-        log.info("Dummy String is: " + caseData.getDummyString());
-        caseData.setDummyString(EXUI_ISSUE_ID);
+        log.info("Dummy Enum Field is: " + dummyFields.getDummyEnumField());
+        dummyFields.setDummyEnumField(DummyFields.DummyEnum.DUMMY_ENUM_1);
 
-        log.info("Dummy String is Now: " + caseData.getDummyString());
+        log.info("Dummy Enum Field is Now: " + dummyFields.getDummyEnumField());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(details.getData())
             .build();
     }
 
@@ -71,26 +74,28 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
                                                                   final CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} midEvent callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_4347, details.getId());
 
-        CaseData caseData = details.getData();
-        CaseData beforeCaseData = beforeDetails.getData();
-        String dummyString = caseData.getDummyString();
-        String beforeDummyString = beforeCaseData.getDummyString();
+        DummyFields dummyFields = details.getData().getExuiDummyFields();
+        DummyFields beforeDummyFields = beforeDetails.getData().getExuiDummyFields();
+        List<String> warnings = new ArrayList<>();
 
-        String originalDummyString = "Dummy String Was Originally: " + beforeDummyString;
-        String currentDummyString = "Dummy String is Now: " + dummyString;
-        String expectedDummyString = "Dummy String Should Be: " + EXUI_ISSUE_ID;
+        DummyFields.DummyEnum dummyEnumField = dummyFields.getDummyEnumField();
+        DummyFields.DummyEnum beforeDummyEnumField = beforeDummyFields.getDummyEnumField();
 
-        String warning = "midEvent Callback: " + originalDummyString + " " + currentDummyString + " " + expectedDummyString;
+        String originalDummyEnum = "Dummy Enum Field Was Originally: " + beforeDummyEnumField;
+        String currentDummyEnum = "Dummy Enum Field is Now: " + dummyEnumField;
+        String expectedDummyEnum = "Dummy Enum Field Should Be: " + DummyFields.DummyEnum.DUMMY_ENUM_1;
 
-        if (YesOrNo.YES.equals(caseData.getDummySetDateAutomatically())) {
-            log.info("Dummy Date is: " + caseData.getDummyDate());
-            caseData.setDummyDate(LocalDate.now());
-            log.info("Dummy Date is Now: " + caseData.getDummyDate());
+        warnings.add("aboutToSubmit Callback: " + originalDummyEnum + " " + currentDummyEnum + " " + expectedDummyEnum);
+
+        if (YesOrNo.YES.equals(dummyFields.getDummySetDateAutomatically())) {
+            log.info("Dummy Date is: " + dummyFields.getDummyDate());
+            dummyFields.setDummyDate(LocalDate.now());
+            log.info("Dummy Date is Now: " + dummyFields.getDummyDate());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
-            .warnings(EXUI_ISSUE_ID.equals(caseData.getDummyString()) ? null : Collections.singletonList(warning))
+            .warnings(warnings)
             .build();
     }
 
@@ -98,29 +103,23 @@ public class CaseworkerDummyEventEXUI4347 implements CCDConfig<CaseData, State, 
                                                                         final CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_DUMMY_EVENT_EXUI_4347, details.getId());
         List<String> errors = new ArrayList<>();
-        String alwaysThrowError = "Always Throw Error To Preserve Test Case Data";
-        errors.add(alwaysThrowError);
 
-        CaseData caseData = details.getData();
-        CaseData beforeCaseData = beforeDetails.getData();
-        String dummyString = caseData.getDummyString();
-        String beforeDummyString = beforeCaseData.getDummyString();
+        DummyFields dummyFields = details.getData().getExuiDummyFields();
+        DummyFields beforeDummyFields = beforeDetails.getData().getExuiDummyFields();
+        DummyFields.DummyEnum dummyEnumField = dummyFields.getDummyEnumField();
+        DummyFields.DummyEnum beforeDummyEnumField = beforeDummyFields.getDummyEnumField();
 
-        String originalDummyString = "Dummy String Was Originally: " + beforeDummyString;
-        String currentDummyString = "Dummy String is Now: " + dummyString;
-        String expectedDummyString = "Dummy String Should Be: " + EXUI_ISSUE_ID;
+        String originalDummyEnum = "Dummy Enum Field Was Originally: " + beforeDummyEnumField;
+        String currentDummyEnum = "Dummy Enum Field is Now: " + dummyEnumField;
+        String expectedDummyEnum = "Dummy Enum Field Should Be: " + DummyFields.DummyEnum.DUMMY_ENUM_1;
 
-        String error = "aboutToSubmit Callback: " + originalDummyString + " " + currentDummyString + " " + expectedDummyString;
-        if (!EXUI_ISSUE_ID.equals(dummyString)) {
-            errors.add(error);
-        }
+        errors.add("aboutToSubmit Callback: " + originalDummyEnum + " " + currentDummyEnum + " " + expectedDummyEnum);
 
-        if (YesOrNo.YES.equals(caseData.getDummySetDateAutomatically()) && !LocalDate.now().equals(caseData.getDummyDate())) {
-            String originalDummyDate = "Dummy Date Was Originally: " + beforeCaseData.getDummyDate();
-            String currentDummyDate = "Dummy Date is Now: " + caseData.getDummyDate();
+        if (YesOrNo.YES.equals(dummyFields.getDummySetDateAutomatically())) {
+            String originalDummyDate = "Dummy Date Was Originally: " + beforeDummyFields.getDummyDate();
+            String currentDummyDate = "Dummy Date is Now: " + dummyFields.getDummyDate();
             String expectedDummyDate = "Dummy Date Should Be: " + LocalDate.now();
-            String dateError = "aboutToSubmit Callback: " + originalDummyDate + " " + currentDummyDate + " " + expectedDummyDate;
-            errors.add(dateError);
+            errors.add("aboutToSubmit Callback: " + originalDummyDate + " " + currentDummyDate + " " + expectedDummyDate);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
