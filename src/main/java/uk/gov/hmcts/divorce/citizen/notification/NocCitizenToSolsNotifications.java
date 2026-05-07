@@ -81,7 +81,7 @@ public class NocCitizenToSolsNotifications implements ApplicantNotification {
         notificationService.sendEmail(
             caseData.getApplicant1().getSolicitor().getEmail(),
             NOC_TO_SOLS_EMAIL_NEW_SOL,
-            commonContent.nocSolsTemplateVars(id, caseData ,caseData.getApplicant1()),
+            commonContent.nocSolsTemplateVars(id, caseData, caseData.getApplicant1()),
             caseData.getApplicant1().getLanguagePreference(),
             id
         );

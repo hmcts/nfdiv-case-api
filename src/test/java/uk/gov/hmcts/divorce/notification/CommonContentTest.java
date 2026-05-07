@@ -917,7 +917,7 @@ class CommonContentTest {
             .applicationType(SOLE_APPLICATION)
             .build();
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(WEBFORM_CY_URL, "https://welshUrl"));
-        Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, caseData , applicant);
+        Map<String, String> templateVars = commonContent.nocSolsTemplateVars(caseRef, caseData, applicant);
 
         assertThat(templateVars.get(CommonContent.WEB_FORM_TEXT)).contains("https://welshUrl");
     }
