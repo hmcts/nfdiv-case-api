@@ -408,7 +408,8 @@ public class CaseData {
     private Flags caseFlags;
 
     @CCD(
-        label = "Service application refund due date"
+        label = "Service application refund due date",
+        searchable = false
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate refundDueDate;
