@@ -144,7 +144,7 @@ public class NoticeOfProceedingSolicitorContent {
             templateContent.put(APPLICANT_1_SOLICITOR_ADDRESS, applicant1.getSolicitor().getFirmAndAddress());
             templateContent.put(IS_APP1_REPRESENTED, applicant1.isRepresented());
             templateContent.put(ADDRESS_BASED_OVERSEAS,
-                YesOrNo.YES.equals(applicant2.getAddressOverseas()) || !AddressUtil.isEnglandOrWales(applicant2.getAddress())
+                YesOrNo.YES.equals(applicant2.getAddressOverseas()) || !AddressUtil.isUnitedKingdom(applicant2.getAddress())
             );
         }
 
