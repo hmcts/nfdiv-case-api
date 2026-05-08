@@ -3,8 +3,10 @@ package uk.gov.hmcts.divorce.common.notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -20,7 +22,10 @@ public class ApplicationRejectedFeeNotPaidNotification implements ApplicantNotif
     private final CommonContent commonContent;
 
     @Override
-    public void sendToApplicant1(final CaseData caseData, final Long caseId) {
+    public void sendToApplicant1(final CaseDetails<CaseData, State> caseDetails) {
+        CaseData caseData = caseDetails.getData();
+        Long caseId = caseDetails.getId();
+
         log.info("Sending application rejected notification to applicant 1 for case : {}", caseId);
 
         Applicant applicant = caseData.getApplicant1();
@@ -36,7 +41,9 @@ public class ApplicationRejectedFeeNotPaidNotification implements ApplicantNotif
     }
 
     @Override
-    public void sendToApplicant2(final CaseData caseData, final Long caseId) {
+    public void sendToApplicant2(final CaseDetails<CaseData, State> caseDetails) {
+        CaseData caseData = caseDetails.getData();
+        Long caseId = caseDetails.getId();
         if (!caseData.getApplicationType().isSole()) {
             log.info("Sending application rejected notification to applicant 2 for case : {}", caseId);
 

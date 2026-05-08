@@ -79,7 +79,7 @@ public class SystemRejectCasesWithPaymentOverdueTask implements Runnable {
             casesInAwaitingPaymentStateForPaymentOverdue.stream()
                 .map(caseDetailsConverter::convertToCaseDetailsFromReformModel)
                 .forEach(caseDetails -> {
-                    //paymentStatusService.processPaymentRejection(caseDetails, user, serviceAuth);
+                    paymentStatusService.processPaymentRejection(caseDetails, user, serviceAuth);
                     log.info("{} in {} state rejected for payment overdue", caseDetails.getId(), caseDetails.getState());
                 });
 

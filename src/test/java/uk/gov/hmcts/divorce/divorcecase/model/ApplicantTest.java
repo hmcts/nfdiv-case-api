@@ -151,7 +151,7 @@ class ApplicantTest {
     }
 
     @Test
-    void shouldReturnTrueIfScottishAddress() {
+    void shouldReturnFalseIfScottishAddress() {
         final Applicant applicant1 = Applicant.builder()
             .address(AddressGlobalUK.builder().country("UK").postCode("KA27 8AB").build())
             .build();
@@ -162,9 +162,9 @@ class ApplicantTest {
             .address(AddressGlobalUK.builder().country("Scotland").build())
             .build();
 
-        assertThat(applicant1.isBasedOverseas()).isTrue();
-        assertThat(applicant2.isBasedOverseas()).isTrue();
-        assertThat(applicant3.isBasedOverseas()).isTrue();
+        assertThat(applicant1.isBasedOverseas()).isFalse();
+        assertThat(applicant2.isBasedOverseas()).isFalse();
+        assertThat(applicant3.isBasedOverseas()).isFalse();
     }
 
     @Test
@@ -463,7 +463,7 @@ class ApplicantTest {
         Applicant applicant = caseData().getApplicant2();
         applicant.setAddress(
             AddressGlobalUK.builder()
-                .country("Scotland")
+                .country("Greece")
                 .postCode("111111")
                 .build()
         );
