@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType;
 import uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.util.Arrays;
@@ -202,12 +203,53 @@ class SetSubmitAosStateTest {
     }
 
     @Test
+    void shouldSetStateToPendingRefundIfActiveServiceApplicationIsPresentPayByPhone() {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.setAlternativeService(AlternativeService.builder()
+            .alternativeServiceType(AlternativeServiceType.ALTERNATIVE_SERVICE)
+            .servicePaymentFee(FeeDetails.builder().paymentMethod(ServicePaymentMethod.FEE_PAY_BY_PHONE).build())
+            .build());
+
+
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData)
+            .state(OfflineDocumentReceived)
+            .build();
+
+        final CaseDetails<CaseData, State> result = setSubmitAosState.apply(caseDetails);
+
+        assertThat(result.getState()).isEqualTo(PendingRefund);
+    }
+
+
+    @Test
     void shouldSetStateToPendingRefundIfActiveGeneralApplicationWithAutoGeneralReferralIsPresent() {
         final CaseData caseData = caseData();
         caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
         caseData.setGeneralReferral(GeneralReferral.builder()
             .generalReferralType(GeneralReferralType.DISCLOSURE_VIA_DWP)
             .generalReferralFee(FeeDetails.builder().paymentReference("123").build())
+            .build());
+
+
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .data(caseData)
+            .state(OfflineDocumentReceived)
+            .build();
+
+        final CaseDetails<CaseData, State> result = setSubmitAosState.apply(caseDetails);
+
+        assertThat(result.getState()).isEqualTo(PendingRefund);
+    }
+
+    @Test
+    void shouldSetStateToPendingRefundIfActiveGeneralApplicationWithAutoGeneralReferralIsPresentPayByPhone() {
+        final CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.setGeneralReferral(GeneralReferral.builder()
+            .generalReferralType(GeneralReferralType.DISCLOSURE_VIA_DWP)
+            .generalReferralFee(FeeDetails.builder().paymentMethod(ServicePaymentMethod.FEE_PAY_BY_PHONE).build())
             .build());
 
 

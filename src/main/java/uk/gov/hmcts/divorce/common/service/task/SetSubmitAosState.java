@@ -6,8 +6,10 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType;
+import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
@@ -77,13 +79,16 @@ public class SetSubmitAosState implements CaseTask {
     }
 
     private boolean hasSuccessfulServicePayment(AlternativeService alternativeService) {
-        return alternativeService != null
-            && alternativeService.getServicePaymentFee().getPaymentReference() != null;
+        FeeDetails feeDetails = alternativeService.getServicePaymentFee();
+
+        return !isEmpty(feeDetails.getPaymentReference()) || feeDetails.getPaymentMethod() == ServicePaymentMethod.FEE_PAY_BY_PHONE;
     }
 
     private boolean hasSuccessfulGeneralApplicationAutomaticReferralPayment(GeneralReferral generalReferral) {
-        return generalReferral != null
-            && generalReferral.getGeneralReferralType() == GeneralReferralType.DISCLOSURE_VIA_DWP
-            && !isEmpty(generalReferral.getGeneralReferralFee().getPaymentReference());
+        FeeDetails feeDetails = generalReferral.getGeneralReferralFee();
+
+        return generalReferral.getGeneralReferralType() == GeneralReferralType.DISCLOSURE_VIA_DWP
+            && (!isEmpty(generalReferral.getGeneralReferralFee().getPaymentReference())
+            || feeDetails.getPaymentMethod() == ServicePaymentMethod.FEE_PAY_BY_PHONE);
     }
 }
