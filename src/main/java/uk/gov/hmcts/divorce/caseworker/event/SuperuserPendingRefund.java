@@ -10,7 +10,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.PENDING_REFUND_STATES;
+import java.util.EnumSet;
+
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAmendedApplication;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -28,7 +35,15 @@ public class SuperuserPendingRefund implements CCDConfig<CaseData, State, UserRo
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SUPERUSER_PENDING_REFUND)
-            .forStateTransition(PENDING_REFUND_STATES, PendingRefund)
+            .forStateTransition(EnumSet.complementOf(EnumSet.of(
+                Draft,
+                AwaitingApplicant1Response,
+                AwaitingApplicant2Response,
+                Applicant2Approved,
+                AwaitingClarification,
+                AwaitingAmendedApplication,
+                PendingRefund
+            )), PendingRefund)
             .name("Pending refund")
             .description("Pending refund")
             .showEventNotes()

@@ -627,15 +627,5 @@ public enum State {
         Rejected,
         Archived
     ));
-
-    public static final EnumSet<State> PENDING_REFUND_STATES = EnumSet.complementOf(EnumSet.of(
-        Draft,
-        AwaitingApplicant1Response,
-        AwaitingApplicant2Response,
-        Applicant2Approved,
-        AwaitingClarification,
-        AwaitingAmendedApplication,
-        PendingRefund
-    ));
 }
 

@@ -82,9 +82,8 @@ public class SetSubmitAosState implements CaseTask {
     }
 
     private boolean hasSuccessfulGeneralApplicationAutomaticReferralPayment(GeneralReferral generalReferral) {
-        var generalReferralPaymentFee = generalReferral != null ? generalReferral.getGeneralReferralFee() : null;
-        return generalReferralPaymentFee != null
+        return generalReferral != null
             && generalReferral.getGeneralReferralType() == GeneralReferralType.DISCLOSURE_VIA_DWP
-            && !isEmpty(generalReferralPaymentFee.getPaymentReference());
+            && !isEmpty(generalReferral.getGeneralReferralFee().getPaymentReference());
     }
 }
