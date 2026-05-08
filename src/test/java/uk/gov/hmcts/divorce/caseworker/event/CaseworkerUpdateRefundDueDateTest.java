@@ -24,7 +24,7 @@ class CaseworkerUpdateRefundDueDateTest {
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        caseworkerUpdateRefundDueDat.configure(configBuilder);
+        caseworkerUpdateRefundDueDate.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
