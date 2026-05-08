@@ -64,8 +64,8 @@ public class SetSubmitAosState implements CaseTask {
     }
 
     private State getState(CaseData caseData) {
-        if (hasSuccessfulServicePayment(caseData.getAlternativeService())
-            || hasSuccessfulGeneralApplicationAutomaticReferralPayment(caseData.getGeneralReferral())) {
+        if (hasServicePayment(caseData.getAlternativeService())
+            || hasGeneralReferralPayment(caseData.getGeneralReferral())) {
             return PendingRefund;
         }
 
@@ -78,17 +78,16 @@ public class SetSubmitAosState implements CaseTask {
         return Holding;
     }
 
-    private boolean hasSuccessfulServicePayment(AlternativeService alternativeService) {
-        FeeDetails feeDetails = alternativeService.getServicePaymentFee();
-
-        return !isEmpty(feeDetails.getPaymentReference()) || feeDetails.getPaymentMethod() == ServicePaymentMethod.FEE_PAY_BY_PHONE;
+    private boolean hasServicePayment(AlternativeService alternativeService) {
+        return hasCompletedPayment(alternativeService.getServicePaymentFee());
     }
 
-    private boolean hasSuccessfulGeneralApplicationAutomaticReferralPayment(GeneralReferral generalReferral) {
-        FeeDetails feeDetails = generalReferral.getGeneralReferralFee();
-
+    private boolean hasGeneralReferralPayment(GeneralReferral generalReferral) {
         return generalReferral.getGeneralReferralType() == GeneralReferralType.DISCLOSURE_VIA_DWP
-            && (!isEmpty(generalReferral.getGeneralReferralFee().getPaymentReference())
-            || feeDetails.getPaymentMethod() == ServicePaymentMethod.FEE_PAY_BY_PHONE);
+            && hasCompletedPayment(generalReferral.getGeneralReferralFee());
+    }
+
+    private boolean hasCompletedPayment(FeeDetails feeDetails) {
+        return !isEmpty(feeDetails.getPaymentReference()) || feeDetails.getPaymentMethod() == ServicePaymentMethod.FEE_PAY_BY_PHONE;
     }
 }
