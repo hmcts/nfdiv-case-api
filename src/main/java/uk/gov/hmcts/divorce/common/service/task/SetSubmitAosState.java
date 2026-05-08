@@ -77,9 +77,8 @@ public class SetSubmitAosState implements CaseTask {
     }
 
     private boolean hasSuccessfulServicePayment(AlternativeService alternativeService) {
-        var servicePaymentFee = alternativeService != null ? alternativeService.getServicePaymentFee() : null;
-
-        return servicePaymentFee != null && !isEmpty(servicePaymentFee.getPaymentReference());
+        return alternativeService != null
+          && alternativeService.getServicePaymentFee().getPaymentReference() != null;
     }
 
     private boolean hasSuccessfulGeneralApplicationAutomaticReferralPayment(GeneralReferral generalReferral) {
