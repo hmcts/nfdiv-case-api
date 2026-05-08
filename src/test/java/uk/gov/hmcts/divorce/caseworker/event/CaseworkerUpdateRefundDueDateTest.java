@@ -18,7 +18,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 @ExtendWith(MockitoExtension.class)
 class CaseworkerUpdateRefundDueDateTest {
     @InjectMocks
-    private CaseworkerUpdateRefundDueDate caseworkerUpdateRefundDueDat;
+    private CaseworkerUpdateRefundDueDate caseworkerUpdateRefundDueDate;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
