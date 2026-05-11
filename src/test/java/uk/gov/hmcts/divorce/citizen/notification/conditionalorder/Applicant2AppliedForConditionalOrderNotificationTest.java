@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -67,7 +67,6 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
-import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
@@ -78,7 +77,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseDa
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class Applicant2AppliedForConditionalOrderNotificationTest {
 
     @Mock
@@ -100,8 +99,6 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
-
-        setMockClock(clock);
 
         notification.sendToApplicant1(caseData, TEST_CASE_ID);
 
@@ -135,8 +132,6 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(templateVars);
 
-        setMockClock(clock);
-
         notification.sendToApplicant1(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
@@ -161,7 +156,6 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
         setSubmittedDate(caseData, List.of(APPLICANT2));
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))
             .thenReturn(getMainTemplateVars());
-        setMockClock(clock);
 
         notification.sendToApplicant1(caseData, TEST_CASE_ID);
 
@@ -185,7 +179,6 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
             .conditionalOrderApplicant1Questions(ConditionalOrderQuestions.builder().submittedDate(LocalDateTime.now()).build())
             .build());
         setSubmittedDate(caseData, List.of(APPLICANT2));
-        setMockClock(clock);
 
         notification.sendToApplicant1(caseData, TEST_CASE_ID);
 
@@ -205,8 +198,6 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
-
-        setMockClock(clock);
 
         notification.sendToApplicant2(caseData, TEST_CASE_ID);
 
@@ -235,8 +226,6 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
 
-        setMockClock(clock);
-
         notification.sendToApplicant2(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
@@ -256,8 +245,6 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2(), caseData.getApplicant1()))
             .thenReturn(getMainTemplateVars());
-
-        setMockClock(clock);
 
         notification.sendToApplicant2(caseData, TEST_CASE_ID);
 
@@ -279,8 +266,6 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
         setSubmittedDate(caseData, List.of(APPLICANT1, APPLICANT2));
         caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
         caseData.getApplicant2().setLanguagePreferenceWelsh(YesOrNo.YES);
-
-        setMockClock(clock);
 
         notification.sendToApplicant2(caseData, TEST_CASE_ID);
 
@@ -312,8 +297,6 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
 
         when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
             .thenReturn(getMainTemplateVars());
-
-        setMockClock(clock);
 
         notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
@@ -367,8 +350,6 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
 
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("/signInUrl");
-
-        setMockClock(clock);
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
