@@ -67,10 +67,7 @@ public class CaseworkerUpdateFinalOrderFields implements CCDConfig<CaseData, Sta
         finalOrder.setDateFinalOrderNoLongerEligible(
             finalOrder.calculateDateFinalOrderNoLongerEligible(conditionalOrder.getGrantedDate()));
         finalOrder.setDateFinalOrderEligibleToRespondent(
-            finalOrder.calculateDateFinalOrderEligibleToRespondent(
-                conditionalOrder.getGrantedDate()
-            )
-        );
+            finalOrder.calculateDateFinalOrderEligibleToRespondent());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

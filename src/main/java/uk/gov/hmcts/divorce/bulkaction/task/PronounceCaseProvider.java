@@ -58,7 +58,7 @@ public class PronounceCaseProvider implements BulkActionCaseTaskProvider {
                 finalOrder.setDateFinalOrderNoLongerEligible(
                     finalOrder.calculateDateFinalOrderNoLongerEligible(conditionalOrder.getGrantedDate()));
                 finalOrder.setDateFinalOrderEligibleToRespondent(
-                    finalOrder.calculateDateFinalOrderEligibleToRespondent(conditionalOrder.getGrantedDate()));
+                    finalOrder.calculateDateFinalOrderEligibleToRespondent());
             }
 
             return mainCaseDetails;
