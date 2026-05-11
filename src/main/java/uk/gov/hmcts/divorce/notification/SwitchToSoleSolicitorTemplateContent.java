@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -39,6 +40,12 @@ public class SwitchToSoleSolicitorTemplateContent {
         templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateContent.put(DATE_PLUS_14_DAYS, LocalDate.now(clock).plusDays(14).format(
             getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
+
+        final LocalDate issueDate = caseData.getApplication().getIssueDate();
+        templateContent.put(DocmosisTemplateConstants.ISSUE_DATE,
+            issueDate == null ? "" : caseData.getApplication().getIssueDate().format(
+                getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference()))
+        );
 
         return templateContent;
     }

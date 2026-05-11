@@ -6,11 +6,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.Map;
 
 import static java.time.LocalDate.now;
@@ -75,6 +78,7 @@ class SwitchToSoleSolicitorTemplateContentTest {
                 applicant2
             )
             .finalOrder(FinalOrder.builder().doesApplicant2IntendToSwitchToSole(YES).build())
+            .application(Application.builder().issueDate(LocalDate.of(2021, 4, 28)).build())
             .build();
 
         final Map<String, String> templateVars = solicitorTemplateContent.templatevars(caseData, TEST_CASE_ID, applicant1, applicant2);
@@ -86,7 +90,8 @@ class SwitchToSoleSolicitorTemplateContentTest {
                 entry(APPLICANT_2_NAME, "Bob Smith"),
                 entry(SOLICITOR_REFERENCE, "sol ref"),
                 entry(SOLICITOR_NAME, "app1 sol"),
-                entry(DATE_PLUS_14_DAYS, now(clock).plusDays(14).format(DATE_TIME_FORMATTER))
+                entry(DATE_PLUS_14_DAYS, now(clock).plusDays(14).format(DATE_TIME_FORMATTER)),
+                entry(DocmosisTemplateConstants.ISSUE_DATE, "28 April 2021")
             );
     }
 }

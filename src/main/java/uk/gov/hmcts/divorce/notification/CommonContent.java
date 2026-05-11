@@ -463,9 +463,7 @@ public class CommonContent {
             applicant.getLanguagePreference())
         );
 
-        boolean isSole = caseData.getApplicationType().isSole();
-        templateVars.put(APPLICANT1_LABEL, isSole ? APPLICANT : APPLICANT_1);
-        templateVars.put(APPLICANT2_LABEL, isSole ? RESPONDENT : APPLICANT_2);
+        setApplicantLabels(caseData, templateVars);
         templateVars.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
         templateVars.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
 
@@ -511,6 +509,12 @@ public class CommonContent {
         return templateVars;
     }
 
+    public Map<String, String> getGeneralEmailSolicitorVars(CaseData caseData, Long caseId, Applicant applicant) {
+        Map<String, String> templateVars = solicitorTemplateVars(caseData, caseId, applicant);
+        setApplicantLabels(caseData, templateVars);
+        return templateVars;
+    }
+
     public void setOverdueAndInTimeVariables(CaseData caseData, Map<String, String> templateVars) {
         if (YesOrNo.YES.equals(caseData.getFinalOrder().getIsFinalOrderOverdue())) {
             templateVars.put(IS_OVERDUE, YES);
@@ -524,6 +528,12 @@ public class CommonContent {
     public void setIsDivorceAndIsDissolutionVariables(CaseData caseData, Map<String, String> templateVars) {
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
+    }
+
+    private void setApplicantLabels(CaseData caseData, Map<String, String> templateVars) {
+        boolean isSole = caseData.getApplicationType().isSole();
+        templateVars.put(APPLICANT1_LABEL, isSole ? APPLICANT : APPLICANT_1);
+        templateVars.put(APPLICANT2_LABEL, isSole ? RESPONDENT : APPLICANT_2);
     }
 
     public String getContactWebFormText(LanguagePreference languagePreference) {
