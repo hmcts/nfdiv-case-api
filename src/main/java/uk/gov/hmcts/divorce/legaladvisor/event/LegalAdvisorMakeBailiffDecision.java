@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.caseworker.event;
+package uk.gov.hmcts.divorce.legaladvisor.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,9 +40,9 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.BAILIFF_SERVICE;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State, UserRole> {
+public class LegalAdvisorMakeBailiffDecision implements CCDConfig<CaseData, State, UserRole> {
 
-    public static final String CASEWORKER_BAILIFF_DECISION = "caseworker-bailiff-decision";
+    public static final String LEGAL_ADVISOR_BAILIFF_DECISION = "caseworker-bailiff-decision";
 
     private final CaseDataDocumentService caseDataDocumentService;
 
@@ -59,7 +59,7 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_BAILIFF_DECISION)
+            .event(LEGAL_ADVISOR_BAILIFF_DECISION)
             .forStates(AwaitingBailiffReferral, AwaitingServiceConsideration, LAServiceReview)
             .showCondition("alternativeServiceType=\"bailiff\"")
             .name("Make bailiff decision")
@@ -100,7 +100,7 @@ public class CaseworkerMakeBailiffDecision implements CCDConfig<CaseData, State,
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("Caseworker make bailiff decision about to submit callback invoked for Case Id: {}", details.getId());
+        log.info("Legal advisor make bailiff decision about to submit callback invoked for Case Id: {}", details.getId());
 
         var caseDataCopy = details.getData().toBuilder().build();
         var serviceApplication = caseDataCopy.getAlternativeService();

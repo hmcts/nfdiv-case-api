@@ -86,6 +86,22 @@ class CaseworkerExpediteFinalOrderTest {
     }
 
     @Test
+    void shouldReturnErrorWhenFinalOrderHasBeenGrantedAlready() {
+        final CaseData caseData = caseData();
+        caseData.setFinalOrder(FinalOrder.builder().grantedDate(
+            LocalDateTime.of(2022, 3, 16, 0, 0)).build());
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerExpediteFinalOrder.aboutToStart(details);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors())
+            .isEqualTo(Collections.singletonList(CaseworkerGrantFinalOrder.ERROR_FINAL_ORDER_ALREADY_GRANTED));
+    }
+
+    @Test
     void shouldReturnErrorIfNoGeneralOrderDocuments() {
         final CaseData caseData = caseData();
         caseData.setConditionalOrder(ConditionalOrder.builder().grantedDate(LocalDate.now()).build());
