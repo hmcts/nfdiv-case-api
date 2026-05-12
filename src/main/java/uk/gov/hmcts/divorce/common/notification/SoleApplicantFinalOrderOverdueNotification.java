@@ -28,7 +28,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class ApplicantFinalOrderOverdueNotification implements ApplicantNotification {
+public class SoleApplicantFinalOrderOverdueNotification implements ApplicantNotification {
 
     private final CommonContent commonContent;
 
@@ -38,50 +38,44 @@ public class ApplicantFinalOrderOverdueNotification implements ApplicantNotifica
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
-        if (caseData.getApplicationType().isSole()) {
-            log.info("Sending notification to applicant 1 that final order is overdue: {}", id);
-            final Applicant applicant1 = caseData.getApplicant1();
-            final Applicant applicant2 = caseData.getApplicant2();
+        log.info("Sending notification to applicant 1 that final order is overdue: {}", id);
+        final Applicant applicant1 = caseData.getApplicant1();
+        final Applicant applicant2 = caseData.getApplicant2();
 
-            notificationService.sendEmail(
-                applicant1.getEmail(),
-                SOLE_APPLICANT_FINAL_ORDER_OVERDUE,
-                templateVars(caseData, id, applicant1, applicant2),
-                applicant1.getLanguagePreference(),
-                id
-            );
-        }
+        notificationService.sendEmail(
+            applicant1.getEmail(),
+            SOLE_APPLICANT_FINAL_ORDER_OVERDUE,
+            templateVars(caseData, id, applicant1, applicant2),
+            applicant1.getLanguagePreference(),
+            id
+        );
     }
 
     @Override
     public void sendToApplicant1Solicitor(final CaseData caseData, final Long id) {
-        if (caseData.getApplicationType().isSole()) {
-            final Applicant applicant1 = caseData.getApplicant1();
+        final Applicant applicant1 = caseData.getApplicant1();
 
-            log.info("Notifying applicant's solicitor that final order is overdue: {}", id);
+        log.info("Notifying applicant's solicitor that final order is overdue: {}", id);
 
-            notificationService.sendEmail(
-                applicant1.getSolicitor().getEmail(),
-                SOLE_APPLICANT_SOLICITOR_FINAL_ORDER_OVERDUE,
-                solicitorTemplateVars(caseData, id, applicant1),
-                applicant1.getLanguagePreference(),
-                id
-            );
-        }
+        notificationService.sendEmail(
+            applicant1.getSolicitor().getEmail(),
+            SOLE_APPLICANT_SOLICITOR_FINAL_ORDER_OVERDUE,
+            solicitorTemplateVars(caseData, id, applicant1),
+            applicant1.getLanguagePreference(),
+            id
+        );
     }
 
     @Override
     public void sendToApplicant1Offline(final CaseData caseData, final Long id) {
-        if (caseData.getApplicationType().isSole()) {
-            log.info("Notifying offline applicant that final order is overdue: {}", id);
-            var documentPack = soleApplicantFinalOrderOverdueDocumentPack.getDocumentPack(caseData, caseData.getApplicant1());
-            letterPrinter.sendLetters(
-                caseData,
-                id,
-                caseData.getApplicant1(),
-                documentPack,
-                soleApplicantFinalOrderOverdueDocumentPack.getLetterId());
-        }
+        log.info("Notifying offline applicant that final order is overdue: {}", id);
+        var documentPack = soleApplicantFinalOrderOverdueDocumentPack.getDocumentPack(caseData, caseData.getApplicant1());
+        letterPrinter.sendLetters(
+            caseData,
+            id,
+            caseData.getApplicant1(),
+            documentPack,
+            soleApplicantFinalOrderOverdueDocumentPack.getLetterId());
     }
 
     private Map<String, String> solicitorTemplateVars(CaseData caseData, Long id, Applicant applicant) {

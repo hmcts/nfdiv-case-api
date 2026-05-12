@@ -8,7 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.common.notification.ApplicantFinalOrderOverdueNotification;
+import uk.gov.hmcts.divorce.common.notification.SoleApplicantFinalOrderOverdueNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -34,7 +34,7 @@ public class SystemNotifyFinalOrderOverdue implements CCDConfig<CaseData, State,
 
     private final NotificationDispatcher notificationDispatcher;
 
-    private final ApplicantFinalOrderOverdueNotification applicantFinalOrderOverdueNotification;
+    private final SoleApplicantFinalOrderOverdueNotification soleApplicantFinalOrderOverdueNotification;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -58,7 +58,7 @@ public class SystemNotifyFinalOrderOverdue implements CCDConfig<CaseData, State,
             log.info("A period of 12 months has elapsed since the CO was granted, and the final order is now overdue for case {}. "
                 + "Triggering notificationDispatcher...", caseId);
 
-            notificationDispatcher.send(applicantFinalOrderOverdueNotification, caseData, caseId);
+            notificationDispatcher.send(soleApplicantFinalOrderOverdueNotification, caseData, caseId);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

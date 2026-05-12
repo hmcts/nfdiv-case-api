@@ -42,7 +42,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForAwaitingFinalOrder;
 
 @ExtendWith(MockitoExtension.class)
-class ApplicantFinalOrderOverdueNotificationTest {
+class SoleApplicantFinalOrderOverdueNotificationTest {
 
     @Mock
     private SoleApplicantFinalOrderOverdueDocumentPack soleApplicantFinalOrderOverdueDocumentPack;
@@ -60,7 +60,7 @@ class ApplicantFinalOrderOverdueNotificationTest {
     private LetterPrinter letterPrinter;
 
     @InjectMocks
-    private ApplicantFinalOrderOverdueNotification applicantFinalOrderOverdueNotification;
+    private SoleApplicantFinalOrderOverdueNotification soleApplicantFinalOrderOverdueNotification;
 
     @Test
     void shouldSendSoleApplicantFinalOrderOverdueEmail() {
@@ -68,7 +68,7 @@ class ApplicantFinalOrderOverdueNotificationTest {
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplicant1().setEmail(TEST_USER_EMAIL);
 
-        applicantFinalOrderOverdueNotification.sendToApplicant1(data, TEST_CASE_ID);
+        soleApplicantFinalOrderOverdueNotification.sendToApplicant1(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
@@ -77,16 +77,6 @@ class ApplicantFinalOrderOverdueNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-    }
-
-    @Test
-    void shouldNotSendJointApplicant1FinalOrderOverdueEmail() {
-        final var data = validCaseDataForAwaitingFinalOrder();
-        data.setApplicationType(JOINT_APPLICATION);
-
-        applicantFinalOrderOverdueNotification.sendToApplicant1(data, TEST_CASE_ID);
-
-        verifyNoInteractions(notificationService);
     }
 
     @Test
@@ -102,7 +92,7 @@ class ApplicantFinalOrderOverdueNotificationTest {
         when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
             .thenReturn("test-url");
 
-        applicantFinalOrderOverdueNotification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
+        soleApplicantFinalOrderOverdueNotification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
             eq(TEST_SOLICITOR_EMAIL),
@@ -119,16 +109,6 @@ class ApplicantFinalOrderOverdueNotificationTest {
     }
 
     @Test
-    void shouldNotSendJointApplicant1SolicitorFinalOrderOverdueEmail() {
-        final var data = validCaseDataForAwaitingFinalOrder();
-        data.setApplicationType(JOINT_APPLICATION);
-
-        applicantFinalOrderOverdueNotification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
-
-        verifyNoInteractions(notificationService);
-    }
-
-    @Test
     void shouldSendSoleApplicantFinalOrderOverdueOfflineNotification() {
         final var data = validCaseDataForAwaitingFinalOrder();
         data.setApplicationType(SOLE_APPLICATION);
@@ -139,7 +119,7 @@ class ApplicantFinalOrderOverdueNotificationTest {
             data,
             data.getApplicant1())).thenReturn(documentPackInfo);
 
-        applicantFinalOrderOverdueNotification.sendToApplicant1Offline(data, TEST_CASE_ID);
+        soleApplicantFinalOrderOverdueNotification.sendToApplicant1Offline(data, TEST_CASE_ID);
 
         verify(soleApplicantFinalOrderOverdueDocumentPack).getDocumentPack(
             data,
@@ -151,16 +131,5 @@ class ApplicantFinalOrderOverdueNotificationTest {
             data.getApplicant1(),
             documentPackInfo,
             soleApplicantFinalOrderOverdueDocumentPack.getLetterId());
-    }
-
-    @Test
-    void shouldNotSendJointApplicant1FinalOrderOverdueOfflineNotification() {
-        final var data = validCaseDataForAwaitingFinalOrder();
-        data.setApplicationType(JOINT_APPLICATION);
-
-        applicantFinalOrderOverdueNotification.sendToApplicant1Offline(data, TEST_CASE_ID);
-
-        verifyNoInteractions(soleApplicantFinalOrderOverdueDocumentPack);
-        verifyNoInteractions(letterPrinter);
     }
 }
