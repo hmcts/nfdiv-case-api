@@ -57,6 +57,7 @@
     "coDateAndTimeOfHearing": "2021-11-08T14:56:00.000",
     "dateFinalOrderEligibleFrom": "${json-unit.any-string}",
     "grantedDate": "${json-unit.any-string}",
+    "granted": ["Yes"],
     "dateFinalOrderEligibleToRespondent": "${json-unit.any-string}",
     "documentsGenerated": [
       {
@@ -104,5 +105,6 @@
       "expeditedFinalOrderJudgeName": "JudgeName"
     }
   },
-  "state" : "FinalOrderComplete"
+  "state" : "FinalOrderComplete",
+  "warnings": []
 }

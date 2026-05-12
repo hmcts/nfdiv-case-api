@@ -57,6 +57,7 @@
     "coDateAndTimeOfHearing": "2021-11-08T14:56:00.000",
     "dateFinalOrderEligibleFrom": "2021-12-21",
     "grantedDate": "${json-unit.any-string}",
+    "granted": ["Yes"],
     "dateFinalOrderEligibleToRespondent": "2022-03-21",
     "finalOrderSwitchedToSole": "Yes",
     "documentsGenerated": [
@@ -76,5 +77,6 @@
     "dataVersion": "${json-unit.any-number}",
     "warnings": []
   },
-  "state" : "FinalOrderComplete"
+  "state" : "FinalOrderComplete",
+  "warnings": []
 }

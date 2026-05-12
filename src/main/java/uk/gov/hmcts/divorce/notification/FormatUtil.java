@@ -16,6 +16,7 @@ public final class FormatUtil {
     public static final DateTimeFormatter WELSH_DATE_TIME_FORMATTER = ofPattern("d MMMM yyyy", new Locale("cy", "GB-WLS"));
     public static final DateTimeFormatter ES_DATE_FORMATTER = ofPattern("yyyy-MM-dd", UK);
     public static final DateTimeFormatter TIME_FORMATTER = ofPattern("H:mm a", UK);
+    public static final DateTimeFormatter JSON_DATE_TIME_FORMATTER = ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS", UK);
 
     private FormatUtil() {
     }

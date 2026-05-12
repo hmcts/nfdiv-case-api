@@ -63,7 +63,8 @@ class SearchGovRecordsApplicationTemplateContentTest {
         expectedEntries.put("applicant2FullName", caseData.getApplicant2().getFullName());
         expectedEntries.put("applicationDate", "1 August 2025");
         expectedEntries.put("whySearchGovRecords", "Test reason");
-        expectedEntries.put("departmentsToSearch", "[Department for Work and Pensions, HM Revenue & Customs]");
+        expectedEntries.put("departmentsToSearch",
+            "[Department for Work and Pensions, Other government departments, HM Revenue & Customs]");
         expectedEntries.put("otherDepartmentsToSearch", true);
         expectedEntries.put("otherDepartments", "Test department");
         expectedEntries.put("reasonWhySearchTheseDepartments", "Test reason");
@@ -77,6 +78,7 @@ class SearchGovRecordsApplicationTemplateContentTest {
         expectedEntries.put("knowAdditionalAddressesForPartner", "Yes");
         expectedEntries.put("additionalAddress1", "Test address1");
         expectedEntries.put("additionalAddress1DatesLivedThere", "1 Jan 2023");
+        expectedEntries.put("providesAddress2", "Yes");
         expectedEntries.put("additionalAddress2", "Test address2");
         expectedEntries.put("additionalAddress2DatesLivedThere", "1 Jan 2024");
         expectedEntries.put("divorceAndDissolutionHeader","Divorce and Dissolution");
@@ -109,7 +111,8 @@ class SearchGovRecordsApplicationTemplateContentTest {
         expectedEntries.put("applicant2FullName", caseData.getApplicant2().getFullName());
         expectedEntries.put("applicationDate", "1 Awst 2025");
         expectedEntries.put("whySearchGovRecords", "Test reason");
-        expectedEntries.put("departmentsToSearch", "[Department for Work and Pensions, HM Revenue & Customs]");
+        expectedEntries.put("departmentsToSearch",
+            "[Department for Work and Pensions, Other government departments, HM Revenue & Customs]");
         expectedEntries.put("otherDepartmentsToSearch", true);
         expectedEntries.put("otherDepartments", "Test department");
         expectedEntries.put("reasonWhySearchTheseDepartments", "Test reason");
@@ -123,6 +126,7 @@ class SearchGovRecordsApplicationTemplateContentTest {
         expectedEntries.put("knowAdditionalAddressesForPartner", "Ydw");
         expectedEntries.put("additionalAddress1", "Test address1");
         expectedEntries.put("additionalAddress1DatesLivedThere", "1 Jan 2023");
+        expectedEntries.put("providesAddress2", "Yes");
         expectedEntries.put("additionalAddress2", "Test address2");
         expectedEntries.put("additionalAddress2DatesLivedThere", "1 Jan 2024");
         expectedEntries.put("divorceAndDissolutionHeader","Divorce and Dissolution");
