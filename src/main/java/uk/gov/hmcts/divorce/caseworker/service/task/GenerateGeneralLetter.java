@@ -55,8 +55,10 @@ public class GenerateGeneralLetter implements CaseTask {
 
         log.info("Generating general letter for case id: {} ", caseId);
 
+        final GeneralParties generalParties = caseData.getGeneralLetter().getGeneralLetterParties();
+
         LanguagePreference languagePreference =
-            GeneralParties.RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
+            GeneralParties.RESPONDENT.equals(generalParties) || GeneralParties.APPLICANT2.equals(generalParties)
                 ? caseData.getApplicant2().getLanguagePreference()
                 : caseData.getApplicant1().getLanguagePreference();
 

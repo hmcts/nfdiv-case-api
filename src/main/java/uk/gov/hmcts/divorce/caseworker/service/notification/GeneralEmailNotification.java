@@ -30,6 +30,7 @@ import java.util.Map;
 
 import static java.util.stream.Stream.ofNullable;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
@@ -72,7 +73,7 @@ public class GeneralEmailNotification {
 
         GeneralParties parties = generalEmail.getGeneralEmailParties();
         LanguagePreference languagePreference = (APPLICANT.equals(parties)) ? caseData.getApplicant1().getLanguagePreference()
-            : (RESPONDENT.equals(parties)) ? caseData.getApplicant2().getLanguagePreference() : ENGLISH;
+            : (RESPONDENT.equals(parties) || APPLICANT2.equals(parties)) ? caseData.getApplicant2().getLanguagePreference() : ENGLISH;
 
         Map<String, String> templateVars = templateVars(caseData, caseId, languagePreference);
 
@@ -105,7 +106,7 @@ public class GeneralEmailNotification {
                 emailTo = caseData.getApplicant1().getEmail();
                 templateId = GENERAL_EMAIL_PETITIONER;
             }
-        } else if (RESPONDENT.equals(parties)) {
+        } else if (RESPONDENT.equals(parties) || APPLICANT2.equals(parties)) {
             if (caseData.getApplicant2().isRepresented()) {
                 log.info("Sending General Email Notification to respondent solicitor for case id: {}", caseId);
                 emailTo = caseData.getApplicant2().getSolicitor().getEmail();

@@ -11,7 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
+import uk.gov.hmcts.divorce.common.service.CitizenServiceApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -57,7 +57,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
     private final PaymentSetupService paymentSetupService;
 
-    private final InterimApplicationSubmissionService interimApplicationSubmissionService;
+    private final CitizenServiceApplicationSubmissionService submissionService;
 
     private final DocumentRemovalService documentRemovalService;
 
@@ -115,17 +115,15 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             serviceFee.setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF);
             serviceFee.setHelpWithFeesReferenceNumber(userOptions.getInterimAppsHwfRefNumber());
 
-            details.setState(userOptions.awaitingDocuments() ? AwaitingDocuments : AwaitingServicePayment);
+            details.setState(userOptions.isAwaitingDocuments() ? AwaitingDocuments : AwaitingServicePayment);
 
             if (data.isWelshApplication()) {
                 data.getApplication().setWelshPreviousState(details.getState());
                 details.setState(WelshTranslationReview);
-                log.info("State set to WelshTranslationReview, WelshPreviousState set to {}, CaseID {}",
-                    data.getApplication().getWelshPreviousState(), details.getId());
             }
         }
 
-        DivorceDocument applicationDocument = interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+        DivorceDocument applicationDocument = submissionService.generateServiceApplicationAnswerDocument(
             caseId, applicant, data
         );
         newServiceApplication.setServiceApplicationAnswers(applicationDocument);
@@ -147,7 +145,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         ServicePaymentMethod paymentMethod = alternativeService.getServicePaymentFee().getPaymentMethod();
 
         if (ServicePaymentMethod.FEE_PAY_BY_HWF.equals(paymentMethod)) {
-            interimApplicationSubmissionService.sendServiceApplicationNotifications(
+            submissionService.sendNotifications(
                 details.getId(), alternativeService.getAlternativeServiceType(), data
             );
         }
@@ -168,7 +166,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .receivedServiceApplicationDate(LocalDate.now(clock))
             .receivedServiceAddedDate(LocalDate.now(clock))
             .alternativeServiceType(userOptions.getInterimApplicationType().getServiceType())
-            .serviceApplicationDocsUploadedPreSubmission(userOptions.awaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
+            .serviceApplicationDocsUploadedPreSubmission(userOptions.isAwaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
             .serviceApplicationDocuments(evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs())
             .alternativeServiceFeeRequired(YesOrNo.YES)

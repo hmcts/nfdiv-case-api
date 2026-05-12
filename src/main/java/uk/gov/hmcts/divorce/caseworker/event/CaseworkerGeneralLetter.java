@@ -98,9 +98,9 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
         // generate and send letters from about to submit callback.
         generateGeneralLetter.apply(details);
 
-        Applicant applicant = GeneralParties.RESPONDENT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
-            ? caseData.getApplicant2()
-            : caseData.getApplicant1();
+        Applicant applicant = GeneralParties.APPLICANT.equals(caseData.getGeneralLetter().getGeneralLetterParties())
+            ? caseData.getApplicant1()
+            : caseData.getApplicant2();
 
         letterPrinter.sendLetters(caseData,
             details.getId(),
