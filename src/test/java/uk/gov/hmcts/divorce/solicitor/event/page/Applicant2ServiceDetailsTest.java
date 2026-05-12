@@ -27,7 +27,7 @@ class Applicant2ServiceDetailsTest {
     void shouldReturnErrorIfEmailValidationFailsForNonSolicitorCase() {
         final CaseData caseData = caseData();
         caseData.setApplicant2(Applicant.builder()
-                .email("invalidEmail")
+                .nonConfidentialEmail("invalidEmail")
                 .solicitorRepresented(NO)
             .build());
 

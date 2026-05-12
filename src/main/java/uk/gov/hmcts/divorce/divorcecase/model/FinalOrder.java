@@ -79,6 +79,13 @@ public class FinalOrder {
     )
     private Set<Granted> granted;
 
+    @CCD(
+        label = "Do you wish to grant the final order using the current date and time?",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private YesOrNo grantWithCurrentDateTime;
+
     @Getter
     @AllArgsConstructor
     public enum Granted implements HasLabel {
@@ -553,5 +560,10 @@ public class FinalOrder {
             || nonNull(applicant2FinalOrderLateExplanation)
             || nonNull(applicant1FinalOrderLateExplanationTranslated)
             || nonNull(applicant2FinalOrderLateExplanationTranslated);
+    }
+
+    @JsonIgnore
+    public boolean hasFinalOrderBeenGranted() {
+        return granted != null;
     }
 }

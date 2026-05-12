@@ -41,6 +41,7 @@
   "applicant1PrayerDissolveDivorce": ["dissolveDivorce"],
   "applicant1StatementOfTruth": "Yes",
   "dateFinalOrderEligibleFrom": "2021-12-21",
+  "granted": ["Yes"],
   "marriageDate": "1990-06-10",
   "applicant2Offline": "Yes",
   "applicant1Email": "test@test.com",

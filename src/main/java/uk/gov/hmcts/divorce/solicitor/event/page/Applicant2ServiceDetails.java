@@ -79,7 +79,7 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
 
                     .complex(Solicitor::getOrganisationPolicy, IS_APPLICANT2_REPRESENTED)
                         .complex(OrganisationPolicy::getOrganisation)
-                            .optional(Organisation::getOrganisationId)
+                            .mandatory(Organisation::getOrganisationId)
                             .done()
                         .optional(OrganisationPolicy::getOrgPolicyCaseAssignedRole, NEVER_SHOW, APPLICANT_2_SOLICITOR)
                         .optional(OrganisationPolicy::getOrgPolicyReference, NEVER_SHOW)
@@ -130,8 +130,8 @@ public class Applicant2ServiceDetails implements CcdPageConfiguration {
         List<String> validationErrors = new ArrayList<>();
 
         boolean validApplicantEmail;
-        if (isNotEmpty(applicant2.getEmail())) {
-            validApplicantEmail = EmailValidator.getInstance().isValid(applicant2.getEmail());
+        if (isNotEmpty(applicant2.getNonConfidentialEmail())) {
+            validApplicantEmail = EmailValidator.getInstance().isValid(applicant2.getNonConfidentialEmail());
             if (!validApplicantEmail) {
                 validationErrors.add(INVALID_APPLICANT_EMAIL_ERROR);
             }

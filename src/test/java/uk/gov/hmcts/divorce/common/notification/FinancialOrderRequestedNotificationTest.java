@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
@@ -17,6 +18,7 @@ import java.util.Map;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_CONSENT_ORDER;
@@ -116,5 +118,27 @@ public class FinancialOrderRequestedNotificationTest {
             eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+    }
+
+    @Test
+    void shouldNotSendEmailToRespondentWhenSolicitorService() {
+        CaseData data = validCaseDataForFinancialOrder();
+        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.getApplication().setServiceMethod(ServiceMethod.SOLICITOR_SERVICE);
+
+        financialOrderRequestedNotification.sendToApplicant2(data, TEST_CASE_ID);
+
+        verifyNoInteractions(notificationService);
+    }
+
+    @Test
+    void shouldNotSendEmailToRespondentWhenPersonalService() {
+        CaseData data = validCaseDataForFinancialOrder();
+        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        data.getApplication().setServiceMethod(ServiceMethod.PERSONAL_SERVICE);
+
+        financialOrderRequestedNotification.sendToApplicant2(data, TEST_CASE_ID);
+
+        verifyNoInteractions(notificationService);
     }
 }

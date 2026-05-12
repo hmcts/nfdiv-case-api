@@ -16,6 +16,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
@@ -53,7 +54,7 @@ public class ServiceRequestSearchService {
         return Optional.empty();
     }
 
-    private List<ServiceRequestDto> getServiceRequestsForCase(long caseId) {
+    public List<ServiceRequestDto> getServiceRequestsForCase(long caseId) {
         final User user = idamService.retrieveSystemUpdateUserDetails();
 
         CaseServiceRequestsResponse serviceRequestsResponse = paymentClient.getServiceRequests(
@@ -64,7 +65,10 @@ public class ServiceRequestSearchService {
 
         return Optional.ofNullable(serviceRequestsResponse)
             .map(CaseServiceRequestsResponse::getServiceRequests)
-            .orElse(Collections.emptyList());
+            .orElse(Collections.emptyList())
+            .stream()
+            .filter(Objects::nonNull)
+            .toList();
     }
 
     private boolean isServiceRequestUnpaidWithMatchingFee(ServiceRequestDto serviceRequest, Fee fee, String responsibleParty) {
