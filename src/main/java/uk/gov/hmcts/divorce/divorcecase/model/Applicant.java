@@ -383,7 +383,7 @@ public class Applicant {
     }
 
     @JsonIgnore
-    private String getApplicantAddress() {
+    public String getApplicantAddress() {
         if (YES.equals(addressOverseas)) {
             return Stream.of(
                     address.getAddressLine1(),
