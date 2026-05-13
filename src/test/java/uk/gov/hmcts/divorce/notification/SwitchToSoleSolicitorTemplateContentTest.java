@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 
 import static java.time.LocalDate.now;
@@ -82,7 +83,7 @@ class SwitchToSoleSolicitorTemplateContentTest {
             .application(Application.builder().issueDate(LocalDate.of(2021, 4, 28)).build())
             .build();
 
-        when(commonContent.getIssueDateInPreferredLanguage(caseData, applicant1)).thenReturn("28 April 2021");
+        when(commonContent.solicitorTemplateVars(caseData, TEST_CASE_ID, applicant1)).thenReturn(solicitorTemplateVars());
 
         final Map<String, String> templateVars = solicitorTemplateContent.templatevars(caseData, TEST_CASE_ID, applicant1, applicant2);
 
@@ -94,7 +95,15 @@ class SwitchToSoleSolicitorTemplateContentTest {
                 entry(SOLICITOR_REFERENCE, "sol ref"),
                 entry(SOLICITOR_NAME, "app1 sol"),
                 entry(DATE_PLUS_14_DAYS, now(clock).plusDays(14).format(DATE_TIME_FORMATTER)),
-                entry(DocmosisTemplateConstants.ISSUE_DATE, "28 April 2021")
+                entry(DocmosisTemplateConstants.ISSUE_DATE, "28 Apr 2021")
             );
+    }
+
+    private Map<String, String> solicitorTemplateVars() {
+        Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(SOLICITOR_REFERENCE, "sol ref");
+        templateVars.put(SOLICITOR_NAME, "app1 sol");
+        templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, "28 Apr 2021");
+        return templateVars;
     }
 }

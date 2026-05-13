@@ -249,11 +249,7 @@ public class CommonContent {
 
     public Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant) {
         Map<String, String> templateVars = solicitorTemplateVarsPreIssue(data, id, applicant);
-        final LocalDate issueDate = data.getApplication().getIssueDate();
-
-        templateVars.put(DocmosisTemplateConstants.ISSUE_DATE,
-            issueDate == null ? "" : data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER)
-        );
+        templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, getIssueDateInPreferredLanguage(data, applicant));
         return templateVars;
     }
 
