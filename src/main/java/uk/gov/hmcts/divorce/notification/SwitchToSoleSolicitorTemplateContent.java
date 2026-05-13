@@ -40,13 +40,7 @@ public class SwitchToSoleSolicitorTemplateContent {
         templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
         templateContent.put(DATE_PLUS_14_DAYS, LocalDate.now(clock).plusDays(14).format(
             getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
-
-        final LocalDate issueDate = caseData.getApplication().getIssueDate();
-        templateContent.put(DocmosisTemplateConstants.ISSUE_DATE,
-            issueDate == null ? "" : caseData.getApplication().getIssueDate().format(
-                getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference()))
-        );
-
+        templateContent.put(DocmosisTemplateConstants.ISSUE_DATE, commonContent.getIssueDateInPreferredLanguage(caseData, applicant));
         return templateContent;
     }
 }

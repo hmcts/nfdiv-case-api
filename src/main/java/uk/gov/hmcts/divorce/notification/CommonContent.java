@@ -257,6 +257,13 @@ public class CommonContent {
         return templateVars;
     }
 
+    public String getIssueDateInPreferredLanguage(CaseData data, Applicant applicant) {
+        final LocalDate issueDate = data.getApplication().getIssueDate();
+        return
+            issueDate == null ? "" : issueDate.format(
+                getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference()));
+    }
+
     public Map<String, String> serviceApplicationTemplateVars(CaseData data, Long id, Applicant applicant) {
         Map<String, String> templateVars = mainTemplateVars(data, id, applicant, data.getApplicant2());
 

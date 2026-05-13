@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_PLUS_14_DAYS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
@@ -80,6 +81,8 @@ class SwitchToSoleSolicitorTemplateContentTest {
             .finalOrder(FinalOrder.builder().doesApplicant2IntendToSwitchToSole(YES).build())
             .application(Application.builder().issueDate(LocalDate.of(2021, 4, 28)).build())
             .build();
+
+        when(commonContent.getIssueDateInPreferredLanguage(caseData, applicant1)).thenReturn("28 April 2021");
 
         final Map<String, String> templateVars = solicitorTemplateContent.templatevars(caseData, TEST_CASE_ID, applicant1, applicant2);
 
