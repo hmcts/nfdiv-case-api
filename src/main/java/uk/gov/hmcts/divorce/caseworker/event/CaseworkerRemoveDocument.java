@@ -68,7 +68,7 @@ public class CaseworkerRemoveDocument implements CCDConfig<CaseData, State, User
                 .optionalWithLabel(AlternativeService::getServiceApplicationDocuments, "Service application documents")
             .done()
             .complex(CaseData::getGeneralReferral)
-            .   optional(GeneralReferral::getGeneralReferralDocuments)
+            .optional(GeneralReferral::getGeneralReferralDocuments)
             .done();
     }
 

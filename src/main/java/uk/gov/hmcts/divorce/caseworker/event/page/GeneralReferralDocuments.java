@@ -10,7 +10,7 @@ public class GeneralReferralDocuments implements CcdPageConfiguration {
     @Override
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder.page("generalReferralDocs")
-            .showCondition("generalReferralReason=\"generalApplicationReferral\"")
+            .showCondition("generalReferralReason=\"*\"")
             .pageLabel("General Referral")
             .complex(CaseData::getGeneralReferral)
                 .optional(GeneralReferral::getGeneralReferralDocuments)
