@@ -59,7 +59,7 @@ class CaseworkerGenerateHmctsCoversheetTest {
     }
 
     @Test
-    void shouldGenerateHMCTSCoversheet() {
+    void shouldGenerateHmctsCoversheet() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -75,7 +75,7 @@ class CaseworkerGenerateHmctsCoversheetTest {
     }
 
     @Test
-    void shouldNotGenerateHMCTSCoversheetIfItAlreadyExists() {
+    void shouldNotGenerateHmctsCoversheetIfItAlreadyExists() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
