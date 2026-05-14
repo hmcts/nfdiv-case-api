@@ -20,6 +20,7 @@ import org.springframework.test.context.TestPropertySource;
 import uk.gov.hmcts.divorce.payment.client.FeesAndPaymentsClient;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.DIVORCE_APPLICATION_FEE_CODE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.DEFAULT_CHANNEL;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
@@ -71,6 +72,6 @@ public class FeesRegisterConsumerTest {
             KEYWORD_DIVORCE
         );
 
-        assert(DIVORCE_APPLICATION_FEE_CODE).equals(result.getFeeCode());
+        assertThat(DIVORCE_APPLICATION_FEE_CODE).isEqualTo(result.getFeeCode());
     }
 }
