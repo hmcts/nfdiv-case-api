@@ -7,6 +7,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -41,6 +43,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationOfflineRespon
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationSoleParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
@@ -53,12 +56,14 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -97,6 +102,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RespondentFinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_TOO_EARLY_FOR_RESPONDENT_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWERS;
@@ -875,8 +881,14 @@ class CaseworkerOfflineDocumentVerifiedTest {
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+        AboutToStartOrSubmitResponse<CaseData, State> response;
+        try (MockedStatic<FinalOrderValidation> classMock = mockStatic(FinalOrderValidation.class)) {
+
+            classMock.when(() -> FinalOrderValidation.validateCanRespondentApplyFinalOrder(Mockito.any(CaseData.class)))
+                .thenReturn(Collections.emptyList());
+
+            response = caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+        }
 
         assertThat(response.getData().getApplicant1().isApplicantOffline()).isFalse();
         assertThat(response.getData().getApplicant2().isApplicantOffline()).isTrue();
@@ -928,8 +940,14 @@ class CaseworkerOfflineDocumentVerifiedTest {
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+        AboutToStartOrSubmitResponse<CaseData, State> response;
+        try (MockedStatic<FinalOrderValidation> classMock = mockStatic(FinalOrderValidation.class)) {
+
+            classMock.when(() -> FinalOrderValidation.validateCanRespondentApplyFinalOrder(Mockito.any(CaseData.class)))
+                .thenReturn(Collections.emptyList());
+
+            response = caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+        }
 
         assertThat(response.getState()).isEqualTo(RespondentFinalOrderRequested);
     }
@@ -1359,6 +1377,28 @@ class CaseworkerOfflineDocumentVerifiedTest {
         caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
         verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldThrowErrorIfValidationForRespondentFinalOrderFails() {
+        CaseData caseData = caseData();
+        caseData.getFinalOrder().setD36WhoApplying(OfflineWhoApplying.APPLICANT_2);
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.getDocuments().setTypeOfDocumentAttached(FO_D36);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response;
+        try (MockedStatic<FinalOrderValidation> classMock = mockStatic(FinalOrderValidation.class)) {
+
+            classMock.when(() ->
+                FinalOrderValidation.validateCanRespondentApplyFinalOrder(caseData)
+            ).thenReturn(List.of(ERROR_TOO_EARLY_FOR_RESPONDENT_FINAL_ORDER));
+
+            response = caseworkerOfflineDocumentVerified.aboutToSubmit(caseDetails, caseDetails);
+        }
+
+        assertThat(response.getErrors()).containsExactly(ERROR_TOO_EARLY_FOR_RESPONDENT_FINAL_ORDER);
     }
 
     @Test

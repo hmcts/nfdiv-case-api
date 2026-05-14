@@ -141,7 +141,10 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
 
         caseFlagsService.resetSolicitorCaseFlags(details.getData(), isRepresentingApplicant1);
 
-        NoticeType.ORG_REMOVED.applyNoticeOfChange(
+        NoticeType noticeType = NoticeType.ORG_REMOVED;
+        details.getData().getNoticeOfChange().setNoticeType(noticeType);
+
+        noticeType.applyNoticeOfChange(
             applicant.apply(details.getData()),
             applicant.apply(beforeDetails.getData()),
             rolesToRemove,
@@ -168,7 +171,7 @@ public class SolicitorStopRepresentingClient implements CCDConfig<CaseData, Stat
         boolean wasRepresentingApplicant1 = data.getNoticeOfChange().getWhichApplicant() == WhichApplicant.APPLICANT_1;
 
         notificationDispatcher.sendNOC(nocSolRemovedSelfNotifications, details.getData(),
-            beforeDetails.getData(), details.getId(), wasRepresentingApplicant1, NoticeType.ORG_REMOVED);
+            beforeDetails.getData(), details.getId(), wasRepresentingApplicant1, data.getNoticeOfChange().getNoticeType());
 
         if (shouldSendInviteToParty(details.getData(), wasRepresentingApplicant1)) {
             notificationDispatcher.sendNOCCaseInvite(nocSolsToCitizenNotifications, details.getData(), details.getId(),

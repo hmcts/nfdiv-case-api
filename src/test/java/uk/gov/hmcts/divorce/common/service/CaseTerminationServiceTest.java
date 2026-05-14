@@ -6,18 +6,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.common.notification.ApplicationRejectedFeeNotPaidNotification;
 import uk.gov.hmcts.divorce.common.notification.ApplicationWithdrawnNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.WithdrawApplicationReasonType;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -28,10 +32,13 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.applicantRepresentedB
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
 @ExtendWith(MockitoExtension.class)
-class WithdrawCaseServiceTest {
+class CaseTerminationServiceTest {
 
     @Mock
     private ApplicationWithdrawnNotification applicationWithdrawnNotification;
+
+    @Mock
+    private ApplicationRejectedFeeNotPaidNotification applicationRejectedFeeNotPaidNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -40,17 +47,17 @@ class WithdrawCaseServiceTest {
     private CcdAccessService caseAccessService;
 
     @InjectMocks
-    private WithdrawCaseService withdrawCaseService;
+    private CaseTerminationService caseTerminationService;
 
     @Test
-    void shouldUnlinkApplicantsAndSendNotificationsToApplicant() {
+    void shouldUnlinkApplicantsAndSendNotificationsToApplicantWhenCaseIsWithdrawn() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         var caseData = validApplicant2CaseData();
         caseData.setCaseInvite(new CaseInvite(caseData.getCaseInvite().applicant2InviteEmailAddress(), "12345", "12"));
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        withdrawCaseService.withdraw(caseDetails);
+        caseTerminationService.withdraw(caseDetails);
 
         assertThat(caseDetails.getData().getCaseInvite().accessCode()).isNull();
         assertThat(caseDetails.getData().getCaseInvite().applicant2UserId()).isNull();
@@ -76,7 +83,7 @@ class WithdrawCaseServiceTest {
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
-        withdrawCaseService.withdraw(caseDetails);
+        caseTerminationService.withdraw(caseDetails);
 
         assertThat(caseDetails.getData().getApplicant1().getSolicitor().getOrganisationPolicy()).isNull();
         assertThat(caseDetails.getData().getApplicant2().getSolicitor().getOrganisationPolicy()).isNull();
@@ -91,5 +98,45 @@ class WithdrawCaseServiceTest {
         )));
         verify(notificationDispatcher).send(applicationWithdrawnNotification, caseDetails);
         verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldUnlinkApplicantsAndSendNotificationsToApplicantWhenCaseIsRejected() {
+        final var caseDetails = new CaseDetails<CaseData, State>();
+        var caseData = validApplicant2CaseData();
+        caseData.setCaseInvite(new CaseInvite(caseData.getCaseInvite().applicant2InviteEmailAddress(), "12345", "12"));
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        caseTerminationService.reject(caseDetails);
+
+        assertThat(caseDetails.getData().getCaseInvite().accessCode()).isNull();
+        assertThat(caseDetails.getData().getCaseInvite().applicant2UserId()).isNull();
+
+        verify(caseAccessService).removeUsersWithRole(anyLong(), eq(
+            List.of(
+                CREATOR.getRole(),
+                APPLICANT_2.getRole(),
+                APPLICANT_1_SOLICITOR.getRole(),
+                APPLICANT_2_SOLICITOR.getRole()
+            )
+        ));
+        verify(notificationDispatcher).send(applicationRejectedFeeNotPaidNotification, caseDetails);
+        verifyNoMoreInteractions(notificationDispatcher);
+    }
+
+
+    @Test
+    void shouldNotSendNotificationsToApplicantWhenCwTriggersWithdraw() {
+        final var caseDetails = new CaseDetails<CaseData, State>();
+        var caseData = validApplicant2CaseData();
+        caseData.setCaseInvite(new CaseInvite(caseData.getCaseInvite().applicant2InviteEmailAddress(), "12345", "12"));
+        caseData.getApplication().setCwWithdrawApplicationReason(WithdrawApplicationReasonType.REFUND_PROCESSED);
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        caseTerminationService.withdraw(caseDetails);
+
+        verifyNoInteractions(notificationDispatcher);
     }
 }

@@ -115,7 +115,11 @@ public class CommonContent {
     public static final String DATE_PLUS_14_DAYS = "date plus 14 days";
 
     public static final String DATE_FINAL_ORDER_ELIGIBLE_FROM_PLUS_3_MONTHS = "date final order eligible from plus 3 months";
+    public static final String FEES_CONSENT_ORDER = "consentOrderFees";
+    public static final String FEES_FINANCIAL_ORDER = "financialOrderFees";
     public static final String FINAL_ORDER_OVERDUE_DATE = "finalOrderOverdueDate";
+    public static final String FINANCIAL_ORDER_NOT_REQUESTED = "financialOrderNotRequested";
+    public static final String FINANCIAL_ORDER_REQUESTED = "financialOrderRequested";
 
     public static final String IS_SOLE = "isSole";
     public static final String IS_JOINT = "isJoint";
@@ -245,7 +249,11 @@ public class CommonContent {
 
     public Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant) {
         Map<String, String> templateVars = solicitorTemplateVarsPreIssue(data, id, applicant);
-        templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        final LocalDate issueDate = data.getApplication().getIssueDate();
+
+        templateVars.put(DocmosisTemplateConstants.ISSUE_DATE,
+            issueDate == null ? "" : data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER)
+        );
         return templateVars;
     }
 
@@ -445,6 +453,7 @@ public class CommonContent {
     }
 
     public Map<String, String> nocSolsTemplateVars(final Long caseId,
+                                                   final CaseData caseData,
                                                    final Applicant applicant) {
         Map<String, String> templateVars = new HashMap<>();
         templateVars.put(APPLICATION_REFERENCE, caseId != null ? formatId(caseId) : null);
@@ -453,6 +462,20 @@ public class CommonContent {
             applicant.getSolicitor(),
             applicant.getLanguagePreference())
         );
+
+        boolean isSole = caseData.getApplicationType().isSole();
+        templateVars.put(APPLICANT1_LABEL, isSole ? APPLICANT : APPLICANT_1);
+        templateVars.put(APPLICANT2_LABEL, isSole ? RESPONDENT : APPLICANT_2);
+        templateVars.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
+        templateVars.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
+
+        final LocalDate issueDate = caseData.getApplication().getIssueDate();
+
+        templateVars.put(DATE_OF_ISSUE,
+            issueDate == null ? "" : caseData.getApplication().getIssueDate().format(
+                getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference()))
+        );
+
         templateVars.put(SMART_SURVEY, getSmartSurveyWithDoNotReply(applicant.getLanguagePreference()));
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
 

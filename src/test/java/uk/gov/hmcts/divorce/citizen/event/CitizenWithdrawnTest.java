@@ -8,22 +8,26 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
-import uk.gov.hmcts.divorce.common.service.WithdrawCaseService;
+import uk.gov.hmcts.divorce.common.service.CaseTerminationService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+
+import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenWithdrawn.CITIZEN_WITHDRAWN;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 
 @ExtendWith(MockitoExtension.class)
 class CitizenWithdrawnTest {
 
     @Mock
-    private WithdrawCaseService withdrawCaseService;
+    private CaseTerminationService caseTerminationService;
 
     @InjectMocks
     private CitizenWithdrawn citizenWithdrawn;
@@ -41,10 +45,59 @@ class CitizenWithdrawnTest {
 
     @Test
     void shouldWithdrawCaseByDelegatingToWithdrawCaseService() {
-        final var caseDetails = new CaseDetails<CaseData, State>();
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        CaseData data = validCaseDataForIssueApplication();
+        caseDetails.setData(data);
+        caseDetails.setState(State.Draft);
 
         citizenWithdrawn.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(withdrawCaseService).withdraw(caseDetails);
+        verify(caseTerminationService).withdraw(caseDetails);
+    }
+
+    @Test
+    void shouldTransitionStateToWithdrawn() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        CaseData data = validCaseDataForIssueApplication();
+        data.getApplication().setDateSubmitted(null);
+        caseDetails.setData(data);
+        caseDetails.setState(State.Draft);
+
+        CaseData caseData = CaseData.builder().build();
+        caseData.getApplication().setDateSubmitted(null);
+
+        var response = citizenWithdrawn.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(State.Withdrawn);
+    }
+
+    @Test
+    void shouldTransitionStateToPendingRefund() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        CaseData data = validCaseDataForIssueApplication();
+        data.getApplication().setIssueDate(null);
+        caseDetails.setData(data);
+        caseDetails.setState(State.Submitted);
+
+        var response = citizenWithdrawn.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getState()).isEqualTo(State.PendingRefund);
+    }
+
+    @Test
+    void shouldReturnErrorWhenCaseCannotBeWithdrawnBecauseItHasBeenIssued() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        CaseData data = validCaseDataForIssueApplication();
+        data.getApplication().setIssueDate(LocalDate.now());
+        caseDetails.setData(data);
+        caseDetails.setState(State.AwaitingService);
+
+        var response = citizenWithdrawn.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors().size()).isEqualTo(1);
     }
 }

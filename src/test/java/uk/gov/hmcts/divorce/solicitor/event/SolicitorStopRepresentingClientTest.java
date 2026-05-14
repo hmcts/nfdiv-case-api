@@ -98,13 +98,13 @@ class SolicitorStopRepresentingClientTest {
     private NocSolRemovedCitizenNotification nocSolRemovedCitizenNotification;
 
     @InjectMocks
-    private SolicitorStopRepresentingClient noticeOfChange;
+    private SolicitorStopRepresentingClient solicitorStopRepresentingClient;
 
     @Test
     void configure() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        noticeOfChange.configure(configBuilder);
+        solicitorStopRepresentingClient.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -132,7 +132,7 @@ class SolicitorStopRepresentingClientTest {
 
         List<String> roles = List.of(CREATOR.getRole(), APPLICANT_1_SOLICITOR.getRole());
 
-        var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
+        var result = solicitorStopRepresentingClient.aboutToSubmit(details, beforeDetails);
 
         verify(changeOfRepresentativeService).buildChangeOfRepresentative(
             details.getData(),
@@ -166,7 +166,7 @@ class SolicitorStopRepresentingClientTest {
 
         List<String> roles = List.of(APPLICANT_2.getRole(), APPLICANT_2_SOLICITOR.getRole());
 
-        var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
+        var result = solicitorStopRepresentingClient.aboutToSubmit(details, beforeDetails);
 
         verify(changeOfRepresentativeService).buildChangeOfRepresentative(
             details.getData(),
@@ -185,12 +185,12 @@ class SolicitorStopRepresentingClientTest {
         final var beforeDetails = getCaseDetails();
         Applicant applicant = details.getData().getApplicant1();
         details.getData().setNoticeOfChange(
-            NoticeOfChange.builder().whichApplicant(WhichApplicant.APPLICANT_1).build()
+            NoticeOfChange.builder().whichApplicant(WhichApplicant.APPLICANT_1).noticeType(NoticeType.ORG_REMOVED).build()
         );
         applicant.setFirstName(TEST_FIRST_NAME);
         applicant.setLastName(TEST_LAST_NAME);
 
-        var result = noticeOfChange.submitted(details, beforeDetails);
+        var result = solicitorStopRepresentingClient.submitted(details, beforeDetails);
 
         verify(notificationDispatcher).sendNOC(nocSolRemovedSelfNotifications, details.getData(),
             beforeDetails.getData(), details.getId(), true, NoticeType.ORG_REMOVED);
@@ -206,12 +206,12 @@ class SolicitorStopRepresentingClientTest {
         final var beforeDetails = getCaseDetails();
         Applicant applicant = details.getData().getApplicant2();
         details.getData().setNoticeOfChange(
-            NoticeOfChange.builder().whichApplicant(WhichApplicant.APPLICANT_2).build()
+            NoticeOfChange.builder().whichApplicant(WhichApplicant.APPLICANT_2).noticeType(NoticeType.ORG_REMOVED).build()
         );
         applicant.setFirstName(TEST_FIRST_NAME);
         applicant.setLastName(TEST_LAST_NAME);
 
-        var result = noticeOfChange.submitted(details, beforeDetails);
+        var result = solicitorStopRepresentingClient.submitted(details, beforeDetails);
 
         verify(notificationDispatcher).sendNOC(nocSolRemovedSelfNotifications, details.getData(),
             beforeDetails.getData(), details.getId(), false, NoticeType.ORG_REMOVED);
@@ -240,7 +240,7 @@ class SolicitorStopRepresentingClientTest {
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(true);
 
-        noticeOfChange.aboutToSubmit(details, beforeDetails);
+        solicitorStopRepresentingClient.aboutToSubmit(details, beforeDetails);
 
         verify(caseFlagsService).resetSolicitorCaseFlags(details.getData(), true);
     }
@@ -257,7 +257,7 @@ class SolicitorStopRepresentingClientTest {
         applicant.setLastName(TEST_LAST_NAME);
         applicant.setEmail(TEST_USER_EMAIL);
 
-        noticeOfChange.submitted(details, beforeDetails);
+        solicitorStopRepresentingClient.submitted(details, beforeDetails);
 
         verify(notificationDispatcher).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             details.getData(), details.getId(), true);
@@ -275,7 +275,7 @@ class SolicitorStopRepresentingClientTest {
         applicant.setLastName(TEST_LAST_NAME);
         applicant.setEmail(null);
 
-        noticeOfChange.submitted(details, beforeDetails);
+        solicitorStopRepresentingClient.submitted(details, beforeDetails);
 
         verify(notificationDispatcher, never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             details.getData(), details.getId(), true);
@@ -294,7 +294,7 @@ class SolicitorStopRepresentingClientTest {
         applicant.setLastName(TEST_LAST_NAME);
         applicant.setEmail("");
 
-        noticeOfChange.submitted(details, beforeDetails);
+        solicitorStopRepresentingClient.submitted(details, beforeDetails);
 
         verify(notificationDispatcher, never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             details.getData(), details.getId(), true);
@@ -313,7 +313,7 @@ class SolicitorStopRepresentingClientTest {
         applicant.setLastName(TEST_LAST_NAME);
         applicant.setEmail(TEST_USER_EMAIL);
 
-        noticeOfChange.submitted(details, beforeDetails);
+        solicitorStopRepresentingClient.submitted(details, beforeDetails);
 
         verify(notificationDispatcher).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             details.getData(), details.getId(), false);
@@ -332,7 +332,7 @@ class SolicitorStopRepresentingClientTest {
         applicant.setEmail(TEST_USER_EMAIL);
         details.getData().getApplication().setIssueDate(null);
 
-        noticeOfChange.submitted(details, beforeDetails);
+        solicitorStopRepresentingClient.submitted(details, beforeDetails);
 
         verify(notificationDispatcher, never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             details.getData(), details.getId(), false);
@@ -351,7 +351,7 @@ class SolicitorStopRepresentingClientTest {
         applicant.setLastName(TEST_LAST_NAME);
         applicant.setEmail(null);
 
-        noticeOfChange.submitted(details, beforeDetails);
+        solicitorStopRepresentingClient.submitted(details, beforeDetails);
 
         verify(notificationDispatcher, never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             details.getData(), details.getId(), false);
@@ -370,7 +370,7 @@ class SolicitorStopRepresentingClientTest {
         applicant.setLastName(TEST_LAST_NAME);
         applicant.setEmail("");
 
-        noticeOfChange.submitted(details, beforeDetails);
+        solicitorStopRepresentingClient.submitted(details, beforeDetails);
 
         verify(notificationDispatcher, never()).sendNOCCaseInvite(nocSolsToCitizenNotifications,
             details.getData(), details.getId(), false);
@@ -384,12 +384,12 @@ class SolicitorStopRepresentingClientTest {
         final var beforeDetails = getCaseDetails();
         Applicant applicant = details.getData().getApplicant1();
         details.getData().setNoticeOfChange(
-            NoticeOfChange.builder().whichApplicant(WhichApplicant.APPLICANT_1).build()
+            NoticeOfChange.builder().whichApplicant(WhichApplicant.APPLICANT_1).noticeType(NoticeType.ORG_REMOVED).build()
         );
         applicant.setFirstName(TEST_FIRST_NAME);
         applicant.setLastName(TEST_LAST_NAME);
 
-        noticeOfChange.submitted(details, beforeDetails);
+        solicitorStopRepresentingClient.submitted(details, beforeDetails);
 
         verify(notificationDispatcher).sendNOC(nocSolRemovedSelfNotifications, details.getData(),
             beforeDetails.getData(), details.getId(), true, NoticeType.ORG_REMOVED);
@@ -417,7 +417,7 @@ class SolicitorStopRepresentingClientTest {
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(true);
 
-        var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
+        var result = solicitorStopRepresentingClient.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant2().getOffline()).isEqualTo(YES);
     }
@@ -442,7 +442,7 @@ class SolicitorStopRepresentingClientTest {
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(false);
 
-        var result = noticeOfChange.aboutToSubmit(details, beforeDetails);
+        var result = solicitorStopRepresentingClient.aboutToSubmit(details, beforeDetails);
 
         assertThat(result.getData().getApplicant1().getOffline()).isEqualTo(YES);
     }

@@ -30,6 +30,7 @@ import uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor;
 import uk.gov.hmcts.divorce.noticeofchange.service.ChangeOfRepresentativeService;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.SolicitorValidationService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +81,7 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
             .page("changeRepresentation-1", this::midEvent)
@@ -214,26 +216,39 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
             details,
             noticeOfChangeService);
 
+        data.getNoticeOfChange().setNoticeType(noticeType);
+
         changeOfRepresentativeService.buildChangeOfRepresentative(data, beforeData,
                 ChangeOfRepresentationAuthor.CASEWORKER_NOTICE_OF_CHANGE.getValue(), isApplicant1);
 
 
-        //could get which applicant from case data but use param to avoid mishap
-        //this can move to submitted once we have more NOC data on casedata
-        notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, details.getData(),
-            beforeData, details.getId(), isApplicant1, noticeType);
-
-        if (hasRepresentationBeenRemoved(isApplicant1, data, beforeData)
-            && shouldSendInviteToParty(data, isApplicant1)) {
-            //Send email to party with case invites
+        if (representationRemovedShouldSendInvite(isApplicant1, data, beforeData)) {
             generateCaseInvite(data, isApplicant1, applicant);
-            notificationDispatcher.sendNOCCaseInvite(nocSolsToCitizenNotifications, details.getData(), details.getId(),
-                isApplicant1);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(correctRepresentationDetails(details.getData(), beforeData))
             .build();
+    }
+
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+        log.info("{} submitted callback invoked for case id: {}", CASEWORKER_NOTICE_OF_CHANGE, details.getId());
+
+        CaseData data = details.getData();
+        CaseData beforeData = beforeDetails.getData();
+
+        final boolean isApplicant1 = data.getNoticeOfChange().getWhichApplicant() == APPLICANT_1;
+        final NoticeType noticeType = data.getNoticeOfChange().getNoticeType();
+
+        //could get which applicant from case data but use param to avoid mishap
+        notificationDispatcher.sendNOC(nocCitizenToSolsNotifications, data, beforeData, details.getId(), isApplicant1, noticeType);
+
+        if (representationRemovedShouldSendInvite(isApplicant1, data, beforeData)) {
+            notificationDispatcher.sendNOCCaseInvite(nocSolsToCitizenNotifications, data, details.getId(), isApplicant1);
+        }
+
+        return SubmittedCallbackResponse.builder().build();
     }
 
     private NoticeType calculateNoticeType(Applicant applicant, Applicant beforeApplicant) {
@@ -347,15 +362,6 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         return solicitor;
     }
 
-    private boolean shouldSendInviteToParty(final CaseData data, boolean isApplicant1) {
-        Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
-        boolean hasEmailAddressOnCase = StringUtils.isNotEmpty(applicant.getEmail());
-
-        return (hasEmailAddressOnCase
-            && (data.getApplicationType() == ApplicationType.SOLE_APPLICATION)
-            && (isApplicant1 || (!isApplicant1 && ObjectUtils.isNotEmpty(data.getApplication().getIssueDate()))));
-    }
-
     private void generateCaseInvite(final CaseData data, boolean isApplicant1, Applicant applicant) {
         if (isApplicant1) {
             CaseInviteApp1 invite = CaseInviteApp1.builder()
@@ -372,12 +378,19 @@ public class CaseworkerNoticeOfChange implements CCDConfig<CaseData, State, User
         }
     }
 
-    private boolean hasRepresentationBeenRemoved(final  boolean isApplicant1,
-                                                 final CaseData caseData,
-                                                 final CaseData previousCaseData) {
+    private boolean representationRemovedShouldSendInvite(final  boolean isApplicant1,
+                                                          final CaseData caseData,
+                                                          final CaseData previousCaseData) {
         Applicant beforeApplicant = isApplicant1 ? previousCaseData.getApplicant1() : previousCaseData.getApplicant2();
         Applicant afterApplicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
 
-        return beforeApplicant.isRepresented() && !afterApplicant.isRepresented();
+        boolean hasRepresentationBeenRemoved = beforeApplicant.isRepresented() && !afterApplicant.isRepresented();
+        boolean shouldSendInviteToParty = (
+            StringUtils.isNotEmpty(afterApplicant.getEmail())
+            && (caseData.getApplicationType() == ApplicationType.SOLE_APPLICATION)
+            && (isApplicant1 || ObjectUtils.isNotEmpty(caseData.getApplication().getIssueDate()))
+        );
+
+        return hasRepresentationBeenRemoved && shouldSendInviteToParty;
     }
 }

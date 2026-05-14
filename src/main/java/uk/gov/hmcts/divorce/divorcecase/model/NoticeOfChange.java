@@ -12,7 +12,9 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.event.NoticeType;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -41,6 +43,13 @@ public class NoticeOfChange {
         access = {CaseworkerAccess.class}
     )
     private YesOrNo areTheyDigital;
+
+    @CCD(
+        label = "Notice Type",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private NoticeType noticeType;
 
     @Getter
     @AllArgsConstructor

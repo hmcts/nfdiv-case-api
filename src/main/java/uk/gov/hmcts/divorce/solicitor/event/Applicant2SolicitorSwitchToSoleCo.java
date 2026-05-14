@@ -19,6 +19,8 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorSwitchToSoleCoNotification;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.util.List;
+
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
@@ -40,12 +42,13 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.CONDITIONAL_ORDER
 public class Applicant2SolicitorSwitchToSoleCo implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO = "app2-sol-switch-to-sole-co";
+    public static final String SHOW_CONDITION = "coApplicant2EnableSolicitorSwitchToSoleCo=\"Yes\" AND coApplicant1IsSubmitted!=\"Yes\"";
+    public static final String ERROR_OTHER_PARTY_HAS_SUBMITTED = "The Conditional Order on this case has been submitted by both parties.";
 
     private final SwitchToSoleService switchToSoleService;
     private final NotificationDispatcher notificationDispatcher;
     private final SolicitorSwitchToSoleCoNotification solicitorSwitchToSoleCoNotification;
     private final DocumentGenerator documentGenerator;
-
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -53,7 +56,7 @@ public class Applicant2SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
         new PageBuilder(configBuilder
             .event(APPLICANT_2_SOLICITOR_SWITCH_TO_SOLE_CO)
             .forStates(ConditionalOrderPending, JSAwaitingLA, AwaitingLegalAdvisorReferral)
-            .showCondition("coApplicant2EnableSolicitorSwitchToSoleCo=\"Yes\"")
+            .showCondition(SHOW_CONDITION)
             .name("Switch To Sole CO")
             .description("Changing to a sole conditional order application")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
@@ -85,6 +88,12 @@ public class Applicant2SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
         Long caseId = details.getId();
 
         log.info("Applicant 2 Solicitor SwitchedToSoleCO aboutToSubmit callback invoked for Case Id: {}", caseId);
+
+        if (YES.equals(data.getConditionalOrder().getConditionalOrderApplicant1Questions().getIsSubmitted())) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(ERROR_OTHER_PARTY_HAS_SUBMITTED))
+                .build();
+        }
 
         data.setApplicationType(SOLE_APPLICATION);
         data.getApplication().setSwitchedToSoleCo(YES);

@@ -26,8 +26,10 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.DRAFT_APPLICATION_SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.INTERIM_APPLICATION_SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SAVE_SIGN_OUT;
@@ -69,6 +71,25 @@ class SaveAndSignOutNotificationHandlerTest {
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
             eq(SAVE_SIGN_OUT),
+            any(),
+            eq(ENGLISH),
+            eq(CASE_ID)
+        );
+    }
+
+    @Test
+    void shouldCallSendEmailToApp1WhenNotifyApplicantIsInvokedForGivenCaseDataInDraftState() {
+        CaseData caseData = validApplicant2CaseData();
+        User user = new User(USER_TOKEN, UserInfo.builder().sub(TEST_USER_EMAIL).build());
+        when(idamService.retrieveUser(USER_TOKEN)).thenReturn(user);
+        when(ccdAccessService.isApplicant1(USER_TOKEN, CASE_ID)).thenReturn(true);
+
+        saveAndSignOutNotificationHandler.notifyApplicant(Draft, caseData, CASE_ID, USER_TOKEN);
+
+        verify(commonContent).mainTemplateVars(caseData, CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(DRAFT_APPLICATION_SAVE_SIGN_OUT),
             any(),
             eq(ENGLISH),
             eq(CASE_ID)

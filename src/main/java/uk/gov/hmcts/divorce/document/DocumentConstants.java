@@ -28,6 +28,8 @@ public final class DocumentConstants {
     public static final String NFD_NOTICE_OF_CHANGE_APP_INVITE_DOCUMENT_NAME = "Case invitation to Citizen";
     public static final String NFD_NOP_APP1_JS_SOLE_UNDISPUTED = "NFD_NOP_APP1_JS_SOLE_UNDISPUTED";
 
+    public static final String HEARING_REMINDER = "HEARING_REMINDER";
+
     public static final String PRONOUNCEMENT_LIST_TEMPLATE_ID = "BULK_CASE_PRONOUNCEMENT";
     public static final String PRONOUNCEMENT_LIST_DOCUMENT_NAME = "NFD_Pronouncement_List";
 
@@ -194,6 +196,9 @@ public final class DocumentConstants {
 
     public static final String FINAL_ORDER_COVER_LETTER_DOCUMENT_NAME = "FinalOrderGrantedCoverLetter";
     public static final String FINAL_ORDER_COVER_LETTER_TEMPLATE_ID = "FINAL_ORDER_GRANTED_COVER_LETTER";
+
+    public static final String RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID = "RESPONDENT_FINAL_ORDER_ANSWERS";
+    public static final String RESPONDENT_FINAL_ORDER_ANSWERS_DOCUMENT_NAME = "respondentFinalOrderAnswers";
 
     public static final String NOC_CITIZEN_LETTER_TEMPLATE_ID = "NOC_TO_SOLS_CITIZEN_LETTER";
     public static final String NOC_CITIZEN_LETTER_DOCUMENT_NAME = "Noc";
