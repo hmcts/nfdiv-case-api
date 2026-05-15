@@ -23,6 +23,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateHmctsCoversheet;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -159,6 +160,9 @@ public class SubmitAosIT {
 
     @MockitoBean
     private PaymentService paymentService;
+
+    @MockitoBean
+    private GenerateHmctsCoversheet generateHmctsCoverSheet;
 
     @BeforeAll
     static void setUp() {
