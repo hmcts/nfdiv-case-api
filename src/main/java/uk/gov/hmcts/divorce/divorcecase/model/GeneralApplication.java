@@ -114,6 +114,12 @@ public class GeneralApplication {
     )
     private String generalApplicationUrgentCaseReason;
 
+    @CCD(
+        label = "Was the application submitted before the case was issued?",
+        searchable = false
+    )
+    private YesOrNo generalApplicationSubmittedBeforeIssue;
+
     @JsonIgnore
     public void recordPayment(String paymentReference, LocalDate dateOfPayment) {
 

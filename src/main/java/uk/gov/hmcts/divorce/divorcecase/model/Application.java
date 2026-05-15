@@ -745,6 +745,11 @@ public class Application {
     }
 
     @JsonIgnore
+    public boolean hasBeenIssued() {
+        return issueDate != null;
+    }
+
+    @JsonIgnore
     public boolean isHelpWithFeesApplication() {
         return Objects.nonNull(applicant1HelpWithFees)
             && Objects.nonNull(applicant1HelpWithFees.getNeedHelp())

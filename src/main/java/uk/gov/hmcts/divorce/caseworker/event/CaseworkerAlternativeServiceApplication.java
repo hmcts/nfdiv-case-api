@@ -94,20 +94,22 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
     ) {
         log.info("Caseworker create service application about to submit callback invoked for Case Id: {}", details.getId());
 
-        var caseData = details.getData();
+        final CaseData data = details.getData();
+        final AlternativeService serviceApplication = data.getAlternativeService();
 
-        caseData.getAlternativeService().setReceivedServiceAddedDate(LocalDate.now(clock));
+        serviceApplication.setServiceApplicationSubmittedBeforeIssue(YesOrNo.from(!data.getApplication().hasBeenIssued()));
+        data.getAlternativeService().setReceivedServiceAddedDate(LocalDate.now(clock));
 
         State endState = AwaitingServiceConsideration;
 
-        if (YesOrNo.YES == caseData.getAlternativeService().getAlternativeServiceFeeRequired()) {
+        if (YesOrNo.YES == serviceApplication.getAlternativeServiceFeeRequired()) {
             endState = AwaitingServicePayment;
         }
 
-        notificationDispatcher.send(generalApplicationReceivedNotification, caseData, details.getId());
+        notificationDispatcher.send(generalApplicationReceivedNotification, data, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(data)
             .state(endState)
             .build();
     }

@@ -29,6 +29,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDwpResponse;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -66,7 +67,14 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_ISSUE_APPLICATION)
-            .forStates(Submitted, AwaitingDocuments, InformationRequested, RequestedInformationSubmitted, AwaitingDwpResponse)
+            .forStates(
+                Submitted,
+                AwaitingDocuments,
+                InformationRequested,
+                RequestedInformationSubmitted,
+                AwaitingDwpResponse,
+                GeneralConsiderationComplete
+            )
             .name("Application issue")
             .description("Application issued")
             .showSummary()
