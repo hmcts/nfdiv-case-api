@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP;
@@ -41,13 +42,9 @@ public class BailiffNotApprovedOrderContent {
 
     private final CommonContent commonContent;
 
-    private final DocmosisCommonContent docmosisCommonContent;
-
-
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
 
-        final Map<String, Object> templateContent = docmosisCommonContent
-            .getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference());
+        final Map<String, Object> templateContent = new HashMap<>();
 
         var alternativeService = caseData.getAlternativeService();
         final var applicant1LanguagePreference = caseData.getApplicant1().getLanguagePreference();
