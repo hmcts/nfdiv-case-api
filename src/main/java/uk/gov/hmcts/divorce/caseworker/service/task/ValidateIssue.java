@@ -15,22 +15,10 @@ import static uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation.
 
 @Component
 @Slf4j
-public class ValidateIssue implements CaseTask {
-
-    @Override
-    public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> details) {
+public class ValidateIssue {
+    public List<String> validate(final CaseDetails<CaseData, State> details) {
         log.info("Validating Issue for Case Id: {}", details.getId());
-
         final List<String> caseValidationErrors = validateIssue(details.getData());
-
-        if (CollectionUtils.isNotEmpty(caseValidationErrors)) {
-            throw new InvalidDataException(
-                "Case data is not valid for application issue",
-                null,
-                caseValidationErrors
-            );
-        }
-
-        return details;
+        return caseValidationErrors;
     }
 }

@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
@@ -26,6 +27,8 @@ import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
+
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDwpResponse;
@@ -128,21 +131,21 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
         CaseData caseData = details.getData();
         caseData.getApplication().setBeingIssuedWithoutAddress(null);
 
-        try {
-            final CaseDetails<CaseData, State> result = issueApplicationService.issueApplication(details);
-
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(result.getData())
-                .state(result.getState())
-                .build();
-        } catch (InvalidDataException exception) {
-            log.info("Data not valid for application issue, case id: {}", details.getId(), exception);
-
+        List<String> validationErrors = issueApplicationService.validateIssueApplication(details);
+        if (CollectionUtils.isNotEmpty(validationErrors)) {
+            log.info("Data not valid for application issue, case id: {}, errors: {}", details.getId(), validationErrors);
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(exception.getErrors())
+                .errors(validationErrors)
                 .build();
         }
+
+        final CaseDetails<CaseData, State> result = issueApplicationService.issueApplication(details);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(result.getData())
+            .state(result.getState())
+            .build();
     }
 
     public SubmittedCallbackResponse submitted(final CaseDetails<CaseData, State> details,

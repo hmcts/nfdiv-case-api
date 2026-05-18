@@ -23,6 +23,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
+import java.util.List;
+
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
 @Service
@@ -65,7 +67,6 @@ public class IssueApplicationService {
     public CaseDetails<CaseData, State> issueApplication(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
             setServiceType,
-            validateIssue,
             setIssueDate,
             setPostIssueState,
             setDueDateAfterIssue,
@@ -86,5 +87,10 @@ public class IssueApplicationService {
             sendApplicationIssueNotifications,
             sendFinancialOrderRequestedNotifications
         ).run(caseDetails);
+    }
+
+    public List<String> validateIssueApplication(CaseDetails<CaseData, State> details) {
+        final CaseDetails<CaseData, State> result = setServiceType.apply(details);
+        return validateIssue.validate(result);
     }
 }
