@@ -29,7 +29,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 @RequiredArgsConstructor
 public class SuperuserPendingRefund implements CCDConfig<CaseData, State, UserRole> {
-    public static final String SUPERUSER_PENDING_REFUND = "caseworker-pending-refund";
+    public static final String SUPERUSER_PENDING_REFUND = "superuser-pending-refund";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
