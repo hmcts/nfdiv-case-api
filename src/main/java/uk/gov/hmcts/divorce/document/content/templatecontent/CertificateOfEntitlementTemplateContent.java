@@ -133,7 +133,7 @@ public class CertificateOfEntitlementTemplateContent implements TemplateContent 
             if (caseData.getApplicant2().isRepresented()) {
                 templateContent.put(APPLICANT_2_SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
             }
-            templateContent.put(COURT_NAME, conditionalOrderCourt);
+            templateContent.put(COURT_NAME, conditionalOrderCourt != null ? conditionalOrderCourt.getLabel() : null);
 
             templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
             templateContent.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
