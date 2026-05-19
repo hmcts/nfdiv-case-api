@@ -487,7 +487,7 @@ docmosis:
       NFD_RESP_RESPONDED_AWAITING_CO_DISPUTED: FL-NFD-GOR-ENG-Respondent-Responded-Defended-Awaiting-CO.docx
       NFD_RESP_NOT_RESPONDED: FL-NFD-GOR-ENG-Respondent-Not-Responded-V2.docx
       NFD_RESP_NOT_RESPONDED_JS: FL-NFD-GOR-ENG-Respondent-Not-Responded-JS_V2.docx
-      COVERSHEET_APPLICANT: FL-NFD-GOR-ENG-Applicant_Coversheet_V2
+      COVERSHEET_APPLICANT: FL-NFD-GOR-ENG-Applicant_Coversheet_V2.docx
       COVERSHEET_SOLICITOR: FL-NFD-GOR-ENG-Solicitor-Coversheet_V2.docx
       NFD_RESP_RESPONDED_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended_V2.docx
       NFD_RESP_RESPONDED_AWAITING_CO_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended-Awaiting-CO.docx
@@ -584,7 +584,7 @@ docmosis:
       NFD_RESP_RESPONDED_AWAITING_CO_DISPUTED: FL-NFD-GOR-ENG-Respondent-Responded-Defended-Awaiting-CO.docx #TODO: add translated content
       NFD_RESP_NOT_RESPONDED: FL-NFD-GOR-ENG-Respondent-Not-Responded-V2.docx #TODO: add translated content
       NFD_RESP_NOT_RESPONDED_JS: FL-NFD-GOR-ENG-Respondent-Not-Responded-JS_V2.docx #TODO: add translated content
-      COVERSHEET_APPLICANT: FL-NFD-GOR-ENG-Applicant_Coversheet_V2
+      COVERSHEET_APPLICANT: FL-NFD-GOR-ENG-Applicant_Coversheet_V2.docx
       COVERSHEET_SOLICITOR: FL-NFD-GOR-ENG-Solicitor-Coversheet_V2.docx
       NFD_RESP_RESPONDED_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended_V2.docx #TODO: add translated content
       NFD_RESP_RESPONDED_AWAITING_CO_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended-Awaiting-CO.docx #TODO: add translated content
