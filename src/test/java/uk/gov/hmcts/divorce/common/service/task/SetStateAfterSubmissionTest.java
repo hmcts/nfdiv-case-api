@@ -81,6 +81,8 @@ class SetStateAfterSubmissionTest {
             .applicant1HelpWithFees(HelpWithFees.builder()
                 .needHelp(YES)
                 .build())
+            .applicant1KnowsApplicant2Address(YES)
+            .applicant1FoundApplicant2Address(YES)
             .build();
 
         final CaseData caseData = caseData();
@@ -107,6 +109,8 @@ class SetStateAfterSubmissionTest {
             .applicant2HelpWithFees(HelpWithFees.builder()
                 .needHelp(NO)
                 .build())
+            .applicant1KnowsApplicant2Address(YES)
+            .applicant1FoundApplicant2Address(YES)
             .build();
 
         final CaseData caseData = caseData();
@@ -198,6 +202,8 @@ class SetStateAfterSubmissionTest {
             .applicationFeeOrderSummary(OrderSummary.builder()
                 .paymentTotal("55000")
                 .build())
+            .applicant1KnowsApplicant2Address(YES)
+            .applicant1FoundApplicant2Address(YES)
             .build();
 
         final var caseData = caseData();
@@ -247,7 +253,7 @@ class SetStateAfterSubmissionTest {
     }
 
     @Test
-    void shouldSetSubmittedStateIfApplicationIsNotAwaitingDocuments() {
+    void shouldSetSubmittedStateIfApplicationIsNotAwaitingDocumentsAndRespondentAddressProvided() {
 
         final var payment = new ListValue<>(null, Payment
             .builder()
@@ -260,6 +266,8 @@ class SetStateAfterSubmissionTest {
                 .paymentTotal("55000")
                 .build())
             .applicationPayments(singletonList(payment))
+            .applicant1KnowsApplicant2Address(YES)
+            .applicant1FoundApplicant2Address(YES)
             .build();
 
         final var caseData = caseData();
@@ -402,6 +410,8 @@ class SetStateAfterSubmissionTest {
         final CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(YES);
+        caseData.getApplication().setApplicant1FoundApplicant2Address(YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
@@ -419,6 +429,8 @@ class SetStateAfterSubmissionTest {
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(YES);
+        caseData.getApplication().setApplicant1FoundApplicant2Address(YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);
@@ -436,6 +448,8 @@ class SetStateAfterSubmissionTest {
         final CaseData caseData = caseData();
         caseData.setApplicationType(JOINT_APPLICATION);
         caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(YES);
+        caseData.getApplication().setApplicant1FoundApplicant2Address(YES);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(TEST_CASE_ID);

@@ -270,11 +270,13 @@ public class ApplicationTab implements CCDConfig<CaseData, State, UserRole> {
     }
 
     private void addApplicant1Representation(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+
+
         tabBuilder
             .field("applicant1CannotUpload")
             .field("applicant1CannotUploadSupportingDocument")
-            .field("applicant1KnowsApplicant2Address",
-                "applicant1WantsToHavePapersServedAnotherWay=\"Yes\"")
+            .field("applicant1KnowsApplicant2Address")
+            .field("applicant1FoundApplicant2Address")
             .field("applicant1WantsToHavePapersServedAnotherWay",
                 "applicant1WantsToHavePapersServedAnotherWay=\"Yes\"")
 

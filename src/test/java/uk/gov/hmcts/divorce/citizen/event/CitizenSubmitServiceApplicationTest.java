@@ -11,8 +11,10 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.BailiffServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
@@ -25,6 +27,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +41,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.AWAITING_DECISION_ERROR;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenSubmitServiceApplication.SERVICE_APPLICATION_NOT_ALLOWED;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
@@ -119,6 +123,8 @@ class CitizenSubmitServiceApplicationTest {
                     .build()
             ).build();
 
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 10, 26));
+
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setId(TEST_CASE_ID);
 
@@ -170,6 +176,8 @@ class CitizenSubmitServiceApplicationTest {
                     .build()
             ).build();
 
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 10, 26));
+
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setId(TEST_CASE_ID);
 
@@ -214,6 +222,8 @@ class CitizenSubmitServiceApplicationTest {
                     .build()
             ).build();
 
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 10, 26));
+
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setId(TEST_CASE_ID);
 
@@ -250,6 +260,8 @@ class CitizenSubmitServiceApplicationTest {
                     .build()
             ).build();
 
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 10, 26));
+
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setId(TEST_CASE_ID);
 
@@ -285,6 +297,8 @@ class CitizenSubmitServiceApplicationTest {
                         .build())
                     .build()
             ).build();
+
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 10, 26));
 
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setId(TEST_CASE_ID);
@@ -335,6 +349,8 @@ class CitizenSubmitServiceApplicationTest {
                     .build()
             ).build();
 
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 10, 26));
+
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseDetails.setId(TEST_CASE_ID);
 
@@ -352,6 +368,92 @@ class CitizenSubmitServiceApplicationTest {
         AlternativeService alternativeService = response.getData().getAlternativeService();
         assertThat(response.getState()).isEqualTo(State.AwaitingDocuments);
         assertThat(alternativeService.getServiceApplicationDocuments()).isNull();
+    }
+
+    @Test
+    void shouldNotAllowDeemedServiceApplicationPreIssue() {
+        CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(
+                Applicant.builder()
+                    .firstName(TEST_FIRST_NAME)
+                    .interimApplicationOptions(InterimApplicationOptions.builder()
+                        .interimAppsUseHelpWithFees(NO)
+                        .interimAppsCannotUploadDocs(YES)
+                        .interimApplicationType(InterimApplicationType.DEEMED_SERVICE)
+                        .deemedServiceJourneyOptions(DeemedServiceJourneyOptions.builder().build())
+                        .build())
+                    .build()
+            ).build();
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
+            caseDetails, caseDetails
+        );
+
+        assertThat(response.getErrors()).isEqualTo(Collections.singletonList(SERVICE_APPLICATION_NOT_ALLOWED));
+    }
+
+    @Test
+    void shouldNotAllowBailiffServiceApplicationPreIssue() {
+        CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(
+                Applicant.builder()
+                    .firstName(TEST_FIRST_NAME)
+                    .interimApplicationOptions(InterimApplicationOptions.builder()
+                        .interimAppsUseHelpWithFees(NO)
+                        .interimAppsCannotUploadDocs(YES)
+                        .interimApplicationType(InterimApplicationType.BAILIFF_SERVICE)
+                        .bailiffServiceJourneyOptions(BailiffServiceJourneyOptions.builder().build())
+                        .build())
+                    .build()
+            ).build();
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
+            caseDetails, caseDetails
+        );
+
+        assertThat(response.getErrors()).isEqualTo(Collections.singletonList(SERVICE_APPLICATION_NOT_ALLOWED));
+    }
+
+    @Test
+    void shouldAllowAlternativeServiceApplicationPreIssue() {
+        setMockClock(clock);
+
+        CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(
+                Applicant.builder()
+                    .firstName(TEST_FIRST_NAME)
+                    .interimApplicationOptions(InterimApplicationOptions.builder()
+                        .interimAppsUseHelpWithFees(YES)
+                        .interimAppsCannotUploadDocs(NO)
+                        .interimApplicationType(InterimApplicationType.ALTERNATIVE_SERVICE)
+                        .alternativeServiceJourneyOptions(AlternativeServiceJourneyOptions.builder().build())
+                        .build())
+                    .build()
+            ).build();
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        DivorceDocument generatedApplication = DivorceDocument.builder().build();
+        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+            TEST_CASE_ID, caseData.getApplicant1(), caseData
+        )).thenReturn(generatedApplication);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenSubmitServiceApplication.aboutToSubmit(
+            caseDetails, caseDetails
+        );
+
+        AlternativeService alternativeService = response.getData().getAlternativeService();
+        assertThat(alternativeService.getAlternativeServiceType()).isEqualTo(AlternativeServiceType.ALTERNATIVE_SERVICE);
     }
 
 
