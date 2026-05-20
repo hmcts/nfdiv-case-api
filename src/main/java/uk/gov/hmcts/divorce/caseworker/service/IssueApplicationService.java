@@ -66,7 +66,6 @@ public class IssueApplicationService {
 
     public CaseDetails<CaseData, State> issueApplication(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
-            setServiceType,
             setIssueDate,
             setPostIssueState,
             setDueDateAfterIssue,
@@ -90,7 +89,10 @@ public class IssueApplicationService {
     }
 
     public List<String> validateIssueApplication(CaseDetails<CaseData, State> details) {
-        final CaseDetails<CaseData, State> result = setServiceType.apply(details);
-        return validateIssue.validate(result);
+        return validateIssue.validate(details);
+    }
+
+    public CaseDetails<CaseData, State> updateServiceType(CaseDetails<CaseData, State> details) {
+        return setServiceType.apply(details);
     }
 }

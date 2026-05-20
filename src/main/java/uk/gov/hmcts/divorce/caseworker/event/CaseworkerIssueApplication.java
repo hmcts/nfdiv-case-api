@@ -13,7 +13,6 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.exception.InvalidDataException;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -131,7 +130,10 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
         CaseData caseData = details.getData();
         caseData.getApplication().setBeingIssuedWithoutAddress(null);
 
-        List<String> validationErrors = issueApplicationService.validateIssueApplication(details);
+        //Setting the service type first to ensure a validation check is done on the correct service type
+        final CaseDetails<CaseData, State> afterServiceType = issueApplicationService.updateServiceType(details);
+
+        List<String> validationErrors = issueApplicationService.validateIssueApplication(afterServiceType);
         if (CollectionUtils.isNotEmpty(validationErrors)) {
             log.info("Data not valid for application issue, case id: {}, errors: {}", details.getId(), validationErrors);
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -140,7 +142,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
                 .build();
         }
 
-        final CaseDetails<CaseData, State> result = issueApplicationService.issueApplication(details);
+        final CaseDetails<CaseData, State> result = issueApplicationService.issueApplication(afterServiceType);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(result.getData())
