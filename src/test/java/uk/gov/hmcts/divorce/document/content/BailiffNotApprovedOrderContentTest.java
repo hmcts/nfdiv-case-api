@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
@@ -20,8 +19,11 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICATION_TO_END_THE_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
@@ -41,6 +43,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_MIDDLE_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.jointCaseDataWithOrderSummary;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,6 +51,9 @@ class BailiffNotApprovedOrderContentTest {
 
     @Mock
     private Clock clock;
+
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
 
     @Mock
     private CommonContent commonContent;
@@ -66,7 +72,9 @@ class BailiffNotApprovedOrderContentTest {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reason");
         caseData.getAlternativeService().setReceivedServiceApplicationDate(SERVICE_APPLICATION_DATE);
 
-        Mockito.when(commonContent.getPartner(caseData, caseData.getApplicant2(), LanguagePreference.ENGLISH)).thenReturn("wife");
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), LanguagePreference.ENGLISH)).thenReturn("wife");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
@@ -90,7 +98,9 @@ class BailiffNotApprovedOrderContentTest {
         caseData.setDivorceOrDissolution(DISSOLUTION);
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reason");
         caseData.getAlternativeService().setReceivedServiceApplicationDate(SERVICE_APPLICATION_DATE);
-        Mockito.when(commonContent.getPartner(caseData, caseData.getApplicant2(), LanguagePreference.ENGLISH)).thenReturn("civil partner");
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), LanguagePreference.ENGLISH)).thenReturn("civil partner");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
@@ -128,7 +138,9 @@ class BailiffNotApprovedOrderContentTest {
             .alternativeService(AlternativeService.builder().receivedServiceApplicationDate(SERVICE_APPLICATION_DATE).build())
             .build();
 
-        Mockito.when(commonContent.getPartner(caseData, caseData.getApplicant2(), LanguagePreference.WELSH)).thenReturn("gŵr");
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), LanguagePreference.WELSH)).thenReturn("gŵr");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(WELSH));
 
         final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
@@ -160,8 +172,9 @@ class BailiffNotApprovedOrderContentTest {
             .alternativeService(AlternativeService.builder().receivedServiceApplicationDate(SERVICE_APPLICATION_DATE).build())
             .build();
 
-        Mockito.when(commonContent.getPartner(caseData, caseData.getApplicant2(), LanguagePreference.WELSH)).thenReturn("gŵr");
-
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), LanguagePreference.WELSH)).thenReturn("gŵr");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(WELSH));
         final Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(result).contains(
