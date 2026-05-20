@@ -117,9 +117,9 @@ uk:
             APPLICANT_NOTICE_OF_PROCEEDINGS: '2d79f93a-aabc-470a-b5f5-333059787a8a'
             APPLICANT_SOLICITOR_SERVICE: 'ae5ef50e-bda6-45ae-a530-1fe588adfb57'
             GENERAL_EMAIL_PETITIONER: '1e2d5765-3a4e-4e67-856a-c80b9ef364c9'
-            GENERAL_EMAIL_PETITIONER_SOLICITOR: '85ee5f96-1979-4817-acff-41e39fe755ae'
+            GENERAL_EMAIL_PETITIONER_SOLICITOR: '21bb7e05-87dd-4943-a615-1194d6faf538'
             GENERAL_EMAIL_RESPONDENT: '921588e0-a82a-47ee-afc5-988959a77159'
-            GENERAL_EMAIL_RESPONDENT_SOLICITOR: '55fd1f3d-37e0-49ba-8ae0-5b539e2ad6a0'
+            GENERAL_EMAIL_RESPONDENT_SOLICITOR: '600c07de-967b-468c-886f-1f8f3c7e995c'
             GENERAL_EMAIL_OTHER_PARTY: '7f47e47e-8ad2-4b7f-a22c-46130c55a49f'
             APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER: '8c6d4196-0e77-4b76-a660-5d1ae0a4fa54'
             JOINT_SOLICITOR_BOTH_APPLIED_CO_FO: '74dd410e-7cf8-4d1c-b2c9-27a29f6ed090'
@@ -194,13 +194,13 @@ uk:
             OTHER_APPLICANT_NOT_APPLIED_FOR_FINAL_ORDER: '7a97eeb5-7b58-4e86-a61e-57cb21ddb1e1'
             INTEND_TO_SWITCH_TO_SOLE_FO: 'e6b98a64-ddcd-48cf-a9b5-774006c8ee78'
             PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO: '7e5e6d89-62a6-4e9b-b044-ab7b27186a35'
-            OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR: '10a45ed1-9b42-4a09-9ebc-ff8005d82a13'
+            OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR: 'd61dad88-5b37-4156-8770-0e25b0ec1510'
             OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_CITIZEN: '7e5e6d89-62a6-4e9b-b044-ab7b27186a35'
             APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '2486536c-481d-4dd3-8934-91faa5aa37f5'
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_APPLICANT: '174da37d-df36-4407-b9ee-eae1f94b4f6b'
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT: 'abf7a206-5818-4a52-9e66-7bbc3a2471a0'
             APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '3f3298fd-21fe-45aa-81ea-8a49155a9f69'
-            APPLICANT_2_SOLICITOR_APPLIED_FOR_FINAL_ORDER: '6c71903e-4186-4d48-96ee-18f6cf7af0a9'
+            APPLICANT_2_SOLICITOR_APPLIED_FOR_FINAL_ORDER: '236aa863-c334-4f30-9f3f-19cbfc8e2590'
             NOC_CITIZEN_TO_SOL_EMAIL_CITIZEN: 'ac0c038c-88c7-4f9d-8931-9e98383978dc'
             NOC_TO_SOLS_EMAIL_NEW_SOL: '015cb1c6-a4d0-47f2-b386-81c27603576f'
             NOC_TO_SOLS_EMAIL_OLD_SOL: '000453d2-1a89-4211-aac8-5eb583db64ef'
@@ -230,6 +230,8 @@ uk:
             GENERAL_APPLICATION_REJECTED_BY_CASEWORKER: 'da01b9f2-4f1c-4838-8789-7d7324c1589b'
             FINANCIAL_ORDER_REQUESTED_NOTIFICATION: '740f2b58-6f72-4f07-8c85-26ccb06efd13'
             RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION: 'f0407ced-5060-4e4c-8a22-0852cb0bc66f'
+            COURT_ORDERS_REGENERATED_CITIZEN: '0c51bf9b-5d6c-49f4-bf75-866a75a64f9d'
+            COURT_ORDERS_REGENERATED_SOLICITOR: '5ac5a300-4cd4-42b8-adb9-0944ebc3279c'
             CERTIFICATE_OF_SERVICE_EVIDENCE_NOTIFICATION: '06d40e2f-5db7-491b-abe0-be1de6d2bcce'
             HEARING_REMINDER_CITIZEN: '96ad6d01-49d0-4fd8-9119-c15a4cdef873'
             HEARING_REMINDER_SOLICITOR: '95d52e90-216e-47bb-90b8-1a5ac2d0f053'
@@ -290,9 +292,9 @@ uk:
             APPLICANT_NOTICE_OF_PROCEEDINGS: '2d79f93a-aabc-470a-b5f5-333059787a8a'
             APPLICANT_SOLICITOR_SERVICE: 'be52d59d-f50b-46c0-ba4e-99951edb189c'
             GENERAL_EMAIL_PETITIONER: '058914e0-c303-4d7f-9b02-c426a681b8d3'
-            GENERAL_EMAIL_PETITIONER_SOLICITOR: 'f5531e99-5fe5-4305-93f4-686add9691d8'
+            GENERAL_EMAIL_PETITIONER_SOLICITOR: '75f47ebd-c222-4b35-b88c-d39a3bdad338'
             GENERAL_EMAIL_RESPONDENT: '5c721a7c-a5b1-4eb9-84b3-e788834c0a90'
-            GENERAL_EMAIL_RESPONDENT_SOLICITOR: 'ba73096f-800a-4030-8a9c-ba726dca54bc'
+            GENERAL_EMAIL_RESPONDENT_SOLICITOR: 'e8adfd00-93ed-4a1b-8835-a38f6fa5e03a'
             GENERAL_EMAIL_OTHER_PARTY: '7f47e47e-8ad2-4b7f-a22c-46130c55a49f'
             APPLICANT_SOLICITOR_CAN_APPLY_CONDITIONAL_ORDER: '6d159093-27b3-4bbf-9410-2949004a0f34'
             SOLICITOR_AWAITING_CONDITIONAL_ORDER: '89de4d8a-c94f-4699-8fc7-663dc7a994be'
@@ -368,13 +370,13 @@ uk:
             INTEND_TO_SWITCH_TO_SOLE_FO: '0eb5deb5-851d-4ced-b793-0d836e8f9101'
             PARTNER_INTENDS_TO_SWITCH_TO_SOLE_FO: 'af46da5d-57bf-4e77-891f-2929d3fef037'
             SOLICITOR_PARTNER_HAS_SWITCHED_TO_SOLE_FINAL_ORDER: 'a926a5e3-cab1-42cd-82fd-2e7a383f862e'
-            OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR: '10aa232c-dde7-4029-aa16-bb6121146fa4'
+            OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_SOLICITOR: '65943bc4-bf44-4cf1-87ee-b547c569387a'
             OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_CITIZEN: '2c7245b5-e469-4bee-923d-9033beab5d4c'
             APPLICANT_SOLICITOR_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '8bd999b2-477e-49b4-8757-faf698e95657'
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_APPLICANT: '174da37d-df36-4407-b9ee-eae1f94b4f6b' #TODO - Welsh translation needed
             FINAL_ORDER_GRANTED_SWITCH_TO_SOLE_RESPONDENT: 'c3a8b230-63cc-4d63-a9b7-d9434c1c129a'
             APPLICANT_SWITCH_TO_SOLE_AFTER_INTENTION_FO: '9baabc53-5776-49b0-8f86-d3fd3b5d4205'
-            APPLICANT_2_SOLICITOR_APPLIED_FOR_FINAL_ORDER: '29ca7d6f-a674-419d-8ae4-2df2c452a331'
+            APPLICANT_2_SOLICITOR_APPLIED_FOR_FINAL_ORDER: 'b2b51641-648d-4c4b-8d04-561b7ae9390d'
             NOC_CITIZEN_TO_SOL_EMAIL_CITIZEN: '834ffb2e-d901-4599-8c13-a0380391c7bb'
             NOC_TO_SOLS_EMAIL_NEW_SOL: 'db423d95-49bb-4e40-9023-6708ee1cbbb3'
             NOC_TO_SOLS_EMAIL_OLD_SOL: 'da09beed-30bd-413b-b178-a9b75333d631'
@@ -403,6 +405,8 @@ uk:
             GENERAL_APPLICATION_REJECTED_BY_CASEWORKER: 'a2bff369-1daa-4b18-8058-433ff3add380'
             FINANCIAL_ORDER_REQUESTED_NOTIFICATION: 'f94e22c4-42b4-4049-97d1-f47a68f7c466'
             RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION: '3d4436d2-6d50-4837-b81b-b03eba205a55'
+            COURT_ORDERS_REGENERATED_CITIZEN: '0c51bf9b-5d6c-49f4-bf75-866a75a64f9d' #TODO: Update Welsh translation
+            COURT_ORDERS_REGENERATED_SOLICITOR: '5ac5a300-4cd4-42b8-adb9-0944ebc3279c' #TODO: Update Welsh translation
             CERTIFICATE_OF_SERVICE_EVIDENCE_NOTIFICATION: '06d40e2f-5db7-491b-abe0-be1de6d2bcce' #TODO: Update Welsh translation
             HEARING_REMINDER_CITIZEN: '96ad6d01-49d0-4fd8-9119-c15a4cdef873'
             HEARING_REMINDER_SOLICITOR: '95d52e90-216e-47bb-90b8-1a5ac2d0f053'
@@ -450,24 +454,24 @@ docmosis:
     english:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-ENG-Divorce-Application-Joint_V1.docx
-      DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx
+      DIVORCE_DRAFT_APPLICATION: FL-NFD-APP-ENG-CP_Mini_Draft_Application_Template_V1.docx
       REJECTED_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order_V3.docx
       CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline_V5.docx
-      CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V2.docx
-      JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx
-      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx
-      JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Refusal-Solicitor-Cover-Letter_V1.docx
-      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Clarification-Refusal-Solicitor-Cover-Letter_V1.docx
-      REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V2.docx
+      CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V4.docx
+      JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V3.docx
+      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V3.docx
+      JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Refusal-Solicitor-Cover-Letter_V3.docx
+      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Clarification-Refusal-Solicitor-Cover-Letter_V3.docx
+      REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V4.docx
       DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V3.docx
       RESPONDENT_ANSWERS: FL-NFD-GOR-ENG-Respondent-Answers-Eng-V3.docx #TODO: update content
       CERTIFICATE_OF_SERVICE: FL-NFD-GOR-ENG-Certificate_Of_Service_V2.docx
       SERVICE_ORDER: FL-NFD-GOR-ENG-Service-Order-V5.docx #TODO: update content
       BULK_CASE_PRONOUNCEMENT: FL-NFD-GOR-ENG-Pronouncement-List-V3.docx
-      CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx
-      CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT: FL-NFD-GOR-ENG-Do-Not-Attend-Court-CO-Granted-Letter.docx
+      CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V3.docx
+      CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT: FL-NFD-GOR-ENG-Do-Not-Attend-Court-CO-Granted-Letter_V2.docx
       CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V3.docx
-      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx
+      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V6.docx
       CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx
       CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor.docx
       CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor_V1.docx
@@ -548,11 +552,12 @@ docmosis:
       SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-ENG-Search-Government-Records-Application_V3.docx
       BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-ENG-Bailiff-Service-Successful-Letter-V1.docx
       RESPONDENT_FINAL_ORDER_ANSWERS: FL-NFD-GOR-ENG-Respondent_Final_Order_Answers_V1.docx
+      CITIZEN_COURT_ORDERS_REGENERATED: FL-NFD-GOR-ENG-Court-Orders-Regenerated-Citizen-V1.docx
       HEARING_REMINDER: FL-NFD-GOR-ENG-Hearing-Reminder-V1.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V2.docx
-      DIVORCE_DRAFT_APPLICATION: NFD_CP_Mini_Draft_Application_Template.docx #TODO: Set correct template when available
+      DIVORCE_DRAFT_APPLICATION: FL-NFD-APP-ENG-CP_Mini_Draft_Application_Template_V1.docx #TODO: Set correct template when available
       DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V3.docx #TODO: update template once available
       JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Solicitor-Cover-Letter-JS.docx
       CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V3.docx
@@ -564,7 +569,7 @@ docmosis:
       NOTICE_OF_PROCEEDINGS_RESP: NFD_Notice_Of_Proceedings_Sole_Respondent.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-WEL-Certificate-Of-Entitlement_V3.docx
       CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT: FL-NFD-GOR-WEL-Do-Not-Attend-Court-CO-Granted-Letter_V1.docx
-      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx #TODO: update content
+      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V6.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor_V1.docx #TODO: update content
@@ -591,13 +596,13 @@ docmosis:
       GENERAL_LETTER: FL-NFD-GOR-ENG-General-Letter-V1.docx
       NOTICE_OF_PROCEEDINGS_JOINT_SOLICITOR: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Sole-Joint-Solicitor-V1.docx
       REJECTED_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Refusal-Order_V2.docx
-      REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V2.docx #TODO: update welsh content
+      REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V4.docx #TODO: update welsh content
       CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Clarification-Refusal-Order_V4.docx
-      CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V2.docx #TODO: update welsh content
-      JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx #TODO: update welsh content
-      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx #TODO: update welsh content
+      CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V4.docx #TODO: update welsh content
+      JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V3.docx #TODO: update welsh content
+      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V3.docx #TODO: update welsh content
       JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-WEL-Judicial-Separation-Conditional-Order-Refusal-Solicitor-Cover-Letter_V2.docx
-      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Clarification-Refusal-Solicitor-Cover-Letter_V1.docx #TODO: update welsh content
+      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Clarification-Refusal-Solicitor-Cover-Letter_V3.docx #TODO: update welsh content
       NFD_NOP_A1_SOLE_APP1_CIT_CS: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Sole_V4.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: FL-NFD-GOR-WEL-Notice-Of-Proceedings-Overseas-Sole_V5.docx
       NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V4.docx #TODO: add Welsh translation
@@ -648,6 +653,7 @@ docmosis:
       SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-WEL-Search-Government-Records-Application_V3.docx
       BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-WEL-Bailiff-Service-Successful-Letter-V1.docx
       RESPONDENT_FINAL_ORDER_ANSWERS: FL-NFD-GOR-WEL-Respondent_Final_Order_Answers_V1.docx
+      CITIZEN_COURT_ORDERS_REGENERATED: FL-NFD-GOR-ENG-Court-Orders-Regenerated-Citizen-V1.docx
       HEARING_REMINDER: FL-NFD-GOR-ENG-Hearing-Reminder-V1.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
