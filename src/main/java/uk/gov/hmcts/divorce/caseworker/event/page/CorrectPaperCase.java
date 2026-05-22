@@ -195,7 +195,7 @@ public class CorrectPaperCase implements CcdPageConfiguration {
                 "${labelContentApplicantsOrApplicant1s} full name as on ${labelContentMarriageOrCivilPartnership} certificate")
                     .mandatoryWithLabel(MarriageDetails::getApplicant2Name,
                 "${labelContentRespondentsOrApplicant2s} full name as on ${labelContentMarriageOrCivilPartnership} certificate")
-                    .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect) //fix
+                    .mandatory(MarriageDetails::getCertifyMarriageCertificateIsCorrect)
                     .mandatory(MarriageDetails::getMarriageCertificateIsIncorrectDetails,
                 "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
                 .done()
