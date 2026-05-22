@@ -1,12 +1,13 @@
 package uk.gov.hmcts.divorce.consumer;
 
 
+import au.com.dius.pact.consumer.dsl.PactBuilder;
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
-import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
-import au.com.dius.pact.core.model.RequestResponsePact;
+import au.com.dius.pact.core.model.V4Pact;
 import au.com.dius.pact.core.model.annotations.Pact;
+import au.com.dius.pact.core.model.annotations.PactDirectory;
 import org.apache.hc.core5.http.HttpStatus;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_DIVORC
 @ExtendWith(PactConsumerTestExt.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
+@PactDirectory("pacts")
 @PactTestFor(providerName = "feeRegister_lookUp", port = "4411")
 @TestPropertySource(locations = {"/application.properties"})
 public class FeesRegisterConsumerTest {
@@ -39,9 +41,10 @@ public class FeesRegisterConsumerTest {
     @Autowired
     FeesAndPaymentsClient feesClient;
 
-    @Pact(provider = "feeRegister_lookUp", consumer = "nfdiv_case_api")
-    public RequestResponsePact createApplicationFeeFragment(PactDslWithProvider builder) {
+    @Pact(provider = "feeRegister_lookUp", consumer = "nfdiv_caseApi")
+    public V4Pact createApplicationFeeFragment(PactBuilder builder) {
         return builder
+            .usingLegacyDsl()
             .given("service is registered in Fee registry")
             .uponReceiving("request for Divorce application fee")
             .path("/fees-register/fees/lookup")
@@ -57,7 +60,7 @@ public class FeesRegisterConsumerTest {
             .body(new PactDslJsonBody()
                 .stringValue("code", DIVORCE_APPLICATION_FEE_CODE))
             .status(HttpStatus.SC_OK)
-            .toPact();
+            .toPact(V4Pact.class);
     }
 
     @Test

@@ -130,26 +130,35 @@ task integration(type: Test) {
 task contract(type: Test) {
   description = "Runs pact contract tests"
   group = "Verification"
+  useJUnitPlatform()
   testClassesDirs = sourceSets.contractTest.output.classesDirs
   classpath = sourceSets.contractTest.runtimeClasspath
   environment 'FEE_API_URL', 'http://localhost:4411'
 }
 
-task runAndPublishPactConsumerContractTests(type: Test, description: 'Publish pact contract tests to broker.', group: 'Verification') {
+task runAndPublishConsumerPactTests(type: Test, description: 'Publish pact contract tests to broker.', group: 'Verification') {
   testClassesDirs = sourceSets.contractTest.output.classesDirs
   classpath = sourceSets.contractTest.runtimeClasspath
   environment 'FEE_API_URL', 'http://localhost:4411'
+}
+
+project.ext.pacticipant = 'nfdiv_caseApi'
+project.ext.pacticipantVersion = getCheckedOutGitCommitHash()
+
+static def getCheckedOutGitCommitHash() {
+  'git rev-parse --verify --short HEAD'.execute().text.trim()
 }
 
 pact {
   broker {
-    pactBrokerUrl = System.getenv("PACT_BROKER_FULL_URL") ?: 'http://localhost:80'
+    pactBrokerUrl = 'http://localhost:80'
   }
   publish {
     pactDirectory = 'pacts'
-    pactBrokerUrl = System.getenv("PACT_BROKER_FULL_URL") ?: 'http://localhost:80'
-    tags = ['Dev']
-    version = "1.0"
+    pactBrokerUrl = 'http://localhost:80'
+    tags = [System.getenv("PACT_BRANCH_NAME") ?:'Dev']
+    version = project.pacticipantVersion
+    consumerVersion = project.pacticipantVersion
   }
 }
 
@@ -157,7 +166,8 @@ pactPublish {
   pactPublish = project.pact.publish
 }
 
-runAndPublishPactConsumerContractTests.finalizedBy pactPublish
+runAndPublishConsumerPactTests.dependsOn contract
+runAndPublishConsumerPactTests.finalizedBy pactPublish
 
 // Invoked from CftLibConfig when booting with CCD.
 task buildCCDXlsx(type: Exec) {
@@ -275,7 +285,6 @@ def versions = [
   junit        : '5.14.4',
   junitPlatform: '1.14.4',
   lombok       : '1.18.42',
-  pact         : '4.1.34',
   springBoot   : springBoot.class.package.implementationVersion
 ]
 
@@ -365,7 +374,8 @@ dependencies {
   functionalTestImplementation sourceSets.test.runtimeClasspath
   functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.2'
 
-  contractTestImplementation "au.com.dius.pact.consumer:junit5:${versions.pact}"
+  contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.19'
+  contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.19'
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
