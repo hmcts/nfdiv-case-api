@@ -57,8 +57,6 @@ sourceSets {
       runtimeClasspath += main.output
       srcDir file('src/contractTest/java')
     }
-
-    // resources.srcDir file('src/contractTest/resources')
   }
 }
 
@@ -151,11 +149,11 @@ static def getCheckedOutGitCommitHash() {
 
 pact {
   broker {
-    pactBrokerUrl = 'http://localhost:80'
+    pactBrokerUrl = System.getenv("PACT_BROKER_FULL_URL") ?: 'http://localhost:80'
   }
   publish {
     pactDirectory = 'pacts'
-    pactBrokerUrl = 'http://localhost:80'
+    pactBrokerUrl = System.getenv("PACT_BROKER_FULL_URL") ?: 'http://localhost:80'
     tags = [System.getenv("PACT_BRANCH_NAME") ?:'Dev']
     version = project.pacticipantVersion
     consumerVersion = project.pacticipantVersion
