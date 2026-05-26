@@ -3,6 +3,40 @@ const fs = require('fs');
 const path = require('path');
 const model = JSON.parse(fs.readFileSync('build/state-event-model.json', 'utf8'));
 
+// Build set of event IDs that have entries on the email-notifications page
+// const NOTIF_PAGE = 'https://hmcts.github.io/civil-service/email-notifications.html';
+// const notifPageEvents = new Set();
+// // Usage: node generate-state-event-svg.js [civil-service-path]
+// const civilServiceRoot = process.argv[2]
+//   ? path.resolve(process.cwd(), process.argv[2])
+//   : path.resolve(process.cwd(), '..', 'civil-service');
+// const notifHtmlPath = path.join(civilServiceRoot, 'docs', 'email-notifications.html');
+// if (fs.existsSync(notifHtmlPath)) {
+//   const html = fs.readFileSync(notifHtmlPath, 'utf8');
+//   const re = /<option value='([^']+)'>/g;
+//   let m;
+//   while ((m = re.exec(html)) !== null) notifPageEvents.add(m[1]);
+//   console.log(`Notification page events loaded: ${notifPageEvents.size}`);
+// } else {
+//   console.warn('email-notifications.html not found, links will be disabled');
+// }
+//
+// // Alias map: user-facing events → notification page event they trigger downstream
+// const NOTIF_ALIASES = {
+//   'VIEW_AND_RESPOND_TO_DEFENCE': 'claimant_response',
+//   'APPLY_NOC_DECISION': 'apply_noc_decision_defendant_lip',
+//   'UPLOAD_TRANSLATED_DOCUMENT': 'upload_translated_document_claimant_intention',
+// };
+//
+// function getNotifLink(eventId) {
+//   const lower = eventId.toLowerCase();
+//   if (notifPageEvents.has(lower)) return lower;
+//   const alias = NOTIF_ALIASES[eventId];
+//   if (alias && notifPageEvents.has(alias)) return alias;
+//   return null;
+// }
+
+//The above needs further review - skip for PoC.  Can determine relevance to nfd later.
 const notifPageEvents = new Set();
 // Usage: node generate-state-event-svg.js
 function getNotifLink(eventId) {
