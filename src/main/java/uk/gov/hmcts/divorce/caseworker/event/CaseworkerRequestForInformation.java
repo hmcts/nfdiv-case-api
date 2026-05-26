@@ -2,14 +2,17 @@ package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.caseworker.service.notification.RequestForInformationNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
@@ -21,6 +24,7 @@ import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -64,6 +68,9 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         "Please use create general email event to request information from the respondent";
     public static final String USE_CORRECT_PARTY_ERROR = "Please use the correct option to contact online parties.";
 
+    public static final String WARNING_SHOULD_NOT_REQUEST_RESPONDENT_ADDRESS = "The respondent’s address is missing from this case and" +
+        "request for information should not be used to request it. The applicant must provide the address via their online account.";
+
     private final RequestForInformationNotification requestForInformationNotification;
 
     private final NotificationDispatcher notificationDispatcher;
@@ -86,6 +93,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
             .showSummary()
             .showEventNotes()
             .endButtonLabel("Submit")
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE))
@@ -103,6 +111,31 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
                     .mandatory(RequestForInformation::getRequestForInformationDetails)
                 .done()
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_REQUEST_FOR_INFORMATION, details.getId());
+
+        final CaseData data = details.getData();
+
+        final boolean isSole = ApplicationType.SOLE_APPLICATION.equals(data.getApplicationType());
+        final AddressGlobalUK respondentAddress = data.getApplicant2().getAddress();
+        final boolean respondentAddressIsBlank = respondentAddress == null || Stream.of(
+            respondentAddress.getAddressLine1(), respondentAddress.getAddressLine2(), respondentAddress.getAddressLine3(),
+            respondentAddress.getCounty(), respondentAddress.getCountry(), respondentAddress.getPostCode(),
+            respondentAddress.getPostTown()
+        ).allMatch(StringUtils::isBlank);
+
+        if (isSole && respondentAddressIsBlank) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .warnings(Collections.singletonList(WARNING_SHOULD_NOT_REQUEST_RESPONDENT_ADDRESS))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(details.getData())
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
