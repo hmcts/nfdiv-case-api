@@ -68,8 +68,8 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
         "Please use create general email event to request information from the respondent";
     public static final String USE_CORRECT_PARTY_ERROR = "Please use the correct option to contact online parties.";
 
-    public static final String WARNING_SHOULD_NOT_REQUEST_RESPONDENT_ADDRESS = "The respondent’s address is missing from this case and"
-        + "request for information should not be used to request it. The applicant must provide the address via their online account.";
+    public static final String WARNING_SHOULD_NOT_REQUEST_RESPONDENT_ADDRESS = "The respondent’s address is missing from this case. "
+        + "Request for Information cannot be used for this purpose. The applicant must provide the address via their online account.";
 
     private final RequestForInformationNotification requestForInformationNotification;
 
