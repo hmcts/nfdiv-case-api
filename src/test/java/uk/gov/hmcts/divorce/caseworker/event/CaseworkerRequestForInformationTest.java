@@ -96,20 +96,6 @@ class CaseworkerRequestForInformationTest {
     }
 
     @Test
-    void shouldReturnWarningWhenRespondentAddressIsNull() {
-        CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, false, false);
-        CaseData caseData = caseDetails.getData();
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.setApplicant2(getApplicant2WithAddress());
-        caseData.getApplicant2().setAddress(null);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerRequestForInformation.aboutToStart(caseDetails);
-
-        assertThat(response.getWarnings()).containsExactly(WARNING_SHOULD_NOT_REQUEST_RESPONDENT_ADDRESS);
-    }
-
-    @Test
     void shouldReturnWarningIfSoleRespondentAddressIsBlank() {
         CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, false, false);
         CaseData caseData = caseDetails.getData();
@@ -174,7 +160,7 @@ class CaseworkerRequestForInformationTest {
             final AboutToStartOrSubmitResponse<CaseData, State> response =
                 caseworkerRequestForInformation.aboutToStart(caseDetails);
 
-            assertThat(response.getWarnings()).containsExactly(WARNING_SHOULD_NOT_REQUEST_RESPONDENT_ADDRESS);
+            assertThat(response.getWarnings()).isNull();
         }
     }
 

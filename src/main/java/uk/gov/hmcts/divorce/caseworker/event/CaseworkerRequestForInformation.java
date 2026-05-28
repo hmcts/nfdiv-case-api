@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -18,13 +17,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationList;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -121,11 +120,7 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
 
         final boolean isSole = ApplicationType.SOLE_APPLICATION.equals(data.getApplicationType());
         final AddressGlobalUK respondentAddress = data.getApplicant2().getAddress();
-        final boolean respondentAddressIsBlank = respondentAddress == null || Stream.of(
-            respondentAddress.getAddressLine1(), respondentAddress.getAddressLine2(), respondentAddress.getAddressLine3(),
-            respondentAddress.getCounty(), respondentAddress.getCountry(), respondentAddress.getPostCode(),
-            respondentAddress.getPostTown()
-        ).allMatch(StringUtils::isBlank);
+        final boolean respondentAddressIsBlank = AddressUtil.isBlank(respondentAddress);
 
         if (isSole && respondentAddressIsBlank) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
