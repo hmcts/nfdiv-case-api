@@ -479,7 +479,7 @@ public class NoticeOfProceedingContentIT {
                 .addressLine1("line1")
                 .addressLine2("line2")
                 .postCode("bt31 1re")
-                .country("UK")
+                .country("Greece")
                 .build()
         );
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
@@ -538,7 +538,7 @@ public class NoticeOfProceedingContentIT {
         expectedEntries.put(CAN_SERVE_BY_EMAIL, false);
         expectedEntries.put(IS_RESPONDENT_BASED_IN_UK, true);
         expectedEntries.put(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false);
-        expectedEntries.put(APPLICANT_2_ADDRESS, "line1\nline2\nUK\nbt31 1re");
+        expectedEntries.put(APPLICANT_2_ADDRESS, "line1\nline2\nGreece\nbt31 1re");
         expectedEntries.put(IS_DIVORCE, true);
         expectedEntries.put(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS);
         expectedEntries.put(IS_OFFLINE, false);

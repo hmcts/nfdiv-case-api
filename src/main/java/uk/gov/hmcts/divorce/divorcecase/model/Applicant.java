@@ -38,7 +38,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.divorcecase.util.AddressUtil.isEnglandOrWales;
+import static uk.gov.hmcts.divorce.divorcecase.util.AddressUtil.isUnitedKingdom;
 
 @Data
 @AllArgsConstructor
@@ -379,7 +379,7 @@ public class Applicant {
             return false;
         }
 
-        return (nonNull(address) && !isBlank(address.getCountry()) && !isEnglandOrWales(address)) || YesOrNo.YES.equals(addressOverseas);
+        return (nonNull(address) && !isBlank(address.getCountry()) && !isUnitedKingdom(address)) || YesOrNo.YES.equals(addressOverseas);
     }
 
     @JsonIgnore
@@ -388,7 +388,7 @@ public class Applicant {
     }
 
     @JsonIgnore
-    private String getApplicantAddress() {
+    public String getApplicantAddress() {
         if (YES.equals(addressOverseas)) {
             return Stream.of(
                     address.getAddressLine1(),
