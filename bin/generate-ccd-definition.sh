@@ -18,6 +18,8 @@ echo "Definition input directory: ${definition_input_dir}"
 echo "Definition output file: ${definition_output_file}"
 echo "Additional params: ${additionalParameters}"
 
+env AZURE_CONFIG_DIR=/opt/jenkins/.azure-nonprod az acr login --name hmctsprod
+
 docker run --pull always --rm \
   -v ${definition_input_dir}:/tmp/ccd-definition \
   -v ${definition_output_file}:/tmp/ccd-definition.xlsx \
