@@ -1,11 +1,10 @@
 #!groovy
-
+import uk.gov.hmcts.contino.AppPipelineConfig
+import uk.gov.hmcts.contino.AppPipelineDsl
 @Library("Infrastructure")
 
 import uk.gov.hmcts.contino.GradleBuilder
-import uk.gov.hmcts.contino.AppPipelineConfig
 import uk.gov.hmcts.contino.MetricsPublisher
-import uk.gov.hmcts.contino.GithubAPI
 
 def type = "java"
 def product = "nfdiv"
@@ -174,8 +173,11 @@ withPipeline(type, product, component) {
     env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
     env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
     env.CREATE_PAPER_CASE_MOCK_NOTIFICATION=true
+    env.PACT_BROKER_FULL_URL = 'https://pact-broker.platform.hmcts.net'
 
     setCommonEnvVariables()
+
+    enablePactAs([AppPipelineDsl.PactRoles.CONSUMER])
   }
 
   onMaster {
@@ -189,7 +191,11 @@ withPipeline(type, product, component) {
     env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
     env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
     env.CREATE_PAPER_CASE_MOCK_NOTIFICATION=true
+    env.PACT_BROKER_FULL_URL = 'https://pact-broker.platform.hmcts.net'
+
     setCommonEnvVariables()
+
+    enablePactAs([AppPipelineDsl.PactRoles.CONSUMER])
   }
 
   afterAlways('functionalTest:aat') {
