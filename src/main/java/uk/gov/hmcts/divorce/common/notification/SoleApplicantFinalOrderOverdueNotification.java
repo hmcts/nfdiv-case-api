@@ -17,6 +17,7 @@ import java.util.Map;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FINAL_ORDER_OVERDUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
@@ -82,9 +83,11 @@ public class SoleApplicantFinalOrderOverdueNotification implements ApplicantNoti
         var languagePreference = applicant.getLanguagePreference();
         var templateVars = commonContent.basicTemplateVars(caseData, id, languagePreference);
 
-        templateVars.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(
+        templateVars.put(DATE_OF_ISSUE, caseData.getApplication().getIssueDate().format(
             getDateTimeFormatterForPreferredLanguage(languagePreference)
         ));
+        templateVars.put(FINAL_ORDER_OVERDUE_DATE, caseData.getConditionalOrder().getGrantedDate().plusMonths(12)
+            .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
         Solicitor applicantSolicitor = applicant.getSolicitor();
