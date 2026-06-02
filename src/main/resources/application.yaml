@@ -59,6 +59,7 @@ uk:
           smartSurvey: https://www.smartsurvey.co.uk/s/NFD_Feedback/?pageurl=email
           idamInactivityPolicy: If you do not log into your online account within 90 days, your account will become inactive, and you will have to reset your account. You do this by requesting a password reset with the email you used when creating your account.
           idamInactivityPolicyCy: Os na fyddwch yn mewngofnodi i'ch cyfrif ar-lein o fewn 90 diwrnod, bydd eich cyfrif yn cael ei nodi fel cyfrif segur a bydd rhaid i chi ailosod eich cyfrif. Gallwch wneud hyn drwy ddefnyddio'r cyfeiriad e-bost a ddefnyddiwyd gennych i greu eich cyfrif i ofyn i'ch cyfrinair gael ei ailosod.
+          welshEnquiriesEmail: ${WELSH_ENQUIRIES_EMAIL:ymholiadaucymraeg@justice.gov.uk}
         templates:
           english:
             REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT: 'e15fa45a-f100-4b07-b1ca-ad96c633a30d'
