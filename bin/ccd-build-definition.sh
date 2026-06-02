@@ -10,6 +10,8 @@ build_dir=${root_dir}/build/ccd-config
 
 mkdir -p ${build_dir}
 
+docker logout hmctspublic.azurecr.io
+
 for dir in $(find ${root_dir}/build/definitions/ -maxdepth 1 -mindepth  1 -type d -exec basename {} \;)
 do
   config_dir=${root_dir}/build/definitions/${dir}
