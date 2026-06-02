@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,6 +61,8 @@ class SolicitorWithdrawnTest {
         final var beforeDetails = getCaseDetails(false);
         final var details = getCaseDetails(false);
 
+        when(caseTerminationService.getStateToTransitionTo(details)).thenReturn(State.Withdrawn);
+
         solicitorWithdrawn.aboutToSubmit(details, beforeDetails);
 
         verify(caseTerminationService).withdraw(details);
@@ -81,26 +82,6 @@ class SolicitorWithdrawnTest {
     }
 
     @Test
-    void shouldSetCaseStateToWithdrawnWhenNotSubmitted() {
-        final var details = getCaseDetails(false);
-        final var beforeDetails = getCaseDetails(false);
-
-        var response = solicitorWithdrawn.aboutToSubmit(details, beforeDetails);
-
-        assertThat(response.getState()).isEqualTo(State.Withdrawn);
-    }
-
-    @Test
-    void shouldSetCaseStateToPendingRefundWhenCaseIsSubmitted() {
-        final var details = getCaseDetails(true);
-        final var beforeDetails = getCaseDetails(true);
-
-        var response = solicitorWithdrawn.aboutToSubmit(details, beforeDetails);
-
-        assertThat(response.getState()).isEqualTo(State.PendingRefund);
-    }
-
-    @Test
     void shouldAllowApplicantSolicitorToWithdrawCaseInAllowedState() {
         final var details = getCaseDetails(false);
         details.setState(State.Draft);
@@ -108,6 +89,7 @@ class SolicitorWithdrawnTest {
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(ccdAccessService.isApplicant2(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(false);
+        when(caseTerminationService.canApplicationBeWithdrawn(details.getState(), details.getData())).thenReturn(true);
 
         var response = solicitorWithdrawn.aboutToStart(details);
 
@@ -122,6 +104,7 @@ class SolicitorWithdrawnTest {
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(ccdAccessService.isApplicant2(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(false);
+        when(caseTerminationService.canApplicationBeWithdrawn(details.getState(), details.getData())).thenReturn(true);
 
         var response = solicitorWithdrawn.aboutToStart(details);
 
@@ -136,6 +119,7 @@ class SolicitorWithdrawnTest {
 
         when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
         when(ccdAccessService.isApplicant2(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(true);
+        when(caseTerminationService.canApplicationBeWithdrawn(details.getState(), details.getData())).thenReturn(true);
 
         var response = solicitorWithdrawn.aboutToStart(details);
 
@@ -154,33 +138,6 @@ class SolicitorWithdrawnTest {
         var response = solicitorWithdrawn.aboutToStart(details);
 
         assertThat(response.getErrors()).contains(SolicitorWithdrawn.RESPONDENT_SOLICITOR_ERROR);
-    }
-
-    @Test
-    void shouldAllowSolicitorToWithdrawCaseIfCaseNotIssuedYet() {
-        final var details = getCaseDetails(true);
-        details.setState(State.Submitted);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(ccdAccessService.isApplicant2(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(false);
-
-        var response = solicitorWithdrawn.aboutToStart(details);
-
-        assertThat(response.getErrors()).isNullOrEmpty();
-    }
-
-    @Test
-    void shouldNotAllowSolicitorToWithdrawWhenCaseIsIssued() {
-        final var details = getCaseDetails(true);
-        details.getData().getApplication().setIssueDate(LocalDate.now());
-        details.setState(State.Holding);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
-        when(ccdAccessService.isApplicant2(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(false);
-
-        var response = solicitorWithdrawn.aboutToStart(details);
-
-        assertThat(response.getErrors()).contains(SolicitorWithdrawn.CANNOT_WITHDRAW_CASE);
     }
 
     private CaseDetails<CaseData, State> getCaseDetails(boolean caseSubmitted) {

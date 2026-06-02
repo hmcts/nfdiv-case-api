@@ -17,17 +17,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.util.EnumSet;
 import java.util.List;
 
 import static org.springframework.cloud.openfeign.security.OAuth2AccessTokenInterceptor.AUTHORIZATION;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -57,9 +49,9 @@ public class SolicitorWithdrawn implements CCDConfig<CaseData, State, UserRole> 
         [View case list](/cases)
         """;
 
-    public static final String CANNOT_WITHDRAW_CASE = "You cannot withdraw this case at this stage";
+    public static final String CANNOT_WITHDRAW_CASE = "You cannot withdraw this case at this stage.";
 
-    public static final String RESPONDENT_SOLICITOR_ERROR = "You cannot withdraw this case";
+    public static final String RESPONDENT_SOLICITOR_ERROR = "You cannot withdraw a case as the respondent solicitor.";
 
     private final CaseTerminationService caseTerminationService;
 
@@ -96,7 +88,7 @@ public class SolicitorWithdrawn implements CCDConfig<CaseData, State, UserRole> 
                 .build();
         }
 
-        boolean canSolicitorWithdrawApplication = canApplicationBeWithdrawn(details.getState(), details.getData());
+        boolean canSolicitorWithdrawApplication = caseTerminationService.canApplicationBeWithdrawn(details.getState(), details.getData());
 
         if (!canSolicitorWithdrawApplication) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -113,20 +105,11 @@ public class SolicitorWithdrawn implements CCDConfig<CaseData, State, UserRole> 
         return ccdAccessService.isApplicant2(authHeader, id);
     }
 
-    private boolean canApplicationBeWithdrawn(State state, CaseData data) {
-        boolean isAllowedPreSubmissionState =
-            EnumSet.of(Draft, Archived, Applicant2Approved, AwaitingApplicant1Response, AwaitingApplicant2Response).contains(state);
-        boolean isApplicationSubmittedButNotIssued = data.getApplication().getDateSubmitted() != null
-            && data.getApplication().getIssueDate() == null;;
-
-        return isAllowedPreSubmissionState || isApplicationSubmittedButNotIssued;
-    }
-
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
                                                                        final CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} about to submit callback invoked for Case Id: {}", SOLICITOR_WITHDRAWN, details.getId());
 
-        State stateToSet = (details.getData().getApplication().getDateSubmitted() == null) ? Withdrawn : PendingRefund;
+        State stateToSet = caseTerminationService.getStateToTransitionTo(details);
 
         caseTerminationService.withdraw(details);
 

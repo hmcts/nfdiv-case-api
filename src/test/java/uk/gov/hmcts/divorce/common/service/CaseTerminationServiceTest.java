@@ -15,6 +15,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.WithdrawApplicationReasonType;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -138,5 +140,70 @@ class CaseTerminationServiceTest {
         caseTerminationService.withdraw(caseDetails);
 
         verifyNoInteractions(notificationDispatcher);
+    }
+
+    @Test
+    void shouldReturnStateAsWithdrawnWhenCaseIsNotSubmittedYet() {
+        final var caseDetails = new CaseDetails<CaseData, State>();
+        var caseData = validApplicant2CaseData();
+        caseData.getApplication().setDateSubmitted(null);
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        var stateToTransitionTo = caseTerminationService.getStateToTransitionTo(caseDetails);
+
+        assertThat(stateToTransitionTo).isEqualTo(State.Withdrawn);
+    }
+
+    @Test
+    void shouldReturnStateAsPendingRefundWhenCaseIsSubmitted() {
+        final var caseDetails = new CaseDetails<CaseData, State>();
+        var caseData = validApplicant2CaseData();
+        caseData.getApplication().setDateSubmitted(LocalDateTime.now());
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        var stateToTransitionTo = caseTerminationService.getStateToTransitionTo(caseDetails);
+
+        assertThat(stateToTransitionTo).isEqualTo(State.PendingRefund);
+    }
+
+    @Test
+    void shouldReturnTrueWhenCaseIsInDraftState() {
+        final var caseDetails = new CaseDetails<CaseData, State>();
+        var caseData = validApplicant2CaseData();
+        caseDetails.setData(caseData);
+        caseDetails.setState(State.Draft);
+
+        boolean canBeWithdrawn = caseTerminationService.canApplicationBeWithdrawn(caseDetails.getState(), caseDetails.getData());
+
+        assertThat(canBeWithdrawn).isTrue();
+    }
+
+    @Test
+    void shouldReturnTrueWhenCaseIsNotIssued() {
+        final var caseDetails = new CaseDetails<CaseData, State>();
+        var caseData = validApplicant2CaseData();
+        caseData.getApplication().setDateSubmitted(LocalDateTime.now());
+        caseDetails.setData(caseData);
+        caseDetails.setState(State.GeneralApplicationReceived);
+
+        boolean canBeWithdrawn = caseTerminationService.canApplicationBeWithdrawn(caseDetails.getState(), caseDetails.getData());
+
+        assertThat(canBeWithdrawn).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseWhenCaseIsIssued() {
+        final var caseDetails = new CaseDetails<CaseData, State>();
+        var caseData = validApplicant2CaseData();
+        caseData.getApplication().setDateSubmitted(LocalDateTime.now());
+        caseData.getApplication().setIssueDate(LocalDate.now());
+        caseDetails.setData(caseData);
+        caseDetails.setState(State.Holding);
+
+        boolean canBeWithdrawn = caseTerminationService.canApplicationBeWithdrawn(caseDetails.getState(), caseDetails.getData());
+
+        assertThat(canBeWithdrawn).isFalse();
     }
 }
