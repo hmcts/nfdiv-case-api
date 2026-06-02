@@ -170,6 +170,7 @@ public class AlternativeService {
             .receivedServiceApplicationDate(receivedServiceApplicationDate)
             .receivedServiceAddedDate(receivedServiceAddedDate)
             .serviceApplicationAnswers(serviceApplicationAnswers)
+            .serviceApplicationSubmittedBeforeIssue(serviceApplicationSubmittedBeforeIssue)
             .serviceApplicationDocuments(serviceApplicationDocuments)
             .serviceApplicationSubmittedOnline(serviceApplicationSubmittedOnline)
             .serviceApplicationDocsUploadedPreSubmission(serviceApplicationDocsUploadedPreSubmission)

@@ -51,6 +51,12 @@ public class GeneralApplication {
     private LocalDateTime generalApplicationReceivedDate;
 
     @CCD(
+        label = "Was the application submitted before the case was issued?",
+        searchable = false
+    )
+    private YesOrNo generalApplicationSubmittedBeforeIssue;
+
+    @CCD(
         label = "Please provide more information about general application type",
         typeOverride = TextArea,
         searchable = false
@@ -113,12 +119,6 @@ public class GeneralApplication {
         searchable = false
     )
     private String generalApplicationUrgentCaseReason;
-
-    @CCD(
-        label = "Was the application submitted before the case was issued?",
-        searchable = false
-    )
-    private YesOrNo generalApplicationSubmittedBeforeIssue;
 
     @JsonIgnore
     public void recordPayment(String paymentReference, LocalDate dateOfPayment) {
