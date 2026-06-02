@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -26,6 +27,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NO
 import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CREATE_ACCOUNT_LINK;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
@@ -60,6 +62,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     private final NotificationService notificationService;
 
     private final CommonContent commonContent;
+
+    private final DocmosisCommonContent docmosisCommonContent;
 
     private final EmailTemplatesConfig config;
 
@@ -324,11 +328,6 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     private Map<String, String> templateVars(final CaseData caseData,
                                              final Long caseId,
                                              final Applicant applicant) {
-
-        String solicitorReference = isNotEmpty(caseData.getApplicant1().getSolicitor().getReference())
-            ? caseData.getApplicant1().getSolicitor().getReference()
-            : "not provided";
-
         LanguagePreference languagePreference = applicant.getLanguagePreference();
 
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId, languagePreference);
@@ -336,7 +335,18 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
         templateVars.put(APPLICATION_REFERENCE, String.valueOf(caseId));
         templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData, languagePreference));
-        templateVars.put(SOLICITOR_REFERENCE, solicitorReference);
+        templateVars.put(SOLICITOR_REFERENCE, docmosisCommonContent.getSolicitorReference(
+            caseData.getApplicant1().getSolicitor(),
+            languagePreference)
+        );
+
+        final LocalDate issueDate = caseData.getApplication().getIssueDate();
+        templateVars.put(DATE_OF_ISSUE,
+            issueDate == null
+                ? ""
+                : caseData.getApplication().getIssueDate().format(getDateTimeFormatterForPreferredLanguage(languagePreference))
+        );
+
         return templateVars;
     }
 }

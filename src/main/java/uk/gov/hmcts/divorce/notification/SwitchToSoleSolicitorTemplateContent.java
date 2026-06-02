@@ -9,11 +9,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Map;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_PLUS_14_DAYS;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
@@ -32,14 +28,9 @@ public class SwitchToSoleSolicitorTemplateContent {
 
         templateContent.put(APPLICANT_1_NAME, caseData.getApplicant1().getFullName());
         templateContent.put(APPLICANT_2_NAME, caseData.getApplicant2().getFullName());
-        templateContent.put(SOLICITOR_REFERENCE,
-            isNotEmpty(applicant.getSolicitor().getReference())
-                ? applicant.getSolicitor().getReference()
-                : NOT_PROVIDED);
-        templateContent.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
+        templateContent.putAll(commonContent.solicitorTemplateVars(caseData, caseId, applicant));
         templateContent.put(DATE_PLUS_14_DAYS, LocalDate.now(clock).plusDays(14).format(
             getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
-
         return templateContent;
     }
 }
