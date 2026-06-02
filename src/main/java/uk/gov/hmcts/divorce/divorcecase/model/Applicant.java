@@ -211,7 +211,8 @@ public class Applicant {
     private ContactDetailsType contactDetailsType;
 
     @CCD(
-        label = "Are these details correct and up to date?"
+        label = "Are these details correct and up to date?",
+        searchable = false
     )
     private YesOrNo confirmContactDetails;
 
