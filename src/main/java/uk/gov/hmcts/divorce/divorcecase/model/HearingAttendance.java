@@ -9,13 +9,14 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum HearingAttendance implements HasLabel {
     @JsonProperty("inPerson")
-    IN_PERSON("In person"),
+    IN_PERSON("In person", "Wyneb yn wyneb"),
 
     @JsonProperty("remoteVideo")
-    REMOTE_VIDEO_CALL("Remote - video call"),
+    REMOTE_VIDEO_CALL("Remote - video call", "O bell - galwad fideo"),
 
     @JsonProperty("remotePhone")
-    REMOTE_PHONE_CALL("Remote - phone call");
+    REMOTE_PHONE_CALL("Remote - phone call", "O bell - galwad ffôn");
 
     private final String label;
+    private final String welshLabel;
 }
