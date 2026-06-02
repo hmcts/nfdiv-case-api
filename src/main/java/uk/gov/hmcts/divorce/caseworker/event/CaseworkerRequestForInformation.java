@@ -120,9 +120,10 @@ public class CaseworkerRequestForInformation implements CCDConfig<CaseData, Stat
 
         final boolean isSole = ApplicationType.SOLE_APPLICATION.equals(data.getApplicationType());
         final AddressGlobalUK respondentAddress = data.getApplicant2().getAddress();
+        final boolean applicantIsOnline = !data.getApplicant1().isApplicantOffline();
         final boolean respondentAddressIsBlank = AddressUtil.isBlank(respondentAddress);
 
-        if (isSole && respondentAddressIsBlank) {
+        if (isSole && applicantIsOnline && respondentAddressIsBlank) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .warnings(Collections.singletonList(WARNING_SHOULD_NOT_REQUEST_RESPONDENT_ADDRESS))
                 .build();
