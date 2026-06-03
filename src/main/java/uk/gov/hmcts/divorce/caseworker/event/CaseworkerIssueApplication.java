@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.exception.InvalidDataException;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -26,6 +25,8 @@ import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
+
+import java.util.Collections;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDwpResponse;
@@ -61,7 +62,9 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
     private final AuthTokenGenerator authTokenGenerator;
 
-    private final SetServiceType setServiceType;
+    public static final String ERROR_HAS_BEEN_ISSUED = """
+        This application has already been issued. Use the Reissue event to reissue the application.
+        """;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -116,12 +119,20 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
         String app2Address = AddressUtil.getPostalAddress(caseData.getApplicant2().getAddress());
 
-        boolean soleApplicationBeingIssuedWithoutApp2Address =
+        final boolean soleApplicationBeingIssuedWithoutApp2Address =
             caseData.getApplicationType() == ApplicationType.SOLE_APPLICATION
             && StringUtils.isEmpty(app2Address);
 
         if (soleApplicationBeingIssuedWithoutApp2Address) {
             caseData.getApplication().setBeingIssuedWithoutAddress(YesOrNo.YES);
+        }
+
+        final boolean caseHasBeenIssued = details.getData().getApplication().getIssueDate() != null;
+        if (caseHasBeenIssued) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(Collections.singletonList(ERROR_HAS_BEEN_ISSUED))
+                .build();
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
