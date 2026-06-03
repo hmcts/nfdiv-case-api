@@ -409,8 +409,8 @@ uk:
             COURT_ORDERS_REGENERATED_CITIZEN: '0c51bf9b-5d6c-49f4-bf75-866a75a64f9d' #TODO: Update Welsh translation
             COURT_ORDERS_REGENERATED_SOLICITOR: '5ac5a300-4cd4-42b8-adb9-0944ebc3279c' #TODO: Update Welsh translation
             CERTIFICATE_OF_SERVICE_EVIDENCE_NOTIFICATION: '5cf32cc3-dd84-4796-9f0f-268a86496d76'
-            HEARING_REMINDER_CITIZEN: '28d71ce2-52d4-426f-96fc-d23e29addd61'
-            HEARING_REMINDER_SOLICITOR: '80692e64-a1c5-4f58-ba5e-85de8e69bf5a'
+            HEARING_REMINDER_CITIZEN: '96ad6d01-49d0-4fd8-9119-c15a4cdef873'
+            HEARING_REMINDER_SOLICITOR: '95d52e90-216e-47bb-90b8-1a5ac2d0f053'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator,payment_app}
@@ -555,6 +555,7 @@ docmosis:
       RESPONDENT_FINAL_ORDER_ANSWERS: FL-NFD-GOR-ENG-Respondent_Final_Order_Answers_V1.docx
       CITIZEN_COURT_ORDERS_REGENERATED: FL-NFD-GOR-ENG-Court-Orders-Regenerated-Citizen-V1.docx
       HEARING_REMINDER: FL-NFD-GOR-ENG-Hearing-Reminder-V1.docx
+      NFD_FO_REQUESTED_LETTER_RESPONDENT: FL-NFD-GOR-ENG-FO-Requested-Respondent-Letter_V1.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V2.docx
@@ -656,6 +657,7 @@ docmosis:
       RESPONDENT_FINAL_ORDER_ANSWERS: FL-NFD-GOR-WEL-Respondent_Final_Order_Answers_V1.docx
       CITIZEN_COURT_ORDERS_REGENERATED: FL-NFD-GOR-ENG-Court-Orders-Regenerated-Citizen-V1.docx
       HEARING_REMINDER: FL-NFD-GOR-WEL-Hearing-Reminder.docx
+      NFD_FO_REQUESTED_LETTER_RESPONDENT: FL-NFD-GOR-ENG-FO-Requested-Respondent-Letter_V1.docx #TODO: update welsh content
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}

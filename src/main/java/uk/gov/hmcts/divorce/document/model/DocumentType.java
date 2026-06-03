@@ -219,6 +219,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("noticeOfProceedingsApp2")
     NOTICE_OF_PROCEEDINGS_APP_2("Notice of proceedings for respondent/applicant 2", false /*handled separately*/),
 
+    @JsonProperty("financialOrderRequestedLetterForRespondent")
+    FINANCIAL_ORDER_REQUESTED_LETTER_RESPONDENT("Financial Order Requested Letter to Respondent", false /*handled separately*/),
+
     @JsonProperty("noticeOfRefusalOfEntitlement")
     NOTICE_OF_REFUSAL_OF_ENTITLEMENT("Notice of refusal of entitlement to a CO", true),
 

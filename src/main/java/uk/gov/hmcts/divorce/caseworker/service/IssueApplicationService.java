@@ -4,20 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
-import uk.gov.hmcts.divorce.caseworker.service.task.SendFinancialOrderRequestedNotifications;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetDueDateAfterIssue;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetIssueDate;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
-import uk.gov.hmcts.divorce.caseworker.service.task.ValidateIssue;
+import uk.gov.hmcts.divorce.caseworker.service.task.*;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
@@ -54,6 +41,8 @@ public class IssueApplicationService {
 
     private final GenerateD84Form generateD84Form;
 
+    private final GenerateFinancialOrderRequestedLetter generateFinancialOrderRequestedLetter;
+
     private final SetServiceType setServiceType;
 
     private final SetIssueDate setIssueDate;
@@ -75,7 +64,8 @@ public class IssueApplicationService {
             divorceApplicationRemover,
             generateApplication,
             generateD10Form,
-            generateD84Form
+            generateD84Form,
+            generateFinancialOrderRequestedLetter
         ).run(caseDetails);
     }
 
