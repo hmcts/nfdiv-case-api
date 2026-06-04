@@ -410,6 +410,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         tabBuilder
             .field("receivedServiceApplicationDate")
             .field("receivedServiceAddedDate")
+            .field("serviceApplicationSubmittedBeforeIssue")
             .field("alternativeServiceType")
             .field("alternativeServiceJudgeOrLegalAdvisorDetails")
             .field("serviceApplicationAnswers")

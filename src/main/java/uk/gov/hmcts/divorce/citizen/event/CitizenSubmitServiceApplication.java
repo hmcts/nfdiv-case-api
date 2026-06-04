@@ -112,7 +112,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
 
         Applicant applicant = data.getApplicant1();
         InterimApplicationOptions userOptions = applicant.getInterimApplicationOptions();
-        AlternativeService newServiceApplication = buildServiceApplication(userOptions);
+        AlternativeService newServiceApplication = buildServiceApplication(userOptions, data);
         data.setAlternativeService(newServiceApplication);
 
         FeeDetails serviceFee = newServiceApplication.getServicePaymentFee();
@@ -166,7 +166,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         return SubmittedCallbackResponse.builder().build();
     }
 
-    private AlternativeService buildServiceApplication(InterimApplicationOptions userOptions) {
+    private AlternativeService buildServiceApplication(InterimApplicationOptions userOptions, CaseData data) {
         boolean evidenceNotSubmitted = YesOrNo.NO.equals(userOptions.getInterimAppsCanUploadEvidence())
             && userOptions.getInterimAppsEvidenceDocs() != null;
 
@@ -183,6 +183,7 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
             .serviceApplicationDocuments(evidenceNotSubmitted ? null : userOptions.getInterimAppsEvidenceDocs())
             .alternativeServiceFeeRequired(YesOrNo.YES)
+            .serviceApplicationSubmittedBeforeIssue(YesOrNo.from(!data.getApplication().hasBeenIssued()))
             .build();
     }
 
