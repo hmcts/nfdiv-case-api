@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfPr
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinancialOrderRequestedLetter;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
@@ -84,6 +85,9 @@ class CaseworkerIssueApplicationServiceTest {
     @Mock
     private SetIssueDate setIssueDate;
 
+    @Mock
+    private GenerateFinancialOrderRequestedLetter generateFinancialOrderRequestedLetter;
+
     @InjectMocks
     private IssueApplicationService issueApplicationService;
 
@@ -109,6 +113,7 @@ class CaseworkerIssueApplicationServiceTest {
         when(setDueDateAfterIssue.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateFinancialOrderRequestedLetter.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = issueApplicationService.issueApplication(caseDetails);
 
