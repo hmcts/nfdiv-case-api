@@ -54,7 +54,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     public static final String MISSING_NAME_CHANGE_PROOF = "nameChangeProof";
     public static final String LABEL_PARTNER = "labelPartner";
     public static final String LABEL_DIVORCE_OR_CIVIL_PARTNERSHIP_CERTIFICATE = "labelDivorceOrCivilPartnershipCertificate";
-    private static final String DIVORCE_CERTIFICATE = "divorce certificate";
+    private static final String DIVORCE_CERTIFICATE = "marriage certificate";
     private static final String CIVIL_PARTNERSHIP_CERTIFICATE = "civil partnership certificate";
     private static final String CY_DIVORCE_CERTIFICATE = "tystysgrif priodas";
     private static final String CY_CIVIL_PARTNERSHIP_CERTIFICATE = "tystysgrif partneriaeth sifil";
