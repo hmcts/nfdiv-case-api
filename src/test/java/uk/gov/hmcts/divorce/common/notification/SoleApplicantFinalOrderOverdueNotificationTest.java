@@ -26,7 +26,8 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.FINAL_ORDER_OVERDUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
@@ -81,6 +82,7 @@ class SoleApplicantFinalOrderOverdueNotificationTest {
     void shouldSendSoleApplicantSolicitorFinalOrderOverdueEmail() {
         final var data = validCaseDataForAwaitingFinalOrder();
         data.getApplication().setIssueDate(LocalDate.of(2021, 4, 5));
+        data.getConditionalOrder().setGrantedDate(LocalDate.of(2021, 6, 5));
         data.getApplicant1().setSolicitor(
             Solicitor.builder().name(TEST_SOLICITOR_NAME).email(TEST_SOLICITOR_EMAIL).reference("1234").build());
         data.setApplicationType(SOLE_APPLICATION);
@@ -96,7 +98,8 @@ class SoleApplicantFinalOrderOverdueNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(SOLE_APPLICANT_SOLICITOR_FINAL_ORDER_OVERDUE),
             argThat(allOf(
-                hasEntry(ISSUE_DATE, "5 April 2021"),
+                hasEntry(DATE_OF_ISSUE, "5 April 2021"),
+                hasEntry(FINAL_ORDER_OVERDUE_DATE, "5 June 2022"),
                 hasEntry(SIGN_IN_URL, "test-url"),
                 hasEntry(SOLICITOR_NAME, TEST_SOLICITOR_NAME),
                 hasEntry(SOLICITOR_REFERENCE, "1234")
