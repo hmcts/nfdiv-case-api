@@ -7,7 +7,9 @@ import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AddressUtilTest {
 
@@ -255,5 +257,30 @@ class AddressUtilTest {
         assertThatThrownBy(() -> AddressUtil.isUnitedKingdom(addressGlobalUK))
             .isExactlyInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining(TEST_OVERSEAS_EXCEPTION_MESSAGE);
+    }
+
+    @Test
+    void shouldReturnTrueIfAddressFieldsAreBlank() {
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .country(null)
+            .postCode("   ")
+            .build();
+
+        assertTrue(AddressUtil.isBlank(addressGlobalUK));
+    }
+
+    @Test
+    void shouldReturnTrueIfAddressIsNull() {
+        assertTrue(AddressUtil.isBlank(null));
+    }
+
+    @Test
+    void shouldReturnFalseIfAddressFieldsArePopulated() {
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .country(null)
+            .postCode("ZZZ")
+            .build();
+
+        assertFalse(AddressUtil.isBlank(addressGlobalUK));
     }
 }
