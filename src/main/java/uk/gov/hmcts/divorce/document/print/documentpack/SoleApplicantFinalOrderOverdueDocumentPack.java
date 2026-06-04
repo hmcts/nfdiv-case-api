@@ -22,7 +22,7 @@ public class SoleApplicantFinalOrderOverdueDocumentPack implements DocumentPack 
 
     static final String SOLE_APPLICANT_FINAL_ORDER_OVERDUE_PACK = "sole-applicant-final-order-overdue-pack";
 
-    static final DocumentPackInfo APPLICANT1_OFFLINE_DOCUMENTPACK = new DocumentPackInfo(
+    static final DocumentPackInfo SOLE_APPLICANT_FINAL_ORDER_OVERDUE_DOCUMENT_PACK = new DocumentPackInfo(
         ImmutableMap.of(
             COVERSHEET, Optional.of(COVERSHEET_APPLICANT),
             SOLE_APPLICANT_FINAL_ORDER_OVERDUE, Optional.of(SOLE_APPLICANT_FINAL_ORDER_OVERDUE_TEMPLATE_ID),
@@ -36,7 +36,7 @@ public class SoleApplicantFinalOrderOverdueDocumentPack implements DocumentPack 
 
     @Override
     public DocumentPackInfo getDocumentPack(CaseData caseData, Applicant applicant) {
-        return APPLICANT1_OFFLINE_DOCUMENTPACK;
+        return SOLE_APPLICANT_FINAL_ORDER_OVERDUE_DOCUMENT_PACK;
     }
 
     @Override
