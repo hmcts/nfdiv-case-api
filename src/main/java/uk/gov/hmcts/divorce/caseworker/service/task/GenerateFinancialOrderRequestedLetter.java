@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.common.config.DocmosisTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
@@ -30,6 +31,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WELSH_ENQUIRIES_EMAIL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINANCIAL_ORDER_REQUESTED_LETTER_RESPONDENT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_CONSENT_ORDER;
@@ -53,6 +55,7 @@ public class GenerateFinancialOrderRequestedLetter implements CaseTask {
     private final DocmosisCommonContent docmosisCommonContent;
     private final PaymentService paymentService;
     private final CommonContent commonContent;
+    private final DocmosisTemplatesConfig config;
 
     public void apply(final CaseData caseData) {
         apply(caseData, null);
@@ -100,6 +103,7 @@ public class GenerateFinancialOrderRequestedLetter implements CaseTask {
             KEYWORD_CONSENT_ORDER));
         templateContent.put(FEES_CONSENT_ORDER, consentOrderFees);
         templateContent.put(RELATION, commonContent.getPartner(caseData, caseData.getApplicant1()));
+        templateContent.put(WELSH_ENQUIRIES_EMAIL, config.getTemplateVars().get(WELSH_ENQUIRIES_EMAIL));
 
         return templateContent;
     }
