@@ -12,7 +12,7 @@ import static uk.gov.hmcts.divorce.divorcecase.constant.ConditionalOrderCourtCon
 
 @Getter
 @AllArgsConstructor
-public enum ConditionalOrderCourt implements HasLabel {
+public enum ConditionalOrderCourtBulk implements HasLabel {
 
     @JsonProperty(birminghamCourtId)
     BIRMINGHAM(birminghamCourtId, birmingham),
@@ -22,4 +22,8 @@ public enum ConditionalOrderCourt implements HasLabel {
 
     private String courtId;
     private String label;
+
+    public ConditionalOrderCourt getConditionalOrderCourt() {
+        return ConditionalOrderCourt.valueOf(this.name());
+    }
 }
