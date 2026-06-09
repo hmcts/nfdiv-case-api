@@ -35,7 +35,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_A
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_CAN_APPLY_APP2;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED_COVER_LETTER_APP_2;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.FINANCIAL_ORDER_REQUESTED_LETTER_RESPONDENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
