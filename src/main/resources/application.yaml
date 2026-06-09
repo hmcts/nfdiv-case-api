@@ -235,6 +235,7 @@ uk:
             CERTIFICATE_OF_SERVICE_EVIDENCE_NOTIFICATION: '06d40e2f-5db7-491b-abe0-be1de6d2bcce'
             HEARING_REMINDER_CITIZEN: '96ad6d01-49d0-4fd8-9119-c15a4cdef873'
             HEARING_REMINDER_SOLICITOR: '95d52e90-216e-47bb-90b8-1a5ac2d0f053'
+            APPLICANT_NAME_UPDATED: '7f967812-ff21-4828-9470-fb44b4cc1868'
           welsh:
             REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT: '6fed53fd-8558-4f9a-8804-8b1004221083'
             SAVE_SIGN_OUT: '6f8b8605-64ab-47ca-b5a8-ee87f96be77d'
@@ -410,6 +411,7 @@ uk:
             CERTIFICATE_OF_SERVICE_EVIDENCE_NOTIFICATION: '5cf32cc3-dd84-4796-9f0f-268a86496d76'
             HEARING_REMINDER_CITIZEN: '28d71ce2-52d4-426f-96fc-d23e29addd61'
             HEARING_REMINDER_SOLICITOR: '80692e64-a1c5-4f58-ba5e-85de8e69bf5a'
+            APPLICANT_NAME_UPDATED: '7f967812-ff21-4828-9470-fb44b4cc1868'
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator,payment_app}
