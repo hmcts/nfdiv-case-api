@@ -36,7 +36,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.FINANCIAL_ORDER_R
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_CONSENT_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_FINANCIAL_ORDER;
-
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
@@ -120,7 +119,7 @@ public class GenerateFinancialOrderRequestedLetter implements CaseTask {
         }
     }
 
-    private boolean doesFORequestedLetterNeedsGeneration(final CaseData caseData) {
+    public static boolean doesFORequestedLetterNeedsGeneration(final CaseData caseData) {
         boolean isSole = caseData.getApplicationType().isSole();
         boolean hasFOBeenRequested = YesOrNo.YES.equals(caseData.getApplicant1().getFinancialOrder());
         boolean isRepresented = caseData.getApplicant2().isRepresented();

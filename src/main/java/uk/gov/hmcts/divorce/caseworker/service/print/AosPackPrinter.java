@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.caseworker.service.print;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
@@ -16,6 +15,7 @@ import java.util.UUID;
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinancialOrderRequestedLetter.doesFORequestedLetterNeedsGeneration;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
@@ -191,11 +191,6 @@ public class AosPackPrinter {
         final Letter divorceApplicationLetter = firstElement(divorceApplicationLetters);
         final Letter notificationLetter = firstElement(getLettersBasedOnContactPrivacy(caseData, NOTICE_OF_PROCEEDINGS_APP_1));
 
-        final Letter financialOrderRequestedLetter = firstElement(getLettersBasedOnContactPrivacy(caseData,
-            FINANCIAL_ORDER_REQUESTED_LETTER_RESPONDENT));
-        boolean doesFinancialOrderRequestedLetterNeedToBeSent =
-            caseData.getApplicationType().isSole() && YesOrNo.YES.equals(caseData.getApplicant1().getFinancialOrder());
-
         final List<Letter> currentAosLetters = new ArrayList<>();
 
         if (null != notificationLetter) {
@@ -217,6 +212,9 @@ public class AosPackPrinter {
             currentAosLetters.add(divorceApplicationLetter);
         }
 
+        boolean doesFinancialOrderRequestedLetterNeedToBeSent = doesFORequestedLetterNeedsGeneration(caseData);
+        final Letter financialOrderRequestedLetter = firstElement(getLettersBasedOnContactPrivacy(caseData,
+            FINANCIAL_ORDER_REQUESTED_LETTER_RESPONDENT));
         if (doesFinancialOrderRequestedLetterNeedToBeSent && null != financialOrderRequestedLetter) {
             currentAosLetters.add(financialOrderRequestedLetter);
         }
