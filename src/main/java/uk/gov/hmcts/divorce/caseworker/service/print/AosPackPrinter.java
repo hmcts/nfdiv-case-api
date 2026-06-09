@@ -15,7 +15,7 @@ import java.util.UUID;
 import static org.springframework.util.CollectionUtils.firstElement;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinancialOrderRequestedLetter.doesFORequestedLetterNeedsGeneration;
+import static uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinancialOrderRequestedLetter.shouldGenerateFinancialOrderLetter;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getLettersBasedOnContactPrivacy;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
@@ -212,7 +212,7 @@ public class AosPackPrinter {
             currentAosLetters.add(divorceApplicationLetter);
         }
 
-        boolean doesFinancialOrderRequestedLetterNeedToBeSent = doesFORequestedLetterNeedsGeneration(caseData);
+        boolean doesFinancialOrderRequestedLetterNeedToBeSent = shouldGenerateFinancialOrderLetter(caseData);
         final Letter financialOrderRequestedLetter = firstElement(getLettersBasedOnContactPrivacy(caseData,
             FINANCIAL_ORDER_REQUESTED_LETTER_RESPONDENT));
         if (doesFinancialOrderRequestedLetterNeedToBeSent && null != financialOrderRequestedLetter) {

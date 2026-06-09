@@ -68,7 +68,7 @@ public class GenerateFinancialOrderRequestedLetter implements CaseTask {
 
     private void apply(final CaseData caseData, final Long caseId) {
         removeExistingFORequestedLetter(caseData, caseId);
-        if (doesFORequestedLetterNeedsGeneration(caseData)) {
+        if (shouldGenerateFinancialOrderLetter(caseData)) {
             caseDataDocumentService.renderDocumentAndUpdateCaseData(
                 caseData,
                 FINANCIAL_ORDER_REQUESTED_LETTER_RESPONDENT,
@@ -119,7 +119,7 @@ public class GenerateFinancialOrderRequestedLetter implements CaseTask {
         }
     }
 
-    public static boolean doesFORequestedLetterNeedsGeneration(final CaseData caseData) {
+    public static boolean shouldGenerateFinancialOrderLetter(final CaseData caseData) {
         boolean isSole = caseData.getApplicationType().isSole();
         boolean hasFOBeenRequested = YesOrNo.YES.equals(caseData.getApplicant1().getFinancialOrder());
         boolean isRepresented = caseData.getApplicant2().isRepresented();

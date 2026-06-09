@@ -729,7 +729,7 @@ class AosPackPrinterTest {
                  mockStatic(GenerateFinancialOrderRequestedLetter.class)) {
 
             classMock.when(() ->
-                GenerateFinancialOrderRequestedLetter.doesFORequestedLetterNeedsGeneration(caseData)
+                GenerateFinancialOrderRequestedLetter.shouldGenerateFinancialOrderLetter(caseData)
             ).thenReturn(true);
 
             aosPackPrinter.sendAosLetterAndRespondentAosPackToApplicant(caseData, TEST_CASE_ID);
