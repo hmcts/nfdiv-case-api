@@ -181,10 +181,6 @@ public final class DocumentUtil {
             return caseData.getApplicant2().isConfidentialContactDetails();
         }
 
-        if (FINANCIAL_ORDER_REQUESTED_LETTER_RESPONDENT.equals(documentType)) {
-            return caseData.getApplicant2().isConfidentialContactDetails();
-        }
-
         return isAnApplicantConfidential && documentType.isPotentiallyConfidential();
     }
 
