@@ -534,7 +534,7 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES),
                 hasEntry(LABEL_PARTNER, "husband"),
-                hasEntry(LABEL_DIVORCE_OR_CIVIL_PARTNERSHIP_CERTIFICATE, "divorce certificate")
+                hasEntry(LABEL_DIVORCE_OR_CIVIL_PARTNERSHIP_CERTIFICATE, "marriage certificate")
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
