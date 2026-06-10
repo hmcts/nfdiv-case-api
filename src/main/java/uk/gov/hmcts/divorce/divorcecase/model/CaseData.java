@@ -35,6 +35,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CitizenAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.access.InternalCaseFlagsAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
@@ -140,11 +141,11 @@ public class CaseData {
     private Application application = new Application();
 
     @JsonUnwrapped()
-    @CCD(access = {DefaultAccess.class})
+    @CCD(access = {DefaultAccessExcludingSolicitor.class})
     private CaseInvite caseInvite;
 
     @JsonUnwrapped()
-    @CCD(access = {DefaultAccess.class})
+    @CCD(access = {DefaultAccessExcludingSolicitor.class})
     private CaseInviteApp1 caseInviteApp1;
 
     @JsonUnwrapped()

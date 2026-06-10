@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.Document;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.notification.HearingReminderNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -42,6 +43,7 @@ import static uk.gov.hmcts.divorce.common.notification.HearingReminderNotificati
 import static uk.gov.hmcts.divorce.common.notification.HearingReminderNotification.HEARING_VENUE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BIRMINGHAM;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.HEARING_REMINDER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
@@ -269,6 +271,33 @@ class HearingReminderNotificationTest {
             eq(applicant.getLanguagePreference()),
             eq(HEARING_REMINDER_LETTER_TYPE)
         );
+    }
+
+    @Test
+    void shouldUseWelshReminderVariables() {
+        CaseData data = validCaseDataForIssueApplication();
+        data.getApplicant1().setEmail(TEST_USER_EMAIL);
+        data.setHearing(buildHearingData());
+        data.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
+            .thenReturn(new HashMap<>());
+
+        hearingReminderNotification.sendToApplicant1(data, TEST_CASE_ID);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(HEARING_REMINDER_CITIZEN),
+            argThat(allOf(
+                hasEntry(HEARING_DATE, "1 Ionawr 2022"),
+                hasEntry(HEARING_TIME, "12:00 yh"),
+                hasEntry(HEARING_VENUE, BIRMINGHAM.getLabel()),
+                hasEntry(HEARING_ATTENDANCE_MODE, HearingAttendance.IN_PERSON.getWelshLabel())
+            )),
+            eq(WELSH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2());
     }
 
     public Hearing buildHearingData() {
