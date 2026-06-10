@@ -147,8 +147,6 @@ public class SystemAttachScannedDocuments implements CCDConfig<CaseData, State, 
 
     private DocumentType getDocumentType(CaseDocuments.ScannedDocumentSubtypes scannedDocumentSubtype) {
 
-        // TODO: extend once Nullity document types added
-
         if (D10.equals(scannedDocumentSubtype) || D10_CONFIDENTIAL.equals(scannedDocumentSubtype)) {
             return RESPONDENT_ANSWERS;
         } else if (D84.equals(scannedDocumentSubtype)) {

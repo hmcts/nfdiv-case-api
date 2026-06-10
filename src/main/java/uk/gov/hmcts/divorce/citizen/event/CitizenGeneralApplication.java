@@ -124,6 +124,10 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
             userOptions, GeneralParties.from(isApplicant1, data.getApplicationType())
         );
 
+        DivorceDocument applicationDocument = interimApplicationSubmissionService
+            .generateGeneralApplicationAnswerDocument(caseId, applicant, data, newGeneralApplication);
+        newGeneralApplication.setGeneralApplicationDocument(applicationDocument);
+
         FeeDetails applicationFee = newGeneralApplication.getGeneralApplicationFee();
         if (userOptions.willMakePayment()) {
             newGeneralApplication.setGeneralApplicationFeeType(userOptions.isHearingRequired() ? FEE0227 : FEE0228);

@@ -6,11 +6,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 
 import java.time.Clock;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 
 import static java.time.LocalDate.now;
@@ -18,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_PLUS_14_DAYS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
@@ -75,7 +80,10 @@ class SwitchToSoleSolicitorTemplateContentTest {
                 applicant2
             )
             .finalOrder(FinalOrder.builder().doesApplicant2IntendToSwitchToSole(YES).build())
+            .application(Application.builder().issueDate(LocalDate.of(2021, 4, 28)).build())
             .build();
+
+        when(commonContent.solicitorTemplateVars(caseData, TEST_CASE_ID, applicant1)).thenReturn(solicitorTemplateVars());
 
         final Map<String, String> templateVars = solicitorTemplateContent.templatevars(caseData, TEST_CASE_ID, applicant1, applicant2);
 
@@ -86,7 +94,16 @@ class SwitchToSoleSolicitorTemplateContentTest {
                 entry(APPLICANT_2_NAME, "Bob Smith"),
                 entry(SOLICITOR_REFERENCE, "sol ref"),
                 entry(SOLICITOR_NAME, "app1 sol"),
-                entry(DATE_PLUS_14_DAYS, now(clock).plusDays(14).format(DATE_TIME_FORMATTER))
+                entry(DATE_PLUS_14_DAYS, now(clock).plusDays(14).format(DATE_TIME_FORMATTER)),
+                entry(DocmosisTemplateConstants.ISSUE_DATE, "28 Apr 2021")
             );
+    }
+
+    private Map<String, String> solicitorTemplateVars() {
+        Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(SOLICITOR_REFERENCE, "sol ref");
+        templateVars.put(SOLICITOR_NAME, "app1 sol");
+        templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, "28 Apr 2021");
+        return templateVars;
     }
 }

@@ -33,7 +33,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_OTHER_PARTY;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_PETITIONER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_PETITIONER_SOLICITOR;
@@ -100,7 +99,7 @@ public class GeneralEmailNotification {
                 log.info("Sending General Email Notification to petitioner solicitor for case id: {}", caseId);
                 emailTo = caseData.getApplicant1().getSolicitor().getEmail();
                 templateId = GENERAL_EMAIL_PETITIONER_SOLICITOR;
-                templateVars.put(SOLICITOR_NAME, caseData.getApplicant1().getSolicitor().getName());
+                templateVars.putAll(commonContent.getGeneralEmailSolicitorVars(caseData, caseId, caseData.getApplicant1()));
             } else {
                 log.info("Sending General Email Notification to petitioner for case id: {}", caseId);
                 emailTo = caseData.getApplicant1().getEmail();
@@ -111,7 +110,7 @@ public class GeneralEmailNotification {
                 log.info("Sending General Email Notification to respondent solicitor for case id: {}", caseId);
                 emailTo = caseData.getApplicant2().getSolicitor().getEmail();
                 templateId = GENERAL_EMAIL_RESPONDENT_SOLICITOR;
-                templateVars.put(SOLICITOR_NAME, caseData.getApplicant2().getSolicitor().getName());
+                templateVars.putAll(commonContent.getGeneralEmailSolicitorVars(caseData, caseId, caseData.getApplicant2()));
             } else {
                 log.info("Sending General Email Notification to respondent for case id: {}", caseId);
                 emailTo = caseData.getApplicant2().getEmail();
