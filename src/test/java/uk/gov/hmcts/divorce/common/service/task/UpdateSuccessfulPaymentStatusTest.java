@@ -7,6 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
@@ -22,7 +24,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.IN_PROGRESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,24 +39,30 @@ class UpdateSuccessfulPaymentStatusTest {
 
     @BeforeEach
     void setUp() {
-
-        final List<ListValue<Payment>> applicationPayments = getPayments(Payment
-                .builder()
-                .status(PaymentStatus.IN_PROGRESS)
-                .reference(UUID.randomUUID().toString())
-                .build());
-        final List<ListValue<Payment>> finalOrderPayments = getPayments(Payment
-                .builder()
-                .status(PaymentStatus.IN_PROGRESS)
-                .reference(UUID.randomUUID().toString())
-                .build());
-
         caseDetails = new CaseDetails<>();
 
-        caseDetails.setData(CaseData.builder().application(
-                        Application.builder().applicationPayments(applicationPayments).build())
-                        .finalOrder(FinalOrder.builder().finalOrderPayments(finalOrderPayments).build())
-                .build());
+        caseDetails.setData(CaseData.builder()
+            .application(
+                Application.builder()
+                    .applicationPayments(buildPaymentsInProgress())
+                    .build()
+            )
+            .finalOrder(
+                FinalOrder.builder()
+                    .finalOrderPayments(buildPaymentsInProgress())
+                    .build()
+            )
+            .alternativeService(
+                AlternativeService.builder()
+                    .servicePayments(buildPaymentsInProgress())
+                    .build()
+            )
+            .applicant1(
+                Applicant.builder()
+                    .generalAppPayments(buildPaymentsInProgress())
+                    .build()
+            )
+            .build());
 
         caseDetails.setId(TEST_CASE_ID);
     }
@@ -66,8 +76,8 @@ class UpdateSuccessfulPaymentStatusTest {
 
         assertThat(result.getState()).isEqualTo(AwaitingPayment);
         final CaseData resultData = result.getData();
-        assertThat(resultData.getApplication().getApplicationPayments().get(0).getValue().getStatus()).isEqualTo(SUCCESS);
-        assertThat(resultData.getFinalOrder().getFinalOrderPayments().get(0).getValue().getStatus()).isEqualTo(IN_PROGRESS);
+        assertThat(resultData.getApplication().getApplicationPayments().getFirst().getValue().getStatus()).isEqualTo(SUCCESS);
+        assertThat(resultData.getFinalOrder().getFinalOrderPayments().getFirst().getValue().getStatus()).isEqualTo(IN_PROGRESS);
     }
 
     @Test
@@ -79,8 +89,42 @@ class UpdateSuccessfulPaymentStatusTest {
 
         assertThat(result.getState()).isEqualTo(AwaitingFinalOrderPayment);
         final CaseData resultData = result.getData();
-        assertThat(resultData.getFinalOrder().getFinalOrderPayments().get(0).getValue().getStatus()).isEqualTo(SUCCESS);
-        assertThat(resultData.getApplication().getApplicationPayments().get(0).getValue().getStatus()).isEqualTo(IN_PROGRESS);
+        assertThat(resultData.getFinalOrder().getFinalOrderPayments().getFirst().getValue().getStatus()).isEqualTo(SUCCESS);
+        assertThat(resultData.getApplication().getApplicationPayments().getFirst().getValue().getStatus()).isEqualTo(IN_PROGRESS);
+    }
+
+    @Test
+    void shouldSetServicePaymentStatusToSuccessIfStateIsAwaitingServicePayment() {
+
+        caseDetails.setState(AwaitingServicePayment);
+
+        final CaseDetails<CaseData, State> result = updateSuccessfulPaymentStatus.apply(caseDetails);
+
+        assertThat(result.getState()).isEqualTo(AwaitingServicePayment);
+        final CaseData resultData = result.getData();
+        assertThat(resultData.getAlternativeService().getServicePayments().getFirst().getValue().getStatus()).isEqualTo(SUCCESS);
+        assertThat(resultData.getApplication().getApplicationPayments().getFirst().getValue().getStatus()).isEqualTo(IN_PROGRESS);
+    }
+
+    @Test
+    void shouldGenAppPaymentStatusToSuccessIfStateIsAwaitingGeneralApplicationPayment() {
+
+        caseDetails.setState(AwaitingGeneralApplicationPayment);
+
+        final CaseDetails<CaseData, State> result = updateSuccessfulPaymentStatus.apply(caseDetails);
+
+        assertThat(result.getState()).isEqualTo(AwaitingGeneralApplicationPayment);
+        final CaseData resultData = result.getData();
+        assertThat(resultData.getApplicant1().getGeneralAppPayments().getFirst().getValue().getStatus()).isEqualTo(SUCCESS);
+        assertThat(resultData.getApplication().getApplicationPayments().getFirst().getValue().getStatus()).isEqualTo(IN_PROGRESS);
+    }
+
+    private List<ListValue<Payment>> buildPaymentsInProgress() {
+        return getPayments(Payment
+            .builder()
+            .status(PaymentStatus.IN_PROGRESS)
+            .reference(UUID.randomUUID().toString())
+            .build());
     }
 
     private List<ListValue<Payment>> getPayments(Payment payment) {
