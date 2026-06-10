@@ -120,6 +120,13 @@ public class GeneralApplication {
     )
     private String generalApplicationUrgentCaseReason;
 
+    @CCD(
+        label = "Specify, what other application?",
+        typeOverride = TextArea,
+        searchable = false
+    )
+    private String generalApplicationOtherTypeDetails;
+
     @JsonIgnore
     public void recordPayment(String paymentReference, LocalDate dateOfPayment) {
 
