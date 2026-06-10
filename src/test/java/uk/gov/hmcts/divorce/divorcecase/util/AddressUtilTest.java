@@ -239,6 +239,83 @@ class AddressUtilTest {
     }
 
     @Test
+    void shouldReturnTrueIfCountryUsesWelshForUnitedKingdomAndPostcodeIsNull() {
+
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .country("Deyrnas Unedig")
+            .postCode(null)
+            .build();
+
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(true));
+    }
+
+    @Test
+    void shouldReturnTrueIfCountryUsesWelshForUKAndPostcodeIsNull() {
+
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .country("DU")
+            .postCode(null)
+            .build();
+
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(true));
+    }
+
+    @Test
+    void shouldReturnTrueIfCountryUsesWelshForEnglandAndPostcodeIsNull() {
+
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .country("Lloegr")
+            .postCode(null)
+            .build();
+
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(true));
+    }
+
+    @Test
+    void shouldReturnTrueIfCountryUsesWelshForWalesAndPostcodeIsNull() {
+
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .country("Cymru")
+            .postCode(null)
+            .build();
+
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(true));
+    }
+
+    @Test
+    void shouldReturnTrueIfCountryUsesWelshForGreatBritainAndPostcodeIsNull() {
+
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .country("Prydain Fawr")
+            .postCode(null)
+            .build();
+
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(true));
+    }
+
+    @Test
+    void shouldReturnTrueIfCountryUsesWelshForScotlandAndPostcodeIsNull() {
+
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .country("Yr Alban")
+            .postCode(null)
+            .build();
+
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(true));
+    }
+
+    @Test
+    void shouldReturnTrueIfCountryUsesWelshForNorthernIrelandAndPostcodeIsNull() {
+
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder()
+            .country("Gogledd Iwerddon")
+            .postCode(null)
+            .build();
+
+        assertThat(AddressUtil.isUnitedKingdom(addressGlobalUK), is(true));
+    }
+
+    @Test
     void shouldThrowIllegalArgumentExceptionIfAddressIsNull() {
         assertThatThrownBy(() -> AddressUtil.isUnitedKingdom(null))
             .isExactlyInstanceOf(IllegalArgumentException.class)

@@ -31,7 +31,7 @@ public class UpdateCaseCourtHearingProvider implements BulkActionCaseTaskProvide
                 bulkActionCaseData.getDateAndTimeOfHearing()
             );
             conditionalOrder.setCourt(
-                bulkActionCaseData.getCourt()
+                bulkActionCaseData.getCourt().getConditionalOrderCourt()
             );
             conditionalOrder.setOfflineCertificateOfEntitlementDocumentSentToApplicant1(NO);
             conditionalOrder.setOfflineCertificateOfEntitlementDocumentSentToApplicant2(NO);
