@@ -124,8 +124,9 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
             userOptions, GeneralParties.from(isApplicant1, data.getApplicationType())
         );
 
-        DivorceDocument applicationDocument = interimApplicationSubmissionService
-            .generateGeneralApplicationAnswerDocument(caseId, applicant, data, newGeneralApplication);
+        DivorceDocument applicationDocument = submissionService.generateGeneralApplicationAnswerDocument(
+            caseId, applicant, data, newGeneralApplication
+        );
         newGeneralApplication.setGeneralApplicationDocument(applicationDocument);
 
         FeeDetails applicationFee = newGeneralApplication.getGeneralApplicationFee();
@@ -149,11 +150,6 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
 
             submissionService.setEndState(details, newGeneralApplication);
         }
-
-        DivorceDocument applicationDocument = submissionService.generateGeneralApplicationAnswerDocument(
-            caseId, applicant, data, newGeneralApplication
-        );
-        newGeneralApplication.setGeneralApplicationDocument(applicationDocument);
 
         data.updateCaseWithGeneralApplication(newGeneralApplication);
         applicant.archiveInterimApplicationOptions();
