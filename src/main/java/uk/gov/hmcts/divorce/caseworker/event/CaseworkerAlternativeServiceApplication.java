@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
@@ -43,13 +44,17 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @RequiredArgsConstructor
 public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_SERVICE_RECEIVED = "caseworker-service-received";
-    private static final String Service_APPLICATION_RECEIVED = "Service application received";
+    private static final String SERVICE_APPLICATION_RECEIVED = "Service application received";
 
     private final Clock clock;
 
     private final GeneralApplicationReceivedNotification generalApplicationReceivedNotification;
 
     private final NotificationDispatcher notificationDispatcher;
+
+    public static final String WARNING_SERVICE_APP_IN_PROGRESS = """
+        A digital application is currently in progress. Proceeding will archive the existing service application.
+        """;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -66,15 +71,16 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
                 RequestedInformationSubmitted,
                 GeneralApplicationReceived
             )
-            .name(Service_APPLICATION_RECEIVED)
-            .description(Service_APPLICATION_RECEIVED)
+            .name(SERVICE_APPLICATION_RECEIVED)
+            .description(SERVICE_APPLICATION_RECEIVED)
             .showSummary()
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, CASE_WORKER)
             .grantHistoryOnly(SUPER_USER, LEGAL_ADVISOR, JUDGE, SOLICITOR, CITIZEN))
             .page("serviceApplicationReceived")
-            .pageLabel(Service_APPLICATION_RECEIVED)
+            .pageLabel(SERVICE_APPLICATION_RECEIVED)
             .complex(CaseData::getAlternativeService)
                 .mandatory(AlternativeService::getReceivedServiceApplicationDate)
                 .mandatory(AlternativeService::getAlternativeServiceType)
@@ -88,17 +94,44 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
             .done();
     }
 
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_SERVICE_RECEIVED, details.getId());
+
+        final CaseData caseData = details.getData();
+
+        if (hasServiceApplicationInProgress(caseData)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .warnings(List.of(WARNING_SERVICE_APP_IN_PROGRESS))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
+    }
+
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
         log.info("Caseworker create service application about to submit callback invoked for Case Id: {}", details.getId());
 
-        final CaseData data = details.getData();
-        final AlternativeService serviceApplication = data.getAlternativeService();
+        final CaseData beforeData = beforeDetails.getData();
+        final CaseData afterData = details.getData();
 
-        serviceApplication.setServiceApplicationSubmittedBeforeIssue(YesOrNo.from(!data.getApplication().hasBeenIssued()));
-        data.getAlternativeService().setReceivedServiceAddedDate(LocalDate.now(clock));
+        if (hasServiceApplicationInProgress(beforeData)) {
+            beforeData.archiveAlternativeServiceApplicationOnCompletion();
+            afterData.setAlternativeServiceOutcomes(beforeData.getAlternativeServiceOutcomes());
+        }
+
+        afterData.setAlternativeService(buildServiceApplication(afterData));
+
+        final AlternativeService serviceApplication = afterData.getAlternativeService();
+
+        serviceApplication.setServiceApplicationSubmittedBeforeIssue(YesOrNo.from(!afterData.getApplication().hasBeenIssued()));
+        serviceApplication.setReceivedServiceAddedDate(LocalDate.now(clock));
+
 
         State endState = AwaitingServiceConsideration;
 
@@ -106,11 +139,28 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
             endState = AwaitingServicePayment;
         }
 
-        notificationDispatcher.send(generalApplicationReceivedNotification, data, details.getId());
+        notificationDispatcher.send(generalApplicationReceivedNotification, afterData, details.getId());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(data)
+            .data(afterData)
             .state(endState)
+            .build();
+    }
+
+    private boolean hasServiceApplicationInProgress(CaseData caseData) {
+        return caseData.getAlternativeService().getAlternativeServiceType() != null;
+    }
+
+    private AlternativeService buildServiceApplication(CaseData caseData) {
+        final AlternativeService serviceApplicationAnswers = caseData.getAlternativeService();
+
+        return AlternativeService.builder()
+            .receivedServiceAddedDate(LocalDate.now(clock))
+            .receivedServiceApplicationDate(serviceApplicationAnswers.getReceivedServiceApplicationDate())
+            .alternativeServiceType(serviceApplicationAnswers.getAlternativeServiceType())
+            .alternativeServiceJudgeOrLegalAdvisorDetails(serviceApplicationAnswers.getAlternativeServiceJudgeOrLegalAdvisorDetails())
+            .alternativeServiceFeeRequired(serviceApplicationAnswers.getAlternativeServiceFeeRequired())
+            .serviceApplicationDocuments(serviceApplicationAnswers.getServiceApplicationDocuments())
             .build();
     }
 }

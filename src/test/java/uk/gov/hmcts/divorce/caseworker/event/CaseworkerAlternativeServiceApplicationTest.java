@@ -17,7 +17,6 @@ import uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotif
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
-import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -28,8 +27,11 @@ import java.time.LocalDate;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAlternativeServiceApplication.CASEWORKER_SERVICE_RECEIVED;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerAlternativeServiceApplication.WARNING_SERVICE_APP_IN_PROGRESS;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -66,32 +68,67 @@ class CaseworkerAlternativeServiceApplicationTest {
     void shouldSendApp1NotificationsOnAboutToSubmit() {
         setMockClock(clock);
 
-        CaseData caseData = caseData();
-        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> afterDetails = new CaseDetails<>();
+        final CaseData afterData = buildCaseData(AlternativeServiceType.ALTERNATIVE_SERVICE, YesOrNo.NO);
+        afterDetails.setId(TEST_CASE_ID);
 
-        caseworkerAlternativeServiceApplication.aboutToSubmit(caseDetails, null);
+        beforeDetails.setData(afterData);
+        afterDetails.setData(buildCaseData(AlternativeServiceType.ALTERNATIVE_SERVICE, YesOrNo.NO));
 
-        verify(notificationDispatcher).send(generalApplicationReceivedNotification, caseData, caseDetails.getId());
-    }
 
-    private CaseData caseData() {
-        return CaseData.builder()
-            .applicationType(ApplicationType.SOLE_APPLICATION)
-            .build();
+        caseworkerAlternativeServiceApplication.aboutToSubmit(afterDetails, beforeDetails);
+
+        verify(notificationDispatcher).send(eq(generalApplicationReceivedNotification), any(CaseData.class), eq(TEST_CASE_ID));
     }
 
     @Test
-    void shouldSetReceivedServiceAddedDateToCurrentDateWhenAboutToSubmitCallbackIsInvoked() {
-
-        setMockClock(clock);
-
+    void shouldWarnUserThatServiceApplicationAlreadyExists() {
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         final CaseData caseData = CaseData.builder().build();
+        caseData.setAlternativeService(
+            AlternativeService.builder()
+                .alternativeServiceType(AlternativeServiceType.BAILIFF)
+                .build()
+        );
+
         caseDetails.setData(caseData);
         caseDetails.setId(TEST_CASE_ID);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerAlternativeServiceApplication.aboutToSubmit(caseDetails, caseDetails);
+            caseworkerAlternativeServiceApplication.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getWarnings()).containsExactly(WARNING_SERVICE_APP_IN_PROGRESS);
+    }
+
+    @Test
+    void shouldNotWarnUsersWhenThereIsNoServiceApplicationInProgress() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        final CaseData caseData = CaseData.builder().build();
+
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerAlternativeServiceApplication.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getWarnings()).isNull();
+    }
+
+    @Test
+    void shouldSetReceivedServiceAddedDateToCurrentDateWhenAboutToSubmitCallbackIsInvoked() {
+        setMockClock(clock);
+
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> afterDetails = new CaseDetails<>();
+
+        beforeDetails.setData(buildCaseData(AlternativeServiceType.ALTERNATIVE_SERVICE, YesOrNo.NO));
+        afterDetails.setData(buildCaseData(AlternativeServiceType.ALTERNATIVE_SERVICE, YesOrNo.NO));
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerAlternativeServiceApplication.aboutToSubmit(afterDetails, beforeDetails);
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getWarnings()).isNull();
@@ -100,7 +137,7 @@ class CaseworkerAlternativeServiceApplicationTest {
     }
 
     @Test
-    void shouldSetPreIssueFlagToNoForPostIssueGeneralApplication() {
+    void shouldSetPreIssueFlagToYesForPreIssueGeneralApplication() {
 
         setMockClock(clock);
 
@@ -113,12 +150,40 @@ class CaseworkerAlternativeServiceApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerAlternativeServiceApplication.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).isNull();
-        assertThat(response.getWarnings()).isNull();
-
         final AlternativeService serviceApplication = response.getData().getAlternativeService();
         assertThat(serviceApplication.getReceivedServiceAddedDate()).isEqualTo(getExpectedLocalDate());
         assertThat(serviceApplication.getServiceApplicationSubmittedBeforeIssue()).isEqualTo(YesOrNo.YES);
+    }
+
+    @Test
+    void shouldArchiveInProgressServiceApplication() {
+        setMockClock(clock);
+
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        final CaseData beforeData = CaseData.builder().build();
+        beforeData.setAlternativeService(
+            AlternativeService.builder()
+                .alternativeServiceType(AlternativeServiceType.DEEMED)
+                .build()
+        );
+        beforeDetails.setData(beforeData);
+
+        final CaseDetails<CaseData, State> afterDetails = new CaseDetails<>();
+        final CaseData afterData = CaseData.builder().build();
+        afterData.setAlternativeService(
+            AlternativeService.builder()
+                .alternativeServiceType(AlternativeServiceType.BAILIFF)
+                .build()
+        );
+        afterDetails.setData(afterData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerAlternativeServiceApplication.aboutToSubmit(afterDetails, beforeDetails);
+
+        assertThat(response.getData().getAlternativeServiceOutcomes().getFirst().getValue().getAlternativeServiceType())
+            .isEqualTo(AlternativeServiceType.DEEMED);
+        assertThat(response.getData().getAlternativeService().getAlternativeServiceType())
+            .isEqualTo(AlternativeServiceType.BAILIFF);
     }
 
     @Test
@@ -135,14 +200,10 @@ class CaseworkerAlternativeServiceApplicationTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerAlternativeServiceApplication.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getErrors()).isNull();
-        assertThat(response.getWarnings()).isNull();
-
         final AlternativeService serviceApplication = response.getData().getAlternativeService();
         assertThat(serviceApplication.getReceivedServiceAddedDate()).isEqualTo(getExpectedLocalDate());
         assertThat(serviceApplication.getServiceApplicationSubmittedBeforeIssue()).isEqualTo(YesOrNo.NO);
     }
-
     static Stream<Arguments> provideTestArguments() {
         return Stream.of(
             Arguments.of(YesOrNo.NO, null, State.AwaitingServiceConsideration),
@@ -156,22 +217,26 @@ class CaseworkerAlternativeServiceApplicationTest {
 
         setMockClock(clock);
 
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        final CaseData caseData = CaseData.builder()
-            .alternativeService(AlternativeService.builder()
-                .alternativeServiceFeeRequired(feeRequired)
-                .alternativeServiceType(serviceType)
-                .build())
-            .build();
-        caseDetails.setData(caseData);
-        caseDetails.setId(TEST_CASE_ID);
+        final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();
+        final CaseDetails<CaseData, State> afterDetails = new CaseDetails<>();
+        afterDetails.setData(buildCaseData(serviceType, feeRequired));
+        beforeDetails.setData(buildCaseData(serviceType, feeRequired));
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
-            caseworkerAlternativeServiceApplication.aboutToSubmit(caseDetails, caseDetails);
+            caseworkerAlternativeServiceApplication.aboutToSubmit(afterDetails, beforeDetails);
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getData().getAlternativeService().getReceivedServiceAddedDate()).isEqualTo(getExpectedLocalDate());
         assertThat(response.getState()).isEqualTo(expectedState);
+    }
+
+    private CaseData buildCaseData(AlternativeServiceType serviceType, YesOrNo feeRequired) {
+        return CaseData.builder()
+            .alternativeService(AlternativeService.builder()
+                .alternativeServiceFeeRequired(feeRequired)
+                .alternativeServiceType(serviceType)
+                .build())
+            .build();
     }
 }
