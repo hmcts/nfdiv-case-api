@@ -204,6 +204,7 @@ class CaseworkerAlternativeServiceApplicationTest {
         assertThat(serviceApplication.getReceivedServiceAddedDate()).isEqualTo(getExpectedLocalDate());
         assertThat(serviceApplication.getServiceApplicationSubmittedBeforeIssue()).isEqualTo(YesOrNo.NO);
     }
+
     static Stream<Arguments> provideTestArguments() {
         return Stream.of(
             Arguments.of(YesOrNo.NO, null, State.AwaitingServiceConsideration),
