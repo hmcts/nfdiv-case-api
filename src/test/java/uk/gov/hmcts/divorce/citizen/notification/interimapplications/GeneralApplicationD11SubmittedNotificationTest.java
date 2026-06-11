@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
@@ -55,6 +56,7 @@ class GeneralApplicationD11SubmittedNotificationTest {
         GeneralApplication generalApplication = GeneralApplication.builder()
             .generalApplicationParty(GeneralParties.APPLICANT)
             .generalApplicationDocsUploadedPreSubmission(YesOrNo.NO)
+            .generalApplicationType(GeneralApplicationType.AMEND_APPLICATION)
             .generalApplicationFee(
                 FeeDetails.builder()
                     .paymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF)
@@ -87,6 +89,7 @@ class GeneralApplicationD11SubmittedNotificationTest {
             .build());
         GeneralApplication generalApplication = GeneralApplication.builder()
             .generalApplicationParty(GeneralParties.APPLICANT)
+            .generalApplicationType(GeneralApplicationType.AMEND_APPLICATION)
             .generalApplicationFee(
                 FeeDetails.builder()
                     .dateOfPayment(LocalDate.of(2022, 1, 1))
