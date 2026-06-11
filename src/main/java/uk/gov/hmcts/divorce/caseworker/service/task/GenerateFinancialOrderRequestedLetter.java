@@ -30,12 +30,12 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DA
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.LAST_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WELSH_ENQUIRIES_EMAIL;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINANCIAL_ORDER_REQUESTED_LETTER_RESPONDENT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ADDRESS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_CONSENT_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FEES_FINANCIAL_ORDER;
+import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
@@ -101,7 +101,7 @@ public class GenerateFinancialOrderRequestedLetter implements CaseTask {
             EVENT_GENERAL,
             KEYWORD_CONSENT_ORDER));
         templateContent.put(FEES_CONSENT_ORDER, consentOrderFees);
-        templateContent.put(RELATION, commonContent.getPartner(caseData, caseData.getApplicant1()));
+        templateContent.put(PARTNER, commonContent.getPartner(caseData, caseData.getApplicant1()));
         templateContent.put(WELSH_ENQUIRIES_EMAIL, config.getTemplateVars().get(WELSH_ENQUIRIES_EMAIL));
 
         return templateContent;
