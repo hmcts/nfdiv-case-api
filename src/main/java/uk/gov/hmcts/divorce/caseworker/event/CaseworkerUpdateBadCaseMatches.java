@@ -42,14 +42,14 @@ public class CaseworkerUpdateBadCaseMatches implements CCDConfig<CaseData, State
         new PageBuilder(configBuilder
             .event(UPDATE_BAD_CASE_MATCHES)
             .forStates(EVENT_STATES)
-            .name("Update bad case matches")
-            .description("Update bad case matches")
+            .name("Fix incorrect matches")
+            .description("Fix incorrect matches")
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
             .page("badcasematch")
-            .pageLabel("Update bad case matches")
+            .pageLabel("Fix incorrect case matches")
             .readonlyNoSummary(CaseData::getBadCaseMatches)
             .done();
     }
