@@ -34,9 +34,4 @@ public class FinalOrderPaymentCallbackRule implements PaymentCallbackRule {
             details -> details.getData().getFinalOrder().getFinalOrderPayments()
         );
     }
-
-    @Override
-    public UserRole userRole() {
-        return UserRole.APPLICANT_2;
-    }
 }

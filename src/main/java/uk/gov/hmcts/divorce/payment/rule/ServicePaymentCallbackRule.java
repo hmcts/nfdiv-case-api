@@ -6,7 +6,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.Optional;
 
@@ -35,10 +34,5 @@ public class ServicePaymentCallbackRule implements PaymentCallbackRule {
         return new UpdateSuccessfulPaymentStatus(
             details -> details.getData().getAlternativeService().getServicePayments()
         );
-    }
-
-    @Override
-    public UserRole userRole() {
-        return UserRole.CREATOR;
     }
 }

@@ -31,9 +31,4 @@ public class Applicant2GeneralApplicationPaymentCallbackRule implements PaymentC
             details -> details.getData().getApplicant2().getGeneralAppPayments()
         );
     }
-
-    @Override
-    public UserRole userRole() {
-        return UserRole.APPLICANT_2;
-    }
 }

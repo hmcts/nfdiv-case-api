@@ -81,7 +81,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
         log.info("{} About to Submit callback invoked for Case Id: {}", CITIZEN_GENERAL_APPLICATION_PAYMENT, caseId);
 
         final boolean isApplicant1 = paymentMadeByApplicant1(details.getData(), beforeDetails.getData());
-        Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
+        final Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
         log.info(
             "Processing Citizen General Application payment for {}, Case Id: {}",
             isApplicant1 ? APPLICANT_LABEL : APPLICANT_2_LABEL, caseId
@@ -133,11 +133,11 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
         CaseData beforeData = beforeDetails.getData();
         CaseData data = details.getData();
 
-        Applicant beforeApplicant2 = beforeData.getApplicant2();
-        Applicant beforeApplicant1 = beforeData.getApplicant1();
-        Applicant applicant1 = data.getApplicant1();
+        final Applicant beforeApplicant2 = beforeData.getApplicant2();
+        final Applicant beforeApplicant1 = beforeData.getApplicant1();
+        final Applicant applicant1 = data.getApplicant1();
 
-        boolean isApplicant1 = beforeApplicant1.hasUnpaidGeneralApplication() && !applicant1.hasUnpaidGeneralApplication();
+        final boolean isApplicant1 = beforeApplicant1.hasUnpaidGeneralApplication() && !applicant1.hasUnpaidGeneralApplication();
 
         Applicant beforeApplicant = isApplicant1 ? beforeApplicant1 : beforeApplicant2;
         Optional<GeneralApplication> generalAppOptional = submissionService.findActiveGeneralApplication(data, beforeApplicant);

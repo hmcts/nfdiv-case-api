@@ -34,9 +34,4 @@ public class ApplicationPaymentCallbackRule implements PaymentCallbackRule {
             details -> details.getData().getApplication().getApplicationPayments()
         );
     }
-
-    @Override
-    public UserRole userRole() {
-        return UserRole.CREATOR;
-    }
 }
