@@ -443,6 +443,11 @@ public class Applicant {
     }
 
     @JsonIgnore
+    public boolean hasUnpaidGeneralApplication() {
+        return this.generalAppServiceRequest != null;
+    }
+
+    @JsonIgnore
     public boolean appliedForFinancialOrder() {
         return nonNull(financialOrder) && financialOrder.toBoolean();
     }

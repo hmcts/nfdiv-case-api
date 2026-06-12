@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -19,9 +18,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
+import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
@@ -29,7 +28,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -37,7 +35,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LABEL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_LABEL;
 
 @Component
 @Slf4j
@@ -52,13 +53,10 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
     private final CitizenGeneralApplicationSubmissionService submissionService;
 
-    private final CcdAccessService ccdAccessService;
-
-    private final HttpServletRequest request;
-
     private final GeneralReferralService generalReferralService;
 
     private static final String GENERAL_APPLICATION_NOT_FOUND = "No general applications are awaiting payment";
+    private static final String ERROR_UNABLE_TO_FIND_PAYMENT_PARTY = "Unable to find general application payment party";
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -72,7 +70,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .showCondition(NEVER_SHOW)
-            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2)
+            .grant(CREATE_READ_UPDATE, CREATOR, APPLICANT_2, SYSTEMUPDATE)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE));
     }
 
@@ -82,8 +80,13 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
         CaseData data = details.getData();
         log.info("{} About to Submit callback invoked for Case Id: {}", CITIZEN_GENERAL_APPLICATION_PAYMENT, caseId);
 
-        boolean isApplicant1 = isApplicant1(caseId);
+        final boolean isApplicant1 = paymentMadeByApplicant1(details.getData(), beforeDetails.getData());
         Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
+        log.info(
+            "Processing Citizen General Application payment for {}, Case Id: {}",
+            isApplicant1 ? APPLICANT_LABEL : APPLICANT_2_LABEL, caseId
+        );
+
         Optional<GeneralApplication> generalAppOptional = submissionService.findActiveGeneralApplication(data, applicant);
 
         if (generalAppOptional.isEmpty()) {
@@ -130,8 +133,13 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
         CaseData beforeData = beforeDetails.getData();
         CaseData data = details.getData();
 
-        boolean isApplicant1 = isApplicant1(details.getId());
-        Applicant beforeApplicant = isApplicant1 ? beforeData.getApplicant1() : beforeData.getApplicant2();
+        Applicant beforeApplicant2 = beforeData.getApplicant2();
+        Applicant beforeApplicant1 = beforeData.getApplicant1();
+        Applicant applicant1 = data.getApplicant1();
+
+        boolean isApplicant1 = beforeApplicant1.hasUnpaidGeneralApplication() && !applicant1.hasUnpaidGeneralApplication();
+
+        Applicant beforeApplicant = isApplicant1 ? beforeApplicant1 : beforeApplicant2;
         Optional<GeneralApplication> generalAppOptional = submissionService.findActiveGeneralApplication(data, beforeApplicant);
 
         data.getApplication().setPreviousState(beforeDetails.getState());
@@ -143,7 +151,32 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
         return SubmittedCallbackResponse.builder().build();
     }
 
-    private boolean isApplicant1(Long caseId) {
-        return ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), caseId);
+    private boolean paymentMadeByApplicant1(CaseData caseData, CaseData beforeData) {
+        final boolean applicant1HasPaid = hasMadeGeneralAppPayment(caseData.getApplicant1(), beforeData.getApplicant1());
+        final boolean applicant2HasPaid = hasMadeGeneralAppPayment(caseData.getApplicant2(), beforeData.getApplicant2());
+
+        if (applicant1HasPaid == applicant2HasPaid) {
+            throw new IllegalStateException(ERROR_UNABLE_TO_FIND_PAYMENT_PARTY);
+        }
+
+        return applicant1HasPaid;
+    }
+
+    private boolean hasMadeGeneralAppPayment(Applicant applicant, Applicant beforeApplicant) {
+        final int successfulPaymentCount = countSuccessfulPayments(applicant.getGeneralAppPayments());
+        final int beforeSuccessfulPaymentCount = countSuccessfulPayments(beforeApplicant.getGeneralAppPayments());
+
+        return applicant.getGeneralAppServiceRequest() != null && successfulPaymentCount > beforeSuccessfulPaymentCount;
+    }
+
+    private int countSuccessfulPayments(List<ListValue<Payment>> payments) {
+        if (CollectionUtils.isEmpty(payments)) {
+            return 0;
+        }
+
+        return (int) payments.stream()
+            .map(ListValue::getValue)
+            .filter(payment -> PaymentStatus.SUCCESS.equals(payment.getStatus()))
+            .count();
     }
 }

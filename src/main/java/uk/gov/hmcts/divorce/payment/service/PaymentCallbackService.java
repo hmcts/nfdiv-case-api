@@ -3,33 +3,19 @@ package uk.gov.hmcts.divorce.payment.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.divorce.common.service.task.UpdateSuccessfulPaymentStatus;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
-import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.payment.model.OnlinePaymentMethod;
 import uk.gov.hmcts.divorce.payment.model.PaymentCallbackDto;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus;
+import uk.gov.hmcts.divorce.payment.rule.PaymentCallbackRule;
+import uk.gov.hmcts.divorce.payment.rule.PaymentCallbackRuleEngine;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
-
-import java.util.Optional;
-
-import static uk.gov.hmcts.divorce.citizen.event.CitizenGeneralApplicationPaymentMade.CITIZEN_GENERAL_APPLICATION_PAYMENT;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenPaymentMade.CITIZEN_PAYMENT_MADE;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenServicePaymentMade.CITIZEN_SERVICE_PAYMENT;
-import static uk.gov.hmcts.divorce.citizen.event.RespondentFinalOrderPaymentMade.RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralApplicationPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +32,7 @@ public class PaymentCallbackService {
 
     private final CoreCaseDataApi coreCaseDataApi;
 
-    private final UpdateSuccessfulPaymentStatus updateSuccessfulPaymentStatus;
+    private final PaymentCallbackRuleEngine paymentCallbackRuleEngine;
 
     private static final String LOG_CALLBACK_RECEIVED = """
         Payment callback received for payment: {}, case id: {}, service request status: {}, payment method: {}
@@ -56,8 +42,8 @@ public class PaymentCallbackService {
         Not processing payment callback ({}) for case id: {}, payment was done by PBA or is incomplete.
         """;
 
-    private static final String LOG_NOT_PROCESSING_COMPLETED_CALLBACK = """
-        Not processing payment callback ({}) for case id: {}, case is no longer awaiting payment.
+    private static final String LOG_NOT_PROCESSING_NO_MATCHING_RULE = """
+        Not processing payment callback ({}) for case id: {}, no matching rule found for application awaiting payment
         """;
 
     public void handleCallback(PaymentCallbackDto paymentCallback) {
@@ -74,24 +60,30 @@ public class PaymentCallbackService {
             return;
         }
 
-        final User systemUpdateUser = idamService.retrieveSystemUpdateUserDetails();
+        final User systemUser = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuthorization = authTokenGenerator.generate();
         final uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> details = caseDetailsConverter.convertToCaseDetailsFromReformModel(
-            coreCaseDataApi.getCase(systemUpdateUser.getAuthToken(), serviceAuthorization, caseRef)
+            coreCaseDataApi.getCase(systemUser.getAuthToken(), serviceAuthorization, caseRef)
         );
-        final State state = details.getState();
-        final String paymentMadeEvent = paymentMadeEvent(state, serviceRequestReference, details.getData());
 
-        if (paymentMadeEvent == null) {
-            log.info(LOG_NOT_PROCESSING_COMPLETED_CALLBACK, paymentRef, caseRef);
+        final State state = details.getState();
+        final CaseData caseData = details.getData();
+
+        final var matchingPaymentCallbackRuleOpt = paymentCallbackRuleEngine.find(state, serviceRequestReference, caseData);
+
+        if (matchingPaymentCallbackRuleOpt.isEmpty()) {
+            log.info(LOG_NOT_PROCESSING_NO_MATCHING_RULE, paymentRef, caseRef);
+            
             return;
         }
 
+        PaymentCallbackRule rule = matchingPaymentCallbackRuleOpt.get();
+
         ccdUpdateService.submitEventWithRetry(
             caseRef,
-            paymentMadeEvent,
-            updateSuccessfulPaymentStatus,
-            systemUpdateUser,
+            rule.paymentMadeEvent(),
+            rule.updatePaymentStatusTask(),
+            systemUser,
             serviceAuthorization
         );
     }
@@ -102,53 +94,5 @@ public class PaymentCallbackService {
 
     private boolean isSolicitorPbaPayment(OnlinePaymentMethod paymentMethod) {
         return OnlinePaymentMethod.PAYMENT_BY_ACCOUNT.equals(paymentMethod);
-    }
-
-    private String paymentMadeEvent(State state, String paymentServiceRequest, CaseData caseData) {
-        if (AwaitingPayment.equals(state) && isApplicationPayment(paymentServiceRequest, caseData)) {
-            return CITIZEN_PAYMENT_MADE;
-        }
-
-        if (AwaitingFinalOrderPayment.equals(state) && isFinalOrderPayment(paymentServiceRequest, caseData)) {
-            return RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
-        }
-
-        if (AwaitingServicePayment.equals(state) && isServicePayment(paymentServiceRequest, caseData)) {
-            return CITIZEN_SERVICE_PAYMENT;
-        }
-
-        if (AwaitingGeneralApplicationPayment.equals(state) && isGeneralApplicationPayment(paymentServiceRequest, caseData)) {
-            return CITIZEN_GENERAL_APPLICATION_PAYMENT;
-        }
-
-        return null;
-    }
-
-    private boolean isApplicationPayment(String paymentServiceRequest, CaseData caseData) {
-        return Optional.of(caseData.getApplication())
-            .map(Application::getApplicationFeeServiceRequestReference)
-            .filter(paymentServiceRequest::equals)
-            .isPresent();
-    }
-
-    private boolean isFinalOrderPayment(String paymentServiceRequest, CaseData caseData) {
-        return Optional.ofNullable(caseData.getFinalOrder())
-            .map(FinalOrder::getApplicant2FinalOrderFeeServiceRequestReference)
-            .filter(paymentServiceRequest::equals)
-            .isPresent();
-    }
-
-    private boolean isServicePayment(String paymentServiceRequest, CaseData caseData) {
-        return Optional.ofNullable(caseData.getAlternativeService())
-            .map(AlternativeService::getServicePaymentFee)
-            .map(FeeDetails::getServiceRequestReference)
-            .filter(paymentServiceRequest::equals)
-            .isPresent();
-    }
-
-    private boolean isGeneralApplicationPayment(String paymentServiceRequest, CaseData caseData) {
-        return Optional.ofNullable(caseData.getApplicant1().getGeneralAppServiceRequest())
-            .filter(paymentServiceRequest::equals)
-            .isPresent();
     }
 }

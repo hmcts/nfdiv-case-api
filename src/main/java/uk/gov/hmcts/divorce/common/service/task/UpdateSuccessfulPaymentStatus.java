@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.common.service.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -12,10 +11,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import java.util.List;
+import java.util.function.Function;
 
-@Component
 @Slf4j
 public class UpdateSuccessfulPaymentStatus implements CaseTask {
+
+    private final Function<CaseDetails<CaseData, State>, List<ListValue<Payment>>> paymentExtractor;
+
+    public UpdateSuccessfulPaymentStatus(
+        Function<CaseDetails<CaseData, State>, List<ListValue<Payment>>> paymentExtractor
+    ) {
+        this.paymentExtractor = paymentExtractor;
+    }
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {

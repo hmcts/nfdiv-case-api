@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.common.service.task.UpdateSuccessfulPaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -15,6 +14,9 @@ import uk.gov.hmcts.divorce.payment.client.PaymentClient;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus;
+import uk.gov.hmcts.divorce.payment.rule.ApplicationPaymentCallbackRule;
+import uk.gov.hmcts.divorce.payment.rule.FinalOrderPaymentCallbackRule;
+import uk.gov.hmcts.divorce.payment.rule.PaymentCallbackRule;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -29,8 +31,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenPaymentMade.CITIZEN_PAYMENT_MADE;
-import static uk.gov.hmcts.divorce.citizen.event.RespondentFinalOrderPaymentMade.RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRejectCasesWithPaymentOverdue.APPLICATION_REJECTED_FEE_NOT_PAID;
@@ -54,7 +54,9 @@ public class PaymentStatusService {
 
     private final ServiceRequestSearchService serviceRequestSearchService;
 
-    private final UpdateSuccessfulPaymentStatus updateSuccessfulPaymentStatus;
+    private final ApplicationPaymentCallbackRule applicationPaymentCallbackRule;
+
+    private final FinalOrderPaymentCallbackRule finalOrderPaymentCallbackRule;
 
     public void hasSuccessFulPayment(List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> casesInAwaitingPaymentState) {
         log.info("PaymentStatusService: {} cases in AwaitingPayment state",
@@ -93,14 +95,16 @@ public class PaymentStatusService {
         List<Long> successfulPaymentCaseIds = new ArrayList<>();
         casesWithSuccessfulPayment.forEach(successfulPaymentCase -> {
 
-            String eventId = AwaitingPayment == successfulPaymentCase.getState()
-                    ? CITIZEN_PAYMENT_MADE : RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
+            PaymentCallbackRule paymentRule = AwaitingPayment == successfulPaymentCase.getState()
+                    ? applicationPaymentCallbackRule : finalOrderPaymentCallbackRule;
 
             Long caseId = successfulPaymentCase.getId();
 
-            log.info("{} event called for {} with successful payment: ", eventId, caseId);
+            log.info("{} event called for {} with successful payment: ", paymentRule.paymentMadeEvent(), caseId);
 
-            ccdUpdateService.submitEventWithRetry(caseId.toString(), eventId, updateSuccessfulPaymentStatus, user, s2sToken);
+            ccdUpdateService.submitEventWithRetry(
+                caseId.toString(), paymentRule.paymentMadeEvent(), paymentRule.updatePaymentStatusTask(), user, s2sToken
+            );
             successfulPaymentCaseIds.add(caseId);
         });
 
