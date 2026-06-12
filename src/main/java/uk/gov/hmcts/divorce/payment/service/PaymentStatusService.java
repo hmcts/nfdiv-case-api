@@ -14,9 +14,9 @@ import uk.gov.hmcts.divorce.payment.client.PaymentClient;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus;
-import uk.gov.hmcts.divorce.payment.rule.ApplicationPaymentCallbackRule;
-import uk.gov.hmcts.divorce.payment.rule.FinalOrderPaymentCallbackRule;
-import uk.gov.hmcts.divorce.payment.rule.PaymentCallbackRule;
+import uk.gov.hmcts.divorce.payment.rule.ApplicationPaymentMadeRule;
+import uk.gov.hmcts.divorce.payment.rule.FinalOrderPaymentMadeRule;
+import uk.gov.hmcts.divorce.payment.rule.PaymentMadeRule;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -54,9 +54,9 @@ public class PaymentStatusService {
 
     private final ServiceRequestSearchService serviceRequestSearchService;
 
-    private final ApplicationPaymentCallbackRule applicationPaymentCallbackRule;
+    private final ApplicationPaymentMadeRule applicationPaymentMadeRule;
 
-    private final FinalOrderPaymentCallbackRule finalOrderPaymentCallbackRule;
+    private final FinalOrderPaymentMadeRule finalOrderPaymentMadeRule;
 
     public void hasSuccessFulPayment(List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> casesInAwaitingPaymentState) {
         log.info("PaymentStatusService: {} cases in AwaitingPayment state",
@@ -95,8 +95,8 @@ public class PaymentStatusService {
         List<Long> successfulPaymentCaseIds = new ArrayList<>();
         casesWithSuccessfulPayment.forEach(successfulPaymentCase -> {
 
-            PaymentCallbackRule paymentRule = AwaitingPayment == successfulPaymentCase.getState()
-                    ? applicationPaymentCallbackRule : finalOrderPaymentCallbackRule;
+            PaymentMadeRule paymentRule = AwaitingPayment == successfulPaymentCase.getState()
+                    ? applicationPaymentMadeRule : finalOrderPaymentMadeRule;
 
             Long caseId = successfulPaymentCase.getId();
 

@@ -10,8 +10,8 @@ import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.payment.model.OnlinePaymentMethod;
 import uk.gov.hmcts.divorce.payment.model.PaymentCallbackDto;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus;
-import uk.gov.hmcts.divorce.payment.rule.PaymentCallbackRule;
-import uk.gov.hmcts.divorce.payment.rule.PaymentCallbackRuleEngine;
+import uk.gov.hmcts.divorce.payment.rule.PaymentMadeRule;
+import uk.gov.hmcts.divorce.payment.rule.PaymentMadeRuleEngine;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -32,7 +32,7 @@ public class PaymentCallbackService {
 
     private final CoreCaseDataApi coreCaseDataApi;
 
-    private final PaymentCallbackRuleEngine paymentCallbackRuleEngine;
+    private final PaymentMadeRuleEngine PaymentMadeRuleEngine;
 
     private static final String LOG_CALLBACK_RECEIVED = """
         Payment callback received for payment: {}, case id: {}, service request status: {}, payment method: {}
@@ -69,15 +69,15 @@ public class PaymentCallbackService {
         final State state = details.getState();
         final CaseData caseData = details.getData();
 
-        final var matchingPaymentCallbackRuleOpt = paymentCallbackRuleEngine.find(state, serviceRequestReference, caseData);
+        final var matchingPaymentMadeRuleOpt = PaymentMadeRuleEngine.find(state, serviceRequestReference, caseData);
 
-        if (matchingPaymentCallbackRuleOpt.isEmpty()) {
+        if (matchingPaymentMadeRuleOpt.isEmpty()) {
             log.info(LOG_NOT_PROCESSING_NO_MATCHING_RULE, paymentRef, caseRef);
-            
+
             return;
         }
 
-        PaymentCallbackRule rule = matchingPaymentCallbackRuleOpt.get();
+        PaymentMadeRule rule = matchingPaymentMadeRuleOpt.get();
 
         ccdUpdateService.submitEventWithRetry(
             caseRef,

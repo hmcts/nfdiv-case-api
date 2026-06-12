@@ -4,7 +4,7 @@ import uk.gov.hmcts.divorce.common.service.task.UpdateSuccessfulPaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
-public interface PaymentCallbackRule {
+public interface PaymentMadeRule {
     boolean matches(State state, String serviceRequestRef, CaseData data);
 
     String paymentMadeEvent();

@@ -10,11 +10,11 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class PaymentCallbackRuleEngine {
+public class PaymentMadeRuleEngine {
 
-    private final List<PaymentCallbackRule> rules;
+    private final List<PaymentMadeRule> rules;
 
-    public Optional<PaymentCallbackRule> find(State state, String serviceRequestRef, CaseData data) {
+    public Optional<PaymentMadeRule> find(State state, String serviceRequestRef, CaseData data) {
         return rules.stream()
             .filter(rule -> rule.matches(state, serviceRequestRef, data))
             .findFirst();

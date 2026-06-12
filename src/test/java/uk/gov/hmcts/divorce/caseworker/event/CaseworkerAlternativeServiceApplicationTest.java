@@ -135,15 +135,7 @@ class CaseworkerAlternativeServiceApplicationTest {
     }
 
     @Test
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     void shouldArchiveInProgressServiceApplication() {
-=======
-=======
->>>>>>> Stashed changes
-    void shouldSetPreIssueFlagToYesForPreIssueGeneralApplication() {
-
->>>>>>> Stashed changes
         setMockClock(clock);
 
         final CaseDetails<CaseData, State> beforeDetails = new CaseDetails<>();

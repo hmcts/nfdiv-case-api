@@ -2,33 +2,37 @@ package uk.gov.hmcts.divorce.payment.rule;
 
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.service.task.UpdateSuccessfulPaymentStatus;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import java.util.Optional;
 
-import static uk.gov.hmcts.divorce.citizen.event.CitizenGeneralApplicationPaymentMade.CITIZEN_GENERAL_APPLICATION_PAYMENT;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenServicePaymentMade.CITIZEN_SERVICE_PAYMENT;
 
 @Component
-public class Applicant2GeneralApplicationPaymentCallbackRule implements PaymentCallbackRule {
+public class ServicePaymentMadeRule implements PaymentMadeRule {
 
     @Override
     public boolean matches(State state, String serviceRequestRef, CaseData data) {
-        return Optional.ofNullable(data.getApplicant2().getGeneralAppServiceRequest())
+        return State.AwaitingServicePayment.equals(state)
+            && Optional.ofNullable(data.getAlternativeService())
+            .map(AlternativeService::getServicePaymentFee)
+            .map(FeeDetails::getServiceRequestReference)
             .filter(serviceRequestRef::equals)
             .isPresent();
     }
 
     @Override
     public String paymentMadeEvent() {
-        return CITIZEN_GENERAL_APPLICATION_PAYMENT;
+        return CITIZEN_SERVICE_PAYMENT;
     }
 
     @Override
     public UpdateSuccessfulPaymentStatus updatePaymentStatusTask() {
         return new UpdateSuccessfulPaymentStatus(
-            details -> details.getData().getApplicant2().getGeneralAppPayments()
+            details -> details.getData().getAlternativeService().getServicePayments()
         );
     }
 }
