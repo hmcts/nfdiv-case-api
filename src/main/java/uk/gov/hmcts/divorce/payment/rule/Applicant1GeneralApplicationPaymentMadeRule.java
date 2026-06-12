@@ -1,10 +1,12 @@
 package uk.gov.hmcts.divorce.payment.rule;
 
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.common.service.task.UpdateSuccessfulPaymentStatus;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
+import java.util.List;
 import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.citizen.event.CitizenGeneralApplicationPaymentMade.CITIZEN_GENERAL_APPLICATION_PAYMENT;
@@ -25,9 +27,7 @@ public class Applicant1GeneralApplicationPaymentMadeRule implements PaymentMadeR
     }
 
     @Override
-    public UpdateSuccessfulPaymentStatus updatePaymentStatusTask() {
-        return new UpdateSuccessfulPaymentStatus(
-            details -> details.getData().getApplicant1().getGeneralAppPayments()
-        );
+    public List<ListValue<Payment>> getPayments(CaseData data) {
+        return data.getApplicant1().getGeneralAppPayments();
     }
 }

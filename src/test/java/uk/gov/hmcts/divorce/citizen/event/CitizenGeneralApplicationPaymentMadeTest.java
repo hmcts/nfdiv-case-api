@@ -1,7 +1,5 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
-import jakarta.servlet.http.HttpServletRequest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
-import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
@@ -24,10 +21,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralReason;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
+import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -42,13 +39,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.divorce.common.service.PaymentValidatorService.ERROR_PAYMENT_INCOMPLETE;
+import static uk.gov.hmcts.divorce.citizen.event.CitizenGeneralApplicationPaymentMade.ERROR_UNABLE_TO_FIND_PAYMENT_PARTY;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.DECLINED;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPronouncement;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE;
@@ -56,19 +52,10 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_REFERENCE
 @ExtendWith(MockitoExtension.class)
 class CitizenGeneralApplicationPaymentMadeTest {
     @Mock
-    private PaymentValidatorService paymentValidatorService;
-
-    @Mock
     private Clock clock;
 
     @Mock
-    private CcdAccessService ccdAccessService;
-
-    @Mock
     private CitizenGeneralApplicationSubmissionService submissionService;
-
-    @Mock
-    private HttpServletRequest request;
 
     @Mock
     private GeneralReferralService generalReferralService;
@@ -76,15 +63,12 @@ class CitizenGeneralApplicationPaymentMadeTest {
     @InjectMocks
     private CitizenGeneralApplicationPaymentMade citizenGeneralApplicationPayment;
 
-    @BeforeEach
-    void stubDependencies() {
-        when(request.getHeader(AUTHORIZATION)).thenReturn(AUTHORIZATION);
-        when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
-    }
-
     @Test
     void shouldReturnErrorIfNoGeneralApplicationMatchesTheServiceRequest() {
-        List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder().amount(6000).status(DECLINED).build()));
+        List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder().amount(6000).status(SUCCESS).build()));
+
+        final var beforeData = buildTestData();
+        final var beforeDetails = CaseDetails.<CaseData, State>builder().data(beforeData).build();
 
         final var caseData = buildTestData();
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
@@ -93,7 +77,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
         caseDetails.setId(TEST_CASE_ID);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplicationPayment.aboutToSubmit(
-            caseDetails, caseDetails
+            caseDetails, beforeDetails
         );
 
         assertThat(response.getErrors()).hasSize(1);
@@ -101,24 +85,18 @@ class CitizenGeneralApplicationPaymentMadeTest {
 
     @Test
     void shouldReturnErrorIfPaymentValidationFails() {
-        List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder().amount(6000).status(DECLINED).build()));
+        final var payments = List.of(new ListValue<>("1", Payment.builder().amount(6000).status(DECLINED).build()));
 
         final var caseData = buildTestData();
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseData.getApplicant1().setGeneralAppPayments(payments);
         caseDetails.setId(TEST_CASE_ID);
 
-        GeneralApplication generalApp = caseData.getGeneralApplications().getFirst().getValue();
-        when(submissionService.findActiveGeneralApplication(caseData, caseData.getApplicant1()))
-            .thenReturn(Optional.of(generalApp));
-        when(paymentValidatorService.validatePayments(payments, TEST_CASE_ID))
-            .thenReturn(Collections.singletonList(ERROR_PAYMENT_INCOMPLETE));
-
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplicationPayment.aboutToSubmit(
             caseDetails, caseDetails
         );
 
-        assertThat(response.getErrors()).isEqualTo(Collections.singletonList(ERROR_PAYMENT_INCOMPLETE));
+        assertThat(response.getErrors()).isEqualTo(Collections.singletonList(ERROR_UNABLE_TO_FIND_PAYMENT_PARTY));
     }
 
     @Test
@@ -129,6 +107,9 @@ class CitizenGeneralApplicationPaymentMadeTest {
         List<ListValue<Payment>> payments = singletonList(new ListValue<>(
             "1", Payment.builder().amount(6000).status(SUCCESS).reference(TEST_REFERENCE).build())
         );
+
+        final var beforeData = buildTestData();
+        final var beforeDetails = CaseDetails.<CaseData, State>builder().data(beforeData).build();
 
         final var caseData = buildTestData();
         final var details = CaseDetails.<CaseData, State>builder().data(caseData).build();
@@ -154,15 +135,13 @@ class CitizenGeneralApplicationPaymentMadeTest {
             ).generalReferralDocument(generalApp.getGeneralApplicationDocument())
             .generalReferralDocuments(generalApp.getGeneralApplicationDocuments())
             .build();
-
-        when(paymentValidatorService.validatePayments(payments, TEST_CASE_ID)).thenReturn(
-            Collections.emptyList()
-        );
-        when(submissionService.canBeAutoReferred(any(CaseData.class), eq(GeneralApplicationType.DISCLOSURE_VIA_DWP))).thenReturn(true);
-        when(paymentValidatorService.getLastPayment(payments)).thenReturn(payments.getLast().getValue());
+        when(submissionService.canBeAutoReferred(any(CaseData.class), eq(GeneralApplicationType.DISCLOSURE_VIA_DWP)))
+            .thenReturn(true);
         when(generalReferralService.buildGeneralReferral(generalApp)).thenReturn(genReferral);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplicationPayment.aboutToSubmit(details, details);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplicationPayment.aboutToSubmit(
+            details, beforeDetails
+        );
 
         GeneralApplication generalApplication = response.getData().getGeneralApplications().getFirst().getValue();
         GeneralReferral generalReferral = response.getData().getGeneralReferral();
@@ -185,6 +164,9 @@ class CitizenGeneralApplicationPaymentMadeTest {
             "1", Payment.builder().amount(6000).status(SUCCESS).reference(TEST_REFERENCE).build())
         );
 
+        final var beforeData = buildTestData();
+        final var beforeDetails = CaseDetails.<CaseData, State>builder().data(beforeData).build();
+
         final var caseData = buildTestData();
         final var details = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseData.setApplicationType(SOLE_APPLICATION);
@@ -200,12 +182,9 @@ class CitizenGeneralApplicationPaymentMadeTest {
         when(submissionService.findActiveGeneralApplication(caseData, caseData.getApplicant1()))
             .thenReturn(Optional.of(generalApp));
 
-        when(paymentValidatorService.validatePayments(payments, TEST_CASE_ID)).thenReturn(
-            Collections.emptyList()
+        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplicationPayment.aboutToSubmit(
+            details, beforeDetails
         );
-        when(paymentValidatorService.getLastPayment(payments)).thenReturn(payments.getLast().getValue());
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplicationPayment.aboutToSubmit(details, details);
 
         GeneralApplication generalApplication = response.getData().getGeneralApplications().getFirst().getValue();
         GeneralReferral generalReferral = response.getData().getGeneralReferral();
@@ -218,6 +197,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
     @Test
     void shouldTriggerNotificationsByDelegatingToDispatcher() {
         final var caseData = buildTestData();
+        caseData.getApplicant1().setGeneralAppServiceRequest(null);
         final var details = CaseDetails.<CaseData, State>builder()
             .data(caseData)
             .id(TEST_CASE_ID)
@@ -260,6 +240,9 @@ class CitizenGeneralApplicationPaymentMadeTest {
         return CaseData.builder()
             .applicant1(Applicant.builder()
                 .generalAppServiceRequest(TEST_SERVICE_REFERENCE)
+                .generalAppPayments(List.of(
+                    ListValue.<Payment>builder().value(Payment.builder().status(PaymentStatus.IN_PROGRESS).build()).build()
+                ))
                 .build())
             .generalApplications(List.of(
                 ListValue.<GeneralApplication>builder()

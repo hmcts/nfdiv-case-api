@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.payment.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.divorce.common.service.task.UpdateSuccessfulPaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
@@ -32,7 +33,7 @@ public class PaymentCallbackService {
 
     private final CoreCaseDataApi coreCaseDataApi;
 
-    private final PaymentMadeRuleEngine PaymentMadeRuleEngine;
+    private final PaymentMadeRuleEngine paymentMadeRuleEngine;
 
     private static final String LOG_CALLBACK_RECEIVED = """
         Payment callback received for payment: {}, case id: {}, service request status: {}, payment method: {}
@@ -69,7 +70,7 @@ public class PaymentCallbackService {
         final State state = details.getState();
         final CaseData caseData = details.getData();
 
-        final var matchingPaymentMadeRuleOpt = PaymentMadeRuleEngine.find(state, serviceRequestReference, caseData);
+        final var matchingPaymentMadeRuleOpt = paymentMadeRuleEngine.find(state, serviceRequestReference, caseData);
 
         if (matchingPaymentMadeRuleOpt.isEmpty()) {
             log.info(LOG_NOT_PROCESSING_NO_MATCHING_RULE, paymentRef, caseRef);
@@ -82,7 +83,7 @@ public class PaymentCallbackService {
         ccdUpdateService.submitEventWithRetry(
             caseRef,
             rule.paymentMadeEvent(),
-            rule.updatePaymentStatusTask(),
+            new UpdateSuccessfulPaymentStatus(rule),
             systemUser,
             serviceAuthorization
         );

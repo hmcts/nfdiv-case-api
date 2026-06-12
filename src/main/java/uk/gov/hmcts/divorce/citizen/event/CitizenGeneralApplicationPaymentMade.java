@@ -12,7 +12,6 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
-import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
@@ -49,14 +48,12 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
     private final Clock clock;
 
-    private final PaymentValidatorService paymentValidatorService;
-
     private final CitizenGeneralApplicationSubmissionService submissionService;
 
     private final GeneralReferralService generalReferralService;
 
     private static final String GENERAL_APPLICATION_NOT_FOUND = "No general applications are awaiting payment";
-    private static final String ERROR_UNABLE_TO_FIND_PAYMENT_PARTY = "Unable to find general application payment party";
+    public static final String ERROR_UNABLE_TO_FIND_PAYMENT_PARTY = "Unable to find general application payment party";
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -80,7 +77,16 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
         CaseData data = details.getData();
         log.info("{} About to Submit callback invoked for Case Id: {}", CITIZEN_GENERAL_APPLICATION_PAYMENT, caseId);
 
-        final boolean isApplicant1 = paymentMadeByApplicant1(details.getData(), beforeDetails.getData());
+        boolean isApplicant1;
+        try {
+            isApplicant1 = paymentMadeByApplicant1(details.getData(), beforeDetails.getData());
+        } catch (IllegalStateException e) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(details.getData())
+                .errors(List.of(ERROR_UNABLE_TO_FIND_PAYMENT_PARTY))
+                .build();
+        }
+
         final Applicant applicant = isApplicant1 ? data.getApplicant1() : data.getApplicant2();
         log.info(
             "Processing Citizen General Application payment for {}, Case Id: {}",
@@ -88,10 +94,9 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
         );
 
         Optional<GeneralApplication> generalAppOptional = submissionService.findActiveGeneralApplication(data, applicant);
-
         if (generalAppOptional.isEmpty()) {
             log.info("Failed to find active general application for payment, party: {}, case id: {}",
-                isApplicant1 ? "Applicant 1" : "Respondent/Applicant2", caseId);
+                isApplicant1 ? APPLICANT_LABEL : APPLICANT_2_LABEL, caseId);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(List.of(GENERAL_APPLICATION_NOT_FOUND))
@@ -101,14 +106,7 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
         GeneralApplication generalApplication = generalAppOptional.get();
         List<ListValue<Payment>> payments = applicant.getGeneralAppPayments();
 
-        List<String> validationErrors = paymentValidatorService.validatePayments(payments, caseId);
-        if (CollectionUtils.isNotEmpty(validationErrors)) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                    .errors(validationErrors)
-                    .build();
-        }
-
-        String paymentReference = paymentValidatorService.getLastPayment(payments).getReference();
+        String paymentReference = payments.getLast().getValue().getReference();
         generalApplication.recordPayment(paymentReference, LocalDate.now(clock));
         applicant.setActiveGeneralApplication(null);
 

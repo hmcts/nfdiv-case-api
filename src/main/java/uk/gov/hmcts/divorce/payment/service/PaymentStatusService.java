@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.common.service.task.UpdateSuccessfulPaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -95,7 +96,7 @@ public class PaymentStatusService {
         List<Long> successfulPaymentCaseIds = new ArrayList<>();
         casesWithSuccessfulPayment.forEach(successfulPaymentCase -> {
 
-            PaymentMadeRule paymentRule = AwaitingPayment == successfulPaymentCase.getState()
+            PaymentMadeRule paymentRule = AwaitingPayment.equals(successfulPaymentCase.getState())
                     ? applicationPaymentMadeRule : finalOrderPaymentMadeRule;
 
             Long caseId = successfulPaymentCase.getId();
@@ -103,7 +104,7 @@ public class PaymentStatusService {
             log.info("{} event called for {} with successful payment: ", paymentRule.paymentMadeEvent(), caseId);
 
             ccdUpdateService.submitEventWithRetry(
-                caseId.toString(), paymentRule.paymentMadeEvent(), paymentRule.updatePaymentStatusTask(), user, s2sToken
+                caseId.toString(), paymentRule.paymentMadeEvent(), new UpdateSuccessfulPaymentStatus(paymentRule), user, s2sToken
             );
             successfulPaymentCaseIds.add(caseId);
         });

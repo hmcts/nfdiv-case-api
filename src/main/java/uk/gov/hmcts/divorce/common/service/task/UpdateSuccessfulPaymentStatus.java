@@ -10,22 +10,22 @@ import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
+import uk.gov.hmcts.divorce.payment.rule.PaymentMadeRule;
 
 import java.util.List;
-import java.util.function.Function;
 
 @Slf4j
 @RequiredArgsConstructor
 public class UpdateSuccessfulPaymentStatus implements CaseTask {
 
-    private final Function<CaseDetails<CaseData, State>, List<ListValue<Payment>>> paymentExtractor;
+    private final PaymentMadeRule paymentMadeRule;
 
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
         log.info("Setting payment status to Success for Case ID: {}", caseDetails.getId());
 
-        List<ListValue<Payment>> activePayments = paymentExtractor.apply(caseDetails);
+        List<ListValue<Payment>> activePayments = paymentMadeRule.getPayments(caseDetails.getData());
         if (CollectionUtils.isEmpty(activePayments)) {
             return caseDetails;
         }

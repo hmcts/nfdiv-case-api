@@ -10,12 +10,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.divorce.common.service.task.UpdateSuccessfulPaymentStatus;
-import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
@@ -24,6 +20,8 @@ import uk.gov.hmcts.divorce.payment.model.OnlinePaymentMethod;
 import uk.gov.hmcts.divorce.payment.model.PaymentCallbackDto;
 import uk.gov.hmcts.divorce.payment.model.PaymentCallbackDto.PaymentDto;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus;
+import uk.gov.hmcts.divorce.payment.rule.ApplicationPaymentMadeRule;
+import uk.gov.hmcts.divorce.payment.rule.PaymentMadeRuleEngine;
 import uk.gov.hmcts.divorce.payment.service.PaymentCallbackService;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -32,14 +30,18 @@ import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenGeneralApplicationPaymentMade.CITIZEN_GENERAL_APPLICATION_PAYMENT;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenPaymentMade.CITIZEN_PAYMENT_MADE;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenServicePaymentMade.CITIZEN_SERVICE_PAYMENT;
-import static uk.gov.hmcts.divorce.citizen.event.RespondentFinalOrderPaymentMade.RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -75,6 +77,9 @@ class PaymentCallbackServiceTest {
     @Mock
     private CaseDetailsConverter caseDetailsConverter;
 
+    @Mock
+    private PaymentMadeRuleEngine paymentMadeRuleEngine;
+
     @InjectMocks
     private PaymentCallbackService paymentCallbackService;
 
@@ -89,7 +94,7 @@ class PaymentCallbackServiceTest {
     @Test
     void shouldNotProcessCallbackIfPaymentUnsuccessful() {
         uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = uk.gov.hmcts.ccd.sdk.api.CaseDetails.<CaseData, State>builder()
-            .state(State.AwaitingPayment)
+            .state(AwaitingPayment)
             .build();
 
         PaymentCallbackDto paymentCallback = buildPaymentCallback(ServiceRequestStatus.NOT_PAID, OnlinePaymentMethod.CARD);
@@ -103,7 +108,7 @@ class PaymentCallbackServiceTest {
     void shouldNotProcessCallbackIfPaymentMethodWasPBA() {
         uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = uk.gov.hmcts.ccd.sdk.api.CaseDetails.<CaseData, State>builder()
             .data(CaseData.builder().build())
-            .state(State.AwaitingPayment)
+            .state(AwaitingPayment)
             .build();
 
         PaymentCallbackDto paymentCallback = buildPaymentCallback(
@@ -119,10 +124,14 @@ class PaymentCallbackServiceTest {
     void shouldNotProcessCallbackIfCaseNotAwaitingPayment() {
         uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = uk.gov.hmcts.ccd.sdk.api.CaseDetails.<CaseData, State>builder()
             .data(CaseData.builder().build())
-            .state(State.Submitted)
+            .state(Submitted)
             .build();
+        CaseData caseData = caseDetails.getData();
 
         PaymentCallbackDto paymentCallback = buildPaymentCallback(ServiceRequestStatus.PAID, OnlinePaymentMethod.CARD);
+
+        when(paymentMadeRuleEngine.find(Submitted, paymentCallback.getServiceRequestReference(), caseData))
+            .thenReturn(Optional.empty());
 
         processPaymentCallback(caseDetails, paymentCallback);
 
@@ -130,93 +139,28 @@ class PaymentCallbackServiceTest {
     }
 
     @Test
-    void shouldProcessCitizenApplicationPaymentCallback() {
+    void shouldProcessPaymentCallbackIfMatchingPaymentMadeRuleIsFound() {
         uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = uk.gov.hmcts.ccd.sdk.api.CaseDetails.<CaseData, State>builder()
             .data(CaseData.builder()
                 .application(Application.builder().applicationFeeServiceRequestReference(TEST_SERVICE_REFERENCE).build())
                 .build()
-            ).state(State.AwaitingPayment)
+            ).state(AwaitingPayment)
             .build();
+        CaseData caseData = caseDetails.getData();
 
         PaymentCallbackDto paymentCallback = buildPaymentCallback(ServiceRequestStatus.PAID, OnlinePaymentMethod.CARD);
+
+        when(paymentMadeRuleEngine.find(AwaitingPayment, paymentCallback.getServiceRequestReference(), caseData))
+            .thenReturn(Optional.of(new ApplicationPaymentMadeRule()));
 
         processPaymentCallback(caseDetails, paymentCallback);
 
         verify(ccdUpdateService).submitEventWithRetry(
-            TEST_CASE_ID.toString(),
-            CITIZEN_PAYMENT_MADE,
-            updateSuccessfulPaymentStatus,
-            user,
-            TEST_SERVICE_AUTH_TOKEN
-        );
-    }
-
-    @Test
-    void shouldProcessCitizenFinalOrderPaymentCallback() {
-        uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = uk.gov.hmcts.ccd.sdk.api.CaseDetails.<CaseData, State>builder()
-            .data(CaseData.builder()
-                .finalOrder(FinalOrder.builder().applicant2FinalOrderFeeServiceRequestReference(TEST_SERVICE_REFERENCE).build())
-                .build()
-            ).state(State.AwaitingFinalOrderPayment)
-            .build();
-
-        PaymentCallbackDto paymentCallback = buildPaymentCallback(ServiceRequestStatus.PAID, OnlinePaymentMethod.CARD);
-
-        processPaymentCallback(caseDetails, paymentCallback);
-
-        verify(ccdUpdateService).submitEventWithRetry(
-            TEST_CASE_ID.toString(),
-            RESPONDENT_FINAL_ORDER_PAYMENT_MADE,
-            updateSuccessfulPaymentStatus,
-            user,
-            TEST_SERVICE_AUTH_TOKEN
-        );
-    }
-
-    @Test
-    void shouldProcessCitizenServicePaymentCallback() {
-        uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = uk.gov.hmcts.ccd.sdk.api.CaseDetails.<CaseData, State>builder()
-            .data(CaseData.builder()
-                .alternativeService(AlternativeService.builder().servicePaymentFee(
-                    FeeDetails.builder()
-                        .serviceRequestReference(TEST_SERVICE_REFERENCE)
-                        .build()
-                ).build()).build())
-            .state(State.AwaitingServicePayment)
-            .build();
-
-        PaymentCallbackDto paymentCallback = buildPaymentCallback(ServiceRequestStatus.PAID, OnlinePaymentMethod.CARD);
-
-        processPaymentCallback(caseDetails, paymentCallback);
-
-        verify(ccdUpdateService).submitEventWithRetry(
-            TEST_CASE_ID.toString(),
-            CITIZEN_SERVICE_PAYMENT,
-            updateSuccessfulPaymentStatus,
-            user,
-            TEST_SERVICE_AUTH_TOKEN
-        );
-    }
-
-    @Test
-    void shouldProcessCitizenSearchGovernmentRecordsPaymentCallback() {
-        uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails = uk.gov.hmcts.ccd.sdk.api.CaseDetails.<CaseData, State>builder()
-            .data(CaseData.builder()
-                .applicant1(Applicant.builder().generalAppServiceRequest(TEST_SERVICE_REFERENCE).build())
-                .build()
-            ).state(State.AwaitingGeneralApplicationPayment)
-            .build();
-
-        PaymentCallbackDto paymentCallback = buildPaymentCallback(ServiceRequestStatus.PAID, OnlinePaymentMethod.CARD);
-
-        processPaymentCallback(caseDetails, paymentCallback);
-
-        verify(ccdUpdateService).submitEventWithRetry(
-            TEST_CASE_ID.toString(),
-            CITIZEN_GENERAL_APPLICATION_PAYMENT,
-            updateSuccessfulPaymentStatus,
-            user,
-            TEST_SERVICE_AUTH_TOKEN
+            eq(TEST_CASE_ID.toString()),
+            eq(CITIZEN_PAYMENT_MADE),
+            any(UpdateSuccessfulPaymentStatus.class),
+            eq(user),
+            eq(TEST_SERVICE_AUTH_TOKEN)
         );
     }
 

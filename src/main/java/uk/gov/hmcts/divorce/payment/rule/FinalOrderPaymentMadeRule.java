@@ -1,11 +1,13 @@
 package uk.gov.hmcts.divorce.payment.rule;
 
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.common.service.task.UpdateSuccessfulPaymentStatus;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
+import java.util.List;
 import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.citizen.event.RespondentFinalOrderPaymentMade.RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
@@ -28,9 +30,7 @@ public class FinalOrderPaymentMadeRule implements PaymentMadeRule {
     }
 
     @Override
-    public UpdateSuccessfulPaymentStatus updatePaymentStatusTask() {
-        return new UpdateSuccessfulPaymentStatus(
-            details -> details.getData().getFinalOrder().getFinalOrderPayments()
-        );
+    public List<ListValue<Payment>> getPayments(CaseData data) {
+        return data.getFinalOrder().getFinalOrderPayments();
     }
 }
