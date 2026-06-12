@@ -653,7 +653,7 @@ docmosis:
       SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-WEL-Search-Government-Records-Application_V3.docx
       BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-WEL-Bailiff-Service-Successful-Letter-V2.docx
       RESPONDENT_FINAL_ORDER_ANSWERS: FL-NFD-GOR-WEL-Respondent_Final_Order_Answers_V1.docx
-      CITIZEN_COURT_ORDERS_REGENERATED: FL-NFD-GOR-ENG-Court-Orders-Regenerated-Citizen-V1.docx
+      CITIZEN_COURT_ORDERS_REGENERATED: FL-NFD-GOR-WEL-Court-Orders-Regenerated-Citizen-V1.docx
       HEARING_REMINDER: FL-NFD-GOR-WEL-Hearing-Reminder.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
