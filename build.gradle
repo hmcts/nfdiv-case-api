@@ -15,11 +15,12 @@ plugins {
   id 'pmd'
   id 'jacoco'
   id 'org.owasp.dependencycheck' version '12.2.1'
-  id 'org.sonarqube' version '7.3.0.8198'
+  id 'org.sonarqube' version '7.3.1.8318'
   id 'org.springframework.boot' version '3.4.7'
   id 'com.github.ben-manes.versions' version '0.54.0'
-  id 'hmcts.ccd.sdk' version '6.7.2'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.2165'
+  id 'au.com.dius.pact' version '4.7.1'
+  id 'hmcts.ccd.sdk' version '6.8.0'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.2197'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -49,6 +50,14 @@ sourceSets {
       srcDir file('src/integrationTest/java')
     }
   }
+
+  contractTest {
+    java {
+      compileClasspath += main.output
+      runtimeClasspath += main.output
+      srcDir file('src/contractTest/java')
+    }
+  }
 }
 
 java {
@@ -71,6 +80,8 @@ configurations {
   functionalTestRuntime.extendsFrom testRuntime
   integrationTestImplementation.extendsFrom testImplementation
   integrationTestRuntime.extendsFrom testRuntime
+  contractTestImplementation.extendsFrom testImplementation
+  contractTestRuntimeOnly.extendsFrom testRuntimeOnly
   cftlibTestImplementation.extendsFrom testImplementation
   cftlibTestRuntime.extendsFrom testRuntime
 }
@@ -114,6 +125,48 @@ task integration(type: Test) {
   environment 'ADMIN_UNLINK_APPLICANT_2_ENABLED', 'true'
 }
 
+task contract(type: Test) {
+  description = "Runs pact contract tests"
+  group = "Verification"
+  useJUnitPlatform()
+  testClassesDirs = sourceSets.contractTest.output.classesDirs
+  classpath = sourceSets.contractTest.runtimeClasspath
+  environment 'FEE_API_URL', 'http://localhost:4411'
+}
+
+task runAndPublishConsumerPactTests(type: Test, description: 'Publish pact contract tests to broker.', group: 'Verification') {
+  testClassesDirs = sourceSets.contractTest.output.classesDirs
+  classpath = sourceSets.contractTest.runtimeClasspath
+  environment 'FEE_API_URL', 'http://localhost:4411'
+}
+
+project.ext.pacticipant = 'nfdiv_caseApi'
+project.ext.pacticipantVersion = getCheckedOutGitCommitHash()
+
+static def getCheckedOutGitCommitHash() {
+  'git rev-parse --verify --short HEAD'.execute().text.trim()
+}
+
+pact {
+  broker {
+    pactBrokerUrl = System.getenv("PACT_BROKER_FULL_URL") ?: 'http://localhost:80'
+  }
+  publish {
+    pactDirectory = 'pacts'
+    pactBrokerUrl = System.getenv("PACT_BROKER_FULL_URL") ?: 'http://localhost:80'
+    tags = [System.getenv("PACT_BRANCH_NAME") ?:'Dev']
+    version = project.pacticipantVersion
+    consumerVersion = project.pacticipantVersion
+  }
+}
+
+pactPublish {
+  pactPublish = project.pact.publish
+}
+
+runAndPublishConsumerPactTests.dependsOn contract
+runAndPublishConsumerPactTests.finalizedBy pactPublish
+
 // Invoked from CftLibConfig when booting with CCD.
 task buildCCDXlsx(type: Exec) {
   group 'ccd tasks'
@@ -137,7 +190,7 @@ task highLevelDataSetup(type: JavaExec) {
 
 checkstyle {
   maxWarnings = 0
-  toolVersion = '13.4.2'
+  toolVersion = '13.6.0'
   getConfigDirectory().set(new File(projectDir, 'config/checkstyle'))
 }
 
@@ -255,7 +308,7 @@ dependencies {
   implementation group: "com.fasterxml.jackson.core", name: "jackson-databind"
   implementation group: "com.fasterxml.jackson.core", name: "jackson-core"
   implementation group: "com.fasterxml.jackson.core", name: "jackson-annotations"
-  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.13.4'
+  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.14.0'
   implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.4') {
     exclude group: 'org.apache.commons', module: 'commons-compress'
     exclude group: 'com.google.guava', module: 'guava'
@@ -317,8 +370,10 @@ dependencies {
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation sourceSets.test.runtimeClasspath
-
   functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.2'
+
+  contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.1'
+  contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.1'
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
@@ -468,6 +523,10 @@ tasks.withType(Test).configureEach {
 // exclude the logback binding is coming in via cftlib
 configurations.cftlibTestImplementation {
   exclude group: 'ch.qos.logback', module: 'logback-classic'
+}
+
+configurations.contractTestImplementation {
+  exclude group: 'org.simplify4u', module: 'slf4j2-mock'
 }
 
 task installChromium(type: JavaExec) {
