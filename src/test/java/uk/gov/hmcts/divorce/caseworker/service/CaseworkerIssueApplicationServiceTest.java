@@ -25,6 +25,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -97,8 +99,6 @@ class CaseworkerIssueApplicationServiceTest {
         caseDetails.setId(TEST_CASE_ID);
         caseDetails.setCreatedDate(LOCAL_DATE_TIME);
 
-        when(validateIssue.apply(caseDetails)).thenReturn(caseDetails);
-        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
         when(setIssueDate.apply(caseDetails)).thenReturn(caseDetails);
         when(setPostIssueState.apply(caseDetails)).thenReturn(caseDetails);
         when(setNoticeOfProceedingDetailsForRespondent.apply(caseDetails)).thenReturn(caseDetails);
@@ -140,5 +140,49 @@ class CaseworkerIssueApplicationServiceTest {
         verify(sendAosPackToRespondent).apply(caseDetails);
         verify(sendApplicationIssueNotifications).apply(caseDetails);
         verify(sendFinancialOrderRequestedNotifications).apply(caseDetails);
+    }
+
+    @Test
+    void shouldSetServiceType() {
+        final CaseData caseData = caseData();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        when(setServiceType.apply(caseDetails)).thenReturn(caseDetails);
+
+        final CaseDetails<CaseData, State> response = issueApplicationService.updateServiceType(caseDetails);
+
+        assertThat(response.getData()).isEqualTo(caseData);
+
+        verifyNoInteractions(sendAosPackToApplicant);
+        verifyNoInteractions(sendAosPackToRespondent);
+        verifyNoInteractions(sendApplicationIssueNotifications);
+        verifyNoInteractions(sendFinancialOrderRequestedNotifications);
+    }
+
+    @Test
+    void shouldValidateCaseDetails() {
+        final CaseData caseData = caseData();
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setCreatedDate(LOCAL_DATE_TIME);
+
+        final List<String> expectedErrors = List.of("error1", "error2");
+
+        when(validateIssue.validate(caseDetails)).thenReturn(expectedErrors);
+
+        final List<String> response = issueApplicationService.validateIssueApplication(caseDetails);
+
+        assertThat(response).isEqualTo(expectedErrors);
+
+        verifyNoInteractions(sendAosPackToApplicant);
+        verifyNoInteractions(sendAosPackToRespondent);
+        verifyNoInteractions(sendApplicationIssueNotifications);
+        verifyNoInteractions(sendFinancialOrderRequestedNotifications);
     }
 }

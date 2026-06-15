@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Hearing;
 import uk.gov.hmcts.divorce.divorcecase.model.HearingAttendance;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant;
 import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
@@ -17,13 +18,13 @@ import uk.gov.hmcts.divorce.document.print.model.Letter;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
-import uk.gov.hmcts.divorce.notification.FormatUtil;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.HEARING_REMIND
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.HEARING_REMINDER_SOLICITOR;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -173,17 +175,26 @@ public class HearingReminderNotification implements ApplicantNotification {
 
     private Map<String, String> hearingReminderVariables(final CaseData data, final Applicant applicant, final Applicant partner) {
         final Map<String,String> templateVars = new HashMap<>();
+        final LanguagePreference languagePreference = applicant.getLanguagePreference();
         final Hearing hearing = data.getHearing();
-        final DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference());
-        final String hearingAttendanceLabel = hearing.getHearingAttendance().stream()
-            .map(HearingAttendance::getLabel)
-            .collect(Collectors.joining(" / "));
+
+        final DateTimeFormatter dateTimeFormatter = getDateTimeFormatterForPreferredLanguage(languagePreference);
+        final DateTimeFormatter timeFormatter = getTimeFormatterForPreferredLanguage(languagePreference);
+        final String hearingAttendanceLabel = buildHearingAttendanceLabel(hearing.getHearingAttendance(), languagePreference);
 
         templateVars.put(HEARING_DATE, hearing.getDateOfHearing().format(dateTimeFormatter));
         templateVars.put(HEARING_VENUE, hearing.getVenueOfHearing());
-        templateVars.put(HEARING_TIME, hearing.getDateOfHearing().format(FormatUtil.TIME_FORMATTER));
+        templateVars.put(HEARING_TIME, hearing.getDateOfHearing().format(timeFormatter));
         templateVars.put(HEARING_ATTENDANCE_MODE, hearingAttendanceLabel);
 
         return templateVars;
+    }
+
+    private String buildHearingAttendanceLabel(Set<HearingAttendance> hearingAttendances, LanguagePreference languagePreference) {
+        final boolean isWelsh = LanguagePreference.WELSH.equals(languagePreference);
+
+        return hearingAttendances.stream()
+            .map(attendance -> isWelsh ? attendance.getWelshLabel() : attendance.getLabel())
+            .collect(Collectors.joining(" / "));
     }
 }
