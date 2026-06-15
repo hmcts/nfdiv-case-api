@@ -152,7 +152,7 @@ class GenerateFinancialOrderRequestedLetterTest {
         templateContent.put("address", applicant2Address);
         templateContent.put("financialOrderFees", "£275.00");
         templateContent.put("consentOrderFees", "£275.00");
-        templateContent.put("relation", "wife");
+        templateContent.put("partner", "wife");
         templateContent.put("welshEnquiriesEmail", "test@test,com");
         return templateContent;
     }
