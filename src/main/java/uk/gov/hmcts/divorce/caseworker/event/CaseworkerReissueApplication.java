@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -9,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.exception.InvalidDataException;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
@@ -128,6 +128,15 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
 
         log.info("Caseworker reissue application about to submit callback invoked for case id: {}", details.getId());
 
+        List<String> validationErrors = reIssueApplicationService.validateReIssueApplication(details);
+        if (CollectionUtils.isNotEmpty(validationErrors)) {
+            log.info("Data not valid for application re-issue, case id: {}, errors: {}", details.getId(), validationErrors);
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(validationErrors)
+                .build();
+        }
+
         try {
             final CaseDetails<CaseData, State> result = reIssueApplicationService.process(details);
 
@@ -139,13 +148,6 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .errors(List.of("Invalid reissue option, browser page refresh may have occurred. "
                     + "Please use 'Previous' button and select a reissue option"))
-                .build();
-        } catch (final InvalidDataException e) {
-            log.info("Data not valid for application reissue, case id: {}", details.getId(), e);
-
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(e.getErrors())
                 .build();
         }
     }
