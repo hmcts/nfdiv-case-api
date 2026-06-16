@@ -100,9 +100,9 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         }
 
         List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseMatchDetails = getFreshMatches(details, marriageDetails);
-        log.info("Case ID: " + details.getId() + " nfdiv case matching search result: " + caseMatchDetails.size());
+        log.info("Case ID: {} nfdiv case matching search result: {}", details.getId(), caseMatchDetails.size());
         List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> oldcaseMatchDetails = getOldDivorceFreshMatches(marriageDetails);
-        log.info("Case ID: " + details.getId() + " old divorce case matching search result: " + oldcaseMatchDetails.size());
+        log.info("Case ID: {} old divorce case matching search result: {}", details.getId(), oldcaseMatchDetails.size());
 
         List<CaseMatch> newMatches = new ArrayList<>();
         newMatches.addAll(transformToMatchingCasesList(caseMatchDetails));
@@ -110,8 +110,8 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
         setToNewMatches(caseData, newMatches);
 
-        String caseMatchesCount = caseData.getCaseMatches() != null ? String.valueOf(caseData.getCaseMatches().size()) : "0";
-        log.info("Case ID: " + details.getId() + " filtered cases matching search result: " + caseMatchesCount);
+        int caseMatchesCount = caseData.getCaseMatches() != null ? caseData.getCaseMatches().size() : 0;
+        log.info("Case ID: {} filtered cases matching search result: {}", details.getId(), caseMatchesCount);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
@@ -139,12 +139,12 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
             }).toList();
 
         if (!newBadMatches.isEmpty()) {
-            log.info("Case ID: " + details.getId() + " new bad case matches count: " + newBadMatches.size());
+            log.info("Case ID: {} new bad case matches count: {}", details.getId(), newBadMatches.size());
 
-            log.info("Updating bad matches for Case ID: " + details.getId());
+            log.info("Updating bad matches for Case ID: {}", details.getId());
             caseData.getBadCaseMatches().addAll(newBadMatches);
 
-            log.info("Case ID: " + details.getId() + " total bad matches count: " + caseData.getBadCaseMatches().size());
+            log.info("Case ID: {} total bad matches count: {}", details.getId(), caseData.getBadCaseMatches().size());
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
