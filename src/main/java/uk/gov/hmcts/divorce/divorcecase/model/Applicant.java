@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.divorcecase.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
@@ -21,6 +22,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -79,6 +81,12 @@ public class Applicant {
         label = "They have agreed to receive notifications and be served (delivered) court documents by email"
     )
     private YesOrNo agreedToReceiveEmails;
+
+    @CCD(
+        label = "Date of birth"
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateOfBirth;
 
     @CCD(
         label = "Has the applicant confirmed the receipt?"
