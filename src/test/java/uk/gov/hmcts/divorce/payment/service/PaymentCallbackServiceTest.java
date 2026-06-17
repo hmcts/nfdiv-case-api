@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.payment;
+package uk.gov.hmcts.divorce.payment.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +22,6 @@ import uk.gov.hmcts.divorce.payment.model.PaymentCallbackDto.PaymentDto;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus;
 import uk.gov.hmcts.divorce.payment.rule.ApplicationPaymentMadeRule;
 import uk.gov.hmcts.divorce.payment.rule.PaymentMadeRuleEngine;
-import uk.gov.hmcts.divorce.payment.service.PaymentCallbackService;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
