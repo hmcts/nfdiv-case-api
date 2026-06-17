@@ -38,6 +38,13 @@ public class GeneralApplication {
     private GeneralApplicationType generalApplicationType;
 
     @CCD(
+        label = "Specify, what other application?",
+        typeOverride = TextArea,
+        searchable = false
+    )
+    private String generalApplicationOtherTypeDetails;
+
+    @CCD(
         label = "Which party submitted the general application?",
         searchable = false
     )
@@ -119,13 +126,6 @@ public class GeneralApplication {
         searchable = false
     )
     private String generalApplicationUrgentCaseReason;
-
-    @CCD(
-        label = "Specify, what other application?",
-        typeOverride = TextArea,
-        searchable = false
-    )
-    private String generalApplicationOtherTypeDetails;
 
     @JsonIgnore
     public void recordPayment(String paymentReference, LocalDate dateOfPayment) {
