@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ChangedNameHow;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -50,6 +52,12 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     public static final String MISSING_MARRIAGE_CERTIFICATE_TRANSLATION = "marriageCertificateTranslation";
     public static final String MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION = "civilPartnershipCertificateTranslation";
     public static final String MISSING_NAME_CHANGE_PROOF = "nameChangeProof";
+    public static final String LABEL_PARTNER = "labelPartner";
+    public static final String LABEL_DIVORCE_OR_CIVIL_PARTNERSHIP_CERTIFICATE = "labelDivorceOrCivilPartnershipCertificate";
+    private static final String DIVORCE_CERTIFICATE = "marriage certificate";
+    private static final String CIVIL_PARTNERSHIP_CERTIFICATE = "civil partnership certificate";
+    private static final String CY_DIVORCE_CERTIFICATE = "tystysgrif priodas";
+    private static final String CY_CIVIL_PARTNERSHIP_CERTIFICATE = "tystysgrif partneriaeth sifil";
 
     private final NotificationService notificationService;
     private final CommonContent commonContent;
@@ -87,7 +95,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     private Map<String, String> applicant1TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
-        templateVars.putAll(courtDocumentDetails(caseData));
+        templateVars.putAll(courtDocumentDetails(caseData, true));
         boolean soleServingAnotherWay = caseData.getApplicationType().isSole()
             && caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES;
         templateVars.putAll(serveAnotherWayTemplateVars(soleServingAnotherWay, caseData));
@@ -96,7 +104,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     private Map<String, String> applicant2TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-        templateVars.putAll(courtDocumentDetails(caseData));
+        templateVars.putAll(courtDocumentDetails(caseData, false));
         templateVars.putAll(serveAnotherWayTemplateVars(false, caseData));
         return templateVars;
     }
@@ -118,7 +126,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         return templateVars;
     }
 
-    private Map<String, String> courtDocumentDetails(CaseData caseData) {
+    private Map<String, String> courtDocumentDetails(CaseData caseData, boolean isApplicant1) {
         Map<String, String> templateVars = new HashMap<>();
         boolean needsToSendDocuments = !isEmpty(caseData.getApplication().getMissingDocumentTypes());
         boolean isDivorceAndSendDocumentsToCourt = needsToSendDocuments && caseData.isDivorce();
@@ -129,15 +137,18 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         templateVars.put(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, isDissolutionAndSendDocumentsToCourt ? YES : NO);
         templateVars.put(JOINT_CONDITIONAL_ORDER, !caseData.getApplicationType().isSole() ? YES : NO);
 
-        templateVars.putAll(missingDocsTemplateVars(caseData));
+        templateVars.putAll(missingDocsTemplateVars(caseData, isApplicant1));
 
         return templateVars;
     }
 
-    private Map<String, String> missingDocsTemplateVars(CaseData caseData) {
+    private Map<String, String> missingDocsTemplateVars(CaseData caseData, boolean isApplicant1) {
         Map<String, String> templateVars = new HashMap<>();
         Set<DocumentType> missingDocTypes = caseData.getApplication().getMissingDocumentTypes();
         Set<ChangedNameHow> nameChangedHowSet = getNameChangedHowSet(caseData);
+
+        Applicant applicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
+        Applicant partner = isApplicant1 ? caseData.getApplicant2() : caseData.getApplicant1();
 
         boolean hasCertifiedTranslation = Optional.ofNullable(
             caseData.getApplication().getMarriageDetails().getCertifiedTranslation()).orElse(YesOrNo.NO).toBoolean();
@@ -150,6 +161,8 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
         boolean isMissingTranslatedMarriageCertificate = missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION)
             || isMissingMarriageCertificateNameChangeEvidence && hasCertifiedTranslation;
+
+        boolean isMissingNameChangeEvidence = missingDocTypes.contains(NAME_CHANGE_EVIDENCE);
 
         templateVars.put(MISSING_MARRIAGE_CERTIFICATE,
             isMissingMarriageCertificate && ukMarriage && caseData.isDivorce() ? YES : NO);
@@ -164,10 +177,24 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         templateVars.put(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION,
             isMissingTranslatedMarriageCertificate && !caseData.isDivorce() ? YES : NO);
 
-        templateVars.put(MISSING_NAME_CHANGE_PROOF, missingDocTypes.contains(NAME_CHANGE_EVIDENCE) && !isEmpty(nameChangedHowSet)
-            && !nameChangedHowSet.contains(ChangedNameHow.MARRIAGE_CERTIFICATE) ? YES : NO);
+        templateVars.put(MISSING_NAME_CHANGE_PROOF, isMissingNameChangeEvidence ? YES : NO);
+        templateVars.put(LABEL_PARTNER, isMissingNameChangeEvidence
+            ? commonContent.getPartner(caseData, partner, applicant.getLanguagePreference())
+            : "");
+        templateVars.put(LABEL_DIVORCE_OR_CIVIL_PARTNERSHIP_CERTIFICATE, isMissingNameChangeEvidence
+            ? getLabelForDivorceOrCivilPartnershipCertificate(caseData, applicant.getLanguagePreference())
+            : "");
+
 
         return templateVars;
+    }
+
+    private String getLabelForDivorceOrCivilPartnershipCertificate(CaseData caseData, LanguagePreference languagePreference) {
+        if (caseData.isDivorce()) {
+            return languagePreference == WELSH ? CY_DIVORCE_CERTIFICATE : DIVORCE_CERTIFICATE;
+        } else {
+            return languagePreference == WELSH ? CY_CIVIL_PARTNERSHIP_CERTIFICATE : CIVIL_PARTNERSHIP_CERTIFICATE;
+        }
     }
 
     private Set<ChangedNameHow> getNameChangedHowSet(CaseData caseData) {

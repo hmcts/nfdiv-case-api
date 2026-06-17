@@ -1126,5 +1126,36 @@ class CommonContentTest {
         assertThrows(NotificationTemplateException.class,
             () -> commonContent.coPronouncedTemplateVars(caseData, TEST_CASE_ID, applicant1, applicant2));
     }
+
+    @Test
+    void shouldSetGeneralEmailSolicitorVars() {
+
+        CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .application(Application.builder()
+                .issueDate(LocalDate.of(2022, 6, 22))
+                .build())
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(applicantRepresentedBySolicitor())
+            .applicant2(respondent())
+            .build();
+
+        when(docmosisCommonContent.getSolicitorReference(any(), any())).thenReturn(NOT_PROVIDED);
+
+        final Map<String, String> result = commonContent.getGeneralEmailSolicitorVars(caseData, TEST_CASE_ID,
+            caseData.getApplicant1());
+
+        assertThat(result)
+            .isNotEmpty()
+            .contains(
+                entry(SOLICITOR_NAME, "The Solicitor"),
+                entry(SOLICITOR_REFERENCE, NOT_PROVIDED),
+                entry("applicant1Label", "Applicant"),
+                entry("applicant2Label", "Respondent"),
+                entry(ISSUE_DATE, "22 June 2022"),
+                entry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
+                entry(APPLICANT_2_FULL_NAME, "applicant_2_first_name test_last_name")
+            );
+    }
 }
 
