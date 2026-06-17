@@ -493,6 +493,7 @@ docmosis:
       NFD_RESP_NOT_RESPONDED_JS: FL-NFD-GOR-ENG-Respondent-Not-Responded-JS_V2.docx
       COVERSHEET_APPLICANT: FL-NFD-GOR-ENG-Applicant_Coversheet_V2.docx
       COVERSHEET_SOLICITOR: FL-NFD-GOR-ENG-Solicitor-Coversheet_V2.docx
+      COVERSHEET_HMCTS: FL-NFD-GOR-ENG-HMCTS-Coversheet.docx
       NFD_RESP_RESPONDED_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended_V2.docx
       NFD_RESP_RESPONDED_AWAITING_CO_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended-Awaiting-CO.docx
       GENERAL_LETTER: FL-NFD-GOR-ENG-General-Letter-V1.docx
@@ -591,6 +592,7 @@ docmosis:
       NFD_RESP_NOT_RESPONDED_JS: FL-NFD-GOR-ENG-Respondent-Not-Responded-JS_V2.docx #TODO: add translated content
       COVERSHEET_APPLICANT: FL-NFD-GOR-ENG-Applicant_Coversheet_V2.docx
       COVERSHEET_SOLICITOR: FL-NFD-GOR-ENG-Solicitor-Coversheet_V2.docx
+      COVERSHEET_HMCTS: FL-NFD-GOR-ENG-HMCTS-Coversheet.docx
       NFD_RESP_RESPONDED_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended_V2.docx #TODO: add translated content
       NFD_RESP_RESPONDED_AWAITING_CO_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended-Awaiting-CO.docx #TODO: add translated content
       GENERAL_LETTER: FL-NFD-GOR-ENG-General-Letter-V1.docx
