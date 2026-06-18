@@ -198,4 +198,13 @@ public class InterimApplicationOptions {
     public boolean hasUploadedSupportingDocuments() {
         return YesOrNo.YES.equals(interimAppsCanUploadEvidence) && interimAppsEvidenceDocs != null;
     }
+
+    @JsonIgnore
+    public String getOtherGeneralApplicationTypeDetails() {
+        if (DIGITISED_GENERAL_APPLICATION_D11.equals(interimApplicationType)
+            && generalApplicationD11JourneyOptions.getType().equals(GeneralApplicationType.OTHER)) {
+            return generalApplicationD11JourneyOptions.getTypeOtherDetails();
+        }
+        return null;
+    }
 }

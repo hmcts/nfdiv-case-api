@@ -38,6 +38,13 @@ public class GeneralApplication {
     private GeneralApplicationType generalApplicationType;
 
     @CCD(
+        label = "Specify, what other application?",
+        typeOverride = TextArea,
+        searchable = false
+    )
+    private String generalApplicationOtherTypeDetails;
+
+    @CCD(
         label = "Which party submitted the general application?",
         searchable = false
     )
