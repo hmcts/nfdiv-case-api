@@ -22,8 +22,8 @@ import uk.gov.hmcts.divorce.payment.client.FeesAndPaymentsClient;
 import uk.gov.hmcts.divorce.payment.model.FeeResponse;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.DIVORCE_APPLICATION_FEE_CODE;
 import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.BAILIFF_SERVE_DOC_FEE_CODE;
+import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.DIVORCE_APPLICATION_FEE_CODE;
 import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.FINANCIAL_ORDER_ON_NOTICE_FEE_CODE;
 import static uk.gov.hmcts.divorce.payment.FeesAndPayConstants.GENERAL_APPLICATION_WITHOUT_NOTICE_FEE_CODE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.DEFAULT_CHANNEL;
