@@ -68,6 +68,13 @@ public enum State {
     Rejected,
 
     @CCD(
+        label = "Application Stayed",
+        hint = CASE_TITLE,
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    ApplicationStayed,
+
+    @CCD(
         label = "Application withdrawn",
         hint = CASE_TITLE,
         access = {DefaultStateAccess.class}
@@ -108,13 +115,6 @@ public enum State {
         access = {DefaultStateAccessExcludingCAA.class}
     )
     AwaitingDocuments,
-
-    @CCD(
-        label = "Application Stayed",
-        hint = CASE_TITLE,
-        access = {DefaultStateAccessExcludingCAA.class}
-    )
-    ApplicationStayed,
 
     @CCD(
         label = "Awaiting applicant 1 response",
