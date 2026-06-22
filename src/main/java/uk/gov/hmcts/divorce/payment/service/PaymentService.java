@@ -212,7 +212,8 @@ public class PaymentService {
             log.error("For case id {} unsuccessful payment for account number {} with exception {}",
                 caseId,
                 pbaNumber,
-                exception.getMessage()
+                exception.getMessage(),
+                exception
             );
             return getPbaErrorResponse(pbaNumber, exception);
         }
