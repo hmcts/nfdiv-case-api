@@ -4,7 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType;
+import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
@@ -12,6 +17,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
@@ -22,6 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 
 @Component
@@ -57,13 +64,30 @@ public class SetSubmitAosState implements CaseTask {
     }
 
     private State getState(CaseData caseData) {
+        if (hasServicePayment(caseData.getAlternativeService())
+            || hasGeneralReferralPayment(caseData.getGeneralReferral())) {
+            return PendingRefund;
+        }
+
         boolean isSoleJsApplication = caseData.getApplicationType().isSole()
             && caseData.isJudicialSeparationCase();
         if (isSoleJsApplication) {
             caseData.setAwaitingJsAnswerStartDate(LocalDate.now());
             return caseData.getAcknowledgementOfService().isDisputed() ? AwaitingAnswer : AwaitingJsNullity;
-        } else {
-            return Holding;
         }
+        return Holding;
+    }
+
+    private boolean hasServicePayment(AlternativeService alternativeService) {
+        return hasCompletedPayment(alternativeService.getServicePaymentFee());
+    }
+
+    private boolean hasGeneralReferralPayment(GeneralReferral generalReferral) {
+        return generalReferral.getGeneralReferralType() == GeneralReferralType.DISCLOSURE_VIA_DWP
+            && hasCompletedPayment(generalReferral.getGeneralReferralFee());
+    }
+
+    private boolean hasCompletedPayment(FeeDetails feeDetails) {
+        return !isEmpty(feeDetails.getPaymentReference()) || feeDetails.getPaymentMethod() == ServicePaymentMethod.FEE_PAY_BY_PHONE;
     }
 }
