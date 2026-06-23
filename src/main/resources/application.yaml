@@ -405,8 +405,8 @@ uk:
             GENERAL_APPLICATION_REJECTED_BY_CASEWORKER: 'a2bff369-1daa-4b18-8058-433ff3add380'
             FINANCIAL_ORDER_REQUESTED_NOTIFICATION: 'f94e22c4-42b4-4049-97d1-f47a68f7c466'
             RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION: '3d4436d2-6d50-4837-b81b-b03eba205a55'
-            COURT_ORDERS_REGENERATED_CITIZEN: '0c51bf9b-5d6c-49f4-bf75-866a75a64f9d' #TODO: Update Welsh translation
-            COURT_ORDERS_REGENERATED_SOLICITOR: '5ac5a300-4cd4-42b8-adb9-0944ebc3279c' #TODO: Update Welsh translation
+            COURT_ORDERS_REGENERATED_CITIZEN: 'a5c87893-d69d-489f-84ff-28555ca04a13'
+            COURT_ORDERS_REGENERATED_SOLICITOR: '9018b2a1-aac5-418f-a360-738c030aa403'
             CERTIFICATE_OF_SERVICE_EVIDENCE_NOTIFICATION: '5cf32cc3-dd84-4796-9f0f-268a86496d76'
             HEARING_REMINDER_CITIZEN: '28d71ce2-52d4-426f-96fc-d23e29addd61'
             HEARING_REMINDER_SOLICITOR: '80692e64-a1c5-4f58-ba5e-85de8e69bf5a'
@@ -653,7 +653,7 @@ docmosis:
       SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-WEL-Search-Government-Records-Application_V3.docx
       BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-WEL-Bailiff-Service-Successful-Letter-V2.docx
       RESPONDENT_FINAL_ORDER_ANSWERS: FL-NFD-GOR-WEL-Respondent_Final_Order_Answers_V1.docx
-      CITIZEN_COURT_ORDERS_REGENERATED: FL-NFD-GOR-ENG-Court-Orders-Regenerated-Citizen-V1.docx
+      CITIZEN_COURT_ORDERS_REGENERATED: FL-NFD-GOR-WEL-Court-Orders-Regenerated-Citizen-V1.docx
       HEARING_REMINDER: FL-NFD-GOR-WEL-Hearing-Reminder.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
