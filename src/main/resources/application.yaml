@@ -65,7 +65,7 @@ uk:
             SAVE_SIGN_OUT: 'aadcf58b-668f-480d-b453-a99ea6b50902'
             DRAFT_APPLICATION_SAVE_SIGN_OUT: 'da541734-8d57-4dc8-ab69-10ce225ce7c8'
             INTERIM_APPLICATION_SAVE_SIGN_OUT: '6b7537ed-b234-4aac-a16a-6f32489f1fdc'
-            OUTSTANDING_ACTIONS: 'b077b50a-6fe2-48bd-aac5-2da5deceac86'
+            OUTSTANDING_ACTIONS: '52d4a44d-5103-4781-a688-42aa8605ce32'
             APPLICATION_SUBMITTED: '3b819c22-09e8-45a9-bbcb-e4ab1dbf96fd'
             SOLICITOR_JOINT_APPLICATION_SUBMITTED: '12795f00-f656-4df2-bd8b-0921ebd18080'
             DEEMED_SERVICE_APPLICATION_SUBMITTED: 'e69eca1f-57b7-438e-a498-b1581c17ae35'
@@ -242,7 +242,7 @@ uk:
             SAVE_SIGN_OUT: '6f8b8605-64ab-47ca-b5a8-ee87f96be77d'
             DRAFT_APPLICATION_SAVE_SIGN_OUT: '96fd5bd2-417f-4eca-8378-fafae4a416bb'
             INTERIM_APPLICATION_SAVE_SIGN_OUT: 'a8db64b7-7cfd-45ba-86e8-1783420a56f9'
-            OUTSTANDING_ACTIONS: '474d5778-8886-4df7-b0ea-006ca28eab8e'
+            OUTSTANDING_ACTIONS: '1ca1cdc3-2415-428c-a556-8271eed5aa85'
             APPLICATION_SUBMITTED: 'b7a78a0c-b163-4293-86d0-41d773275a8f'
             SOLICITOR_JOINT_APPLICATION_SUBMITTED: '12795f00-f656-4df2-bd8b-0921ebd18080' #TODO: Welsh translation needed
             DEEMED_SERVICE_APPLICATION_SUBMITTED: 'af85112a-824e-4572-94de-3312ca9cfef2'
@@ -409,8 +409,8 @@ uk:
             GENERAL_APPLICATION_REJECTED_BY_CASEWORKER: 'a2bff369-1daa-4b18-8058-433ff3add380'
             FINANCIAL_ORDER_REQUESTED_NOTIFICATION: 'f94e22c4-42b4-4049-97d1-f47a68f7c466'
             RESPONDENT_FINANCIAL_ORDER_REQUESTED_NOTIFICATION: '3d4436d2-6d50-4837-b81b-b03eba205a55'
-            COURT_ORDERS_REGENERATED_CITIZEN: '0c51bf9b-5d6c-49f4-bf75-866a75a64f9d' #TODO: Update Welsh translation
-            COURT_ORDERS_REGENERATED_SOLICITOR: '5ac5a300-4cd4-42b8-adb9-0944ebc3279c' #TODO: Update Welsh translation
+            COURT_ORDERS_REGENERATED_CITIZEN: 'a5c87893-d69d-489f-84ff-28555ca04a13'
+            COURT_ORDERS_REGENERATED_SOLICITOR: '9018b2a1-aac5-418f-a360-738c030aa403'
             CERTIFICATE_OF_SERVICE_EVIDENCE_NOTIFICATION: '5cf32cc3-dd84-4796-9f0f-268a86496d76'
             HEARING_REMINDER_CITIZEN: '28d71ce2-52d4-426f-96fc-d23e29addd61'
             HEARING_REMINDER_SOLICITOR: '80692e64-a1c5-4f58-ba5e-85de8e69bf5a'
@@ -532,17 +532,17 @@ docmosis:
       FINAL_ORDER_GRANTED: FL-NFD-GOR-ENG-Final-Order-Granted_V3.docx
       FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V4.docx
       NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed_V2.docx
-      NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Undisputed.docx
-      NFD_NOP_APP1_JS_SOLE_UNDISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole_Undisputed.docx
-      NFD_NOP_APP2_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole.docx
-      NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Disputed.docx
+      NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Undisputed_V2.docx
+      NFD_NOP_APP1_JS_SOLE_UNDISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole_Undisputed_V1.docx
+      NFD_NOP_APP2_JS_SOLE: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole_V1.docx
+      NFD_NOP_APP1_SOL_JS_SOLE_DISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Disputed_V1.docx
       JUDICIAL_SEPARATION_SOLE_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Sole_V1.docx
       JUDICIAL_SEPARATION_JOINT_APPLICATION: FL-NFD-APP-ENG-Judicial-Separation-Application-Joint_V1.docx
-      NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2: FL-NFD-GRP-ENG-Grant-Of-Representation-V2.docx
-      NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: FL-NFD-GOR-ENG-SOLICITOR-APPLIED-FOR-FINAL-ORDER.docx
+      NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1__APP2: FL-NFD-GRP-ENG-Grant-Of-Representation-V3.docx
+      NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER: FL-NFD-GOR-ENG-SOLICITOR-APPLIED-FOR-FINAL-ORDER-V1.docx
       NFD_APPLICANT_PAPERCASE_RECEIVED: FL-NFD-GOR-ENG-PaperCase-Received-Applicant-V2.docx
-      NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_citizen_letter_V1.docx
-      NFD_SOL_STOPPED_REP_NOTIFY_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_notify_citizen_V1.docx
+      NFD_NOTICE_OF_CHANGE_INVITE_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_citizen_letter_V2.docx
+      NFD_SOL_STOPPED_REP_NOTIFY_APP: FL-NFD-GOR-ENG-Solicitor_stopped_representation_notify_citizen_V2.docx
       REQUEST_FOR_INFORMATION_LETTER: FL-NFD-GOR-ENG-Request-For-Information.docx
       REQUEST_FOR_INFORMATION_SOLICITOR_LETTER: FL-NFD-GOR-ENG-Request-For-Information-Solicitor.docx
       REQUEST_FOR_INFORMATION_RESPONSE_LETTER: FL-NFD-GOR-ENG-Request-For-Information-Response.docx
@@ -555,7 +555,7 @@ docmosis:
       ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Alternative-Service-Application_V1.docx
       DISPENSE_WITH_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Dispense-With-Service-Application_V1.docx
       SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-ENG-Search-Government-Records-Application_V3.docx
-      BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-ENG-Bailiff-Service-Successful-Letter-V1.docx
+      BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-ENG-Bailiff-Service-Successful-Letter-V2.docx
       RESPONDENT_FINAL_ORDER_ANSWERS: FL-NFD-GOR-ENG-Respondent_Final_Order_Answers_V1.docx
       CITIZEN_COURT_ORDERS_REGENERATED: FL-NFD-GOR-ENG-Court-Orders-Regenerated-Citizen-V1.docx
       HEARING_REMINDER: FL-NFD-GOR-ENG-Hearing-Reminder-V1.docx
@@ -659,7 +659,7 @@ docmosis:
       SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-WEL-Search-Government-Records-Application_V3.docx
       BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-WEL-Bailiff-Service-Successful-Letter-V2.docx
       RESPONDENT_FINAL_ORDER_ANSWERS: FL-NFD-GOR-WEL-Respondent_Final_Order_Answers_V1.docx
-      CITIZEN_COURT_ORDERS_REGENERATED: FL-NFD-GOR-ENG-Court-Orders-Regenerated-Citizen-V1.docx
+      CITIZEN_COURT_ORDERS_REGENERATED: FL-NFD-GOR-WEL-Court-Orders-Regenerated-Citizen-V1.docx
       HEARING_REMINDER: FL-NFD-GOR-WEL-Hearing-Reminder.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
