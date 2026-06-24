@@ -23,6 +23,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
 
+import java.util.List;
+
 import static java.lang.String.format;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -96,7 +98,6 @@ public class ReIssueApplicationService {
             caseDetails.getData().getApplicant2().setOffline(NO);
 
             return caseTasks(
-                validateIssue,
                 setPostIssueState,
                 setReIssueAndDueDate,
                 generateApplicant1NoticeOfProceeding,
@@ -110,7 +111,6 @@ public class ReIssueApplicationService {
             caseDetails.getData().getApplicant2().setOffline(YES);
 
             return caseTasks(
-                validateIssue,
                 setPostIssueState,
                 setReIssueAndDueDate,
                 setNoticeOfProceedingDetailsForRespondent,
@@ -124,7 +124,6 @@ public class ReIssueApplicationService {
         } else if (REISSUE_CASE.equals(reissueOption)) {
             log.info("For case id {} processing complete reissue ", caseDetails.getId());
             return caseTasks(
-                validateIssue,
                 setPostIssueState,
                 setReIssueAndDueDate,
                 setNoticeOfProceedingDetailsForRespondent,
@@ -172,5 +171,9 @@ public class ReIssueApplicationService {
                 "Exception occurred while sending reissue application notifications for case id " + caseDetails.getId()
             );
         }
+    }
+
+    public List<String> validateReIssueApplication(CaseDetails<CaseData, State> details) {
+        return validateIssue.validate(details);
     }
 }
