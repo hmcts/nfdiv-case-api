@@ -409,14 +409,14 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     }
 
     private String getShowConditionForConfidentialDocumentTab() {
-        return "confidentialDocumentsGenerated=\"*\" " +
-            "OR confidentialDocumentsUploaded=\"*\" " +
-            "OR (applicant1DocumentsUploaded=\"*\" AND applicant1ContactDetailsType=\"private\") " +
-            "OR (applicant2DocumentsUploaded=\"*\" AND applicant2ContactDetailsType=\"private\") " +
-            "OR scannedDocuments=\"*\" " +
-            "OR confidentialGeneralEmails=\"*\" " +
-            "OR (generalLetters=\"*\" AND applicant1ContactDetailsType=\"private\") " +
-            "OR (generalLetters=\"*\" AND applicant2ContactDetailsType=\"private\")";
+        return "confidentialDocumentsGenerated=\"*\" "
+            + "OR confidentialDocumentsUploaded=\"*\" "
+            + "OR (applicant1DocumentsUploaded=\"*\" AND applicant1ContactDetailsType=\"private\") "
+            + "OR (applicant2DocumentsUploaded=\"*\" AND applicant2ContactDetailsType=\"private\") "
+            + "OR scannedDocuments=\"*\" "
+            + "OR confidentialGeneralEmails=\"*\" "
+            + "OR (generalLetters=\"*\" AND applicant1ContactDetailsType=\"private\") "
+            + "OR (generalLetters=\"*\" AND applicant2ContactDetailsType=\"private\")";
     }
 
     private void buildServiceApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
