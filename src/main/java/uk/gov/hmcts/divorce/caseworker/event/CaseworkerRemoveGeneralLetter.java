@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -66,6 +67,10 @@ public class CaseworkerRemoveGeneralLetter implements CCDConfig<CaseData, State,
 
         findLettersToRemove(beforeLetters, afterLetters)
             .forEach(this::deleteLetterAndAttachments);
+
+        if (CollectionUtils.isEmpty(details.getData().getGeneralLetters())) {
+            details.getData().setGeneralLetters(null);
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

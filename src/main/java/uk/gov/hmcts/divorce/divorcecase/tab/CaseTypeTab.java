@@ -398,6 +398,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildConfidentialDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("confidentialDocuments", "Confidential Document")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
+            .showCondition(getShowConditionForConfidentialDocumentTab())
             .field("confidentialDocumentsGenerated")
             .field("confidentialDocumentsUploaded")
             .field("applicant1DocumentsUploaded", APPLICANT_1_CONTACT_DETAILS_PRIVATE)
@@ -405,6 +406,17 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("scannedDocuments")
             .field(CaseData::getConfidentialGeneralEmails)
             .field(CaseData::getGeneralLetters, APPLICANTS_CONTACT_DETAILS_PRIVATE);
+    }
+
+    private String getShowConditionForConfidentialDocumentTab() {
+        return "confidentialDocumentsGenerated=\"*\" " +
+            "OR confidentialDocumentsUploaded=\"*\" " +
+            "OR (applicant1DocumentsUploaded=\"*\" AND applicant1ContactDetailsType=\"private\") " +
+            "OR (applicant2DocumentsUploaded=\"*\" AND applicant2ContactDetailsType=\"private\") " +
+            "OR scannedDocuments=\"*\" " +
+            "OR confidentialGeneralEmails=\"*\" " +
+            "OR (generalLetters=\"*\" AND applicant1ContactDetailsType=\"private\") " +
+            "OR (generalLetters=\"*\" AND applicant2ContactDetailsType=\"private\")";
     }
 
     private void buildServiceApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
