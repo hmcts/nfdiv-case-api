@@ -115,13 +115,12 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         // remove "name changed by Deed Poll" ignoring case
         String nameWithoutDeedPollStatement = name.replaceAll("(?i)name changed by deed poll", "").trim();
 
-        // Split to separate names for search wherever there are non-alphanumeric characters,
-        // but preserve apostrophes so names like O'Connor stay as a single segment.
+        // Split to separate names for search wherever there are non-alphanumeric characters (excluding accented characters)
         return Arrays.stream(nameWithoutDeedPollStatement.split("[^\\p{L}\\p{N}'\\u2019]+"))
             .map(String::trim)
             .filter(part -> !part.isEmpty()) // Ignore empty parts
-            .filter(part -> part.length() >= MIN_SEARCH_NAME_SEGMENT_LENGTH) // Ignore 1-character initials
             .flatMap(part -> part.contains(" ") ? Arrays.stream(part.split("\\s+")) : Stream.of(part)) // Split on spaces
+            .filter(part -> part.length() >= MIN_SEARCH_NAME_SEGMENT_LENGTH)
             .toArray(String[]::new);
     }
 
