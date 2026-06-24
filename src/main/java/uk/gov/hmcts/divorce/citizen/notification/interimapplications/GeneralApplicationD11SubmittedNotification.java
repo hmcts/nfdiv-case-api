@@ -23,8 +23,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.MADE_PAYMENT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
@@ -122,24 +120,29 @@ public class GeneralApplicationD11SubmittedNotification implements GeneralApplic
     }
 
     private Map<GeneralApplicationType, String> getEnglishTranslationMap(boolean isDivorce) {
-        String divorceOrCivilPartnership = isDivorce ? DIVORCE_APPLICATION : END_CIVIL_PARTNERSHIP;
-        String expediteAction = isDivorce ? "complete your divorce application" : "end your civil partnership";
+        String divorceOrDissolution = isDivorce ? "divorce" : "dissolution";
         String marriageCertificate = isDivorce ? MARRIAGE : CIVIL_PARTNERSHIP;
         return Map.of(
             GeneralApplicationType.AMEND_APPLICATION,
-            String.format("Your application to amend your %s has been submitted", divorceOrCivilPartnership),
+                String.format("Your application to amend your %s case has been submitted", divorceOrDissolution),
             GeneralApplicationType.EXPEDITE,
-            String.format("Your application to %s more quickly has been submitted", expediteAction),
+                String.format("Your application to complete your %s case more quickly has been submitted",
+                        divorceOrDissolution),
             GeneralApplicationType.EXTEND,
-            String.format("Your application to get more time to serve your %s has been submitted", divorceOrCivilPartnership),
+                String.format("Your application to get more time to serve your %s case has been submitted",
+                        divorceOrDissolution),
             GeneralApplicationType.ISSUE_DIVORCE_WITHOUT_CERT,
-            String.format("Your application to continue your %s without a %s certificate has been submitted", divorceOrCivilPartnership,
+                String.format("Your application to continue your %s case without a %s certificate has been submitted",
+                        divorceOrDissolution,
                 marriageCertificate),
             GeneralApplicationType.DELAY,
-            String.format("Your application to delay or pause your %s has been submitted", divorceOrCivilPartnership),
-            GeneralApplicationType.OTHER, GEN_APP_SUBMITTED_EN,
+                String.format("Your application to delay or pause your %s case has been submitted",
+                        divorceOrDissolution),
+            GeneralApplicationType.OTHER,
+                String.format("Your general application relating to your %s case has been submitted",
+                        divorceOrDissolution),
             GeneralApplicationType.WITHDRAW_POST_ISSUE,
-            String.format("Your application to withdraw your %s has been submitted", divorceOrCivilPartnership)
+                String.format("Your application to withdraw your %s case has been submitted", divorceOrDissolution)
         );
     }
 
