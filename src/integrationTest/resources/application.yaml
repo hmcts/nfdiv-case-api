@@ -28,6 +28,7 @@ uk:
           dissolutionCourtEmail: contactdivorce@justice.gov.uk
           webformUrl: ${WEBFORM_URL:https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/}
           webformCyUrl: ${WEBFORM_CY_URL:https://contact-us-about-a-divorce-application-cy.form.service.justice.gov.uk/}
+          welshEnquiriesEmail: ${WELSH_ENQUIRIES_EMAIL:ymholiadaucymraeg@justice.gov.uk}
         templates:
           english:
             SAVE_SIGN_OUT: '70dd0a1e-047f-4baa-993a-e722db17d8ac'
@@ -239,6 +240,7 @@ docmosis:
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}
     applicant2SignInDivorceUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/applicant2}
     applicant2SignInDissolutionUrl: ${NOTIFY_TEMPLATE_APPLICANT2_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/applicant2}
+    welshEnquiriesEmail: ${WELSH_ENQUIRIES_EMAIL:ymholiadaucymraeg@justice.gov.uk}
 
 case_document_am:
   url: ${CASE_DOCUMENT_AM_URL:http://ccd-case-document-am-api-aat.service.core-compute-aat.internal}
