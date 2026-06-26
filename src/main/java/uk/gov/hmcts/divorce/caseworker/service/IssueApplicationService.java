@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfPr
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinancialOrderRequestedLetter;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
@@ -56,6 +57,8 @@ public class IssueApplicationService {
 
     private final GenerateD84Form generateD84Form;
 
+    private final GenerateFinancialOrderRequestedLetter generateFinancialOrderRequestedLetter;
+
     private final SetServiceType setServiceType;
 
     private final SetIssueDate setIssueDate;
@@ -75,7 +78,8 @@ public class IssueApplicationService {
             divorceApplicationRemover,
             generateApplication,
             generateD10Form,
-            generateD84Form
+            generateD84Form,
+            generateFinancialOrderRequestedLetter
         ).run(caseDetails);
     }
 

@@ -77,6 +77,7 @@ public class CommonContent {
     public static final String SIGN_IN_PROFESSIONAL_USERS_URL = "signInProfessionalUsersUrl";
     public static final String DIVORCE_COURT_EMAIL = "divorceCourtEmail";
     public static final String DISSOLUTION_COURT_EMAIL = "dissolutionCourtEmail";
+    public static final String WELSH_ENQUIRIES_EMAIL = "welshEnquiriesEmail";
 
     public static final String SUBMISSION_RESPONSE_DATE = "date of response";
     public static final String APPLICATION_REFERENCE = "reference number";
@@ -203,6 +204,7 @@ public class CommonContent {
         templateVars.put(PARTNER, getPartner(caseData, partner, languagePreference));
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
+        templateVars.put(WELSH_ENQUIRIES_EMAIL, config.getTemplateVars().get(WELSH_ENQUIRIES_EMAIL));
         templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
         templateVars.put(WEBFORM_URL, getWebFormUrl(applicant.getLanguagePreference()));
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
