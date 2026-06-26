@@ -53,7 +53,10 @@ public class FinalOrderInsightSurveyNotification implements ApplicantNotificatio
         final int notificationsSent = finalOrder.getFinalOrderInsightSurveyStage();
         final FinalOrderInsightSurveyInvite inviteStage = FinalOrderInsightSurveyInvite.BY_STAGE.get(notificationsSent - 1);
         final EmailTemplateName emailTemplate = inviteStage.getEmailTemplateName();
-        log.info("Sending final order insight survey for case id: {}, stage: {}, party: {}", caseId, emailTemplate, whichApplicant.getLabel());
+        log.info(
+            "Sending final order insight survey invite for case id: {}, stage: {}, party: {}",
+            caseId, emailTemplate, whichApplicant.getLabel()
+        );
 
         final Map<String, String> templateVars = commonContent.mainTemplateVars(data, caseId, applicant, partner);
 

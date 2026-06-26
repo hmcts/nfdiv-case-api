@@ -121,7 +121,7 @@ class FinalOrderInsightSurveyNotificationTest {
         caseData.getApplicant1().setEmail(TEST_USER_EMAIL);
         caseData.setFinalOrder(FinalOrder.builder()
             .grantedDate(grantedDate)
-            .finalOrderInsightSurveyStage(invite.getStage())
+            .finalOrderInsightSurveyStage(invite.getStage() + 1)
             .build());
         return caseData;
     }

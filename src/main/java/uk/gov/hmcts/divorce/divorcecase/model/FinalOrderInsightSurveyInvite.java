@@ -5,9 +5,9 @@ import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_INSIGHT_SURVEY_LAST_REMINDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_INSIGHT_SURVEY_FIRST_REMINDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_INSIGHT_SURVEY_INVITE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_INSIGHT_SURVEY_LAST_REMINDER;
 
 @Getter
 public enum FinalOrderInsightSurveyInvite {
