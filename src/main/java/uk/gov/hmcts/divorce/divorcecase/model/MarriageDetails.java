@@ -35,18 +35,6 @@ public class MarriageDetails {
     private String applicant2Name;
 
     @CCD(
-        label = "Applicant full name to use for matching case search",
-        searchable = false
-    )
-    private String applicant1NameForMatching;
-
-    @CCD(
-        label = "${labelContentTheApplicant2UC} full name to use for matching case search",
-        searchable = false
-    )
-    private String applicant2NameForMatching;
-
-    @CCD(
         label = "Did the ${labelContentMarriageOrCivilPartnership} take place in the UK?"
     )
     private YesOrNo marriedInUk;

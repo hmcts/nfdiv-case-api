@@ -32,7 +32,7 @@ public class SystemSendFinalOrderCompleteSurveyTask implements Runnable {
     public static final int SCHEDULE_WINDOW_DAYS = 1;
 
     public static final String CASE_FINAL_ORDER_GRANTED_DATE = "data.grantedDate";
-    public static final String CASE_SURVEY_INVITE_STAGE = "data.insightTeamFinalOrderSurveyInviteStage";
+    public static final String CASE_SURVEY_INVITE_STAGE = "data.finalOrderInsightSurveyStage";
 
     private final CcdSearchService ccdSearchService;
 

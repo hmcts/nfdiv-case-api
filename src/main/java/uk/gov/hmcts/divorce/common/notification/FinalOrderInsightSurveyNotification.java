@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -27,7 +28,7 @@ public class FinalOrderInsightSurveyNotification implements ApplicantNotificatio
     public static final String INSIGHT_SURVEY_URL_VALUE = "https://www.smartsurvey.co.uk/t/onlinedivorceservice/";
     public static final String YOUR_DATA_URL_VARIABLE = "yourDataUrl";
     public static final String YOUR_DATA_URL_VALUE =
-        "https://www.gov.uk/government/organisations/hm-courts-and-tribunals-service/about/personal-information-charter)";
+        "https://www.gov.uk/government/organisations/hm-courts-and-tribunals-service/about/personal-information-charter";
 
     private static final Map<String, String> INSIGHT_SURVEY_VARIABLES = Map.of(
         INSIGHT_SURVEY_URL_VARIABLE, INSIGHT_SURVEY_URL_VALUE,
@@ -55,10 +56,14 @@ public class FinalOrderInsightSurveyNotification implements ApplicantNotificatio
 
         final FinalOrder finalOrder = data.getFinalOrder();
         final int notificationsSent = finalOrder.getFinalOrderInsightSurveyStage();
+        final List<FinalOrderInsightSurveyInvite> inviteStages = FinalOrderInsightSurveyInvite.BY_STAGE;
+
+        if (notificationsSent >= inviteStages.size()) {
+            return;
+        }
 
         final FinalOrderInsightSurveyInvite inviteStage = FinalOrderInsightSurveyInvite.BY_STAGE.get(notificationsSent);
         final LocalDateTime earliestNotificationDate = finalOrder.getGrantedDate().plusDays(inviteStage.getDaysAfterGrantedDate());
-
         if (earliestNotificationDate.isAfter(LocalDateTime.now())) {
             return;
         }
