@@ -98,8 +98,8 @@ class FinalOrderInsightSurveyNotificationTest {
     @Test
     void shouldSendFinalReminderToApplicant1() {
         final CaseData caseData = buildCaseData(
-            FinalOrderInsightSurveyInvite.FINAL_REMINDER,
-            LocalDateTime.now().minusDays(FinalOrderInsightSurveyInvite.FINAL_REMINDER.getDaysAfterGrantedDate())
+            FinalOrderInsightSurveyInvite.LAST_REMINDER,
+            LocalDateTime.now().minusDays(FinalOrderInsightSurveyInvite.LAST_REMINDER.getDaysAfterGrantedDate())
         );
 
         when(commonContent.mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2()))

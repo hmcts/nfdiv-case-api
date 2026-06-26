@@ -13,7 +13,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_IN
 public enum FinalOrderInsightSurveyInvite {
     FIRST_NOTIFICATION(0, FINAL_ORDER_INSIGHT_SURVEY_INVITE, 1),
     FIRST_REMINDER(1, FINAL_ORDER_INSIGHT_SURVEY_FIRST_REMINDER, 3),
-    FINAL_REMINDER(2, FINAL_ORDER_INSIGHT_SURVEY_LAST_REMINDER, 6);
+    LAST_REMINDER(2, FINAL_ORDER_INSIGHT_SURVEY_LAST_REMINDER, 6);
 
     private final int stage;
     private final EmailTemplateName emailTemplateName;
@@ -26,5 +26,5 @@ public enum FinalOrderInsightSurveyInvite {
     }
 
     public static final List<FinalOrderInsightSurveyInvite> BY_STAGE =
-        List.of(FIRST_NOTIFICATION, FIRST_REMINDER, FINAL_REMINDER);
+        List.of(FIRST_NOTIFICATION, FIRST_REMINDER, LAST_REMINDER);
 }
