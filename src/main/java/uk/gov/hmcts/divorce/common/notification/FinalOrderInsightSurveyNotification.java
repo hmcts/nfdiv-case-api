@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderInsightSurveyInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange.WhichApplicant;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.LocalDateTime;
@@ -44,8 +45,6 @@ public class FinalOrderInsightSurveyNotification implements ApplicantNotificatio
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        log.info("Sending final order survey notification to applicant 2/respondent: {}", id);
-
         sendCitizenNotification(caseData, id, WhichApplicant.APPLICANT_2);
     }
 
@@ -55,18 +54,23 @@ public class FinalOrderInsightSurveyNotification implements ApplicantNotificatio
         final Applicant partner = isApplicant1 ? data.getApplicant2() : data.getApplicant1();
 
         final FinalOrder finalOrder = data.getFinalOrder();
-        final int notificationsSent = finalOrder.getFinalOrderInsightSurveyStage();
         final List<FinalOrderInsightSurveyInvite> inviteStages = FinalOrderInsightSurveyInvite.BY_STAGE;
 
+        final int notificationsSent = finalOrder.getFinalOrderInsightSurveyStage();
         if (notificationsSent >= inviteStages.size()) {
+            log.info("Aborting final order insight survey notification for {}, all stages have been sent.", caseId);
             return;
         }
 
         final FinalOrderInsightSurveyInvite inviteStage = FinalOrderInsightSurveyInvite.BY_STAGE.get(notificationsSent);
         final LocalDateTime earliestNotificationDate = finalOrder.getGrantedDate().plusDays(inviteStage.getDaysAfterGrantedDate());
         if (earliestNotificationDate.isAfter(LocalDateTime.now())) {
+            log.info("Aborting final order insight survey notification for {}, not eligible for next stage yet.", caseId);
             return;
         }
+
+        final EmailTemplateName emailTemplate = inviteStage.getEmailTemplateName();
+        log.info("Sending final order insight survey for {}, stage: {}, party: {}", caseId, emailTemplate, whichApplicant.getLabel());
 
         final Map<String, String> templateVars = commonContent.mainTemplateVars(data, caseId, applicant, partner);
 
@@ -74,7 +78,7 @@ public class FinalOrderInsightSurveyNotification implements ApplicantNotificatio
 
         notificationService.sendEmail(
             applicant.getEmail(),
-            inviteStage.getEmailTemplateName(),
+            emailTemplate,
             templateVars,
             applicant.getLanguagePreference(),
             caseId
