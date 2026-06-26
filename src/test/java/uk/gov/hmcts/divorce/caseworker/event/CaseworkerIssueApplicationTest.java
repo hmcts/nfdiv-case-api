@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -13,19 +12,16 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
-import uk.gov.hmcts.divorce.common.exception.InvalidDataException;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
-import uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -54,7 +50,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.PERSONAL_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -64,7 +59,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_VALIDATION_ERROR;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithStatementOfTruth;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -217,6 +211,7 @@ class CaseworkerIssueApplicationTest {
 
         final var caseData = caseDataWithAllMandatoryFields();
         final var expectedCaseData = CaseData.builder().build();
+        final var expectedCaseDataWithServiceType = CaseData.builder().build();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -224,35 +219,40 @@ class CaseworkerIssueApplicationTest {
         details.setId(TEST_CASE_ID);
         details.setCreatedDate(LOCAL_DATE_TIME);
 
+        final CaseDetails<CaseData, State> expectedDetailsWithServiceType = new CaseDetails<>();
+        expectedDetailsWithServiceType.setData(expectedCaseDataWithServiceType);
+        expectedDetailsWithServiceType.setId(TEST_CASE_ID);
+        expectedDetailsWithServiceType.setCreatedDate(LOCAL_DATE_TIME);
+
         final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
         expectedDetails.setData(expectedCaseData);
         expectedDetails.setId(TEST_CASE_ID);
         expectedDetails.setCreatedDate(LOCAL_DATE_TIME);
         expectedDetails.setState(AwaitingService);
 
-        when(issueApplicationService.issueApplication(details)).thenReturn(expectedDetails);
+        when(issueApplicationService.issueApplication(expectedDetailsWithServiceType)).thenReturn(expectedDetails);
+        when(issueApplicationService.updateServiceType(details)).thenReturn(expectedDetailsWithServiceType);
+        when(issueApplicationService.validateIssueApplication(expectedDetailsWithServiceType)).thenReturn(Collections.emptyList());
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
         assertThat(response.getState()).isEqualTo(AwaitingService);
-        verify(issueApplicationService).issueApplication(details);
+        verify(issueApplicationService).updateServiceType(details);
+        verify(issueApplicationService).issueApplication(expectedDetailsWithServiceType);
+        verify(issueApplicationService).validateIssueApplication(expectedDetailsWithServiceType);
     }
 
     @Test
-    void shouldReturnValidationErrorsWhenThereIsAnInvalidDataException() {
+    void shouldReturnValidationErrorsWhenThereIsAnInvalidData() {
         final var caseData = invalidCaseData();
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
         details.setCreatedDate(LOCAL_DATE_TIME);
 
-        when(issueApplicationService.issueApplication(details))
-            .thenThrow(new InvalidDataException(
-                "dummy details",
-                null,
-                Collections.singletonList(TEST_VALIDATION_ERROR)
-            ));
+        when(issueApplicationService.updateServiceType(details)).thenReturn(details);
+        when(issueApplicationService.validateIssueApplication(details)).thenReturn(Collections.singletonList(TEST_VALIDATION_ERROR));
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(details, null);
 
@@ -310,80 +310,6 @@ class CaseworkerIssueApplicationTest {
         verifyNoInteractions(ccdUpdateService);
 
         verify(issueApplicationService).sendNotifications(caseDetails);
-    }
-
-    @Test
-    void shouldIssueApplicationPersonalServiceNonConfidential() {
-        final CaseData caseData = caseDataWithStatementOfTruth();
-        caseData.getApplication().setDateSubmitted(LocalDateTime.now());
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
-        caseDetails.setData(caseData);
-        caseDetails.setState(Submitted);
-        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
-        final Applicant applicant2 = caseData.getApplicant2();
-        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
-
-        final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
-        expectedDetails.setData(caseData);
-        expectedDetails.setState(Submitted);
-
-        when(issueApplicationService.issueApplication(caseDetails)).thenReturn(expectedDetails);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(
-            expectedDetails, caseDetails);
-
-        assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).isNull();
-    }
-
-    @Test
-    void shouldIssueApplicationSolicitorServiceNonConfidential() {
-        final CaseData caseData = caseDataWithStatementOfTruth();
-        caseData.getApplication().setDateSubmitted(LocalDateTime.now());
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("Some place");
-        caseDetails.setData(caseData);
-        caseDetails.setState(Submitted);
-        caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
-        final Applicant applicant2 = caseData.getApplicant2();
-        applicant2.setContactDetailsType(ContactDetailsType.PUBLIC);
-
-        final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
-        expectedDetails.setData(caseData);
-        expectedDetails.setState(Submitted);
-
-        when(issueApplicationService.issueApplication(caseDetails)).thenReturn(expectedDetails);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(
-            expectedDetails, caseDetails);
-
-        assertThat(response.getWarnings()).isNull();
-        assertThat(response.getErrors()).isNull();
-    }
-
-    void shouldSetBeingIssuedWithoutAddressFlagToNullInAboutToSubmit() {
-        final CaseData caseData = caseDataWithStatementOfTruth();
-        caseData.getApplication().setBeingIssuedWithoutAddress(YES);
-        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
-        caseDetails.setData(caseData);
-        caseDetails.setState(Submitted);
-
-        final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
-        expectedDetails.setData(caseData);
-        expectedDetails.setState(Submitted);
-
-        MockedStatic<ApplicationValidation> classMock = Mockito.mockStatic(ApplicationValidation.class);
-        classMock.when(() -> ApplicationValidation.validateIssue(caseData)).thenReturn(Collections.emptyList());
-
-        when(issueApplicationService.issueApplication(caseDetails)).thenReturn(expectedDetails);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToSubmit(
-            expectedDetails, caseDetails);
-
-        assertThat(response.getData().getApplication().getBeingIssuedWithoutAddress()).isNull();
-
-        classMock.close();
     }
 
     private CaseData caseDataWithAllMandatoryFields() {
