@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class SystemSendFinalOrderCompleteSurveyTask implements Runnable {
+public class SystemSendFinalOrderInsightSurveyTask implements Runnable {
 
     public static final int SCHEDULE_WINDOW_DAYS = 1;
 
@@ -44,7 +44,7 @@ public class SystemSendFinalOrderCompleteSurveyTask implements Runnable {
 
     @Override
     public void run() {
-        log.info("SystemSendFinalOrderCompleteSurveyTask scheduled task started");
+        log.info("SystemSendFinalOrderInsightSurveyTask scheduled task started");
 
         try {
             final List<FinalOrderInsightSurveyInvite> surveyInvitesByStage = FinalOrderInsightSurveyInvite.BY_STAGE;
@@ -70,11 +70,11 @@ public class SystemSendFinalOrderCompleteSurveyTask implements Runnable {
                 .searchForAllCasesWithQuery(query, user, serviceAuth, FinalOrderComplete)
                 .forEach(caseDetails -> submitEvent(caseDetails.getId(), user, serviceAuth));
 
-            log.info("SystemSendFinalOrderCompleteSurveyTask scheduled task complete.");
+            log.info("SystemSendFinalOrderInsightSurveyTask scheduled task complete.");
         } catch (final CcdSearchCaseException e) {
-            log.error("SystemSendFinalOrderCompleteSurveyTask schedule task stopped after search error", e);
+            log.error("SystemSendFinalOrderInsightSurveyTask schedule task stopped after search error", e);
         } catch (final CcdConflictException e) {
-            log.info("SystemSendFinalOrderCompleteSurveyTask schedule task stopping due to conflict with another running task"
+            log.info("SystemSendFinalOrderInsightSurveyTask schedule task stopping due to conflict with another running task"
             );
         }
     }

@@ -26,9 +26,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemSendFinalOrderInsightSurvey.SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY;
-import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemSendFinalOrderCompleteSurveyTask.CASE_FINAL_ORDER_GRANTED_DATE;
-import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemSendFinalOrderCompleteSurveyTask.CASE_SURVEY_INVITE_STAGE;
-import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemSendFinalOrderCompleteSurveyTask.SCHEDULE_WINDOW_DAYS;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemSendFinalOrderInsightSurveyTask.CASE_FINAL_ORDER_GRANTED_DATE;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemSendFinalOrderInsightSurveyTask.CASE_SURVEY_INVITE_STAGE;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemSendFinalOrderInsightSurveyTask.SCHEDULE_WINDOW_DAYS;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
@@ -50,7 +50,7 @@ class SystemSendFinalOrderInsightSurveyTaskTest {
     private AuthTokenGenerator authTokenGenerator;
 
     @InjectMocks
-    private SystemSendFinalOrderCompleteSurveyTask systemSendFinalOrderCompleteSurveyTask;
+    private SystemSendFinalOrderInsightSurveyTask systemSendFinalOrderInsightSurveyTask;
 
     private User user;
 
@@ -96,7 +96,7 @@ class SystemSendFinalOrderInsightSurveyTaskTest {
         when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, FinalOrderComplete))
             .thenReturn(caseDetailsList);
 
-        systemSendFinalOrderCompleteSurveyTask.run();
+        systemSendFinalOrderInsightSurveyTask.run();
 
         verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY, user, SERVICE_AUTHORIZATION);
     }
