@@ -27,9 +27,9 @@ import static uk.gov.hmcts.divorce.common.notification.FinalOrderInsightSurveyNo
 import static uk.gov.hmcts.divorce.common.notification.FinalOrderInsightSurveyNotification.YOUR_DATA_URL_VARIABLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_INSIGHT_SURVEY_LAST_REMINDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_INSIGHT_SURVEY_FIRST_REMINDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_INSIGHT_SURVEY_INVITE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_INSIGHT_SURVEY_LAST_REMINDER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
