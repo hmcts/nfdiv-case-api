@@ -73,6 +73,7 @@ class SystemSendFinalOrderInsightSurveyTest {
         caseData.getFinalOrder().setGrantedDate(
             LocalDateTime.now().minusDays(FinalOrderInsightSurveyInvite.FIRST_NOTIFICATION.getDaysAfterGrantedDate())
         );
+        caseData.getFinalOrder().setFinalOrderInsightSurveyStage(0);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
@@ -88,6 +89,7 @@ class SystemSendFinalOrderInsightSurveyTest {
     @Test
     void shouldErrorWhenCaseIsNotYetEligibleForNextInvite() {
         final CaseData caseData = caseDataWithOrderSummary();
+        caseData.getFinalOrder().setFinalOrderInsightSurveyStage(0);
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.now());
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -104,6 +106,7 @@ class SystemSendFinalOrderInsightSurveyTest {
     @Test
     void shouldSendNotificationWhenCaseDataIsValid() {
         final CaseData caseData = caseDataWithOrderSummary();
+        caseData.getFinalOrder().setFinalOrderInsightSurveyStage(0);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
