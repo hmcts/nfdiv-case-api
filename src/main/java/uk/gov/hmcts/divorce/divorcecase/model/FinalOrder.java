@@ -516,7 +516,7 @@ public class FinalOrder {
         label = "Number of Survey Invites Sent after Final Order Granted",
         access = {DefaultAccess.class}
     )
-    private int finalOrderInsightSurveyStage;
+    private Integer finalOrderInsightSurveyStage;
 
     @JsonIgnore
     public boolean applicant2NeedsHelpWithFees() {
