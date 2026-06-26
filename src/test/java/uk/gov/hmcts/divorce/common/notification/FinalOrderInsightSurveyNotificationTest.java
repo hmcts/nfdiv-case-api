@@ -28,9 +28,9 @@ import static uk.gov.hmcts.divorce.common.notification.FinalOrderInsightSurveyNo
 import static uk.gov.hmcts.divorce.common.notification.FinalOrderInsightSurveyNotification.YOUR_DATA_URL_VARIABLE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.INSIGHT_SURVEY_FINAL_REMINDER_FINAL_ORDER_COMPLETE;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.INSIGHT_SURVEY_FIRST_REMINDER_FINAL_ORDER_COMPLETE;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.INSIGHT_SURVEY_INVITE_FINAL_ORDER_COMPLETE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_INSIGHT_SURVEY_LAST_REMINDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_INSIGHT_SURVEY_FIRST_REMINDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_INSIGHT_SURVEY_INVITE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
@@ -61,7 +61,7 @@ class FinalOrderInsightSurveyNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq(INSIGHT_SURVEY_INVITE_FINAL_ORDER_COMPLETE),
+            eq(FINAL_ORDER_INSIGHT_SURVEY_INVITE),
             argThat(allOf(
                 hasEntry(INSIGHT_SURVEY_URL_VARIABLE, INSIGHT_SURVEY_URL_VALUE),
                 hasEntry(YOUR_DATA_URL_VARIABLE, YOUR_DATA_URL_VALUE)
@@ -87,7 +87,7 @@ class FinalOrderInsightSurveyNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(caseData.getApplicant2().getEmail()),
-            eq(INSIGHT_SURVEY_FIRST_REMINDER_FINAL_ORDER_COMPLETE),
+            eq(FINAL_ORDER_INSIGHT_SURVEY_FIRST_REMINDER),
             argThat(hasEntry(INSIGHT_SURVEY_URL_VARIABLE, INSIGHT_SURVEY_URL_VALUE)),
             eq(WELSH),
             eq(TEST_CASE_ID)
@@ -109,7 +109,7 @@ class FinalOrderInsightSurveyNotificationTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq(INSIGHT_SURVEY_FINAL_REMINDER_FINAL_ORDER_COMPLETE),
+            eq(FINAL_ORDER_INSIGHT_SURVEY_LAST_REMINDER),
             argThat(hasEntry(YOUR_DATA_URL_VARIABLE, YOUR_DATA_URL_VALUE)),
             eq(ENGLISH),
             eq(TEST_CASE_ID)

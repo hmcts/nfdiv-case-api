@@ -5,15 +5,15 @@ import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.INSIGHT_SURVEY_FINAL_REMINDER_FINAL_ORDER_COMPLETE;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.INSIGHT_SURVEY_FIRST_REMINDER_FINAL_ORDER_COMPLETE;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.INSIGHT_SURVEY_INVITE_FINAL_ORDER_COMPLETE;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_INSIGHT_SURVEY_LAST_REMINDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_INSIGHT_SURVEY_FIRST_REMINDER;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.FINAL_ORDER_INSIGHT_SURVEY_INVITE;
 
 @Getter
 public enum FinalOrderInsightSurveyInvite {
-    FIRST_NOTIFICATION(0, INSIGHT_SURVEY_INVITE_FINAL_ORDER_COMPLETE, 1),
-    FIRST_REMINDER(1, INSIGHT_SURVEY_FIRST_REMINDER_FINAL_ORDER_COMPLETE, 3),
-    FINAL_REMINDER(2, INSIGHT_SURVEY_FINAL_REMINDER_FINAL_ORDER_COMPLETE, 6);
+    FIRST_NOTIFICATION(0, FINAL_ORDER_INSIGHT_SURVEY_INVITE, 1),
+    FIRST_REMINDER(1, FINAL_ORDER_INSIGHT_SURVEY_FIRST_REMINDER, 3),
+    FINAL_REMINDER(2, FINAL_ORDER_INSIGHT_SURVEY_LAST_REMINDER, 6);
 
     private final int stage;
     private final EmailTemplateName emailTemplateName;
