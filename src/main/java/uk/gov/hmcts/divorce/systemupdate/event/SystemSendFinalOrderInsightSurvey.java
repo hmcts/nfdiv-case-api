@@ -7,20 +7,19 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.notification.FinalOrderInsightSurveyNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderInsightSurveyInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService.CASE_ALREADY_PROCESSED_ERROR;
@@ -31,22 +30,23 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService.CASE_AL
 public class SystemSendFinalOrderInsightSurvey implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY = "system-send-final-order-insight-survey";
+    public static final String CASE_NOT_YET_ELIGIBLE_FOR_INSIGHT_SURVEY_ERROR =
+        "The case is not yet eligible for a final order insight survey.";
 
     private final NotificationDispatcher notificationDispatcher;
-    private final FinalOrderGrantedNotification finalOrderGrantedNotification;
-    private static final int MAX_NOTIFICATIONS_TO_SEND = 3;
+    private final FinalOrderInsightSurveyNotification finalOrderInsightSurveyNotification;
+    private static final int MAX_NOTIFICATIONS_TO_SEND = FinalOrderInsightSurveyInvite.BY_STAGE.size();
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY)
             .forState(FinalOrderComplete)
-            .name("Send Insight Team Feedback Survey")
-            .description("Insight Team Feedback Survey or Reminder Sent after Final Order Granted")
+            .name("Insight Team Survey Invite")
+            .description("Send Insight Team Survey Invitation or Reminder")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
-            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)
-            .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE));
+            .grant(CREATE_READ_UPDATE, SYSTEMUPDATE));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -67,6 +67,18 @@ public class SystemSendFinalOrderInsightSurvey implements CCDConfig<CaseData, St
                 .build();
         }
 
+        final FinalOrderInsightSurveyInvite inviteStage = FinalOrderInsightSurveyInvite.BY_STAGE.get(notificationsSent);
+        final LocalDateTime earliestNotificationDate =
+            caseData.getFinalOrder().getGrantedDate().plusDays(inviteStage.getDaysAfterGrantedDate());
+
+        if (earliestNotificationDate.isAfter(LocalDateTime.now())) {
+            log.error("{} errored as case is not yet eligible to be processed: {}", SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY, caseId);
+
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(CASE_NOT_YET_ELIGIBLE_FOR_INSIGHT_SURVEY_ERROR))
+                .build();
+        }
+
         caseData.getFinalOrder().setFinalOrderInsightSurveyStage(notificationsSent + 1);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -83,7 +95,7 @@ public class SystemSendFinalOrderInsightSurvey implements CCDConfig<CaseData, St
 
         log.info("{} submitted callback invoked CaseID: {}", SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY, caseId);
 
-        notificationDispatcher.send(finalOrderGrantedNotification, caseData, caseId);
+        notificationDispatcher.send(finalOrderInsightSurveyNotification, caseData, caseId);
 
         return SubmittedCallbackResponse.builder().build();
     }

@@ -514,8 +514,7 @@ public class FinalOrder {
 
     @CCD(
         label = "Number of Survey Invites Sent after Final Order Granted",
-        access = {DefaultAccess.class},
-        searchable = false
+        access = {DefaultAccess.class}
     )
     @Builder.Default
     private int finalOrderInsightSurveyStage = 0;

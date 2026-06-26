@@ -9,15 +9,18 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
+import uk.gov.hmcts.divorce.common.notification.FinalOrderInsightSurveyNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderInsightSurveyInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemSendFinalOrderInsightSurvey.CASE_NOT_YET_ELIGIBLE_FOR_INSIGHT_SURVEY_ERROR;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemSendFinalOrderInsightSurvey.SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService.CASE_ALREADY_PROCESSED_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -29,7 +32,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithOrderSumm
 class SystemSendFinalOrderInsightSurveyTest {
 
     @Mock
-    private FinalOrderGrantedNotification finalOrderGrantedNotification;
+    private FinalOrderInsightSurveyNotification finalOrderInsightSurveyNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -67,6 +70,9 @@ class SystemSendFinalOrderInsightSurveyTest {
     @Test
     void shouldIncrementNotificationCounter() {
         final CaseData caseData = caseDataWithOrderSummary();
+        caseData.getFinalOrder().setGrantedDate(
+            LocalDateTime.now().minusDays(FinalOrderInsightSurveyInvite.FIRST_NOTIFICATION.getDaysAfterGrantedDate())
+        );
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
@@ -80,6 +86,22 @@ class SystemSendFinalOrderInsightSurveyTest {
     }
 
     @Test
+    void shouldErrorWhenCaseIsNotYetEligibleForNextInvite() {
+        final CaseData caseData = caseDataWithOrderSummary();
+        caseData.getFinalOrder().setGrantedDate(LocalDateTime.now());
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+        details.setState(State.FinalOrderComplete);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            systemSendFinalOrderInsightSurvey.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).containsExactly(CASE_NOT_YET_ELIGIBLE_FOR_INSIGHT_SURVEY_ERROR);
+    }
+
+    @Test
     void shouldSendNotificationWhenCaseDataIsValid() {
         final CaseData caseData = caseDataWithOrderSummary();
 
@@ -90,6 +112,6 @@ class SystemSendFinalOrderInsightSurveyTest {
 
         systemSendFinalOrderInsightSurvey.submitted(details, details);
 
-        verify(notificationDispatcher).send(finalOrderGrantedNotification, details.getData(), details.getId());
+        verify(notificationDispatcher).send(finalOrderInsightSurveyNotification, details.getData(), details.getId());
     }
 }

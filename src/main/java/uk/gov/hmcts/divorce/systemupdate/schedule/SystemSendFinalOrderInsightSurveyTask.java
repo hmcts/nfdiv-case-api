@@ -52,9 +52,7 @@ public class SystemSendFinalOrderInsightSurveyTask implements Runnable {
             final BoolQueryBuilder surveyNotificationScheduleQuery = boolQuery();
             for (FinalOrderInsightSurveyInvite surveyInvite : surveyInvitesByStage) {
                 surveyNotificationScheduleQuery
-                    .should(getNotificationWindowQuery(
-                        surveyInvite.getStage(), surveyInvite.getDaysAfterGrantedDate()
-                    ));
+                    .should(getNotificationWindowQuery(surveyInvite.getStage(), surveyInvite.getDaysAfterGrantedDate()));
             }
             surveyNotificationScheduleQuery.minimumShouldMatch(1);
 

@@ -19,7 +19,6 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.common.notification.FinalOrderInsightSurveyNotification.INSIGHT_SURVEY_URL_VALUE;
@@ -115,15 +114,6 @@ class FinalOrderInsightSurveyNotificationTest {
             eq(TEST_CASE_ID)
         );
         verify(commonContent).mainTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getApplicant2());
-    }
-
-    @Test
-    void shouldNotSendInsightSurveyBeforeInviteIsDue() {
-        final CaseData caseData = buildCaseData(FinalOrderInsightSurveyInvite.FIRST_NOTIFICATION, LocalDateTime.now());
-
-        notification.sendToApplicant1(caseData, TEST_CASE_ID);
-
-        verifyNoInteractions(commonContent, notificationService);
     }
 
     private CaseData buildCaseData(FinalOrderInsightSurveyInvite invite, LocalDateTime grantedDate) {
