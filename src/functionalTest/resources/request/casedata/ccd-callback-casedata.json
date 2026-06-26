@@ -9,18 +9,24 @@
   "solPaymentHowToPay": "feePayByAccount",
   "marriageDate": "2009-04-20",
   "applicationFeeOrderSummary": {
-    "PaymentTotal": "55000",
-    "PaymentReference": null,
+    "PaymentTotal": "61200",
     "Fees": [
       {
-        "id": null,
         "value": {
           "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
-          "FeeVersion": "5",
+          "FeeVersion": "8",
           "FeeCode": "FEE0002",
-          "FeeAmount": "55000"
+          "FeeAmount": "61200"
         }
       }
     ]
+  },
+  "applicationFeeServiceRequestReference": "123",
+  "applicant1Address": {
+    "addressLine1": "221a Baker Street",
+    "postTown": "London",
+    "county": "Greater London",
+    "postCode": "NW1 6XE",
+    "country": "United Kingdom"
   }
 }
