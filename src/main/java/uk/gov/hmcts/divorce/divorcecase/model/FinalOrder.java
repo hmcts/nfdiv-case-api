@@ -512,6 +512,14 @@ public class FinalOrder {
     )
     private FinalOrderAuthorisation overdueFinalOrderAuthorisation;
 
+    @CCD(
+        label = "Number of Survey Invites Sent after Final Order Granted",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    @Builder.Default
+    private int finalOrderInsightSurveyStage = 0;
+
     @JsonIgnore
     public boolean applicant2NeedsHelpWithFees() {
         return Objects.nonNull(applicant2FinalOrderHelpWithFees)
