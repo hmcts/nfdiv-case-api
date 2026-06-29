@@ -733,6 +733,7 @@ class ApplicationIssuedNotificationTest {
 
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DIVORCE)
+            .applicationType(SOLE_APPLICATION)
             .applicant1(applicantRepresentedBySolicitor())
             .application(Application.builder()
                 .serviceMethod(SOLICITOR_SERVICE)
@@ -755,6 +756,7 @@ class ApplicationIssuedNotificationTest {
         personalServiceTemplateVars.put("union type", "divorce");
         personalServiceTemplateVars.put("solicitor reference", "not provided");
         personalServiceTemplateVars.put(DATE_OF_ISSUE, "");
+        personalServiceTemplateVars.put("addFOLetterContent", "no");
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
@@ -775,6 +777,7 @@ class ApplicationIssuedNotificationTest {
 
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DISSOLUTION)
+            .applicationType(SOLE_APPLICATION)
             .applicant1(applicant1)
             .application(Application.builder()
                 .serviceMethod(SOLICITOR_SERVICE)
@@ -797,6 +800,7 @@ class ApplicationIssuedNotificationTest {
         personalServiceTemplateVars.put("union type", "dissolution");
         personalServiceTemplateVars.put("solicitor reference", "someRef");
         personalServiceTemplateVars.put(DATE_OF_ISSUE, "");
+        personalServiceTemplateVars.put("addFOLetterContent", "no");
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
