@@ -1,7 +1,7 @@
 #!groovy
 import uk.gov.hmcts.contino.AppPipelineConfig
 import uk.gov.hmcts.contino.AppPipelineDsl
-@Library("Infrastructure@DTSPO-30107-jenkins-agents-2")
+@Library("Infrastructure")
 
 import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.MetricsPublisher
@@ -39,8 +39,6 @@ def secrets = [
                 secret('idam-data-store-system-user-password','IDAM_DATA_STORE_SYSTEM_USER_PASSWORD'),
         ],
         'nfdiv-${env}'    :[
-                secret('ccd-importer-username', 'DEFINITION_IMPORTER_USERNAME'),
-                secret('ccd-importer-password', 'DEFINITION_IMPORTER_PASSWORD'),
                 secret('idam-secret', 'OAUTH2_CLIENT_SECRET'),
                 secret('idam-solicitor-username', 'IDAM_SOLICITOR_USERNAME'),
                 secret('idam-solicitor-password', 'IDAM_SOLICITOR_PASSWORD'),
