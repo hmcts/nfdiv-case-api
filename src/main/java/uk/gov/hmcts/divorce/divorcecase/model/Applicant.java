@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Email;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
@@ -409,6 +410,14 @@ public class Applicant {
                 .filter(value -> value != null && !value.isEmpty())
                 .collect(joining("\n"));
         }
+    }
+
+    @JsonIgnore
+    public boolean isValidUnitedKingdomAddress() {
+        return address != null
+            && isNotBlank(address.getAddressLine1()) && address.getAddressLine1().length() > 3
+            && (isNotBlank(address.getPostCode()) && address.getPostCode().length() >3)
+            && isUnitedKingdom(address);
     }
 
     @JsonIgnore

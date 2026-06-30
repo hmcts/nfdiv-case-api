@@ -133,10 +133,15 @@ public class NotificationDispatcher {
                 applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
             }
         } else if (applicant.isApplicantOffline() || (!isApplicant1 && isBlank(caseData.getApplicant2EmailAddress()))) {
-            if (isApplicant1) {
-                applicantNotification.sendToApplicant1Offline(caseData, caseId);
+            if (applicant.isValidUnitedKingdomAddress()) {
+                if (isApplicant1) {
+                    applicantNotification.sendToApplicant1Offline(caseData, caseId);
+                } else {
+                    applicantNotification.sendToApplicant2Offline(caseData, caseId);
+                }
             } else {
-                applicantNotification.sendToApplicant2Offline(caseData, caseId);
+                log.warn("Skipping offline notification for {} on case {} - address is invalid",
+                    isApplicant1 ? "applicant1" : "applicant2", caseId);
             }
         } else {
             if (isApplicant1) {
@@ -221,7 +226,7 @@ public class NotificationDispatcher {
                 applicantNotification.sendToApplicant1Solicitor(caseData, caseId);
             }
         } else {
-            if (caseData.getApplicant1().isApplicantOffline()) {
+            if (caseData.getApplicant1().isApplicantOffline() && caseData.getApplicant1().isValidUnitedKingdomAddress()) {
                 applicantNotification.sendToApplicant1Offline(caseData, caseId);
             } else {
                 applicantNotification.sendToApplicant1(caseData, caseId);
@@ -237,7 +242,7 @@ public class NotificationDispatcher {
                 applicantNotification.sendToApplicant2Solicitor(caseData, caseId);
             }
         } else {
-            if (caseData.getApplicant2().isApplicantOffline()) {
+            if (caseData.getApplicant2().isApplicantOffline() && caseData.getApplicant2().isValidUnitedKingdomAddress()) {
                 applicantNotification.sendToApplicant2Offline(caseData, caseId);
             } else {
                 applicantNotification.sendToApplicant2(caseData, caseId);
