@@ -82,7 +82,7 @@ public class SystemSendFinalOrderInsightSurveyTask implements Runnable {
             .must(rangeQuery(CASE_SURVEY_INVITE_STAGE).gte(inviteStage).lt(inviteStage + 1))
             .filter(rangeQuery(CASE_FINAL_ORDER_GRANTED_DATE)
                 .lte(LocalDate.now().minusDays(inviteDaysAfterGrantedDate))
-                .gt(LocalDate.now().minusDays(inviteDaysAfterGrantedDate + SCHEDULE_WINDOW_DAYS))
+                .gt(LocalDate.now().minusDays(inviteDaysAfterGrantedDate + (long) SCHEDULE_WINDOW_DAYS))
             );
     }
 

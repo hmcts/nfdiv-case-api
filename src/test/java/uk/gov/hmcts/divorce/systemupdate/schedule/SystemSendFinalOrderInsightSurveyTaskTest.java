@@ -85,7 +85,7 @@ class SystemSendFinalOrderInsightSurveyTaskTest {
             .must(rangeQuery(CASE_SURVEY_INVITE_STAGE).gte(notificationsSent).lt(notificationsSent + 1))
             .filter(rangeQuery(CASE_FINAL_ORDER_GRANTED_DATE)
                 .lte(LocalDate.now().minusDays(grantedDateOffsetDays))
-                .gt(LocalDate.now().minusDays(grantedDateOffsetDays + SCHEDULE_WINDOW_DAYS))
+                .gt(LocalDate.now().minusDays(grantedDateOffsetDays + (long) SCHEDULE_WINDOW_DAYS))
             );
     }
 
