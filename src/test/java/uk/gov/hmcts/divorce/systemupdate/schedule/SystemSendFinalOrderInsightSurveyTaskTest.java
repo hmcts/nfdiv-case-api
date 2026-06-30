@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.systemupdate.schedule;
 
+import feign.FeignException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderInsightSurveyInvite;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdConflictException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdManagementException;
+import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchCaseException;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -22,8 +26,13 @@ import java.util.List;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemSendFinalOrderInsightSurvey.SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemSendFinalOrderInsightSurveyTask.CASE_FINAL_ORDER_GRANTED_DATE;
@@ -99,5 +108,66 @@ class SystemSendFinalOrderInsightSurveyTaskTest {
         systemSendFinalOrderInsightSurveyTask.run();
 
         verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldNotSubmitEventIfSearchFails() {
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, FinalOrderComplete))
+            .thenThrow(new CcdSearchCaseException("Failed to search cases", mock(FeignException.class)));
+
+        systemSendFinalOrderInsightSurveyTask.run();
+
+        verifyNoInteractions(ccdUpdateService);
+    }
+
+    @Test
+    void shouldStopProcessingIfThereIsConflictDuringSubmission() {
+        CaseDetails caseDetails1 = CaseDetails.builder().id(TEST_CASE_ID).build();
+        CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, FinalOrderComplete))
+            .thenReturn(List.of(caseDetails1, caseDetails2));
+
+        doThrow(new CcdConflictException("Case is modified by another transaction", mock(FeignException.class)))
+            .when(ccdUpdateService)
+            .submitEvent(TEST_CASE_ID, SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY, user, SERVICE_AUTHORIZATION);
+
+        systemSendFinalOrderInsightSurveyTask.run();
+
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService, never()).submitEvent(2L, SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldContinueToNextCaseIfCcdManagementExceptionIsThrown() {
+        CaseDetails caseDetails1 = CaseDetails.builder().id(TEST_CASE_ID).build();
+        CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, FinalOrderComplete))
+            .thenReturn(List.of(caseDetails1, caseDetails2));
+
+        doThrow(new CcdManagementException(GATEWAY_TIMEOUT.value(), "Failed processing of case", mock(FeignException.class)))
+            .when(ccdUpdateService)
+            .submitEvent(TEST_CASE_ID, SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY, user, SERVICE_AUTHORIZATION);
+
+        systemSendFinalOrderInsightSurveyTask.run();
+
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY, user, SERVICE_AUTHORIZATION);
+    }
+
+    @Test
+    void shouldContinueToNextCaseIfIllegalArgumentExceptionIsThrown() {
+        CaseDetails caseDetails1 = CaseDetails.builder().id(TEST_CASE_ID).build();
+        CaseDetails caseDetails2 = CaseDetails.builder().id(2L).build();
+        when(ccdSearchService.searchForAllCasesWithQuery(query, user, SERVICE_AUTHORIZATION, FinalOrderComplete))
+            .thenReturn(List.of(caseDetails1, caseDetails2));
+
+        doThrow(new IllegalArgumentException("Deserialization failed"))
+            .when(ccdUpdateService)
+            .submitEvent(TEST_CASE_ID, SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY, user, SERVICE_AUTHORIZATION);
+
+        systemSendFinalOrderInsightSurveyTask.run();
+
+        verify(ccdUpdateService).submitEvent(TEST_CASE_ID, SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEvent(2L, SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY, user, SERVICE_AUTHORIZATION);
     }
 }
