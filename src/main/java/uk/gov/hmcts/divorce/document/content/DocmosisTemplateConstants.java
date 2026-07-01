@@ -176,6 +176,7 @@ public final class DocmosisTemplateConstants {
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER = "divorceOrCivilPartnershipServiceHeader";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP = "divorceOrCivilPartnership";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL = "divorceOrCivilPartnershipEmail";
+    public static final String WELSH_ENQUIRIES_EMAIL = "welshEnquiriesEmail";
     public static final String DIVORCE_SERVICE = "The Divorce Service";
     public static final String END_CP_SERVICE = "End A Civil Partnership Service";
     public static final String CONTACT_DIVORCE_EMAIL = "contactdivorce@justice.gov.uk";

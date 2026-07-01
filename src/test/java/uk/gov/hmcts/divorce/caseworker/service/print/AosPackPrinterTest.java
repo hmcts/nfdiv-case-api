@@ -6,8 +6,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinancialOrderRequestedLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
@@ -27,6 +29,7 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -36,6 +39,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLI
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
+import static uk.gov.hmcts.divorce.document.model.DocumentType.FINANCIAL_ORDER_REQUESTED_LETTER_RESPONDENT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_1;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
@@ -703,5 +707,37 @@ class AosPackPrinterTest {
         assertThat(print.getLetters()).hasSize(2);
         assertThat(print.getLetters().get(0).getConfidentialDivorceDocument()).isSameAs(doc1.getValue());
         assertThat(print.getLetters().get(1).getDivorceDocument()).isSameAs(doc2.getValue());
+    }
+
+    @Test
+    void shouldPrintPersonalServiceAosPackWithFinancialOrderRequestedLetter() {
+
+        final ListValue<DivorceDocument> doc1 = ListValue.<DivorceDocument>builder()
+            .value(DivorceDocument.builder()
+                .documentType(FINANCIAL_ORDER_REQUESTED_LETTER_RESPONDENT)
+                .build())
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1)).build())
+            .build();
+
+        when(bulkPrintService.printWithD10Form(printCaptor.capture())).thenReturn(randomUUID());
+
+        try (MockedStatic<GenerateFinancialOrderRequestedLetter> classMock =
+                 mockStatic(GenerateFinancialOrderRequestedLetter.class)) {
+
+            classMock.when(() ->
+                GenerateFinancialOrderRequestedLetter.shouldGenerateFinancialOrderLetter(caseData)
+            ).thenReturn(true);
+
+            aosPackPrinter.sendAosLetterAndRespondentAosPackToApplicant(caseData, TEST_CASE_ID);
+        }
+
+        verify(bulkPrintService).printWithD10Form(printCaptor.capture());
+
+        final Print print = printCaptor.getValue();
+        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
     }
 }
