@@ -50,7 +50,7 @@ public class CourtOrderRegeneratedTemplateContent {
         templateContent.put(LAST_NAME, applicant.getLastName());
         templateContent.put(RECIPIENT_ADDRESS,  AddressUtil.getPostalAddress(applicant.getAddress()));
         templateContent.putAll(regenerateTemplateContent(caseData));
-        templateContent.put(DATE, LocalDate.now().format(getDateTimeFormatterForPreferredLanguage(LanguagePreference.ENGLISH)));
+        templateContent.put(DATE, LocalDate.now().format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
 
         return templateContent;
     }

@@ -21,6 +21,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +42,7 @@ import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemNotifyRespondentApplyFinalOrder.SYSTEM_NOTIFY_RESPONDENT_APPLY_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemNotifyRespondentApplyFinalOrderTask.APPLICATION_TYPE;
+import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemNotifyRespondentApplyFinalOrderTask.CO_GRANTED_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemNotifyRespondentApplyFinalOrderTask.NOTIFICATION_FLAG;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemNotifyRespondentApplyFinalOrderTask.RESP_ELIGIBLE_DATE;
 import static uk.gov.hmcts.divorce.systemupdate.schedule.SystemNotifyRespondentApplyFinalOrderTask.SOLE_APPLICATION;
@@ -67,11 +69,17 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
 
     private User user;
 
+    private static final String OVERDUE_DATE = DateTimeFormatter
+        .ofPattern("yyyy-MM-dd").format(LocalDate.now().minusMonths(12));
     private static final BoolQueryBuilder query =
         boolQuery()
             .must(matchQuery(STATE, AwaitingFinalOrder))
             .filter(rangeQuery(String.format(DATA, RESP_ELIGIBLE_DATE)).lte(LocalDate.now()))
             .must(matchQuery(String.format(DATA, APPLICATION_TYPE), SOLE_APPLICATION))
+            .must(
+                boolQuery()
+                    .should(boolQuery().must(rangeQuery(String.format(DATA, CO_GRANTED_DATE)).lt(OVERDUE_DATE)))
+            )
             .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
     @BeforeEach
@@ -191,6 +199,10 @@ class SystemNotifyRespondentApplyFinalOrderTaskTest {
             .must(matchQuery(STATE, AwaitingFinalOrder))
             .filter(rangeQuery(String.format(DATA, RESP_ELIGIBLE_DATE)).lte(LocalDate.now()))
             .must(matchQuery(String.format(DATA, APPLICATION_TYPE), SOLE_APPLICATION))
+            .must(
+                boolQuery()
+                    .should(boolQuery().must(rangeQuery(String.format(DATA, CO_GRANTED_DATE)).lt(OVERDUE_DATE)))
+            )
             .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
         systemNotifyRespondentApplyFinalOrderTask.run();
