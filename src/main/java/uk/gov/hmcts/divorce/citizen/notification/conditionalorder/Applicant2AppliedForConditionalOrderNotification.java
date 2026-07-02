@@ -11,7 +11,6 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_PARTNER_APPLIED_FOR_CONDITIONAL_ORDER;
@@ -93,7 +92,7 @@ public class Applicant2AppliedForConditionalOrderNotification
                 caseData.getApplicant2().getSolicitor().getEmail(),
                 JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER,
                 solicitorTemplateVars(caseData, caseId, caseData.getApplicant2(), APPLICANT2),
-                ENGLISH,
+                caseData.getApplicant2().getLanguagePreference(),
                 caseId
             );
         }

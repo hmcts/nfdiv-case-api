@@ -20,7 +20,6 @@ import java.util.Objects;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
@@ -186,7 +185,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 soleRespondentSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH,
+                caseData.getApplicant2().getLanguagePreference(),
                 caseId
             );
 
@@ -276,11 +275,10 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         final Map<String, String> templateVars = commonSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId, applicant2);
 
         templateVars.put(SOLICITOR_NAME, applicant2.getSolicitor().getName());
-        templateVars.put(
-            SOLICITOR_REFERENCE,
-            isNotEmpty(applicant2.getSolicitor().getReference())
-                ? applicant2.getSolicitor().getReference()
-                : NOT_PROVIDED);
+        templateVars.put(SOLICITOR_REFERENCE, docmosisCommonContent.getSolicitorReference(
+            applicant2.getSolicitor(),
+            applicant2.getLanguagePreference())
+        );
 
         templateVars.put(SUBMISSION_RESPONSE_DATE,
             caseData.getApplication().getIssueDate().plusDays(16)
