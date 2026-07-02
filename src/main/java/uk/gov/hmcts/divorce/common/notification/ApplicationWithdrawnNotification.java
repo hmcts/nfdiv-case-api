@@ -4,17 +4,26 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_OR_APPLICANT1;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_OR_APPLICANT2;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.ISSUE_DATE_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.CITIZEN_APPLICATION_WITHDRAWN;
@@ -29,6 +38,8 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
     private static final String IS_PENDING_REFUND = "isPendingRefund";
 
     private final CommonContent commonContent;
+
+    private final DocmosisCommonContent docmosisCommonContent;
 
     private final NotificationService notificationService;
 
@@ -97,6 +108,8 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
         final Map<String, String> templateVars =
             commonContent.solicitorTemplateVarsPreIssue(caseData, caseDetails.getId(), caseData.getApplicant1());
 
+        addApplicantLabelAndIssueDateVars(templateVars, caseData, caseData.getApplicant1());
+
         notificationService.sendEmail(
             solicitorEmail,
             SOLICITOR_APPLICATION_WITHDRAWN,
@@ -121,6 +134,8 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
         final Map<String, String> templateVars =
             commonContent.solicitorTemplateVarsPreIssue(caseData, caseDetails.getId(), caseData.getApplicant2());
 
+        addApplicantLabelAndIssueDateVars(templateVars, caseData, caseData.getApplicant2());
+
         notificationService.sendEmail(
             solicitorEmail,
             SOLICITOR_APPLICATION_WITHDRAWN,
@@ -128,6 +143,21 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
             caseData.getApplicant2().getLanguagePreference(),
             caseId
         );
+    }
+
+    private void addApplicantLabelAndIssueDateVars(Map<String, String> templateVars, CaseData caseData, Applicant applicant) {
+        final LanguagePreference languagePreference = applicant.getLanguagePreference();
+        templateVars.put(ISSUE_DATE_LABEL, getIssueDateLabelInPreferredLanguage(caseData.getApplication().getIssueDate(),
+            languagePreference));
+        templateVars.put(DATE_OF_ISSUE, commonContent.getIssueDateInPreferredLanguage(caseData, applicant));
+        templateVars.put(APPLICANT_OR_APPLICANT1, docmosisCommonContent.getApplicantOrApplicant1(caseData, languagePreference));
+        templateVars.put(RESPONDENT_OR_APPLICANT2, docmosisCommonContent.getRespondentOrApplicant2(caseData, languagePreference));
+    }
+
+    private String getIssueDateLabelInPreferredLanguage(LocalDate issueDate, LanguagePreference languagePreference) {
+        return isNotEmpty(issueDate)
+            ? (WELSH.equals(languagePreference) ? "Dyddiad cyhoeddi:" : "Issue date:")
+            : "";
     }
 
     private boolean shouldSendNotificationToApplicant2(final CaseData caseData, final State state) {
