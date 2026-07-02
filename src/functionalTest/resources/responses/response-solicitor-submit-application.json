@@ -1,23 +1,34 @@
 {
   "data": {
     "divorceOrDissolution": "divorce",
-    "marriageApplicant1Name": null,
-    "marriageApplicant2Name": null,
     "applicant1FirstName": "John",
     "applicant1LastName": "Smith",
     "applicant1Email": "simulate-delivered@notifications.service.gov.uk",
     "applicationFeeOrderSummary": {
-      "PaymentTotal": "55000",
+      "PaymentTotal": "61200",
       "Fees": [
         {
           "value": {
             "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
-            "FeeVersion": "5",
+            "FeeVersion": "8",
             "FeeCode": "FEE0002",
-            "FeeAmount": "55000"
+            "FeeAmount": "61200"
           }
         }
       ]
-    }
+    },
+    "divorceWho": "wife",
+    "applicant1Address": {},
+    "changeOfRepresentatives": [],
+    "dataVersion": 5,
+    "sentNotifications": {},
+    "coCronRetriesRemindApplicantApplyCo": 0,
+    "marriageFormationType": "oppositeSexCouple",
+    "solApplicationFeeInPounds": "612",
+    "marriageDate": "2009-04-20",
+    "solPaymentHowToPay": "feePayByAccount",
+    "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
+    "supplementaryCaseType": "notApplicable",
+    "warnings": []
   }
 }
