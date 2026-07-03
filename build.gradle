@@ -299,9 +299,9 @@ dependencies {
 // uncomment for local version
 //  implementation group: 'com.github.hmcts', name: 'ccd-config-generator', version: 'DEV-SNAPSHOT'
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '9.0'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.26.0'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.26.0'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.26.0'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.26.1'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.26.1'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.26.1'
   implementation group: 'com.google.guava', name: 'guava', version: '33.6.0-jre'
 
   implementation platform(group: "com.fasterxml.jackson", name: "jackson-bom", version: "2.21.1")
