@@ -45,7 +45,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
@@ -282,7 +281,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
 
         templateVars.put(SUBMISSION_RESPONSE_DATE,
             caseData.getApplication().getIssueDate().plusDays(16)
-                    .format(DATE_TIME_FORMATTER));
+                    .format(getDateTimeFormatterForPreferredLanguage(applicant2.getLanguagePreference())));
 
         return templateVars;
     }
