@@ -21,6 +21,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -73,7 +74,8 @@ public class AppliedForConditionalOrderNotification {
     protected Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant, String whichPartner) {
         Map<String, String> templateVars = commonContent.solicitorTemplateVars(data, id, applicant);
         templateVars.put(RESPONSE_DUE_DATE,
-            coQuestions(data, whichPartner).getSubmittedDate().plusDays(14).format(DATE_TIME_FORMATTER));
+            coQuestions(data, whichPartner).getSubmittedDate().plusDays(14)
+                .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         templateVars.put(CO_OR_FO, "conditional");
         return templateVars;
     }
