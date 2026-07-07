@@ -40,7 +40,7 @@ public class DeemedServiceDetailsAndUploadPage implements CcdPageConfiguration {
                         .label("deemedEvidenceLabel", DEEMED_EVIDENCE_LABEL)
                         .mandatory(DeemedServiceJourneyOptions::getDeemedEvidenceDetails)
                         .label("deemedStatementLabel", DEEMED_STATEMENT_LABEL)
-                        .optional(DeemedServiceJourneyOptions::getDeemedNoEvidenceStatement)
+                        .optionalNoSummary(DeemedServiceJourneyOptions::getDeemedNoEvidenceStatement)
                         .label("deemedEvidenceDocsLabel", DEEMED_EVIDENCE_DOCS_LABEL)
                         .optional(DeemedServiceJourneyOptions::getDeemedEvidenceDocs)
                     .done()

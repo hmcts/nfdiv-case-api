@@ -24,7 +24,6 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.*;
 public class DeemedServiceJourneyOptions implements ApplicationAnswers {
 
     @CCD(
-        label = "Provide a statement",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -32,7 +31,7 @@ public class DeemedServiceJourneyOptions implements ApplicationAnswers {
     private String deemedNoEvidenceStatement;
 
     @CCD(
-        label = "Tell us about your evidence",
+        label = "Details about your evidence",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
