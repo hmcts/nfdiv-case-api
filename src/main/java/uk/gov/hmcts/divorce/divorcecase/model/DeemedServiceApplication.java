@@ -30,16 +30,6 @@ public class DeemedServiceApplication {
 
     private Set<DeemedAcknowledgement> agreeToShareDetailsWithRespondentCheckbox;
 
-    @Getter
-    @AllArgsConstructor
-    public enum DeemedAcknowledgement implements HasLabel {
-
-        @JsonProperty("Yes")
-        CONFIRM("I understand that the answers may be shared with the respondent");
-
-        private final String label;
-    }
-
     @CCD(
         label = "How will payment be made?",
         typeOverride = FixedList,
@@ -71,4 +61,14 @@ public class DeemedServiceApplication {
         searchable = false
     )
     private List<ListValue<DivorceDocument>> deemedEvidenceDocs;
+
+    @Getter
+    @AllArgsConstructor
+    public enum DeemedAcknowledgement implements HasLabel {
+
+        @JsonProperty("Yes")
+        CONFIRM("I understand that the answers may be shared with the respondent");
+
+        private final String label;
+    }
 }
