@@ -28,7 +28,10 @@ class SoleApplicantFinalOrderOverdueDocumentPackTest {
     void shouldReturnDocumentPack() {
         Applicant applicant = mock(Applicant.class);
         CaseData caseData = CaseData.builder().applicant1(applicant).build();
-        assertEquals(SOLE_APPLICANT_FINAL_ORDER_OVERDUE_DOCUMENT_PACK, soleApplicantFinalOrderOverdueDocumentPack.getDocumentPack(caseData, applicant));
+        assertEquals(
+            SOLE_APPLICANT_FINAL_ORDER_OVERDUE_DOCUMENT_PACK,
+            soleApplicantFinalOrderOverdueDocumentPack.getDocumentPack(caseData, applicant)
+        );
         verify(generateD36Form).generateD36Document(caseData);
     }
 
