@@ -416,14 +416,6 @@ public class CaseData {
     private LocalDate refundDueDate;
 
     @JsonUnwrapped
-    @CCD(
-        label = "Deemed Service application",
-        access = {DefaultAccess.class},
-        searchable = false
-    )
-    private DeemedServiceApplication deemedServiceApplication;
-
-    @JsonUnwrapped
     @Builder.Default
     @CCD(searchable = false)
     private PartyFlags partyFlags = new PartyFlags();

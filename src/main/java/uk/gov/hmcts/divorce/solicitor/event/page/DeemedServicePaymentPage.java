@@ -2,8 +2,10 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
 public class DeemedServicePaymentPage implements CcdPageConfiguration {
 
@@ -16,8 +18,12 @@ public class DeemedServicePaymentPage implements CcdPageConfiguration {
         pageBuilder.page("deemedServicePayment")
             .pageLabel("Deemed Service App")
             .label("paymentLabel", PAYMENT_HEADING)
-            .complex(CaseData::getDeemedServiceApplication)
-            .mandatoryWithLabel(DeemedServiceApplication::getDeemedPaymentMethod, PAYMENT_LABEL)
+            .complex(CaseData::getApplicant1)
+                .complex(Applicant::getInterimApplicationOptions)
+                    .complex(InterimApplicationOptions::getDeemedServiceJourneyOptions)
+                        .mandatoryWithLabel(DeemedServiceJourneyOptions::getDeemedPaymentMethod, PAYMENT_LABEL)
+                    .done()
+                .done()
             .done();
     }
 }

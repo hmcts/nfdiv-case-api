@@ -2,8 +2,10 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
 public class DeemedServiceConfirmPage implements CcdPageConfiguration {
 
@@ -20,8 +22,12 @@ public class DeemedServiceConfirmPage implements CcdPageConfiguration {
         pageBuilder.page("deemedServiceConfirm")
             .pageLabel("Deemed Service App")
             .label("LabelDeemedServiceConfirmPara-1", SERVICE_CONFIRM_PARA)
-            .complex(CaseData::getDeemedServiceApplication)
-            .mandatoryNoSummary(DeemedServiceApplication::getAgreeToShareDetailsWithRespondentCheckbox)
+            .complex(CaseData::getApplicant1)
+                .complex(Applicant::getInterimApplicationOptions)
+                    .complex(InterimApplicationOptions::getDeemedServiceJourneyOptions)
+                        .mandatoryNoSummary(DeemedServiceJourneyOptions::getAgreeToShareDetailsWithRespondentCheckbox)
+                    .done()
+                .done()
             .done();
     }
 }
