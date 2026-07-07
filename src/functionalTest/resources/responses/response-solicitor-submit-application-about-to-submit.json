@@ -68,7 +68,7 @@
             "FeeAmount": "55000",
             "FeeCode": "FEE0002",
             "FeeDescription": "Filing an application for a divorce, nullity or civil partnership dissolution",
-            "FeeVersion": "5"
+            "FeeVersion": "${json-unit.any-string}"
           }
         }
       ],
