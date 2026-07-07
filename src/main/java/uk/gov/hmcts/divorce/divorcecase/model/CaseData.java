@@ -417,7 +417,7 @@ public class CaseData {
 
     @JsonUnwrapped
     @CCD(
-        label = "Service & General Application Options",
+        label = "Deemed Service application",
         access = {DefaultAccess.class},
         searchable = false
     )
