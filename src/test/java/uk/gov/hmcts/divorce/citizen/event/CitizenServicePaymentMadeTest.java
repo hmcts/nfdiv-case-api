@@ -66,7 +66,7 @@ class CitizenServicePaymentMadeTest {
 
     @Test
     void shouldReturnErrorIfPaymentValidationFails() {
-        List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder().amount(6000).status(DECLINED).build()));
+        List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder().amount(6200).status(DECLINED).build()));
 
         CaseData caseData = CaseData.builder()
             .alternativeService(AlternativeService.builder()
@@ -94,7 +94,7 @@ class CitizenServicePaymentMadeTest {
         setMockClock(clock);
 
         List<ListValue<Payment>> payments = singletonList(new ListValue<>(
-            "1", Payment.builder().amount(6000).status(SUCCESS).reference(TEST_REFERENCE).build())
+            "1", Payment.builder().amount(6200).status(SUCCESS).reference(TEST_REFERENCE).build())
         );
 
         CaseData caseData = CaseData.builder()
@@ -126,7 +126,7 @@ class CitizenServicePaymentMadeTest {
         setMockClock(clock);
 
         List<ListValue<Payment>> payments = singletonList(new ListValue<>(
-            "1", Payment.builder().amount(6000).status(SUCCESS).reference(TEST_REFERENCE).build())
+            "1", Payment.builder().amount(6200).status(SUCCESS).reference(TEST_REFERENCE).build())
         );
 
         CaseData caseData = CaseData.builder()
