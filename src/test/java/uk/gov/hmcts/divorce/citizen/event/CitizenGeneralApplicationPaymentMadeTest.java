@@ -84,7 +84,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
 
     @Test
     void shouldReturnErrorIfNoGeneralApplicationMatchesTheServiceRequest() {
-        List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder().amount(6000).status(DECLINED).build()));
+        List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder().amount(6200).status(DECLINED).build()));
 
         final var caseData = buildTestData();
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
@@ -101,7 +101,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
 
     @Test
     void shouldReturnErrorIfPaymentValidationFails() {
-        List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder().amount(6000).status(DECLINED).build()));
+        List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder().amount(6200).status(DECLINED).build()));
 
         final var caseData = buildTestData();
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
@@ -123,7 +123,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
         setMockClock(clock);
 
         List<ListValue<Payment>> payments = singletonList(new ListValue<>(
-            "1", Payment.builder().amount(6000).status(SUCCESS).reference(TEST_REFERENCE).build())
+            "1", Payment.builder().amount(6200).status(SUCCESS).reference(TEST_REFERENCE).build())
         );
 
         final var caseData = buildTestData();
@@ -172,7 +172,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
         setMockClock(clock);
 
         List<ListValue<Payment>> payments = singletonList(new ListValue<>(
-            "1", Payment.builder().amount(6000).status(SUCCESS).reference(TEST_REFERENCE).build())
+            "1", Payment.builder().amount(6200).status(SUCCESS).reference(TEST_REFERENCE).build())
         );
 
         final var caseData = buildTestData();
@@ -198,7 +198,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
         setMockClock(clock);
 
         List<ListValue<Payment>> payments = singletonList(new ListValue<>(
-            "1", Payment.builder().amount(6000).status(SUCCESS).reference(TEST_REFERENCE).build())
+            "1", Payment.builder().amount(6200).status(SUCCESS).reference(TEST_REFERENCE).build())
         );
 
         final var caseData = buildTestData();
