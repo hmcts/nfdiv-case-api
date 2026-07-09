@@ -20,7 +20,7 @@ plugins {
   id 'com.github.ben-manes.versions' version '0.54.0'
   id 'au.com.dius.pact' version '4.7.3'
   id 'hmcts.ccd.sdk' version '6.20.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.2240'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.2245'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
