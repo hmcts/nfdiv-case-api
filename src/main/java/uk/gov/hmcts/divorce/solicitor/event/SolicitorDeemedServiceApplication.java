@@ -54,6 +54,7 @@ public class SolicitorDeemedServiceApplication implements CCDConfig<CaseData, St
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
+        log.info("{} about to submit callback invoked for Case Id: {}", SOLICITOR_DEEMED_SERVICE_APPLICATION, details.getId());
         final CaseData caseData = details.getData();
         final Applicant applicant = caseData.getApplicant1();
 

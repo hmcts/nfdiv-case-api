@@ -1,6 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
@@ -9,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ServiceApplicationSubmissionService {
@@ -19,6 +21,9 @@ public class ServiceApplicationSubmissionService {
 
     public void submitFromInterimOptions(long caseId, CaseData caseData, Applicant applicant) {
         InterimApplicationOptions options = applicant.getInterimApplicationOptions();
+        log.info(
+            "Building service application from interim options for case id: {}", caseId);
+
         AlternativeService serviceApplication = serviceApplicationFactory.createFromInterimOptions(options);
 
         caseData.setAlternativeService(serviceApplication);

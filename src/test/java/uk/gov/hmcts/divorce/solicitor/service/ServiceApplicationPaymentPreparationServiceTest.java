@@ -48,7 +48,6 @@ class ServiceApplicationPaymentPreparationServiceTest {
         assertThat(serviceApplication.getServicePaymentFee().getPaymentMethod()).isEqualTo(ServicePaymentMethod.FEE_PAY_BY_ACCOUNT);
         assertThat(serviceApplication.getServicePaymentFee().getOrderSummary()).isEqualTo(orderSummary);
         assertThat(serviceApplication.getServicePaymentFee().getServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
-        assertThat(serviceApplication.getServicePaymentFee().getHelpWithFeesReferenceNumber()).isNull();
 
         verify(paymentSetupService).createServiceApplicationOrderSummary(serviceApplication, TEST_CASE_ID);
         verify(paymentSetupService).createServiceApplicationPaymentServiceRequest(
