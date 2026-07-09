@@ -1,11 +1,8 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
-import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -27,7 +24,6 @@ public class CaseworkerRemoveGeneralEmails implements CCDConfig<CaseData, State,
         new PageBuilder(configBuilder
             .event(CASEWORKER_REMOVE_GENERAL_EMAILS)
             .forStates(POST_SUBMISSION_STATES)
-            .aboutToSubmitCallback(this::aboutToSubmit)
             .name(REMOVE_GENERAL_EMAILS)
             .description(REMOVE_GENERAL_EMAILS)
             .showEventNotes()
@@ -38,19 +34,5 @@ public class CaseworkerRemoveGeneralEmails implements CCDConfig<CaseData, State,
             .optional(CaseData::getGeneralEmails)
             .optional(CaseData::getConfidentialGeneralEmails)
             .done();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
-                                                                       final CaseDetails<CaseData, State> beforeDetails) {
-        final var caseData = details.getData();
-        if (CollectionUtils.isEmpty(caseData.getGeneralEmails())) {
-            caseData.setGeneralEmails(null);
-        }
-        if (CollectionUtils.isEmpty(caseData.getConfidentialGeneralEmails())) {
-            caseData.setConfidentialGeneralEmails(null);
-        }
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .build();
     }
 }

@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.caseworker.event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -70,10 +69,6 @@ public class CaseworkerRemoveScannedDocument implements CCDConfig<CaseData, Stat
                 .data(caseData)
                 .errors(List.of("Scanned documents cannot be added by 'Remove scanned documents'"))
                 .build();
-        }
-
-        if (CollectionUtils.isEmpty(caseData.getDocuments().getScannedDocuments())) {
-            caseData.getDocuments().setScannedDocuments(null);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

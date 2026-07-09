@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.caseworker.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -58,10 +57,6 @@ public class CaseworkerUploadConfidentialDocument implements CCDConfig<CaseData,
             beforeDetails.getData().getDocuments().getConfidentialDocumentsUploaded(),
             caseData.getDocuments().getConfidentialDocumentsUploaded()
         ));
-
-        if (CollectionUtils.isEmpty(caseData.getDocuments().getConfidentialDocumentsUploaded())) {
-            caseData.getDocuments().setConfidentialDocumentsUploaded(null);
-        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
