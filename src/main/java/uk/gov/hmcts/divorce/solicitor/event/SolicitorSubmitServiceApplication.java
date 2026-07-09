@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class SolicitorDeemedServiceApplication implements CCDConfig<CaseData, State, UserRole> {
+public class SolicitorSubmitServiceApplication implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_DEEMED_SERVICE_APPLICATION = "solicitor-deemed-service-application";
 
@@ -76,7 +76,6 @@ public class SolicitorDeemedServiceApplication implements CCDConfig<CaseData, St
             .forState(AosOverdue)
             .name("Deemed service App")
             .description("Deemed service App")
-            .showCondition("alternativeServiceType!=\"*\"")
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)

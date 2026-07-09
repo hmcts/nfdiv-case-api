@@ -4,7 +4,6 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 
@@ -36,9 +35,7 @@ public class DeemedServiceConfirmPage implements CcdPageConfiguration {
             .label("LabelDeemedServiceConfirmPara-1", SERVICE_CONFIRM_PARAGRAPH)
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
-                    .complex(InterimApplicationOptions::getDeemedServiceJourneyOptions)
-                        .mandatoryNoSummary(DeemedServiceJourneyOptions::getAgreeToShareDetailsWithRespondentCheckbox)
-                    .done()
+                    .mandatoryNoSummary(InterimApplicationOptions::getAgreeToShareDetailsWithRespondentCheckbox)
                 .done()
             .done();
     }

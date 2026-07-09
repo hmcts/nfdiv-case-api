@@ -4,7 +4,6 @@ import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
 public class DeemedServicePaymentPage implements CcdPageConfiguration {
@@ -20,9 +19,7 @@ public class DeemedServicePaymentPage implements CcdPageConfiguration {
             .label("paymentLabel", PAYMENT_HEADING)
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
-                    .complex(InterimApplicationOptions::getDeemedServiceJourneyOptions)
-                        .mandatoryWithLabel(DeemedServiceJourneyOptions::getDeemedPaymentMethod, PAYMENT_LABEL)
-                    .done()
+                        .mandatoryWithLabel(InterimApplicationOptions::getInterimAppsPaymentMethod, PAYMENT_LABEL)
                 .done()
             .done();
     }

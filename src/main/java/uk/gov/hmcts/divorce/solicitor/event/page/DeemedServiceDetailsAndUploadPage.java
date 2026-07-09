@@ -54,8 +54,8 @@ public class DeemedServiceDetailsAndUploadPage implements CcdPageConfiguration {
                         .label("deemedStatementLabel", DEEMED_STATEMENT_LABEL)
                         .optionalNoSummary(DeemedServiceJourneyOptions::getDeemedNoEvidenceStatement)
                         .label("deemedEvidenceDocsLabel", DEEMED_EVIDENCE_DOCS_LABEL)
-                        .optional(DeemedServiceJourneyOptions::getDeemedEvidenceDocs)
                     .done()
+                    .optionalWithLabel(InterimApplicationOptions::getInterimAppsEvidenceDocs, "Applicant 1 uploaded documents")
                 .done()
             .done();
     }
