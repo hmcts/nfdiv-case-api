@@ -68,7 +68,7 @@ public class ApplicantSolicitorUpdateRespondentContactDetails implements CCDConf
             .complex(CaseData::getApplicant2)
             .optionalWithLabel(Applicant::getNonConfidentialEmail, "Respondent's email address")
             .mandatoryWithLabel(Applicant::getNonConfidentialAddress, "Respondent's postal address")
-            .mandatoryWithLabel(Applicant::getAddressOverseas, "Is respondent's address international?")
+            .mandatoryWithLabel(Applicant::getAddressOverseas, "Is the respondent's postal address international?")
             .done();
     }
 
