@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ChangedNameHow;
-import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -20,27 +18,20 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NAME_CHANGE_EVIDENCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.JOINT_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
-import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class ApplicationOutstandingActionNotification implements ApplicantNotification {
 
-    public static final String PAPERS_SERVED_ANOTHER_WAY = "papersServedAnotherWay";
-    public static final String DIVORCE_SERVED_ANOTHER_WAY = "divorceServedAnotherWay";
-    public static final String DISSOLUTION_SERVED_ANOTHER_WAY = "dissolutionServedAnotherWay";
 
     public static final String SEND_DOCUMENTS_TO_COURT = "sendDocumentsToCourt";
     public static final String SEND_DOCUMENTS_TO_COURT_DIVORCE = "sendDocumentsToCourtDivorce";
@@ -52,41 +43,37 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     public static final String MISSING_MARRIAGE_CERTIFICATE_TRANSLATION = "marriageCertificateTranslation";
     public static final String MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION = "civilPartnershipCertificateTranslation";
     public static final String MISSING_NAME_CHANGE_PROOF = "nameChangeProof";
-    public static final String LABEL_PARTNER = "labelPartner";
-    public static final String LABEL_DIVORCE_OR_CIVIL_PARTNERSHIP_CERTIFICATE = "labelDivorceOrCivilPartnershipCertificate";
-    private static final String DIVORCE_CERTIFICATE = "marriage certificate";
-    private static final String CIVIL_PARTNERSHIP_CERTIFICATE = "civil partnership certificate";
-    private static final String CY_DIVORCE_CERTIFICATE = "tystysgrif priodas";
-    private static final String CY_CIVIL_PARTNERSHIP_CERTIFICATE = "tystysgrif partneriaeth sifil";
+    public static final String ADDRESS_NOT_PROVIDED = "addressNotProvided";
+    public static final String SEND_DOCUMENTS_REFERENCE_NUMBER = "sendDocumentsToCourtReferenceNumber";
+    public static final String UPLOAD_DOCUMENTS_USING_FORM = "uploadDocumentsUsingForm";
+    public static final String ADDRESS_NOT_PROVIDED_SIGN_IN_URL = "addressNotProvidedSignInUrl";
+
 
     private final NotificationService notificationService;
     private final CommonContent commonContent;
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
-        if (caseData.getApplication().hasAwaitingApplicant1Documents() || caseData.getApplication().hasAwaitingApplicant2Documents()) {
-            log.info("Sending application outstanding actions notification to applicant 1 for case : {}", id);
+        log.info("Sending application outstanding actions notification to applicant 1 for case : {}", id);
 
-            notificationService.sendEmail(
-                caseData.getApplicant1().getEmail(),
-                OUTSTANDING_ACTIONS,
-                applicant1TemplateVars(caseData, id),
-                caseData.getApplicant1().getLanguagePreference(),
-                id
-            );
-        }
+        notificationService.sendEmail(
+            caseData.getApplicant1().getEmail(),
+            OUTSTANDING_ACTIONS,
+            applicant1TemplateVars(caseData, id),
+            caseData.getApplicant1().getLanguagePreference(),
+            id
+        );
     }
 
     @Override
     public void sendToApplicant2(final CaseData caseData, final Long id) {
-        if (!caseData.getApplicationType().isSole()
-            && (caseData.getApplication().hasAwaitingApplicant1Documents() || caseData.getApplication().hasAwaitingApplicant2Documents())) {
+        if (!caseData.getApplicationType().isSole()) {
             log.info("Sending application outstanding actions notification to applicant 2 for case : {}", id);
 
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
                 OUTSTANDING_ACTIONS,
-                this.applicant2TemplateVars(caseData, id),
+                applicant2TemplateVars(caseData, id),
                 caseData.getApplicant2().getLanguagePreference(),
                 id
             );
@@ -95,38 +82,20 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     private Map<String, String> applicant1TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
-        templateVars.putAll(courtDocumentDetails(caseData, true));
-        boolean soleServingAnotherWay = caseData.getApplicationType().isSole()
-            && caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES;
-        templateVars.putAll(serveAnotherWayTemplateVars(soleServingAnotherWay, caseData));
+
+        templateVars.putAll(courtDocumentDetails(caseData, id));
+
         return templateVars;
     }
 
     private Map<String, String> applicant2TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-        templateVars.putAll(courtDocumentDetails(caseData, false));
-        templateVars.putAll(serveAnotherWayTemplateVars(false, caseData));
+        templateVars.putAll(courtDocumentDetails(caseData, id));
+
         return templateVars;
     }
 
-    private Map<String, String> serveAnotherWayTemplateVars(boolean soleServingAnotherWay, CaseData caseData) {
-        Map<String, String> templateVars = new HashMap<>();
-
-        boolean servedAnotherWay = soleServingAnotherWay && caseData.isDivorce();
-        boolean languagePreferenceWelsh = WELSH == caseData.getApplicant1().getLanguagePreference();
-        String divorceOrDissolution = languagePreferenceWelsh ? DIVORCE_WELSH : DIVORCE;
-        String partner = soleServingAnotherWay ? commonContent.getPartner(caseData, caseData.getApplicant2(),
-                caseData.getApplicant1().getLanguagePreference()) : "";
-
-        templateVars.put(PAPERS_SERVED_ANOTHER_WAY, soleServingAnotherWay ? YES : NO);
-        templateVars.put(DIVORCE_OR_DISSOLUTION, divorceOrDissolution);
-        templateVars.put(PARTNER,  partner);
-        templateVars.put(DIVORCE_SERVED_ANOTHER_WAY, servedAnotherWay ? YES : NO);
-        templateVars.put(DISSOLUTION_SERVED_ANOTHER_WAY, soleServingAnotherWay && !caseData.isDivorce() ? YES : NO);
-        return templateVars;
-    }
-
-    private Map<String, String> courtDocumentDetails(CaseData caseData, boolean isApplicant1) {
+    private Map<String, String> courtDocumentDetails(CaseData caseData, Long id) {
         Map<String, String> templateVars = new HashMap<>();
         boolean needsToSendDocuments = !isEmpty(caseData.getApplication().getMissingDocumentTypes());
         boolean isDivorceAndSendDocumentsToCourt = needsToSendDocuments && caseData.isDivorce();
@@ -136,19 +105,27 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         templateVars.put(SEND_DOCUMENTS_TO_COURT_DIVORCE, isDivorceAndSendDocumentsToCourt ? YES : NO);
         templateVars.put(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, isDissolutionAndSendDocumentsToCourt ? YES : NO);
         templateVars.put(JOINT_CONDITIONAL_ORDER, !caseData.getApplicationType().isSole() ? YES : NO);
+        templateVars.put(SEND_DOCUMENTS_REFERENCE_NUMBER, needsToSendDocuments ? id != null ? formatId(id) : null : "");
+        templateVars.put(UPLOAD_DOCUMENTS_USING_FORM, needsToSendDocuments
+            ? "[upload your documents using our online form](https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/)."
+            : "");
 
-        templateVars.putAll(missingDocsTemplateVars(caseData, isApplicant1));
+        boolean addressNotProvided = caseData.getApplication().mustServeAnotherWay(
+            caseData.getApplicationType()
+        );
+
+        templateVars.put(ADDRESS_NOT_PROVIDED_SIGN_IN_URL, addressNotProvided ? commonContent.getSignInUrl(caseData) : "");
+        templateVars.put(ADDRESS_NOT_PROVIDED, addressNotProvided ? YES : NO);
+
+        templateVars.putAll(missingDocsTemplateVars(caseData, needsToSendDocuments));
 
         return templateVars;
     }
 
-    private Map<String, String> missingDocsTemplateVars(CaseData caseData, boolean isApplicant1) {
+    private Map<String, String> missingDocsTemplateVars(CaseData caseData, boolean needsToSendDocuments) {
         Map<String, String> templateVars = new HashMap<>();
         Set<DocumentType> missingDocTypes = caseData.getApplication().getMissingDocumentTypes();
         Set<ChangedNameHow> nameChangedHowSet = getNameChangedHowSet(caseData);
-
-        Applicant applicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
-        Applicant partner = isApplicant1 ? caseData.getApplicant2() : caseData.getApplicant1();
 
         boolean hasCertifiedTranslation = Optional.ofNullable(
             caseData.getApplication().getMarriageDetails().getCertifiedTranslation()).orElse(YesOrNo.NO).toBoolean();
@@ -162,39 +139,23 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         boolean isMissingTranslatedMarriageCertificate = missingDocTypes.contains(MARRIAGE_CERTIFICATE_TRANSLATION)
             || isMissingMarriageCertificateNameChangeEvidence && hasCertifiedTranslation;
 
-        boolean isMissingNameChangeEvidence = missingDocTypes.contains(NAME_CHANGE_EVIDENCE);
-
         templateVars.put(MISSING_MARRIAGE_CERTIFICATE,
-            isMissingMarriageCertificate && ukMarriage && caseData.isDivorce() ? YES : NO);
+            needsToSendDocuments && isMissingMarriageCertificate && ukMarriage && caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE,
-            isMissingMarriageCertificate && ukMarriage && !caseData.isDivorce() ? YES : NO);
+            needsToSendDocuments && isMissingMarriageCertificate && ukMarriage && !caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_FOREIGN_MARRIAGE_CERTIFICATE,
-            isMissingMarriageCertificate && !ukMarriage && caseData.isDivorce() ? YES : NO);
+            needsToSendDocuments && isMissingMarriageCertificate && !ukMarriage && caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE,
-            isMissingMarriageCertificate && !ukMarriage && !caseData.isDivorce() ? YES : NO);
+            needsToSendDocuments && isMissingMarriageCertificate && !ukMarriage && !caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION,
-            isMissingTranslatedMarriageCertificate && caseData.isDivorce() ? YES : NO);
+            needsToSendDocuments && isMissingTranslatedMarriageCertificate && caseData.isDivorce() ? YES : NO);
         templateVars.put(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION,
-            isMissingTranslatedMarriageCertificate && !caseData.isDivorce() ? YES : NO);
+            needsToSendDocuments && isMissingTranslatedMarriageCertificate && !caseData.isDivorce() ? YES : NO);
 
-        templateVars.put(MISSING_NAME_CHANGE_PROOF, isMissingNameChangeEvidence ? YES : NO);
-        templateVars.put(LABEL_PARTNER, isMissingNameChangeEvidence
-            ? commonContent.getPartner(caseData, partner, applicant.getLanguagePreference())
-            : "");
-        templateVars.put(LABEL_DIVORCE_OR_CIVIL_PARTNERSHIP_CERTIFICATE, isMissingNameChangeEvidence
-            ? getLabelForDivorceOrCivilPartnershipCertificate(caseData, applicant.getLanguagePreference())
-            : "");
-
+        templateVars.put(MISSING_NAME_CHANGE_PROOF, needsToSendDocuments && missingDocTypes.contains(NAME_CHANGE_EVIDENCE)
+            && !isEmpty(nameChangedHowSet) && !nameChangedHowSet.contains(ChangedNameHow.MARRIAGE_CERTIFICATE) ? YES : NO);
 
         return templateVars;
-    }
-
-    private String getLabelForDivorceOrCivilPartnershipCertificate(CaseData caseData, LanguagePreference languagePreference) {
-        if (caseData.isDivorce()) {
-            return languagePreference == WELSH ? CY_DIVORCE_CERTIFICATE : DIVORCE_CERTIFICATE;
-        } else {
-            return languagePreference == WELSH ? CY_CIVIL_PARTNERSHIP_CERTIFICATE : CIVIL_PARTNERSHIP_CERTIFICATE;
-        }
     }
 
     private Set<ChangedNameHow> getNameChangedHowSet(CaseData caseData) {

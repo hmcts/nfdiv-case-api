@@ -14,14 +14,12 @@ import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHWFDecision;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -44,6 +42,7 @@ public class CitizenPaymentMade implements CCDConfig<CaseData, State, UserRole> 
     private final SubmissionService submissionService;
 
     private final PaymentValidatorService paymentValidatorService;
+    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -92,12 +91,6 @@ public class CitizenPaymentMade implements CCDConfig<CaseData, State, UserRole> 
         }
 
         final CaseDetails<CaseData, State> updatedCaseDetails = submissionService.submitApplication(details);
-
-        if (caseData.getApplicationType().isSole()
-            && NO.equals(caseData.getApplication().getApplicant1KnowsApplicant2Address())
-            && YES.equals(caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay())) {
-            updatedCaseDetails.setState(AwaitingDocuments);
-        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(updatedCaseDetails.getData())

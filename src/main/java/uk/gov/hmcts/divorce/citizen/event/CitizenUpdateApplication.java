@@ -13,6 +13,8 @@ import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.NewPaperCase;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
@@ -29,6 +31,8 @@ public class CitizenUpdateApplication implements CCDConfig<CaseData, State, User
         AwaitingApplicant2Response,
         Applicant2Approved,
         AwaitingPayment,
+        AwaitingHWFEvidence,
+        AwaitingHWFPartPayment,
         NewPaperCase,
         Withdrawn,
         Rejected,
