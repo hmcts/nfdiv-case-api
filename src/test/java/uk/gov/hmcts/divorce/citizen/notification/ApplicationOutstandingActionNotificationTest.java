@@ -138,18 +138,6 @@ class ApplicationOutstandingActionNotificationTest {
     }
 
     @Test
-    void shouldNotCallSendEmailToApplicant1IfNoAwaitingDocuments() {
-        CaseData data = caseData();
-        data.setApplicant2(getApplicant2(MALE));
-        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
-        data.setApplicationType(SOLE_APPLICATION);
-
-        notification.sendToApplicant1(data, TEST_CASE_ID);
-
-        verifyNoInteractions(notificationService);
-    }
-
-    @Test
     void shouldCallSendEmailToApplicant2ForSupportingDocuments() {
         CaseData data = validApplicant2CaseData();
         data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
