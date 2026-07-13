@@ -150,7 +150,7 @@ public class SolicitorSendPapersAgain implements CCDConfig<CaseData, State, User
         } else if (application.isCourtServiceMethod() && applicant2.isBasedOverseas()) {
             validationErrors.add("You may not select court service because the respondent has an international address.");
         } else if (application.isPersonalServiceMethod()) {
-            validationErrors.add("You may not select personal service.");
+            validationErrors.add("You may not select Personal Service. Please select Solicitor or Court Service.");
         }
 
         return validationErrors;
