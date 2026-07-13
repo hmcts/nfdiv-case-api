@@ -15,7 +15,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.notification.SolicitorSendPapersAgainNotification;
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +43,12 @@ class SolicitorSendPapersAgainTest {
 
     @Mock
     private IssueApplicationService issueApplicationService;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private SolicitorSendPapersAgainNotification solicitorSendPapersAgainNotification;
 
     @InjectMocks
     private SolicitorSendPapersAgain solicitorSendPapersAgain;
@@ -183,5 +192,20 @@ class SolicitorSendPapersAgainTest {
             solicitorSendPapersAgain.midEvent(caseDetails, null);
 
         assertThat(response.getErrors()).isNullOrEmpty();
+    }
+
+    @Test
+    void shouldTriggerNotificationSolicitorSendPapersAgainSubmitted() {
+        var caseData = caseData();
+
+        caseData.getApplication().setServiceMethod(ServiceMethod.COURT_SERVICE);
+        caseData.getApplicant2().setAddressOverseas(NO);
+
+        var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+
+        final SubmittedCallbackResponse response =
+            solicitorSendPapersAgain.submitted(caseDetails, null);
+
+        verify(notificationDispatcher).send(solicitorSendPapersAgainNotification, caseData, caseDetails.getId());
     }
 }
