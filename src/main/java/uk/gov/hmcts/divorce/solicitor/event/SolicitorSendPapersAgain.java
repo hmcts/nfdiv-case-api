@@ -39,17 +39,18 @@ public class SolicitorSendPapersAgain implements CCDConfig<CaseData, State, User
     public static final String SOLICITOR_RESEND_PAPERS = "solicitor-send-papers-again";
     private static final String SEND_PAPERS_AGAIN = "Send papers again";
     private static final String RESPONDENT_NEW_ADDRESS_LABEL = """
-        If the respondent has new contact details, you can update their email or \
-        postal address and indicate that you want to send the papers again. We will resend the papers to the updated address at no \
-        additional cost if the service method is court service.
+     You can inform the court that you want to resend the papers to the respondent. We will resend the papers \
+     to their updated address at no additional cost if the service method is court service. You can only use this \
+     option once.
 
-        You can also resend the papers to the respondent without updating their details. If the service method is court service, \
-        we will send them to the same postal and email address as before. You can only use this option once.
+     If you want to serve the papers yourself, choose "solicitor service". We will generate the documents you \
+     need to send to the respondent. You can download the papers from the case and arrange for them to be \
+     served on the respondent. The documents are usually available in the Documents tab.
 
-        If you want to serve the papers yourself, choose "solicitor service". We will generate the documents  you need to send to the \
-        respondent.
+     If the respondent has new contact details and you want to send the papers to their new address, you can \
+     update their email or postal address using the “update respondent’s details” event before using this event
 
-        """;
+     """;
 
     private static final String ALWAYS_HIDE = "serviceMethod=\"ALWAYS_HIDE\"";
 
