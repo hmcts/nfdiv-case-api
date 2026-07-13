@@ -146,7 +146,7 @@ class SolicitorSendPapersAgainTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSendPapersAgain.midEvent(caseDetails, null);
 
-        assertThat(response.getErrors()).isEqualTo(List.of("You may not select personal service."));
+        assertThat(response.getErrors()).isEqualTo(List.of("You may not select Personal Service. Please select Solicitor or Court Service."));
     }
 
     @Test
