@@ -91,7 +91,8 @@ public class CitizenApplicant2UpdateContactDetails implements CCDConfig<CaseData
         dataApplicant2.setPhoneNumber(updatedApplicant2.getPhoneNumber());
         dataApplicant2.setContactDetailsType(updatedApplicant2.getContactDetailsType());
         dataApplicant2.setAddress(updatedApplicant2.getAddress());
-        dataApplicant2.setInRefuge(updatedApplicant2.getInRefuge());
+        dataApplicant2.setInRefuge(updatedApplicant2.isConfidentialContactDetails()
+            ? updatedApplicant2.getInRefuge() : YesOrNo.NO);
     }
 
     private boolean isAddressChanged(CaseData data, CaseData updatedData) {
