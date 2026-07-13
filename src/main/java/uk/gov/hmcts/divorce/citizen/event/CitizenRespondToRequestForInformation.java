@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateHmctsCoversheet;
 import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponseNotification;
 import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponsePartnerNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -63,6 +64,7 @@ public class CitizenRespondToRequestForInformation implements CCDConfig<CaseData
     private final NotificationDispatcher notificationDispatcher;
     private final CitizenRequestForInformationResponseNotification citizenRequestForInformationResponseNotification;
     private final CitizenRequestForInformationResponsePartnerNotification citizenRequestForInformationResponsePartnerNotification;
+    private final GenerateHmctsCoversheet generateHmctsCoverSheet;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -109,6 +111,8 @@ public class CitizenRespondToRequestForInformation implements CCDConfig<CaseData
             YES.equals(requestForInformationList.getLatestRequest().getLatestResponse().getRequestForInformationResponseCannotUploadDocs())
             ? AwaitingRequestedInformation
             : RequestedInformationSubmitted;
+
+        generateHmctsCoverSheet.addToDocumentsGenerated(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
