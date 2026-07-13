@@ -30,7 +30,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.util.List;
 
 import static java.time.LocalDate.now;
-import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.REISSUE_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
@@ -41,7 +40,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
-import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateCaseFieldsForCourtService;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateServiceMethod;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemIssueSolicitorServicePack.SYSTEM_ISSUE_SOLICITOR_SERVICE_PACK;
 
 @Component
@@ -122,21 +121,12 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
         final Application application = caseData.getApplication();
         final Applicant applicant2 = caseData.getApplicant2();
 
-        if (application.isPersonalServiceMethod()) {
+        List<String> validationErrors = validateServiceMethod(caseData);
+
+        if (!validationErrors.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
-                .errors(singletonList("You may not select Personal Service. Please select Solicitor or Court Service."))
-                .build();
-        } else if (application.isSolicitorServiceMethod()
-            && applicant2.isConfidentialContactDetails()) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(singletonList("You may not select Solicitor Service if the respondent is confidential."))
-                .build();
-        } else if (validateCaseFieldsForCourtService(caseData).size() > 0) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(singletonList("Solicitor cannot select court service because the respondent has an international address."))
+                .errors(validationErrors)
                 .build();
         } else if (application.isCourtServiceMethod() && beforeDetails.getData().getApplication().isSolicitorServiceMethod()) {
             caseData.setDueDate(now().plusDays(dueDateOffsetDays));

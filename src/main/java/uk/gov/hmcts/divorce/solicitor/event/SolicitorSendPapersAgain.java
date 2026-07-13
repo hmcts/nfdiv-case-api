@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -20,7 +19,6 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.notification.SolicitorSendPapersAgainNotification;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
@@ -30,6 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil.validateServiceMethod;
 
 @Component
 @Slf4j
@@ -118,7 +117,7 @@ public class SolicitorSendPapersAgain implements CCDConfig<CaseData, State, User
                                                                   CaseDetails<CaseData, State> detailsBefore) {
         final CaseData caseData = details.getData();
 
-        List<String> validationErrors = getValidationErrors(caseData);
+        List<String> validationErrors = validateServiceMethod(caseData);
 
         if (isNotEmpty(validationErrors)) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -138,22 +137,5 @@ public class SolicitorSendPapersAgain implements CCDConfig<CaseData, State, User
         notificationDispatcher.send(solicitorSendPapersAgainNotification, details.getData(), details.getId());
 
         return SubmittedCallbackResponse.builder().build();
-    }
-
-    private static List<String> getValidationErrors(CaseData caseData) {
-        Application application = caseData.getApplication();
-        Applicant applicant2 = caseData.getApplicant2();
-
-        List<String> validationErrors = new ArrayList<>();
-
-        if (application.isSolicitorServiceMethod() && applicant2.isConfidentialContactDetails()) {
-            validationErrors.add("You may not select solicitor service because the respondent is confidential.");
-        } else if (application.isCourtServiceMethod() && applicant2.isBasedOverseas()) {
-            validationErrors.add("You may not select court service because the respondent has an international address.");
-        } else if (application.isPersonalServiceMethod()) {
-            validationErrors.add("You may not select Personal Service. Please select Solicitor or Court Service.");
-        }
-
-        return validationErrors;
     }
 }

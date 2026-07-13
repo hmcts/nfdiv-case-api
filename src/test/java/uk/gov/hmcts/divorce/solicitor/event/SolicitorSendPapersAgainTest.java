@@ -132,7 +132,7 @@ class SolicitorSendPapersAgainTest {
             solicitorSendPapersAgain.midEvent(caseDetails, null);
 
         assertThat(response.getErrors()).isEqualTo(List.of(
-            "You may not select court service because the respondent has an international address."));
+            "Solicitor cannot select court service because the respondent has an international address."));
     }
 
     @Test
@@ -146,7 +146,8 @@ class SolicitorSendPapersAgainTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSendPapersAgain.midEvent(caseDetails, null);
 
-        assertThat(response.getErrors()).isEqualTo(List.of("You may not select Personal Service. Please select Solicitor or Court Service."));
+        assertThat(response.getErrors()).isEqualTo(List.of(
+            "You may not select Personal Service. Please select Solicitor or Court Service."));
     }
 
     @Test
@@ -161,7 +162,7 @@ class SolicitorSendPapersAgainTest {
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             solicitorSendPapersAgain.midEvent(caseDetails, null);
 
-        assertThat(response.getErrors()).isEqualTo(List.of("You may not select solicitor service because the respondent is confidential."));
+        assertThat(response.getErrors()).isEqualTo(List.of("You may not select Solicitor Service if the respondent is confidential."));
     }
 
     @Test
