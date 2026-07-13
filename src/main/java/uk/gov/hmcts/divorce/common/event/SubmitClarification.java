@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateHmctsCoversheet;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.ClarificationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.PostInformationToCourtNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -51,6 +52,8 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
 
     private final ClarificationSubmittedNotification clarificationSubmittedNotification;
 
+    private final GenerateHmctsCoversheet generateHmctsCoverSheet;
+
     private final Clock clock;
 
     @Override
@@ -91,6 +94,8 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
         final ConditionalOrder conditionalOrder = data.getConditionalOrder();
         final boolean cannotUploadDocuments = conditionalOrder.cannotUploadClarificationDocumentsBoolean();
         final boolean clarificationDocumentsUploaded = isNotEmpty(conditionalOrder.getClarificationUploadDocuments());
+
+        generateHmctsCoverSheet.addToDocumentsGenerated(details);
 
         if (cannotUploadDocuments) {
             notificationDispatcher.send(postInformationToCourtNotification, data, details.getId());
