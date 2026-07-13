@@ -64,7 +64,7 @@ public class SolicitorSendPapersAgain implements CCDConfig<CaseData, State, User
             .forStates(AosOverdue)
             .name(SEND_PAPERS_AGAIN)
             .description(SEND_PAPERS_AGAIN)
-            .showCondition("solicitorSentPapersAgain!=\"Yes\"")
+            .showCondition("applicationType=\"soleApplication\" AND solicitorSentPapersAgain!=\"Yes\"")
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
