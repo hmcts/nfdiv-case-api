@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
@@ -65,6 +66,9 @@ public class CitizenGeneralApplicationSubmissionService {
         final CaseData data = details.getData();
         final FeeDetails feeDetails = generalApplication.getGeneralApplicationFee();
         final ServicePaymentMethod paymentMethod = feeDetails.getPaymentMethod();
+        final Applicant applicant = generalApplication.getGeneralApplicationParty() == GeneralParties.APPLICANT
+                ? data.getApplicant1()
+                : data.getApplicant2();
 
         final boolean isHwfApplication = ServicePaymentMethod.FEE_PAY_BY_HWF.equals(paymentMethod);
         final boolean isAwaitingDocuments = YesOrNo.NO.equals(generalApplication.getGeneralApplicationDocsUploadedPreSubmission());
@@ -78,7 +82,7 @@ public class CitizenGeneralApplicationSubmissionService {
             details.setState(canBeAutoReferred ? AwaitingGeneralConsideration : GeneralApplicationReceived);
         }
 
-        if (data.isWelshGeneralApplication(generalApplication.getGeneralApplicationParty())) {
+        if (applicant.submittedWelshApplication()) {
             data.getApplication().setWelshPreviousState(details.getState());
             details.setState(WelshTranslationReview);
         }
