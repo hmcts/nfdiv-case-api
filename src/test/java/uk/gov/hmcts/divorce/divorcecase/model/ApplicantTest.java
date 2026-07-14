@@ -485,4 +485,26 @@ class ApplicantTest {
 
         assertThat(applicant.mustBeServedOverseas()).isFalse();
     }
+
+    @Test
+    void shouldResetInterimApplications() {
+        CaseData caseData = caseData();
+        Applicant applicant = caseData.getApplicant1();
+
+        applicant.setInterimApplications(List.of(ListValue.<InterimApplication>builder().value(
+                InterimApplication.builder().build())
+                .build()));
+        applicant.setInterimApplicationOptions(
+            InterimApplicationOptions.builder()
+                .interimApplicationType(InterimApplicationType.DISPENSE_WITH_SERVICE)
+                .build()
+        );
+        applicant.setGeneralAppServiceRequest("service-request");
+
+        applicant.resetInterimApplications();
+
+        assertThat(applicant.getInterimApplications()).isNull();
+        assertThat(applicant.getInterimApplicationOptions().getInterimApplicationType()).isNull();
+        assertThat(applicant.getGeneralAppServiceRequest()).isNull();
+    }
 }

@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfPr
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinancialOrderRequestedLetter;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendApplicationIssueNotifications;
@@ -22,6 +23,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.task.DivorceApplicationRemover;
 import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD84Form;
+
+import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.task.CaseTaskRunner.caseTasks;
 
@@ -54,6 +57,8 @@ public class IssueApplicationService {
 
     private final GenerateD84Form generateD84Form;
 
+    private final GenerateFinancialOrderRequestedLetter generateFinancialOrderRequestedLetter;
+
     private final SetServiceType setServiceType;
 
     private final SetIssueDate setIssueDate;
@@ -64,8 +69,6 @@ public class IssueApplicationService {
 
     public CaseDetails<CaseData, State> issueApplication(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
-            setServiceType,
-            validateIssue,
             setIssueDate,
             setPostIssueState,
             setDueDateAfterIssue,
@@ -75,7 +78,8 @@ public class IssueApplicationService {
             divorceApplicationRemover,
             generateApplication,
             generateD10Form,
-            generateD84Form
+            generateD84Form,
+            generateFinancialOrderRequestedLetter
         ).run(caseDetails);
     }
 
@@ -86,5 +90,13 @@ public class IssueApplicationService {
             sendApplicationIssueNotifications,
             sendFinancialOrderRequestedNotifications
         ).run(caseDetails);
+    }
+
+    public List<String> validateIssueApplication(CaseDetails<CaseData, State> details) {
+        return validateIssue.validate(details);
+    }
+
+    public CaseDetails<CaseData, State> updateServiceType(CaseDetails<CaseData, State> details) {
+        return setServiceType.apply(details);
     }
 }

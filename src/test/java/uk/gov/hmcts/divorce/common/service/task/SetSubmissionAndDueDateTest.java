@@ -24,6 +24,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDateTime;
@@ -74,6 +75,27 @@ class SetSubmissionAndDueDateTest {
     }
 
     @Test
+    void shouldSetDueDateAndDateAosSubmittedIfStateIsPendingRefund() {
+        setMockClock(clock);
+
+        final LocalDate issueDate = getExpectedLocalDate();
+
+        final CaseData caseData = caseData();
+        caseData.getApplication().setIssueDate(issueDate);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(PendingRefund);
+        caseDetails.setData(caseData);
+
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(issueDate);
+
+        final CaseDetails<CaseData, State> result = setSubmissionAndDueDate.apply(caseDetails);
+
+        assertThat(result.getData().getAcknowledgementOfService().getDateAosSubmitted()).isEqualTo(getExpectedLocalDateTime());
+        assertThat(result.getData().getDueDate()).isEqualTo(issueDate);
+    }
+
+    @Test
     void shouldSetDueDateToTwentyOneDaysIfSoleApplicationAndJudicialSeparationAndDisputed() {
         setMockClock(clock);
         final var caseData = caseData();
@@ -107,6 +129,29 @@ class SetSubmissionAndDueDateTest {
 
         final CaseData caseData = caseData();
         caseData.getApplication().setWelshPreviousState(Holding);
+        caseData.getApplication().setIssueDate(issueDate);
+
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setState(WelshTranslationReview);
+        caseDetails.setData(caseData);
+
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(issueDate);
+
+        final CaseDetails<CaseData, State> result = setSubmissionAndDueDate.apply(caseDetails);
+
+        assertThat(result.getData().getAcknowledgementOfService().getDateAosSubmitted()).isEqualTo(getExpectedLocalDateTime());
+        assertThat(result.getData().getDueDate()).isEqualTo(issueDate);
+    }
+
+    @Test
+    void shouldSetDueDateAndDateAosSubmittedIfStateIsWelshTranslationReviewAndWelshPreviousStateIsPendingRefund() {
+
+        setMockClock(clock);
+
+        final LocalDate issueDate = getExpectedLocalDate();
+
+        final CaseData caseData = caseData();
+        caseData.getApplication().setWelshPreviousState(PendingRefund);
         caseData.getApplication().setIssueDate(issueDate);
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
