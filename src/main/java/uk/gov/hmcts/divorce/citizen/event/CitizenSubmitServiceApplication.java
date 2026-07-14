@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateHmctsCoversheet;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
@@ -67,6 +68,8 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
     private final DocumentRemovalService documentRemovalService;
 
     private final Clock clock;
+
+    private final GenerateHmctsCoversheet generateHmctsCoverSheet;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -142,6 +145,8 @@ public class CitizenSubmitServiceApplication implements CCDConfig<CaseData, Stat
         newServiceApplication.setServiceApplicationAnswers(applicationDocument);
 
         applicant.archiveInterimApplicationOptions();
+
+        generateHmctsCoverSheet.addToDocumentsGenerated(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())

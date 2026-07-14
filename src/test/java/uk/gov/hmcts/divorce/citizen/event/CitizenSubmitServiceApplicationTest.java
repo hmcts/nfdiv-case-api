@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateHmctsCoversheet;
 import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceJourneyOptions;
@@ -64,6 +65,9 @@ class CitizenSubmitServiceApplicationTest {
 
     @Mock
     DocumentRemovalService documentRemovalService;
+
+    @Mock
+    private GenerateHmctsCoversheet generateHmctsCoverSheet;
 
     @InjectMocks
     private CitizenSubmitServiceApplication citizenSubmitServiceApplication;
