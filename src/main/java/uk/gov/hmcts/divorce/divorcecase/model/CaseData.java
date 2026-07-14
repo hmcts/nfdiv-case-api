@@ -454,6 +454,17 @@ public class CaseData {
         }
     }
 
+    @JsonIgnore
+    public boolean isWelshGeneralApplication( GeneralParties party) {
+        if (party.equals(GeneralParties.APPLICANT)) {
+            return YES.equals(applicant1.getLanguagePreferenceWelsh())
+                || YES.equals(applicant1.getUsedWelshTranslationOnSubmission());
+        } else {
+            return YES.equals(applicant2.getLanguagePreferenceWelsh())
+                || YES.equals(applicant2.getUsedWelshTranslationOnSubmission());
+        }
+    }
+
     private void enforceDivorceOrDissolution() {
         if (SEPARATION.equals(this.supplementaryCaseType)) {
             this.divorceOrDissolution = DISSOLUTION; // set Dissolution when Separation

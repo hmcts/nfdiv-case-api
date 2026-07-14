@@ -69,17 +69,18 @@ public class CitizenGeneralApplicationSubmissionService {
         final boolean isHwfApplication = ServicePaymentMethod.FEE_PAY_BY_HWF.equals(paymentMethod);
         final boolean isAwaitingDocuments = YesOrNo.NO.equals(generalApplication.getGeneralApplicationDocsUploadedPreSubmission());
 
-        if (data.isWelshApplication()) {
-            data.getApplication().setWelshPreviousState(details.getState());
-            details.setState(WelshTranslationReview);
-        } else if (isAwaitingDocuments) {
+        if (isAwaitingDocuments) {
             details.setState(AwaitingGenAppDocuments);
         } else if (isHwfApplication) {
             details.setState(AwaitingGeneralReferralPayment);
         } else {
             final boolean canBeAutoReferred = canBeAutoReferred(data, generalApplication.getGeneralApplicationType());
-
             details.setState(canBeAutoReferred ? AwaitingGeneralConsideration : GeneralApplicationReceived);
+        }
+
+        if (data.isWelshGeneralApplication(generalApplication.getGeneralApplicationParty())) {
+            data.getApplication().setWelshPreviousState(details.getState());
+            details.setState(WelshTranslationReview);
         }
     }
 
