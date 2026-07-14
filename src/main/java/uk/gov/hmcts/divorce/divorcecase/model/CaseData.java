@@ -444,13 +444,9 @@ public class CaseData {
     @JsonIgnore
     public boolean isWelshApplication() {
         if (applicationType.isSole()) {
-            return YES.equals(applicant1.getLanguagePreferenceWelsh())
-                || YES.equals(applicant1.getUsedWelshTranslationOnSubmission());
+            return applicant1.submittedWelshApplication();
         } else {
-            return YES.equals(applicant1.getLanguagePreferenceWelsh())
-                || YES.equals(applicant2.getLanguagePreferenceWelsh())
-                || YES.equals(applicant1.getUsedWelshTranslationOnSubmission())
-                || YES.equals(applicant2.getUsedWelshTranslationOnSubmission());
+            return applicant1.submittedWelshApplication() || applicant2.submittedWelshApplication();
         }
     }
 
