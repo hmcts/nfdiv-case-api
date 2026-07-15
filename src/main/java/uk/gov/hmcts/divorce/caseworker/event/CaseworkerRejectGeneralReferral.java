@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @RequiredArgsConstructor
 public class CaseworkerRejectGeneralReferral implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_REJECT_GENERAL_REFERRAL = "reject-general-referral";
-    private static final String DELETE_GENERAL_REFERRAL = "Reject general referral";
+    private static final String REJECT_GENERAL_REFERRAL = "Reject general referral";
     private static final String NO_GENERAL_REFERRAL_ERROR = "No general referral exists to reject.";
     private static final String WARNING_MESSAGE = "You are about to delete the general referral. This action cannot be undone.";
 
@@ -44,8 +44,8 @@ public class CaseworkerRejectGeneralReferral implements CCDConfig<CaseData, Stat
             .forStates(POST_SUBMISSION_STATES)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .aboutToStartCallback(this::aboutToStart)
-            .name(DELETE_GENERAL_REFERRAL)
-            .description(DELETE_GENERAL_REFERRAL)
+            .name(REJECT_GENERAL_REFERRAL)
+            .description(REJECT_GENERAL_REFERRAL)
             .showEventNotes()
             .showSummary()
             .grant(CREATE_READ_UPDATE,
@@ -56,7 +56,7 @@ public class CaseworkerRejectGeneralReferral implements CCDConfig<CaseData, Stat
                 LEGAL_ADVISOR,
                 JUDGE))
             .page("rejectGeneralReferral", this::midEvent)
-            .pageLabel(DELETE_GENERAL_REFERRAL)
+            .pageLabel(REJECT_GENERAL_REFERRAL)
             .complex(CaseData::getGeneralReferral)
                 .label("generalReferralTypeLabel", "## Note: The following general referral will be deleted")
                 .readonlyNoSummary(GeneralReferral::getGeneralReferralType)
