@@ -20,10 +20,10 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-class ServiceApplicationSubmissionServiceTest {
+class ServiceApplicationDraftSubmissionServiceTest {
 
     @InjectMocks
-    private ServiceApplicationSubmissionService serviceApplicationSubmissionService;
+    private ServiceApplicationDraftSubmissionService serviceApplicationSubmissionService;
 
     @Mock
     private ServiceApplicationFactory serviceApplicationFactory;
@@ -60,9 +60,6 @@ class ServiceApplicationSubmissionServiceTest {
 
         assertThat(caseData.getAlternativeService()).isEqualTo(serviceApplication);
         assertThat(caseData.getAlternativeService().getServiceApplicationAnswers()).isEqualTo(generatedDocument);
-        assertThat(applicant.getInterimApplicationOptions()).isEqualTo(new InterimApplicationOptions());
-        assertThat(applicant.getInterimApplications()).hasSize(1);
-        assertThat(applicant.getInterimApplications().getFirst().getValue().getOptions()).isEqualTo(originalOptions);
 
         verify(serviceApplicationFactory).createFromInterimOptions(originalOptions);
         verify(paymentPreparationService).prepareDraftServiceApplicationFee(TEST_CASE_ID, applicant, originalOptions, serviceApplication);

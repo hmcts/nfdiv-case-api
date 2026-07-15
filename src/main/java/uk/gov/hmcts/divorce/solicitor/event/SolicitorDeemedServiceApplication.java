@@ -18,7 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.DeemedServiceConfirmPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.DeemedServiceDetailsAndUploadPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.DeemedServicePaymentPage;
-import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationSubmissionService;
+import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationDraftSubmissionService;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class SolicitorDeemedServiceApplication implements CCDConfig<CaseData, St
 
     public static final String SOLICITOR_DEEMED_SERVICE_APPLICATION = "solicitor-deemed-service-application";
 
-    private final ServiceApplicationSubmissionService serviceApplicationBuilderService;
+    private final ServiceApplicationDraftSubmissionService serviceApplicationBuilderService;
 
 
     @Override
@@ -77,7 +77,9 @@ public class SolicitorDeemedServiceApplication implements CCDConfig<CaseData, St
             .forState(AosOverdue)
             .name("Deemed service App")
             .description("Deemed service App")
-            .showCondition("alternativeServiceType!=\"*\"")
+            .showCondition(
+                "alternativeServiceType!=\"deemed\" AND alternativeServiceType!=\"dispensed\" AND alternativeServiceType!=\"bailiff\" "
+                    + "AND alternativeServiceType!=\"alternativeService\"")
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)

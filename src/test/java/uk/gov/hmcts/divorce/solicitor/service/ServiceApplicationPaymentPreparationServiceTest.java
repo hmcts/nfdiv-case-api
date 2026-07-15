@@ -5,6 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -12,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
+import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.never;
@@ -29,19 +32,27 @@ class ServiceApplicationPaymentPreparationServiceTest {
     @Mock
     private PaymentSetupService paymentSetupService;
 
+    @Mock
+    private PbaService pbaService;
+
     @Test
     void shouldPrepareDraftFeeWithServiceRequestWhenPaymentMethodIsFeePayByAccount() {
         Applicant applicant = Applicant.builder().firstName("Applicant").lastName("One").build();
-        InterimApplicationOptions options = InterimApplicationOptions.builder()
-            .interimAppsPaymentMethod(SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT)
-            .build();
         AlternativeService serviceApplication = AlternativeService.builder().build();
         OrderSummary orderSummary = OrderSummary.builder().build();
+        DynamicList pbaNumbersDynamicList = DynamicList.builder()
+            .value(DynamicListElement.builder().label("PBA0088776").build())
+            .build();
 
         when(paymentSetupService.createServiceApplicationOrderSummary(serviceApplication, TEST_CASE_ID)).thenReturn(orderSummary);
+        when(pbaService.populatePbaDynamicList()).thenReturn(pbaNumbersDynamicList);
         when(paymentSetupService.createServiceApplicationPaymentServiceRequest(
             serviceApplication, TEST_CASE_ID, applicant.getFullName())
         ).thenReturn(TEST_SERVICE_REFERENCE);
+
+        InterimApplicationOptions options = InterimApplicationOptions.builder()
+            .interimAppsPaymentMethod(SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT)
+            .build();
 
         paymentPreparationService.prepareDraftServiceApplicationFee(TEST_CASE_ID, applicant, options, serviceApplication);
 
@@ -73,6 +84,7 @@ class ServiceApplicationPaymentPreparationServiceTest {
         assertThat(serviceApplication.getServicePaymentFee().getServiceRequestReference()).isNull();
 
         verify(paymentSetupService).createServiceApplicationOrderSummary(serviceApplication, TEST_CASE_ID);
+        verify(pbaService, never()).populatePbaDynamicList();
         verify(paymentSetupService, never()).createServiceApplicationPaymentServiceRequest(serviceApplication, TEST_CASE_ID,
             applicant.getFullName());
     }

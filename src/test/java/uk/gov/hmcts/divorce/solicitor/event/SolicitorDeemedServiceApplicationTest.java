@@ -18,7 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationSubmissionService;
+import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationDraftSubmissionService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -42,7 +42,7 @@ class SolicitorDeemedServiceApplicationTest {
     private SolicitorDeemedServiceApplication solicitorDeemedServiceApplication;
 
     @Mock
-    private ServiceApplicationSubmissionService serviceApplicationBuilderService;
+    private ServiceApplicationDraftSubmissionService serviceApplicationBuilderService;
 
     @Test
     void shouldAddSolicitorDeemedServiceApplicationEventToConfigBuilder() {

@@ -13,7 +13,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ServiceApplicationSubmissionService {
+public class ServiceApplicationDraftSubmissionService {
 
     private final ServiceApplicationFactory serviceApplicationFactory;
     private final ServiceApplicationPaymentPreparationService paymentPreparationService;
@@ -33,7 +33,5 @@ public class ServiceApplicationSubmissionService {
         DivorceDocument applicationDocument = interimApplicationSubmissionService
                 .generateServiceApplicationAnswerDocument(caseId, applicant, caseData);
         serviceApplication.setServiceApplicationAnswers(applicationDocument);
-
-        applicant.archiveInterimApplicationOptions();
     }
 }
