@@ -58,7 +58,8 @@ public class GeneralApplication {
     private LocalDateTime generalApplicationReceivedDate;
 
     @CCD(
-        label = "General application referred on"
+        label = "General application referred on",
+        searchable = false
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate generalApplicationReferredOnDate;

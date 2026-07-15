@@ -33,7 +33,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @RequiredArgsConstructor
 public class CaseworkerDeleteGeneralReferral implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_DELETE_GENERAL_REFERRAL = "delete-general-referral";
-    private static final String DELETE_GENERAL_REFERRAL = "Delete general referral";
+    private static final String DELETE_GENERAL_REFERRAL = "Reject general referral";
     private static final String NO_GENERAL_REFERRAL_ERROR = "No general referral exists to delete.";
     private static final String WARNING_MESSAGE = "You are about to delete the general referral. This action cannot be undone.";
 
@@ -55,7 +55,7 @@ public class CaseworkerDeleteGeneralReferral implements CCDConfig<CaseData, Stat
                 CASE_WORKER,
                 LEGAL_ADVISOR,
                 JUDGE))
-            .page("deleteGeneralReferral", this::midEvent)
+            .page("rejectGeneralReferral", this::midEvent)
             .pageLabel(DELETE_GENERAL_REFERRAL)
             .complex(CaseData::getGeneralReferral)
                 .label("generalReferralTypeLabel", "## Note: The following general referral will be deleted")
