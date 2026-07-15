@@ -458,6 +458,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("deemedServiceDate")
             .field("successfulServedByBailiff")
             .field("reasonFailureToServeByBailiff")
+            .field("serviceApplicationStatementOfTruth")
+            .field("serviceApplicationSignStatementOfTruth")
+            .field("serviceApplicationStatementOfTruthSolsName")
+            .field("serviceApplicationStatementOfTruthSolsFirm")
+            .field("serviceApplicationStatementOfTruthComments")
             .field("alternativeServiceOutcomes");
     }
 

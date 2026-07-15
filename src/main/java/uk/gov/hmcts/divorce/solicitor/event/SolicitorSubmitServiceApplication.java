@@ -10,10 +10,8 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -68,8 +66,6 @@ public class SolicitorSubmitServiceApplication implements CCDConfig<CaseData, St
                 .build();
         }
 
-        setStatementOfTruthToAlternativeService(caseData);
-
         caseData.getApplicant1().archiveInterimApplicationOptions();
 
         ServicePaymentMethod paymentMethod = Optional.ofNullable(caseData.getAlternativeService())
@@ -86,23 +82,6 @@ public class SolicitorSubmitServiceApplication implements CCDConfig<CaseData, St
             .state(targetState)
             .build();
     }
-
-    private void setStatementOfTruthToAlternativeService(CaseData caseData) {
-        Applicant applicant = caseData.getApplicant1();
-        AlternativeService alternativeService = caseData.getAlternativeService();
-
-        InterimApplicationOptions options = applicant.getInterimApplicationOptions();
-        if (options == null) {
-            return;
-        }
-
-        alternativeService.setServiceApplicationStatementOfTruth(options.getInterimAppsStatementOfTruth());
-        alternativeService.setServiceApplicationSignStatementOfTruth(options.getInterimAppsSignStatementOfTruth());
-        alternativeService.setServiceApplicationStatementOfTruthSolsName(options.getInterimAppsStatementOfTruthSolsName());
-        alternativeService.setServiceApplicationStatementOfTruthSolsFirm(options.getInterimAppsStatementOfTruthSolsFirm());
-        alternativeService.setServiceApplicationStatementOfTruthComments(options.getInterimAppsStatementOfTruthComments());
-    }
-
 
     private PageBuilder addEventConfig(
         final ConfigBuilder<CaseData, State, UserRole> configBuilder) {

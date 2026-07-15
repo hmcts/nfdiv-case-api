@@ -22,7 +22,6 @@ import java.util.Set;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
-import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 
 @Data
 @Builder(toBuilder = true)
@@ -136,43 +135,6 @@ public class InterimApplicationOptions {
         searchable = false
     )
     private YesOrNo interimAppsCannotUploadDocs;
-
-    @CCD(
-        label = "The applicant believes that the facts stated in this application are true.",
-        access = {DefaultAccess.class},
-        searchable = false
-    )
-    private YesOrNo interimAppsStatementOfTruth;
-
-    @CCD(
-        label = "I am duly authorised by the applicant to sign this statement.",
-        access = {DefaultAccess.class},
-        searchable = false
-    )
-    private YesOrNo interimAppsSignStatementOfTruth;
-
-    @CCD(
-        label = "Your name",
-        access = {DefaultAccess.class},
-        searchable = false
-    )
-    private String interimAppsStatementOfTruthSolsName;
-
-    @CCD(
-        label = "Name of your firm",
-        access = {DefaultAccess.class},
-        searchable = false
-    )
-    private String interimAppsStatementOfTruthSolsFirm;
-
-    @CCD(
-        label = "Additional comments",
-        hint = "For the attention of court staff. These comments will not form part of the application",
-        typeOverride = TextArea,
-        access = {DefaultAccess.class},
-        searchable = false
-    )
-    private String interimAppsStatementOfTruthComments;
 
     @JsonUnwrapped(prefix = "SearchGovRecords")
     @CCD(

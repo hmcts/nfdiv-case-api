@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -80,20 +79,11 @@ class SolicitorSubmitServiceApplicationIT {
         when(serviceApplicationSubmitPaymentService.processSubmitPayment(anyLong(), any()))
             .thenReturn(Optional.empty());
 
-        InterimApplicationOptions options = InterimApplicationOptions.builder()
-            .interimAppsStatementOfTruth(YesOrNo.YES)
-            .interimAppsSignStatementOfTruth(YesOrNo.YES)
-            .interimAppsStatementOfTruthSolsName("Test Solicitor")
-            .interimAppsStatementOfTruthSolsFirm("Test Firm")
-            .interimAppsStatementOfTruthComments("Additional comments")
-            .build();
-
         AlternativeService alternativeService = AlternativeService.builder().build();
         alternativeService.getServicePaymentFee().setPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_ACCOUNT);
 
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()
-                .interimApplicationOptions(options)
                 .build())
             .alternativeService(alternativeService)
             .build();
@@ -105,12 +95,7 @@ class SolicitorSubmitServiceApplicationIT {
                 .content(objectMapper.writeValueAsString(callbackRequest(caseData, SOLICITOR_SUBMIT_SERVICE_APPLICATION)))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.state").value("AwaitingServiceConsideration"))
-            .andExpect(jsonPath("$.data.serviceApplicationStatementOfTruth").value("Yes"))
-            .andExpect(jsonPath("$.data.serviceApplicationSignStatementOfTruth").value("Yes"))
-            .andExpect(jsonPath("$.data.serviceApplicationStatementOfTruthSolsName").value("Test Solicitor"))
-            .andExpect(jsonPath("$.data.serviceApplicationStatementOfTruthSolsFirm").value("Test Firm"))
-            .andExpect(jsonPath("$.data.serviceApplicationStatementOfTruthComments").value("Additional comments"));
+            .andExpect(jsonPath("$.state").value("AwaitingServiceConsideration"));
     }
 
     @Test
