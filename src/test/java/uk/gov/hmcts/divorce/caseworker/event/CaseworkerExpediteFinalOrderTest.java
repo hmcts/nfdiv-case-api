@@ -229,6 +229,18 @@ class CaseworkerExpediteFinalOrderTest {
         verify(notificationDispatcher).send(finalOrderGrantedNotification, details.getData(), TEST_CASE_ID);
     }
 
+    @Test
+    void shouldResetFinalOrderInsightSurveyStageWhenFinalOrderGranted() {
+        final CaseDetails<CaseData, State> details = getCaseDetailsWithSelectedGeneralOrderDocument();
+        details.getData().getFinalOrder().setGrantedDate(LocalDateTime.now());
+        details.getData().getFinalOrder().setFinalOrderInsightSurveyStage(2);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerExpediteFinalOrder.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getFinalOrder().getFinalOrderInsightSurveyStage()).isZero();
+    }
+
     CaseDetails<CaseData, State> getCaseDetails() {
         final CaseData caseData = caseData();
         final DivorceDocument generalOrderDoc = getDivorceDocumentListValue(
