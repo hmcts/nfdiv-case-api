@@ -91,7 +91,9 @@ public class SolicitorSubmitServiceApplication implements CCDConfig<CaseData, St
             .forState(AosOverdue)
             .name("Submit Service App")
             .description("Submit Service App")
-            .showCondition("alternativeServiceType=\"*\"")
+            .showCondition(
+                "alternativeServiceType=\"deemed\" OR alternativeServiceType=\"dispensed\" OR alternativeServiceType=\"bailiff\" "
+                    + "OR alternativeServiceType=\"alternativeService\"")
             .showSummary()
             .showEventNotes()
             .endButtonLabel("Save Application")
