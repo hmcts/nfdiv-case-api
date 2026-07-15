@@ -31,7 +31,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class CaseworkerDeleteGeneralReferral implements CCDConfig<CaseData, State, UserRole> {
+public class CaseworkerRejectGeneralReferral implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_DELETE_GENERAL_REFERRAL = "delete-general-referral";
     private static final String DELETE_GENERAL_REFERRAL = "Reject general referral";
     private static final String NO_GENERAL_REFERRAL_ERROR = "No general referral exists to delete.";

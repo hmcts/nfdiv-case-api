@@ -18,8 +18,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerDeleteGeneralReferral.CASEWORKER_DELETE_GENERAL_REFERRAL;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.INVALID_STATE_ERROR;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralReferral.CASEWORKER_DELETE_GENERAL_REFERRAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
@@ -28,16 +28,16 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseDataWithMarriageDate;
 
 @ExtendWith(MockitoExtension.class)
-class CaseworkerDeleteGeneralReferralTest {
+class CaseworkerRejectGeneralReferralTest {
 
     @InjectMocks
-    private CaseworkerDeleteGeneralReferral caseworkerDeleteGeneralReferral;
+    private CaseworkerRejectGeneralReferral caseworkerRejectGeneralReferral;
 
     @Test
     void shouldAddConfigurationToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        caseworkerDeleteGeneralReferral.configure(configBuilder);
+        caseworkerRejectGeneralReferral.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
@@ -52,7 +52,7 @@ class CaseworkerDeleteGeneralReferralTest {
         caseDetails.setData(caseData);
         caseDetails.setState(Holding);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerDeleteGeneralReferral.aboutToStart(caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRejectGeneralReferral.aboutToStart(caseDetails);
 
         assertThat(response.getErrors()).isNotNull();
         assertThat(response.getErrors()).hasSize(1);
@@ -68,7 +68,7 @@ class CaseworkerDeleteGeneralReferralTest {
         caseDetails.setData(caseData);
         caseDetails.setState(Holding);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerDeleteGeneralReferral.aboutToStart(caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRejectGeneralReferral.aboutToStart(caseDetails);
 
         assertThat(response.getErrors()).isEmpty();
         assertThat(response.getData().getApplication().getCurrentState()).isEqualTo(Holding);
@@ -85,7 +85,7 @@ class CaseworkerDeleteGeneralReferralTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
 
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerDeleteGeneralReferral.midEvent(details, null);
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRejectGeneralReferral.midEvent(details, null);
 
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors().getFirst()).isEqualTo(INVALID_STATE_ERROR);
@@ -104,7 +104,7 @@ class CaseworkerDeleteGeneralReferralTest {
         caseDetails.setData(caseData);
         caseDetails.setState(AwaitingGeneralConsideration);
 
-        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerDeleteGeneralReferral.aboutToSubmit(caseDetails, caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerRejectGeneralReferral.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getGeneralReferral().getGeneralReferralType()).isNull();
         assertThat(response.getData().getGeneralReferral().getGeneralApplicationReferralDate()).isNull();
