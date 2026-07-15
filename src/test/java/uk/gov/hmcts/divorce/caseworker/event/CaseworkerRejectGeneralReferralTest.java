@@ -19,7 +19,7 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.INVALID_STATE_ERROR;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralReferral.CASEWORKER_DELETE_GENERAL_REFERRAL;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralReferral.CASEWORKER_REJECT_GENERAL_REFERRAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
@@ -41,7 +41,7 @@ class CaseworkerRejectGeneralReferralTest {
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(CASEWORKER_DELETE_GENERAL_REFERRAL);
+            .contains(CASEWORKER_REJECT_GENERAL_REFERRAL);
     }
 
     @Test
@@ -56,7 +56,7 @@ class CaseworkerRejectGeneralReferralTest {
 
         assertThat(response.getErrors()).isNotNull();
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors().getFirst()).isEqualTo("No general referral exists to delete.");
+        assertThat(response.getErrors().getFirst()).isEqualTo("No general referral exists to reject.");
     }
 
     @Test

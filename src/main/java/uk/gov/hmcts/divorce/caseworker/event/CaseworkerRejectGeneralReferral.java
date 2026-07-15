@@ -32,15 +32,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Component
 @RequiredArgsConstructor
 public class CaseworkerRejectGeneralReferral implements CCDConfig<CaseData, State, UserRole> {
-    public static final String CASEWORKER_DELETE_GENERAL_REFERRAL = "delete-general-referral";
+    public static final String CASEWORKER_REJECT_GENERAL_REFERRAL = "reject-general-referral";
     private static final String DELETE_GENERAL_REFERRAL = "Reject general referral";
-    private static final String NO_GENERAL_REFERRAL_ERROR = "No general referral exists to delete.";
+    private static final String NO_GENERAL_REFERRAL_ERROR = "No general referral exists to reject.";
     private static final String WARNING_MESSAGE = "You are about to delete the general referral. This action cannot be undone.";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
-            .event(CASEWORKER_DELETE_GENERAL_REFERRAL)
+            .event(CASEWORKER_REJECT_GENERAL_REFERRAL)
             .forStates(POST_SUBMISSION_STATES)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .aboutToStartCallback(this::aboutToStart)
@@ -70,7 +70,7 @@ public class CaseworkerRejectGeneralReferral implements CCDConfig<CaseData, Stat
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        log.info("{} about to start callback invoked, Case Id: {}", CASEWORKER_DELETE_GENERAL_REFERRAL, details.getId());
+        log.info("{} about to start callback invoked, Case Id: {}", CASEWORKER_REJECT_GENERAL_REFERRAL, details.getId());
 
         final CaseData caseData = details.getData();
 
@@ -92,7 +92,7 @@ public class CaseworkerRejectGeneralReferral implements CCDConfig<CaseData, Stat
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails) {
 
-        log.info("{} about to submit callback invoked, Case Id: {}", CASEWORKER_DELETE_GENERAL_REFERRAL, details.getId());
+        log.info("{} about to submit callback invoked, Case Id: {}", CASEWORKER_REJECT_GENERAL_REFERRAL, details.getId());
 
         final CaseData caseData = details.getData();
         State state =  caseData.getApplication().getStateToTransitionApplicationTo();
@@ -111,7 +111,7 @@ public class CaseworkerRejectGeneralReferral implements CCDConfig<CaseData, Stat
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details,
                                                                   final CaseDetails<CaseData, State> detailsBefore) {
-        log.info("{} midEvent callback invoked, Case Id: {}", CASEWORKER_DELETE_GENERAL_REFERRAL, details.getId());
+        log.info("{} midEvent callback invoked, Case Id: {}", CASEWORKER_REJECT_GENERAL_REFERRAL, details.getId());
         List<String> validationErrors = validateStateUpdate(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
