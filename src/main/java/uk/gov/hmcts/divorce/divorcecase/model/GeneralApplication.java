@@ -58,10 +58,10 @@ public class GeneralApplication {
     private LocalDateTime generalApplicationReceivedDate;
 
     @CCD(
-        label = "General application referral date"
+        label = "General application referred on"
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate generalApplicationReferralDate;
+    private LocalDate generalApplicationReferredOnDate;
 
     @CCD(
         label = "Please provide more information about general application type",

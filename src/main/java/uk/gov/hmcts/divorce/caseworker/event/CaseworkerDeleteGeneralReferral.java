@@ -76,7 +76,7 @@ public class CaseworkerDeleteGeneralReferral implements CCDConfig<CaseData, Stat
 
         List<String> validationErrors = new ArrayList<>();
 
-        if (ObjectUtils.isEmpty(caseData.getGeneralReferral().getGeneralReferralType())) {
+        if (ObjectUtils.isEmpty(caseData.getGeneralReferral().getGeneralReferralReason())) {
             validationErrors.add(NO_GENERAL_REFERRAL_ERROR);
         }
 
@@ -97,12 +97,8 @@ public class CaseworkerDeleteGeneralReferral implements CCDConfig<CaseData, Stat
         final CaseData caseData = details.getData();
         State state =  caseData.getApplication().getStateToTransitionApplicationTo();
 
-        log.info("General referral before deletion: {}", caseData.getGeneralReferral());
-
         caseData.getApplication().setPreviousState(details.getState());
         caseData.setGeneralReferral(GeneralReferral.builder().build());
-
-        log.info("General referral after deletion: {}", caseData.getGeneralReferral());
 
         List<String> warnings = Collections.singletonList(WARNING_MESSAGE);
 

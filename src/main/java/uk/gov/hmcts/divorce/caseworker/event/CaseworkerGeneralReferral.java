@@ -153,7 +153,7 @@ public class CaseworkerGeneralReferral implements CCDConfig<CaseData, State, Use
                         ? caseData.getApplicant1() : caseData.getApplicant2();
                     applicant.setActiveGeneralApplication(null);
                 }
-                application.setGeneralApplicationReferralDate(caseData.getGeneralReferral().getGeneralApplicationReferralDate());
+                application.setGeneralApplicationReferredOnDate(caseData.getGeneralReferral().getGeneralApplicationReferralDate());
             }
         }
     }
