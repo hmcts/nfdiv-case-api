@@ -21,7 +21,15 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.util.Collections;
 import java.util.Objects;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -44,11 +52,23 @@ public class ApplicantSolicitorUpdateRespondentContactDetails implements CCDConf
 
     private final RespondentDetailsUpdatedNotification respondentDetailsUpdatedNotification;
 
+    private static final State[] UPDATE_RESPONDENT_DETAILS_STATES = {
+        Submitted,
+        AwaitingService,
+        AwaitingAos,
+        AosOverdue,
+        AwaitingDocuments,
+        AwaitingConditionalOrder,
+        AwaitingHWFEvidence,
+        AwaitingHWFDecision,
+        AwaitingHWFPartPayment
+    };
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(APP_SOLICITOR_UPDATE_RESPONDENT_DETAILS)
-            .forStates(POST_SUBMISSION_STATES)
+            .forStates(UPDATE_RESPONDENT_DETAILS_STATES)
             .showCondition("applicationType=\"soleApplication\"")
             .name("Update respondent details")
             .description("Update respondent contact details")
