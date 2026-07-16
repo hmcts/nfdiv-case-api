@@ -124,6 +124,11 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
             userOptions, GeneralParties.from(isApplicant1, data.getApplicationType())
         );
 
+        DivorceDocument applicationDocument = submissionService.generateGeneralApplicationAnswerDocument(
+            caseId, applicant, data, newGeneralApplication
+        );
+        newGeneralApplication.setGeneralApplicationDocument(applicationDocument);
+
         FeeDetails applicationFee = newGeneralApplication.getGeneralApplicationFee();
         if (userOptions.willMakePayment()) {
             newGeneralApplication.setGeneralApplicationFeeType(userOptions.isHearingRequired() ? FEE0227 : FEE0228);
@@ -145,11 +150,6 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
 
             submissionService.setEndState(details, newGeneralApplication);
         }
-
-        DivorceDocument applicationDocument = submissionService.generateGeneralApplicationAnswerDocument(
-            caseId, applicant, data, newGeneralApplication
-        );
-        newGeneralApplication.setGeneralApplicationDocument(applicationDocument);
 
         data.updateCaseWithGeneralApplication(newGeneralApplication);
         applicant.archiveInterimApplicationOptions();
@@ -192,6 +192,7 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
             .generalApplicationParty(generalParty)
             .generalApplicationReceivedDate(LocalDateTime.now(clock))
             .generalApplicationType(userOptions.getGeneralApplicationType())
+            .generalApplicationOtherTypeDetails(userOptions.getOtherGeneralApplicationTypeDetails())
             .generalApplicationSubmittedOnline(YesOrNo.YES)
             .generalApplicationDocuments(submissionService.collectSupportingDocuments(userOptions))
             .generalApplicationDocsUploadedPreSubmission(userOptions.isAwaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)

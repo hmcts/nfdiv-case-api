@@ -10,7 +10,6 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
-import uk.gov.hmcts.divorce.common.exception.InvalidDataException;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -61,6 +60,7 @@ class CaseworkerReissueApplicationTest {
         caseDetails.setId(12345L);
         caseDetails.setData(caseData);
 
+        when(reIssueApplicationService.validateReIssueApplication(caseDetails)).thenReturn(Collections.emptyList());
         doThrow(new InvalidReissueOptionException("")).when(reIssueApplicationService).process(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerReissue.aboutToSubmit(caseDetails, null);
@@ -118,19 +118,14 @@ class CaseworkerReissueApplicationTest {
     }
 
     @Test
-    void shouldReturnValidationErrorsWhenThereIsAnInvalidDataException() {
+    void shouldReturnValidationErrorsWhenThereIsAnInvalidData() {
         final var caseData = invalidCaseData();
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
         details.setCreatedDate(LOCAL_DATE_TIME);
 
-        when(reIssueApplicationService.process(details))
-            .thenThrow(new InvalidDataException(
-                "dummy details",
-                null,
-                Collections.singletonList(TEST_VALIDATION_ERROR)
-            ));
+        when(reIssueApplicationService.validateReIssueApplication(details)).thenReturn(Collections.singletonList(TEST_VALIDATION_ERROR));
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerReissue.aboutToSubmit(details, null);
 

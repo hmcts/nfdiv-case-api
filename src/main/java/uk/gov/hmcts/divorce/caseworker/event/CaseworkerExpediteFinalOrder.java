@@ -17,20 +17,20 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ExpeditedFinalOrderAuthorisation;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderInsightSurveyInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ErrorsAndWarnings;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.springframework.util.ObjectUtils.isEmpty;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.ERROR_FINAL_ORDER_ALREADY_GRANTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
@@ -41,6 +41,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ErrorsAndWarnings;
+import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.validateFinalOrderGrantedDate;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.FINAL_ORDER_GRANTED;
@@ -83,13 +85,20 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
                     .mandatory(ExpeditedFinalOrderAuthorisation::getExpeditedFinalOrderJudgeName)
                 .done()
                 .mandatory(FinalOrder::getGranted)
-                .optional(FinalOrder::getGrantedDate, "granted=\"Yes\"")
+                .mandatory(FinalOrder::getGrantedDate, "granted=\"Yes\"")
             .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
         log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_EXPEDITE_FINAL_ORDER, details.getId());
         var caseData = details.getData();
+
+        if (caseData.getFinalOrder().getGrantedDate() != null) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(Collections.singletonList(ERROR_FINAL_ORDER_ALREADY_GRANTED))
+                .build();
+        }
 
         if (caseData.getConditionalOrder().getGrantedDate() == null) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
@@ -141,11 +150,15 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
         CaseData caseData = details.getData();
         FinalOrder finalOrder = caseData.getFinalOrder();
 
-        if (isEmpty(finalOrder.getGrantedDate())) {
-            finalOrder.setGrantedDate(LocalDateTime.now(clock));
+        finalOrder.setDateFinalOrderEligibleFrom(details.getData().getConditionalOrder().getGrantedDate());
+        ErrorsAndWarnings errorsAndWarnings = validateFinalOrderGrantedDate(details);
+        if (!errorsAndWarnings.errors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(errorsAndWarnings.errors)
+                .build();
         }
 
-        finalOrder.setDateFinalOrderEligibleFrom(LocalDate.now(clock));
         final String expeditedFinalOrderGeneralOrderDocumentName = caseData.getDocuments()
             .getGeneralOrderDocumentNames().getValue().getLabel();
 
@@ -169,8 +182,13 @@ public class CaseworkerExpediteFinalOrder implements CCDConfig<CaseData, State, 
 
         notificationDispatcher.send(finalOrderGrantedNotification, caseData, details.getId());
 
+        finalOrder.setFinalOrderInsightSurveyStage(
+            FinalOrderInsightSurveyInvite.BY_STAGE.getFirst().getStage()
+        );
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
+            .warnings(errorsAndWarnings.warnings)
             .state(FinalOrderComplete)
             .build();
     }

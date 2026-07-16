@@ -3,10 +3,8 @@ package uk.gov.hmcts.divorce.divorcecase.util;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
@@ -20,10 +18,10 @@ public final class AddressUtil {
 
     private static final String COMMA_SEPARATOR = ",";
     private static final int ADDRESS_LINE_MAX_CHARS = 25;
-    private static final List<String> UK_TERMS = Arrays.asList("unitedkingdom", "uk", "england", "wales", "greatbritain");
-    private static final List<String> SCOTTISH_POSTCODE_PREFIXES =
-        Arrays.asList("ab", "dd", "dg", "eh", "fk", "g", "hs", "iv", "ka", "kw", "ky", "ml", "pa", "ph", "td", "ze");
-    private static final String NI_POSTCODE_PREFIX = "bt";
+    private static final Set<String> UK_TERMS = Set.of(
+        "unitedkingdom", "uk", "england", "wales", "scotland", "northernireland", "greatbritain",
+        "deyrnasunedig", "du", "lloegr", "cymru", "yralban", "gogleddiwerddon", "prydainfawr"
+    );
     private static final String OVERSEAS_EXCEPTION_MESSAGE =
         "Cannot assert whether address is overseas or not due to null address or blank/null country";
 
@@ -69,21 +67,14 @@ public final class AddressUtil {
         return null;
     }
 
-    public static boolean isEnglandOrWales(AddressGlobalUK address) {
+    public static boolean isUnitedKingdom(AddressGlobalUK address) {
         if (isNull(address) || StringUtils.isBlank(address.getCountry())) {
             throw new IllegalArgumentException(OVERSEAS_EXCEPTION_MESSAGE);
         }
 
-        final String sanitisedCountry = address.getCountry().replaceAll("[^a-zA-Z0-9]+", "").toLowerCase(Locale.ROOT);
-        final String postcode = Optional.ofNullable(address.getPostCode()).orElse("");
+        final String sanitisedCountry = address.getCountry().replaceAll("[^a-zA-Z0-9]+", "")
+            .toLowerCase(Locale.ROOT);
 
-        var isScottishOrNorthernIrishPostcode = false;
-        if (postcode.matches(".*[a-zA-Z]+.*")) {
-            final String sanitisedPostcodePrefix = postcode.split("[0-9]")[0].toLowerCase(Locale.ROOT);
-            isScottishOrNorthernIrishPostcode =
-                SCOTTISH_POSTCODE_PREFIXES.contains(sanitisedPostcodePrefix) || NI_POSTCODE_PREFIX.equals(sanitisedPostcodePrefix);
-        }
-
-        return UK_TERMS.contains(sanitisedCountry) && !isScottishOrNorthernIrishPostcode;
+        return UK_TERMS.contains(sanitisedCountry);
     }
 }

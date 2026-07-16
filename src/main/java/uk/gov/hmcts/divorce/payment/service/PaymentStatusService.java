@@ -13,27 +13,35 @@ import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.payment.client.PaymentClient;
 import uk.gov.hmcts.divorce.payment.model.Payment;
+import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto;
+import uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus;
+import uk.gov.hmcts.divorce.payment.rule.ApplicationPaymentMadeRule;
+import uk.gov.hmcts.divorce.payment.rule.FinalOrderPaymentMadeRule;
+import uk.gov.hmcts.divorce.payment.rule.PaymentMadeRule;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenPaymentMade.CITIZEN_PAYMENT_MADE;
-import static uk.gov.hmcts.divorce.citizen.event.RespondentFinalOrderPaymentMade.RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
+import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.systemupdate.event.SystemRejectCasesWithPaymentOverdue.APPLICATION_REJECTED_FEE_NOT_PAID;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentStatusService {
 
-    private static final String SUCCESS = "Success";
+    private static final int GRACE_PERIOD_HOURS = 24;
 
     private final PaymentClient paymentClient;
 
@@ -45,7 +53,11 @@ public class PaymentStatusService {
 
     private final CcdUpdateService ccdUpdateService;
 
-    private final UpdateSuccessfulPaymentStatus updateSuccessfulPaymentStatus;
+    private final ServiceRequestSearchService serviceRequestSearchService;
+
+    private final ApplicationPaymentMadeRule applicationPaymentMadeRule;
+
+    private final FinalOrderPaymentMadeRule finalOrderPaymentMadeRule;
 
     public void hasSuccessFulPayment(List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> casesInAwaitingPaymentState) {
         log.info("PaymentStatusService: {} cases in AwaitingPayment state",
@@ -84,14 +96,16 @@ public class PaymentStatusService {
         List<Long> successfulPaymentCaseIds = new ArrayList<>();
         casesWithSuccessfulPayment.forEach(successfulPaymentCase -> {
 
-            String eventId = AwaitingPayment == successfulPaymentCase.getState()
-                    ? CITIZEN_PAYMENT_MADE : RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
+            PaymentMadeRule paymentRule = AwaitingPayment.equals(successfulPaymentCase.getState())
+                    ? applicationPaymentMadeRule : finalOrderPaymentMadeRule;
 
             Long caseId = successfulPaymentCase.getId();
 
-            log.info("{} event called for {} with successful payment: ", eventId, caseId);
+            log.info("{} event called for {} with successful payment: ", paymentRule.paymentMadeEvent(), caseId);
 
-            ccdUpdateService.submitEventWithRetry(caseId.toString(), eventId, updateSuccessfulPaymentStatus, user, s2sToken);
+            ccdUpdateService.submitEventWithRetry(
+                caseId.toString(), paymentRule.paymentMadeEvent(), new UpdateSuccessfulPaymentStatus(paymentRule), user, s2sToken
+            );
             successfulPaymentCaseIds.add(caseId);
         });
 
@@ -117,7 +131,7 @@ public class PaymentStatusService {
                 : caseDetails.getData().getFinalOrder().getFinalOrderPayments();
     }
 
-    private boolean hasSuccessfulPayment(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
+    public boolean hasSuccessfulPayment(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
                                          String userToken, String s2sToken) {
 
         final List<ListValue<uk.gov.hmcts.divorce.divorcecase.model.Payment>> payments = getPayments(caseDetails);
@@ -140,6 +154,70 @@ public class PaymentStatusService {
             paymentReference
         );
 
-        return SUCCESS.equalsIgnoreCase(payment.getStatus());
+        return SUCCESS.getLabel().equalsIgnoreCase(payment.getStatus());
+    }
+
+    public void processPaymentRejection(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails, User user, String serviceAuth) {
+
+        List<ServiceRequestDto> caseServiceRequests = serviceRequestSearchService.getServiceRequestsForCase(caseDetails.getId());
+
+        if (caseServiceRequests.isEmpty()) {
+            rejectCase(caseDetails, "no service requests found", user, serviceAuth);
+            return;
+        }
+
+        boolean allServiceRequestsCanBeCancelled = caseServiceRequests.stream()
+            .filter(Objects::nonNull)
+            .allMatch(this::canServiceRequestBeCancelled);
+
+        if (allServiceRequestsCanBeCancelled) {
+            rejectCase(caseDetails, "no recent service requests and no successful payments found", user, serviceAuth);
+        } else {
+            log.info("Skipping case {} - Successful payment or recent payment activity within 24 hours found", caseDetails.getId());
+        }
+    }
+
+    private boolean canServiceRequestBeCancelled(ServiceRequestDto serviceRequest) {
+        ServiceRequestStatus serviceRequestStatus = serviceRequest.getServiceRequestStatus();
+        boolean hasServiceRequestBeenPaid = !ServiceRequestStatus.NOT_PAID.equals(serviceRequestStatus);
+        boolean isServiceRequestWithinGracePeriod = isDateWithinGracePeriod(serviceRequest.getDateUpdated());
+
+        if (isServiceRequestWithinGracePeriod || hasServiceRequestBeenPaid) {
+            return false;
+        }
+
+        return canAllPaymentsBeCancelled(serviceRequest.getPayments());
+    }
+
+    private boolean canAllPaymentsBeCancelled(List<ServiceRequestDto.PaymentDto> payments) {
+        if (payments == null || payments.isEmpty()) {
+            return true;
+        }
+
+        return payments.stream()
+            .filter(Objects::nonNull)
+            .noneMatch(payment ->
+                this.isDateWithinGracePeriod(payment.getDateUpdated()) || SUCCESS.getLabel().equalsIgnoreCase(payment.getStatus())
+             );
+    }
+
+    private boolean isDateWithinGracePeriod(Date date) {
+        if (date == null) {
+            return false;
+        }
+
+        LocalDateTime gracePeriodStart = LocalDateTime.now().minusHours(GRACE_PERIOD_HOURS);
+        LocalDateTime createdTime = LocalDateTime.ofInstant(
+            date.toInstant(),
+            ZoneId.systemDefault()
+        );
+
+        return gracePeriodStart.isBefore(createdTime);
+    }
+
+    private void rejectCase(uk.gov.hmcts.ccd.sdk.api.CaseDetails<CaseData, State> caseDetails,
+                            String reason, User user, String serviceAuth) {
+        log.info("Rejecting case {} as {}", caseDetails.getId(), reason);
+        ccdUpdateService.submitEvent(caseDetails.getId(), APPLICATION_REJECTED_FEE_NOT_PAID, user, serviceAuth);
     }
 }

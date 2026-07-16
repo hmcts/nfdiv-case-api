@@ -38,6 +38,13 @@ public class GeneralApplication {
     private GeneralApplicationType generalApplicationType;
 
     @CCD(
+        label = "Specify, what other application?",
+        typeOverride = TextArea,
+        searchable = false
+    )
+    private String generalApplicationOtherTypeDetails;
+
+    @CCD(
         label = "Which party submitted the general application?",
         searchable = false
     )
@@ -49,6 +56,13 @@ public class GeneralApplication {
     )
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime generalApplicationReceivedDate;
+
+    @CCD(
+        label = "General application referred on",
+        searchable = false
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate generalApplicationReferredOnDate;
 
     @CCD(
         label = "Please provide more information about general application type",

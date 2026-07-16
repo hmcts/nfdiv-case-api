@@ -105,7 +105,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         buildWarningsTab(configBuilder);
         buildMatchesTab(configBuilder);
         buildStateTab(configBuilder);
-        buildAosTab(configBuilder);
+        buildSolicitorAosTab(configBuilder);
+        buildInternalUserAosTab(configBuilder);
         buildConditionalOrderTab(configBuilder);
         buildConditionalOrderTabForApp2Sol(configBuilder);
         buildOutcomeOfConditionalOrderTab(configBuilder);
@@ -146,10 +147,19 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("LabelState", null, "#### Case State:  ${[STATE]}");
     }
 
-    private void buildAosTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        configBuilder.tab("aosDetails", "AoS")
-            .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE,
-                SUPER_USER, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
+    private void buildSolicitorAosTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        addAosTabFields(configBuilder.tab("aosDetailsSolicitor", "AoS")
+            .forRoles(APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
+        );
+    }
+
+    private void buildInternalUserAosTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
+        addAosTabFields(configBuilder.tab("aosDetailsInternal", "AoS").forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER))
+            .field("noticeOfProceedingsEmail", "applicant2ContactDetailsType!=\"private\" AND applicant2SolicitorRepresented!=\"Yes\"");
+    }
+
+    private Tab.TabBuilder<CaseData, UserRole> addAosTabFields(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+        return tabBuilder
             .showCondition("dateAosSubmitted=\"*\" AND applicationType=\"soleApplication\" AND coSwitchedToSole!=\"Yes\" AND "
                 + notShowForState(
                     Draft,
@@ -184,8 +194,6 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("applicant2LanguagePreferenceWelsh")
             .field("applicant2SolicitorRepresented")
             .field("applicant2SolicitorEmail","applicant2SolicitorRepresented=\"Yes\"")
-            .field("noticeOfProceedingsEmail",
-                "applicant2ContactDetailsType!=\"private\" AND applicant2SolicitorRepresented!=\"Yes\"")
             .field("noticeOfProceedingsSolicitorFirm")
             .field("applicant2SolicitorRepresented", NEVER_SHOW)
             .field("statementOfTruth")
@@ -390,6 +398,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildConfidentialDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("confidentialDocuments", "Confidential Document")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
+            .showCondition(getShowConditionForConfidentialDocumentTab())
             .field("confidentialDocumentsGenerated")
             .field("confidentialDocumentsUploaded")
             .field("applicant1DocumentsUploaded", APPLICANT_1_CONTACT_DETAILS_PRIVATE)
@@ -399,9 +408,26 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(CaseData::getGeneralLetters, APPLICANTS_CONTACT_DETAILS_PRIVATE);
     }
 
+    private String getShowConditionForConfidentialDocumentTab() {
+        return "confidentialDocumentsGenerated=\"*\" "
+            + "OR confidentialDocumentsUploaded=\"*\" "
+            + "OR (applicant1DocumentsUploaded=\"*\" AND applicant1ContactDetailsType=\"private\") "
+            + "OR (applicant2DocumentsUploaded=\"*\" AND applicant2ContactDetailsType=\"private\") "
+            + "OR scannedDocuments=\"*\" "
+            + "OR confidentialGeneralEmails=\"*\" "
+            + "OR (generalLetters=\"*\" AND applicant1ContactDetailsType=\"private\") "
+            + "OR (generalLetters=\"*\" AND applicant2ContactDetailsType=\"private\")";
+    }
+
     private void buildServiceApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        configBuilder.tab("alternativeService", "Service Application")
+        final Tab.TabBuilder<CaseData, UserRole> tabBuilder = configBuilder.tab("alternativeService", "Service Application")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER, APPLICANT_1_SOLICITOR)
+            .showCondition("receivedServiceApplicationDate=\"*\" OR alternativeServiceOutcomes=\"*\"");
+        addServiceApplicationTabFields(tabBuilder);
+    }
+
+    private void addServiceApplicationTabFields(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
+        tabBuilder
             .field("receivedServiceApplicationDate")
             .field("receivedServiceAddedDate")
             .field("alternativeServiceType")
@@ -417,8 +443,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field("servicePaymentFeeHasCompletedOnlinePayment")
             .field("servicePaymentFeePaymentReference")
             .field(
-              "servicePaymentFeeDateOfPayment",
-              "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\" OR servicePaymentFeePaymentReference=\"*\"")
+                "servicePaymentFeeDateOfPayment",
+                "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\" OR servicePaymentFeePaymentReference=\"*\"")
             .field("servicePaymentFeeAccountNumber",
                 "servicePaymentFeePaymentMethod=\"feePayByAccount\" AND alternativeServiceFeeRequired=\"Yes\"")
             .field("servicePaymentFeeAccountReferenceNumber",

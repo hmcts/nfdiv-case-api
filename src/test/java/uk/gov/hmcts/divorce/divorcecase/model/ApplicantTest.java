@@ -151,7 +151,7 @@ class ApplicantTest {
     }
 
     @Test
-    void shouldReturnTrueIfScottishAddress() {
+    void shouldReturnFalseIfScottishAddress() {
         final Applicant applicant1 = Applicant.builder()
             .address(AddressGlobalUK.builder().country("UK").postCode("KA27 8AB").build())
             .build();
@@ -162,9 +162,9 @@ class ApplicantTest {
             .address(AddressGlobalUK.builder().country("Scotland").build())
             .build();
 
-        assertThat(applicant1.isBasedOverseas()).isTrue();
-        assertThat(applicant2.isBasedOverseas()).isTrue();
-        assertThat(applicant3.isBasedOverseas()).isTrue();
+        assertThat(applicant1.isBasedOverseas()).isFalse();
+        assertThat(applicant2.isBasedOverseas()).isFalse();
+        assertThat(applicant3.isBasedOverseas()).isFalse();
     }
 
     @Test
@@ -416,6 +416,25 @@ class ApplicantTest {
     }
 
     @Test
+    void shouldPreserveGeneralAppPaymentsWhenClearingServiceRequest() {
+        final List<ListValue<Payment>> payments = List.of(
+            ListValue.<Payment>builder()
+                .value(Payment.builder().amount(10).build())
+                .build()
+        );
+
+        final Applicant applicant = Applicant.builder()
+            .generalAppPayments(payments)
+            .generalAppServiceRequest("service-request")
+            .build();
+
+        applicant.setActiveGeneralApplication(null);
+
+        assertThat(applicant.getGeneralAppServiceRequest()).isNull();
+        assertThat(applicant.getGeneralAppPayments()).isEqualTo(payments);
+    }
+
+    @Test
     void shouldArchiveInterimApplicationOptions() {
         InterimApplicationOptions applicationOptions = InterimApplicationOptions.builder()
             .interimAppsUseHelpWithFees(YesOrNo.YES)
@@ -463,7 +482,7 @@ class ApplicantTest {
         Applicant applicant = caseData().getApplicant2();
         applicant.setAddress(
             AddressGlobalUK.builder()
-                .country("Scotland")
+                .country("Greece")
                 .postCode("111111")
                 .build()
         );
@@ -484,5 +503,27 @@ class ApplicantTest {
         applicant.setSolicitorRepresented(NO);
 
         assertThat(applicant.mustBeServedOverseas()).isFalse();
+    }
+
+    @Test
+    void shouldResetInterimApplications() {
+        CaseData caseData = caseData();
+        Applicant applicant = caseData.getApplicant1();
+
+        applicant.setInterimApplications(List.of(ListValue.<InterimApplication>builder().value(
+                InterimApplication.builder().build())
+                .build()));
+        applicant.setInterimApplicationOptions(
+            InterimApplicationOptions.builder()
+                .interimApplicationType(InterimApplicationType.DISPENSE_WITH_SERVICE)
+                .build()
+        );
+        applicant.setGeneralAppServiceRequest("service-request");
+
+        applicant.resetInterimApplications();
+
+        assertThat(applicant.getInterimApplications()).isNull();
+        assertThat(applicant.getInterimApplicationOptions().getInterimApplicationType()).isNull();
+        assertThat(applicant.getGeneralAppServiceRequest()).isNull();
     }
 }

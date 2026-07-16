@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
-import uk.gov.hmcts.divorce.common.service.WithdrawCaseService;
+import uk.gov.hmcts.divorce.common.service.CaseTerminationService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -17,6 +17,7 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenWithdrawn.CITIZEN_WITHDRAWN;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -27,7 +28,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssue
 class CitizenWithdrawnTest {
 
     @Mock
-    private WithdrawCaseService withdrawCaseService;
+    private CaseTerminationService caseTerminationService;
 
     @InjectMocks
     private CitizenWithdrawn citizenWithdrawn;
@@ -51,9 +52,12 @@ class CitizenWithdrawnTest {
         caseDetails.setData(data);
         caseDetails.setState(State.Draft);
 
+        when(caseTerminationService.canApplicationBeWithdrawn(caseDetails.getState(), caseDetails.getData())).thenReturn(true);
+        when(caseTerminationService.getStateToTransitionTo(caseDetails)).thenReturn(State.Withdrawn);
+
         citizenWithdrawn.aboutToSubmit(caseDetails, caseDetails);
 
-        verify(withdrawCaseService).withdraw(caseDetails);
+        verify(caseTerminationService).withdraw(caseDetails);
     }
 
     @Test
@@ -67,6 +71,9 @@ class CitizenWithdrawnTest {
 
         CaseData caseData = CaseData.builder().build();
         caseData.getApplication().setDateSubmitted(null);
+
+        when(caseTerminationService.canApplicationBeWithdrawn(caseDetails.getState(), caseDetails.getData())).thenReturn(true);
+        when(caseTerminationService.getStateToTransitionTo(caseDetails)).thenReturn(State.Withdrawn);
 
         var response = citizenWithdrawn.aboutToSubmit(caseDetails, caseDetails);
 
@@ -82,6 +89,9 @@ class CitizenWithdrawnTest {
         caseDetails.setData(data);
         caseDetails.setState(State.Submitted);
 
+        when(caseTerminationService.canApplicationBeWithdrawn(caseDetails.getState(), caseDetails.getData())).thenReturn(true);
+        when(caseTerminationService.getStateToTransitionTo(caseDetails)).thenReturn(State.PendingRefund);
+
         var response = citizenWithdrawn.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getState()).isEqualTo(State.PendingRefund);
@@ -95,6 +105,8 @@ class CitizenWithdrawnTest {
         data.getApplication().setIssueDate(LocalDate.now());
         caseDetails.setData(data);
         caseDetails.setState(State.AwaitingService);
+
+        when(caseTerminationService.canApplicationBeWithdrawn(caseDetails.getState(), caseDetails.getData())).thenReturn(false);
 
         var response = citizenWithdrawn.aboutToSubmit(caseDetails, caseDetails);
 

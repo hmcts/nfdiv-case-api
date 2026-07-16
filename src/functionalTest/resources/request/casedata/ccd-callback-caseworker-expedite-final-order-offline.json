@@ -14,6 +14,7 @@
   "applicationType": "soleApplication",
   "applicant1LegalProceedings": "No",
   "coGrantedDate": "2022-03-10",
+  "granted": ["Yes"],
   "applicant2Address": {
     "AddressLine1": "line 1",
     "PostTown": "town",

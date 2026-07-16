@@ -38,7 +38,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.divorcecase.util.AddressUtil.isEnglandOrWales;
+import static uk.gov.hmcts.divorce.divorcecase.util.AddressUtil.isUnitedKingdom;
 
 @Data
 @AllArgsConstructor
@@ -374,7 +374,7 @@ public class Applicant {
             return false;
         }
 
-        return (nonNull(address) && !isBlank(address.getCountry()) && !isEnglandOrWales(address)) || YesOrNo.YES.equals(addressOverseas);
+        return (nonNull(address) && !isBlank(address.getCountry()) && !isUnitedKingdom(address)) || YesOrNo.YES.equals(addressOverseas);
     }
 
     @JsonIgnore
@@ -383,7 +383,7 @@ public class Applicant {
     }
 
     @JsonIgnore
-    private String getApplicantAddress() {
+    public String getApplicantAddress() {
         if (YES.equals(addressOverseas)) {
             return Stream.of(
                     address.getAddressLine1(),
@@ -439,7 +439,14 @@ public class Applicant {
     @JsonIgnore
     public void setActiveGeneralApplication(String serviceRequest) {
         this.generalAppServiceRequest = serviceRequest;
-        this.generalAppPayments = new ArrayList<>();
+        if (serviceRequest != null) {
+            this.generalAppPayments = new ArrayList<>();
+        }
+    }
+
+    @JsonIgnore
+    public boolean hasUnpaidGeneralApplication() {
+        return this.generalAppServiceRequest != null;
     }
 
     @JsonIgnore
@@ -473,6 +480,13 @@ public class Applicant {
     }
 
     @JsonIgnore
+    public void resetInterimApplications() {
+        setActiveGeneralApplication(null);
+        setInterimApplications(null);
+        setInterimApplicationOptions(new InterimApplicationOptions());
+    }
+
+    @JsonIgnore
     public boolean mustBeServedOverseas() {
         boolean unrepresentedBasedOverseas = !isRepresented() && isBasedOverseas();
         boolean solicitorBasedOverseas = isRepresented() && YesOrNo.YES.equals(
@@ -482,5 +496,10 @@ public class Applicant {
         );
 
         return unrepresentedBasedOverseas || solicitorBasedOverseas;
+    }
+
+    @JsonIgnore
+    public boolean submittedWelshApplication() {
+        return getLanguagePreference().equals(WELSH) || YesOrNo.YES.equals(usedWelshTranslationOnSubmission);
     }
 }

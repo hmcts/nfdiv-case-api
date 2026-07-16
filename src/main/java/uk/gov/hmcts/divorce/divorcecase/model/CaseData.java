@@ -35,6 +35,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CitizenAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.access.InternalCaseFlagsAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
@@ -62,7 +63,6 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.CasePaymentHistoryViewer;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -86,6 +86,10 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWER
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class CaseData {
+
+    @JsonUnwrapped
+    @Builder.Default
+    private DummyFields exuiDummyFields = new DummyFields();
 
     @CCD(
         label = "Application type",
@@ -136,11 +140,11 @@ public class CaseData {
     private Application application = new Application();
 
     @JsonUnwrapped()
-    @CCD(access = {DefaultAccess.class})
+    @CCD(access = {DefaultAccessExcludingSolicitor.class})
     private CaseInvite caseInvite;
 
     @JsonUnwrapped()
-    @CCD(access = {DefaultAccess.class})
+    @CCD(access = {DefaultAccessExcludingSolicitor.class})
     private CaseInviteApp1 caseInviteApp1;
 
     @JsonUnwrapped()
@@ -403,6 +407,13 @@ public class CaseData {
     )
     private Flags caseFlags;
 
+    @CCD(
+        label = "Service application refund due date",
+        searchable = false
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate refundDueDate;
+
     @JsonUnwrapped
     @Builder.Default
     @CCD(searchable = false)
@@ -432,13 +443,9 @@ public class CaseData {
     @JsonIgnore
     public boolean isWelshApplication() {
         if (applicationType.isSole()) {
-            return YES.equals(applicant1.getLanguagePreferenceWelsh())
-                || YES.equals(applicant1.getUsedWelshTranslationOnSubmission());
+            return applicant1.submittedWelshApplication();
         } else {
-            return YES.equals(applicant1.getLanguagePreferenceWelsh())
-                || YES.equals(applicant2.getLanguagePreferenceWelsh())
-                || YES.equals(applicant1.getUsedWelshTranslationOnSubmission())
-                || YES.equals(applicant2.getUsedWelshTranslationOnSubmission());
+            return applicant1.submittedWelshApplication() || applicant2.submittedWelshApplication();
         }
     }
 

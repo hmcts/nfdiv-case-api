@@ -116,7 +116,8 @@ public class CaseworkerUploadServiceApplicationDocuments implements CCDConfig<Ca
                 endState = AwaitingServicePayment;
             }
         } else {
-            if (alternativeService.getAlternativeServiceFeeRequired().toBoolean()) {
+            if (alternativeService.getAlternativeServiceFeeRequired() != null
+                && alternativeService.getAlternativeServiceFeeRequired().toBoolean()) {
                 endState = AwaitingServicePayment;
             }
         }

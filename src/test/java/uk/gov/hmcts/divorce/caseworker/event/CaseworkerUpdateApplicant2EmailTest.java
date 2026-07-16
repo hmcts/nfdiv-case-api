@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerUpdateApplicant2Email.CASEWORKER_UPDATE_APP2_EMAIL;
@@ -104,5 +105,43 @@ class CaseworkerUpdateApplicant2EmailTest {
         caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
 
         verify(emailUpdateService).processEmailUpdate(details, details, false);
+    }
+
+    @Test
+    void shouldNotCallUpdateEmailServiceWhenStateIsWithdrawn() {
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .offline(YES)
+                .email(TEST_USER_EMAIL)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+        details.setState(State.Withdrawn);
+
+        caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
+
+        verifyNoInteractions(emailUpdateService);
+    }
+
+    @Test
+    void shouldNotCallUpdateEmailServiceWhenStateIsRejected() {
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .offline(YES)
+                .email(TEST_USER_EMAIL)
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+        details.setState(State.Rejected);
+
+        caseworkerUpdateApplicant2Email.aboutToSubmit(details, details);
+
+        verifyNoInteractions(emailUpdateService);
     }
 }
