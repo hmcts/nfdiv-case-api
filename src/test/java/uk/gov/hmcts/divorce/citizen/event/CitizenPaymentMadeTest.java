@@ -66,7 +66,6 @@ class CitizenPaymentMadeTest {
     @Mock
     private CaseFlagsService caseFlagsService;
 
-    @Mock
     private NotificationDispatcher notificationDispatcher;
 
     @Mock
