@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenGeneralApplicationPaymentMade.CITIZEN_GENERAL_APPLICATION_PAYMENT;
@@ -24,9 +25,13 @@ class Applicant2GeneralApplicationPaymentMadeRuleTest {
     }
 
     @Test
-    void returnsTrueIfPaymentServiceRequestMatchesApplicant2GenAppServiceRequest() {
+    void returnsTrueIfPaymentServiceRequestMatchesApplicant2PaymentHistory() {
         final CaseData data = CaseData.builder()
-            .applicant2(Applicant.builder().generalAppServiceRequest(TEST_SERVICE_REFERENCE).build())
+            .applicant2(Applicant.builder().generalAppPayments(List.of(
+                ListValue.<Payment>builder()
+                    .value(Payment.builder().serviceRequestReference(TEST_SERVICE_REFERENCE).build())
+                    .build()
+            )).build())
             .build();
 
         final boolean result = rule.matches(State.Holding, TEST_SERVICE_REFERENCE, data);
@@ -35,14 +40,37 @@ class Applicant2GeneralApplicationPaymentMadeRuleTest {
     }
 
     @Test
-    void returnsFalseIfPaymentServiceRequestDoesNotMatchApplicant2GenAppServiceRequest() {
+    void returnsFalseIfPaymentServiceRequestDoesNotMatchApplicant2PaymentHistory() {
         final CaseData data = CaseData.builder()
-            .applicant2(Applicant.builder().generalAppServiceRequest(TEST_SERVICE_REFERENCE).build())
+            .applicant2(Applicant.builder().generalAppPayments(List.of(
+                ListValue.<Payment>builder()
+                    .value(Payment.builder().serviceRequestReference(TEST_SERVICE_REFERENCE).build())
+                    .build()
+            )).build())
             .build();
 
         final boolean result = rule.matches(State.Holding, "dummy", data);
 
         assertThat(result).isFalse();
+    }
+
+    @Test
+    void returnsTrueIfAnyPaymentServiceRequestMatchesApplicant2PaymentHistory() {
+        final String paymentServiceRequestReference = UUID.randomUUID().toString();
+        final CaseData data = CaseData.builder()
+            .applicant2(Applicant.builder()
+                .generalAppServiceRequest(null)
+                .generalAppPayments(List.of(
+                    ListValue.<Payment>builder()
+                        .value(Payment.builder().serviceRequestReference(paymentServiceRequestReference).build())
+                        .build()
+                ))
+                .build())
+            .build();
+
+        final boolean result = rule.matches(State.Holding, paymentServiceRequestReference, data);
+
+        assertThat(result).isTrue();
     }
 
     @Test

@@ -7,6 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.citizen.event.CitizenGeneralApplicationPaymentMade.CITIZEN_GENERAL_APPLICATION_PAYMENT;
@@ -16,9 +17,13 @@ public class Applicant2GeneralApplicationPaymentMadeRule implements PaymentMadeR
 
     @Override
     public boolean matches(State state, String serviceRequestRef, CaseData data) {
-        return Optional.ofNullable(data.getApplicant2().getGeneralAppServiceRequest())
-            .filter(serviceRequestRef::equals)
-            .isPresent();
+        return Optional.ofNullable(data.getApplicant2().getGeneralAppPayments())
+            .stream()
+            .flatMap(List::stream)
+            .map(ListValue::getValue)
+            .filter(Objects::nonNull)
+            .map(Payment::getServiceRequestReference)
+            .anyMatch(serviceRequestRef::equals);
     }
 
     @Override

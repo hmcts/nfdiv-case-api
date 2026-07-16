@@ -439,7 +439,9 @@ public class Applicant {
     @JsonIgnore
     public void setActiveGeneralApplication(String serviceRequest) {
         this.generalAppServiceRequest = serviceRequest;
-        this.generalAppPayments = new ArrayList<>();
+        if (serviceRequest != null) {
+            this.generalAppPayments = new ArrayList<>();
+        }
     }
 
     @JsonIgnore
