@@ -497,4 +497,9 @@ public class Applicant {
 
         return unrepresentedBasedOverseas || solicitorBasedOverseas;
     }
+
+    @JsonIgnore
+    public boolean submittedWelshApplication() {
+        return getLanguagePreference().equals(WELSH) || YesOrNo.YES.equals(usedWelshTranslationOnSubmission);
+    }
 }
