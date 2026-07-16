@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,8 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponseNotification;
 import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponsePartnerNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
@@ -21,6 +24,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.ScannedDocumentSubtypes;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
@@ -43,9 +47,15 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
@@ -104,6 +114,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     private final AuthTokenGenerator authTokenGenerator;
     private final Clock clock;
     private final GeneralReferralService generalReferralService;
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy, h:mm:ss a");
 
     public static final String CASEWORKER_OFFLINE_DOCUMENT_VERIFIED = "caseworker-offline-document-verified";
     private static final String ALWAYS_HIDE = "typeOfDocumentAttached=\"ALWAYS_HIDE\"";
@@ -115,6 +126,9 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         = "Request for Information Response Notification for Case Id {} failed with message: {}";
     public static final String REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR
         = "Request for Information Response Partner Notification for Case Id {} failed with message: {}";
+    public static final String SCANNED_DOCUMENT_SUBTYPE_MISMATCH_ERROR =
+        "The selected scanned document subtype does not match the type of document attached.";
+    private static final String SCANNED_DOCUMENT_LABEL_SEPARATOR = " / ";
 
     private static final String SCANNED_DOC_MUST_BE_RECLASSIFIED_BY_CASEWORKER =
         "scannedSubtypeReceived!=\"*\" OR scannedSubtypeReceived=\"ConfidentialD10\" OR scannedSubtypeReceived=\"D10\"";
@@ -241,7 +255,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                     .map(scannedDocListValue ->
                         DynamicListElement
                             .builder()
-                            .label(scannedDocListValue.getValue().getFileName())
+                            .label(buildScannedDocumentLabel(scannedDocListValue.getValue()))
                             .code(UUID.randomUUID()).build()
                     ).toList();
 
@@ -313,6 +327,16 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     private List<String> validateDocumentVerification(CaseData data) {
         final CaseDocuments.OfflineDocumentReceived documentType = data.getDocuments().getTypeOfDocumentAttached();
 
+        CaseDocuments.ScannedDocumentSubtypes selectedDocumentSubtype = getSelectedScannedDocumentSubtype(data);
+        if (selectedDocumentSubtype != null) {
+            final Set<CaseDocuments.ScannedDocumentSubtypes> validDocumentSubtypes =
+                getExpectedScannedSubtypesFromDocumentType(documentType);
+
+            if (!validDocumentSubtypes.isEmpty() && !validDocumentSubtypes.contains(selectedDocumentSubtype)) {
+                return Collections.singletonList(SCANNED_DOCUMENT_SUBTYPE_MISMATCH_ERROR);
+            }
+        }
+
         if (RFI_RESPONSE.equals(documentType)) {
             if (data.getRequestForInformationList().getRequestsForInformation() == null
                 || data.getRequestForInformationList().getRequestsForInformation().isEmpty()
@@ -333,6 +357,50 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         }
 
         return Collections.emptyList();
+    }
+
+    private CaseDocuments.ScannedDocumentSubtypes getSelectedScannedDocumentSubtype(CaseData data) {
+        if (data.getDocuments().getScannedDocumentNames() == null
+            || StringUtils.isBlank(data.getDocuments().getScannedDocumentNames().getValueLabel())) {
+            return null;
+        }
+
+        final String selectedScannedDocumentLabel = data.getDocuments().getScannedDocumentNames().getValueLabel();
+        final String filename = extractFilenameFromScannedDocumentLabel(selectedScannedDocumentLabel);
+
+        return emptyIfNull(data.getDocuments().getScannedDocuments())
+            .stream()
+            .map(ListValue::getValue)
+            .filter(scannedDocument -> filename.equals(scannedDocument.getFileName()))
+            .map(ScannedDocument::getSubtype)
+            .filter(StringUtils::isNotBlank)
+            .findFirst()
+            .map(this::parseScannedDocumentSubtype)
+            .orElse(null);
+    }
+
+    private CaseDocuments.ScannedDocumentSubtypes parseScannedDocumentSubtype(String subtype) {
+        try {
+            return ScannedDocumentSubtypes.valueOf(subtype.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException exception) {
+            return null;
+        }
+    }
+
+    private Set<CaseDocuments.ScannedDocumentSubtypes> getExpectedScannedSubtypesFromDocumentType(
+        CaseDocuments.OfflineDocumentReceived documentType
+    ) {
+        if (AOS_D10.equals(documentType)) {
+            return Set.of(D10, D10_CONFIDENTIAL);
+        } else if (CO_D84.equals(documentType)) {
+            return Set.of(D84);
+        } else if (FO_D36.equals(documentType)) {
+            return Set.of(D36);
+        } else if (RFI_RESPONSE.equals(documentType)) {
+            return Set.of(RFIR);
+        }
+
+        return Collections.emptySet();
     }
 
     private AboutToStartOrSubmitResponse<CaseData, State> processD36AndSendNotifications(CaseDetails<CaseData, State> details) {
@@ -456,7 +524,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         CaseDocuments.ScannedDocumentSubtypes scannedDocumentSubtype = caseData.getDocuments().getScannedSubtypeReceived();
 
         if (scannedDocMustBeReclassifiedByCaseworker(scannedDocumentSubtype)) {
-            String filename = caseData.getDocuments().getScannedDocumentNames().getValueLabel();
+            String selectedDocumentLabel = caseData.getDocuments().getScannedDocumentNames().getValueLabel();
+            String filename = extractFilenameFromScannedDocumentLabel(selectedDocumentLabel);
 
             log.info("Reclassifying scanned doc {} to {} doc type", filename, documentType);
 
@@ -563,5 +632,21 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         }
 
         return SubmittedCallbackResponse.builder().build();
+    }
+
+    private String buildScannedDocumentLabel(uk.gov.hmcts.ccd.sdk.type.ScannedDocument scannedDocument) {
+        final String fileName = scannedDocument.getFileName();
+        final String subtype = scannedDocument.getSubtype();
+        final LocalDateTime scannedDate = scannedDocument.getScannedDate();
+
+        return Stream.of(subtype, scannedDate != null ? scannedDate.format(dateFormatter) : null, fileName)
+            .filter(StringUtils::isNotBlank)
+            .collect(Collectors.joining(SCANNED_DOCUMENT_LABEL_SEPARATOR));
+    }
+
+    private String extractFilenameFromScannedDocumentLabel(String scannedDocumentLabel) {
+        final String[] labelSegments = scannedDocumentLabel.trim().split(SCANNED_DOCUMENT_LABEL_SEPARATOR);
+
+        return labelSegments[labelSegments.length - 1];
     }
 }
