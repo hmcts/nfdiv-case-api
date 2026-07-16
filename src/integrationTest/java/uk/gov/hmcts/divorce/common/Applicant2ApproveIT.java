@@ -122,7 +122,8 @@ public class Applicant2ApproveIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS, "NFD_CP_Joint_Applicant_2_Answers_V2.docx");
+        stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS,
+            "FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers_V1.docx");
 
         CaseData data = validApplicant2CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
@@ -155,7 +156,8 @@ public class Applicant2ApproveIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS, "NFD_CP_Joint_Applicant_2_Answers_V2.docx");
+        stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS,
+            "FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers_V1.docx");
 
         CaseData data = validApplicant2CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
@@ -203,7 +205,8 @@ public class Applicant2ApproveIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS, "NFD_CP_Joint_Applicant_2_Answers_V2.docx");
+        stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS,
+            "FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers_V1.docx");
 
         CaseData data = validApplicant2CaseData();
         data.getApplication().setApplicant1HelpWithFees(HelpWithFees.builder().needHelp(YES).build());
@@ -239,7 +242,7 @@ public class Applicant2ApproveIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS,
-            "FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers.docx");
+            "FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers_V1.docx");
 
         CaseData data = validApplicant2CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);

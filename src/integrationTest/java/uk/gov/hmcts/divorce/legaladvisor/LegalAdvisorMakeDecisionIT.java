@@ -118,15 +118,15 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 @DirtiesContext
 public class LegalAdvisorMakeDecisionIT {
 
-    private static final String REJECTED_REFUSAL_ORDER_TEMPLATE_FILE_NAME = "FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order_V2.docx";
+    private static final String REJECTED_REFUSAL_ORDER_TEMPLATE_FILE_NAME = "FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order_V5.docx";
     private static final String CLARIFICATION_REFUSAL_ORDER_TEMPLATE_FILE_NAME =
-        "FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline_V2.docx";
+        "FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline_V5.docx";
     private static final String CLARIFICATION_REFUSAL_ORDER_WELSH_TEMPLATE_FILE_NAME =
-        "FL-NFD-GOR-WEL-Conditional-Order-Clarification-Refusal-Order.docx";
+        "FL-NFD-GOR-WEL-Conditional-Order-Clarification-Refusal-Order_V4.docx";
     private static final String UUID = "49fa338b-1955-41c2-8e05-1df710a8ffaa";
-    private static final String NFD_APPLICANT_COVERSHEET_FILENAME = "NFD_Applicant_Coversheet.docx";
+    private static final String NFD_APPLICANT_COVERSHEET_FILENAME = "FL-NFD-GOR-ENG-Applicant_Coversheet_V2.docx";
     private static final String CO_REFUSAL_COVER_LETTER_TEMPLATE_NAME =
-        "FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V1.docx";
+        "FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V3.docx";
 
     @Autowired
     private MockMvc mockMvc;
@@ -543,7 +543,7 @@ public class LegalAdvisorMakeDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, "FL-NFD-GOR-WEL-Conditional-Order-Refusal-Order.docx");
+        stubForDocAssemblyWith(UUID, "FL-NFD-GOR-WEL-Conditional-Order-Refusal-Order_V3.docx");
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -907,7 +907,7 @@ public class LegalAdvisorMakeDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, "NFD_Refusal_Order_V2.docx");
+        stubForDocAssemblyWith(UUID, "FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order_V5.docx");
         when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DIVORCE_AMEND_PETITION)).thenReturn(10.00);
 
         mockMvc.perform(post(CO_REFUSAL_ORDER_WITH_AMENDMENTS_MID_EVENT_URL)

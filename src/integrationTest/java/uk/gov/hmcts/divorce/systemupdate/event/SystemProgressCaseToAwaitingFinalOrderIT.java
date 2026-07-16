@@ -152,7 +152,7 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(COVERSHEET_DOC_ID, "NFD_Applicant_Coversheet.docx");
+        stubForDocAssemblyWith(COVERSHEET_DOC_ID, "FL-NFD-GOR-ENG-Applicant_Coversheet_V2.docx");
         stubForDocAssemblyWith(CAN_APPLY_FOR_FINAL_ORDER_DOC_ID, "FL-NFD-GOR-ENG-Can-Apply-Final-Order_V7.docx");
         stubApplyForFinalOrderPackSendLetter();
 

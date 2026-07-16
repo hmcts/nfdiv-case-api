@@ -114,11 +114,11 @@ public class CaseworkerGrantFinalOrderIT {
 
     private static final String UUID = "49fa338b-1955-41c2-8e05-1df710a8ffaa";
 
-    private static final String FO_GRANTED_TEMPLATE_NAME = "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx";
+    private static final String FO_GRANTED_TEMPLATE_NAME = "FL-NFD-GOR-ENG-Final-Order-Granted_V3.docx";
 
-    private static final String FO_GRANTED_TEMPLATE_NAME_WELSH = "FL-NFD-GOR-WEL-Final-Order-Granted.docx";
+    private static final String FO_GRANTED_TEMPLATE_NAME_WELSH = "FL-NFD-GOR-WEL-Final-Order-Granted-V3.docx";
 
-    private static final String FO_GRANTED_COVER_NAME = "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx";
+    private static final String FO_GRANTED_COVER_NAME = "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V4.docx";
 
     @Autowired
     private MockMvc mockMvc;
@@ -174,7 +174,7 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Final-Order-Granted_V3.docx");
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -216,8 +216,8 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
-        stubForDocAssemblyWith("a11dc4a5-30b0-4a91-8fbb-1676cd300421", "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Final-Order-Granted_V3.docx");
+        stubForDocAssemblyWith("a11dc4a5-30b0-4a91-8fbb-1676cd300421", "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V4.docx");
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -289,8 +289,8 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
-        stubForDocAssemblyWith("a11dc4a5-30b0-4a91-8fbb-1676cd300421", "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V2.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Final-Order-Granted_V3.docx");
+        stubForDocAssemblyWith("a11dc4a5-30b0-4a91-8fbb-1676cd300421", "FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V4.docx");
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -326,7 +326,7 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-WEL-Final-Order-Granted.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-WEL-Final-Order-Granted-V3.docx");
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -440,7 +440,7 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Final-Order-Granted_V1.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Final-Order-Granted_V3.docx");
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)

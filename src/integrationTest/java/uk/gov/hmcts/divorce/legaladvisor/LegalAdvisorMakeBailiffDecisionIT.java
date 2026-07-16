@@ -110,7 +110,7 @@ public class LegalAdvisorMakeBailiffDecisionIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(BAILIFF_APPLICATION_APPROVED_ID, "NFD_Bailiff_Application_Approved.docx");
+        stubForDocAssemblyWith(BAILIFF_APPLICATION_APPROVED_ID, "FL-NFD-GOR-ENG-Bailiff-Application-Approved-V1.docx");
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setServiceApplicationGranted(YES);
@@ -147,7 +147,7 @@ public class LegalAdvisorMakeBailiffDecisionIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(BAILIFF_APPLICATION_APPROVED_ID, "NFD_Bailiff_Application_Approved_Cy.docx");
+        stubForDocAssemblyWith(BAILIFF_APPLICATION_APPROVED_ID, "FL-NFD-GOR-WEL-Bailiff-Application-Approved_V2.docx");
 
         final CaseData caseData = caseData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
@@ -180,7 +180,7 @@ public class LegalAdvisorMakeBailiffDecisionIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "NFD_Bailiff_Application_Not_Approved.docx");
+        stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "FL-NFD-GOR-ENG-Bailiff-Application-Not-Approved-V1.docx");
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setReceivedServiceApplicationDate(LocalDate.of(2022, 1, 1));

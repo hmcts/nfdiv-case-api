@@ -111,7 +111,7 @@ public class CaseworkerConfirmBailiffRefusalIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "NFD_Bailiff_Application_Not_Approved.docx");
+        stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "FL-NFD-GOR-ENG-Bailiff-Application-Not-Approved-V1.docx");
 
         LocalDate serviceDecisionDate = LocalDate.of(2022, 1, 1);
         CaseData caseData = setUpCaseData(serviceDecisionDate);
@@ -153,7 +153,7 @@ public class CaseworkerConfirmBailiffRefusalIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "NFD_Bailiff_Application_Not_Approved_Cy.docx");
+        stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "FL-NFD-GOR-WEL-Bailiff-Application-Not-Approved_V2.docx");
 
         LocalDate serviceDecisionDate = LocalDate.of(2022, 1, 1);
         CaseData caseData = setUpCaseData(serviceDecisionDate);

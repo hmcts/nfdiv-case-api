@@ -211,7 +211,7 @@ public class SubmitAosIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "FL-NFD-GOR-ENG-Respondent-Answers-Eng-V3.docx");
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -255,7 +255,7 @@ public class SubmitAosIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "FL-NFD-GOR-ENG-Respondent-Answers-Eng-V3.docx");
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -295,7 +295,7 @@ public class SubmitAosIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Cy.docx");
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "FL-NFD-GOR-WEL-Respondent-Answers-Cy-V3.docx");
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -323,7 +323,7 @@ public class SubmitAosIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "FL-NFD-GOR-ENG-Respondent-Answers-Eng-V3.docx");
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -362,7 +362,7 @@ public class SubmitAosIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "FL-NFD-GOR-ENG-Respondent-Answers-Eng-V3.docx");
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -399,7 +399,7 @@ public class SubmitAosIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "FL-NFD-GOR-ENG-Respondent-Answers-Eng-V3.docx");
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -438,7 +438,7 @@ public class SubmitAosIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "FL-NFD-GOR-ENG-Respondent-Answers-Eng-V3.docx");
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -504,9 +504,9 @@ public class SubmitAosIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
-        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", "NFD_Applicant_Coversheet.docx");
-        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", "FL-NFD-GOR-ENG-Respondent-Responded-Defended.docx");
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "FL-NFD-GOR-ENG-Respondent-Answers-Eng-V3.docx");
+        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", "FL-NFD-GOR-ENG-Applicant_Coversheet_V2.docx");
+        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", "FL-NFD-GOR-ENG-Respondent-Responded-Defended_V1.docx");
         stubAosPackSendLetter(d84Uuid.toString());
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -554,9 +554,9 @@ public class SubmitAosIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
-        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", "NFD_Applicant_Coversheet.docx");
-        stubForDocAssemblyWith("51afe8e5-0061-42b6-83a2-4c122046901c", "FL-NFD-GOR-ENG-Respondent-Responded-Defended.docx");
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "FL-NFD-GOR-ENG-Respondent-Answers-Eng-V3.docx");
+        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", "FL-NFD-GOR-ENG-Applicant_Coversheet_V2.docx");
+        stubForDocAssemblyWith("51afe8e5-0061-42b6-83a2-4c122046901c", "FL-NFD-GOR-ENG-Respondent-Responded-Defended_V1.docx");
         stubAosPackSendLetter();
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -604,8 +604,8 @@ public class SubmitAosIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "NFD_Respondent_Answers_Eng.docx");
-        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", "NFD_Applicant_Coversheet.docx");
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "FL-NFD-GOR-ENG-Respondent-Answers-Eng-V3.docx");
+        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", "FL-NFD-GOR-ENG-Applicant_Coversheet_V2.docx");
         stubForDocAssemblyWith("51afe8e5-0061-42b6-83a2-4c122046901c", "FL-NFD-GOR-ENG-Respondent-Responded-Undefended_V3.docx");
         stubAosPackSendLetter();
 
