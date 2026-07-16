@@ -29,7 +29,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.isActiveGeneralApplication;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
+import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -38,8 +40,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
-import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.isActiveGeneralApplication;
-import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LABEL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_LABEL;
