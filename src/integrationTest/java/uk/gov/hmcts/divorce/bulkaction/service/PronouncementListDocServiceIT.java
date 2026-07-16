@@ -15,8 +15,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.document.DocumentConstants;
 import uk.gov.hmcts.divorce.document.content.PronouncementListTemplateContent;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
+import uk.gov.hmcts.divorce.testutil.DocTemplateResolver;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -72,6 +74,9 @@ public class PronouncementListDocServiceIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private DocTemplateResolver docTemplateResolver;
+
     @MockitoBean
     private Clock clock;
 
@@ -106,9 +111,12 @@ public class PronouncementListDocServiceIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(templateContentService.apply(any(), any())).thenReturn(mockedTemplateContent);
 
+        final String PRONOUNCEMENT_LIST_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.PRONOUNCEMENT_LIST_TEMPLATE_ID);
+
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Pronouncement-List-V3.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", PRONOUNCEMENT_LIST_TEMPLATE_ID);
 
         final LocalDateTime dateAndTimeOfHearing = LocalDateTime.of(2021, 11, 10, 0, 0, 0);
         final var bulkActionCaseData = BulkActionCaseData

@@ -22,12 +22,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.DocumentConstants;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
+import uk.gov.hmcts.divorce.testutil.DocTemplateResolver;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
@@ -112,6 +114,9 @@ public class SwitchedToSoleCoIT {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private DocTemplateResolver docTemplateResolver;
 
     @MockitoBean
     private NotificationService notificationService;
@@ -421,10 +426,15 @@ public class SwitchedToSoleCoIT {
         when(idamService.retrieveSystemUpdateUserDetails())
             .thenReturn(new User(BEARER_TEST_SYSTEM_AUTHORISATION_TOKEN, UserInfo.builder().build()));
 
+        final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
+        final String SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID);
+
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Conditional_Order_Answers_V1.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
         stubForDocAssemblyWith("2014c722-122c-4732-b583-75bad8dcedfc",
-            "FL-NFD-GOR-ENG-Applied-For-Co-Switch-To-Sole_V4.docx");
+            SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID);
     }
 }

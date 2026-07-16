@@ -16,8 +16,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.DocumentConstants;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
+import uk.gov.hmcts.divorce.testutil.DocTemplateResolver;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -67,6 +69,9 @@ public class CaseworkerCreateGeneralOrderIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private DocTemplateResolver docTemplateResolver;
+
     @MockitoBean
     private AuthTokenGenerator serviceTokenGenerator;
 
@@ -101,6 +106,8 @@ public class CaseworkerCreateGeneralOrderIT {
 
     @Test
     public void shouldGenerateGeneralOrderDocumentsAndUpdateCaseDataWhenMidEventCallbackIsInvoked() throws Exception {
+        final String DIVORCE_GENERAL_ORDER =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_GENERAL_ORDER);
         final CaseData caseData = caseData();
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.setGeneralOrder(getGeneralOrder());
@@ -109,7 +116,7 @@ public class CaseworkerCreateGeneralOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-General-Order-V3.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", DIVORCE_GENERAL_ORDER);
 
         mockMvc.perform(post(CREATE_GENERAL_ORDER_MID_EVENT_URL)
                 .contentType(APPLICATION_JSON)

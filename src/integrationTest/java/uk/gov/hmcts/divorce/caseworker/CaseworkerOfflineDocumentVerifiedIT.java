@@ -34,12 +34,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.NoticeOfChange;
 import uk.gov.hmcts.divorce.divorcecase.model.RetiredFields;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
+import uk.gov.hmcts.divorce.document.DocumentConstants;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.CdamWireMock;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
+import uk.gov.hmcts.divorce.testutil.DocTemplateResolver;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -135,6 +137,9 @@ public class CaseworkerOfflineDocumentVerifiedIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private DocTemplateResolver docTemplateResolver;
+
     @MockitoBean
     private WebMvcConfig webMvcConfig;
 
@@ -168,6 +173,8 @@ public class CaseworkerOfflineDocumentVerifiedIT {
 
     @Test
     void shouldTriggerAosSubmissionAndMoveCaseStateToHoldingIfD10Verified() throws Exception {
+        final String RESPONDENT_ANSWERS_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID);
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
             .howToRespondApplication(DISPUTE_DIVORCE)
@@ -222,7 +229,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", "FL-NFD-GOR-ENG-Respondent-Answers-Eng-V3.docx");
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", RESPONDENT_ANSWERS_TEMPLATE_ID);
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)

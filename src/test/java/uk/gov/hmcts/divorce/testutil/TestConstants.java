@@ -84,6 +84,7 @@ public final class TestConstants {
 
     public static final String ENGLISH_TEMPLATE_ID = "divorceminiapplication";
     public static final String WELSH_TEMPLATE_ID = "FL-DIV-GNO-WEL-00256.docx";
+    public static final String DUMMY_TEMPLATE_ID = "NFD_CP_Dummy_Template.docx";
     public static final String BEARER = "Bearer ";
     public static final String TEST_ORG_ID = "ABC123";
     public static final String TEST_ORG_NAME = "Test Organisation";
@@ -111,9 +112,6 @@ public final class TestConstants {
     public static final String RESPONDENT_SIGN_IN_DISSOLUTION_TEST_URL = "respondentDissolutionTestUrl";
 
     public static final String EMPTY_STRING = "";
-
-    public static final String TEST_DIVORCE_APPLICATION_SOLE_TEMPLATE_ID = "FL-NFD-GOR-ENG-Application-Sole_V7.docx";
-    public static final String TEST_DIVORCE_APPLICATION_JOINT_TEMPLATE_ID = "FL-NFD-APP-ENG-Divorce-Application-Joint_V1.docx";
 
     public static final String TEST_FINANCIAL_ORDER_POLICY_HEADER_TEXT = "The applicant wants to apply for a financial order.";
     public static final String TEST_FINANCIAL_ORDER_POLICY_HINT_TEXT = "A financial order is a legal document that describes how the "

@@ -17,8 +17,11 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.document.DocumentConstants;
 import uk.gov.hmcts.divorce.document.DocumentIdProvider;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
+import uk.gov.hmcts.divorce.testutil.DocTemplateResolver;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -64,6 +67,9 @@ public class CaseworkerIssueBailiffPackIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private DocTemplateResolver docTemplateResolver;
+
     @MockitoBean
     private AuthTokenGenerator serviceTokenGenerator;
 
@@ -90,6 +96,8 @@ public class CaseworkerIssueBailiffPackIT {
 
     @Test
     public void shouldGenerateCertificateOfServiceDocumentAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvoked() throws Exception {
+        final String CERTIFICATE_OF_SERVICE_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_SERVICE_TEMPLATE_ID);
         setMockClock(clock);
         final CaseData caseData = caseData();
         caseData.setDocuments(CaseDocuments.builder().build());
@@ -100,7 +108,7 @@ public class CaseworkerIssueBailiffPackIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "FL-NFD-GOR-ENG-Certificate_Of_Service_V2.docx");
+            CERTIFICATE_OF_SERVICE_TEMPLATE_ID);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -123,6 +131,8 @@ public class CaseworkerIssueBailiffPackIT {
 
     @Test
     public void shouldGenerateCertificateOfServiceDocumentInWelshAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvoked() throws Exception {
+        final String CERTIFICATE_OF_SERVICE_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_SERVICE_TEMPLATE_ID, LanguagePreference.WELSH);
         setMockClock(clock);
         final CaseData caseData = caseData();
         caseData.setDocuments(CaseDocuments.builder().build());
@@ -133,7 +143,7 @@ public class CaseworkerIssueBailiffPackIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-WEL-Certificate-Of-Service_V2.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CERTIFICATE_OF_SERVICE_TEMPLATE_ID);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)

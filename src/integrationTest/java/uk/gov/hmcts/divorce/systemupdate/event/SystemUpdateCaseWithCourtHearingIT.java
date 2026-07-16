@@ -21,10 +21,12 @@ import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.DocumentConstants;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.model.Print;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
+import uk.gov.hmcts.divorce.testutil.DocTemplateResolver;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -88,6 +90,9 @@ public class SystemUpdateCaseWithCourtHearingIT {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private DocTemplateResolver docTemplateResolver;
+
     @MockitoBean
     private RequestInterceptor requestInterceptor;
 
@@ -121,11 +126,13 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicantAndRespondent() throws Exception {
+        final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V3.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
@@ -154,6 +161,8 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
     @Test
     public void givenBothApplicantsHaveWelshAsChosenLanguageThenSendWelshEmails() throws Exception {
+        final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID, WELSH);
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
@@ -165,7 +174,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-WEL-Certificate-Of-Entitlement_V3.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -186,13 +195,17 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicantsForJointCase() throws Exception {
+        final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
+        final String CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT_TEMPLATE_ID);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V3.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
         stubForDocAssemblyWith("6dd725e8-f053-4493-9cbe-bb69d1905a12",
-                "FL-NFD-GOR-ENG-Do-Not-Attend-Court-CO-Granted-Letter_V2.docx");
+            CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT_TEMPLATE_ID);
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
@@ -220,11 +233,13 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
     @Test
     public void givenBothApplicantsAreRepresentedAndIsDigitalApplicationSendEmailToBothApplicantSolicitors() throws Exception {
+        final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V3.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
@@ -268,13 +283,17 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
     @Test
     public void givenBothApplicantsAreRepresentedAndIsPaperApplicationThenNoEmailsSent() throws Exception {
+        final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
+        final String CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V3.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor_V3.docx");
+            CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
@@ -317,16 +336,24 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
     @Test
     public void givenSoleApplicationWithOfflineRespondentThenNoEmailsSent() throws Exception {
+        final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
+        final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID);
+        final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID);
+        final String CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT_TEMPLATE_ID);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V3.docx");
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae2", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V6.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae2", CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905d33",
-            "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent_V1.docx");
+            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID);
         stubForDocAssemblyWith("6dd725e8-f053-4493-9cbe-bb69d1905a12",
-                "FL-NFD-GOR-ENG-Do-Not-Attend-Court-CO-Granted-Letter_V2.docx");
+            CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT_TEMPLATE_ID);
 
         CaseData data = validCaseWithCourtHearing();
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
@@ -365,14 +392,20 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
     @Test
     public void givenBothApplicantsOfflineWhenSoleJudicialSeparationCaseThenJSCoverLettersAreGenerated() throws Exception {
+        final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
+        final String CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID);
+        final String CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V3.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V3.docx");
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS_V2.docx");
+            CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID);
 
         CaseData data = validCaseWithCourtHearing();
         data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
@@ -402,14 +435,20 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
     @Test
     public void givenBothApplicantsOfflineWhenJointJudicialSeparationCaseThenJSCoverLettersAreGenerated() throws Exception {
+        final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
+        final String CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID);
+        final String CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V3.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V3.docx");
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS_V2.docx");
+            CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID);
 
         CaseData data = validCaseWithCourtHearing();
         data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
@@ -437,13 +476,17 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
     @Test
     public void givenBothApplicantsOfflineAndRepresentedWhenSoleJudicialSeparationCaseThenJSCoverLettersAreGenerated() throws Exception {
+        final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
+        final String CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V3.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1",
-            "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor_V2.docx");
+            CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
 
         CaseData data = validCaseWithCourtHearing();
         data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
@@ -471,13 +514,17 @@ public class SystemUpdateCaseWithCourtHearingIT {
 
     @Test
     public void givenBothApplicantsOfflineAndRepresentedWhenJointJudicialSeparationCaseThenJSCoverLettersAreGenerated() throws Exception {
+        final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
+        final String CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V3.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1",
-            "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor_V2.docx");
+            CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
 
         CaseData data = validCaseWithCourtHearing();
         data.setSupplementaryCaseType(JUDICIAL_SEPARATION);

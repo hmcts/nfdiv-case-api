@@ -21,12 +21,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.DocumentConstants;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.content.templatecontent.ConditionalOrderAnswersTemplateContent;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
+import uk.gov.hmcts.divorce.testutil.DocTemplateResolver;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -94,6 +96,9 @@ public class SubmitConditionalOrderIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private DocTemplateResolver docTemplateResolver;
+
     @MockitoBean
     private WebMvcConfig webMvcConfig;
 
@@ -129,6 +134,8 @@ public class SubmitConditionalOrderIT {
 
     @Test
     void shouldSetDateSubmitted() throws Exception {
+        final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         final Map<String, Object> mockedTemplateContent = new HashMap<>();
 
@@ -140,7 +147,7 @@ public class SubmitConditionalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Conditional_Order_Answers_V1.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
 
@@ -191,6 +198,8 @@ public class SubmitConditionalOrderIT {
 
     @Test
     void shouldSetDateSubmittedAndSendWelshNotification() throws Exception {
+        final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID, WELSH);
 
         final Map<String, Object> mockedTemplateContent = new HashMap<>();
 
@@ -202,7 +211,7 @@ public class SubmitConditionalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-WEL-Conditional_Order_Answers_V2.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
 
@@ -400,6 +409,8 @@ public class SubmitConditionalOrderIT {
 
     @Test
     void testJointConditionalOrderIsSubmittedByApplicant1Solicitor() throws Exception {
+        final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         final Map<String, Object> mockedTemplateContent = new HashMap<>();
 
@@ -411,7 +422,7 @@ public class SubmitConditionalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Conditional_Order_Answers_V1.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
 
@@ -485,6 +496,8 @@ public class SubmitConditionalOrderIT {
 
     @Test
     void testJointConditionalOrderIsSubmittedByApplicant2Solicitor() throws Exception {
+        final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         final Map<String, Object> mockedTemplateContent = new HashMap<>();
 
@@ -496,7 +509,7 @@ public class SubmitConditionalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Conditional_Order_Answers_V1.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(false);
 
@@ -566,6 +579,8 @@ public class SubmitConditionalOrderIT {
     @Test
     void testJointApplicationWithApplicant2RepresentedWhenConditionalOrderIsSubmittedByApplicant1()
         throws Exception {
+        final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         final Map<String, Object> mockedTemplateContent = new HashMap<>();
 
@@ -577,7 +592,7 @@ public class SubmitConditionalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Conditional_Order_Answers_V1.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
 
@@ -713,6 +728,8 @@ public class SubmitConditionalOrderIT {
 
     private void verifyJointCOSubmission(final ConditionalOrder conditionalOrder)
         throws Exception {
+        final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
         final Map<String, Object> mockedTemplateContent = new HashMap<>();
 
         setMockClock(clock);
@@ -723,7 +740,7 @@ public class SubmitConditionalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", "FL-NFD-GOR-ENG-Conditional_Order_Answers_V1.docx");
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         final CaseData caseData = validApplicant2CaseData();
         caseData.getApplicant2().setEmail("app2@gm.com");
