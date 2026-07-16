@@ -119,7 +119,7 @@ public class CaseworkerCreateGeneralLetterIT {
 
     @Test
     public void shouldSendGeneralLetterDocumentsForApplicantAndUpdateCaseDataWhenAddressedToApplicant() throws Exception {
-        final String GENERAL_LETTER_TEMPLATE_ID =
+        final String generalLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.GENERAL_LETTER_TEMPLATE_ID);
         final CaseData caseData = buildCaseDataWithGeneralLetter(APPLICANT);
 
@@ -131,7 +131,7 @@ public class CaseworkerCreateGeneralLetterIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", GENERAL_LETTER_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", generalLetterTemplateId);
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -156,7 +156,7 @@ public class CaseworkerCreateGeneralLetterIT {
 
     @Test
     public void shouldSendGeneralLetterDocumentsForConfidentialApplicantAndUpdateCaseDataWhenAddressedToApplicant() throws Exception {
-        final String GENERAL_LETTER_TEMPLATE_ID =
+        final String generalLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.GENERAL_LETTER_TEMPLATE_ID);
         final CaseData caseData = buildCaseDataWithGeneralLetter(APPLICANT);
         caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
@@ -169,7 +169,7 @@ public class CaseworkerCreateGeneralLetterIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", GENERAL_LETTER_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", generalLetterTemplateId);
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)

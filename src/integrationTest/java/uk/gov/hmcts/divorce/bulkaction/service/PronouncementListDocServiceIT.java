@@ -111,12 +111,12 @@ public class PronouncementListDocServiceIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(templateContentService.apply(any(), any())).thenReturn(mockedTemplateContent);
 
-        final String PRONOUNCEMENT_LIST_TEMPLATE_ID =
+        final String pronouncementListTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.PRONOUNCEMENT_LIST_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", PRONOUNCEMENT_LIST_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", pronouncementListTemplateId);
 
         final LocalDateTime dateAndTimeOfHearing = LocalDateTime.of(2021, 11, 10, 0, 0, 0);
         final var bulkActionCaseData = BulkActionCaseData

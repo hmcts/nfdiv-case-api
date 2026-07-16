@@ -280,13 +280,13 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Notice of proceeding respondent")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_A1_SOLE_APP1_CIT_CS =
+        final String nfdNopA1SoleApp1CitCs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS);
-        final String NFD_NOP_SOLE_RESPONDENT_CITIZEN =
+        final String nfdNopSoleRespondentCitizen =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN);
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_A1_SOLE_APP1_CIT_CS);
-        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopA1SoleApp1CitCs);
+        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, nfdNopSoleRespondentCitizen);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -384,11 +384,11 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Notice of proceeding respondent")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_A1_SOLE_APP1_CIT_CS =
+        final String nfdNopA1SoleApp1CitCs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS);
-        final String NFD_NOP_SOLE_RESPONDENT_CITIZEN =
+        final String nfdNopSoleRespondentCitizen =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -396,9 +396,9 @@ public class CaseworkerIssueApplicationIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubAosPackSendLetterToApplicant1CourtService(NOTICE_OF_PROCEEDING_TEMPLATE_ID);
         stubAosPackSendLetterToApplicant2();
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_A1_SOLE_APP1_CIT_CS);
-        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopA1SoleApp1CitCs);
+        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, nfdNopSoleRespondentCitizen);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -496,16 +496,16 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Notice of proceeding respondent")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_A1_SOLE_APP1_CIT_CS =
+        final String nfdNopA1SoleApp1CitCs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS, WELSH);
-        final String NFD_NOP_SOLE_RESPONDENT_CITIZEN =
+        final String nfdNopSoleRespondentCitizen =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_A1_SOLE_APP1_CIT_CS);
-        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopA1SoleApp1CitCs);
+        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, nfdNopSoleRespondentCitizen);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -557,16 +557,16 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Notice of proceeding respondent")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS =
+        final String nfdNopAs1SoleJointApp1App2SolCs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        final String NFD_NOP_SOLE_RESPONDENT_CITIZEN =
+        final String nfdNopSoleRespondentCitizen =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopAs1SoleJointApp1App2SolCs);
+        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, nfdNopSoleRespondentCitizen);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -715,19 +715,19 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Coversheet")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_AL2_SOLE_APP1_CIT_PS =
+        final String nfdNopAl2SoleApp1CitPs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS);
-        final String COVERSHEET_APPLICANT =
+        final String coversheetApplicant =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
-        final String NFD_NOP_SOLE_RESPONDENT_CITIZEN =
+        final String nfdNopSoleRespondentCitizen =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN);
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_AL2_SOLE_APP1_CIT_PS);
-        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, COVERSHEET_APPLICANT);
-        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopAl2SoleApp1CitPs);
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, coversheetApplicant);
+        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, nfdNopSoleRespondentCitizen);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -857,19 +857,19 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Coversheet")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_AL2_SOLE_APP1_CIT_PS =
+        final String nfdNopAl2SoleApp1CitPs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS);
-        final String NFD_NOP_SOLE_RESPONDENT_CITIZEN =
+        final String nfdNopSoleRespondentCitizen =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        final String COVERSHEET_APPLICANT =
+        final String coversheetApplicant =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_AL2_SOLE_APP1_CIT_PS);
-        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
-        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, COVERSHEET_APPLICANT);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopAl2SoleApp1CitPs);
+        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, nfdNopSoleRespondentCitizen);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, coversheetApplicant);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -960,19 +960,19 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Coversheet")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_AL2_SOLE_APP1_CIT_PS =
+        final String nfdNopAl2SoleApp1CitPs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS);
-        final String NFD_NOP_SOLE_RESPONDENT_CITIZEN =
+        final String nfdNopSoleRespondentCitizen =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        final String COVERSHEET_APPLICANT =
+        final String coversheetApplicant =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_AL2_SOLE_APP1_CIT_PS);
-        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
-        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, COVERSHEET_APPLICANT);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopAl2SoleApp1CitPs);
+        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, nfdNopSoleRespondentCitizen);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, coversheetApplicant);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -1012,16 +1012,16 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Notice of proceedings respondent")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS =
+        final String nfdNopAs1SoleJointApp1App2SolCs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        final String NFD_NOP_JA1_JOINT_APP1APP2_CIT =
+        final String nfdNopJa1JointApp1App2Cit =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT);
-        final String DIVORCE_APPLICATION_JOINT =
+        final String divorceApplicationJoint =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_JOINT);
 
-        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_JOINT);
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_JA1_JOINT_APP1APP2_CIT);
+        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, nfdNopAs1SoleJointApp1App2SolCs);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationJoint);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopJa1JointApp1App2Cit);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -1122,17 +1122,17 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Notice of proceedings app2")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS =
+        final String nfdNopAs1SolejointApp1app2SolCs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        final String NFD_NOP_JA1_JOINT_APP1APP2_CIT =
+        final String nfdNopJa1JointApp1app2Cit =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT);
-        final String DIVORCE_APPLICATION_JOINT =
+        final String divorceApplicationJoint =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_JOINT);
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, DUMMY_TEMPLATE_ID);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_JOINT);
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_JA1_JOINT_APP1APP2_CIT);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationJoint);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopAs1SolejointApp1app2SolCs);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopJa1JointApp1app2Cit);
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -1245,17 +1245,17 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Notice of proceedings app2")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS =
+        final String nfdNopAs1SoleJointApp1App2SolCs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        final String NFD_NOP_JA1_JOINT_APP1APP2_CIT =
+        final String nfdNopJa1JointApp1App2Cit =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT, WELSH);
-        final String DIVORCE_APPLICATION_JOINT =
+        final String divorceApplicationJoint =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_JOINT);
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, DUMMY_TEMPLATE_ID);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_JOINT);
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_JA1_JOINT_APP1APP2_CIT);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationJoint);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopAs1SoleJointApp1App2SolCs);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopJa1JointApp1App2Cit);
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -1296,16 +1296,16 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Notice of proceeding respondent")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS =
+        final String nfdNopAs1SoleJointApp1App2SolCs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        final String NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE =
+        final String nfdNopRs1SoleApp2SolOnline =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
 
-        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE);
+        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, nfdNopAs1SoleJointApp1App2SolCs);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopRs1SoleApp2SolOnline);
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -1390,16 +1390,16 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Notice of proceeding respondent")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_A1_SOLE_APP1_CIT_CS =
+        final String nfdNopA1SoleApp1CitCs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_A1_SOLE_APP1_CIT_CS);
-        final String NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS =
+        final String nfdNopAs1SoleJointApp1App2SolCs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_A1_SOLE_APP1_CIT_CS);
-        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopA1SoleApp1CitCs);
+        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, nfdNopAs1SoleJointApp1App2SolCs);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -1495,19 +1495,19 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Coversheet")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_AS2_SOLE_APP1_SOL_SS =
+        final String nfdNopAs2SoleApp1SolSs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS);
-        final String NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE =
+        final String nfdNopRs1SoleApp2SolOnline =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE);
-        final String COVERSHEET_APPLICANT2_SOLICITOR =
+        final String coversheetApplicant2Solicitor =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
 
-        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, NFD_NOP_AS2_SOLE_APP1_SOL_SS);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
-        stubForDocAssemblyWith(NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE);
-        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, COVERSHEET_APPLICANT2_SOLICITOR);
+        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, nfdNopAs2SoleApp1SolSs);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
+        stubForDocAssemblyWith(NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID, nfdNopRs1SoleApp2SolOnline);
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, coversheetApplicant2Solicitor);
         stubAosPackSendLetterToApplicant1NotCourtService(AOS_COVER_LETTER_TEMPLATE_ID, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID);
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -1565,19 +1565,19 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Coversheet")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_AS2_SOLE_APP1_SOL_SS =
+        final String nfdNopAs2SoleApp1SolSs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS);
-        final String NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE =
+        final String nfdNopRs1SoleApp2SolOnline =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE);
-        final String COVERSHEET_APPLICANT2_SOLICITOR =
+        final String coversheetApplicant2Solicitor =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
 
-        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, NFD_NOP_AS2_SOLE_APP1_SOL_SS);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
-        stubForDocAssemblyWith(NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE);
-        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, COVERSHEET_APPLICANT2_SOLICITOR);
+        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, nfdNopAs2SoleApp1SolSs);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
+        stubForDocAssemblyWith(NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID, nfdNopRs1SoleApp2SolOnline);
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, coversheetApplicant2Solicitor);
         stubAosPackSendLetterToApplicant1NotCourtService(AOS_COVER_LETTER_TEMPLATE_ID, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID);
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -1634,19 +1634,19 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Coversheet")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_AS2_SOLE_APP1_SOL_SS =
+        final String nfdNopAs2SoleApp1SolSs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AS2_SOLE_APP1_SOL_SS);
-        final String NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE =
+        final String nfdNopRs1SoleApp2SolOnline =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE);
-        final String COVERSHEET_APPLICANT2_SOLICITOR =
+        final String coversheetApplicant2Solicitor =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
 
-        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, NFD_NOP_AS2_SOLE_APP1_SOL_SS);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
-        stubForDocAssemblyWith(NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE);
-        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, COVERSHEET_APPLICANT2_SOLICITOR);
+        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, nfdNopAs2SoleApp1SolSs);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
+        stubForDocAssemblyWith(NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID, nfdNopRs1SoleApp2SolOnline);
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, coversheetApplicant2Solicitor);
         stubAosPackSendLetterToApplicant1NotCourtService(AOS_COVER_LETTER_TEMPLATE_ID, NFD_NOP_RS1_SOLE_APP2_SOL_ONLINE_ID);
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -1809,10 +1809,10 @@ public class CaseworkerIssueApplicationIT {
         when(documentIdProvider.documentId()).thenReturn("Notice of proceedings respondent").thenReturn("Divorce application");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, DUMMY_TEMPLATE_ID);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
 
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
         stubAosPackSendLetterToApplicant1CourtService(AOS_COVER_LETTER_TEMPLATE_ID);
         stubAosPackSendLetterToApplicant2();
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -1847,16 +1847,16 @@ public class CaseworkerIssueApplicationIT {
         when(documentIdProvider.documentId()).thenReturn("Notice of proceedings respondent").thenReturn("Divorce application");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, DUMMY_TEMPLATE_ID);
-        final String NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS =
+        final String nfdNopAs1SolejointApp1app2SolCs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        final String NFD_NOP_SOLE_RESPONDENT_CITIZEN =
+        final String nfdNopSoleRespondentCitizen =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopAs1SolejointApp1app2SolCs);
+        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, nfdNopSoleRespondentCitizen);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
         stubAosPackSendLetterToApplicant1CourtService(AOS_COVER_LETTER_TEMPLATE_ID);
         stubAosPackSendLetterToApplicant2();
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -1894,16 +1894,16 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Notice of proceedings respondent")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS =
+        final String nfdNopAs1SolejointApp1app2SolCs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        final String NFD_NOP_JA1_JOINT_APP1APP2_CIT =
+        final String nfdNopJa1JointApp1app2Cit =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT);
-        final String DIVORCE_APPLICATION_JOINT =
+        final String divorceApplicationJoint =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_JOINT);
 
-        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_JOINT);
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_JA1_JOINT_APP1APP2_CIT);
+        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, nfdNopAs1SolejointApp1app2SolCs);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationJoint);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopJa1JointApp1app2Cit);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -1951,19 +1951,19 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Coversheet")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_AL2_SOLE_APP1_CIT_PS =
+        final String nfdNopAl2SoleApp1CitPs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS);
-        final String NFD_NOP_SOLE_RESPONDENT_CITIZEN =
+        final String nfdNopSoleRespondentCitizen =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        final String COVERSHEET_APPLICANT =
+        final String coversheetApplicant =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_AL2_SOLE_APP1_CIT_PS);
-        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
-        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, COVERSHEET_APPLICANT);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopAl2SoleApp1CitPs);
+        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, nfdNopSoleRespondentCitizen);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, coversheetApplicant);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -2002,13 +2002,13 @@ public class CaseworkerIssueApplicationIT {
         when(documentIdProvider.documentId()).thenReturn("Notice of proceedings respondent").thenReturn("Divorce application");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, DUMMY_TEMPLATE_ID);
-        final String DIVORCE_APPLICATION_JOINT =
+        final String divorceApplicationJoint =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_JOINT);
-        final String NFD_NOP_JA1_JOINT_APP1APP2_CIT =
+        final String nfdNopJa1JointApp1app2Cit =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT);
 
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_JOINT);
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_JA1_JOINT_APP1APP2_CIT);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationJoint);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopJa1JointApp1app2Cit);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -2059,19 +2059,19 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Coversheet")
             .thenReturn("Divorce application");
 
-        final String NFD_NOP_AL2_SOLE_APP1_CIT_PS =
+        final String nfdNopAl2SoleApp1CitPs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AL2_SOLE_APP1_CIT_PS);
-        final String NFD_NOP_SOLE_RESPONDENT_CITIZEN =
+        final String nfdNopSoleRespondentCitizen =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        final String COVERSHEET_APPLICANT =
+        final String coversheetApplicant =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_AL2_SOLE_APP1_CIT_PS);
-        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
-        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, COVERSHEET_APPLICANT);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopAl2SoleApp1CitPs);
+        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, nfdNopSoleRespondentCitizen);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, coversheetApplicant);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -2111,13 +2111,13 @@ public class CaseworkerIssueApplicationIT {
         when(documentIdProvider.documentId()).thenReturn("Notice of proceedings respondent").thenReturn("Divorce application");
 
         stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, DUMMY_TEMPLATE_ID);
-        final String DIVORCE_APPLICATION_JOINT =
+        final String divorceApplicationJoint =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_JOINT);
-        final String NFD_NOP_JA1_JOINT_APP1APP2_CIT =
+        final String nfdNopJa1JointApp1app2Cit =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT);
 
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_JOINT);
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_JA1_JOINT_APP1APP2_CIT);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationJoint);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopJa1JointApp1app2Cit);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -2153,16 +2153,16 @@ public class CaseworkerIssueApplicationIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, DUMMY_TEMPLATE_ID);
-        final String NFD_NOP_SOLE_RESPONDENT_CITIZEN =
+        final String nfdNopSoleRespondentCitizen =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        final String COVERSHEET_APPLICANT =
+        final String coversheetApplicant =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
 
-        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, COVERSHEET_APPLICANT);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
+        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, nfdNopSoleRespondentCitizen);
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, coversheetApplicant);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -2201,19 +2201,19 @@ public class CaseworkerIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        final String NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS =
+        final String nfdNopAs1SolejointApp1app2SolCs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        final String NFD_NOP_SOLE_RESPONDENT_CITIZEN =
+        final String nfdNopSoleRespondentCitizen =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        final String COVERSHEET_APPLICANT =
+        final String coversheetApplicant =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, COVERSHEET_APPLICANT);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopAs1SolejointApp1app2SolCs);
+        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, nfdNopSoleRespondentCitizen);
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, coversheetApplicant);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -2253,16 +2253,16 @@ public class CaseworkerIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        final String NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS =
+        final String nfdNopAs1SolejointApp1app2SolCs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        final String NFD_NOP_JA1_JOINT_APP1APP2_CIT =
+        final String nfdNopJa1JointApp1app2Cit =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT);
-        final String DIVORCE_APPLICATION_JOINT =
+        final String divorceApplicationJoint =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_JOINT);
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, NFD_NOP_JA1_JOINT_APP1APP2_CIT);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_JOINT);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopAs1SolejointApp1app2SolCs);
+        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, nfdNopJa1JointApp1app2Cit);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationJoint);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -2301,19 +2301,19 @@ public class CaseworkerIssueApplicationIT {
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        final String NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS =
+        final String nfdNopAs1SolejointApp1app2SolCs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        final String NFD_NOP_SOLE_RESPONDENT_CITIZEN =
+        final String nfdNopSoleRespondentCitizen =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        final String COVERSHEET_APPLICANT =
+        final String coversheetApplicant =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
-        final String DIVORCE_APPLICATION_SOLE =
+        final String divorceApplicationSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_SOLE);
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_AS1_SOLEJOINT_APP1APP2_SOL_CS);
-        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, NFD_NOP_SOLE_RESPONDENT_CITIZEN);
-        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, COVERSHEET_APPLICANT);
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_SOLE);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopAs1SolejointApp1app2SolCs);
+        stubForDocAssemblyWith(NFD_NOP_SOLE_RESPONDENT_CITIZEN_TEMPLATE_ID, nfdNopSoleRespondentCitizen);
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, coversheetApplicant);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationSole);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -2357,17 +2357,17 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Notice of proceeding applicant 2")
             .thenReturn("Judicial separation application");
 
-        final String NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS =
+        final String nfdNopJa1JointApp1app2CitJs =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS);
-        final String COVERSHEET_APPLICANT =
+        final String coversheetApplicant =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
-        final String JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID =
+        final String judicialSeparationJointApplicationTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID);
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS);
-        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, COVERSHEET_APPLICANT);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopJa1JointApp1app2CitJs);
+        stubForDocAssemblyWith(APPLICANT_COVERSHEET_TEMPLATE_ID, coversheetApplicant);
         stubForDocAssemblyWith(NFD_NOP_JUDICIAL_SEPARATION_APPLICATION_JOINT_TEMPLATE_ID,
-            JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID);
+            judicialSeparationJointApplicationTemplateId);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -2421,13 +2421,13 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Notice of proceedings applicant 2")
             .thenReturn("Divorce application");
 
-        final String DIVORCE_APPLICATION_JOINT =
+        final String divorceApplicationJoint =
             docTemplateResolver.resolveTemplateID(DocumentConstants.DIVORCE_APPLICATION_JOINT, WELSH);
-        final String NFD_NOP_JA1_JOINT_APP1APP2_CIT =
+        final String nfdNopJa1JointApp1App2Cit =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_JA1_JOINT_APP1APP2_CIT, WELSH);
 
-        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, DIVORCE_APPLICATION_JOINT);
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_JA1_JOINT_APP1APP2_CIT);
+        stubForDocAssemblyWith(DIVORCE_APPLICATION_TEMPLATE_ID, divorceApplicationJoint);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopJa1JointApp1App2Cit);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -2476,20 +2476,20 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Coversheet")
             .thenReturn("Judicial separation application");
 
-        final String NFD_NOP_APP1_JS_SOLE =
+        final String nfdNopApp1JsSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_APP1_JS_SOLE);
-        final String NFD_NOP_APP2_JS_SOLE =
+        final String nfdNopApp2JsSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_APP2_JS_SOLE);
-        final String JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID =
+        final String judicialSeparationSoleApplicationTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID);
-        final String COVERSHEET_APPLICANT =
+        final String coversheetApplicant =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
 
-        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, NFD_NOP_APP1_JS_SOLE);
-        stubForDocAssemblyWith(NFD_NOP_APP2_JS_SOLE_ID, NFD_NOP_APP2_JS_SOLE);
+        stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID, nfdNopApp1JsSole);
+        stubForDocAssemblyWith(NFD_NOP_APP2_JS_SOLE_ID, nfdNopApp2JsSole);
         stubForDocAssemblyWith(NFD_NOP_JUDICIAL_SEPARATION_APPLICATION_SOLE_TEMPLATE_ID,
-            JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID);
-        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, COVERSHEET_APPLICANT);
+            judicialSeparationSoleApplicationTemplateId);
+        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, coversheetApplicant);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -2535,22 +2535,22 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Coversheet")
             .thenReturn("Judicial separation application");
 
-        final String NFD_NOP_APP1_SOLICITOR_JS_SOLE =
+        final String nfdNopApp1SolicitorJsSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_APP1_SOLICITOR_JS_SOLE);
-        final String NFD_NOP_APP2_JS_SOLE =
+        final String nfdNopApp2JsSole =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_APP2_JS_SOLE);
-        final String JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID =
+        final String judicialSeparationSoleApplicationTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID);
-        final String COVERSHEET_APPLICANT =
+        final String coversheetApplicant =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID,
-            NFD_NOP_APP1_SOLICITOR_JS_SOLE);
+            nfdNopApp1SolicitorJsSole);
         stubForDocAssemblyWith(NFD_NOP_APP2_JS_SOLE_ID,
-            NFD_NOP_APP2_JS_SOLE);
+            nfdNopApp2JsSole);
         stubForDocAssemblyWith(NFD_NOP_JUDICIAL_SEPARATION_APPLICATION_SOLE_TEMPLATE_ID,
-            JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID);
-        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, COVERSHEET_APPLICANT);
+            judicialSeparationSoleApplicationTemplateId);
+        stubForDocAssemblyWith(AOS_COVER_LETTER_TEMPLATE_ID, coversheetApplicant);
 
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
@@ -2605,18 +2605,18 @@ public class CaseworkerIssueApplicationIT {
             .thenReturn("Notice of proceeding applicant2 solicitor")
             .thenReturn("Judicial separation application");
 
-        final String NFD_NOP_APP1APP2_SOL_JS_JOINT =
+        final String nfdNopApp1App2SolJsJoint =
             docTemplateResolver.resolveTemplateID(DocumentConstants.NFD_NOP_APP1APP2_SOL_JS_JOINT);
-        final String JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID =
+        final String judicialSeparationJointApplicationTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID);
-        final String COVERSHEET_APPLICANT2_SOLICITOR =
+        final String coversheetApplicant2Solicitor =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT2_SOLICITOR);
 
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_TEMPLATE_ID,
-            NFD_NOP_APP1APP2_SOL_JS_JOINT);
+            nfdNopApp1App2SolJsJoint);
         stubForDocAssemblyWith(NFD_NOP_JUDICIAL_SEPARATION_APPLICATION_JOINT_TEMPLATE_ID,
-            JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID);
-        stubForDocAssemblyWith(SOLICITOR_COVERSHEET_ID, COVERSHEET_APPLICANT2_SOLICITOR);
+            judicialSeparationJointApplicationTemplateId);
+        stubForDocAssemblyWith(SOLICITOR_COVERSHEET_ID, coversheetApplicant2Solicitor);
 
         stubCdamUploadWith(D84_DOCUMENT_ID, D84.getLabel());
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);

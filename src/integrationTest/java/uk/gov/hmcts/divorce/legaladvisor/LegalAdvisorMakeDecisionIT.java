@@ -238,7 +238,7 @@ public class LegalAdvisorMakeDecisionIT {
     @Test
     public void givenConditionalOrderIsNotGrantedAndRefusalIsDueToMoreInformationRequiredThenShouldSendNotification()
         throws Exception {
-        final String CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID =
+        final String clarificationRefusalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID);
 
         setMockClock(clock);
@@ -258,7 +258,7 @@ public class LegalAdvisorMakeDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID);
+        stubForDocAssemblyWith(UUID, clarificationRefusalOrderTemplateId);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -290,7 +290,7 @@ public class LegalAdvisorMakeDecisionIT {
     @Test
     public void givenCaseTypeIsJointAndConditionalOrderIsNotGrantedAndLanguagePreferenceIsWelshThenShouldSendWelshNotifications()
         throws Exception {
-        final String CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID =
+        final String clarificationRefusalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID, WELSH);
 
         setMockClock(clock);
@@ -313,7 +313,7 @@ public class LegalAdvisorMakeDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID);
+        stubForDocAssemblyWith(UUID, clarificationRefusalOrderTemplateId);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -389,7 +389,7 @@ public class LegalAdvisorMakeDecisionIT {
     @Test
     public void shouldSetStateToAwaitingAmendedApplicationAnsSendNotificationToApplicantIfConditionalOrderIsRejectedForAmendment()
         throws Exception {
-        final String REJECTED_REFUSAL_ORDER_TEMPLATE_ID =
+        final String rejectedRefusalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.REJECTED_REFUSAL_ORDER_TEMPLATE_ID);
 
         setMockClock(clock);
@@ -417,7 +417,7 @@ public class LegalAdvisorMakeDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, REJECTED_REFUSAL_ORDER_TEMPLATE_ID);
+        stubForDocAssemblyWith(UUID, rejectedRefusalOrderTemplateId);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -451,7 +451,7 @@ public class LegalAdvisorMakeDecisionIT {
     @Test
     public void shouldSetStateToAwaitingAmendedApplicationAndSendNotificationToBothApplicantsIfConditionalOrderIsRejectedForAmendment()
         throws Exception {
-        final String REJECTED_REFUSAL_ORDER_TEMPLATE_ID =
+        final String rejectedRefusalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.REJECTED_REFUSAL_ORDER_TEMPLATE_ID);
 
         setMockClock(clock);
@@ -479,7 +479,7 @@ public class LegalAdvisorMakeDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, REJECTED_REFUSAL_ORDER_TEMPLATE_ID);
+        stubForDocAssemblyWith(UUID, rejectedRefusalOrderTemplateId);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -521,7 +521,7 @@ public class LegalAdvisorMakeDecisionIT {
     @Test
     public void shouldSendNotificationInWelshToBothApplicantsIfConditionalOrderIsRejectedForAmendmentAndLanguagePrefferedIsWelsh()
         throws Exception {
-        final String REJECTED_REFUSAL_ORDER_TEMPLATE_ID =
+        final String rejectedRefusalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.REJECTED_REFUSAL_ORDER_TEMPLATE_ID, WELSH);
 
         setMockClock(clock);
@@ -550,7 +550,7 @@ public class LegalAdvisorMakeDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, REJECTED_REFUSAL_ORDER_TEMPLATE_ID);
+        stubForDocAssemblyWith(UUID, rejectedRefusalOrderTemplateId);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -591,7 +591,7 @@ public class LegalAdvisorMakeDecisionIT {
 
     @Test
     public void shouldAddLegalAdvisorDecisionToAuditList() throws Exception {
-        final String CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID =
+        final String clarificationRefusalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID);
 
         setMockClock(clock);
@@ -612,7 +612,7 @@ public class LegalAdvisorMakeDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID);
+        stubForDocAssemblyWith(UUID, clarificationRefusalOrderTemplateId);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -642,7 +642,7 @@ public class LegalAdvisorMakeDecisionIT {
     @Test
     public void givenSoleApplicationCoIsNotGrantedAndRefusalIsDueToMoreInfoRequiredThenShouldSendNotificationToApp1Solicitor()
         throws Exception {
-        final String CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID =
+        final String clarificationRefusalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID);
 
         setMockClock(clock);
@@ -671,7 +671,7 @@ public class LegalAdvisorMakeDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID);
+        stubForDocAssemblyWith(UUID, clarificationRefusalOrderTemplateId);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -710,11 +710,11 @@ public class LegalAdvisorMakeDecisionIT {
 
     @Test
     public void shouldAddRefusalLetterToConfidentialDocumentsWhenEitherPartyHasConfidentialContactInfo() throws Exception {
-        final String CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID =
+        final String clarificationRefusalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID);
-        final String COVERSHEET_APPLICANT =
+        final String coversheetApplicant =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
-        final String JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID =
+        final String judicialSeparationOrderRefusalCoverLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID);
         setMockClock(clock);
 
@@ -752,9 +752,9 @@ public class LegalAdvisorMakeDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID);
-        stubForDocAssemblyWith(UUID, COVERSHEET_APPLICANT);
-        stubForDocAssemblyWith(UUID, JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER_TEMPLATE_ID);
+        stubForDocAssemblyWith(UUID, clarificationRefusalOrderTemplateId);
+        stubForDocAssemblyWith(UUID, coversheetApplicant);
+        stubForDocAssemblyWith(UUID, judicialSeparationOrderRefusalCoverLetterTemplateId);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -781,7 +781,7 @@ public class LegalAdvisorMakeDecisionIT {
     @Test
     public void givenJointCaseCoIsNotGrantedAndRefusalIsDueToAmendApplicationThenShouldSendNotificationToBothApplicantSolicitors()
         throws Exception {
-        final String REJECTED_REFUSAL_ORDER_TEMPLATE_ID =
+        final String rejectedRefusalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.REJECTED_REFUSAL_ORDER_TEMPLATE_ID);
 
         setMockClock(clock);
@@ -817,7 +817,7 @@ public class LegalAdvisorMakeDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, REJECTED_REFUSAL_ORDER_TEMPLATE_ID);
+        stubForDocAssemblyWith(UUID, rejectedRefusalOrderTemplateId);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -873,7 +873,7 @@ public class LegalAdvisorMakeDecisionIT {
 
     @Test
     public void midEventShouldGenerateRefusalOrderDocumentWhenCORejectedWithMoreInfo() throws Exception {
-        final String CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID =
+        final String clarificationRefusalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID);
         setMockClock(clock);
         final Map<String, Object> templateContent = new HashMap<>();
@@ -891,7 +891,7 @@ public class LegalAdvisorMakeDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, CLARIFICATION_REFUSAL_ORDER_TEMPLATE_ID);
+        stubForDocAssemblyWith(UUID, clarificationRefusalOrderTemplateId);
 
         mockMvc.perform(post(CO_REFUSAL_ORDER_WITH_MORE_INFO_MID_EVENT_URL)
                 .contentType(APPLICATION_JSON)
@@ -914,7 +914,7 @@ public class LegalAdvisorMakeDecisionIT {
 
     @Test
     public void midEventShouldGenerateRefusalOrderDocumentWhenCORejectedWithAmendments() throws Exception {
-        final String REJECTED_REFUSAL_ORDER_TEMPLATE_ID =
+        final String rejectedRefusalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.REJECTED_REFUSAL_ORDER_TEMPLATE_ID);
         setMockClock(clock);
         final Map<String, Object> templateContent = new HashMap<>();
@@ -930,7 +930,7 @@ public class LegalAdvisorMakeDecisionIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, REJECTED_REFUSAL_ORDER_TEMPLATE_ID);
+        stubForDocAssemblyWith(UUID, rejectedRefusalOrderTemplateId);
         when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DIVORCE_AMEND_PETITION)).thenReturn(10.00);
 
         mockMvc.perform(post(CO_REFUSAL_ORDER_WITH_AMENDMENTS_MID_EVENT_URL)

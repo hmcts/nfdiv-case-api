@@ -109,14 +109,14 @@ public class LegalAdvisorMakeBailiffDecisionIT {
         throws Exception {
         setMockClock(clock);
 
-        final String BAILIFF_APPLICATION_APPROVED_ID =
+        final String bailiffApplicationApprovedId =
             docTemplateResolver.resolveTemplateID(uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith(uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID,
-            BAILIFF_APPLICATION_APPROVED_ID);
+            bailiffApplicationApprovedId);
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setServiceApplicationGranted(YES);
@@ -150,14 +150,14 @@ public class LegalAdvisorMakeBailiffDecisionIT {
     public void shouldGenerateWelshDocumentAndNotificationWhenApplicant1LanguagePreferenceIsWelsh() throws Exception {
         setMockClock(clock);
 
-        final String BAILIFF_APPLICATION_APPROVED_ID =
+        final String bailiffApplicationApprovedId =
             docTemplateResolver.resolveTemplateID(uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID, WELSH);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith(uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID,
-            BAILIFF_APPLICATION_APPROVED_ID);
+            bailiffApplicationApprovedId);
 
         final CaseData caseData = caseData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
@@ -187,14 +187,14 @@ public class LegalAdvisorMakeBailiffDecisionIT {
         throws Exception {
         setMockClock(clock);
 
-        final String BAILIFF_APPLICATION_NOT_APPROVED_ID =
+        final String bailiffApplicationNotApprovedId =
             docTemplateResolver.resolveTemplateID(uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_ID);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith(uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_ID,
-            BAILIFF_APPLICATION_NOT_APPROVED_ID);
+            bailiffApplicationNotApprovedId);
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setReceivedServiceApplicationDate(LocalDate.of(2022, 1, 1));

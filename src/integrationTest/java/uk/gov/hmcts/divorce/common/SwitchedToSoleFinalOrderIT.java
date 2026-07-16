@@ -253,11 +253,11 @@ public class SwitchedToSoleFinalOrderIT {
         when(idamService.retrieveSystemUpdateUserDetails())
             .thenReturn(new User(BEARER_TEST_SYSTEM_AUTHORISATION_TOKEN, UserInfo.builder().build()));
 
-        final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID =
+        final String conditionalOrderAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", conditionalOrderAnswersTemplateId);
     }
 }

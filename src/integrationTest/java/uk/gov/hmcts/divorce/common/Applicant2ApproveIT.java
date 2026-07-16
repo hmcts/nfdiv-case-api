@@ -124,12 +124,12 @@ public class Applicant2ApproveIT {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant1AndApplicant2() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        final String DIVORCE_JOINT_APPLICANT_2_ANSWERS_TEMPLATE_ID =
+        final String divorceJointApplicant2AnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DIVORCE_JOINT_APPLICANT_2_ANSWERS);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS,
-            DIVORCE_JOINT_APPLICANT_2_ANSWERS_TEMPLATE_ID);
+            divorceJointApplicant2AnswersTemplateId);
 
         CaseData data = validApplicant2CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
@@ -160,12 +160,12 @@ public class Applicant2ApproveIT {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant2InWelsh() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        final String DIVORCE_JOINT_APPLICANT_2_ANSWERS_TEMPLATE_ID =
+        final String divorceJointApplicant2AnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DIVORCE_JOINT_APPLICANT_2_ANSWERS);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS,
-            DIVORCE_JOINT_APPLICANT_2_ANSWERS_TEMPLATE_ID);
+            divorceJointApplicant2AnswersTemplateId);
 
         CaseData data = validApplicant2CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
@@ -211,12 +211,12 @@ public class Applicant2ApproveIT {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant1AndApplicant2WithDeniedHwf() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        final String DIVORCE_JOINT_APPLICANT_2_ANSWERS_TEMPLATE_ID =
+        final String divorceJointApplicant2AnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DIVORCE_JOINT_APPLICANT_2_ANSWERS);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS,
-            DIVORCE_JOINT_APPLICANT_2_ANSWERS_TEMPLATE_ID);
+            divorceJointApplicant2AnswersTemplateId);
 
         CaseData data = validApplicant2CaseData();
         data.getApplication().setApplicant1HelpWithFees(HelpWithFees.builder().needHelp(YES).build());
@@ -249,12 +249,12 @@ public class Applicant2ApproveIT {
     @Test
     public void givenValidJointCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant1Solicitor() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        final String DIVORCE_JOINT_APPLICANT_2_ANSWERS_TEMPLATE_ID =
+        final String divorceJointApplicant2AnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DIVORCE_JOINT_APPLICANT_2_ANSWERS);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS,
-            DIVORCE_JOINT_APPLICANT_2_ANSWERS_TEMPLATE_ID);
+            divorceJointApplicant2AnswersTemplateId);
 
         CaseData data = validApplicant2CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);

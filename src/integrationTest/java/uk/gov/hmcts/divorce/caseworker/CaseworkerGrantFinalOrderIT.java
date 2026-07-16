@@ -165,7 +165,7 @@ public class CaseworkerGrantFinalOrderIT {
 
     @Test
     public void shouldGenerateGrantFinalOrderDocumentAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvoked() throws Exception {
-        final String FINAL_ORDER_TEMPLATE_ID =
+        final String finalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_TEMPLATE_ID);
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
         caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
@@ -175,7 +175,7 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", FINAL_ORDER_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", finalOrderTemplateId);
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -205,9 +205,9 @@ public class CaseworkerGrantFinalOrderIT {
     @Test
     public void shouldGenerateGrantFinalOrderDocumentAndFinalOrderCoverLetterWhenAboutToSubmitCallbackIsInvokedForOfflineCase()
         throws Exception {
-        final String FINAL_ORDER_TEMPLATE_ID =
+        final String finalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_TEMPLATE_ID);
-        final String FINAL_ORDER_COVER_LETTER_TEMPLATE_ID =
+        final String finalOrderCoverLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_COVER_LETTER_TEMPLATE_ID);
 
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
@@ -221,8 +221,8 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", FINAL_ORDER_TEMPLATE_ID);
-        stubForDocAssemblyWith("a11dc4a5-30b0-4a91-8fbb-1676cd300421", FINAL_ORDER_COVER_LETTER_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", finalOrderTemplateId);
+        stubForDocAssemblyWith("a11dc4a5-30b0-4a91-8fbb-1676cd300421", finalOrderCoverLetterTemplateId);
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -250,9 +250,9 @@ public class CaseworkerGrantFinalOrderIT {
     @Test
     public void shouldGenerateGrantFinalOrderDocumentAndFinalOrderCoverLetterWhenAboutToSubmitCallbackIsInvokedForFinalOrderOverdue()
         throws Exception {
-        final String FINAL_ORDER_TEMPLATE_ID =
+        final String finalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_TEMPLATE_ID);
-        final String FINAL_ORDER_COVER_LETTER_TEMPLATE_ID =
+        final String finalOrderCoverLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_COVER_LETTER_TEMPLATE_ID);
 
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
@@ -298,8 +298,8 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", FINAL_ORDER_TEMPLATE_ID);
-        stubForDocAssemblyWith("a11dc4a5-30b0-4a91-8fbb-1676cd300421", FINAL_ORDER_COVER_LETTER_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", finalOrderTemplateId);
+        stubForDocAssemblyWith("a11dc4a5-30b0-4a91-8fbb-1676cd300421", finalOrderCoverLetterTemplateId);
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -326,7 +326,7 @@ public class CaseworkerGrantFinalOrderIT {
 
     @Test
     public void shouldGenerateGrantFinalOrderDocumentInWelshAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvoked() throws Exception {
-        final String FINAL_ORDER_TEMPLATE_ID =
+        final String finalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_TEMPLATE_ID, WELSH);
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
         caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
@@ -337,7 +337,7 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", FINAL_ORDER_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", finalOrderTemplateId);
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -425,7 +425,7 @@ public class CaseworkerGrantFinalOrderIT {
 
     @Test
     public void shouldGenerateFinalOrderAndSendNotificationToSolicitorsWhenAboutToSubmitCallbackIsInvoked() throws Exception {
-        final String FINAL_ORDER_TEMPLATE_ID =
+        final String finalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_TEMPLATE_ID);
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
         caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
@@ -453,7 +453,7 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", FINAL_ORDER_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", finalOrderTemplateId);
 
         String response = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -482,7 +482,7 @@ public class CaseworkerGrantFinalOrderIT {
 
     @Test
     public void shouldSendNotificationToSolicitorsWhenAboutToSubmitCallbackIsInvoked() throws Exception {
-        final String FINAL_ORDER_TEMPLATE_ID =
+        final String finalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_TEMPLATE_ID);
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
         caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
@@ -510,7 +510,7 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", FINAL_ORDER_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", finalOrderTemplateId);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -548,7 +548,7 @@ public class CaseworkerGrantFinalOrderIT {
 
     @Test
     public void shouldSendNotificationToApplicantAndRespondentWhenAboutToSubmitCallbackIsInvokedForASoleCase() throws Exception {
-        final String FINAL_ORDER_TEMPLATE_ID =
+        final String finalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_TEMPLATE_ID);
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
@@ -566,7 +566,7 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, FINAL_ORDER_TEMPLATE_ID);
+        stubForDocAssemblyWith(UUID, finalOrderTemplateId);
 
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -605,7 +605,7 @@ public class CaseworkerGrantFinalOrderIT {
 
     @Test
     public void shouldSendWelshNotificationToApplicantAndRespondentWhenAboutToSubmitCallbackIsInvokedForASoleCase() throws Exception {
-        final String FINAL_ORDER_TEMPLATE_ID =
+        final String finalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_TEMPLATE_ID, WELSH);
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
         caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
@@ -623,7 +623,7 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, FINAL_ORDER_TEMPLATE_ID);
+        stubForDocAssemblyWith(UUID, finalOrderTemplateId);
 
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -662,9 +662,9 @@ public class CaseworkerGrantFinalOrderIT {
 
     @Test
     public void shouldSendBulkPrintNotificationToOfflineApplicantAndOfflineRespondentWhenSubmittedCallbackIsInvoked() throws Exception {
-        final String FINAL_ORDER_TEMPLATE_ID =
+        final String finalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_TEMPLATE_ID);
-        final String FINAL_ORDER_COVER_LETTER_TEMPLATE_ID =
+        final String finalOrderCoverLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_COVER_LETTER_TEMPLATE_ID);
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
         caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
@@ -710,8 +710,8 @@ public class CaseworkerGrantFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, FINAL_ORDER_TEMPLATE_ID);
-        stubForDocAssemblyWith(UUID, FINAL_ORDER_COVER_LETTER_TEMPLATE_ID);
+        stubForDocAssemblyWith(UUID, finalOrderTemplateId);
+        stubForDocAssemblyWith(UUID, finalOrderCoverLetterTemplateId);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)

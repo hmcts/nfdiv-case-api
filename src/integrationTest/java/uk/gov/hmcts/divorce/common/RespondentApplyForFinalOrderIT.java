@@ -137,13 +137,13 @@ public class RespondentApplyForFinalOrderIT {
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        final String RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID =
+        final String respondentFinalOrderAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID);
+            respondentFinalOrderAnswersTemplateId);
 
         performRespondentApplyForFinalRequest(caseDetails.getData(), ABOUT_TO_SUBMIT_URL)
             .andExpect(status().isOk())
@@ -171,13 +171,13 @@ public class RespondentApplyForFinalOrderIT {
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        final String RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID =
+        final String respondentFinalOrderAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID);
+            respondentFinalOrderAnswersTemplateId);
 
         performRespondentApplyForFinalRequest(caseDetails.getData(), ABOUT_TO_SUBMIT_URL)
             .andExpect(status().isOk())
@@ -194,13 +194,13 @@ public class RespondentApplyForFinalOrderIT {
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
-        final String RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID =
+        final String respondentFinalOrderAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID);
+            respondentFinalOrderAnswersTemplateId);
 
         performRespondentApplyForFinalRequest(caseDetails.getData(), SUBMITTED_URL).andExpect(status().isOk());
 

@@ -134,7 +134,7 @@ public class SubmitConditionalOrderIT {
 
     @Test
     void shouldSetDateSubmitted() throws Exception {
-        final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID =
+        final String conditionalOrderAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         final Map<String, Object> mockedTemplateContent = new HashMap<>();
@@ -147,7 +147,7 @@ public class SubmitConditionalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", conditionalOrderAnswersTemplateId);
 
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
 
@@ -198,7 +198,7 @@ public class SubmitConditionalOrderIT {
 
     @Test
     void shouldSetDateSubmittedAndSendWelshNotification() throws Exception {
-        final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID =
+        final String conditionalOrderAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID, WELSH);
 
         final Map<String, Object> mockedTemplateContent = new HashMap<>();
@@ -211,7 +211,7 @@ public class SubmitConditionalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", conditionalOrderAnswersTemplateId);
 
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
 
@@ -409,7 +409,7 @@ public class SubmitConditionalOrderIT {
 
     @Test
     void testJointConditionalOrderIsSubmittedByApplicant1Solicitor() throws Exception {
-        final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID =
+        final String conditionalOrderAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         final Map<String, Object> mockedTemplateContent = new HashMap<>();
@@ -422,7 +422,7 @@ public class SubmitConditionalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", conditionalOrderAnswersTemplateId);
 
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
 
@@ -496,7 +496,7 @@ public class SubmitConditionalOrderIT {
 
     @Test
     void testJointConditionalOrderIsSubmittedByApplicant2Solicitor() throws Exception {
-        final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID =
+        final String conditionalOrderAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         final Map<String, Object> mockedTemplateContent = new HashMap<>();
@@ -509,7 +509,7 @@ public class SubmitConditionalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", conditionalOrderAnswersTemplateId);
 
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(false);
 
@@ -579,7 +579,7 @@ public class SubmitConditionalOrderIT {
     @Test
     void testJointApplicationWithApplicant2RepresentedWhenConditionalOrderIsSubmittedByApplicant1()
         throws Exception {
-        final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID =
+        final String conditionalOrderAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
 
         final Map<String, Object> mockedTemplateContent = new HashMap<>();
@@ -592,7 +592,7 @@ public class SubmitConditionalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", conditionalOrderAnswersTemplateId);
 
         when(ccdAccessService.isApplicant1(anyString(), anyLong())).thenReturn(true);
 
@@ -728,7 +728,7 @@ public class SubmitConditionalOrderIT {
 
     private void verifyJointCOSubmission(final ConditionalOrder conditionalOrder)
         throws Exception {
-        final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID =
+        final String conditionalOrderAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
         final Map<String, Object> mockedTemplateContent = new HashMap<>();
 
@@ -740,7 +740,7 @@ public class SubmitConditionalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", conditionalOrderAnswersTemplateId);
 
         final CaseData caseData = validApplicant2CaseData();
         caseData.getApplicant2().setEmail("app2@gm.com");

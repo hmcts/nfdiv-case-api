@@ -111,13 +111,13 @@ public class CaseworkerConfirmBailiffRefusalIT {
 
     @Test
     public void shouldChangeCaseStateToAwaitingAos() throws Exception {
-        final String BAILIFF_APPLICATION_NOT_APPROVED_ID =
+        final String bailiffApplicationNotApprovedId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_ID);
         setMockClock(clock);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_ID, BAILIFF_APPLICATION_NOT_APPROVED_ID);
+        stubForDocAssemblyWith(DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_ID, bailiffApplicationNotApprovedId);
 
         LocalDate serviceDecisionDate = LocalDate.of(2022, 1, 1);
         CaseData caseData = setUpCaseData(serviceDecisionDate);
@@ -155,13 +155,13 @@ public class CaseworkerConfirmBailiffRefusalIT {
 
     @Test
     public void shouldSendWelshEmailIfChosenLanguagePreferenceIsWelsh() throws Exception {
-        final String BAILIFF_APPLICATION_NOT_APPROVED_ID =
+        final String bailiffApplicationNotApprovedId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_ID, WELSH);
         setMockClock(clock);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_ID, BAILIFF_APPLICATION_NOT_APPROVED_ID);
+        stubForDocAssemblyWith(DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_ID, bailiffApplicationNotApprovedId);
 
         LocalDate serviceDecisionDate = LocalDate.of(2022, 1, 1);
         CaseData caseData = setUpCaseData(serviceDecisionDate);

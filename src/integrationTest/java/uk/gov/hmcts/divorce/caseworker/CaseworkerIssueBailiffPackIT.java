@@ -96,7 +96,7 @@ public class CaseworkerIssueBailiffPackIT {
 
     @Test
     public void shouldGenerateCertificateOfServiceDocumentAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvoked() throws Exception {
-        final String CERTIFICATE_OF_SERVICE_TEMPLATE_ID =
+        final String certificateOfServiceTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_SERVICE_TEMPLATE_ID);
         setMockClock(clock);
         final CaseData caseData = caseData();
@@ -108,7 +108,7 @@ public class CaseworkerIssueBailiffPackIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            CERTIFICATE_OF_SERVICE_TEMPLATE_ID);
+            certificateOfServiceTemplateId);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -131,7 +131,7 @@ public class CaseworkerIssueBailiffPackIT {
 
     @Test
     public void shouldGenerateCertificateOfServiceDocumentInWelshAndUpdateCaseDataWhenAboutToSubmitCallbackIsInvoked() throws Exception {
-        final String CERTIFICATE_OF_SERVICE_TEMPLATE_ID =
+        final String certificateOfServiceTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_SERVICE_TEMPLATE_ID, LanguagePreference.WELSH);
         setMockClock(clock);
         final CaseData caseData = caseData();
@@ -143,7 +143,7 @@ public class CaseworkerIssueBailiffPackIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CERTIFICATE_OF_SERVICE_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", certificateOfServiceTemplateId);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)

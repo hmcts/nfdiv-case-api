@@ -195,7 +195,7 @@ public class SubmitAosIT {
 
     @Test
     void shouldSetStateToHoldingAndSetDateAosSubmittedAndGenerateRespondentPdfForValidUndisputedAos() throws Exception {
-        final String RESPONDENT_ANSWERS_TEMPLATE_ID =
+        final String respondentAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID);
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
@@ -218,7 +218,7 @@ public class SubmitAosIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", RESPONDENT_ANSWERS_TEMPLATE_ID);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", respondentAnswersTemplateId);
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -240,7 +240,7 @@ public class SubmitAosIT {
     @ParameterizedTest
     @MethodSource("caseStateParameters")
     void shouldSetStateToHoldingForValidUndisputedAosWithValidAosPrestates(State aosValidState) throws Exception {
-        final String RESPONDENT_ANSWERS_TEMPLATE_ID =
+        final String respondentAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID);
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
@@ -264,7 +264,7 @@ public class SubmitAosIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", RESPONDENT_ANSWERS_TEMPLATE_ID);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", respondentAnswersTemplateId);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -282,7 +282,7 @@ public class SubmitAosIT {
 
     @Test
     void shouldSetStateToHoldingAndSetDateAosSubmittedAndGenerateRespondentPdfInWelshForValidUndisputedAos() throws Exception {
-        final String RESPONDENT_ANSWERS_TEMPLATE_ID =
+        final String respondentAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID, WELSH);
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
@@ -306,7 +306,7 @@ public class SubmitAosIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", RESPONDENT_ANSWERS_TEMPLATE_ID);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", respondentAnswersTemplateId);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -322,7 +322,7 @@ public class SubmitAosIT {
 
     @Test
     public void givenValidCaseDataWithoutDisputeWhenAboutToSubmitCallbackIsInvokedThenSuccess() throws Exception {
-        final String RESPONDENT_ANSWERS_TEMPLATE_ID =
+        final String respondentAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID);
         CaseData data = validCaseDataForAosSubmitted();
         data.getApplication().setIssueDate(LOCAL_DATE);
@@ -336,7 +336,7 @@ public class SubmitAosIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", RESPONDENT_ANSWERS_TEMPLATE_ID);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", respondentAnswersTemplateId);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -362,7 +362,7 @@ public class SubmitAosIT {
 
     @Test
     public void givenValidCaseDataWithDisputeWhenAboutToSubmitCallbackIsInvokedThenSuccess() throws Exception {
-        final String RESPONDENT_ANSWERS_TEMPLATE_ID =
+        final String respondentAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID);
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LOCAL_DATE);
@@ -377,7 +377,7 @@ public class SubmitAosIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", RESPONDENT_ANSWERS_TEMPLATE_ID);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", respondentAnswersTemplateId);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -400,7 +400,7 @@ public class SubmitAosIT {
     @Test
     public void givenValidCaseDataWithDisputeWhenAboutToSubmitCallbackIsInvokedThenSuccessWhenLangPrefIsWelsh()
         throws Exception {
-        final String RESPONDENT_ANSWERS_TEMPLATE_ID =
+        final String respondentAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID);
         CaseData data = validCaseDataForAosSubmitted();
         data.setDueDate(LOCAL_DATE);
@@ -416,7 +416,7 @@ public class SubmitAosIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", RESPONDENT_ANSWERS_TEMPLATE_ID);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", respondentAnswersTemplateId);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -442,7 +442,7 @@ public class SubmitAosIT {
 
     @Test
     public void givenValidCaseDataForRespondentRepresentedWhenAboutToSubmitCallbackIsInvokedThenSubmitAos() throws Exception {
-        final String RESPONDENT_ANSWERS_TEMPLATE_ID =
+        final String respondentAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID);
         CaseData data = validCaseDataForAosSubmitted();
         data.getApplication().setIssueDate(LOCAL_DATE);
@@ -457,7 +457,7 @@ public class SubmitAosIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", RESPONDENT_ANSWERS_TEMPLATE_ID);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", respondentAnswersTemplateId);
 
         String actualResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
@@ -483,11 +483,11 @@ public class SubmitAosIT {
 
     @Test
     void shouldGenerateAndSendAosResponseLetterWhenApplicant1IsOfflineAndAosIsDisputed() throws Exception {
-        final String RESPONDENT_ANSWERS_TEMPLATE_ID =
+        final String respondentAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID);
-        final String COVERSHEET_APPLICANT =
+        final String coversheetApplicant =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
-        final String RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID =
+        final String respondentRespondedDisputedTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID);
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
@@ -529,9 +529,9 @@ public class SubmitAosIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", RESPONDENT_ANSWERS_TEMPLATE_ID);
-        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", COVERSHEET_APPLICANT);
-        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", respondentAnswersTemplateId);
+        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", coversheetApplicant);
+        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", respondentRespondedDisputedTemplateId);
         stubAosPackSendLetter(d84Uuid.toString());
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -554,11 +554,11 @@ public class SubmitAosIT {
 
     @Test
     void shouldGenerateAndSendAosResponseLetterWhenApplicant1IsOfflineAndContactIsPrivateAndAosIsDisputed() throws Exception {
-        final String RESPONDENT_ANSWERS_TEMPLATE_ID =
+        final String respondentAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID);
-        final String COVERSHEET_APPLICANT =
+        final String coversheetApplicant =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
-        final String RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID =
+        final String respondentRespondedDisputedTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID);
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
@@ -585,9 +585,9 @@ public class SubmitAosIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", RESPONDENT_ANSWERS_TEMPLATE_ID);
-        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", COVERSHEET_APPLICANT);
-        stubForDocAssemblyWith("51afe8e5-0061-42b6-83a2-4c122046901c", RESPONDENT_RESPONDED_DISPUTED_TEMPLATE_ID);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", respondentAnswersTemplateId);
+        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", coversheetApplicant);
+        stubForDocAssemblyWith("51afe8e5-0061-42b6-83a2-4c122046901c", respondentRespondedDisputedTemplateId);
         stubAosPackSendLetter();
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -610,11 +610,11 @@ public class SubmitAosIT {
 
     @Test
     void shouldGenerateAndSendAosResponseLetterWhenApplicant1IsOfflineAndContactIsPrivateAndAosIsUndisputed() throws Exception {
-        final String RESPONDENT_ANSWERS_TEMPLATE_ID =
+        final String respondentAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID);
-        final String COVERSHEET_APPLICANT =
+        final String coversheetApplicant =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
-        final String RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID =
+        final String respondentRespondedUndefendedTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID);
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
@@ -641,9 +641,9 @@ public class SubmitAosIT {
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", RESPONDENT_ANSWERS_TEMPLATE_ID);
-        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", COVERSHEET_APPLICANT);
-        stubForDocAssemblyWith("51afe8e5-0061-42b6-83a2-4c122046901c", RESPONDENT_RESPONDED_UNDEFENDED_TEMPLATE_ID);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", respondentAnswersTemplateId);
+        stubForDocAssemblyWith("baf61f9a-38e5-11ed-a261-0242ac120002", coversheetApplicant);
+        stubForDocAssemblyWith("51afe8e5-0061-42b6-83a2-4c122046901c", respondentRespondedUndefendedTemplateId);
         stubAosPackSendLetter();
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)

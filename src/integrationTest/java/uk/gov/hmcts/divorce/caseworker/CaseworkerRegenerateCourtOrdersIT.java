@@ -162,25 +162,25 @@ public class CaseworkerRegenerateCourtOrdersIT {
     @Test
     void shouldRegenerateCourtOrdersAndCoverLettersWhenCertificateOfEntitlementAndCOGrantedAndFOGrantedDocsExistAndOffline()
         throws Exception {
-        final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID =
+        final String certificateOfEntitlementCoverLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID);
-        final String CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID =
+        final String certificateOfEntitlementCoverLetterOfflineRespondentTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID);
-        final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID =
+        final String certificateOfEntitlementTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
-        final String CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT_TEMPLATE_ID =
+        final String certificateOfEntitlementDoNotAttendCourtTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT_TEMPLATE_ID);
-        final String CO_GRANTED_COVER_LETTER_TEMPLATE_ID =
+        final String coGrantedCoverLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CO_GRANTED_COVER_LETTER_TEMPLATE_ID);
-        final String CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID =
+        final String coPronouncedCoverLetterOfflineRespondentTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID);
-        final String CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID =
+        final String conditionalOrderPronouncedTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID);
-        final String FINAL_ORDER_COVER_LETTER_TEMPLATE_ID =
+        final String finalOrderCoverLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_COVER_LETTER_TEMPLATE_ID);
-        final String FINAL_ORDER_TEMPLATE_ID =
+        final String finalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_TEMPLATE_ID);
-        final String CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID =
+        final String citizenCourtOrdersRegeneratedTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -189,25 +189,25 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("81759115-d69e-4818-a0c5-a1f343d4f914",
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_TEMPLATE_ID);
+            certificateOfEntitlementCoverLetterTemplateId);
         stubForDocAssemblyWith("411bfbe3-af6c-4458-92f7-7854d3d1de24",
-            CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID);
+            certificateOfEntitlementCoverLetterOfflineRespondentTemplateId);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
+            certificateOfEntitlementTemplateId);
         stubForDocAssemblyWith("6dd725e8-f053-4493-9cbe-bb69d1905a12",
-            CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT_TEMPLATE_ID);
+            certificateOfEntitlementDoNotAttendCourtTemplateId);
         stubForDocAssemblyWith("ea114af6-ed73-476b-8cc6-41ec8eb4f0b3",
-            CO_GRANTED_COVER_LETTER_TEMPLATE_ID);
+            coGrantedCoverLetterTemplateId);
         stubForDocAssemblyWith("b3d8d9de-8706-4b6e-881c-d8b400d6c533",
-            CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID);
+            coPronouncedCoverLetterOfflineRespondentTemplateId);
         stubForDocAssemblyWith("d2fcd6f7-5365-4b8a-af15-ce3c949173aa",
-            CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID);
+            conditionalOrderPronouncedTemplateId);
         stubForDocAssemblyWith("959ddaf2-75d8-4d49-8a2d-bc29d451f921",
-            FINAL_ORDER_COVER_LETTER_TEMPLATE_ID);
+            finalOrderCoverLetterTemplateId);
         stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
-            FINAL_ORDER_TEMPLATE_ID);
+            finalOrderTemplateId);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID);
+            citizenCourtOrdersRegeneratedTemplateId);
 
 
         byte[] byteArray = loadPdfAsBytes();
@@ -281,15 +281,15 @@ public class CaseworkerRegenerateCourtOrdersIT {
     @Test
     void shouldRegenerateCourtOrdersWithoutCoverLettersForOnlineApplicants()
         throws Exception {
-        final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID =
+        final String certificateOfEntitlementTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
-        final String CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID =
+        final String conditionalOrderPronouncedTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID);
-        final String FINAL_ORDER_TEMPLATE_ID =
+        final String finalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_TEMPLATE_ID);
-        final String FINAL_ORDER_COVER_LETTER_TEMPLATE_ID =
+        final String finalOrderCoverLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_COVER_LETTER_TEMPLATE_ID);
-        final String CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID =
+        final String citizenCourtOrdersRegeneratedTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -298,14 +298,14 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
+            certificateOfEntitlementTemplateId);
         stubForDocAssemblyWith("d2fcd6f7-5365-4b8a-af15-ce3c949173aa",
-            CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID);
+            conditionalOrderPronouncedTemplateId);
         stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
-            FINAL_ORDER_TEMPLATE_ID);
-        stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2", FINAL_ORDER_COVER_LETTER_TEMPLATE_ID);
+            finalOrderTemplateId);
+        stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2", finalOrderCoverLetterTemplateId);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID);
+            citizenCourtOrdersRegeneratedTemplateId);
 
         final ListValue<DivorceDocument> coGrantedDoc =
             getDivorceDocumentListValue(
@@ -370,13 +370,13 @@ public class CaseworkerRegenerateCourtOrdersIT {
     @Test
     void shouldRegenerateCourtOrdersWhenCertificateOfEntitlementAndCOGrantedAndFOGrantedDocsExistForDigitalCivilPartnershipCase()
         throws Exception {
-        final String CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID =
+        final String certificateOfEntitlementTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
-        final String CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID =
+        final String conditionalOrderPronouncedTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID);
-        final String FINAL_ORDER_TEMPLATE_ID =
+        final String finalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_TEMPLATE_ID);
-        final String CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID =
+        final String citizenCourtOrdersRegeneratedTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -385,13 +385,13 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            CERTIFICATE_OF_ENTITLEMENT_TEMPLATE_ID);
+            certificateOfEntitlementTemplateId);
         stubForDocAssemblyWith("d2fcd6f7-5365-4b8a-af15-ce3c949173aa",
-            CONDITIONAL_ORDER_PRONOUNCED_TEMPLATE_ID);
+            conditionalOrderPronouncedTemplateId);
         stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
-            FINAL_ORDER_TEMPLATE_ID);
+            finalOrderTemplateId);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID);
+            citizenCourtOrdersRegeneratedTemplateId);
 
         final ListValue<DivorceDocument> coGrantedDoc =
             getDivorceDocumentListValue(
@@ -460,21 +460,21 @@ public class CaseworkerRegenerateCourtOrdersIT {
     @Test
     void shouldRegenerateRequiredDocsWhenCertificateOfEntitlementAndCOGrantedAndFOGrantedDocsExistAndOfflineJudicialSeparation()
         throws Exception {
-        final String CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID =
+        final String certificateOfEntitlementJsCoverLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID);
-        final String CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID =
+        final String certificateOfEntitlementJudicialSeparationTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID);
-        final String JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID =
+        final String judicialSeparationOrderGrantedCoverLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID);
-        final String CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID =
+        final String coPronouncedCoverLetterOfflineRespondentTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID);
-        final String JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID =
+        final String judicialSeparationOrderPronouncedTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID);
-        final String FINAL_ORDER_COVER_LETTER_TEMPLATE_ID =
+        final String finalOrderCoverLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_COVER_LETTER_TEMPLATE_ID);
-        final String FINAL_ORDER_TEMPLATE_ID =
+        final String finalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_TEMPLATE_ID);
-        final String CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID =
+        final String citizenCourtOrdersRegeneratedTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -484,21 +484,21 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         stubForDocAssemblyWith("411bfbe3-af6c-4458-92f7-7854d3d1de24",
-            CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER_TEMPLATE_ID);
+            certificateOfEntitlementJsCoverLetterTemplateId);
         stubForDocAssemblyWith("b9dbf3b2-bda8-11ed-afa1-0242ac120002",
-            CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID);
+            certificateOfEntitlementJudicialSeparationTemplateId);
         stubForDocAssemblyWith("31f23884-a707-4983-9bb9-5ce33e13d8c2",
-            JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER_TEMPLATE_ID);
+            judicialSeparationOrderGrantedCoverLetterTemplateId);
         stubForDocAssemblyWith("b3d8d9de-8706-4b6e-881c-d8b400d6c533",
-            CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT_TEMPLATE_ID);
+            coPronouncedCoverLetterOfflineRespondentTemplateId);
         stubForDocAssemblyWith("90ac37a0-b723-4722-9723-86157e4ee450",
-            JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID);
+            judicialSeparationOrderPronouncedTemplateId);
         stubForDocAssemblyWith("959ddaf2-75d8-4d49-8a2d-bc29d451f921",
-            FINAL_ORDER_COVER_LETTER_TEMPLATE_ID);
+            finalOrderCoverLetterTemplateId);
         stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
-            FINAL_ORDER_TEMPLATE_ID);
+            finalOrderTemplateId);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID);
+            citizenCourtOrdersRegeneratedTemplateId);
 
         final ListValue<DivorceDocument> coGrantedDoc =
             getDivorceDocumentListValue(
@@ -570,19 +570,19 @@ public class CaseworkerRegenerateCourtOrdersIT {
     @Test
     void shouldRegenerateCourtOrdersAndCoverLettersWhenOfflineJudicialSeparationAndApplicantsAreRepresented()
         throws Exception {
-        final String CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID =
+        final String certificateOfEntitlementJsSolicitorCoverLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
-        final String CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID =
+        final String certificateOfEntitlementJudicialSeparationTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID);
-        final String JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID =
+        final String judicialSeparationOrderGrantedSolicitorCoverLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
-        final String JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID =
+        final String judicialSeparationOrderPronouncedTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID);
-        final String FINAL_ORDER_COVER_LETTER_TEMPLATE_ID =
+        final String finalOrderCoverLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_COVER_LETTER_TEMPLATE_ID);
-        final String FINAL_ORDER_TEMPLATE_ID =
+        final String finalOrderTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_TEMPLATE_ID);
-        final String CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID =
+        final String citizenCourtOrdersRegeneratedTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID);
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -592,19 +592,19 @@ public class CaseworkerRegenerateCourtOrdersIT {
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
 
         stubForDocAssemblyWith("5baa7e23-6b3e-4f4a-82de-1d4e3dc1759d",
-            CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
+            certificateOfEntitlementJsSolicitorCoverLetterTemplateId);
         stubForDocAssemblyWith("b9dbf3b2-bda8-11ed-afa1-0242ac120002",
-            CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION_TEMPLATE_ID);
+            certificateOfEntitlementJudicialSeparationTemplateId);
         stubForDocAssemblyWith("94e63858-bda1-11ed-afa1-0242ac120002",
-            JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER_TEMPLATE_ID);
+            judicialSeparationOrderGrantedSolicitorCoverLetterTemplateId);
         stubForDocAssemblyWith("90ac37a0-b723-4722-9723-86157e4ee450",
-            JUDICIAL_SEPARATION_ORDER_PRONOUNCED_TEMPLATE_ID);
+            judicialSeparationOrderPronouncedTemplateId);
         stubForDocAssemblyWith("959ddaf2-75d8-4d49-8a2d-bc29d451f921",
-            FINAL_ORDER_COVER_LETTER_TEMPLATE_ID);
+            finalOrderCoverLetterTemplateId);
         stubForDocAssemblyWith("7aa5c8bb-1177-4b3e-af83-841c20b572c2",
-            FINAL_ORDER_TEMPLATE_ID);
+            finalOrderTemplateId);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID);
+            citizenCourtOrdersRegeneratedTemplateId);
 
         String testString = "a simple test";
         // Convert the string to byte array

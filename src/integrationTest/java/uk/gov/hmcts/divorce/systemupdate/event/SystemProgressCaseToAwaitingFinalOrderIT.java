@@ -140,9 +140,9 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
 
     @Test
     void shouldSendLettersToOfflineApplicantsInJointCase() throws Exception {
-        final String COVERSHEET_APPLICANT =
+        final String coversheetApplicant =
             docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
-        final String FINAL_ORDER_CAN_APPLY_TEMPLATE_ID =
+        final String finalOrderCanApplyTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_CAN_APPLY_TEMPLATE_ID);
 
         final CaseData caseData = validJointApplicant1CaseData();
@@ -161,8 +161,8 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(COVERSHEET_DOC_ID, COVERSHEET_APPLICANT);
-        stubForDocAssemblyWith(CAN_APPLY_FOR_FINAL_ORDER_DOC_ID, FINAL_ORDER_CAN_APPLY_TEMPLATE_ID);
+        stubForDocAssemblyWith(COVERSHEET_DOC_ID, coversheetApplicant);
+        stubForDocAssemblyWith(CAN_APPLY_FOR_FINAL_ORDER_DOC_ID, finalOrderCanApplyTemplateId);
         stubApplyForFinalOrderPackSendLetter();
 
         final Document document = Document.builder().build();

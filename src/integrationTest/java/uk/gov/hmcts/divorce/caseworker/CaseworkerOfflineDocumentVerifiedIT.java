@@ -173,7 +173,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
 
     @Test
     void shouldTriggerAosSubmissionAndMoveCaseStateToHoldingIfD10Verified() throws Exception {
-        final String RESPONDENT_ANSWERS_TEMPLATE_ID =
+        final String respondentAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_ANSWERS_TEMPLATE_ID);
 
         final AcknowledgementOfService acknowledgementOfService = AcknowledgementOfService.builder()
@@ -229,7 +229,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", RESPONDENT_ANSWERS_TEMPLATE_ID);
+        stubForDocAssemblyWith("c35b1868-e397-457a-aa67-ac1422bb8100", respondentAnswersTemplateId);
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)

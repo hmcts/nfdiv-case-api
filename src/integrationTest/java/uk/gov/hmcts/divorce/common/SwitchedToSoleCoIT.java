@@ -426,15 +426,15 @@ public class SwitchedToSoleCoIT {
         when(idamService.retrieveSystemUpdateUserDetails())
             .thenReturn(new User(BEARER_TEST_SYSTEM_AUTHORISATION_TOKEN, UserInfo.builder().build()));
 
-        final String CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID =
+        final String conditionalOrderAnswersTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
-        final String SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID =
+        final String switchToSoleCoLetterTemplateId =
             docTemplateResolver.resolveTemplateID(DocumentConstants.SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", CONDITIONAL_ORDER_ANSWERS_TEMPLATE_ID);
+        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3", conditionalOrderAnswersTemplateId);
         stubForDocAssemblyWith("2014c722-122c-4732-b583-75bad8dcedfc",
-            SWITCH_TO_SOLE_CO_LETTER_TEMPLATE_ID);
+            switchToSoleCoLetterTemplateId);
     }
 }
