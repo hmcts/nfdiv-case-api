@@ -114,7 +114,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     private final AuthTokenGenerator authTokenGenerator;
     private final Clock clock;
     private final GeneralReferralService generalReferralService;
-    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy, h:mm:ss a");
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     public static final String CASEWORKER_OFFLINE_DOCUMENT_VERIFIED = "caseworker-offline-document-verified";
     private static final String ALWAYS_HIDE = "typeOfDocumentAttached=\"ALWAYS_HIDE\"";
@@ -127,7 +127,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     public static final String REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR
         = "Request for Information Response Partner Notification for Case Id {} failed with message: {}";
     public static final String SCANNED_DOCUMENT_SUBTYPE_MISMATCH_ERROR =
-        "The selected scanned document subtype does not match the type of document attached.";
+        "The selected scanned documents subtype does not match the document type selected for verification.";
     private static final String SCANNED_DOCUMENT_LABEL_SEPARATOR = " / ";
 
     private static final String SCANNED_DOC_MUST_BE_RECLASSIFIED_BY_CASEWORKER =
