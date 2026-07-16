@@ -128,7 +128,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.setSendNotificationFl
 @ExtendWith(MockitoExtension.class)
 class CaseworkerOfflineDocumentVerifiedTest {
 
-    private static final DateTimeFormatter SCANNED_DATE_LABEL_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy, h:mm:ss a");
+    private static final DateTimeFormatter SCANNED_DATE_LABEL_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     @Mock
     private SubmitAosService submitAosService;
