@@ -66,7 +66,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
 
     @Test
     void shouldReturnErrorIfNoGeneralApplicationMatchesTheServiceRequest() {
-        List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder().amount(6000).status(SUCCESS).build()));
+        List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder().amount(6200).status(DECLINED).build()));
 
         final var beforeData = buildTestData();
         final var beforeDetails = CaseDetails.<CaseData, State>builder().data(beforeData).build();
@@ -86,7 +86,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
 
     @Test
     void shouldReturnErrorIfPaymentValidationFails() {
-        final var payments = List.of(new ListValue<>("1", Payment.builder().amount(6000).status(DECLINED).build()));
+        List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder().amount(6200).status(DECLINED).build()));
 
         final var caseData = buildTestData();
         final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
@@ -106,12 +106,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
         setMockClock(clock);
 
         List<ListValue<Payment>> payments = singletonList(new ListValue<>(
-            "1", Payment.builder()
-            .amount(6000)
-            .status(SUCCESS)
-            .reference(TEST_REFERENCE)
-            .serviceRequestReference(TEST_SERVICE_REFERENCE)
-            .build())
+            "1", Payment.builder().amount(6200).status(SUCCESS).reference(TEST_REFERENCE).build())
         );
 
         final var beforeData = buildTestData();

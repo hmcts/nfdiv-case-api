@@ -22,7 +22,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -82,8 +81,8 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
         log.info("Switched To Sole FO aboutToSubmit callback invoked for Case Id: {}", caseId);
         CaseData caseData = details.getData();
 
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getLabelContent().setApplicationType(SOLE_APPLICATION);
+        switchToSoleService.switchApplicationType(caseData);
+
         caseData.getFinalOrder().setFinalOrderSwitchedToSole(YES);
 
         // triggered by citizen users

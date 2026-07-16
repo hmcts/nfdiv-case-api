@@ -56,6 +56,7 @@
     "coCourt": "buryStEdmunds",
     "coDateAndTimeOfHearing": "2021-11-08T14:56:00.000",
     "dateFinalOrderEligibleFrom": "${json-unit.any-string}",
+    "finalOrderInsightSurveyStage": 0,
     "grantedDate": "${json-unit.any-string}",
     "letterPacks": "${json-unit.ignore}",
     "confidentialDocumentsGenerated": [

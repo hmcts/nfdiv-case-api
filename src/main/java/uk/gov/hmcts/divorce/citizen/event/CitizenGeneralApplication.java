@@ -192,6 +192,7 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
             .generalApplicationParty(generalParty)
             .generalApplicationReceivedDate(LocalDateTime.now(clock))
             .generalApplicationType(userOptions.getGeneralApplicationType())
+            .generalApplicationOtherTypeDetails(userOptions.getOtherGeneralApplicationTypeDetails())
             .generalApplicationSubmittedOnline(YesOrNo.YES)
             .generalApplicationDocuments(submissionService.collectSupportingDocuments(userOptions))
             .generalApplicationDocsUploadedPreSubmission(userOptions.isAwaitingDocuments() ? YesOrNo.NO : YesOrNo.YES)
