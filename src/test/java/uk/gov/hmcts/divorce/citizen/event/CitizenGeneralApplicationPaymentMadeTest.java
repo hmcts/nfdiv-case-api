@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -19,7 +18,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralReason;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType;
 import uk.gov.hmcts.divorce.divorcecase.model.Payment;
 import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
@@ -27,7 +25,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.Clock;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -35,8 +32,6 @@ import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenGeneralApplicationPaymentMade.ERROR_UNABLE_TO_FIND_PAYMENT_PARTY;
@@ -105,8 +100,8 @@ class CitizenGeneralApplicationPaymentMadeTest {
     void givenValidPaymentMadeThenShouldSetPaymentDetailsAndSetPendingRefund() {
         setMockClock(clock);
 
-        List<ListValue<Payment>> payments = singletonList(new ListValue<>(
-            "1", Payment.builder().amount(6200).status(SUCCESS).reference(TEST_REFERENCE).build())
+        List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder()
+            .amount(6200).status(SUCCESS).reference(TEST_REFERENCE).serviceRequestReference(TEST_SERVICE_REFERENCE).build())
         );
 
         final var beforeData = buildTestData();
