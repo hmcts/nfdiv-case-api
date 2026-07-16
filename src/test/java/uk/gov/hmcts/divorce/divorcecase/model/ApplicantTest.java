@@ -416,6 +416,25 @@ class ApplicantTest {
     }
 
     @Test
+    void shouldPreserveGeneralAppPaymentsWhenClearingServiceRequest() {
+        final List<ListValue<Payment>> payments = List.of(
+            ListValue.<Payment>builder()
+                .value(Payment.builder().amount(10).build())
+                .build()
+        );
+
+        final Applicant applicant = Applicant.builder()
+            .generalAppPayments(payments)
+            .generalAppServiceRequest("service-request")
+            .build();
+
+        applicant.setActiveGeneralApplication(null);
+
+        assertThat(applicant.getGeneralAppServiceRequest()).isNull();
+        assertThat(applicant.getGeneralAppPayments()).isEqualTo(payments);
+    }
+
+    @Test
     void shouldArchiveInterimApplicationOptions() {
         InterimApplicationOptions applicationOptions = InterimApplicationOptions.builder()
             .interimAppsUseHelpWithFees(YesOrNo.YES)
