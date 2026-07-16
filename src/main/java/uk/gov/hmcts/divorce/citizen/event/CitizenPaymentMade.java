@@ -41,7 +41,6 @@ public class CitizenPaymentMade implements CCDConfig<CaseData, State, UserRole> 
     private final SubmissionService submissionService;
 
     private final PaymentValidatorService paymentValidatorService;
-    private final NotificationDispatcher notificationDispatcher;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
