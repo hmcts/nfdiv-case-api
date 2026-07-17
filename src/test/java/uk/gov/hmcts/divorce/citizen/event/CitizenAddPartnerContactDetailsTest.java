@@ -89,7 +89,7 @@ class CitizenAddPartnerContactDetailsTest {
     }
 
     @Test
-    void shouldNotReturnErrorIfRespondentAddressIsIncompleteExists() {
+    void shouldNotReturnErrorIfRespondentAddressIsIncomplete() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         caseDetails.setData(getCaseData(true));
         caseDetails.setState(State.AwaitingDocuments);
