@@ -48,6 +48,9 @@ public class GeneralApplicationD11SubmittedNotification implements GeneralApplic
     private static final String EMAIL_BODY_LINE1 = "emailBodyLine1";
     private static final String GEN_APP_SUBMITTED_EN = "Your general application has been submitted";
     private static final String GEN_APP_SUBMITTED_CY = "Your general application has been submitted";
+    private static final String ADD_ADDITIONAL_INFO = "addAdditionalInfo";
+    private static final String ADD_ADDITIONAL_INFO_DIVORCE = "addAdditionalInfoDivorce";
+    private static final String ADD_ADDITIONAL_INFO_DISSOLUTION = "addAdditionalInfoDissolution";
 
     public void sendToApplicant(final CaseData caseData, final Long caseId, GeneralApplication generalApplication) {
         final GeneralParties generalParties = generalApplication.getGeneralApplicationParty();
@@ -101,6 +104,12 @@ public class GeneralApplicationD11SubmittedNotification implements GeneralApplic
 
         templateVars.put(EMAIL_BODY_LINE1, getContentBasedOnGenAppType(generalApplication.getGeneralApplicationType(),
             applicant.getLanguagePreference(), caseData.isDivorce()));
+
+        boolean madePaymentAndNoIssueDate = madePayment && caseData.getApplication().getIssueDate() == null;
+
+        templateVars.put(ADD_ADDITIONAL_INFO, madePaymentAndNoIssueDate ? YES : NO);
+        templateVars.put(ADD_ADDITIONAL_INFO_DIVORCE, madePaymentAndNoIssueDate && caseData.isDivorce() ? YES : NO);
+        templateVars.put(ADD_ADDITIONAL_INFO_DISSOLUTION, madePaymentAndNoIssueDate && !caseData.isDivorce() ? YES : NO);
 
         return templateVars;
     }
