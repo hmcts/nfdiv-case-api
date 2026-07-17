@@ -184,4 +184,37 @@ class SolicitorIntendsToSwitchToSoleFoNotificationTest {
         verifyNoInteractions(switchToSoleSolicitorTemplateContent);
         verifyNoInteractions(notificationService);
     }
+
+    @Test
+    void shouldSendApplicant1NotificationIfApplicant2IsNotRepresented() {
+
+
+        final CaseData caseData = CaseData.builder()
+            .finalOrder(FinalOrder.builder().doesApplicant2IntendToSwitchToSole(YES).build())
+            .build();
+
+        solicitorIntendsToSwitchToSoleFoNotification.sendToApplicant1(caseData, TEST_CASE_ID);
+
+        verify(switchToSoleSolicitorTemplateContent).templatevars(eq(caseData),eq(TEST_CASE_ID),any(Applicant.class),any(Applicant.class));
+        verify(notificationService).sendEmail(
+            eq(caseData.getApplicant1().getEmail()),
+            eq(OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_CITIZEN),
+            anyMap(),
+            eq(caseData.getApplicant1().getLanguagePreference()),
+            eq(TEST_CASE_ID)
+        );
+    }
+
+    @Test
+    void shouldNotSendApplicant1NotificationIfApplicant1DidNotTriggerEvent() {
+
+        final CaseData caseData = CaseData.builder()
+            .finalOrder(FinalOrder.builder().doesApplicant2IntendToSwitchToSole(NO).build())
+            .build();
+
+        solicitorIntendsToSwitchToSoleFoNotification.sendToApplicant1(caseData, TEST_CASE_ID);
+
+        verifyNoInteractions(switchToSoleSolicitorTemplateContent);
+        verifyNoInteractions(notificationService);
+    }
 }

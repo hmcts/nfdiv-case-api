@@ -1,7 +1,7 @@
 #!groovy
 import uk.gov.hmcts.contino.AppPipelineConfig
 import uk.gov.hmcts.contino.AppPipelineDsl
-@Library("Infrastructure")
+@Library("Infrastructure@2.4.4")
 
 import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.MetricsPublisher
@@ -159,6 +159,9 @@ withPipeline(type, product, component) {
 
   afterAlways('checkout') {
     builder.setupToolVersion()
+  }
+
+  before('highleveldatasetup') {
     builder.gradle('generateCCDConfig')
     generateDefinitions()
   }

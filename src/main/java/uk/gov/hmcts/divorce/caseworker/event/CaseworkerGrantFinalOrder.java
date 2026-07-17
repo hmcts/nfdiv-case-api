@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderAuthorisation;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderInsightSurveyInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
@@ -201,6 +202,10 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             FINAL_ORDER_DOCUMENT_NAME,
             caseData,
             details.getId()
+        );
+
+        finalOrder.setFinalOrderInsightSurveyStage(
+            FinalOrderInsightSurveyInvite.BY_STAGE.getFirst().getStage()
         );
 
         notificationDispatcher.send(finalOrderGrantedNotification, caseData, details.getId());

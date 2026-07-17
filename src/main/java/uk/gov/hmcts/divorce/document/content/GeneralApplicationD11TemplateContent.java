@@ -103,6 +103,7 @@ public class GeneralApplicationD11TemplateContent {
         final InterimApplicationOptions interimApplicationOptions = applicant.getInterimApplicationOptions();
         final GeneralApplicationD11JourneyOptions applicationAnswers = interimApplicationOptions.getGeneralApplicationD11JourneyOptions();
         final boolean isDivorce = caseData.isDivorce();
+        final boolean isRespondent = !isApplicant1 && caseData.getApplicationType().isSole();
 
         templateContent.put(HEARING_NOT_REQUIRED_DETAILS, applicationAnswers.getHearingNotRequired().getLabel());
         templateContent.put(
@@ -115,7 +116,7 @@ public class GeneralApplicationD11TemplateContent {
         );
         templateContent.put(
             PARTNER_DETAILS_CORRECT,
-            partner.isConfidentialContactDetails()
+            partner.isConfidentialContactDetails() || isRespondent
                 ? CONFIDENTIAL_PARTNER_PLACEHOLDER
                 : applicationAnswers.getPartnerDetailsCorrect().getValue()
         );

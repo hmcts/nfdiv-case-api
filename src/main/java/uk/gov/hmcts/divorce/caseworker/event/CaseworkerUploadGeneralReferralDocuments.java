@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.hasDeletedDocuments;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -39,7 +40,7 @@ public class CaseworkerUploadGeneralReferralDocuments implements CCDConfig<CaseD
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(UPLOAD_GENERAL_REFERRAL_DOCS)
-            .forAllStates()
+            .forStates(POST_SUBMISSION_STATES)
             .name(UPLOAD_GENERAL_REFERRAL_DOCS_NAME)
             .description(UPLOAD_GENERAL_REFERRAL_DOCS_NAME)
             .showCondition("generalReferralReason=\"*\"")

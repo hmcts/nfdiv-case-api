@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.systemupdate.event;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,22 +16,34 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
+import uk.gov.hmcts.divorce.idam.IdamService;
+import uk.gov.hmcts.divorce.idam.User;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.CaseAssignmentApi;
 import uk.gov.hmcts.reform.ccd.client.model.CallbackRequest;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRole;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRoleWithOrganisation;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesRequest;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResource;
+import uk.gov.hmcts.reform.ccd.client.model.CaseAssignmentUserRolesResponse;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.json;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -75,10 +86,19 @@ public class SystemLinkApplicant2IT {
     private RequestInterceptor requestInterceptor;
 
     @MockitoBean
+    private CaseAssignmentApi caseAssignmentApi;
+
+
+    @MockitoBean
+    private IdamService idamService;
+
+    @MockitoBean
     private WebMvcConfig webMvcConfig;
 
     @MockitoBean
     private AuthTokenGenerator serviceTokenGenerator;
+    @Autowired
+    private CcdAccessService ccdAccessService;
 
     @BeforeAll
     static void setUp() {
@@ -93,7 +113,6 @@ public class SystemLinkApplicant2IT {
     }
 
     @Test
-    @Disabled
     public void givenValidAccessCodeThenAccessCodeIsRemovedAndApp2OfflineIsNoAndSolicitorRolesAreSet() throws Exception {
         CaseData data = caseData();
         data.setCaseInvite(new CaseInvite(null, "D8BC9AQR", "3"));
@@ -104,9 +123,43 @@ public class SystemLinkApplicant2IT {
         stubForIdamDetails(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(CASEWORKER_AUTH_TOKEN);
 
+        final var userDetails = UserInfo.builder().uid(CASEWORKER_USER_ID).build();
+        final User user = new User(CASEWORKER_AUTH_TOKEN, userDetails);
+        when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
+        when(idamService.retrieveUser(TEST_AUTHORIZATION_TOKEN)).thenReturn(user);
         when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
 
         stubForCitizenCcdCaseRoles();
+
+        var caseAssignmentRoles = List.of(
+            CaseAssignmentUserRole.builder().userId("1").caseRole("[APPLICANTTWO]").build(),
+            CaseAssignmentUserRole.builder().userId("2").caseRole("[CREATOR]").build()
+        );
+
+        final CaseAssignmentUserRolesResource caseRolesResponse = CaseAssignmentUserRolesResource.builder()
+            .caseAssignmentUserRoles(caseAssignmentRoles)
+            .build();
+
+
+
+        var orgAssignmentRoles = CaseAssignmentUserRoleWithOrganisation.builder()
+            .organisationId(null)
+            .caseDataId(String.valueOf(1616591401473378L))
+            .caseRole("[APPLICANTTWO]")
+            .userId("1")
+            .build();
+
+        var caseAssignmentUserRolesReq = CaseAssignmentUserRolesRequest.builder()
+            .caseAssignmentUserRolesWithOrganisation(List.of(orgAssignmentRoles)).build();
+        var caseAssignmentUserRolesResponse = CaseAssignmentUserRolesResponse.builder().statusMessage("123").build();
+
+        when(caseAssignmentApi.getUserRoles(CASEWORKER_AUTH_TOKEN, SERVICE_AUTHORIZATION, List.of(String.valueOf(1616591401473378L))))
+            .thenReturn(caseRolesResponse);
+        when(caseAssignmentApi.addCaseUserRoles(CASEWORKER_AUTH_TOKEN, SERVICE_AUTHORIZATION, caseAssignmentUserRolesReq))
+            .thenReturn(caseAssignmentUserRolesResponse);
+
+        when(caseAssignmentApi.removeCaseUserRoles(CASEWORKER_AUTH_TOKEN, SERVICE_AUTHORIZATION, caseAssignmentUserRolesReq))
+            .thenReturn(caseAssignmentUserRolesResponse);
 
         CallbackRequest callbackRequest = callbackRequest(data, SYSTEM_LINK_APPLICANT_2);
         callbackRequest.setCaseDetailsBefore(
@@ -117,7 +170,7 @@ public class SystemLinkApplicant2IT {
                         "applicant2UserId", "3",
                         "accessCode", "D8BC9AQR"
                     )
-                )
+                ).id(1616591401473378L)
                 .build()
         );
 
@@ -136,63 +189,8 @@ public class SystemLinkApplicant2IT {
             .when(IGNORING_EXTRA_FIELDS)
             .isEqualTo(json(expectedCcdAboutToStartCallbackSuccessfulResponse()));
 
-        verify(serviceTokenGenerator).generate();
+        verify(serviceTokenGenerator, times(2)).generate();
         verifyNoMoreInteractions(serviceTokenGenerator);
-    }
-
-    @Test
-    @Disabled
-    public void givenNoApplicant2UserIdPassedWhenCallbackIsInvokedThen404ErrorIsReturned() throws Exception {
-        CaseData data = caseData();
-        data.setCaseInvite(new CaseInvite(null, "D8BC9AQR", null));
-        data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
-
-        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);
-        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
-        stubForIdamDetails(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
-        stubForIdamToken(CASEWORKER_AUTH_TOKEN);
-
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-
-        stubForCitizenCcdCaseRoles();
-
-        CallbackRequest callbackRequest = callbackRequest(data, SYSTEM_LINK_APPLICANT_2);
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest))
-                .accept(APPLICATION_JSON))
-            .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @Disabled
-    public void givenNoCaseIdPassedWhenCallbackIsInvokedThen404ErrorIsReturned() throws Exception {
-        CaseData data = caseData();
-        data.setCaseInvite(new CaseInvite(null, "D8BC9AQR", null));
-        data.setDueDate(LocalDate.now().plus(2, ChronoUnit.WEEKS));
-
-        stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, APP_2_CITIZEN_USER_ID, CITIZEN_ROLE);
-        stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
-        stubForIdamDetails(CASEWORKER_AUTH_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
-        stubForIdamToken(CASEWORKER_AUTH_TOKEN);
-
-        when(serviceTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
-
-        stubForCitizenCcdCaseRoles();
-
-        CallbackRequest callbackRequest = callbackRequest(data, SYSTEM_LINK_APPLICANT_2);
-        callbackRequest.getCaseDetails().setId(null);
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
-                .content(objectMapper.writeValueAsString(callbackRequest))
-                .accept(APPLICATION_JSON))
-            .andExpect(status().isNotFound());
     }
 
     private String expectedCcdAboutToStartCallbackSuccessfulResponse() throws IOException {

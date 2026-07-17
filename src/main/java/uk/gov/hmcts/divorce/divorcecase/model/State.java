@@ -68,6 +68,13 @@ public enum State {
     Rejected,
 
     @CCD(
+        label = "Application Stayed",
+        hint = CASE_TITLE,
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    ApplicationStayed,
+
+    @CCD(
         label = "Application withdrawn",
         hint = CASE_TITLE,
         access = {DefaultStateAccess.class}
@@ -609,7 +616,7 @@ public enum State {
         AwaitingJudgeClarification, PendingServiceAppResponse, GeneralConsiderationComplete, AwaitingGeneralReferralPayment,
         AwaitingGeneralConsideration, GeneralApplicationReceived, PendingHearingOutcome, PendingHearingDate,
         AwaitingGeneralApplicationPayment, AwaitingDocuments, AwaitingGenAppHWFPartPayment, AwaitingGenAppHWFEvidence,
-        AwaitingGenAppDocuments
+        AwaitingGenAppDocuments, ApplicationStayed
     };
 
     public static final State[] POST_SUBMISSION_PRE_AWAITING_CO_STATES = {

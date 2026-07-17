@@ -158,14 +158,13 @@ class CaseworkerGeneralReferralTest {
         GeneralApplication afterSearchGovApplication = afterGeneralApplications.get(1).getValue();
 
         assertThat(afterApplicant.getGeneralAppServiceRequest()).isNull();
-        assertThat(afterApplicant.getGeneralAppPayments()).isEmpty();
         assertThat(afterGeneralApplications).hasSize(2);
         assertThat(afterGeneralApplications.getFirst()).isEqualTo(buildListOfGeneralApplications().getFirst());
         assertThat(afterGeneralApplications.getLast()).isNotEqualTo(buildListOfGeneralApplications().getLast());
         assertThat(afterSearchGovApplication.getGeneralApplicationFee().getServiceRequestReference())
             .isNull();
         assertThat(response.getData().getGeneralReferral().getGeneralApplicationReferralDate()).isNotNull();
-        assertThat(afterSearchGovApplication.getGeneralApplicationReferralDate())
+        assertThat(afterSearchGovApplication.getGeneralApplicationReferredOnDate())
             .isEqualTo(response.getData().getGeneralReferral().getGeneralApplicationReferralDate());
     }
 

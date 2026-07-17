@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralReason;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
@@ -195,6 +196,34 @@ class CitizenGeneralApplicationSubmissionServiceTest {
 
             assertThat(details.getState()).isEqualTo(AwaitingGeneralReferralPayment);
         }
+
+        @Test
+        void shouldMoveToWelshTranslationReviewWhenApplicantUsedWelshJourneyForSubmission() {
+            CaseDetails<CaseData, State> details = new CaseDetails<>();
+            CaseData caseData = caseData();
+            caseData.getApplicant1().setUsedWelshTranslationOnSubmission(YesOrNo.YES);
+            details.setData(caseData);
+            GeneralApplication application = buildApplication(FEE_PAY_BY_CARD, YesOrNo.YES, YesOrNo.YES);
+            application.setGeneralApplicationParty(GeneralParties.APPLICANT);
+
+            submissionService.setEndState(details, application);
+
+            assertThat(details.getState()).isEqualTo(State.WelshTranslationReview);
+        }
+
+        @Test
+        void shouldMoveToWelshTranslationReviewWhenApplicant2UsedWelshJourneyForSubmission() {
+            CaseDetails<CaseData, State> details = new CaseDetails<>();
+            CaseData caseData = caseData();
+            caseData.getApplicant2().setUsedWelshTranslationOnSubmission(YesOrNo.YES);
+            details.setData(caseData);
+            GeneralApplication application = buildApplication(FEE_PAY_BY_CARD, YesOrNo.YES, YesOrNo.YES);
+            application.setGeneralApplicationParty(GeneralParties.APPLICANT2);
+
+            submissionService.setEndState(details, application);
+
+            assertThat(details.getState()).isEqualTo(State.WelshTranslationReview);
+        }
     }
 
     @Nested
@@ -351,6 +380,7 @@ class CitizenGeneralApplicationSubmissionServiceTest {
                     .hasCompletedOnlinePayment(completedOnlinePayment)
                     .build()
             )
+            .generalApplicationParty(GeneralParties.APPLICANT)
             .generalApplicationType(GeneralApplicationType.DISCLOSURE_VIA_DWP)
             .generalApplicationDocsUploadedPreSubmission(docsUploaded)
             .build();
