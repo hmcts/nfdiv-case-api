@@ -115,10 +115,10 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
 
         GeneralApplication generalApplication = generalAppOptional.get();
         generalApplication.recordPayment(successfulPayment.getReference(), LocalDate.now(clock));
+        boolean paidAgainstInactiveGeneralApplication = !Objects.equals(applicant.getGeneralAppServiceRequest(), serviceRequestReference);
         applicant.setActiveGeneralApplication(null);
         applicant.setGeneralAppPayments(null);
 
-        boolean paidAgainstInactiveGeneralApplication = !Objects.equals(applicant.getGeneralAppServiceRequest(), serviceRequestReference);
         if (paidAgainstInactiveGeneralApplication) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(details.getData())
