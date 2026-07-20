@@ -9,7 +9,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -20,6 +22,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.MARRIAGE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.MADE_PAYMENT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
@@ -41,6 +45,12 @@ public class GeneralApplicationD11SubmittedNotification implements GeneralApplic
     private final CommonContent commonContent;
 
     private static final String HAS_PRONOUNCEMENT_GUIDANCE = "hasPronouncementGuidance";
+    private static final String EMAIL_BODY_LINE1 = "emailBodyLine1";
+    private static final String GEN_APP_SUBMITTED_EN = "Your general application has been submitted";
+    private static final String GEN_APP_SUBMITTED_CY = "Your general application has been submitted";
+    private static final String ADD_ADDITIONAL_INFO = "addAdditionalInfo";
+    private static final String ADD_ADDITIONAL_INFO_DIVORCE = "addAdditionalInfoDivorce";
+    private static final String ADD_ADDITIONAL_INFO_DISSOLUTION = "addAdditionalInfoDissolution";
 
     public void sendToApplicant(final CaseData caseData, final Long caseId, GeneralApplication generalApplication) {
         final GeneralParties generalParties = generalApplication.getGeneralApplicationParty();
@@ -92,6 +102,60 @@ public class GeneralApplicationD11SubmittedNotification implements GeneralApplic
             templateVars.put(SUBMISSION_RESPONSE_DATE, "");
         }
 
+        templateVars.put(EMAIL_BODY_LINE1, getContentBasedOnGenAppType(generalApplication.getGeneralApplicationType(),
+            applicant.getLanguagePreference(), caseData.isDivorce()));
+
+        boolean madePaymentAndNoIssueDate = madePayment && caseData.getApplication().getIssueDate() == null;
+
+        templateVars.put(ADD_ADDITIONAL_INFO, madePaymentAndNoIssueDate ? YES : NO);
+        templateVars.put(ADD_ADDITIONAL_INFO_DIVORCE, madePaymentAndNoIssueDate && caseData.isDivorce() ? YES : NO);
+        templateVars.put(ADD_ADDITIONAL_INFO_DISSOLUTION, madePaymentAndNoIssueDate && !caseData.isDivorce() ? YES : NO);
+
         return templateVars;
+    }
+
+    private String getContentBasedOnGenAppType(GeneralApplicationType generalApplicationType,
+                                               LanguagePreference languagePreference,
+                                               boolean isDivorce) {
+        Map<GeneralApplicationType, String> translationMap =
+            languagePreference == LanguagePreference.WELSH ? getWelshTranslationMap(isDivorce) : getEnglishTranslationMap(isDivorce);
+
+        return translationMap.getOrDefault(
+            generalApplicationType,
+            languagePreference == LanguagePreference.WELSH
+                ? GEN_APP_SUBMITTED_CY
+                : GEN_APP_SUBMITTED_EN
+        );
+    }
+
+    private Map<GeneralApplicationType, String> getEnglishTranslationMap(boolean isDivorce) {
+        String divorceOrDissolution = isDivorce ? "divorce" : "dissolution";
+        String marriageCertificate = isDivorce ? MARRIAGE : CIVIL_PARTNERSHIP;
+        return Map.of(
+            GeneralApplicationType.AMEND_APPLICATION,
+                String.format("Your application to amend your %s case has been submitted", divorceOrDissolution),
+            GeneralApplicationType.EXPEDITE,
+                String.format("Your application to complete your %s case more quickly has been submitted",
+                        divorceOrDissolution),
+            GeneralApplicationType.EXTEND,
+                String.format("Your application to get more time to serve your %s case has been submitted",
+                        divorceOrDissolution),
+            GeneralApplicationType.ISSUE_DIVORCE_WITHOUT_CERT,
+                String.format("Your application to continue your %s case without a %s certificate has been submitted",
+                        divorceOrDissolution,
+                marriageCertificate),
+            GeneralApplicationType.DELAY,
+                String.format("Your application to delay or pause your %s case has been submitted",
+                        divorceOrDissolution),
+            GeneralApplicationType.OTHER,
+                String.format("Your general application relating to your %s case has been submitted",
+                        divorceOrDissolution),
+            GeneralApplicationType.WITHDRAW_POST_ISSUE,
+                String.format("Your application to withdraw your %s case has been submitted", divorceOrDissolution)
+        );
+    }
+
+    private Map<GeneralApplicationType, String> getWelshTranslationMap(boolean isDivorce) {
+        return getEnglishTranslationMap(isDivorce);
     }
 }
