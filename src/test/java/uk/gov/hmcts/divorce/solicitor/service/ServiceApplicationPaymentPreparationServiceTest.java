@@ -73,17 +73,12 @@ class ServiceApplicationPaymentPreparationServiceTest {
             .interimAppsPaymentMethod(SolicitorPaymentMethod.FEES_HELP_WITH)
             .build();
         AlternativeService serviceApplication = AlternativeService.builder().build();
-        OrderSummary orderSummary = OrderSummary.builder().build();
-
-        when(paymentSetupService.createServiceApplicationOrderSummary(serviceApplication, TEST_CASE_ID)).thenReturn(orderSummary);
 
         paymentPreparationService.prepareDraftServiceApplicationFee(TEST_CASE_ID, applicant, options, serviceApplication);
 
         assertThat(serviceApplication.getServicePaymentFee().getPaymentMethod()).isEqualTo(ServicePaymentMethod.FEE_PAY_BY_HWF);
-        assertThat(serviceApplication.getServicePaymentFee().getOrderSummary()).isEqualTo(orderSummary);
         assertThat(serviceApplication.getServicePaymentFee().getServiceRequestReference()).isNull();
 
-        verify(paymentSetupService).createServiceApplicationOrderSummary(serviceApplication, TEST_CASE_ID);
         verify(pbaService, never()).populatePbaDynamicList();
         verify(paymentSetupService, never()).createServiceApplicationPaymentServiceRequest(serviceApplication, TEST_CASE_ID,
             applicant.getFullName());

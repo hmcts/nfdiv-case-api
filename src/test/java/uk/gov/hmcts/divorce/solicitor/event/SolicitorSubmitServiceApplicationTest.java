@@ -12,7 +12,13 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.Permission;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-import uk.gov.hmcts.divorce.divorcecase.model.*;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationSubmitPaymentService;
 
 import java.util.Optional;
@@ -176,8 +182,7 @@ class SolicitorSubmitServiceApplicationTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitServiceApplication.aboutToStart(details);
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).containsExactly(
-            "The ongoing service application on this case has already been submitted and you cannot submit it again or amend it."
-            );
+            "The ongoing service application on this case has already been submitted and you cannot submit it again or amend it.");
     }
 
     @Test
