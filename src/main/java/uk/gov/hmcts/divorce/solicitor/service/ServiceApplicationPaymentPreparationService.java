@@ -38,9 +38,10 @@ public class ServiceApplicationPaymentPreparationService {
         log.info("Preparing draft service application fee for case id: {}, payment method: {}", caseId, paymentMethod);
 
         feeDetails.setPaymentMethod(paymentMethod);
-        feeDetails.setOrderSummary(paymentSetupService.createServiceApplicationOrderSummary(serviceApplication, caseId));
 
         if (FEE_PAY_BY_ACCOUNT.equals(paymentMethod)) {
+            feeDetails.setOrderSummary(paymentSetupService.createServiceApplicationOrderSummary(serviceApplication, caseId));
+
             preparePbaDraftFee(caseId, applicant, serviceApplication, feeDetails);
         } else {
             feeDetails.setServiceRequestReference(null);

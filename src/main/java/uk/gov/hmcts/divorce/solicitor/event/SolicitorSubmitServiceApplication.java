@@ -40,6 +40,8 @@ public class SolicitorSubmitServiceApplication implements CCDConfig<CaseData, St
 
     public static final String SOLICITOR_SUBMIT_SERVICE_APPLICATION = "solicitor-submit-service-application";
 
+    private static  final String ERROR_ALREADY_SUBMITTED
+        = "The ongoing service application on this case has already been submitted and you cannot submit it again or amend it.";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -83,6 +85,29 @@ public class SolicitorSubmitServiceApplication implements CCDConfig<CaseData, St
             .build();
     }
 
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        log.info("{} About to Submit callback invoked for Case Id: {}", SOLICITOR_SUBMIT_SERVICE_APPLICATION, details.getId());
+
+        CaseData caseData = details.getData();
+        boolean alreadySubmitted = Optional.ofNullable(caseData.getAlternativeService())
+            .map(AlternativeService::getServicePaymentFee)
+            .map(fee -> hasText(fee.getPaymentReference()) || hasText(fee.getHelpWithFeesReferenceNumber()))
+            .orElse(false);
+
+        if (alreadySubmitted) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(singletonList(ERROR_ALREADY_SUBMITTED))
+                .build();
+        }
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData).build();
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.trim().isEmpty();
+    }
+
     private PageBuilder addEventConfig(
         final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -91,12 +116,11 @@ public class SolicitorSubmitServiceApplication implements CCDConfig<CaseData, St
             .forState(AosOverdue)
             .name("Submit Service App")
             .description("Submit Service App")
-            .showCondition(
-                "alternativeServiceType=\"deemed\" OR alternativeServiceType=\"dispensed\" OR alternativeServiceType=\"bailiff\" "
-                    + "OR alternativeServiceType=\"alternativeService\"")
+            .showCondition("serviceApplicationSubmittedOnline=\"Yes\" AND alternativeServiceType=\"*\"")
             .showSummary()
             .showEventNotes()
             .endButtonLabel("Save Application")
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));

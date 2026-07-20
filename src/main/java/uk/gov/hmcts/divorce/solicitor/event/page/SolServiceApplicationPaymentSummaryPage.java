@@ -18,7 +18,7 @@ public class SolServiceApplicationPaymentSummaryPage implements CcdPageConfigura
             .pageLabel("Submit service application")
             .complex(CaseData::getAlternativeService)
                 .complex(AlternativeService::getServicePaymentFee)
-                    .mandatoryNoSummary(FeeDetails::getOrderSummary)
+                    .mandatoryNoSummary(FeeDetails::getOrderSummary, PBA, "")
                     .readonly(FeeDetails::getPaymentMethod)
                     .label("labelServicePaymentFeePaymentMethod",
                 "You can change the payment method by using the “Amend service application” event")

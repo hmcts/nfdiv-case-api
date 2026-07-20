@@ -9,6 +9,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 
 public class DeemedServiceConfirmPage implements CcdPageConfiguration {
 
+    private final String pageShowCondition;
+
     private static final String NEVER_SHOW = "[STATE]=\"NEVER_SHOW\"";
 
     private static final String SERVICE_CONFIRM_PARAGRAPH = """
@@ -25,11 +27,23 @@ public class DeemedServiceConfirmPage implements CcdPageConfiguration {
             We will not share the applicant’s contact details if you've told us to keep them private
             """;
 
+    public DeemedServiceConfirmPage() {
+        this(null);
+    }
+
+    public DeemedServiceConfirmPage(String pageShowCondition) {
+        this.pageShowCondition = pageShowCondition;
+    }
+
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("deemedServiceConfirm")
-            .pageLabel("Deemed Service App")
-            .complex(CaseData::getLabelContent)
+        var page = pageBuilder.page("deemedServiceConfirm")
+                    .pageLabel("Deemed Service App");
+
+        if (pageShowCondition != null) {
+            page.showCondition(pageShowCondition);
+        }
+        page.complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnership, NEVER_SHOW)
             .done()
             .label("LabelDeemedServiceConfirmPara-1", SERVICE_CONFIRM_PARAGRAPH)

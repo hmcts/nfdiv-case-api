@@ -22,6 +22,7 @@ import java.util.Set;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 
 @Data
 @Builder(toBuilder = true)
@@ -152,6 +153,15 @@ public class InterimApplicationOptions {
         searchable = false
     )
     private SolicitorPaymentMethod interimAppsPaymentMethod;
+
+    @CCD(
+        label = "Do you want to Amend your draft service application or withdraw it?",
+        hint = "if you withdraw it, you'll be able to start a new service application.",
+        access = {DefaultAccess.class},
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "DraftServiceApplicationAction"
+    )
+    private DraftServiceApplicationAction draftServiceApplicationAction;
 
     @Getter
     @AllArgsConstructor

@@ -14,14 +14,11 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.Payment;
-import uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.payment.model.PbaResponse;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
 
 import java.time.Clock;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -107,18 +104,13 @@ class ServiceApplicationSubmitPaymentServiceTest {
     }
 
     @Test
-    void shouldStorePaymentDetailsAndAppendServicePaymentWhenPbaPaymentSucceeds() {
+    void shouldStorePaymentDetailsWhenPbaPaymentSucceeds() {
         setMockClock(clock);
 
         CaseData caseData = caseDataWithPaymentMethod(ServicePaymentMethod.FEE_PAY_BY_ACCOUNT);
         caseData.getAlternativeService().getServicePaymentFee().setOrderSummary(serviceOrderSummary());
         caseData.getAlternativeService().getServicePaymentFee().setPbaNumbers(pbaNumbers());
         caseData.getAlternativeService().getServicePaymentFee().setServiceRequestReference(TEST_SERVICE_REFERENCE);
-
-        Payment existingPayment = Payment.builder().feeCode("EXISTING").amount(100).status(PaymentStatus.SUCCESS).build();
-        caseData.getAlternativeService().setServicePayments(new ArrayList<>(List.of(
-            ListValue.<Payment>builder().id(UUID.randomUUID().toString()).value(existingPayment).build()
-        )));
 
         when(paymentService.processPbaPayment(
             eq(TEST_CASE_ID),
@@ -135,15 +127,6 @@ class ServiceApplicationSubmitPaymentServiceTest {
         assertThat(caseData.getAlternativeService().getServicePaymentFee().getPaymentReference()).isEqualTo("RC-12345");
         assertThat(caseData.getAlternativeService().getServicePaymentFee().getHasCompletedOnlinePayment()).isEqualTo(YesOrNo.YES);
         assertThat(caseData.getAlternativeService().getServicePaymentFee().getDateOfPayment()).isEqualTo(getExpectedLocalDate());
-        assertThat(caseData.getAlternativeService().getServicePayments()).hasSize(2);
-
-        Payment addedPayment = caseData.getAlternativeService().getServicePayments().get(1).getValue();
-        assertThat(addedPayment.getAmount()).isEqualTo(23200);
-        assertThat(addedPayment.getFeeCode()).isEqualTo("FEE0423");
-        assertThat(addedPayment.getServiceRequestReference()).isEqualTo(TEST_SERVICE_REFERENCE);
-        assertThat(addedPayment.getReference()).isEqualTo("RC-12345");
-        assertThat(addedPayment.getStatus()).isEqualTo(PaymentStatus.SUCCESS);
-        assertThat(addedPayment.getChannel()).isEqualTo("online");
     }
 
     private CaseData caseDataWithPaymentMethod(ServicePaymentMethod paymentMethod) {

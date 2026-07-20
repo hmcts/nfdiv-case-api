@@ -9,6 +9,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
 public class DeemedServiceDetailsAndUploadPage implements CcdPageConfiguration {
 
+    private final String pageShowCondition;
+
     private static final String DEEMED_EVIDENCE_LABEL = """
             ## Tell us about your evidence
 
@@ -42,11 +44,22 @@ public class DeemedServiceDetailsAndUploadPage implements CcdPageConfiguration {
             ## Applicant 1 uploaded documents
             """;
 
+    public DeemedServiceDetailsAndUploadPage() {
+        this(null);
+    }
+
+    public DeemedServiceDetailsAndUploadPage(String pageShowCondition) {
+        this.pageShowCondition = pageShowCondition;
+    }
+
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("deemedServiceDetailsAndUpload")
-            .pageLabel("Deemed Service App")
-            .complex(CaseData::getApplicant1)
+        var page = pageBuilder.page("deemedServiceDetailsAndUpload")
+            .pageLabel("Deemed Service App");
+        if (pageShowCondition != null) {
+            page.showCondition(pageShowCondition);
+        }
+        page.complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getDeemedServiceJourneyOptions)
                         .label("deemedEvidenceLabel", DEEMED_EVIDENCE_LABEL)

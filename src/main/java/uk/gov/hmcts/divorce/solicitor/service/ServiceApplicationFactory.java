@@ -30,7 +30,7 @@ public class ServiceApplicationFactory {
             .receivedServiceAddedDate(LocalDate.now(clock))
             .alternativeServiceType(options.getInterimApplicationType().getServiceType())
             .serviceApplicationSubmittedOnline(YesOrNo.YES)
-            .serviceApplicationDocsUploadedPreSubmission(docs != null && !docs.isEmpty() ? YesOrNo.YES : YesOrNo.NO)
+            .serviceApplicationDocsUploadedPreSubmission(YesOrNo.from(docs != null && !docs.isEmpty()))
             .serviceApplicationDocuments(docs)
             .alternativeServiceFeeRequired(YesOrNo.YES)
             .build();
