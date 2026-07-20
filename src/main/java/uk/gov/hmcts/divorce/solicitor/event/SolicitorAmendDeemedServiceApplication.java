@@ -44,14 +44,16 @@ public class SolicitorAmendDeemedServiceApplication implements CCDConfig<CaseDat
     private static  final String ERROR_ALREADY_SUBMITTED
         = "The ongoing service application on this case has already been submitted and you cannot submit it again or amend it.";
 
+    private static final String AMEND_SHOW_CONDITION = "applicant1DraftServiceApplicationAction=\"amend\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
 
         final List<CcdPageConfiguration> pages = List.of(new AmendDeemedServiceApplicationActionPage(),
-            new DeemedServiceConfirmPage("applicant1DraftServiceApplicationAction=\"amend\""),
-            new DeemedServicePaymentPage("applicant1DraftServiceApplicationAction=\"amend\""),
-            new DeemedServiceDetailsAndUploadPage("applicant1DraftServiceApplicationAction=\"amend\""));
+            new DeemedServiceConfirmPage(AMEND_SHOW_CONDITION),
+            new DeemedServicePaymentPage(AMEND_SHOW_CONDITION),
+            new DeemedServiceDetailsAndUploadPage(AMEND_SHOW_CONDITION));
 
         pages.forEach(page -> page.addTo(pageBuilder));
     }
