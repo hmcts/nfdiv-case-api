@@ -19,8 +19,8 @@ plugins {
   id 'org.springframework.boot' version '3.4.7'
   id 'com.github.ben-manes.versions' version '0.54.0'
   id 'au.com.dius.pact' version '4.7.3'
-  id 'hmcts.ccd.sdk' version '6.21.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.2258'
+  id 'hmcts.ccd.sdk' version '6.25.0'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.2267'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -191,7 +191,7 @@ task highLevelDataSetup(type: JavaExec) {
 
 checkstyle {
   maxWarnings = 0
-  toolVersion = '13.7.0'
+  toolVersion = '13.8.0'
   getConfigDirectory().set(new File(projectDir, 'config/checkstyle'))
 }
 

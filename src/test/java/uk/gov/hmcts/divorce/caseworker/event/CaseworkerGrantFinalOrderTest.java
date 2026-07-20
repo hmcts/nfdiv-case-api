@@ -443,4 +443,28 @@ class CaseworkerGrantFinalOrderTest {
 
         verify(notificationDispatcher).send(finalOrderGrantedNotification, caseData, TEST_CASE_ID);
     }
+
+    @Test
+    void shouldResetFinalOrderInsightSurveyStageWhenFinalOrderGranted() {
+        final CaseData caseData = caseData();
+        caseData.setConditionalOrder(ConditionalOrder.builder().grantedDate(LocalDate.now()).build());
+        caseData.setFinalOrder(
+            FinalOrder.builder()
+                .granted(Set.of(FinalOrder.Granted.YES))
+                .grantWithCurrentDateTime(YesOrNo.NO)
+                .grantedDate(LocalDateTime.now())
+                .dateFinalOrderEligibleFrom(LocalDate.now())
+                .finalOrderInsightSurveyStage(2)
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerGrantFinalOrder.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getFinalOrder().getFinalOrderInsightSurveyStage()).isZero();
+    }
 }
