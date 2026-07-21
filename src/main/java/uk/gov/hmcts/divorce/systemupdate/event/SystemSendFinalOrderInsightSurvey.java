@@ -16,7 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
@@ -68,10 +68,10 @@ public class SystemSendFinalOrderInsightSurvey implements CCDConfig<CaseData, St
         }
 
         final FinalOrderInsightSurveyInvite inviteStage = FinalOrderInsightSurveyInvite.BY_STAGE.get(notificationsSent);
-        final LocalDateTime earliestNotificationDate =
-            caseData.getFinalOrder().getGrantedDate().plusDays(inviteStage.getDaysAfterGrantedDate());
+        final LocalDate earliestNotificationDate =
+            caseData.getFinalOrder().getGrantedDate().toLocalDate().plusDays(inviteStage.getDaysAfterGrantedDate());
 
-        if (earliestNotificationDate.isAfter(LocalDateTime.now())) {
+        if (earliestNotificationDate.isAfter(LocalDate.now())) {
             log.error("{} errored as case is not yet eligible to be processed: {}", SYSTEM_SEND_FINAL_ORDER_INSIGHT_SURVEY, caseId);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
