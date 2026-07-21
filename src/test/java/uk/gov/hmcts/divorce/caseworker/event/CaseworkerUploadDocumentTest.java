@@ -161,7 +161,8 @@ class CaseworkerUploadDocumentTest {
             caseworkerUploadDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue().getDocumentDateAdded()).isNotNull();
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue().getDocumentDateAdded()).isEqualTo(LocalDate.now());
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue().getDocumentDateAdded())
+            .isEqualTo(LocalDate.now());
     }
 
     @Test
@@ -190,7 +191,8 @@ class CaseworkerUploadDocumentTest {
             caseworkerUploadDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
 
         assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue().getDocumentDateAdded()).isNotNull();
-        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue().getDocumentDateAdded()).isEqualTo(LocalDate.of(2023, 1, 1));
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue().getDocumentDateAdded())
+            .isEqualTo(LocalDate.of(2023, 1, 1));
     }
 
     @Test
