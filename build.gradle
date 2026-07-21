@@ -123,6 +123,7 @@ task integration(type: Test) {
   classpath = sourceSets.integrationTest.runtimeClasspath
   failFast = true
   jvmArgs += "-Xmx3g"
+  systemProperty 'spring.profiles.active', 'integration'
   environment 'ADMIN_UNLINK_APPLICANT_2_ENABLED', 'true'
 }
 
