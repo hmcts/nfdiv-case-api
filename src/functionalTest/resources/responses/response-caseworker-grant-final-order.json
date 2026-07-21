@@ -60,6 +60,7 @@
     "granted": ["Yes"],
     "dateFinalOrderEligibleToRespondent": "2022-03-21",
     "finalOrderSwitchedToSole": "Yes",
+    "finalOrderInsightSurveyStage": 0,
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",
