@@ -166,8 +166,9 @@ withPipeline(type, product, component) {
     if (!azureConfigName) {
       error 'DEPLOYMENT_ENVIRONMENT is required to authenticate to the CCD definition processor registry'
     }
-    dir("${WORKSPACE}/bin") {
-     sh "./az-login.sh ${azureConfigName}"
+    env.AZURE_CONFIG_DIR="/opt/jenkins/.azure-${azureConfigName}"
+    dir("${WORKSPACE}") {
+     sh "./bin/az-login.sh"
     }
 
     builder.gradle('generateCCDConfig')
