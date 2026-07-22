@@ -265,11 +265,8 @@ def setCommonEnvVariables() {
 }
 
 def generateDefinitions() {
-  dir("${WORKSPACE}/bin") {
-    sh "./ccd-build-definition.sh"
-  }
   dir("${WORKSPACE}") {
-    sh "./bin/check-empty-definition.sh"
+    sh "./bin/ccd-build-definition.sh"
     steps.archiveArtifacts artifacts: "build/ccd-config/*.xlsx"
   }
 }
