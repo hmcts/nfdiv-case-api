@@ -20,7 +20,7 @@ public class SolicitorSendPapersAgainNotification implements ApplicantNotificati
     private static final String SOLICITOR_SERVICE = "solicitorService";
     private static final String COURT_SERVICE = "courtService";
     public static final String COURT_SERVICE_TEXT = """
-     We will now serve the %s again on the respondent. The respondent will have 14 day from receiving the papers to respond.""";
+     We will now serve the %s again on the respondent. The respondent will have 14 days from receiving the papers to respond.""";
     public static final String SOLICITOR_SERVICE_TEXT = """
      You will need to arrange delivery of the %s yourself. You can download the papers from the case and arrange for them to be served on \
      the respondent. The documents are usually available in the Documents tab.""";
