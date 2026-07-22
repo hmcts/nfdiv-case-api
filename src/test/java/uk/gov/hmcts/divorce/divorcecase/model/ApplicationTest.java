@@ -6,6 +6,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -162,17 +163,17 @@ class ApplicationTest {
     }
 
     @Test
-    void shouldReturnTrueIfApplicant1WantsToHavePapersServedAnotherWayIsYes() {
+    void shouldReturnTrueIfApplicant1ServedPapersAnotherWayIsYes() {
 
         final var application = Application.builder()
             .applicant1WantsToHavePapersServedAnotherWay(YES)
             .build();
 
-        assertThat(application.hasAwaitingApplicant1Documents()).isTrue();
+        assertThat(application.mustServeAnotherWay(ApplicationType.SOLE_APPLICATION)).isTrue();
     }
 
     @Test
-    void shouldReturnTrueIfApplicant1WantsToHavePapersServedAnotherWayIsNoAndApplicant1CannotUploadSupportingDocument() {
+    void shouldReturnTrueIfApplicant1WantsToHavePapersServedAnotherWayIsNoAndApplicant1CannotUploadSupportingDocumentPapers() {
 
         final var application = Application.builder()
             .applicant1WantsToHavePapersServedAnotherWay(NO)
@@ -183,19 +184,57 @@ class ApplicationTest {
     }
 
     @Test
-    void shouldReturnFalseIfApplicant1WantsToHavePapersServedAnotherWayIsNoAndEmptyApplicant1CannotUploadSupportingDocument() {
+    void shouldReturnFalseIfApplicant1WantsToHavePapersServedAnotherWayIsNoAndEmptyApplicant1CannotUploadSupportingDocumentPapers() {
 
         final var application = Application.builder()
             .applicant1WantsToHavePapersServedAnotherWay(NO)
+            .applicant1KnowsApplicant2Address(YES)
+            .applicant1FoundApplicant2Address(YES)
             .build();
 
         assertThat(application.hasAwaitingApplicant1Documents()).isFalse();
     }
 
     @Test
-    void shouldReturnFalseIfApplicant1WantsToHavePapersServedAnotherWayIsNull() {
+    void shouldReturnFalseIfApplicant1KnowsApplicant2Address() {
 
         final var application = Application.builder()
+            .applicant1KnowsApplicant2Address(YES)
+            .applicant1FoundApplicant2Address(YES)
+            .build();
+
+        assertThat(application.hasAwaitingApplicant1Documents()).isFalse();
+    }
+
+    @Test
+    void shouldReturnTrueIfApplicant1DoesNotFindApplicant2Address() {
+        final var application = Application.builder()
+            .applicant1KnowsApplicant2Address(NO)
+            .applicant1FoundApplicant2Address(NO)
+            .build();
+
+        assertThat(application.mustServeAnotherWay(ApplicationType.SOLE_APPLICATION)).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfApplicant1FoundApplicant2Address() {
+
+        final var application = Application.builder()
+            .applicant1FoundApplicant2Address(YES)
+            .applicant1KnowsApplicant2Address(YES)
+            .build();
+
+        assertThat(application.hasAwaitingApplicant1Documents()).isFalse();
+    }
+
+
+
+    @Test
+    void shouldReturnFalseIfApplicant1ServedPapersAnotherWayIsNull() {
+
+        final var application = Application.builder()
+            .applicant1FoundApplicant2Address(YES)
+            .applicant1KnowsApplicant2Address(YES)
             .build();
 
         assertThat(application.hasAwaitingApplicant1Documents()).isFalse();
@@ -374,6 +413,24 @@ class ApplicationTest {
             .build();
 
         assertThat(application.getPbaNumber()).isEqualTo(Optional.of(pbaNumber));
+    }
+
+    @Test
+    void shouldReturnTrueIfApplicationHasBeenIssued() {
+        final Application application = Application.builder()
+            .issueDate(LocalDate.now())
+            .build();
+
+        assertThat(application.hasBeenIssued()).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfApplicationHasNotBeenIssued() {
+        final Application application = Application.builder()
+            .issueDate(null)
+            .build();
+
+        assertThat(application.hasBeenIssued()).isFalse();
     }
 
     @Test

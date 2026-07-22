@@ -64,6 +64,7 @@
       },
       "valueLabel": "PBA0012345"
     },
+    "generalApplicationSubmittedBeforeIssue":"Yes",
     "generalApplications": [
       {
         "id": "${json-unit.any-string}",
@@ -83,6 +84,7 @@
               }
             }
           ],
+          "generalApplicationSubmittedBeforeIssue":"Yes",
           "generalApplicationFeeServiceRequestReference": "test-service-reference",
           "generalApplicationFeeOrderSummary": {
             "Fees": [

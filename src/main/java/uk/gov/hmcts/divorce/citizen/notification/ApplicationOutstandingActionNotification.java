@@ -64,17 +64,15 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     @Override
     public void sendToApplicant1(final CaseData caseData, final Long id) {
-        if (caseData.getApplication().hasAwaitingApplicant1Documents() || caseData.getApplication().hasAwaitingApplicant2Documents()) {
-            log.info("Sending application outstanding actions notification to applicant 1 for case : {}", id);
+        log.info("Sending application outstanding actions notification to applicant 1 for case : {}", id);
 
-            notificationService.sendEmail(
-                caseData.getApplicant1().getEmail(),
-                OUTSTANDING_ACTIONS,
-                applicant1TemplateVars(caseData, id),
-                caseData.getApplicant1().getLanguagePreference(),
-                id
-            );
-        }
+        notificationService.sendEmail(
+            caseData.getApplicant1().getEmail(),
+            OUTSTANDING_ACTIONS,
+            applicant1TemplateVars(caseData, id),
+            caseData.getApplicant1().getLanguagePreference(),
+            id
+        );
     }
 
     @Override
