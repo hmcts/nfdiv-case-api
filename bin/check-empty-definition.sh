@@ -5,5 +5,3 @@ if [ -n "$empty_definition" ]; then
   echo "Generated CCD definition is empty: $empty_definition" >&2
   exit 1
 fi
-
-wait
