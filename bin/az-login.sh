@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 azureConfigName=$1
 
 env AZURE_CONFIG_DIR="/opt/jenkins/.azure-${azureConfigName}"
