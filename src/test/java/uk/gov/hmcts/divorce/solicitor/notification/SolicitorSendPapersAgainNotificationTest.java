@@ -6,8 +6,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -47,6 +49,7 @@ class SolicitorSendPapersAgainNotificationTest {
         CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
             .applicationType(SOLE_APPLICATION)
+            .application(Application.builder().serviceMethod(ServiceMethod.COURT_SERVICE).build())
             .applicant1(
                 Applicant.builder()
                     .solicitorRepresented(YES)
@@ -65,7 +68,7 @@ class SolicitorSendPapersAgainNotificationTest {
             eq(TEST_SOLICITOR_EMAIL),
             eq(SOLICITOR_SENT_PAPERS_AGAIN),
             argThat(allOf(
-                hasEntry("courtService", String.format(COURT_SERVICE_TEXT, "divorce papers")),
+                hasEntry("serviceMethod", String.format(COURT_SERVICE_TEXT, "divorce papers")),
                 hasEntry("divorceOrDissolution", "divorce application"))),
             eq(ENGLISH),
             eq(caseId)
