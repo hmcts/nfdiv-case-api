@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -56,7 +57,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PRONOUNCE_BY_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLIED_FOR_CONDITIONAL_ORDER;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_BOTH_APPLIED_FOR_CONDITIONAL_ORDER;
@@ -74,6 +74,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.solicitorTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
@@ -310,8 +311,8 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
         data.getApplication().setIssueDate(issueDate);
         setSubmittedDate(data, List.of(APPLICANT2));
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
-            .thenReturn(getMainTemplateVars());
+        when(commonContent.solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant2()))
+            .thenReturn(solicitorTemplateVars(data, data.getApplicant2()));
 
         setMockClock(clock);
 
@@ -323,7 +324,7 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SOLICITOR_NAME, "app2sol"),
-                hasEntry(SOLICITOR_REFERENCE, "refxxx"),
+                hasEntry(DocmosisTemplateConstants.SOLICITOR_REFERENCE, "refxxx"),
                 hasEntry(RESPONSE_DUE_DATE, getExpectedLocalDateTime().plusDays(14).format(DATE_TIME_FORMATTER)),
                 hasEntry(ISSUE_DATE, issueDate.format(DATE_TIME_FORMATTER)),
                 hasEntry(CO_OR_FO, "conditional"),
@@ -333,7 +334,7 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference());
+        verify(commonContent).solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant2());
     }
 
     @Test
@@ -362,11 +363,8 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
         data.getApplication().setIssueDate(issueDate);
         setSubmittedDate(data, List.of(APPLICANT2));
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
-            .thenReturn(getMainTemplateVars());
-
-        when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
-            .thenReturn("/signInUrl");
+        when(commonContent.solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
+            .thenReturn(solicitorTemplateVars(data, data.getApplicant1()));
 
         setMockClock(clock);
 
@@ -378,16 +376,16 @@ class Applicant2AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SOLICITOR_NAME, "app1sol"),
-                hasEntry(SOLICITOR_REFERENCE, "refxxx"),
+                hasEntry(DocmosisTemplateConstants.SOLICITOR_REFERENCE, "refxxx"),
                 hasEntry(ISSUE_DATE, issueDate.format(DATE_TIME_FORMATTER)),
                 hasEntry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
                 hasEntry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name"),
-                hasEntry(SIGN_IN_URL,"/signInUrl")
+                hasEntry(SIGN_IN_URL,"divorceTestUrl")
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference());
+        verify(commonContent).solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
     }
 
     private void setSubmittedDate(CaseData caseData, List<String> applicants) {
