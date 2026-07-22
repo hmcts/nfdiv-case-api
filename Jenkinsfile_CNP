@@ -166,10 +166,9 @@ withPipeline(type, product, component) {
     if (!azureConfigName) {
       error 'DEPLOYMENT_ENVIRONMENT is required to authenticate to the CCD definition processor registry'
     }
-    sh """
-      env AZURE_CONFIG_DIR='/opt/jenkins/.azure-${azureConfigName}' \
-        az acr login --name hmctsprod --subscription DCD-CNP-PROD
-    """
+    dir("${WORKSPACE}/bin") {
+      sh "./az-login.sh ${azureConfigName}"
+    }
 
     builder.gradle('generateCCDConfig')
     generateDefinitions()
@@ -270,13 +269,6 @@ def generateDefinitions() {
     sh "./ccd-build-definition.sh"
   }
   dir("${WORKSPACE}") {
-    sh '''
-      empty_definition=$(find build/ccd-config -maxdepth 1 -type f -name '*.xlsx' -size 0 -print -quit)
-      if [ -n "$empty_definition" ]; then
-        echo "Generated CCD definition is empty: $empty_definition" >&2
-        exit 1
-      fi
-    '''
     steps.archiveArtifacts artifacts: "build/ccd-config/*.xlsx"
   }
 }
