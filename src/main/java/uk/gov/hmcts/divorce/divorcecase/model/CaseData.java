@@ -63,7 +63,6 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.CasePaymentHistoryViewer;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
-import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
@@ -444,13 +443,9 @@ public class CaseData {
     @JsonIgnore
     public boolean isWelshApplication() {
         if (applicationType.isSole()) {
-            return YES.equals(applicant1.getLanguagePreferenceWelsh())
-                || YES.equals(applicant1.getUsedWelshTranslationOnSubmission());
+            return applicant1.submittedWelshApplication();
         } else {
-            return YES.equals(applicant1.getLanguagePreferenceWelsh())
-                || YES.equals(applicant2.getLanguagePreferenceWelsh())
-                || YES.equals(applicant1.getUsedWelshTranslationOnSubmission())
-                || YES.equals(applicant2.getUsedWelshTranslationOnSubmission());
+            return applicant1.submittedWelshApplication() || applicant2.submittedWelshApplication();
         }
     }
 

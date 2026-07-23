@@ -173,6 +173,13 @@ public enum State {
     AwaitingFinalOrder,
 
     @CCD(
+        label = "Awaiting GenApp Documents",
+        hint = CASE_TITLE,
+        access = {DefaultStateAccessExcludingCAA.class}
+    )
+    AwaitingGenAppDocuments,
+
+    @CCD(
         label = "Awaiting GenAppHWF evidence",
         hint = CASE_TITLE,
         access = {DefaultStateAccessExcludingCAA.class}
@@ -609,7 +616,7 @@ public enum State {
         AwaitingJudgeClarification, PendingServiceAppResponse, GeneralConsiderationComplete, AwaitingGeneralReferralPayment,
         AwaitingGeneralConsideration, GeneralApplicationReceived, PendingHearingOutcome, PendingHearingDate,
         AwaitingGeneralApplicationPayment, AwaitingDocuments, AwaitingGenAppHWFPartPayment, AwaitingGenAppHWFEvidence,
-        ApplicationStayed
+        AwaitingGenAppDocuments, ApplicationStayed
     };
 
     public static final State[] POST_SUBMISSION_PRE_AWAITING_CO_STATES = {
@@ -619,6 +626,7 @@ public enum State {
         AwaitingServicePayment,
         AwaitingGenAppHWFPartPayment,
         AwaitingGenAppHWFEvidence,
+        AwaitingGenAppDocuments,
         AwaitingServiceConsideration,
         LAServiceReview,
         AwaitingBailiffReferral,
