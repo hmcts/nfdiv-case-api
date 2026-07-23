@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.print.GeneralLetterDocumentPack;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateGeneralLetter;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -16,12 +17,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
 
-import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 import static java.util.Collections.singletonList;
-import static java.util.stream.Stream.ofNullable;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -39,6 +43,10 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
 
     public static final String CASEWORKER_CREATE_GENERAL_LETTER = "caseworker-create-general-letter";
     private static final String CREATE_GENERAL_LETTER_TITLE = "Create general letter";
+    public static final String GENERAL_LETTER_ATTACHMENTS_REQUIRED_ERROR =
+        "Please ensure all General Letter attachments have been uploaded before continuing";
+    public static final String GENERAL_LETTER_ATTACHMENTS_PDF_ONLY_ERROR =
+        "Please only use PDF files as General Letter attachments. Other file types are not supported by the HMCTS bulk print service.";
 
     private final LetterPrinter letterPrinter;
     private final GeneralLetterDocumentPack generalLetterDocumentPack;
@@ -71,13 +79,23 @@ public class CaseworkerGeneralLetter implements CCDConfig<CaseData, State, UserR
                                                                   final CaseDetails<CaseData, State> detailsBefore) {
 
         final CaseData caseData = details.getData();
-        final boolean invalidGeneralLetterAttachments = ofNullable(caseData.getGeneralLetter().getGeneralLetterAttachments())
-            .flatMap(Collection::stream)
-            .anyMatch(divorceDocument -> isEmpty(divorceDocument.getValue().getDocumentLink()));
+        List<ListValue<DivorceDocument>> letterAttachments = Optional.ofNullable(caseData.getGeneralLetter().getGeneralLetterAttachments())
+                .orElse(Collections.emptyList());
 
-        if (invalidGeneralLetterAttachments) {
+        final boolean hasInvalidLetterAttachment = letterAttachments.stream()
+            .anyMatch(divorceDocument -> isEmpty(divorceDocument.getValue().getDocumentLink()));
+        if (hasInvalidLetterAttachment) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList("Please ensure all General Letter attachments have been uploaded before continuing"))
+                .errors(singletonList(GENERAL_LETTER_ATTACHMENTS_REQUIRED_ERROR))
+                .build();
+        }
+
+        final boolean hasNonPdfLetterAttachment = letterAttachments.stream()
+            .map(divorceDocument -> divorceDocument.getValue().getDocumentLink().getFilename())
+            .anyMatch(filename -> isEmpty(filename) || !filename.toLowerCase(Locale.ROOT).endsWith(".pdf"));
+        if (hasNonPdfLetterAttachment) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(singletonList(GENERAL_LETTER_ATTACHMENTS_PDF_ONLY_ERROR))
                 .build();
         }
 

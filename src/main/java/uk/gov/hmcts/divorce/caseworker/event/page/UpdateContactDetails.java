@@ -63,7 +63,7 @@ public class UpdateContactDetails implements CcdPageConfiguration {
     private static final String HORIZONTAL_RULE = "<hr>";
     private static final String MARRIAGE_CERT_NAME_LABEL = "${%s} full name as on marriage certificate";
     private static final String MARRIAGE_CERT_NAME_HINT_LABEL =
-        "Enter the ${%s} name exactly as it appears on the certificate. Include any extra text such as 'formally known as'.";
+        "Enter the ${%s} name exactly as it appears on the certificate. Include any extra text such as 'formerly known as'.";
     private static final String APPLICANTS_OR_APPLICANT1S = "labelContentApplicantsOrApplicant1s";
     private static final String RESPONDENTS_OR_APPLICANT2S = "labelContentRespondentsOrApplicant2s";
     private static final String THE_RESPONDENT_OR_APPLICANT2 = "labelContentTheApplicant2";
