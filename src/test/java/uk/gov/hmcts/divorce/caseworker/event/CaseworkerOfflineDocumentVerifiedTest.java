@@ -55,6 +55,8 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -73,6 +75,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.CASEWORKER_OFFLINE_DOCUMENT_VERIFIED;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.NO_REQUEST_FOR_INFORMATION_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.NO_REQUEST_FOR_INFORMATION_POST_ISSUE_ERROR;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.SCANNED_DOCUMENT_SUBTYPE_MISMATCH_ERROR;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleCo.SWITCH_TO_SOLE_CO;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrderOffline.SWITCH_TO_SOLE_FO_OFFLINE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
@@ -124,6 +127,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.setSendNotificationFl
 
 @ExtendWith(MockitoExtension.class)
 class CaseworkerOfflineDocumentVerifiedTest {
+
+    private static final DateTimeFormatter SCANNED_DATE_LABEL_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     @Mock
     private SubmitAosService submitAosService;
@@ -1188,7 +1193,92 @@ class CaseworkerOfflineDocumentVerifiedTest {
 
         assertThat(response.getData().getDocuments().getScannedDocumentNames().getListItems())
             .extracting("label")
-            .contains("doc1.pdf", "doc2.pdf");
+            .contains("aos / doc1.pdf", "aos / doc2.pdf");
+    }
+
+    @Test
+    void shouldSetDynamicListLabelsWithScannedSubtypeAndDateWhenPresent() {
+        final LocalDateTime doc1ScannedDate = LocalDateTime.of(2024, 1, 12, 10, 0);
+        final LocalDateTime doc2ScannedDate = LocalDateTime.of(2024, 3, 5, 12, 0);
+        final ListValue<ScannedDocument> doc1 = scannedDocument("doc1.pdf", "D10", doc1ScannedDate);
+        final ListValue<ScannedDocument> doc2 = scannedDocument("doc2.pdf", "RFIR", doc2ScannedDate);
+
+        final CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder()
+                .scannedDocuments(List.of(doc1, doc2))
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().build();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.aboutToStart(details);
+
+        assertThat(response.getData().getDocuments().getScannedDocumentNames().getListItems())
+            .extracting("label")
+            .contains(
+                String.format("D10 / %s / doc1.pdf", doc1ScannedDate.format(SCANNED_DATE_LABEL_FORMATTER)),
+                String.format("RFIR / %s / doc2.pdf", doc2ScannedDate.format(SCANNED_DATE_LABEL_FORMATTER))
+            );
+    }
+
+    @Test
+    void shouldUseFilenameFromMetadataLabelWhenReclassifyingScannedDocument() {
+        setMockClock(clock);
+        final LocalDateTime scannedDate = LocalDateTime.of(2024, 1, 12, 10, 0);
+
+        final Document document = Document.builder()
+            .url("/filename")
+            .binaryUrl("/filename/binary")
+            .filename("filename")
+            .build();
+        final ListValue<ScannedDocument> scannedD84Document = ListValue
+            .<ScannedDocument>builder()
+            .id(FORM.getLabel())
+            .value(
+                ScannedDocument.builder()
+                    .scannedDate(scannedDate)
+                    .subtype("D84")
+                    .fileName("D84.pdf")
+                    .type(FORM)
+                    .url(document)
+                    .build()
+            )
+            .build();
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(Applicant.builder().build())
+            .conditionalOrder(ConditionalOrder.builder().build())
+            .documents(
+                CaseDocuments.builder()
+                    .typeOfDocumentAttached(CO_D84)
+                    .scannedDocuments(List.of(scannedD84Document))
+                    .scannedDocumentNames(
+                        DynamicList
+                            .builder()
+                            .value(
+                                DynamicListElement
+                                    .builder()
+                                    .label(String.format("D84 / %s / D84.pdf", scannedDate.format(SCANNED_DATE_LABEL_FORMATTER)))
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getData().getDocuments().getDocumentsUploaded())
+            .extracting("value.documentFileName")
+            .containsExactly("D84.pdf");
+        assertThat(response.getData().getConditionalOrder().getDateD84FormScanned())
+            .isEqualTo(scannedDate);
     }
 
     @Test
@@ -1324,6 +1414,10 @@ class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     private ListValue<ScannedDocument> scannedDocument(String filename) {
+        return scannedDocument(filename, "aos", null);
+    }
+
+    private ListValue<ScannedDocument> scannedDocument(String filename, String subtype, LocalDateTime scannedDate) {
         return ListValue.<ScannedDocument>builder()
             .value(ScannedDocument.builder()
                 .url(Document.builder()
@@ -1334,7 +1428,8 @@ class CaseworkerOfflineDocumentVerifiedTest {
                 )
                 .fileName(filename)
                 .type(ScannedDocumentType.OTHER)
-                .subtype("aos")
+                .subtype(subtype)
+                .scannedDate(scannedDate)
                 .build()
             ).build();
     }
@@ -1399,6 +1494,58 @@ class CaseworkerOfflineDocumentVerifiedTest {
         }
 
         assertThat(response.getErrors()).containsExactly(ERROR_TOO_EARLY_FOR_RESPONDENT_FINAL_ORDER);
+    }
+
+    @Test
+    void shouldThrowErrorIfSelectedScannedDocumentSubtypeDoesNotMatchTypeOfDocumentAttached() {
+        final ListValue<ScannedDocument> scannedDocument = scannedDocument("D84.pdf", "D84", null);
+
+        final CaseData caseData = CaseData.builder()
+            .documents(CaseDocuments.builder()
+                .typeOfDocumentAttached(FO_D36)
+                .scannedDocuments(List.of(scannedDocument))
+                .scannedDocumentNames(DynamicList.builder()
+                    .value(DynamicListElement.builder().label("D84 / D84.pdf").build())
+                    .build())
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).containsExactly(SCANNED_DOCUMENT_SUBTYPE_MISMATCH_ERROR);
+    }
+
+    @Test
+    void shouldNotThrowSubtypeMismatchErrorIfSelectedScannedDocumentSubtypeMatchesTypeOfDocumentAttached() {
+        setMockClock(clock);
+
+        final ListValue<ScannedDocument> scannedDocument = scannedDocument("D84.pdf", "D84", null);
+
+        final CaseData caseData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(Applicant.builder().build())
+            .conditionalOrder(ConditionalOrder.builder().build())
+            .documents(CaseDocuments.builder()
+                .typeOfDocumentAttached(CO_D84)
+                .scannedDocuments(List.of(scannedDocument))
+                .scannedDocumentNames(DynamicList.builder()
+                    .value(DynamicListElement.builder().label("D84 / D84.pdf").build())
+                    .build())
+                .build())
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
