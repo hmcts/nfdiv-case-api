@@ -114,6 +114,7 @@ task functional(type: Test) {
   group = "Verification"
   testClassesDirs = sourceSets.functionalTest.output.classesDirs
   classpath = sourceSets.functionalTest.runtimeClasspath
+  systemProperty 'spring.profiles.active', 'functional'
 }
 
 task integration(type: Test) {
@@ -123,22 +124,26 @@ task integration(type: Test) {
   classpath = sourceSets.integrationTest.runtimeClasspath
   failFast = true
   jvmArgs += "-Xmx3g"
+  systemProperty 'spring.profiles.active', 'integration'
   environment 'ADMIN_UNLINK_APPLICANT_2_ENABLED', 'true'
 }
 
 task contract(type: Test) {
   description = "Runs pact contract tests"
   group = "Verification"
-  useJUnitPlatform()
   testClassesDirs = sourceSets.contractTest.output.classesDirs
   classpath = sourceSets.contractTest.runtimeClasspath
+  systemProperty 'spring.profiles.active', 'contract'
   environment 'FEE_API_URL', 'http://localhost:4411'
+  environment 'PBA_REF_DATA_SERVICE_URL', 'http://localhost:8892'
 }
 
 task runAndPublishConsumerPactTests(type: Test, description: 'Publish pact contract tests to broker.', group: 'Verification') {
   testClassesDirs = sourceSets.contractTest.output.classesDirs
   classpath = sourceSets.contractTest.runtimeClasspath
+  systemProperty 'spring.profiles.active', 'contract'
   environment 'FEE_API_URL', 'http://localhost:4411'
+  environment 'PBA_REF_DATA_SERVICE_URL', 'http://localhost:8892'
 }
 
 project.ext.pacticipant = 'nfdiv_caseApi'
@@ -180,6 +185,7 @@ task smoke(type: Test) {
   description = "Runs Smoke Tests"
   setTestClassesDirs(sourceSets.functionalTest.output.classesDirs)
   setClasspath(sourceSets.functionalTest.runtimeClasspath)
+  systemProperty 'spring.profiles.active', 'functional'
   include "uk/gov/hmcts/divorce/smoke/**"
 }
 
