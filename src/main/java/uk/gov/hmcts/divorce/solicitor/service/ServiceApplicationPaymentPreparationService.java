@@ -56,7 +56,6 @@ public class ServiceApplicationPaymentPreparationService {
     ) {
         final DynamicList pbaNumbersDynamicList = pbaService.populatePbaDynamicList();
 
-        log.info("PBA Numbers {}, Case Id: {}", pbaNumbersDynamicList, caseId);
         feeDetails.setPbaNumbers(pbaNumbersDynamicList);
 
         log.info("Creating payment service request for case id: {}", caseId);

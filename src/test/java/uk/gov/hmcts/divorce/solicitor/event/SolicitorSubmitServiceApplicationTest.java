@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.Permission;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.SolicitorServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -19,7 +20,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationSubmitPaymentService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.Optional;
 
@@ -49,6 +52,12 @@ class SolicitorSubmitServiceApplicationTest {
 
     @Mock
     private ServiceApplicationSubmitPaymentService serviceApplicationSubmitPaymentService;
+
+    @Mock
+    private SolicitorServiceApplicationSubmittedNotification solicitorServiceApplicationSubmittedNotification;
+
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     @Test
     void shouldAddSolicitorSubmitServiceApplicationEventToConfigBuilder() {
@@ -221,5 +230,20 @@ class SolicitorSubmitServiceApplicationTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitServiceApplication.aboutToStart(details);
         assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldSendSolicitorServiceApplicationSubmittedNotificationOnSubmittedCallback() {
+        CaseData caseData = CaseData.builder().build();
+
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
+            .build();
+
+        SubmittedCallbackResponse response = solicitorSubmitServiceApplication.submitted(caseDetails, caseDetails);
+
+        assertThat(response).isNotNull();
+        verify(notificationDispatcher).send(solicitorServiceApplicationSubmittedNotification, caseData, TEST_CASE_ID);
     }
 }

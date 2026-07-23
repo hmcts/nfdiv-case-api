@@ -7,9 +7,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 
-public class DeemedServiceConfirmPage implements CcdPageConfiguration {
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-    private final String pageShowCondition;
+public class DeemedServiceConfirmPage implements CcdPageConfiguration {
 
     private static final String NEVER_SHOW = "[STATE]=\"NEVER_SHOW\"";
 
@@ -27,20 +27,17 @@ public class DeemedServiceConfirmPage implements CcdPageConfiguration {
             We will not share the applicant’s contact details if you've told us to keep them private
             """;
 
-    public DeemedServiceConfirmPage() {
-        this(null);
-    }
-
-    public DeemedServiceConfirmPage(String pageShowCondition) {
-        this.pageShowCondition = pageShowCondition;
+    @Override
+    public void addTo(PageBuilder pageBuilder) {
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
     }
 
     @Override
-    public void addTo(PageBuilder pageBuilder) {
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
         var page = pageBuilder.page("deemedServiceConfirm")
                     .pageLabel("Deemed Service App");
 
-        if (pageShowCondition != null) {
+        if (isNotBlank(pageShowCondition)) {
             page.showCondition(pageShowCondition);
         }
         page.complex(CaseData::getLabelContent)

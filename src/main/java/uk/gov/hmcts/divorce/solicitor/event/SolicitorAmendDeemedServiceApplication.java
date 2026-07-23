@@ -51,11 +51,11 @@ public class SolicitorAmendDeemedServiceApplication implements CCDConfig<CaseDat
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
 
         final List<CcdPageConfiguration> pages = List.of(new AmendDeemedServiceApplicationActionPage(),
-            new DeemedServiceConfirmPage(AMEND_SHOW_CONDITION),
-            new DeemedServicePaymentPage(AMEND_SHOW_CONDITION),
-            new DeemedServiceDetailsAndUploadPage(AMEND_SHOW_CONDITION));
+            new DeemedServiceConfirmPage(),
+            new DeemedServicePaymentPage(),
+            new DeemedServiceDetailsAndUploadPage());
 
-        pages.forEach(page -> page.addTo(pageBuilder));
+        pages.forEach(page -> page.addWithShowCondition(pageBuilder, AMEND_SHOW_CONDITION));
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(

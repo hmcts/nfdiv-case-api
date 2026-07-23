@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -26,6 +27,14 @@ import java.util.Map;
 import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.util.Objects.isNull;
+import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_ALTERNATIVE_SERVICE;
+import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_BAILIFF_SERVICE;
+import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_DEEMED_SERVICE;
+import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_DISPENSE_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.ALTERNATIVE_SERVICE;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
+import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
@@ -247,6 +256,13 @@ public class CommonContent {
         templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant2().getFullName());
         templateVars.put(SIGN_IN_URL, getProfessionalUsersSignInUrl(id));
         return templateVars;
+    }
+
+    public void addServiceApplicationTypeVars(Map<String, String> templateVars, AlternativeServiceType serviceType) {
+        templateVars.put(IS_DEEMED_SERVICE, DEEMED.equals(serviceType) ? YES : NO);
+        templateVars.put(IS_DISPENSE_SERVICE, DISPENSED.equals(serviceType) ? YES : NO);
+        templateVars.put(IS_BAILIFF_SERVICE, BAILIFF.equals(serviceType) ? YES : NO);
+        templateVars.put(IS_ALTERNATIVE_SERVICE, ALTERNATIVE_SERVICE.equals(serviceType) ? YES : NO);
     }
 
     public Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant) {

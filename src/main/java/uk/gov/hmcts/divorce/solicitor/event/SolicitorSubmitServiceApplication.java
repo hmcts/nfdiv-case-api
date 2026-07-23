@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.SolicitorServiceApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
@@ -15,9 +16,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.event.page.ServiceApplicationStatementOfTruthPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolServiceApplicationPaymentSummaryPage;
 import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationSubmitPaymentService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +40,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class SolicitorSubmitServiceApplication implements CCDConfig<CaseData, State, UserRole> {
 
     private final ServiceApplicationSubmitPaymentService serviceApplicationSubmitPaymentService;
+
+    private final NotificationDispatcher notificationDispatcher;
+
+    private final SolicitorServiceApplicationSubmittedNotification solicitorServiceApplicationSubmittedNotification;
 
     public static final String SOLICITOR_SUBMIT_SERVICE_APPLICATION = "solicitor-submit-service-application";
 
@@ -108,6 +115,15 @@ public class SolicitorSubmitServiceApplication implements CCDConfig<CaseData, St
         return value != null && !value.trim().isEmpty();
     }
 
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+        log.info("{} submitted callback invoked for Case Id: {}", SOLICITOR_SUBMIT_SERVICE_APPLICATION, details.getId());
+
+        notificationDispatcher.send(solicitorServiceApplicationSubmittedNotification, details.getData(), details.getId());
+
+        return SubmittedCallbackResponse.builder().build();
+    }
+
     private PageBuilder addEventConfig(
         final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
@@ -122,6 +138,7 @@ public class SolicitorSubmitServiceApplication implements CCDConfig<CaseData, St
             .endButtonLabel("Save Application")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }

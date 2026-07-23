@@ -7,9 +7,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
-public class DeemedServiceDetailsAndUploadPage implements CcdPageConfiguration {
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-    private final String pageShowCondition;
+public class DeemedServiceDetailsAndUploadPage implements CcdPageConfiguration {
 
     private static final String DEEMED_EVIDENCE_LABEL = """
             ## Tell us about your evidence
@@ -44,19 +44,16 @@ public class DeemedServiceDetailsAndUploadPage implements CcdPageConfiguration {
             ## Applicant 1 uploaded documents
             """;
 
-    public DeemedServiceDetailsAndUploadPage() {
-        this(null);
-    }
-
-    public DeemedServiceDetailsAndUploadPage(String pageShowCondition) {
-        this.pageShowCondition = pageShowCondition;
+    @Override
+    public void addTo(PageBuilder pageBuilder) {
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
     }
 
     @Override
-    public void addTo(PageBuilder pageBuilder) {
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
         var page = pageBuilder.page("deemedServiceDetailsAndUpload")
             .pageLabel("Deemed Service App");
-        if (pageShowCondition != null) {
+        if (isNotBlank(pageShowCondition)) {
             page.showCondition(pageShowCondition);
         }
         page.complex(CaseData::getApplicant1)
