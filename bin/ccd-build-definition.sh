@@ -18,4 +18,10 @@ do
   (${scriptPath}/generate-ccd-definition.sh $config_dir $definitionOutputFile "-e *-nonprod.json,*-testing.json") &
 done
 
+empty_definition=$(find ${build_dir} -maxdepth 1 -type f -name '*.xlsx' -size 0 -print -quit)
+if [ -n "$empty_definition" ]; then
+  echo "Generated CCD definition is empty: $empty_definition" >&2
+  exit 1
+fi
+
 wait
