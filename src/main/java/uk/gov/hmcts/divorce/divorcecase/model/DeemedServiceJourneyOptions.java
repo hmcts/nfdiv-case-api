@@ -16,7 +16,6 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
-
 public class DeemedServiceJourneyOptions implements ApplicationAnswers {
 
     @CCD(

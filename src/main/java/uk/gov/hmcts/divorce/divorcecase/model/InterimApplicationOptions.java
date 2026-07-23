@@ -137,6 +137,13 @@ public class InterimApplicationOptions {
     )
     private YesOrNo interimAppsCannotUploadDocs;
 
+    @CCD(
+        label = "Statement of Truth",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private YesOrNo interimAppsStatementOfTruth;
+
     @JsonUnwrapped(prefix = "SearchGovRecords")
     @CCD(
         label = "Search gov records journey options",
@@ -159,7 +166,8 @@ public class InterimApplicationOptions {
         hint = "if you withdraw it, you'll be able to start a new service application.",
         access = {DefaultAccess.class},
         typeOverride = FixedRadioList,
-        typeParameterOverride = "DraftServiceApplicationAction"
+        typeParameterOverride = "DraftServiceApplicationAction",
+        searchable = false
     )
     private DraftServiceApplicationAction draftServiceApplicationAction;
 
