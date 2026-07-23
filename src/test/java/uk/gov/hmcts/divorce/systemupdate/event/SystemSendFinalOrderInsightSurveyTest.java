@@ -1,6 +1,8 @@
 package uk.gov.hmcts.divorce.systemupdate.event;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -16,7 +18,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -52,9 +56,13 @@ class SystemSendFinalOrderInsightSurveyTest {
     }
 
     @Test
-    void shouldErrorWhenTheCaseHasAlreadyBeenProcessedMaximumTimes() {
+    void shouldErrorWhenTheCaseIsNotEligibleYet() {
         final CaseData caseData = caseDataWithOrderSummary();
         caseData.getFinalOrder().setFinalOrderInsightSurveyStage(FinalOrderInsightSurveyInvite.BY_STAGE.size());
+
+        caseData.getFinalOrder().setGrantedDate(
+            LocalDateTime.now().minusDays(FinalOrderInsightSurveyInvite.FIRST_NOTIFICATION.getDaysAfterGrantedDate())
+        );
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
@@ -68,34 +76,43 @@ class SystemSendFinalOrderInsightSurveyTest {
     }
 
     @Test
-    void shouldIncrementNotificationCounter() {
+    void shouldErrorWhenTheCaseHasAlreadyBeenProcessedMaximumTimes() {
         final CaseData caseData = caseDataWithOrderSummary();
-        caseData.getFinalOrder().setGrantedDate(
-            LocalDateTime.now().minusDays(FinalOrderInsightSurveyInvite.FIRST_NOTIFICATION.getDaysAfterGrantedDate())
-        );
-        caseData.getFinalOrder().setFinalOrderInsightSurveyStage(0);
+        caseData.getFinalOrder().setFinalOrderInsightSurveyStage(FinalOrderInsightSurveyInvite.BY_STAGE.size());
 
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-        details.setState(State.FinalOrderComplete);
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            systemSendFinalOrderInsightSurvey.aboutToSubmit(caseDetails(caseData), caseDetails(caseData));
+
+        assertThat(response.getErrors()).containsExactly(CASE_ALREADY_PROCESSED_ERROR);
+    }
+
+    @ParameterizedTest
+    @MethodSource("inviteStages")
+    void shouldIncrementNotificationCounterWhenGrantedDateFallsOnEligibleBoundary(FinalOrderInsightSurveyInvite inviteStage) {
+        final CaseData caseData = caseDataWithOrderSummary();
+        caseData.getFinalOrder().setFinalOrderInsightSurveyStage(inviteStage.getStage());
+        caseData.getFinalOrder().setGrantedDate(
+            LocalDate.now().minusDays(inviteStage.getDaysAfterGrantedDate()).atTime(23, 59, 59)
+        );
+
+        final CaseDetails<CaseData, State> details = caseDetails(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemSendFinalOrderInsightSurvey.aboutToSubmit(details, details);
 
-        assertThat(response.getData().getFinalOrder().getFinalOrderInsightSurveyStage()).isEqualTo(1);
+        assertThat(response.getData().getFinalOrder().getFinalOrderInsightSurveyStage()).isEqualTo(inviteStage.getStage() + 1);
     }
 
-    @Test
-    void shouldErrorWhenCaseIsNotYetEligibleForNextInvite() {
+    @ParameterizedTest
+    @MethodSource("inviteStages")
+    void shouldErrorWhenCaseIsNotYetEligibleForCurrentInviteStage(FinalOrderInsightSurveyInvite inviteStage) {
         final CaseData caseData = caseDataWithOrderSummary();
-        caseData.getFinalOrder().setFinalOrderInsightSurveyStage(0);
-        caseData.getFinalOrder().setGrantedDate(LocalDateTime.now());
+        caseData.getFinalOrder().setFinalOrderInsightSurveyStage(inviteStage.getStage());
+        caseData.getFinalOrder().setGrantedDate(
+            LocalDate.now().minusDays(inviteStage.getDaysAfterGrantedDate()).plusDays(1).atStartOfDay()
+        );
 
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-        details.setState(State.FinalOrderComplete);
+        final CaseDetails<CaseData, State> details = caseDetails(caseData);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemSendFinalOrderInsightSurvey.aboutToSubmit(details, details);
@@ -108,13 +125,22 @@ class SystemSendFinalOrderInsightSurveyTest {
         final CaseData caseData = caseDataWithOrderSummary();
         caseData.getFinalOrder().setFinalOrderInsightSurveyStage(0);
 
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setId(TEST_CASE_ID);
-        details.setData(caseData);
-        details.setState(State.FinalOrderComplete);
+        final CaseDetails<CaseData, State> details = caseDetails(caseData);
 
         systemSendFinalOrderInsightSurvey.submitted(details, details);
 
         verify(notificationDispatcher).send(finalOrderInsightSurveyNotification, details.getData(), details.getId());
+    }
+
+    private static Stream<FinalOrderInsightSurveyInvite> inviteStages() {
+        return FinalOrderInsightSurveyInvite.BY_STAGE.stream();
+    }
+
+    private static CaseDetails<CaseData, State> caseDetails(CaseData caseData) {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+        details.setState(State.FinalOrderComplete);
+        return details;
     }
 }
