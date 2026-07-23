@@ -32,13 +32,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 
 @Component
 @Slf4j
 public class SetSubmitAosState implements CaseTask {
 
-    private static List<State> STATES_REFUND_NOT_APPLICABLE = Arrays.asList(AwaitingDwpResponse, IssuedToBailiff, BailiffRefused);
+    private static List<State> STATES_REFUND_NOT_APPLICABLE =
+        Arrays.asList(AwaitingDwpResponse, IssuedToBailiff, BailiffRefused, ServiceAdminRefusal);
 
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
@@ -69,8 +71,10 @@ public class SetSubmitAosState implements CaseTask {
     }
 
     private State getState(CaseData caseData, State currentState) {
-        if ((hasServicePayment(caseData.getAlternativeService())
-            || hasGeneralReferralPayment(caseData.getGeneralReferral())) && !STATES_REFUND_NOT_APPLICABLE.contains(currentState)) {
+        boolean hasMadePayment = hasServicePayment(caseData.getAlternativeService())
+            || hasGeneralReferralPayment(caseData.getGeneralReferral());
+
+        if (hasMadePayment && !STATES_REFUND_NOT_APPLICABLE.contains(currentState)) {
             return PendingRefund;
         }
 
