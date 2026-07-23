@@ -185,6 +185,7 @@ task smoke(type: Test) {
   description = "Runs Smoke Tests"
   setTestClassesDirs(sourceSets.functionalTest.output.classesDirs)
   setClasspath(sourceSets.functionalTest.runtimeClasspath)
+  systemProperty 'spring.profiles.active', 'functional'
   include "uk/gov/hmcts/divorce/smoke/**"
 }
 
