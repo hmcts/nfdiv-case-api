@@ -842,7 +842,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(DOES_APPLICANT1_WANT_TO_APPLY_FOR_FINAL_ORDER)
             .field(APPLICANT1_FINAL_ORDER_LATE_EXPLANATION)
             .field(APPLICANT1_FINAL_ORDER_STATEMENT_OF_TRUTH)
-            .label(FINAL_ORDER_SOL_APP1_STATEMENT_OF_TRUTH, IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED, "The applicant believes that the facts stated in the application are true.")
+            .label(FINAL_ORDER_SOL_APP1_STATEMENT_OF_TRUTH, IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED,
+                "The applicant believes that the facts stated in the application are true.")
             .field(APPLICANT1_SOLICITOR_NAME, IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED)
             .field(APPLICANT1_SOLICITOR_FIRM_NAME, IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED)
             .field(GRANTED)
@@ -869,7 +870,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(APPLICANT2_FINAL_ORDER_EXPLANATION, APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
             .field(APPLICANT2_FINAL_ORDER_LATE_EXPLANATION, APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
             .field(APPLICANT2_FINAL_ORDER_STATEMENT_OF_TRUTH, APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
-            .label(FINAL_ORDER_SOL_APP2_STATEMENT_OF_TRUTH, IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED, "The applicant believes that the facts stated in the application are true.")
+            .label(FINAL_ORDER_SOL_APP2_STATEMENT_OF_TRUTH, IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED,
+                "The applicant believes that the facts stated in the application are true.")
             .field(APPLICANT2_SOLICITOR_NAME, IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED)
             .field(APPLICANT2_SOLICITOR_FIRM_NAME, IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED)
             .field(SCANNED_D36_FORM);

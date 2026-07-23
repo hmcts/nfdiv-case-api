@@ -71,7 +71,8 @@ public final class CaseFieldsConstants {
     public static final String APPLICANT_1_WHY_NAME_DIFFERENT_OTHER_DETAILS = "applicant1WhyNameDifferentOtherDetails";
     public static final String APPLICANT_1_LAST_NAME_CHANGED_WHEN_MARRIED = "applicant1LastNameChangedWhenMarried";
     public static final String APPLICANT_1_LAST_NAME_CHANGED_WHEN_MARRIED_METHOD = "applicant1LastNameChangedWhenMarriedMethod";
-    public static final String APPLICANT_1_LAST_NAME_CHANGED_WHEN_MARRIED_OTHER_DETAILS = "applicant1LastNameChangedWhenMarriedOtherDetails";
+    public static final String APPLICANT_1_LAST_NAME_CHANGED_WHEN_MARRIED_OTHER_DETAILS
+        = "applicant1LastNameChangedWhenMarriedOtherDetails";
     public static final String APPLICANT_1_NAME_CHANGED_HOW = "applicant1NameChangedHow";
     public static final String APPLICANT_1_NAME_CHANGED_HOW_OTHER_DETAILS = "applicant1NameChangedHowOtherDetails";
     public static final String APPLICANT_1_CONTACT_DETAILS_TYPE = "applicant1ContactDetailsType";
@@ -85,7 +86,7 @@ public final class CaseFieldsConstants {
     public static final String DELIVERY_DATE = "deliveryDate";
     public static final String OPENING_DATE = "openingDate";
     public static final String CASE_REFERENCE = "caseReference";
-    public static final String ATTACH_TO_CASE_REFERENCE ="attachToCaseReference";
+    public static final String ATTACH_TO_CASE_REFERENCE = "attachToCaseReference";
     public static final String PO_BOX = "poBox";
     public static final String PO_BOX_JURISDICTION = "poBoxJurisdiction";
     public static final String JOURNEY_CLASSIFICATION = "journeyClassification";
@@ -152,13 +153,16 @@ public final class CaseFieldsConstants {
     public static final String APPLICANT_2_MIDDLE_NAME = "applicant2MiddleName";
     public static final String APPLICANT_2_GENDER = "applicant2Gender";
     public static final String APPLICANT_2_NAME_DIFFERENT_TO_MARRIAGE_CERTIFICATE = "applicant2NameDifferentToMarriageCertificate";
-    public static final String APPLICANT_2_NAME_DIFFERENT_TO_MARRIAGE_CERTIFICATE_METHOD = "applicant2NameDifferentToMarriageCertificateMethod";
-    public static final String APPLICANT_2_NAME_DIFFERENT_TO_MARRIAGE_CERTIFICATE_OTHER_DETAILS = "applicant2NameDifferentToMarriageCertificateOtherDetails";
+    public static final String APPLICANT_2_NAME_DIFFERENT_TO_MARRIAGE_CERTIFICATE_METHOD
+        = "applicant2NameDifferentToMarriageCertificateMethod";
+    public static final String APPLICANT_2_NAME_DIFFERENT_TO_MARRIAGE_CERTIFICATE_OTHER_DETAILS
+        = "applicant2NameDifferentToMarriageCertificateOtherDetails";
     public static final String APPLICANT_2_WHY_NAME_DIFFERENT = "applicant2WhyNameDifferent";
     public static final String APPLICANT_2_WHY_NAME_DIFFERENT_OTHER_DETAILS = "applicant2WhyNameDifferentOtherDetails";
     public static final String APPLICANT_2_LAST_NAME_CHANGED_WHEN_MARRIED = "applicant2LastNameChangedWhenMarried";
     public static final String APPLICANT_2_LAST_NAME_CHANGED_WHEN_MARRIED_METHOD = "applicant2LastNameChangedWhenMarriedMethod";
-    public static final String APPLICANT_2_LAST_NAME_CHANGED_WHEN_MARRIED_OTHER_DETAILS = "applicant2LastNameChangedWhenMarriedOtherDetails";
+    public static final String APPLICANT_2_LAST_NAME_CHANGED_WHEN_MARRIED_OTHER_DETAILS
+        = "applicant2LastNameChangedWhenMarriedOtherDetails";
     public static final String APPLICANT_2_NAME_CHANGED_HOW = "applicant2NameChangedHow";
     public static final String APPLICANT_2_NAME_CHANGED_HOW_OTHER_DETAILS = "applicant2NameChangedHowOtherDetails";
     public static final String APPLICANT_2_CONTACT_DETAILS_TYPE = "applicant2ContactDetailsType";
@@ -202,12 +206,15 @@ public final class CaseFieldsConstants {
     public static final String GENERAL_APPLICATION_FEE_HELP_WITH_FEES_REFERENCE_NUMBER = "generalApplicationFeeHelpWithFeesReferenceNumber";
     public static final String APPLICANT_1_USED_WELSH_TRANSLATION_ON_SUBMISSION = "applicant1UsedWelshTranslationOnSubmission";
     public static final String APPLICANT_1_LEGAL_PROCEEDINGS_DETAILS_TRANSLATED = "applicant1LegalProceedingsDetailsTranslated";
-    public static final String CO_APPLICANT_1_REASON_INFORMATION_NOT_CORRECT_TRANSLATED = "coApplicant1ReasonInformationNotCorrectTranslated";
+    public static final String CO_APPLICANT_1_REASON_INFORMATION_NOT_CORRECT_TRANSLATED
+        = "coApplicant1ReasonInformationNotCorrectTranslated";
     public static final String APPLICANT_1_FINAL_ORDER_LATE_EXPLANATION_TRANSLATED = "applicant1FinalOrderLateExplanationTranslated";
     public static final String APPLICANT_2_LEGAL_PROCEEDINGS_DETAILS_TRANSLATED = "applicant2LegalProceedingsDetailsTranslated";
     public static final String APPLICANT_2_USED_WELSH_TRANSLATION_ON_SUBMISSION = "applicant2UsedWelshTranslationOnSubmission";
-    public static final String CO_APPLICANT_2_REASON_INFORMATION_NOT_CORRECT_TRANSLATED = "coApplicant2ReasonInformationNotCorrectTranslated";
-    public static final String REASON_COURTS_ENGLAND_WALES_NO_JURISDICTION_TRANSLATED = "reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslated";
+    public static final String CO_APPLICANT_2_REASON_INFORMATION_NOT_CORRECT_TRANSLATED
+        = "coApplicant2ReasonInformationNotCorrectTranslated";
+    public static final String REASON_COURTS_ENGLAND_WALES_NO_JURISDICTION_TRANSLATED
+        = "reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslated";
     public static final String CO_REFUSAL_CLARIFICATION_ADDITIONAL_INFO_TRANSLATED = "coRefusalClarificationAdditionalInfoTranslated";
     public static final String MARRIAGE_CERTIFY_MARRIAGE_CERTIFICATE_IS_CORRECT = "marriageCertifyMarriageCertificateIsCorrect";
     public static final String MARRIAGE_CERTIFICATE_IS_INCORRECT_DETAILS = "marriageMarriageCertificateIsIncorrectDetails";
