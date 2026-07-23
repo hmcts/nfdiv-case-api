@@ -41,6 +41,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDICIAL_SEPARATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.NA;
@@ -306,7 +307,7 @@ class SetSubmitAosStateTest {
     }
 
     private static Stream<Arguments> caseStateParametersForNotSendingCaseToPendingRefund() {
-        return Arrays.stream(new State[]{IssuedToBailiff, BailiffRefused, AwaitingDwpResponse})
+        return Arrays.stream(new State[]{IssuedToBailiff, BailiffRefused, AwaitingDwpResponse, ServiceAdminRefusal})
             .map(Arguments::of);
     }
 }
