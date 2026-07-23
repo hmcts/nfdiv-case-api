@@ -96,6 +96,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.solicitorTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
@@ -479,8 +480,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
 
         setSubmittedDate(data, List.of(APPLICANT1));
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
-            .thenReturn(getMainTemplateVars());
+        when(commonContent.solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
+            .thenReturn(solicitorTemplateVars(data, data.getApplicant1()));
         setMockClock(clock);
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
@@ -491,7 +492,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SOLICITOR_NAME, "app1sol"),
-                hasEntry(SOLICITOR_REFERENCE, "refxxx"),
+                hasEntry(DocmosisTemplateConstants.SOLICITOR_REFERENCE, "refxxx"),
                 hasEntry(RESPONSE_DUE_DATE, getExpectedLocalDateTime().plusDays(14).format(DATE_TIME_FORMATTER)),
                 hasEntry(DocmosisTemplateConstants.ISSUE_DATE, issueDate.format(DATE_TIME_FORMATTER)),
                 hasEntry(CO_OR_FO, "conditional"),
@@ -501,7 +502,7 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference());
+        verify(commonContent).solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
     }
 
     @Test
@@ -520,11 +521,8 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
         data.getApplication().setIssueDate(issueDate);
         setSubmittedDate(data, List.of(APPLICANT1));
 
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference()))
-            .thenReturn(getMainTemplateVars());
-
-        when(commonContent.getProfessionalUsersSignInUrl(TEST_CASE_ID))
-            .thenReturn("/signInUrl");
+        when(commonContent.solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant2()))
+            .thenReturn(solicitorTemplateVars(data, data.getApplicant2()));
 
         setMockClock(clock);
 
@@ -536,16 +534,16 @@ class Applicant1AppliedForConditionalOrderNotificationTest {
             argThat(allOf(
                 hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SOLICITOR_NAME, "app2sol"),
-                hasEntry(SOLICITOR_REFERENCE, "refxxx"),
+                hasEntry(DocmosisTemplateConstants.SOLICITOR_REFERENCE, "refxxx"),
                 hasEntry(DocmosisTemplateConstants.ISSUE_DATE, issueDate.format(DATE_TIME_FORMATTER)),
                 hasEntry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
                 hasEntry(APPLICANT_2_FULL_NAME, "test_first_name test_middle_name test_last_name"),
-                hasEntry(SIGN_IN_URL,"/signInUrl")
+                hasEntry(SIGN_IN_URL,"divorceTestUrl")
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2().getLanguagePreference());
+        verify(commonContent).solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant2());
     }
 
     @Test

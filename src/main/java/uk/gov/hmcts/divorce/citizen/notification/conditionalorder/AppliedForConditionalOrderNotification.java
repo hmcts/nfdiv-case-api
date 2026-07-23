@@ -7,26 +7,21 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
-import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CO_SUBMISSION_DATE_PLUS_DAYS;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PRONOUNCE_BY_DATE;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -77,19 +72,11 @@ public class AppliedForConditionalOrderNotification {
     }
 
     protected Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant, String whichPartner) {
-        Map<String, String> templateVars = commonContent.basicTemplateVars(data, id, applicant.getLanguagePreference());
-        templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, data.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        Map<String, String> templateVars = commonContent.solicitorTemplateVars(data, id, applicant);
         templateVars.put(RESPONSE_DUE_DATE,
-            coQuestions(data, whichPartner).getSubmittedDate().plusDays(14).format(DATE_TIME_FORMATTER));
-        templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
-        templateVars.put(SOLICITOR_REFERENCE,
-            isNotEmpty(applicant.getSolicitor().getReference())
-                ? applicant.getSolicitor().getReference()
-                : NOT_PROVIDED);
+            coQuestions(data, whichPartner).getSubmittedDate().plusDays(14)
+                .format(getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         templateVars.put(CO_OR_FO, "conditional");
-        templateVars.put(APPLICANT_1_FULL_NAME, data.getApplicant1().getFullName());
-        templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant2().getFullName());
-        templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
         return templateVars;
     }
 
