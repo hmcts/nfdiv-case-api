@@ -134,6 +134,7 @@ task contract(type: Test) {
   useJUnitPlatform()
   testClassesDirs = sourceSets.contractTest.output.classesDirs
   classpath = sourceSets.contractTest.runtimeClasspath
+  systemProperty 'spring.profiles.active', 'contract'
   environment 'FEE_API_URL', 'http://localhost:4411'
 }
 
