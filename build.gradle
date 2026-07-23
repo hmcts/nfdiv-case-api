@@ -131,7 +131,6 @@ task integration(type: Test) {
 task contract(type: Test) {
   description = "Runs pact contract tests"
   group = "Verification"
-  useJUnitPlatform()
   testClassesDirs = sourceSets.contractTest.output.classesDirs
   classpath = sourceSets.contractTest.runtimeClasspath
   systemProperty 'spring.profiles.active', 'contract'
@@ -140,7 +139,6 @@ task contract(type: Test) {
 }
 
 task runAndPublishConsumerPactTests(type: Test, description: 'Publish pact contract tests to broker.', group: 'Verification') {
-  useJUnitPlatform()
   testClassesDirs = sourceSets.contractTest.output.classesDirs
   classpath = sourceSets.contractTest.runtimeClasspath
   systemProperty 'spring.profiles.active', 'contract'
