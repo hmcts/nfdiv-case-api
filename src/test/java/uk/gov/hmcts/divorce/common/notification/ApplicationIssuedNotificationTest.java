@@ -550,6 +550,9 @@ class ApplicationIssuedNotificationTest {
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2().getLanguagePreference()))
                 .thenReturn(commonTemplateVars());
 
+        when(docmosisCommonContent.getSolicitorReference(caseData.getApplicant2().getSolicitor(),
+            caseData.getApplicant2().getLanguagePreference())).thenReturn("Not provided");
+
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
@@ -579,6 +582,9 @@ class ApplicationIssuedNotificationTest {
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2().getLanguagePreference()))
                 .thenReturn(commonTemplateVars());
+
+        when(docmosisCommonContent.getSolicitorReference(caseData.getApplicant2().getSolicitor(),
+            caseData.getApplicant2().getLanguagePreference())).thenReturn("TEST");
 
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
