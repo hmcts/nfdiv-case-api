@@ -136,12 +136,16 @@ task contract(type: Test) {
   classpath = sourceSets.contractTest.runtimeClasspath
   systemProperty 'spring.profiles.active', 'contract'
   environment 'FEE_API_URL', 'http://localhost:4411'
+  environment 'PBA_REF_DATA_SERVICE_URL', 'http://localhost:8892'
 }
 
 task runAndPublishConsumerPactTests(type: Test, description: 'Publish pact contract tests to broker.', group: 'Verification') {
+  useJUnitPlatform()
   testClassesDirs = sourceSets.contractTest.output.classesDirs
   classpath = sourceSets.contractTest.runtimeClasspath
+  systemProperty 'spring.profiles.active', 'contract'
   environment 'FEE_API_URL', 'http://localhost:4411'
+  environment 'PBA_REF_DATA_SERVICE_URL', 'http://localhost:8892'
 }
 
 project.ext.pacticipant = 'nfdiv_caseApi'
