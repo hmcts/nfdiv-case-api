@@ -241,6 +241,7 @@ uk:
             FINAL_ORDER_INSIGHT_SURVEY_INVITE: '7bd6979a-78ac-4f76-9ff8-72e6765ec409'
             FINAL_ORDER_INSIGHT_SURVEY_FIRST_REMINDER: '70fae14b-9d69-4959-be1a-6056af91e248'
             FINAL_ORDER_INSIGHT_SURVEY_LAST_REMINDER: '501d1c88-f479-45a1-a30d-1335f2639045'
+            SOLICITOR_SENT_PAPERS_AGAIN: '97daea39-705f-4431-b6d7-37f77ecb163f'
           welsh:
             REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT: 'f5c9330c-de88-4d57-9e83-da0f96f6bd5a'
             SAVE_SIGN_OUT: '6f8b8605-64ab-47ca-b5a8-ee87f96be77d'
@@ -421,6 +422,7 @@ uk:
             FINAL_ORDER_INSIGHT_SURVEY_INVITE: '7bd6979a-78ac-4f76-9ff8-72e6765ec409'
             FINAL_ORDER_INSIGHT_SURVEY_FIRST_REMINDER: '70fae14b-9d69-4959-be1a-6056af91e248'
             FINAL_ORDER_INSIGHT_SURVEY_LAST_REMINDER: '501d1c88-f479-45a1-a30d-1335f2639045'
+            SOLICITOR_SENT_PAPERS_AGAIN: '97daea39-705f-4431-b6d7-37f77ecb163f'   #TODO - Welsh translation needed
 
 s2s-authorised:
   services: ${S2S_AUTHORISED_SERVICES:ccd_data,bulk_scan_processor,bulk_scan_orchestrator,payment_app}
