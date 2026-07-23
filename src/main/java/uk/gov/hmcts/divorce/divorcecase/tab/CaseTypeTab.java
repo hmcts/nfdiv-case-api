@@ -45,6 +45,229 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.ALTERNATIVE_SERVICE_FEE_REQUIRED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.ALTERNATIVE_SERVICE_JUDGE_OR_LEGAL_ADVISOR_DETAILS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.ALTERNATIVE_SERVICE_MEDIUM;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.ALTERNATIVE_SERVICE_OUTCOMES;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.ALTERNATIVE_SERVICE_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.AMENDED_APPLICATIONS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.AOS_IS_DRAFTED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APP2_SOL_FO_HWF_REFERENCE_NUMBER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT1_FINAL_ORDER_LATE_EXPLANATION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT1_FINAL_ORDER_STATEMENT_OF_TRUTH;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT1_FLAGS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT1_SOLICITOR_FIRM_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT1_SOLICITOR_FLAGS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT1_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_APPLIED_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_APPLIED_FOR_FINAL_ORDER_FIRST;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_FINAL_ORDER_EXPLANATION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_FINAL_ORDER_LATE_EXPLANATION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_FINAL_ORDER_STATEMENT_OF_TRUTH;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_FLAGS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_SOLICITOR_FIRM_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_SOLICITOR_FLAGS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_SOL_APPLIED_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_SOL_FINAL_ORDER_WHY_NEED_TO_APPLY;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_SOL_RESPONSIBLE_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_ADDRESS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_DOCUMENTS_UPLOADED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_EMAIL;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_FINAL_ORDER_LATE_EXPLANATION_TRANSLATED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_HWF;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_IN_REFUGE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_LEGAL_PROCEEDINGS_DETAILS_TRANSLATED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_PHONE_NUMBER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_REPRESENTED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_USED_WELSH_TRANSLATION_ON_SUBMISSION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_ADDRESS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_DOCUMENTS_UPLOADED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_EMAIL;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_FINAL_ORDER_FEE_ORDER_SUMMARY;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_FO_HWF_NEED_HELP;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_FO_HWF_REFERENCE_NUMBER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_HWF;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_HWF_NEED_HELP;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_IN_REFUGE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_LEGAL_PROCEEDINGS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_LEGAL_PROCEEDINGS_CONCLUDED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_LEGAL_PROCEEDINGS_DETAILS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_LEGAL_PROCEEDINGS_DETAILS_TRANSLATED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_OFFLINE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_PHONE_NUMBER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOLICITOR_REPRESENTED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOL_FINAL_ORDER_FEE_ACCOUNT_REFERENCE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOL_FINAL_ORDER_FEE_ORDER_SUMMARY;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOL_PAYMENT_HOW_TO_PAY;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_STATEMENT_OF_TRUTH;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_USED_WELSH_TRANSLATION_ON_SUBMISSION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_WELSH_TRANSLATION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.BULK_LIST_CASE_REFERENCE_LINK;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CERTIFICATE_OF_SERVICE_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CERTIFICATE_OF_SERVICE_DOCUMENT;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CHANGE_OF_REPRESENTATIVES;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CHANGE_ORGANISATION_REQUEST_FIELD;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CONFIDENTIAL_DOCUMENTS_GENERATED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CONFIDENTIAL_DOCUMENTS_UPLOADED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CONFIRM_READ_PETITION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.COUNTRY_LIFE_BASED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_1_APPLY_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_1_CHANGE_OR_ADD_TO_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_1_CONFIRM_INFORMATION_STILL_CORRECT;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_1_REASON_INFORMATION_NOT_CORRECT;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_1_REASON_INFORMATION_NOT_CORRECT_TRANSLATED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_1_SOLICITOR_ADDITIONAL_COMMENTS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_1_SOLICITOR_FIRM;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_1_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_1_STATEMENT_OF_TRUTH;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_1_SUBMITTED_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_2_APPLY_FOR_CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_2_CHANGE_OR_ADD_TO_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_2_CONFIRM_INFORMATION_STILL_CORRECT;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_2_REASON_INFORMATION_NOT_CORRECT;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_2_REASON_INFORMATION_NOT_CORRECT_TRANSLATED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_2_SOLICITOR_ADDITIONAL_COMMENTS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_2_SOLICITOR_FIRM;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_2_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_2_STATEMENT_OF_TRUTH;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_APPLICANT_2_SUBMITTED_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_CANNOT_UPLOAD_CLARIFICATION_DOCUMENTS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_CERTIFICATE_OF_ENTITLEMENT_DOCUMENT;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_CLAIMS_COSTS_ORDER_INFORMATION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_CLAIMS_GRANTED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_CLARIFICATION_RESPONSES_SUBMITTED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_CONDITIONAL_ORDER_GRANTED_DOCUMENT;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_COURT;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_DATE_AND_TIME_OF_HEARING;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_DECISION_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_GRANTED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_GRANTED_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_JUDGE_COSTS_CLAIM_GRANTED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_JUDGE_COSTS_ORDER_ADDITIONAL_INFO;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_LEGAL_ADVISOR_DECISIONS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_OUTCOME_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_PRONOUNCEMENT_JUDGE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_PROOF_OF_SERVICE_UPLOAD_DOCUMENTS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_REFUSAL_CLARIFICATION_ADDITIONAL_INFO_TRANSLATED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_RESCINDED_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_SCANNED_D84_FORM;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CO_SWITCHED_TO_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DATE_AOS_SUBMITTED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DATE_APPLICANT1_DECLARED_INTENTION_TO_SWITCH_TO_SOLE_FO;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DATE_APPLICANT2_DECLARED_INTENTION_TO_SWITCH_TO_SOLE_FO;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DATE_APPLICANT2_SOL_APPLIED_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DATE_FINAL_ORDER_ELIGIBLE_FROM;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DATE_FINAL_ORDER_ELIGIBLE_TO_RESPONDENT;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DATE_FINAL_ORDER_NO_LONGER_ELIGIBLE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DATE_OF_HEARING;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DEEMED_SERVICE_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DOCUMENTS_GENERATED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DOCUMENTS_UPLOADED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DOES_APPLICANT1_INTEND_TO_SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DOES_APPLICANT1_WANT_TO_APPLY_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DOES_APPLICANT2_INTEND_TO_SWITCH_TO_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DOES_APPLICANT2_WANT_TO_APPLY_FOR_FINAL_ORDER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DUE_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.EXPEDITED_FINAL_ORDER_AUTHORISATION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.FINAL_ORDER_PBA_NUMBER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.FINAL_ORDER_SOL_APP1_STATEMENT_OF_TRUTH;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.FINAL_ORDER_SOL_APP2_STATEMENT_OF_TRUTH;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.FINAL_ORDER_SWITCHED_TO_SOLE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.FRAUD_REFERRAL_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_APPLICATION_ADDED_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_APPLICATION_FEE_ACCOUNT_NUMBER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_APPLICATION_FEE_ACCOUNT_REFERENCE_NUMBER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_APPLICATION_FEE_HELP_WITH_FEES_REFERENCE_NUMBER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_APPLICATION_FEE_ORDER_SUMMARY;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_APPLICATION_FEE_PAYMENT_METHOD;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_APPLICATION_FROM;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_APPLICATION_REFERRAL_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRALS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_DECISION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_DECISION_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_DECISION_REASON;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_DOCUMENT;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_DOCUMENTS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_FEE_METHOD;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_FEE_PAYMENT_REFERENCE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_FEE_REQUIRED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_FEE_SERVICE_REQUEST_REFERENCE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_FRAUD_CASE_REASON;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_JUDGE_OR_LEGAL_ADVISOR_DETAILS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_REASON;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_URGENT_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GENERAL_REFERRAL_URGENT_CASE_REASON;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GRANTED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.GRANTED_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.HEARING_ATTENDANCE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.HOW_TO_RESPOND_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.INTEND_TO_DELAY;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.IS_FINAL_ORDER_OVERDUE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.JURISDICTION_AGREE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LABEL_CONTENT_APPLICANT2;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LABEL_CONTENT_DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LABEL_CONTENT_FINALISE_DIVORCE_OR_END_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LABEL_CONTENT_MARRIAGE_OR_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LABEL_CONTENT_MARRIAGE_OR_CIVIL_PARTNERSHIP_UC;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LABEL_CONTENT_THE_APPLICANT_2_UC;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LABEL_CONTENT_UNION_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LABEL_FINAL_ORDER_DETAILS_APPLICANT2;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LABEL_FINAL_ORDER_DETAILS_SOLE_RESPONDENT;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LETTER_PACKS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LOCAL_COURT_EMAIL;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.LOCAL_COURT_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.MARRIAGE_APPLICANT_1_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.MARRIAGE_APPLICANT_2_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.MARRIAGE_CERTIFICATE_IS_INCORRECT_DETAILS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.MARRIAGE_CERTIFY_MARRIAGE_CERTIFICATE_IS_CORRECT;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.MARRIAGE_COUNTRY_OF_MARRIAGE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.MARRIAGE_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.MARRIAGE_ISSUE_APPLICATION_WITHOUT_CERTIFICATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.MARRIAGE_MARRIED_IN_UK;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.MARRIAGE_PLACE_OF_MARRIAGE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.NEW_PAPER_CASE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.NOC_WHICH_APPLICANT;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.NOTICE_OF_PROCEEDINGS_SOLICITOR_FIRM;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.OVERDUE_FINAL_ORDER_AUTHORISATION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.PAPER_CASE_PAYMENT_METHOD;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.PAPER_FORM_APPLICANT_1_NO_PAYMENT_INCLUDED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.PAPER_FORM_APPLICANT_2_NO_PAYMENT_INCLUDED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.PAPER_FORM_APPLICANT_2_PAYMENT_OTHER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAIL;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.PAPER_FORM_SOLE_OR_APPLICANT_1_PAYMENT_OTHER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.PAPER_FORM_SOLE_OR_APPLICANT_1_PAYMENT_OTHER_DETAIL;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.REASON_COURTS_ENGLAND_WALES_NO_JURISDICTION_TRANSLATED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.REASON_COURTS_HAVE_NO_JURISDICTION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.REASON_FAILURE_TO_SERVE_BY_BAILIFF;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.RECEIVED_SERVICE_ADDED_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.RECEIVED_SERVICE_APPLICATION_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.REFUSAL_REASON;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.REQUESTS_FOR_INFORMATION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.RESPONDENT_WELSH_TRANSLATION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SCANNED_D36_FORM;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SCANNED_DOCUMENTS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_APPLICATION_ANSWERS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_APPLICATION_DECISION_DATE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_APPLICATION_DOCS_UPLOADED_PRE_SUBMISSION;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_APPLICATION_DOCUMENTS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_APPLICATION_FURTHER_DETAILS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_APPLICATION_GRANTED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_APPLICATION_REFUSAL_REASON;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_PAYMENT_FEE_ACCOUNT_NUMBER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_PAYMENT_FEE_ACCOUNT_REFERENCE_NUMBER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_PAYMENT_FEE_DATE_OF_PAYMENT;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_PAYMENT_FEE_HAS_COMPLETED_ONLINE_PAYMENT;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_PAYMENT_FEE_HELP_WITH_FEES_REFERENCE_NUMBER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_PAYMENT_FEE_ORDER_SUMMARY;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_PAYMENT_FEE_PAYMENT_METHOD;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_PAYMENT_FEE_PAYMENT_REFERENCE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_PAYMENT_FEE_SERVICE_REQUEST_REFERENCE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.STATEMENT_OF_TRUTH;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SUCCESSFUL_SERVED_BY_BAILIFF;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.VENUE_OF_HEARING;
 import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.notShowForState;
 import static uk.gov.hmcts.divorce.divorcecase.tab.TabShowCondition.showForState;
 
@@ -176,66 +399,66 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
                     AwaitingService
                 )
             )
-            .field("applicant2Offline", NEVER_SHOW)
+            .field(APPLICANT_2_OFFLINE, NEVER_SHOW)
             .label("LabelAosTabOnlineResponse-Heading", "applicant2Offline=\"No\"",
                 "## This is an online AoS response")
             .label("LabelAosTabOfflineResponse-Heading", "applicant2Offline=\"Yes\"",
                 "## This is an offline AoS response")
-            .field("confirmReadPetition")
-            .field("jurisdictionAgree")
-            .field("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", "jurisdictionAgree=\"No\"")
-            .field("inWhichCountryIsYourLifeMainlyBased", "jurisdictionAgree=\"No\"")
-            .field("intendToDelay")
-            .field("applicant2LegalProceedings")
-            .field("applicant2LegalProceedingsDetails")
-            .field("applicant2LegalProceedingsConcluded")
-            .field("dueDate")
-            .field("howToRespondApplication")
-            .field("applicant2LanguagePreferenceWelsh")
-            .field("applicant2SolicitorRepresented")
-            .field("applicant2SolicitorEmail","applicant2SolicitorRepresented=\"Yes\"")
-            .field("noticeOfProceedingsSolicitorFirm")
-            .field("applicant2SolicitorRepresented", NEVER_SHOW)
-            .field("statementOfTruth")
-            .field("applicant2StatementOfTruth", "statementOfTruth!=\"*\"")
-            .field("dateAosSubmitted")
-            .field("aosIsDrafted", NEVER_SHOW);
+            .field(CONFIRM_READ_PETITION)
+            .field(JURISDICTION_AGREE)
+            .field(REASON_COURTS_HAVE_NO_JURISDICTION, "jurisdictionAgree=\"No\"")
+            .field(COUNTRY_LIFE_BASED, "jurisdictionAgree=\"No\"")
+            .field(INTEND_TO_DELAY)
+            .field(APPLICANT_2_LEGAL_PROCEEDINGS)
+            .field(APPLICANT_2_LEGAL_PROCEEDINGS_DETAILS)
+            .field(APPLICANT_2_LEGAL_PROCEEDINGS_CONCLUDED)
+            .field(DUE_DATE)
+            .field(HOW_TO_RESPOND_APPLICATION)
+            .field(RESPONDENT_WELSH_TRANSLATION)
+            .field(APPLICANT_2_SOLICITOR_REPRESENTED)
+            .field(APPLICANT_2_SOLICITOR_EMAIL, "applicant2SolicitorRepresented=\"Yes\"")
+            .field(NOTICE_OF_PROCEEDINGS_SOLICITOR_FIRM)
+            .field(APPLICANT_2_SOLICITOR_REPRESENTED, NEVER_SHOW)
+            .field(STATEMENT_OF_TRUTH)
+            .field(APPLICANT_2_STATEMENT_OF_TRUTH, "statementOfTruth!=\"*\"")
+            .field(DATE_AOS_SUBMITTED)
+            .field(AOS_IS_DRAFTED, NEVER_SHOW);
     }
 
     private void buildPaymentTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("paymentDetailsCourtAdmin", "Payment")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .label("LabelApplicant1-PaymentHeading", IS_JOINT, "### The applicant")
-            .field("applicant2HWFNeedHelp", NEVER_SHOW)
-            .field("applicant1HWFReferenceNumber",
+            .field(APPLICANT_2_HWF_NEED_HELP, NEVER_SHOW)
+            .field(APPLICANT_1_HWF,
                 "applicationType=\"soleApplication\" OR applicant2HWFReferenceNumber=\"*\"")
             .label("LabelApplicant2-PaymentHeading", IS_JOINT_AND_HWF_ENTERED, "### ${labelContentTheApplicant2UC}")
-            .field("applicant2HWFReferenceNumber", IS_JOINT_AND_HWF_ENTERED)
-            .field("newPaperCase", NEVER_SHOW)
+            .field(APPLICANT_2_HWF, IS_JOINT_AND_HWF_ENTERED)
+            .field(NEW_PAPER_CASE, NEVER_SHOW)
             .label("LabelPaperCase-PaymentHeading", IS_NEW_PAPER_CASE, "### Paper Case Payment")
-            .field("paperCasePaymentMethod", IS_NEW_PAPER_CASE)
-            .field("paperFormApplicant1NoPaymentIncluded", NEVER_SHOW)
-            .field("paperFormApplicant2NoPaymentIncluded", NEVER_SHOW)
-            .field("paperFormSoleOrApplicant1PaymentOther", NEVER_SHOW)
-            .field("paperFormApplicant2PaymentOther", NEVER_SHOW)
+            .field(PAPER_CASE_PAYMENT_METHOD, IS_NEW_PAPER_CASE)
+            .field(PAPER_FORM_APPLICANT_1_NO_PAYMENT_INCLUDED, NEVER_SHOW)
+            .field(PAPER_FORM_APPLICANT_2_NO_PAYMENT_INCLUDED, NEVER_SHOW)
+            .field(PAPER_FORM_SOLE_OR_APPLICANT_1_PAYMENT_OTHER, NEVER_SHOW)
+            .field(PAPER_FORM_APPLICANT_2_PAYMENT_OTHER, NEVER_SHOW)
             .label("LabelPaperForm-App1PaymentHeading", PAPER_FORM_PAYMENT_OTHER_DETAILS, "### Paper Form Payment Details")
-            .field("paperFormSoleOrApplicant1PaymentOtherDetail", PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS)
-            .field("paperFormApplicant2PaymentOtherDetail", PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS)
+            .field(PAPER_FORM_SOLE_OR_APPLICANT_1_PAYMENT_OTHER_DETAIL, PAPER_FORM_APPLICANT_1_PAYMENT_OTHER_DETAILS)
+            .field(PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAIL, PAPER_FORM_APPLICANT_2_PAYMENT_OTHER_DETAILS)
             .label("Applicant2Solicitor-PaymentHeading", APPLICANT_2_SOL_APPLIED_FOR_FO, "### Respondent Solicitor")
-            .field("applicant2SolFinalOrderFeeOrderSummary", APPLICANT_2_SOL_APPLIED_FOR_FO)
-            .field("applicant2SolPaymentHowToPay", APPLICANT_2_SOL_APPLIED_FOR_FO)
-            .field("finalOrderPbaNumber", APPLICANT_2_SOL_APPLIED_FOR_FO_PBA)
-            .field("applicant2SolFinalOrderFeeAccountReference", APPLICANT_2_SOL_APPLIED_FOR_FO)
-            .field("app2SolFoHWFReferenceNumber", APPLICANT_2_SOL_APPLIED_FOR_FO_HWF)
+            .field(APPLICANT_2_SOL_FINAL_ORDER_FEE_ORDER_SUMMARY, APPLICANT_2_SOL_APPLIED_FOR_FO)
+            .field(APPLICANT_2_SOL_PAYMENT_HOW_TO_PAY, APPLICANT_2_SOL_APPLIED_FOR_FO)
+            .field(FINAL_ORDER_PBA_NUMBER, APPLICANT_2_SOL_APPLIED_FOR_FO_PBA)
+            .field(APPLICANT_2_SOL_FINAL_ORDER_FEE_ACCOUNT_REFERENCE, APPLICANT_2_SOL_APPLIED_FOR_FO)
+            .field(APP2_SOL_FO_HWF_REFERENCE_NUMBER, APPLICANT_2_SOL_APPLIED_FOR_FO_HWF)
             .label("Applicant2-PaymentHeading", RESPONDENT_APPLIED_FOR_FO, "### Respondent Final Order")
-            .field("applicant2FinalOrderFeeOrderSummary", RESPONDENT_APPLIED_FOR_FO_CARD)
-            .field("applicant2FoHWFNeedHelp", RESPONDENT_APPLIED_FOR_FO_HWF)
-            .field("applicant2FoHWFReferenceNumber", RESPONDENT_APPLIED_FOR_FO_HWF)
-            .field("generalApplicationFeeOrderSummary")
-            .field("generalApplicationFeePaymentMethod")
-            .field("generalApplicationFeeAccountNumber")
-            .field("generalApplicationFeeAccountReferenceNumber")
-            .field("generalApplicationFeeHelpWithFeesReferenceNumber")
+            .field(APPLICANT_2_FINAL_ORDER_FEE_ORDER_SUMMARY, RESPONDENT_APPLIED_FOR_FO_CARD)
+            .field(APPLICANT_2_FO_HWF_NEED_HELP, RESPONDENT_APPLIED_FOR_FO_HWF)
+            .field(APPLICANT_2_FO_HWF_REFERENCE_NUMBER, RESPONDENT_APPLIED_FOR_FO_HWF)
+            .field(GENERAL_APPLICATION_FEE_ORDER_SUMMARY)
+            .field(GENERAL_APPLICATION_FEE_PAYMENT_METHOD)
+            .field(GENERAL_APPLICATION_FEE_ACCOUNT_NUMBER)
+            .field(GENERAL_APPLICATION_FEE_ACCOUNT_REFERENCE_NUMBER)
+            .field(GENERAL_APPLICATION_FEE_HELP_WITH_FEES_REFERENCE_NUMBER)
             .field(CaseData::getPaymentHistoryField);
     }
 
@@ -243,38 +466,38 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("languageDetails", "Language")
             .label("LabelLanguageDetails-Applicant-Sole", IS_SOLE, "### The applicant")
             .label("LabelLanguageDetails-Applicant-Joint", "applicationType=\"jointApplication\"", "### Applicant 1")
-            .field("applicant1LanguagePreferenceWelsh")
-            .field("applicant1UsedWelshTranslationOnSubmission")
-            .field("applicant1LegalProceedingsDetailsTranslated")
-            .field("coApplicant1ReasonInformationNotCorrectTranslated")
-            .field("applicant1FinalOrderLateExplanationTranslated")
+            .field(APPLICANT_WELSH_TRANSLATION)
+            .field(APPLICANT_1_USED_WELSH_TRANSLATION_ON_SUBMISSION)
+            .field(APPLICANT_1_LEGAL_PROCEEDINGS_DETAILS_TRANSLATED)
+            .field(CO_APPLICANT_1_REASON_INFORMATION_NOT_CORRECT_TRANSLATED)
+            .field(APPLICANT_1_FINAL_ORDER_LATE_EXPLANATION_TRANSLATED)
             .label("LabelLanguageDetails-Respondent-Sole", IS_SOLE, "### The respondent")
             .label("LabelLanguageDetails-Respondent-Joint", "applicationType=\"jointApplication\"", "### Applicant 2")
-            .field("applicant2LanguagePreferenceWelsh")
-            .field("applicant2LegalProceedingsDetailsTranslated")
-            .field("applicant2UsedWelshTranslationOnSubmission")
-            .field("coApplicant2ReasonInformationNotCorrectTranslated")
-            .field("reasonCourtsOfEnglandAndWalesHaveNoJurisdictionTranslated")
-            .field("coRefusalClarificationAdditionalInfoTranslated");
+            .field(RESPONDENT_WELSH_TRANSLATION)
+            .field(APPLICANT_2_LEGAL_PROCEEDINGS_DETAILS_TRANSLATED)
+            .field(APPLICANT_2_USED_WELSH_TRANSLATION_ON_SUBMISSION)
+            .field(CO_APPLICANT_2_REASON_INFORMATION_NOT_CORRECT_TRANSLATED)
+            .field(REASON_COURTS_ENGLAND_WALES_NO_JURISDICTION_TRANSLATED)
+            .field(CO_REFUSAL_CLARIFICATION_ADDITIONAL_INFO_TRANSLATED);
     }
 
     private void buildDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("documents", "Documents")
-            .field("coCertificateOfEntitlementDocument")
-            .field("documentsGenerated")
-            .field("applicant1DocumentsUploaded", APPLICANT_1_CONTACT_DETAILS_PUBLIC)
-            .field("applicant2DocumentsUploaded", APPLICANT_2_CONTACT_DETAILS_PUBLIC)
+            .field(CO_CERTIFICATE_OF_ENTITLEMENT_DOCUMENT)
+            .field(DOCUMENTS_GENERATED)
+            .field(APPLICANT_1_DOCUMENTS_UPLOADED, APPLICANT_1_CONTACT_DETAILS_PUBLIC)
+            .field(APPLICANT_2_DOCUMENTS_UPLOADED, APPLICANT_2_CONTACT_DETAILS_PUBLIC)
             .field(CaseData::getGeneralOrders)
-            .field("documentsUploaded")
+            .field(DOCUMENTS_UPLOADED)
             .field(CaseData::getGeneralEmails)
-            .field("certificateOfServiceDocument")
-            .field("coProofOfServiceUploadDocuments");
+            .field(CERTIFICATE_OF_SERVICE_DOCUMENT)
+            .field(CO_PROOF_OF_SERVICE_UPLOAD_DOCUMENTS);
     }
 
     private void buildRequestForInformationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("requestsForInformation", "Requests For Information")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
-            .field("requestsForInformation");
+            .field(REQUESTS_FOR_INFORMATION);
     }
 
     private void buildCorrespondenceTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -288,64 +511,64 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
         configBuilder.tab("ConfidentialApplicant", "Confidential Applicant")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, APPLICANT_1_SOLICITOR, SUPER_USER)
             .showCondition("applicant1ContactDetailsType=\"private\"")
-            .field("applicant1PhoneNumber")
-            .field("applicant1Email")
-            .field("applicant1InRefuge")
-            .field("applicant1Address");
+            .field(APPLICANT_1_PHONE_NUMBER)
+            .field(APPLICANT_1_EMAIL)
+            .field(APPLICANT_1_IN_REFUGE)
+            .field(APPLICANT_1_ADDRESS);
     }
 
     private void buildConfidentialRespondentTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("ConfidentialRespondent", "Confidential Respondent")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, APPLICANT_2_SOLICITOR, SUPER_USER)
             .showCondition("applicant2ContactDetailsType=\"private\" AND applicationType=\"soleApplication\"")
-            .field("applicant2PhoneNumber")
-            .field("applicant2Email")
-            .field("applicant2InRefuge")
-            .field("applicant2Address");
+            .field(APPLICANT_2_PHONE_NUMBER)
+            .field(APPLICANT_2_EMAIL)
+            .field(APPLICANT_2_IN_REFUGE)
+            .field(APPLICANT_2_ADDRESS);
     }
 
     private void buildConfidentialApplicant2Tab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("ConfidentialApplicant2", "Confidential Applicant 2")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, APPLICANT_2_SOLICITOR, SUPER_USER)
             .showCondition("applicant2ContactDetailsType=\"private\" AND applicationType=\"jointApplication\"")
-            .field("applicant2PhoneNumber")
-            .field("applicant2Email")
-            .field("applicant2InRefuge")
-            .field("applicant2Address");
+            .field(APPLICANT_2_PHONE_NUMBER)
+            .field(APPLICANT_2_EMAIL)
+            .field(APPLICANT_2_IN_REFUGE)
+            .field(APPLICANT_2_ADDRESS);
     }
 
     private void buildMarriageCertificateTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("marriageDetails", "Marriage Certificate")
             .showCondition("divorceOrDissolution = \"divorce\"")
-            .field("labelContentTheApplicant2UC", "marriageMarriedInUk=\"NEVER_SHOW\"")
-            .field("labelContentMarriageOrCivilPartnership", "marriageMarriedInUk=\"NEVER_SHOW\"")
-            .field("labelContentMarriageOrCivilPartnershipUC", "marriageMarriedInUk=\"NEVER_SHOW\"")
-            .field("marriageApplicant1Name")
-            .field("marriageApplicant2Name")
-            .field("marriageDate")
-            .field("marriageMarriedInUk")
-            .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"No\" OR marriagePlaceOfMarriage=\"*\"")
-            .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"No\" OR marriageCountryOfMarriage=\"*\"")
-            .field("marriageCertifyMarriageCertificateIsCorrect")
-            .field("marriageMarriageCertificateIsIncorrectDetails", "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
-            .field("marriageIssueApplicationWithoutMarriageCertificate", "marriageCertifyMarriageCertificateIsCorrect=\"No\"");
+            .field(LABEL_CONTENT_THE_APPLICANT_2_UC, "marriageMarriedInUk=\"NEVER_SHOW\"")
+            .field(LABEL_CONTENT_MARRIAGE_OR_CIVIL_PARTNERSHIP, "marriageMarriedInUk=\"NEVER_SHOW\"")
+            .field(LABEL_CONTENT_MARRIAGE_OR_CIVIL_PARTNERSHIP_UC, "marriageMarriedInUk=\"NEVER_SHOW\"")
+            .field(MARRIAGE_APPLICANT_1_NAME)
+            .field(MARRIAGE_APPLICANT_2_NAME)
+            .field(MARRIAGE_DATE)
+            .field(MARRIAGE_MARRIED_IN_UK)
+            .field(MARRIAGE_PLACE_OF_MARRIAGE, "marriageMarriedInUk=\"No\" OR marriagePlaceOfMarriage=\"*\"")
+            .field(MARRIAGE_COUNTRY_OF_MARRIAGE, "marriageMarriedInUk=\"No\" OR marriageCountryOfMarriage=\"*\"")
+            .field(MARRIAGE_CERTIFY_MARRIAGE_CERTIFICATE_IS_CORRECT)
+            .field(MARRIAGE_CERTIFICATE_IS_INCORRECT_DETAILS, "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
+            .field(MARRIAGE_ISSUE_APPLICATION_WITHOUT_CERTIFICATE, "marriageCertifyMarriageCertificateIsCorrect=\"No\"");
     }
 
     private void buildCivilPartnershipCertificateTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("civilPartnershipDetails", "Civil Partnership Certificate")
             .showCondition("divorceOrDissolution = \"dissolution\"")
-            .field("labelContentTheApplicant2UC", "marriageMarriedInUk=\"NEVER_SHOW\"")
-            .field("labelContentMarriageOrCivilPartnership", "marriageMarriedInUk=\"NEVER_SHOW\"")
-            .field("labelContentMarriageOrCivilPartnershipUC", "marriageMarriedInUk=\"NEVER_SHOW\"")
-            .field("marriageApplicant1Name")
-            .field("marriageApplicant2Name")
-            .field("marriageDate")
-            .field("marriageMarriedInUk")
-            .field("marriagePlaceOfMarriage", "marriageMarriedInUk=\"No\" OR marriagePlaceOfMarriage=\"*\"")
-            .field("marriageCountryOfMarriage", "marriageMarriedInUk=\"No\" OR marriageCountryOfMarriage=\"*\"")
-            .field("marriageCertifyMarriageCertificateIsCorrect")
-            .field("marriageMarriageCertificateIsIncorrectDetails", "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
-            .field("marriageIssueApplicationWithoutMarriageCertificate", "marriageCertifyMarriageCertificateIsCorrect=\"No\"");
+            .field(LABEL_CONTENT_THE_APPLICANT_2_UC, "marriageMarriedInUk=\"NEVER_SHOW\"")
+            .field(LABEL_CONTENT_MARRIAGE_OR_CIVIL_PARTNERSHIP, "marriageMarriedInUk=\"NEVER_SHOW\"")
+            .field(LABEL_CONTENT_MARRIAGE_OR_CIVIL_PARTNERSHIP_UC, "marriageMarriedInUk=\"NEVER_SHOW\"")
+            .field(MARRIAGE_APPLICANT_1_NAME)
+            .field(MARRIAGE_APPLICANT_2_NAME)
+            .field(MARRIAGE_DATE)
+            .field(MARRIAGE_MARRIED_IN_UK)
+            .field(MARRIAGE_PLACE_OF_MARRIAGE, "marriageMarriedInUk=\"No\" OR marriagePlaceOfMarriage=\"*\"")
+            .field(MARRIAGE_COUNTRY_OF_MARRIAGE, "marriageMarriedInUk=\"No\" OR marriageCountryOfMarriage=\"*\"")
+            .field(MARRIAGE_CERTIFY_MARRIAGE_CERTIFICATE_IS_CORRECT)
+            .field(MARRIAGE_CERTIFICATE_IS_INCORRECT_DETAILS, "marriageCertifyMarriageCertificateIsCorrect=\"No\"")
+            .field(MARRIAGE_ISSUE_APPLICATION_WITHOUT_CERTIFICATE, "marriageCertifyMarriageCertificateIsCorrect=\"No\"");
     }
 
     private void buildNotesTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -357,53 +580,53 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void buildGeneralReferralTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("generalReferral", "General Referral")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
-            .field("generalReferralReason")
-            .field("generalReferralUrgentCase", "generalReferralReason=\"*\"")
-            .field("generalReferralUrgentCaseReason", "generalReferralUrgentCase=\"Yes\"")
-            .field("generalReferralFraudCase")
-            .field("generalReferralFraudCaseReason", "generalReferralFraudCase=\"Yes\"")
-            .field("generalApplicationFrom", "generalApplicationFrom=\"*\"")
-            .field("generalApplicationReferralDate", "generalApplicationReferralDate=\"*\"")
-            .field("generalApplicationAddedDate")
-            .field("generalReferralType")
-            .field("generalReferralDocument")
-            .field("generalReferralDocuments")
-            .field("alternativeServiceMedium")
-            .field("generalReferralJudgeOrLegalAdvisorDetails")
-            .field("generalReferralFeeRequired")
-            .field("generalReferralFeePaymentMethod")
-            .field("generalReferralFeeServiceRequestReference")
-            .field("generalReferralFeePaymentReference")
-            .field("generalReferralDecisionDate")
-            .field("generalReferralDecision")
-            .field("generalReferralDecisionReason")
-            .field("generalReferrals");
+            .field(GENERAL_REFERRAL_REASON)
+            .field(GENERAL_REFERRAL_URGENT_CASE, "generalReferralReason=\"*\"")
+            .field(GENERAL_REFERRAL_URGENT_CASE_REASON, "generalReferralUrgentCase=\"Yes\"")
+            .field(FRAUD_REFERRAL_CASE)
+            .field(GENERAL_REFERRAL_FRAUD_CASE_REASON, "generalReferralFraudCase=\"Yes\"")
+            .field(GENERAL_APPLICATION_FROM, "generalApplicationFrom=\"*\"")
+            .field(GENERAL_APPLICATION_REFERRAL_DATE, "generalApplicationReferralDate=\"*\"")
+            .field(GENERAL_APPLICATION_ADDED_DATE)
+            .field(GENERAL_REFERRAL_TYPE)
+            .field(GENERAL_REFERRAL_DOCUMENT)
+            .field(GENERAL_REFERRAL_DOCUMENTS)
+            .field(ALTERNATIVE_SERVICE_MEDIUM)
+            .field(GENERAL_REFERRAL_JUDGE_OR_LEGAL_ADVISOR_DETAILS)
+            .field(GENERAL_REFERRAL_FEE_REQUIRED)
+            .field(GENERAL_REFERRAL_FEE_METHOD)
+            .field(GENERAL_REFERRAL_FEE_SERVICE_REQUEST_REFERENCE)
+            .field(GENERAL_REFERRAL_FEE_PAYMENT_REFERENCE)
+            .field(GENERAL_REFERRAL_DECISION_DATE)
+            .field(GENERAL_REFERRAL_DECISION)
+            .field(GENERAL_REFERRAL_DECISION_REASON)
+            .field(GENERAL_REFERRALS);
     }
 
     private void buildHearingsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("hearings", "Hearings")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
-            .field("dateOfHearing")
-            .field("venueOfHearing")
-            .field("hearingAttendance");
+            .field(DATE_OF_HEARING)
+            .field(VENUE_OF_HEARING)
+            .field(HEARING_ATTENDANCE);
     }
 
     private void buildGeneralApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("generalApplication", "General Application")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .showCondition("generalApplications=\"*\"")
-            .field("generalApplications");
+            .field(CaseData::getGeneralApplications);
     }
 
     private void buildConfidentialDocumentsTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("confidentialDocuments", "Confidential Document")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .showCondition(getShowConditionForConfidentialDocumentTab())
-            .field("confidentialDocumentsGenerated")
-            .field("confidentialDocumentsUploaded")
-            .field("applicant1DocumentsUploaded", APPLICANT_1_CONTACT_DETAILS_PRIVATE)
-            .field("applicant2DocumentsUploaded", APPLICANT_2_CONTACT_DETAILS_PRIVATE)
-            .field("scannedDocuments")
+            .field(CONFIDENTIAL_DOCUMENTS_GENERATED)
+            .field(CONFIDENTIAL_DOCUMENTS_UPLOADED)
+            .field(APPLICANT_1_DOCUMENTS_UPLOADED, APPLICANT_1_CONTACT_DETAILS_PRIVATE)
+            .field(APPLICANT_2_DOCUMENTS_UPLOADED, APPLICANT_2_CONTACT_DETAILS_PRIVATE)
+            .field(SCANNED_DOCUMENTS)
             .field(CaseData::getConfidentialGeneralEmails)
             .field(CaseData::getGeneralLetters, APPLICANTS_CONTACT_DETAILS_PRIVATE);
     }
@@ -428,49 +651,48 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
 
     private void addServiceApplicationTabFields(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
-            .field("receivedServiceApplicationDate")
-            .field("receivedServiceAddedDate")
-            .field("alternativeServiceType")
-            .field("alternativeServiceJudgeOrLegalAdvisorDetails")
-            .field("serviceApplicationAnswers")
-            .field("serviceApplicationDocuments", "serviceApplicationDocuments=\"*\"")
-            .field("serviceApplicationDocsUploadedPreSubmission")
-            .field("alternativeServiceFeeRequired")
-            .field("servicePaymentFeeServiceRequestReference")
-            .field("servicePaymentFeeOrderSummary")
-            .field("servicePaymentFeePaymentReference")
-            .field("servicePaymentFeePaymentMethod", "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\"")
-            .field("servicePaymentFeeHasCompletedOnlinePayment")
-            .field("servicePaymentFeePaymentReference")
-            .field(
-                "servicePaymentFeeDateOfPayment",
+            .field(RECEIVED_SERVICE_APPLICATION_DATE)
+            .field(RECEIVED_SERVICE_ADDED_DATE)
+            .field(ALTERNATIVE_SERVICE_TYPE)
+            .field(ALTERNATIVE_SERVICE_JUDGE_OR_LEGAL_ADVISOR_DETAILS)
+            .field(SERVICE_APPLICATION_ANSWERS)
+            .field(SERVICE_APPLICATION_DOCUMENTS, "serviceApplicationDocuments=\"*\"")
+            .field(SERVICE_APPLICATION_DOCS_UPLOADED_PRE_SUBMISSION)
+            .field(ALTERNATIVE_SERVICE_FEE_REQUIRED)
+            .field(SERVICE_PAYMENT_FEE_SERVICE_REQUEST_REFERENCE)
+            .field(SERVICE_PAYMENT_FEE_ORDER_SUMMARY)
+            .field(SERVICE_PAYMENT_FEE_PAYMENT_REFERENCE)
+            .field(SERVICE_PAYMENT_FEE_PAYMENT_METHOD, "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\"")
+            .field(SERVICE_PAYMENT_FEE_HAS_COMPLETED_ONLINE_PAYMENT)
+            .field(SERVICE_PAYMENT_FEE_PAYMENT_REFERENCE)
+            .field(SERVICE_PAYMENT_FEE_DATE_OF_PAYMENT,
                 "servicePaymentFeePaymentMethod=\"*\" AND alternativeServiceFeeRequired=\"Yes\" OR servicePaymentFeePaymentReference=\"*\"")
-            .field("servicePaymentFeeAccountNumber",
+            .field(SERVICE_PAYMENT_FEE_ACCOUNT_NUMBER,
                 "servicePaymentFeePaymentMethod=\"feePayByAccount\" AND alternativeServiceFeeRequired=\"Yes\"")
-            .field("servicePaymentFeeAccountReferenceNumber",
+            .field(SERVICE_PAYMENT_FEE_ACCOUNT_REFERENCE_NUMBER,
                 "servicePaymentFeePaymentMethod=\"feePayByAccount\" AND alternativeServiceFeeRequired=\"Yes\"")
-            .field("servicePaymentFeeHelpWithFeesReferenceNumber",
+            .field(SERVICE_PAYMENT_FEE_HELP_WITH_FEES_REFERENCE_NUMBER,
                 "servicePaymentFeePaymentMethod=\"feePayByHelp\" AND alternativeServiceFeeRequired=\"Yes\"")
             .label("bailiffLocalCourtDetailsLabel",
                 "localCourtName=\"*\" OR localCourtEmail=\"*\"", "### Bailiff local court details")
-            .field("localCourtName")
-            .field("localCourtEmail")
+            .field(LOCAL_COURT_NAME)
+            .field(LOCAL_COURT_EMAIL)
             .label("bailiffReturnLabel",
                 "certificateOfServiceDate=\"*\" OR successfulServedByBailiff=\"*\" OR reasonFailureToServeByBailiff=\"*\"",
                 "### Bailiff return")
-            .field("certificateOfServiceDate")
+            .field(CERTIFICATE_OF_SERVICE_DATE)
             .label("serviceOutcomeLabel",
                 "serviceApplicationGranted=\"No\" OR serviceApplicationGranted=\"Yes\"",
                 "### Outcome of Service Application")
-            .field("serviceApplicationGranted")
-            .field("serviceApplicationDecisionDate")
-            .field("serviceApplicationFurtherDetails", "serviceApplicationGranted=\"Yes\"")
-            .field("refusalReason", "serviceApplicationGranted=\"No\"")
-            .field("serviceApplicationRefusalReason", "serviceApplicationGranted=\"No\"")
-            .field("deemedServiceDate")
-            .field("successfulServedByBailiff")
-            .field("reasonFailureToServeByBailiff")
-            .field("alternativeServiceOutcomes");
+            .field(SERVICE_APPLICATION_GRANTED)
+            .field(SERVICE_APPLICATION_DECISION_DATE)
+            .field(SERVICE_APPLICATION_FURTHER_DETAILS, "serviceApplicationGranted=\"Yes\"")
+            .field(REFUSAL_REASON, "serviceApplicationGranted=\"No\"")
+            .field(SERVICE_APPLICATION_REFUSAL_REASON, "serviceApplicationGranted=\"No\"")
+            .field(DEEMED_SERVICE_DATE)
+            .field(SUCCESSFUL_SERVED_BY_BAILIFF)
+            .field(REASON_FAILURE_TO_SERVE_BY_BAILIFF)
+            .field(ALTERNATIVE_SERVICE_OUTCOMES);
     }
 
     private void buildConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -511,38 +733,38 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("labelApplicant1-SwitchToSole",
                 "finalOrderSwitchedToSole=\"Yes\" AND coApplicant1ApplyForConditionalOrder=\"*\"",
                 "### Applicant 1")
-            .field("labelContentUnionType", "applicationType=\"NEVER_SHOW\"")
-            .field("labelContentDivorceOrCivilPartnershipApplication", "applicationType=\"NEVER_SHOW\"")
-            .field("coApplicant1ApplyForConditionalOrder")
-            .field("coApplicant1ConfirmInformationStillCorrect")
-            .field("coApplicant1ReasonInformationNotCorrect")
-            .field("coApplicant1SubmittedDate")
-            .field("coApplicant1ChangeOrAddToApplication")
-            .field("coApplicant1StatementOfTruth")
-            .field("coApplicant1SolicitorName")
-            .field("coApplicant1SolicitorFirm")
-            .field("coApplicant1SolicitorAdditionalComments")
+            .field(LABEL_CONTENT_UNION_TYPE, "applicationType=\"NEVER_SHOW\"")
+            .field(LABEL_CONTENT_DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION, "applicationType=\"NEVER_SHOW\"")
+            .field(CO_APPLICANT_1_APPLY_FOR_CONDITIONAL_ORDER)
+            .field(CO_APPLICANT_1_CONFIRM_INFORMATION_STILL_CORRECT)
+            .field(CO_APPLICANT_1_REASON_INFORMATION_NOT_CORRECT)
+            .field(CO_APPLICANT_1_SUBMITTED_DATE)
+            .field(CO_APPLICANT_1_CHANGE_OR_ADD_TO_APPLICATION)
+            .field(CO_APPLICANT_1_STATEMENT_OF_TRUTH)
+            .field(CO_APPLICANT_1_SOLICITOR_NAME)
+            .field(CO_APPLICANT_1_SOLICITOR_FIRM)
+            .field(CO_APPLICANT_1_SOLICITOR_ADDITIONAL_COMMENTS)
             .label("labelConditionalOrderDetails-Applicant2",
                 "applicationType=\"jointApplication\" AND coApplicant2ApplyForConditionalOrder=\"*\"",
                 "### Applicant 2")
             .label("labelApplicant2-SwitchToSole",
                 "finalOrderSwitchedToSole=\"Yes\" AND coApplicant2ApplyForConditionalOrder=\"*\"",
                 "### Applicant 2")
-            .field("coApplicant2ApplyForConditionalOrder")
-            .field("coApplicant2ConfirmInformationStillCorrect")
-            .field("coApplicant2ReasonInformationNotCorrect")
-            .field("coApplicant2SubmittedDate")
-            .field("coApplicant2ChangeOrAddToApplication")
-            .field("coApplicant2StatementOfTruth")
-            .field("coApplicant2SolicitorName")
-            .field("coApplicant2SolicitorFirm")
-            .field("coApplicant2SolicitorAdditionalComments")
-            .field("coScannedD84Form")
-            .field("coCourt")
-            .field("coDateAndTimeOfHearing")
-            .field("coPronouncementJudge")
-            .field("coRescindedDate")
-            .field("coSwitchedToSole");
+            .field(CO_APPLICANT_2_APPLY_FOR_CONDITIONAL_ORDER)
+            .field(CO_APPLICANT_2_CONFIRM_INFORMATION_STILL_CORRECT)
+            .field(CO_APPLICANT_2_REASON_INFORMATION_NOT_CORRECT)
+            .field(CO_APPLICANT_2_SUBMITTED_DATE)
+            .field(CO_APPLICANT_2_CHANGE_OR_ADD_TO_APPLICATION)
+            .field(CO_APPLICANT_2_STATEMENT_OF_TRUTH)
+            .field(CO_APPLICANT_2_SOLICITOR_NAME)
+            .field(CO_APPLICANT_2_SOLICITOR_FIRM)
+            .field(CO_APPLICANT_2_SOLICITOR_ADDITIONAL_COMMENTS)
+            .field(CO_SCANNED_D84_FORM)
+            .field(CO_COURT)
+            .field(CO_DATE_AND_TIME_OF_HEARING)
+            .field(CO_PRONOUNCEMENT_JUDGE)
+            .field(CO_RESCINDED_DATE)
+            .field(CO_SWITCHED_TO_SOLE);
     }
 
     private void buildOutcomeOfConditionalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -569,32 +791,32 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
     private void addOutcomeOfConditionalOrderTabFields(final Tab.TabBuilder<CaseData, UserRole> tabBuilder) {
         tabBuilder
             .label("labelLegalAdvisorDecision", null, "## Legal advisor decision")
-            .field("coDecisionDate")
-            .field("coGranted")
-            .field("coClaimsGranted")
-            .field("coClaimsCostsOrderInformation")
-            .field("coLegalAdvisorDecisions")
+            .field(CO_DECISION_DATE)
+            .field(CO_GRANTED)
+            .field(CO_CLAIMS_GRANTED)
+            .field(CO_CLAIMS_COSTS_ORDER_INFORMATION)
+            .field(CO_LEGAL_ADVISOR_DECISIONS)
             .label("labelCoClarificationResponses",
                 "coGranted=\"*\" AND coClarificationResponsesSubmitted=\"*\"",
                 "## Clarification Responses")
-            .field("coClarificationResponsesSubmitted")
-            .field("coCannotUploadClarificationDocuments")
+            .field(CO_CLARIFICATION_RESPONSES_SUBMITTED)
+            .field(CO_CANNOT_UPLOAD_CLARIFICATION_DOCUMENTS)
             .label("labelCoPronouncementDetails", null, "## Pronouncement Details")
-            .field("bulkListCaseReferenceLink")
-            .field("coCourt")
-            .field("coDateAndTimeOfHearing")
-            .field("coPronouncementJudge")
-            .field("coGrantedDate")
-            .field("dateFinalOrderEligibleFrom")
-            .field("coOutcomeCase")
+            .field(BULK_LIST_CASE_REFERENCE_LINK)
+            .field(CO_COURT)
+            .field(CO_DATE_AND_TIME_OF_HEARING)
+            .field(CO_PRONOUNCEMENT_JUDGE)
+            .field(CO_GRANTED_DATE)
+            .field(DATE_FINAL_ORDER_ELIGIBLE_FROM)
+            .field(CO_OUTCOME_CASE)
             .label("labelJudgeCostsDecision",
                 "coJudgeCostsClaimGranted=\"*\" OR coJudgeCostsOrderAdditionalInfo=\"*\"",
                 "## Judge costs decision")
-            .field("coJudgeCostsClaimGranted")
-            .field("coJudgeCostsOrderAdditionalInfo")
-            .field("coCertificateOfEntitlementDocument")
-            .field("coConditionalOrderGrantedDocument")
-            .field("coRescindedDate");
+            .field(CO_JUDGE_COSTS_CLAIM_GRANTED)
+            .field(CO_JUDGE_COSTS_ORDER_ADDITIONAL_INFO)
+            .field(CO_CERTIFICATE_OF_ENTITLEMENT_DOCUMENT)
+            .field(CO_CONDITIONAL_ORDER_GRANTED_DOCUMENT)
+            .field(CO_RESCINDED_DATE);
     }
 
     private void buildFinalOrderTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -613,74 +835,67 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .label("labelFinalOrderDetails-Applicant1",
                 "applicationType=\"jointApplication\"",
                 "### Applicant 1")
-            .field("isFinalOrderOverdue", "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
-            .field("applicant1SolicitorRepresented",
-                "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
-            .field("applicant2SolicitorRepresented",
-                "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
-            .field("labelContentFinaliseDivorceOrEndCivilPartnership",
-                "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
-            .field("doesApplicant1WantToApplyForFinalOrder")
-            .field("applicant1FinalOrderLateExplanation")
-            .field("applicant1FinalOrderStatementOfTruth")
-            .label("finalOrderSolApp1StatementOfTruth",
-                IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED,
-                "The applicant believes that the facts stated in the application are true.")
-            .field("applicant1SolicitorName", IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED)
-            .field("applicant1SolicitorFirmName", IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED)
-            .field("granted")
-            .field("grantedDate")
-            .field("expeditedFinalOrderAuthorisation")
-            .field("overdueFinalOrderAuthorisation")
-            .field("dateFinalOrderNoLongerEligible")
-            .field("dateFinalOrderEligibleToRespondent", IS_SOLE)
-            .field("doesApplicant1IntendToSwitchToSole")
-            .field("dateApplicant1DeclaredIntentionToSwitchToSoleFo")
-            .field("doesApplicant2IntendToSwitchToSole")
-            .field("dateApplicant2DeclaredIntentionToSwitchToSoleFo")
-            .field("finalOrderSwitchedToSole")
-            .label("labelFinalOrderDetails-SoleRespondent", RESPONDENT_APPLIED_FOR_FO, "### Respondent")
-            .label("labelFinalOrderDetails-Applicant2", IS_JOINT,"### Applicant 2")
-            .field("applicant2SolAppliedForFinalOrder", "applicant2SolAppliedForFinalOrder=\"Yes\"")
-            .field("dateApplicant2SolAppliedForFinalOrder", "applicant2SolAppliedForFinalOrder=\"Yes\"")
-            .field("applicant2SolFinalOrderWhyNeedToApply", "applicant2SolAppliedForFinalOrder=\"Yes\"")
-            .field("applicant2SolResponsibleForFinalOrder", "applicant2SolAppliedForFinalOrder=\"Yes\"")
-            .field("applicant2AppliedForFinalOrderFirst", NEVER_SHOW)
-            .field("labelContentApplicant2", NEVER_SHOW)
-            .field("doesApplicant2WantToApplyForFinalOrder", APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
-            .field("applicant2AppliedForFinalOrder", RESPONDENT_APPLIED_FOR_FO)
-            .field("applicant2FinalOrderExplanation", APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
-            .field("applicant2FinalOrderLateExplanation", APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
-            .field("applicant2FinalOrderStatementOfTruth", APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
-            .label("finalOrderSolApp2StatementOfTruth",
-                IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED,
-                "The applicant believes that the facts stated in the application are true.")
-            .field("applicant2SolicitorName", IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED)
-            .field("applicant2SolicitorFirmName", IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED)
-            .field("scannedD36Form");
+            .field(IS_FINAL_ORDER_OVERDUE, "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .field(APPLICANT_1_SOLICITOR_REPRESENTED, "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .field(APPLICANT_2_SOLICITOR_REPRESENTED, "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .field(LABEL_CONTENT_FINALISE_DIVORCE_OR_END_CIVIL_PARTNERSHIP, "doesApplicant1WantToApplyForFinalOrder=\"NEVER_SHOW\"")
+            .field(DOES_APPLICANT1_WANT_TO_APPLY_FOR_FINAL_ORDER)
+            .field(APPLICANT1_FINAL_ORDER_LATE_EXPLANATION)
+            .field(APPLICANT1_FINAL_ORDER_STATEMENT_OF_TRUTH)
+            .label(FINAL_ORDER_SOL_APP1_STATEMENT_OF_TRUTH, IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED, "The applicant believes that the facts stated in the application are true.")
+            .field(APPLICANT1_SOLICITOR_NAME, IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED)
+            .field(APPLICANT1_SOLICITOR_FIRM_NAME, IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED)
+            .field(GRANTED)
+            .field(GRANTED_DATE)
+            .field(EXPEDITED_FINAL_ORDER_AUTHORISATION)
+            .field(OVERDUE_FINAL_ORDER_AUTHORISATION)
+            .field(DATE_FINAL_ORDER_NO_LONGER_ELIGIBLE)
+            .field(DATE_FINAL_ORDER_ELIGIBLE_TO_RESPONDENT, IS_SOLE)
+            .field(DOES_APPLICANT1_INTEND_TO_SWITCH_TO_SOLE)
+            .field(DATE_APPLICANT1_DECLARED_INTENTION_TO_SWITCH_TO_SOLE_FO)
+            .field(DOES_APPLICANT2_INTEND_TO_SWITCH_TO_SOLE)
+            .field(DATE_APPLICANT2_DECLARED_INTENTION_TO_SWITCH_TO_SOLE_FO)
+            .field(FINAL_ORDER_SWITCHED_TO_SOLE)
+            .label(LABEL_FINAL_ORDER_DETAILS_SOLE_RESPONDENT, RESPONDENT_APPLIED_FOR_FO, "### Respondent")
+            .label(LABEL_FINAL_ORDER_DETAILS_APPLICANT2, IS_JOINT, "### Applicant 2")
+            .field(APPLICANT2_SOL_APPLIED_FOR_FINAL_ORDER, "applicant2SolAppliedForFinalOrder=\"Yes\"")
+            .field(DATE_APPLICANT2_SOL_APPLIED_FOR_FINAL_ORDER, "applicant2SolAppliedForFinalOrder=\"Yes\"")
+            .field(APPLICANT2_SOL_FINAL_ORDER_WHY_NEED_TO_APPLY, "applicant2SolAppliedForFinalOrder=\"Yes\"")
+            .field(APPLICANT2_SOL_RESPONSIBLE_FOR_FINAL_ORDER, "applicant2SolAppliedForFinalOrder=\"Yes\"")
+            .field(APPLICANT2_APPLIED_FOR_FINAL_ORDER_FIRST, NEVER_SHOW)
+            .field(LABEL_CONTENT_APPLICANT2, NEVER_SHOW)
+            .field(DOES_APPLICANT2_WANT_TO_APPLY_FOR_FINAL_ORDER, APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
+            .field(APPLICANT2_APPLIED_FOR_FINAL_ORDER, RESPONDENT_APPLIED_FOR_FO)
+            .field(APPLICANT2_FINAL_ORDER_EXPLANATION, APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
+            .field(APPLICANT2_FINAL_ORDER_LATE_EXPLANATION, APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
+            .field(APPLICANT2_FINAL_ORDER_STATEMENT_OF_TRUTH, APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
+            .label(FINAL_ORDER_SOL_APP2_STATEMENT_OF_TRUTH, IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED, "The applicant believes that the facts stated in the application are true.")
+            .field(APPLICANT2_SOLICITOR_NAME, IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED)
+            .field(APPLICANT2_SOLICITOR_FIRM_NAME, IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED)
+            .field(SCANNED_D36_FORM);
     }
 
     private void buildAmendedApplicationTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("amendedApplication", "Amended application")
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .showCondition("amendedApplications=\"*\"")
-            .field("amendedApplications");
+            .field(AMENDED_APPLICATIONS);
     }
 
     private void buildLetterPackTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("letterPack", "Letter packs")
             .forRoles(SUPER_USER)
             .showCondition("letterPacks=\"*\"")
-            .field("letterPacks");
+            .field(LETTER_PACKS);
     }
 
     private void buildChangeOfRepresentativeTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder.tab("changeOfRepresentatives", "Change of representatives")
                 .forRoles(CASE_WORKER, SUPER_USER)
-                .field("nocWhichApplicant", NEVER_SHOW)
-                .field("changeOrganisationRequestField", NEVER_SHOW)
-                .showCondition(NOTICE_OF_CHANGE_HAS_BEEN_APPLIED)
-                .field("changeOfRepresentatives");
+            .field(NOC_WHICH_APPLICANT, NEVER_SHOW)
+            .field(CHANGE_ORGANISATION_REQUEST_FIELD, NEVER_SHOW)
+            .showCondition(NOTICE_OF_CHANGE_HAS_BEEN_APPLIED)
+            .field(CHANGE_OF_REPRESENTATIVES);
     }
 
     private void buildCaseFlagTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -688,10 +903,10 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .forRoles(CASE_WORKER, LEGAL_ADVISOR, JUDGE, SUPER_USER)
             .field(CaseData::getInternalFlagLauncher, null, "#ARGUMENT(READ)")
             .field(CaseData::getCaseFlags, "internalFlagLauncher = \"ALWAYS_HIDE\"")
-            .field("applicant1Flags", "internalFlagLauncher = \"ALWAYS_HIDE\"")
-            .field("applicant2Flags", "internalFlagLauncher = \"ALWAYS_HIDE\"")
-            .field("applicant1SolicitorFlags", "internalFlagLauncher = \"ALWAYS_HIDE\"")
-            .field("applicant2SolicitorFlags", "internalFlagLauncher = \"ALWAYS_HIDE\"");
+            .field(APPLICANT1_FLAGS, "internalFlagLauncher = \"ALWAYS_HIDE\"")
+            .field(APPLICANT2_FLAGS, "internalFlagLauncher = \"ALWAYS_HIDE\"")
+            .field(APPLICANT1_SOLICITOR_FLAGS, "internalFlagLauncher = \"ALWAYS_HIDE\"")
+            .field(APPLICANT2_SOLICITOR_FLAGS, "internalFlagLauncher = \"ALWAYS_HIDE\"");
     }
 
     private void buildMatchesTab(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
