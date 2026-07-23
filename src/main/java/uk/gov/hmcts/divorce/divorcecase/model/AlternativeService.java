@@ -187,8 +187,6 @@ public class AlternativeService {
     )
     private List<ListValue<Payment>> servicePayments;
 
-
-
     @SuppressWarnings("PMD")
     @JsonIgnore
     public AlternativeServiceOutcome getOutcome() {
