@@ -194,6 +194,37 @@ public class AlternativeServiceOutcome {
     @CCD(searchable = false)
     private FeeDetails servicePaymentFee = new FeeDetails();
 
+    @CCD(
+        label = "The applicant believes that the facts stated in this application are true.",
+        searchable = false
+    )
+    private YesOrNo serviceApplicationStatementOfTruth;
+
+    @CCD(
+        label = "I am duly authorised by the applicant to sign this statement.",
+        searchable = false
+    )
+    private YesOrNo serviceApplicationSignStatementOfTruth;
+
+    @CCD(
+        label = "Your name",
+        searchable = false
+    )
+    private String serviceApplicationStatementOfTruthSolsName;
+
+    @CCD(
+        label = "Name of your firm",
+        searchable = false
+    )
+    private String serviceApplicationStatementOfTruthSolsFirm;
+
+    @CCD(
+        label = "Additional comments",
+        typeOverride = TextArea,
+        searchable = false
+    )
+    private String serviceApplicationStatementOfTruthComments;
+
     public String getServiceApplicationOutcomeLabel() {
         return " ";
     }

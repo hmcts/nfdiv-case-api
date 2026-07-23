@@ -17,13 +17,6 @@ import java.util.Map;
 
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
-import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_BAILIFF_SERVICE;
-import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_DEEMED_SERVICE;
-import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_DISPENSE_SERVICE;
-import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.ALTERNATIVE_SERVICE;
-import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
-import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
-import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_SOLE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.MISSING_FIELD_MESSAGE;
@@ -73,10 +66,7 @@ public class ServiceApplicationNotification implements ApplicantNotification {
 
         AlternativeServiceType alternativeServiceType = caseData.getAlternativeService().getAlternativeServiceType();
 
-        templateVars.put(IS_DEEMED_SERVICE, DEEMED.equals(alternativeServiceType) ? YES : NO);
-        templateVars.put(IS_DISPENSE_SERVICE, DISPENSED.equals(alternativeServiceType) ? YES : NO);
-        templateVars.put(IS_BAILIFF_SERVICE, BAILIFF.equals(alternativeServiceType) ? YES : NO);
-        templateVars.put(IS_ALTERNATIVE_SERVICE, ALTERNATIVE_SERVICE.equals(alternativeServiceType) ? YES : NO);
+        commonContent.addServiceApplicationTypeVars(templateVars, alternativeServiceType);
 
         return templateVars;
     }
@@ -88,10 +78,7 @@ public class ServiceApplicationNotification implements ApplicantNotification {
 
         AlternativeServiceType alternativeServiceType = caseData.getAlternativeService().getAlternativeServiceType();
 
-        templateVars.put(IS_DEEMED_SERVICE, DEEMED.equals(alternativeServiceType) ? YES : NO);
-        templateVars.put(IS_DISPENSE_SERVICE, DISPENSED.equals(alternativeServiceType) ? YES : NO);
-        templateVars.put(IS_BAILIFF_SERVICE, BAILIFF.equals(alternativeServiceType) ? YES : NO);
-        templateVars.put(IS_ALTERNATIVE_SERVICE, ALTERNATIVE_SERVICE.equals(alternativeServiceType) ? YES : NO);
+        commonContent.addServiceApplicationTypeVars(templateVars, alternativeServiceType);
         templateVars.put(IS_SOLE, caseData.getApplicationType().isSole() ? YES : NO);
         templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
 

@@ -129,6 +129,37 @@ public class AlternativeService {
     )
     private YesOrNo serviceApplicationSubmittedOnline;
 
+    @CCD(
+        label = "The applicant believes that the facts stated in this application are true.",
+        searchable = false
+    )
+    private YesOrNo serviceApplicationStatementOfTruth;
+
+    @CCD(
+        label = "I am duly authorised by the applicant to sign this statement.",
+        searchable = false
+    )
+    private YesOrNo serviceApplicationSignStatementOfTruth;
+
+    @CCD(
+        label = "Your name",
+        searchable = false
+    )
+    private String serviceApplicationStatementOfTruthSolsName;
+
+    @CCD(
+        label = "Name of your firm",
+        searchable = false
+    )
+    private String serviceApplicationStatementOfTruthSolsFirm;
+
+    @CCD(
+        label = "Additional comments",
+        typeOverride = TextArea,
+        searchable = false
+    )
+    private String serviceApplicationStatementOfTruthComments;
+
     @JsonUnwrapped
     @Builder.Default
     @CCD(access = {CaseworkerAccessOnlyAccess.class})
@@ -182,6 +213,11 @@ public class AlternativeService {
             .successfulServedByBailiff(bailiff.getSuccessfulServedByBailiff())
             .reasonFailureToServeByBailiff(bailiff.getReasonFailureToServeByBailiff())
             .servicePaymentFee(servicePaymentFee)
+            .serviceApplicationStatementOfTruth(serviceApplicationStatementOfTruth)
+            .serviceApplicationSignStatementOfTruth(serviceApplicationSignStatementOfTruth)
+            .serviceApplicationStatementOfTruthSolsName(serviceApplicationStatementOfTruthSolsName)
+            .serviceApplicationStatementOfTruthSolsFirm(serviceApplicationStatementOfTruthSolsFirm)
+            .serviceApplicationStatementOfTruthComments(serviceApplicationStatementOfTruthComments)
             .build();
     }
 

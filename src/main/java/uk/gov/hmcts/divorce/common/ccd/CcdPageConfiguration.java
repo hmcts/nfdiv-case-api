@@ -6,4 +6,8 @@ public interface CcdPageConfiguration {
     String NO_DEFAULT_VALUE = null;
 
     void addTo(final PageBuilder pageBuilder);
+
+    default void addWithShowCondition(final PageBuilder pageBuilder, String showCondition) {
+        addTo(pageBuilder);
+    }
 }
