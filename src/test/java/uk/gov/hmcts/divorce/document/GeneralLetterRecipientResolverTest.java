@@ -21,7 +21,7 @@ class GeneralLetterRecipientResolverTest {
     void shouldResolveApplicantRecipient() {
         var caseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
 
-        GeneralLetterRecipient recipient = resolver.resolve(caseData);
+        GeneralLetterRecipient recipient = resolver.resolve(caseData, GeneralParties.APPLICANT);
 
         assertThat(recipient.party()).isEqualTo(GeneralParties.APPLICANT);
         assertThat(recipient.recipientName()).isEqualTo("test_first_name test_last_name");
@@ -33,7 +33,7 @@ class GeneralLetterRecipientResolverTest {
     void shouldResolveRespondentRecipient() {
         var caseData = buildCaseDataWithGeneralLetter(GeneralParties.RESPONDENT);
 
-        GeneralLetterRecipient recipient = resolver.resolve(caseData);
+        GeneralLetterRecipient recipient = resolver.resolve(caseData, GeneralParties.RESPONDENT);
 
         assertThat(recipient.party()).isEqualTo(GeneralParties.RESPONDENT);
         assertThat(recipient.recipientName()).isEqualTo("test_first_name test_last_name");
@@ -54,7 +54,7 @@ class GeneralLetterRecipientResolverTest {
                 .build())
             .build());
 
-        GeneralLetterRecipient recipient = resolver.resolve(caseData);
+        GeneralLetterRecipient recipient = resolver.resolve(caseData, GeneralParties.OTHER);
 
         assertThat(recipient.party()).isEqualTo(GeneralParties.OTHER);
         assertThat(recipient.recipientName()).isEqualTo("Other Person");
@@ -63,7 +63,7 @@ class GeneralLetterRecipientResolverTest {
     }
 
     @Test
-    void shouldUseGeneralLetterDetailsWhenGeneralLetterIsNull() {
+    void shouldUseFallbackWhenPartyIsNull() {
         var caseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
         caseData.setGeneralLetter(null);
         caseData.setGeneralLetters(List.of(
@@ -72,9 +72,9 @@ class GeneralLetterRecipientResolverTest {
                 .build()
         ));
 
-        GeneralLetterRecipient recipient = resolver.resolve(caseData);
+        GeneralLetterRecipient recipient = resolver.resolve(caseData, null);
 
-        assertThat(recipient.party()).isEqualTo(GeneralParties.RESPONDENT);
-        assertThat(recipient.recipientAddress()).isEqualTo("line 1\ntown\nUK\npostcode");
+        assertThat(recipient.party()).isEqualTo(GeneralParties.OTHER);
+        assertThat(recipient.recipientAddress()).isNull();
     }
 }

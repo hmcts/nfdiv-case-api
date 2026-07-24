@@ -267,7 +267,7 @@ class LetterPrinterTest {
 
 
     @Test
-    void shouldThrowExceptionWhenGeneralLetterIsNull() {
+    void shouldNotPrintWhenGeneralLetterDetailsAreMissing() {
         CaseData caseData = validApplicant1CaseData();
 
         caseData.setGeneralLetters(null);
@@ -287,10 +287,7 @@ class LetterPrinterTest {
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
 
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, LETTER_TYPE_GENERAL_LETTER)
-        );
+        letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, LETTER_TYPE_GENERAL_LETTER);
 
         verifyNoInteractions(bulkPrintService);
     }

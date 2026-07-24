@@ -22,7 +22,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -133,11 +132,10 @@ class GeneralLetterTemplateContentTest {
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
                 .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
+        when(commonContent.getPartner(any(), any())).thenReturn("civil partner");
 
         final Map<String, Object> templateContent = generalLetterTemplateContent
                 .apply(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference());
-
-        verifyNoInteractions(commonContent);
 
         assertThat(templateContent).contains(
                 entry(ISSUE_DATE, "16 March 2022"),

@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.GeneralLetterRecipientResolver;
 import uk.gov.hmcts.divorce.document.model.LetterPack;
@@ -93,9 +94,11 @@ public class LetterPrinter {
             return StringUtils.isBlank(applicant.getCorrespondenceAddressWithoutConfidentialCheck());
         }
 
-        return generalLetterRecipientResolver.resolveIfAvailable(caseData)
-            .map(recipient -> StringUtils.isBlank(recipient.recipientAddress()))
-            .orElse(false);
+        GeneralParties parties = Optional.ofNullable(firstElement(caseData.getGeneralLetters()))
+            .map(element -> element.getValue().getGeneralLetterParties())
+            .orElse(GeneralParties.OTHER);
+
+        return StringUtils.isBlank(generalLetterRecipientResolver.resolve(caseData, parties).recipientAddress());
     }
 
     private void sendGeneralLetterWithAttachments(CaseData caseData, String caseId, String letterName, List<Letter> letters) {
@@ -111,7 +114,7 @@ public class LetterPrinter {
                 documents.addAll(letterDetails.getGeneralLetterAttachmentLinks());
             }
 
-            var recipient = generalLetterRecipientResolver.resolve(caseData);
+            var recipient = generalLetterRecipientResolver.resolve(caseData, letterDetails.getGeneralLetterParties());
 
             List<Letter> generalLetters = mapToLetters(documents, GENERAL_LETTER);
             letters.addAll(generalLetters);
