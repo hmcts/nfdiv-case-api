@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderQuestions;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -80,6 +81,21 @@ class ApplicantSolicitorUpdateRespondentContactDetailsTest {
 
         assertThat(response.getErrors()).containsExactly(
             "You cannot use this event at this stage of the case.");
+    }
+
+    @Test
+    void aboutToStartShouldReturnValidationErrorIfRespondentIsConfidential() {
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setState(Holding);
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().contactDetailsType(ContactDetailsType.PRIVATE).build())
+            .build();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = applicantSolicitorUpdateRespondentContactDetails.aboutToStart(details);
+
+        assertThat(response.getErrors()).containsExactly(
+            "You cannot use this event to update the respondent's contact details as they have been marked as confidential.");
     }
 
     @Test

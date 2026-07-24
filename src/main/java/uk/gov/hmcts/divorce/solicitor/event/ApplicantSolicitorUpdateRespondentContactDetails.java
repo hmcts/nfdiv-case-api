@@ -47,6 +47,8 @@ public class ApplicantSolicitorUpdateRespondentContactDetails implements CCDConf
         "You cannot use this event at this stage of the case.";
     private static final String CANNOT_REMOVE_EMAIL_ERROR =
         "You cannot remove the respondent's email address using this event.";
+    private static final String CONFIDENTIAL_RESPONDENT_ERROR =
+        "You cannot use this event to update the respondent's contact details as they have been marked as confidential.";
 
     private final NotificationDispatcher notificationDispatcher;
 
@@ -101,6 +103,13 @@ public class ApplicantSolicitorUpdateRespondentContactDetails implements CCDConf
         boolean hasSubmittedAos = acknowledgementOfService != null && acknowledgementOfService.getDateAosSubmitted() != null;
         boolean hasApplicantSubmittedCO =
             !Objects.isNull(caseData.getConditionalOrder().getConditionalOrderApplicant1Questions().getSubmittedDate());
+
+        boolean applicantIsConfidential = details.getData().getApplicant2().isConfidentialContactDetails();
+        if (applicantIsConfidential) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(Collections.singletonList(CONFIDENTIAL_RESPONDENT_ERROR))
+                .build();
+        }
 
         if (hasSubmittedAos || hasApplicantSubmittedCO) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
