@@ -28,7 +28,6 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.gov.hmcts.divorce.common.event.ApplyForFinalOrder.FINAL_ORDER_REQUESTED;
 import static uk.gov.hmcts.divorce.common.notification.Applicant2RemindAwaitingJointFinalOrderNotification.DELAY_REASON_IF_OVERDUE;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_APP1_SOLICITOR_APPLIED_FOR_FINAL_ORDER_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SOLICITOR_APPLIED_FOR_FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CO_OR_FO;
@@ -105,7 +104,7 @@ public class Applicant1AppliedForFinalOrderNotification implements ApplicantNoti
                 caseData.getApplicant1().getSolicitor().getEmail(),
                 JOINT_SOLICITOR_APPLIED_FOR_CO_OR_FO_ORDER,
                 templateVars,
-                ENGLISH,
+                caseData.getApplicant1().getLanguagePreference(),
                 caseId
             );
         } else {
