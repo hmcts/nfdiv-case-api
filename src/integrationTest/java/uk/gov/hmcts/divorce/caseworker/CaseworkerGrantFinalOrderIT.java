@@ -653,7 +653,7 @@ public class CaseworkerGrantFinalOrderIT {
         caseData.getApplicant1().setOffline(YES);
         caseData.getApplicant1().setAddress(addressGlobalUK);
 
-    final Applicant applicant2 = getApplicant();
+        final Applicant applicant2 = getApplicant();
         applicant2.setOffline(YES);
         applicant2.setEmail(null);
         applicant2.setAddress(addressGlobalUK);

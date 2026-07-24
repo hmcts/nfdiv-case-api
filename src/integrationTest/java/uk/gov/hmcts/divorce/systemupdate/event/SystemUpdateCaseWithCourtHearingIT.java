@@ -269,7 +269,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
     }
 
     @Test
-    public void givenBothApplicantsAreRepresentedAndIsPaperApplicationWithBlankSolicitorAddressesThenNoEmailsOrLettersSent() throws Exception {
+    public void givenBothApplicantsAreRepresentedWithBlankSolicitorAddressesThenNoEmailsOrLettersSent() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -413,7 +413,6 @@ public class SystemUpdateCaseWithCourtHearingIT {
             "FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V2.docx");
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS.docx");
 
-        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder().addressLine1(TEST_APPLICANT_1_ADDRESS_LINE_1).build();
         CaseData data = validCaseWithCourtHearing();
         data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         data.setApplicationType(ApplicationType.SOLE_APPLICATION);
@@ -424,10 +423,12 @@ public class SystemUpdateCaseWithCourtHearingIT {
         data.getApplicant1().setContactDetailsType(PUBLIC);
         data.getApplicant1().setSolicitorRepresented(NO);
         data.getApplicant2().setOffline(YES);
-        data.getApplicant1().setAddress(addressGlobalUK);
         data.getApplicant2().setFirstName("Applicant2");
         data.getApplicant2().setEmail(null);
         data.getApplicant2().setSolicitorRepresented(NO);
+
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder().addressLine1(TEST_APPLICANT_1_ADDRESS_LINE_1).build();
+        data.getApplicant1().setAddress(addressGlobalUK);
         data.getApplicant2().setAddress(addressGlobalUK);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
@@ -443,7 +444,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
     }
 
     @Test
-    public void givenBothApplicantsOfflineWhenJointJudicialSeparationCaseThenOnlyLettersForPopulatedAddressesAreGenerated() throws Exception {
+    public void givenBothApplicantsOfflineWhenJointJSCaseThenOnlyLettersForPopulatedAddressesAreGenerated() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -478,7 +479,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
     }
 
     @Test
-    public void givenBothApplicantsOfflineAndRepresentedWithBlankAddressesWhenSoleJudicialSeparationCaseThenNoLettersPrinted() throws Exception {
+    public void givenBothApplicantsOfflineAndRepresentedWithBlankAddressesWhenSoleJSCaseThenNoLettersPrinted() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
