@@ -5,12 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
+import uk.gov.hmcts.divorce.document.GeneralLetterRecipientResolver;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
@@ -45,6 +47,9 @@ class GeneralLetterTemplateContentTest {
 
     @Mock
     private Clock clock;
+
+    @Spy
+    private GeneralLetterRecipientResolver generalLetterRecipientResolver = new GeneralLetterRecipientResolver();
 
     @InjectMocks
     private GeneralLetterTemplateContent generalLetterTemplateContent;

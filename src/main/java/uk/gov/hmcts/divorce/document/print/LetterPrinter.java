@@ -2,16 +2,16 @@ package uk.gov.hmcts.divorce.document.print;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
+import uk.gov.hmcts.divorce.document.GeneralLetterRecipientResolver;
 import uk.gov.hmcts.divorce.document.model.LetterPack;
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
@@ -35,6 +35,8 @@ public class LetterPrinter {
 
     private final DocumentGenerator documentGenerator;
 
+    private final GeneralLetterRecipientResolver generalLetterRecipientResolver;
+
     private final BulkPrintService bulkPrintService;
 
     public void sendLetters(final CaseData caseData,
@@ -54,6 +56,11 @@ public class LetterPrinter {
         caseData.getDocuments().setLetterPacks(currentPacks);
 
         if (!isEmpty(letters) && letters.size() == documentPackInfo.documentPack().size()) {
+
+            if (hasBlankRecipientAddress(caseData, applicant, letterName)) {
+                log.info("Skipping bulk print for case {} and letter type {} as recipient address is blank", caseId, letterName);
+                return;
+            }
 
             if (LETTER_TYPE_GENERAL_LETTER.equals(letterName)) {
                 sendGeneralLetterWithAttachments(caseData, caseId.toString(), letterName, letters);
@@ -81,6 +88,16 @@ public class LetterPrinter {
         }
     }
 
+    private boolean hasBlankRecipientAddress(CaseData caseData, Applicant applicant, String letterName) {
+        if (!LETTER_TYPE_GENERAL_LETTER.equals(letterName)) {
+            return StringUtils.isBlank(applicant.getCorrespondenceAddressWithoutConfidentialCheck());
+        }
+
+        return generalLetterRecipientResolver.resolveIfAvailable(caseData)
+            .map(recipient -> StringUtils.isBlank(recipient.recipientAddress()))
+            .orElse(false);
+    }
+
     private void sendGeneralLetterWithAttachments(CaseData caseData, String caseId, String letterName, List<Letter> letters) {
 
         ListValue<GeneralLetterDetails> generalLetterDetailsListValue = firstElement(caseData.getGeneralLetters());
@@ -94,21 +111,7 @@ public class LetterPrinter {
                 documents.addAll(letterDetails.getGeneralLetterAttachmentLinks());
             }
 
-            GeneralParties parties = Optional.ofNullable(firstElement(caseData.getGeneralLetters()))
-                .map(element -> element.getValue().getGeneralLetterParties())
-                .orElse(GeneralParties.OTHER);
-
-            var recipientName = switch (parties) {
-                case RESPONDENT -> caseData.getApplicant2().getFullName();
-                case APPLICANT -> caseData.getApplicant1().getFullName();
-                case OTHER -> parties.name();
-            };
-
-            YesOrNo correspondenceAddressOverseas = switch (parties) {
-                case RESPONDENT -> caseData.getApplicant2().getCorrespondenceAddressIsOverseas();
-                case APPLICANT -> caseData.getApplicant1().getCorrespondenceAddressIsOverseas();
-                case OTHER -> YesOrNo.NO;
-            };
+            var recipient = generalLetterRecipientResolver.resolve(caseData);
 
             List<Letter> generalLetters = mapToLetters(documents, GENERAL_LETTER);
             letters.addAll(generalLetters);
@@ -118,8 +121,8 @@ public class LetterPrinter {
                 caseId,
                 caseId,
                 letterName,
-                recipientName,
-                correspondenceAddressOverseas
+                recipient.recipientName(),
+                recipient.correspondenceAddressOverseas()
             );
 
             final UUID letterId = bulkPrintService.print(print);

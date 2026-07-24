@@ -8,14 +8,18 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
+import uk.gov.hmcts.divorce.document.GeneralLetterRecipientResolver;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
 import uk.gov.hmcts.divorce.document.print.LetterPrinter;
@@ -31,6 +35,7 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -52,6 +57,9 @@ class LetterPrinterTest {
     @Mock
     private BulkPrintService bulkPrintService;
 
+    @Spy
+    private GeneralLetterRecipientResolver generalLetterRecipientResolver = new GeneralLetterRecipientResolver();
+
     @InjectMocks
     private LetterPrinter letterPrinter;
 
@@ -61,6 +69,7 @@ class LetterPrinterTest {
     @Test
     void shouldPrintLettersWhenSizeOfListReturnedMatchesDocumentPackSize() {
         CaseData caseData = validApplicant1CaseData();
+        setApplicantAddress(caseData);
         long caseId = TEST_CASE_ID;
         Applicant applicant = caseData.getApplicant1();
         DocumentPackInfo documentPackInfo = getDocumentPackInfo();
@@ -82,6 +91,7 @@ class LetterPrinterTest {
     @Test
     void shouldPrintLettersWhenSizeOfListReturnedMatchesDocumentPackSizeForGeneralLetter() {
         CaseData caseData = validApplicant1CaseData();
+        setApplicantAddress(caseData);
 
         Document generalLetter = Document.builder()
             .filename("GeneralLetter.pdf")
@@ -126,6 +136,7 @@ class LetterPrinterTest {
     @Test
     void shouldPrintLettersWithInternationalFlagSetWhenApplicantAddressOverseas() {
         CaseData caseData = validApplicant1CaseData();
+        setApplicantAddress(caseData);
         caseData.getApplicant1().setAddressOverseas(YES);
 
         Document generalLetter = Document.builder()
@@ -170,6 +181,7 @@ class LetterPrinterTest {
     @Test
     void shouldPrintAttachmentsWithGeneralLetter() {
         CaseData caseData = validApplicant1CaseData();
+        setApplicantAddress(caseData);
 
         Document generalLetter = Document.builder()
             .filename("GeneralLetter.pdf")
@@ -283,6 +295,52 @@ class LetterPrinterTest {
         verifyNoInteractions(bulkPrintService);
     }
 
+    @Test
+    void shouldNotPrintWhenApplicantAddressIsBlankButStillStoreLetterPack() {
+        CaseData caseData = validApplicant1CaseData();
+        caseData.getApplicant1().setAddress(null);
+        long caseId = TEST_CASE_ID;
+        Applicant applicant = caseData.getApplicant1();
+        DocumentPackInfo documentPackInfo = getDocumentPackInfo();
+
+        List<Letter> expectedLetters = new ArrayList<>(
+            documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType).toList()
+        );
+        when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
+
+        letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, TEST_LETTER_NAME);
+
+        assertThat(caseData.getDocuments().getLetterPacks()).hasSize(1);
+        verifyNoInteractions(bulkPrintService);
+    }
+
+    @Test
+    void shouldNotPrintGeneralLetterWhenOtherRecipientAddressIsBlank() {
+        CaseData caseData = validApplicant1CaseData();
+        caseData.setGeneralLetter(GeneralLetter.builder()
+            .generalLetterParties(GeneralParties.OTHER)
+            .otherRecipientName("Recipient")
+            .build());
+
+        long caseId = TEST_CASE_ID;
+        Applicant applicant = caseData.getApplicant1();
+        DocumentPackInfo documentPackInfo = new DocumentPackInfo(
+            ImmutableMap.of(DocumentType.GENERAL_LETTER, Optional.empty()),
+            ImmutableMap.of()
+        );
+
+        List<Letter> expectedLetters = new ArrayList<>(
+            documentPackInfo.documentPack().keySet().stream().map(this::getLetterFromDocumentType).toList()
+        );
+
+        when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
+
+        letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, LETTER_TYPE_GENERAL_LETTER);
+
+        verifyNoInteractions(bulkPrintService);
+        verifyNoMoreInteractions(documentGenerator);
+    }
+
     private DocumentPackInfo getDocumentPackInfo() {
         return new DocumentPackInfo(
             ImmutableMap.of(
@@ -297,5 +355,14 @@ class LetterPrinterTest {
 
     private Letter getLetterFromDocumentType(DocumentType documentType) {
         return new Letter(Document.builder().filename(documentType.toString()).build(), 1);
+    }
+
+    private void setApplicantAddress(CaseData caseData) {
+        caseData.getApplicant1().setAddress(AddressGlobalUK.builder()
+            .addressLine1("line 1")
+            .postTown("town")
+            .postCode("postcode")
+            .country("UK")
+            .build());
     }
 }
