@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
+import uk.gov.hmcts.divorce.document.GeneralLetterRecipient;
 import uk.gov.hmcts.divorce.document.GeneralLetterRecipientResolver;
 import uk.gov.hmcts.divorce.document.model.LetterPack;
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
@@ -114,7 +115,9 @@ public class LetterPrinter {
                 documents.addAll(letterDetails.getGeneralLetterAttachmentLinks());
             }
 
-            var recipient = generalLetterRecipientResolver.resolve(caseData, letterDetails.getGeneralLetterParties());
+            final GeneralLetterRecipient recipient = generalLetterRecipientResolver.resolve(
+                caseData, letterDetails.getGeneralLetterParties()
+            );
 
             List<Letter> generalLetters = mapToLetters(documents, GENERAL_LETTER);
             letters.addAll(generalLetters);
