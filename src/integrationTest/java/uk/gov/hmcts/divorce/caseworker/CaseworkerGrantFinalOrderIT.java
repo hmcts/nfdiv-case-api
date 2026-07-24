@@ -16,6 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
@@ -86,6 +87,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_1_ADDRESS_LINE_1;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_AUTHORIZATION_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -587,7 +589,7 @@ public class CaseworkerGrantFinalOrderIT {
     }
 
     @Test
-    public void shouldSendWelshNotificationToApplicantAndRespondentWhenAboutToSubmitCallbackIsInvokedForASoleCase() throws Exception {
+    void shouldSendWelshNotificationToApplicantAndRespondentWhenAboutToSubmitCallbackIsInvokedForASoleCase() throws Exception {
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
         caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.now());
@@ -642,16 +644,19 @@ public class CaseworkerGrantFinalOrderIT {
     }
 
     @Test
-    public void shouldSendBulkPrintNotificationToOfflineApplicantAndOfflineRespondentWhenSubmittedCallbackIsInvoked() throws Exception {
+    void shouldSendBulkPrintNotificationToOfflineApplicantAndOfflineRespondentWhenSubmittedCallbackIsInvoked() throws Exception {
+        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder().addressLine1(TEST_APPLICANT_1_ADDRESS_LINE_1).build();
         final CaseData caseData = buildCaseDataForGrantFinalOrder(SOLE_APPLICATION, DIVORCE);
         caseData.getFinalOrder().setGranted(Set.of(FinalOrder.Granted.YES));
         caseData.getFinalOrder().setGrantedDate(LocalDateTime.now());
         caseData.getApplication().setIssueDate(LocalDate.of(2021, 4, 28));
         caseData.getApplicant1().setOffline(YES);
+        caseData.getApplicant1().setAddress(addressGlobalUK);
 
         final Applicant applicant2 = getApplicant();
         applicant2.setOffline(YES);
         applicant2.setEmail(null);
+        applicant2.setAddress(addressGlobalUK);
         caseData.setApplicant2(applicant2);
 
         final ListValue<DivorceDocument> finalOrderGrantedLetter =
