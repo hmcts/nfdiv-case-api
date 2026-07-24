@@ -8,8 +8,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
-import java.util.Optional;
 import java.util.Objects;
+import java.util.Optional;
 
 import static uk.gov.hmcts.divorce.divorcecase.util.AddressUtil.getPostalAddress;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNER;
@@ -41,7 +41,6 @@ public class GeneralLetterRecipientResolver {
                 caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck(),
                 caseData.getApplicant1().getCorrespondenceAddressIsOverseas(),
                 commonContent.getPartner(caseData, caseData.getApplicant2())
-
             );
             case OTHER -> new GeneralLetterRecipient(
                 party,
