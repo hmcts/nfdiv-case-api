@@ -6,16 +6,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HUSBAND_OR_WIFE;
@@ -85,19 +82,9 @@ class GeneralLetterRecipientResolverTest {
     }
 
     @Test
-    void shouldUseFallbackWhenPartyIsNull() {
+    void shouldThrowExceptionWhenPartyIsNull() {
         var caseData = buildCaseDataWithGeneralLetter(GeneralParties.APPLICANT);
-        caseData.setGeneralLetter(null);
-        caseData.setGeneralLetters(List.of(
-            ListValue.<GeneralLetterDetails>builder()
-                .value(GeneralLetterDetails.builder().generalLetterParties(GeneralParties.RESPONDENT).build())
-                .build()
-        ));
 
-        GeneralLetterRecipient recipient = resolver.resolve(caseData, null);
-
-        assertThat(recipient.party()).isEqualTo(GeneralParties.OTHER);
-        assertThat(recipient.recipientAddress()).isNull();
-        assertThat(recipient.partnerRelation()).isEqualTo(HUSBAND_OR_WIFE);
+        assertThrows(NullPointerException.class, () -> resolver.resolve(caseData, null));
     }
 }

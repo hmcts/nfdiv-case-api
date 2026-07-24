@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.util.Optional;
+import java.util.Objects;
 
 import static uk.gov.hmcts.divorce.divorcecase.util.AddressUtil.getPostalAddress;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNER;
@@ -22,18 +23,10 @@ public class GeneralLetterRecipientResolver {
     private final CommonContent commonContent;
 
     public GeneralLetterRecipient resolve(CaseData caseData, GeneralParties party) {
-        return Optional.ofNullable(party)
-            .map(p -> resolveFromParty(caseData, p))
-            .orElse(new GeneralLetterRecipient(
-                GeneralParties.OTHER,
-                GeneralParties.OTHER.name(),
-                null,
-                YesOrNo.NO,
-                caseData.isDivorce() ? HUSBAND_OR_WIFE : CIVIL_PARTNER
-            ));
+        return resolveByParty(caseData, Objects.requireNonNull(party, "General letter party must be set"));
     }
 
-    private GeneralLetterRecipient resolveFromParty(CaseData caseData, GeneralParties party) {
+    private GeneralLetterRecipient resolveByParty(CaseData caseData, GeneralParties party) {
         return switch (party) {
             case RESPONDENT -> new GeneralLetterRecipient(
                 party,
