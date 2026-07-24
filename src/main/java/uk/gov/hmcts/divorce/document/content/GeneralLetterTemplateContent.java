@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.document.GeneralLetterRecipient;
 import uk.gov.hmcts.divorce.document.GeneralLetterRecipientResolver;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
@@ -45,7 +46,7 @@ public class GeneralLetterTemplateContent {
 
         var generalLetter = caseData.getGeneralLetter();
 
-        mapRecipientDetails(templateContent, caseData, generalLetter);
+        mapRecipientDetails(templateContent, generalLetter, caseData);
 
         templateContent.put(FEEDBACK, generalLetter.getGeneralLetterDetails());
         templateContent.put(ISSUE_DATE, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
@@ -56,12 +57,12 @@ public class GeneralLetterTemplateContent {
     }
 
     private void mapRecipientDetails(final Map<String, Object> templateContent,
-                                     final CaseData caseData,
-                                     final GeneralLetter generalLetter) {
-        var recipient = generalLetterRecipientResolver.resolve(caseData, generalLetter.getGeneralLetterParties());
+                                     final GeneralLetter generalLetter,
+                                     final CaseData caseData) {
+        final GeneralLetterRecipient recipient = generalLetterRecipientResolver.resolve(caseData, generalLetter.getGeneralLetterParties());
 
         templateContent.put(RECIPIENT_NAME, recipient.recipientName());
         templateContent.put(RECIPIENT_ADDRESS, recipient.recipientAddress());
-        templateContent.put(RELATION, commonContent.getPartner(caseData, caseData.getApplicant2()));
+        templateContent.put(RELATION, recipient.partnerRelation());
     }
 }

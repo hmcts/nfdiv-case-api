@@ -7,6 +7,7 @@ public record GeneralLetterRecipient(
     GeneralParties party,
     String recipientName,
     String recipientAddress,
-    YesOrNo correspondenceAddressOverseas
+    YesOrNo correspondenceAddressOverseas,
+    String partnerRelation
 ) {
 }
