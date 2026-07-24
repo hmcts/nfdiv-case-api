@@ -530,12 +530,10 @@ public class SystemUpdateCaseWithCourtHearingIT {
         data.getApplicant1().setContactDetailsType(PUBLIC);
         data.getApplicant1().setSolicitorRepresented(YES);
         data.getApplicant1().setSolicitor(Solicitor.builder().address(TEST_APPLICANT_1_ADDRESS_LINE_1).build());
-        data.getApplicant1().getSolicitor().setAddress(TEST_APPLICANT_1_ADDRESS_LINE_1);
         data.getApplicant2().setOffline(YES);
         data.getApplicant2().setEmail(null);
         data.getApplicant2().setSolicitorRepresented(YES);
         data.getApplicant2().setSolicitor(Solicitor.builder().address(TEST_APPLICANT_1_ADDRESS_LINE_1).build());
-        data.getApplicant2().getSolicitor().setAddress(TEST_APPLICANT_1_ADDRESS_LINE_1);
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
