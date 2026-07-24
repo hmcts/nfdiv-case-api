@@ -8,7 +8,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.Document;
@@ -19,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
+import uk.gov.hmcts.divorce.document.GeneralLetterRecipient;
 import uk.gov.hmcts.divorce.document.GeneralLetterRecipientResolver;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 import uk.gov.hmcts.divorce.document.print.BulkPrintService;
@@ -34,10 +34,12 @@ import java.util.Optional;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.service.print.GeneralLetterDocumentPack.LETTER_TYPE_GENERAL_LETTER;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.COVERSHEET_APPLICANT;
@@ -57,8 +59,8 @@ class LetterPrinterTest {
     @Mock
     private BulkPrintService bulkPrintService;
 
-    @Spy
-    private GeneralLetterRecipientResolver generalLetterRecipientResolver = new GeneralLetterRecipientResolver();
+    @Mock
+    private GeneralLetterRecipientResolver generalLetterRecipientResolver;
 
     @InjectMocks
     private LetterPrinter letterPrinter;
@@ -122,6 +124,7 @@ class LetterPrinterTest {
         );
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
+        when(generalLetterRecipientResolver.resolve(any(), any())).thenReturn(applicantRecipient());
 
         letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, LETTER_TYPE_GENERAL_LETTER);
 
@@ -167,6 +170,13 @@ class LetterPrinterTest {
                 .toList());
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
+        when(generalLetterRecipientResolver.resolve(any(), any())).thenReturn(new GeneralLetterRecipient(
+            GeneralParties.APPLICANT,
+            applicant.getFullName(),
+            applicant.getCorrespondenceAddressWithoutConfidentialCheck(),
+            YES,
+            "wife"
+        ));
 
         letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, LETTER_TYPE_GENERAL_LETTER);
 
@@ -219,6 +229,7 @@ class LetterPrinterTest {
                 .toList());
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
+        when(generalLetterRecipientResolver.resolve(any(), any())).thenReturn(applicantRecipient());
 
         letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, LETTER_TYPE_GENERAL_LETTER);
 
@@ -286,6 +297,7 @@ class LetterPrinterTest {
                 .toList());
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
+        when(generalLetterRecipientResolver.resolve(any(), any())).thenReturn(blankOtherRecipient());
 
         letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, LETTER_TYPE_GENERAL_LETTER);
 
@@ -331,6 +343,7 @@ class LetterPrinterTest {
         );
 
         when(documentGenerator.generateDocuments(caseData, caseId, applicant, documentPackInfo)).thenReturn(expectedLetters);
+        when(generalLetterRecipientResolver.resolve(any(), any())).thenReturn(blankOtherRecipient());
 
         letterPrinter.sendLetters(caseData, caseId, applicant, documentPackInfo, LETTER_TYPE_GENERAL_LETTER);
 
@@ -361,5 +374,25 @@ class LetterPrinterTest {
             .postCode("postcode")
             .country("UK")
             .build());
+    }
+
+    private GeneralLetterRecipient applicantRecipient() {
+        return new GeneralLetterRecipient(
+            GeneralParties.APPLICANT,
+            "Applicant",
+            "line 1\ntown\nUK\npostcode",
+            NO,
+            "wife"
+        );
+    }
+
+    private GeneralLetterRecipient blankOtherRecipient() {
+        return new GeneralLetterRecipient(
+            GeneralParties.OTHER,
+            "Other",
+            null,
+            NO,
+            "civil partner"
+        );
     }
 }

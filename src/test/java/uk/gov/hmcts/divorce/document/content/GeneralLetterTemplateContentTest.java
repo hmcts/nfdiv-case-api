@@ -3,9 +3,7 @@ package uk.gov.hmcts.divorce.document.content;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
@@ -47,10 +45,6 @@ class GeneralLetterTemplateContentTest {
     @Mock
     private Clock clock;
 
-    @Spy
-    private GeneralLetterRecipientResolver generalLetterRecipientResolver = new GeneralLetterRecipientResolver();
-
-    @InjectMocks
     private GeneralLetterTemplateContent generalLetterTemplateContent;
 
     @Mock
@@ -70,6 +64,13 @@ class GeneralLetterTemplateContentTest {
     @BeforeEach
     void setUp() {
         setMockClock(clock, LocalDate.of(2022, 3, 16));
+        var generalLetterRecipientResolver = new GeneralLetterRecipientResolver(commonContent);
+        generalLetterTemplateContent = new GeneralLetterTemplateContent(
+            docmosisCommonContent,
+            commonContent,
+            generalLetterRecipientResolver,
+            clock
+        );
     }
 
     @Test
@@ -132,7 +133,6 @@ class GeneralLetterTemplateContentTest {
 
         when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant1().getLanguagePreference()))
                 .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(ENGLISH));
-        when(commonContent.getPartner(any(), any())).thenReturn("civil partner");
 
         final Map<String, Object> templateContent = generalLetterTemplateContent
                 .apply(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference());
