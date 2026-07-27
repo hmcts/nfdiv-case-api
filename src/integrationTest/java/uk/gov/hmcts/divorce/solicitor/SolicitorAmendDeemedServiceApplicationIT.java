@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.DraftServiceApplicationAction;
+import uk.gov.hmcts.divorce.divorcecase.model.DraftApplicationAction;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationDraftSubmissionService;
 
@@ -53,7 +53,7 @@ class SolicitorAmendDeemedServiceApplicationIT {
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()
                 .interimApplicationOptions(InterimApplicationOptions.builder()
-                    .draftServiceApplicationAction(DraftServiceApplicationAction.AMEND).build())
+                    .draftApplicationAction(DraftApplicationAction.AMEND).build())
                 .build())
             .build();
 
@@ -77,7 +77,7 @@ class SolicitorAmendDeemedServiceApplicationIT {
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()
                 .interimApplicationOptions(InterimApplicationOptions.builder()
-                    .draftServiceApplicationAction(DraftServiceApplicationAction.WITHDRAW).build())
+                    .draftApplicationAction(DraftApplicationAction.WITHDRAW).build())
                 .build())
             .build();
 

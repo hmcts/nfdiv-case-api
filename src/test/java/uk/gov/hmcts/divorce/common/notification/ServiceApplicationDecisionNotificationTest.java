@@ -28,7 +28,7 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_BAILIFF_SERVICE;
 import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_DEEMED_SERVICE;
 import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_DISPENSE_SERVICE;
-import static uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification.IS_ALTERNATIVE_SERVICE;
+import static uk.gov.hmcts.divorce.common.notification.ServiceApplicationDecisionNotification.IS_ALTERNATIVE_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.ALTERNATIVE_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
@@ -61,7 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.solicitorTemplateVars
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-class ServiceApplicationNotificationTest {
+class ServiceApplicationDecisionNotificationTest {
 
     @Mock
     private NotificationService notificationService;
@@ -70,7 +70,7 @@ class ServiceApplicationNotificationTest {
     private CommonContent commonContent;
 
     @InjectMocks
-    private ServiceApplicationNotification serviceApplicationNotification;
+    private ServiceApplicationDecisionNotification serviceApplicationNotification;
 
     private static final YesOrNo NOT_GRANTED = YesOrNo.NO;
     private static final YesOrNo GRANTED = YesOrNo.YES;

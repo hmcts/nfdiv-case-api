@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.validation.ServiceApplicationValidation;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.event.page.ServiceApplicationStatementOfTruthPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolServiceApplicationPaymentSummaryPage;
@@ -47,9 +48,6 @@ public class SolicitorSubmitServiceApplication implements CCDConfig<CaseData, St
 
     public static final String SOLICITOR_SUBMIT_SERVICE_APPLICATION = "solicitor-submit-service-application";
 
-    private static  final String ERROR_ALREADY_SUBMITTED
-        = "The ongoing service application on this case has already been submitted and you cannot submit it again or amend it.";
-
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
@@ -60,8 +58,24 @@ public class SolicitorSubmitServiceApplication implements CCDConfig<CaseData, St
         pages.forEach(page -> page.addTo(pageBuilder));
     }
 
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        log.info("{} about to start callback invoked for Case Id: {}", SOLICITOR_SUBMIT_SERVICE_APPLICATION, details.getId());
+
+        CaseData caseData = details.getData();
+        List<String> validationErrors = ServiceApplicationValidation.validateNotAlreadySubmitted(caseData);
+
+        if (!validationErrors.isEmpty()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(validationErrors)
+                .build();
+        }
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData).build();
+    }
+
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
-        final CaseDetails<CaseData, State> beforeDetails) {
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
 
         log.info("{} about to submit callback invoked for Case Id: {}", SOLICITOR_SUBMIT_SERVICE_APPLICATION, details.getId());
 
@@ -90,29 +104,6 @@ public class SolicitorSubmitServiceApplication implements CCDConfig<CaseData, St
             .data(caseData)
             .state(targetState)
             .build();
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-
-        log.info("{} About to Submit callback invoked for Case Id: {}", SOLICITOR_SUBMIT_SERVICE_APPLICATION, details.getId());
-
-        CaseData caseData = details.getData();
-        boolean alreadySubmitted = Optional.ofNullable(caseData.getAlternativeService())
-            .map(AlternativeService::getServicePaymentFee)
-            .map(fee -> hasText(fee.getPaymentReference()) || hasText(fee.getHelpWithFeesReferenceNumber()))
-            .orElse(false);
-
-        if (alreadySubmitted) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .errors(singletonList(ERROR_ALREADY_SUBMITTED))
-                .build();
-        }
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData).build();
-    }
-
-    private boolean hasText(String value) {
-        return value != null && !value.trim().isEmpty();
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,

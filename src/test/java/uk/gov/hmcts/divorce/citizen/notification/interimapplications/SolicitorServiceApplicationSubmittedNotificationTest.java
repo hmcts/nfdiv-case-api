@@ -54,7 +54,7 @@ class SolicitorServiceApplicationSubmittedNotificationTest {
             .build());
 
         Map<String, String> templateVars = new HashMap<>(getMainTemplateVars());
-        when(commonContent.solicitorTemplateVarsPreIssue(data, TEST_CASE_ID, data.getApplicant1()))
+        when(commonContent.solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
             .thenReturn(templateVars);
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);

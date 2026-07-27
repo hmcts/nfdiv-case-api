@@ -30,7 +30,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLIC
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class ServiceApplicationNotification implements ApplicantNotification {
+public class ServiceApplicationDecisionNotification implements ApplicantNotification {
 
     private final NotificationService notificationService;
 

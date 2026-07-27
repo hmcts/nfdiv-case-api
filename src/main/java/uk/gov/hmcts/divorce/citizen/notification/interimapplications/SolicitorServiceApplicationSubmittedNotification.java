@@ -12,7 +12,6 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_SERVICE_APPLICATION_SUBMITTED;
 
 @Component
@@ -28,9 +27,9 @@ public class SolicitorServiceApplicationSubmittedNotification implements Applica
         log.info("Sending service application submitted notification to applicant1 Solicitor1 on case id {}", caseId);
 
         final Map<String, String> templateVars =
-            commonContent.solicitorTemplateVarsPreIssue(caseData, caseId, caseData.getApplicant1());
+            commonContent.solicitorTemplateVars(caseData, caseId, caseData.getApplicant1());
 
-        addApplicantLabelAndIssueDateVars(templateVars, caseData, caseData.getApplicant1());
+        addServiceApplicationTypeVars(templateVars, caseData, caseData.getApplicant1());
 
         notificationService.sendEmail(
             caseData.getApplicant1().getSolicitor().getEmail(),
@@ -41,11 +40,10 @@ public class SolicitorServiceApplicationSubmittedNotification implements Applica
         );
     }
 
-    private void addApplicantLabelAndIssueDateVars(Map<String, String> templateVars, CaseData caseData, Applicant applicant1) {
+    private void addServiceApplicationTypeVars(Map<String, String> templateVars, CaseData caseData, Applicant applicant1) {
 
         AlternativeServiceType serviceType = caseData.getAlternativeService().getAlternativeServiceType();
 
-        templateVars.put(DATE_OF_ISSUE, commonContent.getIssueDateInPreferredLanguage(caseData, applicant1));
         commonContent.addServiceApplicationTypeVars(templateVars, serviceType);
 
     }

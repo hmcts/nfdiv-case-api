@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
-import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
+import uk.gov.hmcts.divorce.common.notification.ServiceApplicationDecisionNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -29,7 +29,7 @@ class CaseworkerConfirmServiceRefusalTest {
     private NotificationDispatcher notificationDispatcher;
 
     @Mock
-    private ServiceApplicationNotification serviceApplicationNotification;
+    private ServiceApplicationDecisionNotification serviceApplicationDecisionNotification;
 
     @InjectMocks
     private CaseworkerConfirmServiceRefusal caseworkerConfirmServiceRefusal;
@@ -58,6 +58,6 @@ class CaseworkerConfirmServiceRefusalTest {
 
         caseworkerConfirmServiceRefusal.submitted(details, beforeDetails);
 
-        verify(notificationDispatcher).send(serviceApplicationNotification, details.getData(), details.getId());
+        verify(notificationDispatcher).send(serviceApplicationDecisionNotification, details.getData(), details.getId());
     }
 }

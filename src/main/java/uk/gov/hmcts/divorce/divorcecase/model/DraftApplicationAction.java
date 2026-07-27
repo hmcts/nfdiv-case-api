@@ -7,7 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 
 @Getter
 @AllArgsConstructor
-public enum DraftServiceApplicationAction implements HasLabel {
+public enum DraftApplicationAction implements HasLabel {
 
     @JsonProperty("amend")
     AMEND("Amend the existing draft application"),

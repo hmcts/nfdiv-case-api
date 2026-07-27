@@ -166,10 +166,10 @@ public class InterimApplicationOptions {
         hint = "if you withdraw it, you'll be able to start a new service application.",
         access = {DefaultAccess.class},
         typeOverride = FixedRadioList,
-        typeParameterOverride = "DraftServiceApplicationAction",
+        typeParameterOverride = "DraftApplicationAction",
         searchable = false
     )
-    private DraftServiceApplicationAction draftServiceApplicationAction;
+    private DraftApplicationAction draftApplicationAction;
 
     @Getter
     @AllArgsConstructor

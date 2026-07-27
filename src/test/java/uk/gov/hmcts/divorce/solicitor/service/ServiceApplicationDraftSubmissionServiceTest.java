@@ -9,7 +9,7 @@ import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.DraftServiceApplicationAction;
+import uk.gov.hmcts.divorce.divorcecase.model.DraftApplicationAction;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod;
@@ -71,7 +71,7 @@ class ServiceApplicationDraftSubmissionServiceTest {
     @Test
     void shouldClearInterimOptionsAndAlternativeServiceWhenDraftActionIsWithdraw() {
         InterimApplicationOptions originalOptions = InterimApplicationOptions.builder()
-            .draftServiceApplicationAction(DraftServiceApplicationAction.WITHDRAW)
+            .draftApplicationAction(DraftApplicationAction.WITHDRAW)
             .build();
 
         Applicant applicant = Applicant.builder()

@@ -6,15 +6,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
-public class AmendDeemedServiceApplicationActionPage implements CcdPageConfiguration {
+public class AmendServiceApplicationActionPage implements CcdPageConfiguration {
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("amendDeemedService")
+        pageBuilder.page("amendServiceApplication")
             .pageLabel("Amend Service Application")
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
-                    .mandatory(InterimApplicationOptions::getDraftServiceApplicationAction)
+                    .mandatory(InterimApplicationOptions::getDraftApplicationAction)
                 .done()
             .done();
     }
