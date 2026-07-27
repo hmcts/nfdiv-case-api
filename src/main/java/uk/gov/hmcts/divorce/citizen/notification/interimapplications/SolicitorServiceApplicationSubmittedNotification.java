@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -29,7 +28,7 @@ public class SolicitorServiceApplicationSubmittedNotification implements Applica
         final Map<String, String> templateVars =
             commonContent.solicitorTemplateVars(caseData, caseId, caseData.getApplicant1());
 
-        addServiceApplicationTypeVars(templateVars, caseData, caseData.getApplicant1());
+        addServiceApplicationTypeVars(templateVars, caseData);
 
         notificationService.sendEmail(
             caseData.getApplicant1().getSolicitor().getEmail(),
@@ -40,7 +39,7 @@ public class SolicitorServiceApplicationSubmittedNotification implements Applica
         );
     }
 
-    private void addServiceApplicationTypeVars(Map<String, String> templateVars, CaseData caseData, Applicant applicant1) {
+    private void addServiceApplicationTypeVars(Map<String, String> templateVars, CaseData caseData) {
 
         AlternativeServiceType serviceType = caseData.getAlternativeService().getAlternativeServiceType();
 
