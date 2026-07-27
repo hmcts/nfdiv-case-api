@@ -56,9 +56,7 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APP2_S
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT1_FINAL_ORDER_LATE_EXPLANATION;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT1_FINAL_ORDER_STATEMENT_OF_TRUTH;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT1_FLAGS;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT1_SOLICITOR_FIRM_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT1_SOLICITOR_FLAGS;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_APPLIED_FOR_FINAL_ORDER_FIRST;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_FINAL_ORDER_EXPLANATION;
@@ -67,18 +65,18 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_FLAGS;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_SOLICITOR_FIRM_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_SOLICITOR_FLAGS;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_SOLICITOR_NAME;
-import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_SOL_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_SOL_FINAL_ORDER_WHY_NEED_TO_APPLY;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT2_SOL_RESPONSIBLE_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_ADDRESS;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_DOCUMENTS_UPLOADED;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_EMAIL;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_FINAL_ORDER_LATE_EXPLANATION_TRANSLATED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_FIRM_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_HWF;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_IN_REFUGE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_LEGAL_PROCEEDINGS_DETAILS_TRANSLATED;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_PHONE_NUMBER;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_SOLICITOR_REPRESENTED;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_USED_WELSH_TRANSLATION_ON_SUBMISSION;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_ADDRESS;
@@ -97,7 +95,9 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLIC
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_OFFLINE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_PHONE_NUMBER;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOLICITOR_EMAIL;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOLICITOR_REPRESENTED;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOL_APPLIED_FOR_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOL_FINAL_ORDER_FEE_ACCOUNT_REFERENCE;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOL_FINAL_ORDER_FEE_ORDER_SUMMARY;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOL_PAYMENT_HOW_TO_PAY;
@@ -844,8 +844,8 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(APPLICANT1_FINAL_ORDER_STATEMENT_OF_TRUTH)
             .label(FINAL_ORDER_SOL_APP1_STATEMENT_OF_TRUTH, IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED,
                 "The applicant believes that the facts stated in the application are true.")
-            .field(APPLICANT1_SOLICITOR_NAME, IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED)
-            .field(APPLICANT1_SOLICITOR_FIRM_NAME, IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED)
+            .field(APPLICANT_1_SOLICITOR_NAME, IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED)
+            .field(APPLICANT_1_FIRM_NAME, IS_OVERDUE_AND_APP_1_IS_REPRESENTED_AND_APPLIED)
             .field(GRANTED)
             .field(GRANTED_DATE)
             .field(EXPEDITED_FINAL_ORDER_AUTHORISATION)
@@ -859,7 +859,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(FINAL_ORDER_SWITCHED_TO_SOLE)
             .label(LABEL_FINAL_ORDER_DETAILS_SOLE_RESPONDENT, RESPONDENT_APPLIED_FOR_FO, "### Respondent")
             .label(LABEL_FINAL_ORDER_DETAILS_APPLICANT2, IS_JOINT, "### Applicant 2")
-            .field(APPLICANT2_SOL_APPLIED_FOR_FINAL_ORDER, "applicant2SolAppliedForFinalOrder=\"Yes\"")
+            .field(APPLICANT_2_SOL_APPLIED_FOR_FINAL_ORDER, "applicant2SolAppliedForFinalOrder=\"Yes\"")
             .field(DATE_APPLICANT2_SOL_APPLIED_FOR_FINAL_ORDER, "applicant2SolAppliedForFinalOrder=\"Yes\"")
             .field(APPLICANT2_SOL_FINAL_ORDER_WHY_NEED_TO_APPLY, "applicant2SolAppliedForFinalOrder=\"Yes\"")
             .field(APPLICANT2_SOL_RESPONSIBLE_FOR_FINAL_ORDER, "applicant2SolAppliedForFinalOrder=\"Yes\"")
@@ -872,7 +872,7 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(APPLICANT2_FINAL_ORDER_STATEMENT_OF_TRUTH, APPLICANT_2_APPLIED_FOR_FO_FIRST_OR_IS_JOINT)
             .label(FINAL_ORDER_SOL_APP2_STATEMENT_OF_TRUTH, IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED,
                 "The applicant believes that the facts stated in the application are true.")
-            .field(APPLICANT2_SOLICITOR_NAME, IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED)
+            .field(APPLICANT_2_SOLICITOR_NAME, IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED)
             .field(APPLICANT2_SOLICITOR_FIRM_NAME, IS_OVERDUE_AND_APP_2_IS_REPRESENTED_AND_APPLIED)
             .field(SCANNED_D36_FORM);
     }

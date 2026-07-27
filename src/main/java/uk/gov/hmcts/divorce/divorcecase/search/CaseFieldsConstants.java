@@ -329,8 +329,6 @@ public final class CaseFieldsConstants {
     public static final String APPLICANT1_FINAL_ORDER_LATE_EXPLANATION = "applicant1FinalOrderLateExplanation";
     public static final String APPLICANT1_FINAL_ORDER_STATEMENT_OF_TRUTH = "applicant1FinalOrderStatementOfTruth";
     public static final String FINAL_ORDER_SOL_APP1_STATEMENT_OF_TRUTH = "finalOrderSolApp1StatementOfTruth";
-    public static final String APPLICANT1_SOLICITOR_NAME = "applicant1SolicitorName";
-    public static final String APPLICANT1_SOLICITOR_FIRM_NAME = "applicant1SolicitorFirmName";
     public static final String GRANTED = "granted";
     public static final String GRANTED_DATE = "grantedDate";
     public static final String EXPEDITED_FINAL_ORDER_AUTHORISATION = "expeditedFinalOrderAuthorisation";
@@ -344,7 +342,6 @@ public final class CaseFieldsConstants {
     public static final String FINAL_ORDER_SWITCHED_TO_SOLE = "finalOrderSwitchedToSole";
     public static final String LABEL_FINAL_ORDER_DETAILS_SOLE_RESPONDENT = "labelFinalOrderDetails-SoleRespondent";
     public static final String LABEL_FINAL_ORDER_DETAILS_APPLICANT2 = "labelFinalOrderDetails-Applicant2";
-    public static final String APPLICANT2_SOL_APPLIED_FOR_FINAL_ORDER = "applicant2SolAppliedForFinalOrder";
     public static final String DATE_APPLICANT2_SOL_APPLIED_FOR_FINAL_ORDER = "dateApplicant2SolAppliedForFinalOrder";
     public static final String APPLICANT2_SOL_FINAL_ORDER_WHY_NEED_TO_APPLY = "applicant2SolFinalOrderWhyNeedToApply";
     public static final String APPLICANT2_SOL_RESPONSIBLE_FOR_FINAL_ORDER = "applicant2SolResponsibleForFinalOrder";
@@ -356,7 +353,6 @@ public final class CaseFieldsConstants {
     public static final String APPLICANT2_FINAL_ORDER_LATE_EXPLANATION = "applicant2FinalOrderLateExplanation";
     public static final String APPLICANT2_FINAL_ORDER_STATEMENT_OF_TRUTH = "applicant2FinalOrderStatementOfTruth";
     public static final String FINAL_ORDER_SOL_APP2_STATEMENT_OF_TRUTH = "finalOrderSolApp2StatementOfTruth";
-    public static final String APPLICANT2_SOLICITOR_NAME = "applicant2SolicitorName";
     public static final String APPLICANT2_SOLICITOR_FIRM_NAME = "applicant2SolicitorFirmName";
     public static final String SCANNED_D36_FORM = "scannedD36Form";
 
