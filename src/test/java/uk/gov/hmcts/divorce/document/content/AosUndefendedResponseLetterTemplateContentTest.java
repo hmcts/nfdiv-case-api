@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
+import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.content.templatecontent.AosUndefendedResponseLetterTemplateContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -64,7 +65,7 @@ class AosUndefendedResponseLetterTemplateContentTest {
 
         CaseData caseData = buildCaseData(DIVORCE);
 
-        when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), LanguagePreference.ENGLISH)).thenReturn("wife");
 
         Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
@@ -87,7 +88,7 @@ class AosUndefendedResponseLetterTemplateContentTest {
     void shouldSuccessfullyApplyDissolutionContent() {
         CaseData caseData = buildCaseData(DISSOLUTION);
 
-        when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("civil partner");
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), LanguagePreference.ENGLISH)).thenReturn("civil partner");
 
         Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
@@ -111,7 +112,7 @@ class AosUndefendedResponseLetterTemplateContentTest {
 
         CaseData caseData = buildCaseDataWithJSAppSol(DIVORCE, false, false);
 
-        when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), LanguagePreference.ENGLISH)).thenReturn("wife");
 
         Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
@@ -143,7 +144,7 @@ class AosUndefendedResponseLetterTemplateContentTest {
 
         CaseData caseData = buildCaseDataWithJSAppSol(DIVORCE, true, false);
 
-        when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), LanguagePreference.ENGLISH)).thenReturn("wife");
 
         Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 
@@ -175,7 +176,7 @@ class AosUndefendedResponseLetterTemplateContentTest {
 
         CaseData caseData = buildCaseDataWithJSAppSol(DIVORCE, true, true);
 
-        when(commonContent.getPartner(caseData, caseData.getApplicant2())).thenReturn("wife");
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), LanguagePreference.ENGLISH)).thenReturn("wife");
 
         Map<String, Object> result = templateContent.apply(caseData, TEST_CASE_ID);
 

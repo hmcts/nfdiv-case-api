@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -108,7 +109,7 @@ class CaseworkerUploadDocumentTest {
     }
 
     @Test
-    void shoudlNotAllowDeletionOfExistingDocuments() {
+    void shouldNotAllowDeletionOfExistingDocuments() {
         final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
 
         final ListValue<DivorceDocument> doc1 =
@@ -133,6 +134,93 @@ class CaseworkerUploadDocumentTest {
 
         assertThat(response.getErrors()).hasSize(1);
         assertThat(response.getErrors()).contains(ERROR_REMOVE_DOCUMENTS);
+    }
+
+    @Test
+    void shouldAddDocumentDateAddedToNewlyAddedDocumentsWhereDateHasNotBeenProvided() {
+        final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
+
+        final ListValue<DivorceDocument> doc1 =
+            getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "d9d.pdf", D9D);
+
+        final ListValue<DivorceDocument> doc2 =
+            getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130004", "aos.pdf", ACKNOWLEDGEMENT_OF_SERVICE);
+
+        final CaseData previousCaseData = caseData();
+        previousCaseData.getDocuments().setDocumentsUploaded(List.of(doc1));
+
+        previousCaseDetails.setData(previousCaseData);
+
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.getDocuments().setDocumentsUploaded(List.of(doc1, doc2));
+
+        updatedCaseDetails.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerUploadDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
+
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue().getDocumentDateAdded()).isNotNull();
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue().getDocumentDateAdded())
+            .isEqualTo(LocalDate.now());
+    }
+
+    @Test
+    void shouldNotAddDocumentDateAddedToNewlyAddedDocumentsWhereDateHasBeenProvided() {
+        final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
+
+        final ListValue<DivorceDocument> doc1 =
+            getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "d9d.pdf", D9D);
+
+        final ListValue<DivorceDocument> doc2 =
+            getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130004", "aos.pdf", ACKNOWLEDGEMENT_OF_SERVICE);
+        doc2.getValue().setDocumentDateAdded(LocalDate.of(2023, 1, 1));
+
+        final CaseData previousCaseData = caseData();
+        previousCaseData.getDocuments().setDocumentsUploaded(List.of(doc1));
+
+        previousCaseDetails.setData(previousCaseData);
+
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.getDocuments().setDocumentsUploaded(List.of(doc1, doc2));
+
+        updatedCaseDetails.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerUploadDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
+
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue().getDocumentDateAdded()).isNotNull();
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(0).getValue().getDocumentDateAdded())
+            .isEqualTo(LocalDate.of(2023, 1, 1));
+    }
+
+    @Test
+    void shouldNotAddDocumentDateAddedToPreviouslyUploadedDocumentWhichDoNotHaveADate() {
+        final CaseDetails<CaseData, State> previousCaseDetails = new CaseDetails<>();
+
+        final ListValue<DivorceDocument> doc1 =
+            getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003", "d9d.pdf", D9D);
+
+        final ListValue<DivorceDocument> doc2 =
+            getDocumentListValue("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130004", "aos.pdf", ACKNOWLEDGEMENT_OF_SERVICE);
+        doc2.getValue().setDocumentDateAdded(LocalDate.of(2023, 1, 1));
+
+        final CaseData previousCaseData = caseData();
+        previousCaseData.getDocuments().setDocumentsUploaded(List.of(doc1));
+
+        previousCaseDetails.setData(previousCaseData);
+
+        final CaseData caseData = caseData();
+        final CaseDetails<CaseData, State> updatedCaseDetails = new CaseDetails<>();
+        caseData.getDocuments().setDocumentsUploaded(List.of(doc1, doc2));
+
+        updatedCaseDetails.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerUploadDocument.aboutToSubmit(updatedCaseDetails, previousCaseDetails);
+
+        assertThat(response.getData().getDocuments().getDocumentsUploaded().get(1).getValue().getDocumentDateAdded()).isNull();
     }
 
     private ListValue<DivorceDocument> getDocumentListValue(
