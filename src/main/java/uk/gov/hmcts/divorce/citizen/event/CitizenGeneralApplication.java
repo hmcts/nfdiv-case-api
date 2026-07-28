@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateHmctsCoversheet;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
@@ -74,6 +75,8 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
     private final GeneralReferralService generalReferralService;
 
     private final CitizenGeneralApplicationSubmissionService submissionService;
+
+    private final GenerateHmctsCoversheet generateHmctsCoverSheet;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -153,6 +156,8 @@ public class CitizenGeneralApplication implements CCDConfig<CaseData, State, Use
 
         data.updateCaseWithGeneralApplication(newGeneralApplication);
         applicant.archiveInterimApplicationOptions();
+
+        generateHmctsCoverSheet.addToDocumentsGenerated(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
