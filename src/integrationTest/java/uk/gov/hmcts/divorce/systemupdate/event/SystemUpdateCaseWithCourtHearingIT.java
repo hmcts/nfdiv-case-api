@@ -16,7 +16,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
@@ -65,7 +64,6 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SERVICE_AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_1_ADDRESS_LINE_1;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
@@ -269,7 +267,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
     }
 
     @Test
-    public void givenBothApplicantsAreRepresentedWithBlankSolicitorAddressesThenNoEmailsOrLettersSent() throws Exception {
+    public void givenBothApplicantsAreRepresentedAndIsPaperApplicationThenNoEmailsSent() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -312,7 +310,8 @@ public class SystemUpdateCaseWithCourtHearingIT {
             .getResponse()
             .getContentAsString();
 
-        verifyNoInteractions(bulkPrintService);
+        verify(bulkPrintService, times(2)).print(any());
+        verifyNoMoreInteractions(bulkPrintService);
         verifyNoInteractions(notificationService);
     }
 
@@ -365,44 +364,6 @@ public class SystemUpdateCaseWithCourtHearingIT {
     }
 
     @Test
-    public void givenSoleApplicationWithOfflineRespondentAndBlankAddressThenNoLettersPrinted() throws Exception {
-        when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-
-        stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
-        stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae1", "FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V1.docx");
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae2", "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V4.docx");
-        stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905d33",
-            "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent.docx");
-        stubForDocAssemblyWith("6dd725e8-f053-4493-9cbe-bb69d1905a12",
-            "FL-NFD-GOR-ENG-Do-Not-Attend-Court-CO-Granted-Letter.docx");
-
-        CaseData data = validCaseWithCourtHearing();
-        data.setApplicationType(ApplicationType.SOLE_APPLICATION);
-        data.getApplication().setIssueDate(LocalDate.now());
-        data.getApplicant1().setOffline(NO);
-        data.getApplicant1().setEmail(TEST_USER_EMAIL);
-        data.getApplicant1().setSolicitorRepresented(NO);
-        data.getApplicant2().setOffline(YES);
-        data.getApplicant2().setEmail(null);
-        data.getApplicant2().setSolicitorRepresented(NO);
-        data.getApplicant2().setAddress(null);
-
-        mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
-                .contentType(APPLICATION_JSON)
-                .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
-                .content(OBJECT_MAPPER.writeValueAsString(callbackRequest(data, SYSTEM_UPDATE_CASE_COURT_HEARING)))
-                .accept(APPLICATION_JSON))
-            .andExpect(status().isOk());
-
-        verify(notificationService, times(2))
-            .sendEmail(any(), any(), anyMap(), eq(ENGLISH), anyLong());
-
-        verifyNoMoreInteractions(notificationService);
-        verifyNoInteractions(bulkPrintService);
-    }
-
-    @Test
     public void givenBothApplicantsOfflineWhenSoleJudicialSeparationCaseThenJSCoverLettersAreGenerated() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
@@ -427,10 +388,6 @@ public class SystemUpdateCaseWithCourtHearingIT {
         data.getApplicant2().setEmail(null);
         data.getApplicant2().setSolicitorRepresented(NO);
 
-        AddressGlobalUK addressGlobalUK = AddressGlobalUK.builder().addressLine1(TEST_APPLICANT_1_ADDRESS_LINE_1).build();
-        data.getApplicant1().setAddress(addressGlobalUK);
-        data.getApplicant2().setAddress(addressGlobalUK);
-
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
@@ -444,7 +401,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
     }
 
     @Test
-    public void givenBothApplicantsOfflineWhenJointJSCaseThenOnlyLettersForPopulatedAddressesAreGenerated() throws Exception {
+    public void givenBothApplicantsOfflineWhenJointJudicialSeparationCaseThenJSCoverLettersAreGenerated() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -473,13 +430,13 @@ public class SystemUpdateCaseWithCourtHearingIT {
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
-        verify(bulkPrintService).print(any());
+        verify(bulkPrintService, times(2)).print(any());
         verifyNoMoreInteractions(bulkPrintService);
         verifyNoInteractions(notificationService);
     }
 
     @Test
-    public void givenBothApplicantsOfflineAndRepresentedWithBlankAddressesWhenSoleJSCaseThenNoLettersPrinted() throws Exception {
+    public void givenBothApplicantsOfflineAndRepresentedWhenSoleJudicialSeparationCaseThenJSCoverLettersAreGenerated() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -507,7 +464,8 @@ public class SystemUpdateCaseWithCourtHearingIT {
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
-        verifyNoInteractions(bulkPrintService);
+        verify(bulkPrintService, times(2)).print(any());
+        verifyNoMoreInteractions(bulkPrintService);
         verifyNoInteractions(notificationService);
     }
 
@@ -522,7 +480,6 @@ public class SystemUpdateCaseWithCourtHearingIT {
             "FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor.docx");
 
         CaseData data = validCaseWithCourtHearing();
-
         data.setSupplementaryCaseType(JUDICIAL_SEPARATION);
         data.setApplicationType(ApplicationType.JOINT_APPLICATION);
         data.getApplication().setIssueDate(LocalDate.now());
@@ -530,11 +487,9 @@ public class SystemUpdateCaseWithCourtHearingIT {
         data.getApplicant1().setEmail(null);
         data.getApplicant1().setContactDetailsType(PUBLIC);
         data.getApplicant1().setSolicitorRepresented(YES);
-        data.getApplicant1().setSolicitor(Solicitor.builder().address(TEST_APPLICANT_1_ADDRESS_LINE_1).build());
         data.getApplicant2().setOffline(YES);
         data.getApplicant2().setEmail(null);
         data.getApplicant2().setSolicitorRepresented(YES);
-        data.getApplicant2().setSolicitor(Solicitor.builder().address(TEST_APPLICANT_1_ADDRESS_LINE_1).build());
 
         mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
