@@ -49,6 +49,7 @@ public class AosPackPrinter {
                 caseIdString,
                 LETTER_TYPE_RESPONDENT_PACK,
                 app2.getFullName(),
+                app2.getCorrespondenceAddressWithoutConfidentialCheck(),
                 app2.getCorrespondenceAddressIsOverseas()
             );
 
@@ -88,6 +89,7 @@ public class AosPackPrinter {
                 caseIdString,
                 LETTER_TYPE_APPLICANT_PACK,
                 caseData.getApplicant1().getFullName(),
+                caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck(),
                 caseData.getApplicant1().getCorrespondenceAddressIsOverseas()
             );
 
@@ -120,6 +122,7 @@ public class AosPackPrinter {
                 caseIdString,
                 LETTER_TYPE_APPLICANT_PACK,
                 caseData.getApplicant1().getFullName(),
+                caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck(),
                 caseData.getApplicant1().getCorrespondenceAddressIsOverseas()
             );
 

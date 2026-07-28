@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.document.print;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.Document;
@@ -10,7 +9,6 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.document.GeneralLetterRecipient;
 import uk.gov.hmcts.divorce.document.GeneralLetterRecipientResolver;
@@ -59,11 +57,6 @@ public class LetterPrinter {
 
         if (!isEmpty(letters) && letters.size() == documentPackInfo.documentPack().size()) {
 
-            if (hasBlankRecipientAddress(caseData, applicant, letterName)) {
-                log.info("Skipping bulk print for case {} and letter type {} as recipient address is blank", caseId, letterName);
-                return;
-            }
-
             if (LETTER_TYPE_GENERAL_LETTER.equals(letterName)) {
                 sendGeneralLetterWithAttachments(caseData, caseId.toString(), letterName, letters);
             } else {
@@ -74,6 +67,7 @@ public class LetterPrinter {
                     caseIdString,
                     letterName,
                     applicant.getFullName(),
+                    applicant.getCorrespondenceAddressWithoutConfidentialCheck(),
                     applicant.getCorrespondenceAddressIsOverseas()
                 );
                 final UUID letterId = bulkPrintService.print(print);
@@ -88,18 +82,6 @@ public class LetterPrinter {
                     caseId)
             );
         }
-    }
-
-    private boolean hasBlankRecipientAddress(CaseData caseData, Applicant applicant, String letterName) {
-        if (!LETTER_TYPE_GENERAL_LETTER.equals(letterName)) {
-            return StringUtils.isBlank(applicant.getCorrespondenceAddressWithoutConfidentialCheck());
-        }
-
-        GeneralParties parties = Optional.ofNullable(firstElement(caseData.getGeneralLetters()))
-            .map(element -> element.getValue().getGeneralLetterParties())
-            .orElse(GeneralParties.OTHER);
-
-        return StringUtils.isBlank(generalLetterRecipientResolver.resolve(caseData, parties).recipientAddress());
     }
 
     private void sendGeneralLetterWithAttachments(CaseData caseData, String caseId, String letterName, List<Letter> letters) {
@@ -128,6 +110,7 @@ public class LetterPrinter {
                 caseId,
                 letterName,
                 recipient.recipientName(),
+                recipient.recipientAddress(),
                 recipient.correspondenceAddressOverseas()
             );
 

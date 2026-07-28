@@ -65,6 +65,7 @@ public class PaperApplicationReceivedNotification implements ApplicantNotificati
             caseIdString,
             LETTER_TYPE_PAPER_APPLICATION_RECEIVED,
             applicant.getFullName(),
+            applicant.getCorrespondenceAddressWithoutConfidentialCheck(),
             applicant.getAddressOverseas()
         );
 
