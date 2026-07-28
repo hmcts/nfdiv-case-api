@@ -7,6 +7,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_LAST_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICANT_2_SOLICITOR_REFERENCE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.APPLICATION_TYPE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CCD_REFERENCE;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DUE_DATE;
+
 @Component
 public class CaseAccessAdministratorSearchTab implements CCDConfig<CaseData, State, UserRole> {
 
@@ -15,13 +23,13 @@ public class CaseAccessAdministratorSearchTab implements CCDConfig<CaseData, Sta
 
         configBuilder
             .searchCasesFields()
-            .field("[CASE_REFERENCE]", "Case number", null, null, "1:ASC")
-            .field("applicationType", "Application type")
-            .field("applicant2SolicitorReference", "Respondent solicitor reference")
-            .field("applicant2SolicitorName", "Respondents solicitors name")
-            .field("applicant1LastName", "Applicants last name")
-            .field("applicant2LastName", "Respondents last name")
-            .field("dueDate","Due Date")
+            .field(CCD_REFERENCE, "Case number", null, null, "1:ASC")
+            .field(APPLICATION_TYPE, "Application type")
+            .field(APPLICANT_2_SOLICITOR_REFERENCE, "Respondent solicitor reference")
+            .field(APPLICANT_2_SOLICITOR_NAME, "Respondents solicitors name")
+            .field(APPLICANT_1_LAST_NAME, "Applicants last name")
+            .field(APPLICANT_2_LAST_NAME, "Respondents last name")
+            .field(DUE_DATE, "Due Date")
             .createdDateField()
             .lastModifiedDate()
             .stateField();
