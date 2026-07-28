@@ -32,7 +32,6 @@ import java.util.Optional;
 import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.isActiveGeneralApplication;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
@@ -127,13 +126,14 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
                 .build();
         }
 
-        if (submissionService.canBeAutoReferred(data, generalApplication.getGeneralApplicationType())) {
+        final boolean canBeAutoReferred = submissionService.canBeAutoReferred(data, generalApplication.getGeneralApplicationType());
+
+        submissionService.setEndState(details, generalApplication);
+
+        if (canBeAutoReferred) {
             GeneralReferral automaticReferral = generalReferralService.buildGeneralReferral(generalApplication);
             data.setGeneralReferral(automaticReferral);
             generalApplication.setGeneralApplicationReferredOnDate(data.getGeneralReferral().getGeneralApplicationReferralDate());
-            details.setState(AwaitingGeneralConsideration);
-        } else {
-            submissionService.setEndState(details, generalApplication);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
