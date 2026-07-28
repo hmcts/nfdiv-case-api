@@ -46,19 +46,11 @@ public class BulkPrintService {
     private final IdamService idamService;
 
     public UUID print(final Print print) {
-        if (shouldSkipPrint(print)) {
-            return null;
-        }
-
         final String authToken = authTokenGenerator.generate();
         return triggerPrintRequest(print, authToken, documentRequestForPrint(print, authToken));
     }
 
     public UUID printWithD84(final Print print) {
-        if (shouldSkipPrint(print)) {
-            return null;
-        }
-
         final String authToken = authTokenGenerator.generate();
         final List<Document> documents = documentRequestForPrint(print, authToken);
 
@@ -68,10 +60,6 @@ public class BulkPrintService {
     }
 
     public UUID printWithD10Form(final Print print) {
-        if (shouldSkipPrint(print)) {
-            return null;
-        }
-
         final String authToken = authTokenGenerator.generate();
         final List<Document> documents = documentRequestForPrint(print, authToken);
 
@@ -81,10 +69,6 @@ public class BulkPrintService {
     }
 
     public UUID printAosRespondentPack(final Print print, final boolean includeD10Document) {
-        if (shouldSkipPrint(print)) {
-            return null;
-        }
-
         final String authToken = authTokenGenerator.generate();
         List<Document> documents = documentRequestForPrint(print, authToken);
 
@@ -93,18 +77,6 @@ public class BulkPrintService {
         }
 
         return triggerPrintRequest(print, authToken, documents);
-    }
-
-    private boolean shouldSkipPrint(final Print print) {
-        if (StringUtils.isBlank(print.getRecipientAddress())) {
-            log.info("Skipping bulk print for case {} and letter type {} as recipient address is blank",
-                print.getCaseRef(),
-                print.getLetterType()
-            );
-            return true;
-        }
-
-        return false;
     }
 
     private void addD10FormTo(final List<Document> documents) {
@@ -141,6 +113,13 @@ public class BulkPrintService {
     }
 
     private UUID triggerPrintRequest(Print print, String authToken, List<Document> documents) {
+        if (StringUtils.isBlank(print.getRecipientAddress())) {
+            log.info("Skipping bulk print for case {} and letter type {} as recipient address is blank",
+                print.getCaseRef(),
+                print.getLetterType()
+            );
+            return null;
+        }
 
         UUID sendLetterUUID = sendLetterApi.sendLetter(
             authToken,

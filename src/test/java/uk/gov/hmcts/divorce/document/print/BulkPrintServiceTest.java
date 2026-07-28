@@ -161,6 +161,13 @@ class BulkPrintServiceTest {
 
     @Test
     void shouldSkipPrintingWhenRecipientAddressIsBlank() {
+        final List<String> roles = List.of("caseworker-divorce", "caseworker-divorce-solicitor");
+        final String userId = UUID.randomUUID().toString();
+        final User systemUpdateUser = solicitorUser(roles, userId);
+
+        given(idamService.retrieveSystemUpdateUserDetails()).willReturn(systemUpdateUser);
+        given(authTokenGenerator.generate()).willReturn(TEST_SERVICE_AUTH_TOKEN);
+
         final Print print = new Print(
             List.of(),
             "1234",
@@ -174,7 +181,7 @@ class BulkPrintServiceTest {
         final UUID letterId = bulkPrintService.print(print);
 
         assertThat(letterId).isNull();
-        verifyNoInteractions(authTokenGenerator, sendLetterApi, documentManagementClient, idamService);
+        verifyNoInteractions(sendLetterApi, documentManagementClient);
     }
 
     @Test
