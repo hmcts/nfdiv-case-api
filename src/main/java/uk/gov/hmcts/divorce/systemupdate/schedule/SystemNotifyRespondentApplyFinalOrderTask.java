@@ -16,6 +16,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -30,10 +31,6 @@ import static uk.gov.hmcts.divorce.systemupdate.service.CcdSearchService.STATE;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-/*
-  As a system, I want to notify the respondent that they can apply for the Final Order IF the applicant hasn't
-  applied after 3 months so that the case can be progressed
-*/
 public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
 
     private final CcdUpdateService ccdUpdateService;
@@ -49,6 +46,7 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
     public static final String NOTIFICATION_FLAG = "finalOrderReminderSentApplicant2";
     public static final String APP_ELIGIBLE_DATE = "dateFinalOrderEligibleFrom";
     public static final String RESP_ELIGIBLE_DATE = "dateFinalOrderEligibleToRespondent";
+    public static final String CO_GRANTED_DATE = "coGrantedDate";
 
     @Override
     public void run() {
@@ -57,12 +55,19 @@ public class SystemNotifyRespondentApplyFinalOrderTask implements Runnable {
         final User user = idamService.retrieveSystemUpdateUserDetails();
         final String serviceAuth = authTokenGenerator.generate();
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String overdueDate = formatter.format(LocalDate.now().minusMonths(12));
+
         try {
             final BoolQueryBuilder query =
                 boolQuery()
                     .must(matchQuery(STATE, AwaitingFinalOrder))
                     .filter(rangeQuery(String.format(DATA, RESP_ELIGIBLE_DATE)).lte(LocalDate.now()))
                     .must(matchQuery(String.format(DATA, APPLICATION_TYPE), SOLE_APPLICATION))
+                    .must(
+                        boolQuery()
+                            .should(boolQuery().must(rangeQuery(String.format(DATA, CO_GRANTED_DATE)).lt(overdueDate)))
+                    )
                     .mustNot(matchQuery(String.format(DATA, NOTIFICATION_FLAG), YesOrNo.YES));
 
             final List<CaseDetails> validCasesInAwaitingFinalOrderState =

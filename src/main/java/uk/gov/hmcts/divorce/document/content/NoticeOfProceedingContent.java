@@ -43,6 +43,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME_WITH_DEFAULT_VALUE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WELSH_ENQUIRIES_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WHO_APPLIED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -232,6 +233,8 @@ public class NoticeOfProceedingContent {
 
         templateContent.put(IS_REISSUED_OFFLINE_AS_AOS, OFFLINE_AOS.equals(caseData.getApplication().getReissueOption()));
         templateContent.put(IS_RESPONDENT_EMAIL_PRESENT, ObjectUtils.isNotEmpty(applicant2.getEmail()));
+
+        templateContent.put(WELSH_ENQUIRIES_EMAIL, config.getTemplateVars().get(WELSH_ENQUIRIES_EMAIL));
 
         generateDivorceOrDissolutionContent(templateContent, caseData, partner, languagePreference);
 

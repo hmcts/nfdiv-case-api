@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.caseworker.service.CaseFlagsService;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateHmctsCoversheet;
 import uk.gov.hmcts.divorce.common.service.SubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -46,6 +47,8 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
     private final CaseFlagsService caseFlagsService;
 
     private final CcdUpdateService ccdUpdateService;
+
+    private final GenerateHmctsCoversheet generateHmctsCoverSheet;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -101,6 +104,8 @@ public class CitizenSubmitApplication implements CCDConfig<CaseData, State, User
 
         data.getLabelContent().setApplicationType(data.getApplicationType());
         data.getLabelContent().setUnionType(data.getDivorceOrDissolution());
+
+        generateHmctsCoverSheet.addToDocumentsGenerated(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

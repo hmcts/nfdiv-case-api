@@ -2000,7 +2000,7 @@ public class CaseworkerReIssueApplicationIT {
             "FL-NFD-APP-ENG-Judicial-Separation-Application-Sole.docx");
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_JS_Sole.docx");
         stubForDocAssemblyWith(NFD_NOP_APP2_JS_SOLE_ID,
-            "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole.docx");
+            "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole_V1.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
@@ -2050,7 +2050,7 @@ public class CaseworkerReIssueApplicationIT {
             "FL-NFD-APP-ENG-Judicial-Separation-Application-Sole.docx");
         stubForDocAssemblyWith(NOTICE_OF_PROCEEDING_ID, "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_Solicitor_JS_Sole.docx");
         stubForDocAssemblyWith(NFD_NOP_APP2_JS_SOLE_ID,
-            "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole.docx");
+            "FL-NFD-GOR-ENG-Notice_Of_Proceedings_Respondent_JS_Sole_V1.docx");
         stubForIdamDetails(TEST_AUTHORIZATION_TOKEN, CASEWORKER_USER_ID, CASEWORKER_ROLE);
         stubForIdamToken(TEST_AUTHORIZATION_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
