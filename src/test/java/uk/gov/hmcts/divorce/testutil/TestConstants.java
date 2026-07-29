@@ -125,6 +125,9 @@ public final class TestConstants {
     public static final String WEBFORM_TEST_URL = "englishWebformUrl";
     public static final String WEBFORM_TEST_URL_CY = "welshWebformUrl";
 
+    public static final String TEST_IDAM_INACTIVITY_POLICY = "englishIdamInactivityPolicy";
+    public static final String TEST_IDAM_INACTIVITY_POLICY_CY = "welshIdamInactivityPolicy";
+
     public static final DocumentPackInfo TEST_DOCUMENT_PACK = new DocumentPackInfo(
         ImmutableMap.of(
             REQUEST_FOR_INFORMATION_RESPONSE, Optional.of(REQUEST_FOR_INFORMATION_RESPONSE_LETTER_TEMPLATE_ID)

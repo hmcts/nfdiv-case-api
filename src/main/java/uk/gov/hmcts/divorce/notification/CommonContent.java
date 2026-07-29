@@ -22,13 +22,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.FEMALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.MORE_INFO;
 import static uk.gov.hmcts.divorce.divorcecase.model.RefusalOption.REJECT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
@@ -36,9 +36,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_OR_APPLICANT1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_OR_APPLICANT2;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IN_TIME;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
@@ -168,6 +165,9 @@ public class CommonContent {
     public static final String DO_NOT_REPLY = "This is an automated message, do not reply to this email.";
     public static final String DO_NOT_REPLY_WELSH = "Neges awtomataidd yw hon, peidiwch ag ymateb i’r e-bost hwn.";
 
+    public static final String USER = "User";
+    public static final String USER_CY = "Defnyddiwr";
+
     @Value("${final_order.eligible_from_offset_days}")
     private long finalOrderOffsetDays;
 
@@ -178,90 +178,181 @@ public class CommonContent {
 
     private final EmailTemplatesConfig config;
 
+    //Stage 1
+    private final TemplateContentLocalisation templateContentLocalisation;
+
     @Value("${interim_application.response_offset_days}")
     private long interimApplicationResponseOffsetDays;
 
+
+    //Stage 1
+    //Localisation method. Does this need to be public? Called by mainTemplateVars
+    //Move to TemplateContentLocalisation.
+    //Leave facade in place - tidy up in Stage 2
     public String getWebFormUrl(LanguagePreference languagePreference) {
-        return WELSH.equals(languagePreference)
-            ? config.getTemplateVars().get(WEBFORM_CY_URL)
-            : config.getTemplateVars().get(WEBFORM_URL);
+        return templateContentLocalisation.getWebFormUrl(languagePreference);
     }
 
+    //Stage 1
+    //Add private method to return partner applicant object
+    private Applicant returnPartner(CaseData caseData, Applicant applicant) {
+        return isApplicant1(caseData, applicant) ? caseData.getApplicant2() : caseData.getApplicant1();
+    }
+
+    //Stage 1
+    //Add private method to determine if an applicant is applicant1 (hash comparison)
+    private boolean isApplicant1(CaseData caseData, Applicant applicant) {
+        Applicant applicant1 = caseData.getApplicant1();
+
+        var applicantHash = Objects.hashCode(applicant);
+        var applicant1Hash = Objects.hashCode(applicant1);
+
+        return applicantHash == applicant1Hash;
+    }
+
+    //Stage 1
+    //Add private method to format firstname string
+    private String formatFirstName(Applicant applicant, LanguagePreference languagePreference) {
+        return StringUtils.isNotEmpty(applicant.getFirstName())
+            ? applicant.getFirstName()
+            :  templateContentLocalisation.getUserString(languagePreference);
+    }
+
+    //Stage 1
+    //Add private method to format lastname string
+    private String formatLastName(Applicant applicant) {
+        return StringUtils.isNotEmpty(applicant.getLastName()) ? applicant.getLastName() : "";
+    }
+
+    //Stage 1
+    //Add languagePreference param to handle requests through basicTemplateVars
+    //Add IS_JOINT, IS_SOLE
+    //Could we set UNION_TYPE here?
     public Map<String, String> mainTemplateVars(final CaseData caseData,
                                                 final Long id,
                                                 final Applicant applicant,
-                                                final Applicant partner) {
+                                                final Applicant partner,
+                                                final LanguagePreference languagePreference) {
         Map<String, String> templateVars = new HashMap<>();
-        LanguagePreference languagePreference = applicant.getLanguagePreference();
+
+        final String applicantFirstName = formatFirstName(applicant, languagePreference);
+        final String applicantLastName = formatLastName(applicant);
+
+        final String partnerFirstName = formatFirstName(partner, languagePreference);
+        final String partnerLastName = formatLastName(partner);
+
+        final boolean isSole = caseData.getApplicationType().isSole();
 
         templateVars.put(APPLICATION_REFERENCE, id != null ? formatId(id) : null);
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
-        templateVars.put(FIRST_NAME, StringUtils.isNotEmpty(applicant.getFirstName())
-            ? applicant.getFirstName()
-            : getUserNameForSelectedLanguage(languagePreference));
-        templateVars.put(LAST_NAME, StringUtils.isNotEmpty(applicant.getLastName()) ? applicant.getLastName() : "");
+        templateVars.put(FIRST_NAME, applicantFirstName);
+        templateVars.put(LAST_NAME, applicantLastName);
         templateVars.put(PARTNER, getPartner(caseData, partner, languagePreference));
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(WELSH_ENQUIRIES_EMAIL, config.getTemplateVars().get(WELSH_ENQUIRIES_EMAIL));
         templateVars.put(SIGN_IN_URL, getSignInUrl(caseData));
-        templateVars.put(WEBFORM_URL, getWebFormUrl(applicant.getLanguagePreference()));
-        templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
-        templateVars.put(SMART_SURVEY, getSmartSurveyWithDoNotReply(languagePreference));
-        templateVars.put(IDAM_INACTIVITY_POLICY, getIdamInactivityPolicy(languagePreference));
+        templateVars.put(WEBFORM_URL, templateContentLocalisation.getWebFormUrl(applicant.getLanguagePreference()));
+        templateVars.put(WEB_FORM_TEXT, templateContentLocalisation.getContactWebFormText(applicant.getLanguagePreference()));
+        templateVars.put(SMART_SURVEY, templateContentLocalisation.getSmartSurvey(languagePreference));
+        templateVars.put(IDAM_INACTIVITY_POLICY, templateContentLocalisation.getIdamInactivityPolicy(languagePreference));
 
-        getPhoneAndOpeningTimes(languagePreference, templateVars);
+        //Extra values needed by basicTemplateVars equivalent. applicant should be app1 when these calls are made, but verify
+        if (isApplicant1(caseData, applicant)) {
+            templateVars.put(APPLICANT_NAME, join(" ", applicantFirstName, applicantLastName));
+            templateVars.put(RESPONDENT_NAME, join(" ", partnerFirstName, partnerLastName));
+        } else {
+            templateVars.put(APPLICANT_NAME, join(" ", partnerFirstName, partnerLastName));
+            templateVars.put(RESPONDENT_NAME, join(" ", applicantFirstName, applicantLastName));
+        }
+
+        //Joint and sole
+        templateVars.put(IS_SOLE, isSole ? YES : NO);
+        templateVars.put(IS_JOINT, !isSole ? YES : NO);
+
+        templateContentLocalisation.getPhoneAndOpeningTimes(languagePreference, templateVars);
         return templateVars;
     }
 
-    public Map<String, String> basicTemplateVars(final CaseData caseData, final Long caseId, LanguagePreference languagePreference) {
+    //Stage 1
+    //Add overload to handle existing requests to mainTemplateVars
+    public Map<String, String> mainTemplateVars(final CaseData caseData,
+                                                final Long id,
+                                                final Applicant applicant,
+                                                final Applicant partner) {
+        LanguagePreference languagePreference = applicant.getLanguagePreference();
+        return mainTemplateVars(caseData, id, applicant, partner, languagePreference);
+    }
 
-        final Map<String, String> templateVars = new HashMap<>();
+    //Stage 1
+    //handle requests for basicTemplateVars
+    public Map<String, String> mainTemplateVars(final CaseData caseData, final Long caseId, LanguagePreference languagePreference) {
+
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant respondent = caseData.getApplicant2();
-
-        templateVars.put(APPLICANT_NAME, join(" ", applicant1.getFirstName(), applicant1.getLastName()));
-        templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
-        templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
-        templateVars.put(RESPONDENT_NAME, join(" ", respondent.getFirstName(), respondent.getLastName()));
-        templateVars.put(APPLICATION_REFERENCE, formatId(caseId));
-        templateVars.put(COURT_EMAIL,
-            config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
-        templateVars.put(SMART_SURVEY, getSmartSurveyWithDoNotReply(languagePreference));
-        templateVars.put(WEBFORM_URL, config.getTemplateVars().get(WEBFORM_URL));
-
-        getPhoneAndOpeningTimes(languagePreference, templateVars);
-
-        return templateVars;
+        return mainTemplateVars(caseData, caseId, applicant1, respondent, languagePreference);
     }
 
-    public Map<String, String> solicitorTemplateVarsPreIssue(CaseData data, Long id, Applicant applicant) {
-        Map<String, String> templateVars = basicTemplateVars(data, id, applicant.getLanguagePreference());
-        templateVars.put(SOLICITOR_NAME, applicant.getSolicitor().getName());
+    //Stage 1
+    //basicTemplateVars facade - pass requests to mainTemplateVars
+    public Map<String, String> basicTemplateVars(final CaseData caseData, final Long caseId, LanguagePreference languagePreference) {
+        return mainTemplateVars(caseData, caseId, languagePreference);
+    }
+
+    //Stage 1
+    //Add public method getSolicitorDetails
+    //Should be called by solicitorTemplateVars and requestForInformationTemplateVars
+    public void setSolicitorDetails(Applicant applicant, Map<String, String> templateVars) {
+        templateVars.put(SOLICITOR_NAME, docmosisCommonContent.getSolicitorName(
+            applicant,
+            applicant.getSolicitor(),
+            applicant.getLanguagePreference())
+        );
         templateVars.put(SOLICITOR_REFERENCE, docmosisCommonContent.getSolicitorReference(
             applicant.getSolicitor(),
             applicant.getLanguagePreference())
         );
+        if (StringUtils.isNotEmpty(applicant.getSolicitor().getPreferredFirmName())) {
+            templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getPreferredFirmName());
+        } else {
+            templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getName());
+        }
+    }
+
+    //Stage 1
+    //Consolidates solicitorTemplateVars & solicitorTemplateVarsPreIssue
+    public Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant, Applicant partner) {
+        Map<String, String> templateVars = mainTemplateVars(data, id, applicant, partner);
+        setSolicitorDetails(applicant, templateVars);
+        setApplicantLabels(data, templateVars); //Once NoC & general email methods are refactored, refactor setApplicantLabels into this
         templateVars.put(APPLICANT_1_FULL_NAME, data.getApplicant1().getFullName());
         templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant2().getFullName());
         templateVars.put(SIGN_IN_URL, getProfessionalUsersSignInUrl(id));
+
+        String issueDate = templateContentLocalisation.getIssueDate(data.getApplication().getIssueDate(), applicant.getLanguagePreference());
+        templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, issueDate);
+        templateVars.put(DATE_OF_ISSUE, issueDate);
         return templateVars;
     }
 
+    //Stage 1
+    //Facade for solicitorTemplateVarsPreIssue.  Determine partner based on applicant and pass to solicitorTemplateVars
+    public Map<String, String> solicitorTemplateVarsPreIssue(CaseData data, Long id, Applicant applicant) {
+        Applicant partner = returnPartner(data, applicant);
+        return solicitorTemplateVars(data, id, applicant, partner);
+    }
+
+    //Stage 1
+    //Consolidate solicitorTemplateVarsPreIssue into this method
+    //Set DATE_OF_ISSUE *and* ISSUE_DATE (same value) for now - evaluate usage and determine if both are required.
     public Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant) {
-        Map<String, String> templateVars = solicitorTemplateVarsPreIssue(data, id, applicant);
-        templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, getIssueDateInPreferredLanguage(data, applicant));
-        return templateVars;
+        Applicant partner = returnPartner(data, applicant);
+        return solicitorTemplateVars(data, id, applicant, partner);
     }
 
-    public String getIssueDateInPreferredLanguage(CaseData data, Applicant applicant) {
-        final LocalDate issueDate = data.getApplication().getIssueDate();
-        return
-            issueDate == null ? "" : issueDate.format(
-                getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference()));
-    }
-
+    //Stage 3
+    //Move to ServiceApplicationTemplateContent class
     public Map<String, String> serviceApplicationTemplateVars(CaseData data, Long id, Applicant applicant) {
         Map<String, String> templateVars = mainTemplateVars(data, id, applicant, data.getApplicant2());
 
@@ -280,6 +371,9 @@ public class CommonContent {
         return templateVars;
     }
 
+    //Stage 3
+    //Move to ConditionalOrderTemplateContent class
+    //Applicant labels, Phone and Opening Times should be set by solicitorTemplateVars already
     public Map<String, String> getCoRefusedSolicitorTemplateVars(CaseData caseData, Long caseId, Applicant applicant,
                                                                  RefusalOption refusalOption) {
         final Map<String, String> templateVars = solicitorTemplateVars(caseData, caseId, applicant);
@@ -296,50 +390,40 @@ public class CommonContent {
         return templateVars;
     }
 
+    //Stage 1
+    //Localisation method.
+    //Move to TemplateContentLocalisation
+    //Leave facade in place - tidy up in Stage 2
     public String getUnionType(CaseData caseData, LanguagePreference applicantLanguagePreference) {
-        if (WELSH.equals(applicantLanguagePreference)) {
-            return caseData.isDivorce() ? DIVORCE_WELSH : DISSOLUTION_WELSH;
-        }
-
-        return caseData.isDivorce() ? DIVORCE : DISSOLUTION;
+        return templateContentLocalisation.getUnionType(caseData, applicantLanguagePreference);
     }
 
+    //Stage 1
+    //Localisation method.  Only called by AwaitingFinalOrderNotification, ConditionalOrderPronouncedNotification and unit tests
+    //Should be an override calling getUnionType(caseData, LanguagePreference.ENGLISH)
+    //If required, move to TemplateContentLocalisation
+    //Leave facade in place - tidy up in Stage 2
     public String getUnionType(CaseData caseData) {
-        return caseData.isDivorce() ? DIVORCE : DISSOLUTION;
+        return templateContentLocalisation.getUnionType(caseData);
     }
 
+    //Stage 1
+    //Localisation method.
+    //Move to TemplateContentLocalisation
+    //Leave facade in place - tidy up in Stage 2
     public String getPartner(CaseData caseData, Applicant partner, LanguagePreference applicantLanguagePreference) {
-        if (WELSH.equals(applicantLanguagePreference)) {
-            return getPartnerWelshContent(caseData, partner);
-        }
-
-        return getPartner(caseData, partner);
+        return templateContentLocalisation.getPartner(caseData, partner, applicantLanguagePreference);
     }
 
+    //Stage 1
+    //english getPartner method is being called directly.  Should not happen.  Add an overload to handle this prior to refactor in Stage 3.
     public String getPartner(CaseData caseData, Applicant partner) {
-        if (caseData.isDivorce()) {
-            if (isNull(partner.getGender())) {
-                return SPOUSE;
-            } else {
-                return partner.getGender() == MALE ? HUSBAND : WIFE;
-            }
-        } else {
-            return CIVIL_PARTNER;
-        }
+        return templateContentLocalisation.getPartner(caseData, partner, LanguagePreference.ENGLISH);
     }
 
-    public String getPartnerWelshContent(CaseData caseData, Applicant partner) {
-        if (caseData.isDivorce()) {
-            if (isNull(partner.getGender())) {
-                return SPOUSE_WELSH;
-            } else {
-                return partner.getGender() == MALE ? HUSBAND_CY : WIFE_CY;
-            }
-        } else {
-            return CIVIL_PARTNER_CY;
-        }
-    }
-
+    //Stage 1
+    //IS_SOLE should be set in mainTemplateVars
+    //Should JOINT_CONDITIONAL_ORDER be set here? If yes, conditionalOrderTemplateVars is redundant, otherwise tidy up
     public Map<String, String> jointTemplateVars(final CaseData caseData,
                                                             final Long id,
                                                             final Applicant applicant,
@@ -348,7 +432,6 @@ public class CommonContent {
         final boolean jointApplication = !caseData.getApplicationType().isSole();
 
         templateVars.put(JOINT_CONDITIONAL_ORDER, jointApplication ? YES : NO);
-        templateVars.put(IS_SOLE, jointApplication ? NO : YES);
         templateVars.put(HUSBAND_JOINT, jointApplication
             && caseData.isDivorce()
             && MALE.equals(partner.getGender())
@@ -364,6 +447,9 @@ public class CommonContent {
         return templateVars;
     }
 
+    //Stage 1
+    //JOINT_CONDITIONAL_ORDER is set by jointTemplateVars. If that is acceptable, this method is redundant.  Leave facade in place.
+    //Either tidy up facade in Stage 2, or move to ConditionalOrderTemplateContent in Stage 3 if still required.
     public Map<String, String> conditionalOrderTemplateVars(final CaseData caseData,
                                                             final Long id,
                                                             final Applicant applicant,
@@ -375,6 +461,11 @@ public class CommonContent {
         return templateVars;
     }
 
+    //Stage 1
+    //IS_JOINT, APPLICANT_NAME, RESPONDENT_NAME should be set by mainTemplateVars
+    //Call setSolicitorDetails() to set SOLICITOR_NAME and SOLICITOR_REFERENCE
+    //Stage 3
+    //Move to RequestForInformationTemplateContent
     public Map<String, String> requestForInformationTemplateVars(final CaseData caseData,
                                                             final Long id,
                                                             final Applicant applicant,
@@ -383,29 +474,34 @@ public class CommonContent {
 
         LanguagePreference languagePreference = applicant.getLanguagePreference();
 
-        templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
         if (applicant.isRepresented()) {
             templateVars.put(APPLICANT_NAME, applicant.getFullName());
             templateVars.put(RESPONDENT_NAME, partner.getFullName());
             templateVars.put(APPLICANT_OR_APPLICANT1, docmosisCommonContent.getApplicantOrApplicant1(caseData, languagePreference));
             templateVars.put(RESPONDENT_OR_APPLICANT2, docmosisCommonContent.getRespondentOrApplicant2(caseData, languagePreference));
-            templateVars.put(SOLICITOR_NAME,
-                    docmosisCommonContent.getSolicitorName(applicant, applicant.getSolicitor(), languagePreference));
-            templateVars.put(SOLICITOR_REFERENCE,
-                    docmosisCommonContent.getSolicitorReference(applicant.getSolicitor(), languagePreference));
+            setSolicitorDetails(applicant, templateVars);
         }
 
         return templateVars;
     }
 
+    //Stage 2
+    //Does this need to be public? It's called by mainTemplateVars
     public String getSignInUrl(CaseData caseData) {
         return config.getTemplateVars().get(caseData.isDivorce() ? SIGN_IN_DIVORCE_URL : SIGN_IN_DISSOLUTION_URL);
     }
 
+
+    //Stage 2
+    //Does this need to be public? Should be called by solicitorTemplateVars
     public String getProfessionalUsersSignInUrl(Long caseId) {
         return config.getTemplateVars().get(SIGN_IN_PROFESSIONAL_USERS_URL) + caseId;
     }
 
+
+    //Stage 3
+    //Move to ConditionalOrderTemplateContent and proxy in FinalOrderTemplateContent for consistency?
+    //Pull firstName, lastName from DocmosisTemplateConstants instead of hardcoding
     public Map<String, Object> templateContentCanApplyForCoOrFo(final CaseData caseData,
                                                                 final Long caseId,
                                                                 final Applicant applicant,
@@ -428,15 +524,17 @@ public class CommonContent {
         return templateContent;
     }
 
-    public String getSmartSurvey() {
-        return config.getTemplateVars().get(SMART_SURVEY);
-    }
-
+    //Stage 1
+    //Localisation method.
+    //Move to TemplateContentLocalisation.getSmartSurvey()
+    //Leave facade in place - tidy up in Stage 2
     public String getSmartSurveyWithDoNotReply(LanguagePreference languagePreference) {
-        return getSmartSurvey() + System.lineSeparator() + System.lineSeparator() + "##"
-            + (WELSH.equals(languagePreference) ? DO_NOT_REPLY_WELSH : DO_NOT_REPLY);
+        return templateContentLocalisation.getSmartSurvey(languagePreference);
     }
 
+    //Stage 3
+    //Move to NocTemplateContent.
+    //Consider calling solicitorTemplateVars instead - nothing unique here.
     public Map<String, String> nocCitizenTemplateVars(final Long caseId,
                                                       final Applicant applicant) {
         Map<String, String> templateVars = new HashMap<>();
@@ -457,6 +555,10 @@ public class CommonContent {
         return templateVars;
     }
 
+    //Stage 3
+    //Move to NocTemplateContent.
+    //Consider calling solicitorTemplateVars instead - nothing unique here.
+    // - Would require refactor of templates to use SOLICITOR_NAME not NAME (until complete, set NAME from SOLICITOR_NAME)
     public Map<String, String> nocSolsTemplateVars(final Long caseId,
                                                    final CaseData caseData,
                                                    final Applicant applicant) {
@@ -486,6 +588,10 @@ public class CommonContent {
         return templateVars;
     }
 
+    //Stage 3
+    //Move to NocTemplateContent
+    //Call solicitorTemplateVars with beforeCaseData, beforeApplicant and beforePartner.
+    // - Will require refactor of templates to use SOLICITOR_NAME not NAME (until complete, set NAME from SOLICITOR_NAME)
     public Map<String, String> nocOldSolsTemplateVars(final Long caseId,
                                                       final CaseData beforecaseData,
                                                       boolean isApplicant1) {
@@ -514,12 +620,16 @@ public class CommonContent {
         return templateVars;
     }
 
+    //Stage 1
+    //Move to GeneralEmailTemplateContent or leave here?
+    //Is this necessary? Could just call solicitorTemplateVars
+    //If removed, leave facade in place and tidy up at Stage 2
     public Map<String, String> getGeneralEmailSolicitorVars(CaseData caseData, Long caseId, Applicant applicant) {
-        Map<String, String> templateVars = solicitorTemplateVars(caseData, caseId, applicant);
-        setApplicantLabels(caseData, templateVars);
-        return templateVars;
+        return solicitorTemplateVars(caseData, caseId, applicant);
     }
 
+    //Stage 3
+    //Move to FinalOrderTemplateContent (Existing FinalOrderNotificationCommonContent - should be renamed for consistency)
     public void setOverdueAndInTimeVariables(CaseData caseData, Map<String, String> templateVars) {
         if (YesOrNo.YES.equals(caseData.getFinalOrder().getIsFinalOrderOverdue())) {
             templateVars.put(IS_OVERDUE, YES);
@@ -530,33 +640,40 @@ public class CommonContent {
         }
     }
 
+    //Stage 3
+    //Is this required? Set in mainTemplateVars, otherwise only used in FinalOrderNotificationCommonContent
     public void setIsDivorceAndIsDissolutionVariables(CaseData caseData, Map<String, String> templateVars) {
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
     }
 
+    //Stage 3
+    //Is this required? Could be refactored into solicitorTemplateVars once NoC methods are refactored.
     private void setApplicantLabels(CaseData caseData, Map<String, String> templateVars) {
         boolean isSole = caseData.getApplicationType().isSole();
         templateVars.put(APPLICANT1_LABEL, isSole ? APPLICANT : APPLICANT_1);
         templateVars.put(APPLICANT2_LABEL, isSole ? RESPONDENT : APPLICANT_2);
     }
 
+
+    //Stage 1
+    //Localisation method.
+    //Move to TemplateContentLocalisation
+    //Leave facade in place - tidy up in Stage 2
     public String getContactWebFormText(LanguagePreference languagePreference) {
-        if (languagePreference == WELSH) {
-            return CONTACT_TEXT_WELSH + "(" + config.getTemplateVars().get(WEBFORM_CY_URL) + ")";
-        } else {
-            return CONTACT_TEXT + "(" + config.getTemplateVars().get(WEBFORM_URL) + ")";
-        }
+        return templateContentLocalisation.getContactWebFormText(languagePreference);
     }
 
+    //Stage 1
+    //Localisation method.
+    //Move to TemplateContentLocalisation
+    //Leave facade in place - tidy up in Stage 2
     public void getPhoneAndOpeningTimes(LanguagePreference recipientLanguagePreference, Map<String, String> templateVars) {
-        if (recipientLanguagePreference != WELSH) {
-            templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
-        } else {
-            templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
-        }
+        templateContentLocalisation.getPhoneAndOpeningTimes(recipientLanguagePreference, templateVars);
     }
 
+    //Stage 3
+    //Move to ConditionalOrderTemplateContent
     public Map<String, String> coPronouncedTemplateVars(final CaseData caseData,
                                                         final Long caseId,
                                                         final Applicant applicant,
@@ -582,16 +699,8 @@ public class CommonContent {
         return templateVars;
     }
 
-    private String getUserNameForSelectedLanguage(LanguagePreference languagePreference) {
-        return languagePreference == WELSH ? "Defnyddiwr" : "User";
-    }
-
-    private String getIdamInactivityPolicy(LanguagePreference languagePreference) {
-        return WELSH.equals(languagePreference)
-            ? config.getTemplateVars().get(IDAM_INACTIVITY_POLICY_CY)
-            : config.getTemplateVars().get(IDAM_INACTIVITY_POLICY);
-    }
-
+    //Stage 3
+    //Move to ConditionalOrderTemplateContent (only called by coPronouncedTemplateVars)
     private void requireNonNull(Object value, String fieldName, Long caseId) {
         if (isNull(value)) {
             throw new NotificationTemplateException(format(MISSING_FIELD_MESSAGE, fieldName, caseId));
