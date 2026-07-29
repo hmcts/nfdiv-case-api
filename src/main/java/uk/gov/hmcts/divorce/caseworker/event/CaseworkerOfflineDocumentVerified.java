@@ -265,6 +265,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                 .build();
 
             caseData.getDocuments().setScannedDocumentNames(scannedDocNamesDynamicList);
+        } else {
+            caseData.getDocuments().setScannedDocumentNames(null);
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
