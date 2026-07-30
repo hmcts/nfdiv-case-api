@@ -106,6 +106,8 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SMART_SURVEY_TEST_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_FIRST_NAME;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APP2_LAST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_IDAM_INACTIVITY_POLICY;
@@ -124,6 +126,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssue
 class CommonContentTest {
 
     private final Long caseRef = 7201000100010001L;
+
     @Mock
     private EmailTemplatesConfig emailTemplatesConfig;
 
@@ -490,6 +493,66 @@ class CommonContentTest {
                 entry(PARTNER, "wife"),
                 entry(IDAM_INACTIVITY_POLICY, TEST_IDAM_INACTIVITY_POLICY)
             );
+    }
+
+    @Test
+    void shouldCorrectlyDetermineApplicantWhenPassedAsPartner() {
+        final Applicant applicant = Applicant.builder()
+            .gender(MALE)
+            .firstName(TEST_FIRST_NAME)
+            .lastName(TEST_LAST_NAME)
+            .languagePreferenceWelsh(NO)
+            .build();
+
+        final Applicant respondent = Applicant.builder()
+            .gender(FEMALE)
+            .firstName(TEST_APP2_FIRST_NAME)
+            .lastName(TEST_APP2_LAST_NAME)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(applicant)
+            .applicant2(respondent)
+            .build();
+
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, TEST_CASE_ID, respondent, applicant);
+
+        assertThat(result).contains(
+            entry(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME),
+            entry(RESPONDENT_NAME, TEST_APP2_FIRST_NAME + " " + TEST_APP2_LAST_NAME)
+        );
+    }
+
+    @Test
+    void shouldCorrectlyDetermineRespondentWhenPassedAsPartner() {
+        final Applicant applicant = Applicant.builder()
+            .gender(MALE)
+            .firstName(TEST_FIRST_NAME)
+            .lastName(TEST_LAST_NAME)
+            .languagePreferenceWelsh(NO)
+            .build();
+
+        final Applicant respondent = Applicant.builder()
+            .gender(FEMALE)
+            .firstName(TEST_APP2_FIRST_NAME)
+            .lastName(TEST_APP2_LAST_NAME)
+            .build();
+
+        final CaseData caseData = CaseData.builder()
+            .divorceOrDissolution(DIVORCE)
+            .applicationType(SOLE_APPLICATION)
+            .applicant1(applicant)
+            .applicant2(respondent)
+            .build();
+
+        final Map<String, String> result = commonContent.mainTemplateVars(caseData, TEST_CASE_ID, applicant, respondent);
+
+        assertThat(result).contains(
+            entry(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME),
+            entry(RESPONDENT_NAME, TEST_APP2_FIRST_NAME + " " + TEST_APP2_LAST_NAME)
+        );
     }
 
     @Test
