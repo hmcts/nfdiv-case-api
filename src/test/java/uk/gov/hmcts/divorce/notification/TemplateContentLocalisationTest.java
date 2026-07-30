@@ -33,6 +33,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.USER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.USER_CY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_CY_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_URL;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_IDAM_INACTIVITY_POLICY;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_IDAM_INACTIVITY_POLICY_CY;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(MockitoExtension.class)
@@ -195,14 +197,14 @@ class TemplateContentLocalisationTest {
     @Test
     void shouldGetIdamInactivityPolicy() {
         Map<String, String> templateVars = Map.of(
-            IDAM_INACTIVITY_POLICY, IDAM_INACTIVITY_POLICY,
-            IDAM_INACTIVITY_POLICY_CY, IDAM_INACTIVITY_POLICY_CY
+            IDAM_INACTIVITY_POLICY, TEST_IDAM_INACTIVITY_POLICY,
+            IDAM_INACTIVITY_POLICY_CY, TEST_IDAM_INACTIVITY_POLICY_CY
         );
         when(emailTemplatesConfig.getTemplateVars()).thenReturn(templateVars);
 
-        assertThat(templateContentLocalisation.getIdamInactivityPolicy(ENGLISH)).isEqualTo(IDAM_INACTIVITY_POLICY);
+        assertThat(templateContentLocalisation.getIdamInactivityPolicy(ENGLISH)).isEqualTo(TEST_IDAM_INACTIVITY_POLICY);
 
-        assertThat(templateContentLocalisation.getIdamInactivityPolicy(WELSH)).isEqualTo(IDAM_INACTIVITY_POLICY_CY);
+        assertThat(templateContentLocalisation.getIdamInactivityPolicy(WELSH)).isEqualTo(TEST_IDAM_INACTIVITY_POLICY_CY);
     }
 }
 
