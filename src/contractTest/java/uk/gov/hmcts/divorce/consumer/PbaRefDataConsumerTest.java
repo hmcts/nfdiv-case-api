@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.TestPropertySource;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaOrganisationResponse;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaRefDataClient;
 
@@ -27,10 +26,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @ExtendWith(PactConsumerTestExt.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@SpringBootTest("pba.ref.data.service.url : localhost:8892")
+@SpringBootTest
 @PactDirectory("pacts")
 @PactTestFor(providerName = "referenceData_organisationalExternalPbas", port = "8892")
-@TestPropertySource(locations = {"/application.properties"})
 public class PbaRefDataConsumerTest {
 
     public static final String SOME_AUTHORIZATION_TOKEN = "Bearer UserAuthToken";
