@@ -205,20 +205,14 @@ public class CommonContent {
                                                 final LanguagePreference languagePreference) {
         Map<String, String> templateVars = new HashMap<>();
 
-        final String applicantFirstName = formatFirstName(applicant, languagePreference);
-        final String applicantLastName = formatLastName(applicant);
-
-        final String partnerFirstName = formatFirstName(partner, languagePreference);
-        final String partnerLastName = formatLastName(partner);
-
-        final boolean isSole = caseData.getApplicationType().isSole();
-
         templateVars.put(APPLICATION_REFERENCE, id != null ? formatId(id) : null);
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
-        templateVars.put(FIRST_NAME, applicantFirstName);
-        templateVars.put(LAST_NAME, applicantLastName);
-        templateVars.put(PARTNER, getPartner(caseData, partner, languagePreference));
+        templateVars.put(FIRST_NAME, StringUtils.isNotEmpty(applicant.getFirstName())
+            ? applicant.getFirstName()
+            :  templateContentLocalisation.getUserString(languagePreference));
+        templateVars.put(LAST_NAME, StringUtils.isNotEmpty(applicant.getLastName()) ? applicant.getLastName() : "");
+        templateVars.put(PARTNER, templateContentLocalisation.getPartner(caseData, partner, languagePreference));
         templateVars.put(COURT_EMAIL,
             config.getTemplateVars().get(caseData.isDivorce() ? DIVORCE_COURT_EMAIL : DISSOLUTION_COURT_EMAIL));
         templateVars.put(WELSH_ENQUIRIES_EMAIL, config.getTemplateVars().get(WELSH_ENQUIRIES_EMAIL));
@@ -230,16 +224,18 @@ public class CommonContent {
 
         //Extra values needed by basicTemplateVars equivalent. applicant should be app1 when these calls are made, but verify
         if (isApplicant1(caseData, applicant)) {
-            templateVars.put(APPLICANT_NAME, join(" ", applicantFirstName, applicantLastName));
-            templateVars.put(RESPONDENT_NAME, join(" ", partnerFirstName, partnerLastName));
+            templateVars.put(APPLICANT_NAME, join(" ", applicant.getFirstName(), applicant.getLastName()));
+            templateVars.put(RESPONDENT_NAME, join(" ", partner.getFirstName(), partner.getLastName()));
         } else {
-            templateVars.put(APPLICANT_NAME, join(" ", partnerFirstName, partnerLastName));
-            templateVars.put(RESPONDENT_NAME, join(" ", applicantFirstName, applicantLastName));
+            templateVars.put(APPLICANT_NAME, join(" ", partner.getFirstName(), partner.getLastName()));
+            templateVars.put(RESPONDENT_NAME, join(" ", applicant.getFirstName(), applicant.getLastName()));
         }
 
         //Joint and sole
-        templateVars.put(IS_SOLE, isSole ? YES : NO);
-        templateVars.put(IS_JOINT, !isSole ? YES : NO);
+        if (caseData.getApplicationType() != null) {
+            templateVars.put(IS_SOLE, caseData.getApplicationType().isSole() ? YES : NO);
+            templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
+        }
 
         templateVars.put(PHONE_AND_OPENING_TIMES, templateContentLocalisation.getPhoneAndOpeningTimes(languagePreference));
         return templateVars;
@@ -659,20 +655,6 @@ public class CommonContent {
         return applicantHash == applicant1Hash;
     }
 
-    //Stage 1
-    //Add private method to format firstname string
-    private String formatFirstName(Applicant applicant, LanguagePreference languagePreference) {
-        return StringUtils.isNotEmpty(applicant.getFirstName())
-            ? applicant.getFirstName()
-            :  templateContentLocalisation.getUserString(languagePreference);
-    }
-
-    //Stage 1
-    //Add private method to format lastname string
-    private String formatLastName(Applicant applicant) {
-        return StringUtils.isNotEmpty(applicant.getLastName()) ? applicant.getLastName() : "";
-    }
-
     //Stage 3
     //Move to ConditionalOrderTemplateContent (only called by coPronouncedTemplateVars)
     private void requireNonNull(Object value, String fieldName, Long caseId) {
@@ -690,9 +672,10 @@ public class CommonContent {
     //Stage 3
     //Is this required? Could be refactored into solicitorTemplateVars once NoC methods are refactored.
     private void setApplicantLabels(CaseData caseData, Map<String, String> templateVars) {
-        boolean isSole = caseData.getApplicationType().isSole();
-        templateVars.put(APPLICANT1_LABEL, isSole ? APPLICANT : APPLICANT_1);
-        templateVars.put(APPLICANT2_LABEL, isSole ? RESPONDENT : APPLICANT_2);
+        if (caseData.getApplicationType() != null) {
+            templateVars.put(APPLICANT1_LABEL, caseData.getApplicationType().isSole() ? APPLICANT : APPLICANT_1);
+            templateVars.put(APPLICANT2_LABEL, caseData.getApplicationType().isSole() ? RESPONDENT : APPLICANT_2);
+        }
     }
 
     //Stage 1
