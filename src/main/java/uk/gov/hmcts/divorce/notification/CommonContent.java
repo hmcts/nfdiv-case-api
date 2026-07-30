@@ -196,7 +196,7 @@ public class CommonContent {
     //Stage 1
     //Add languagePreference param to handle requests through basicTemplateVars
     //Add IS_JOINT, IS_SOLE
-    //Stage 3
+    //Stage 2
     //Could we set UNION_TYPE here?
     public Map<String, String> mainTemplateVars(final CaseData caseData,
                                                 final Long id,
@@ -263,7 +263,7 @@ public class CommonContent {
 
     //Stage 1
     //Consolidates solicitorTemplateVars & solicitorTemplateVarsPreIssue
-    //Set DATE_OF_ISSUE *and* ISSUE_DATE (same value) for now - at Stage 3 evaluate usage and determine which are actually required.
+    //Set DATE_OF_ISSUE *and* ISSUE_DATE (same value) for now - at Stage 4 evaluate usage and determine which are actually required.
     public Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant, Applicant partner) {
         Map<String, String> templateVars = mainTemplateVars(data, id, applicant, partner);
         setSolicitorDetails(applicant, templateVars);
@@ -317,9 +317,8 @@ public class CommonContent {
         return templateVars;
     }
 
-    //Stage 1
-    //Applicant labels, Phone and Opening Times should be set by solicitorTemplateVars already
     //Stage 3
+    //IS_JOINT, Applicant labels, Phone and Opening Times should be set by solicitorTemplateVars already
     //Move to ConditionalOrderTemplateContent class
     public Map<String, String> getCoRefusedSolicitorTemplateVars(CaseData caseData, Long caseId, Applicant applicant,
                                                                  RefusalOption refusalOption) {
@@ -332,6 +331,8 @@ public class CommonContent {
         templateVars.put(IS_JOINT, isSole ? NO : YES);
         templateVars.put(APPLICANT1_LABEL, isSole ? APPLICANT : APPLICANT_1);
         templateVars.put(APPLICANT2_LABEL, isSole ? RESPONDENT : APPLICANT_2);
+
+        templateVars.put(PHONE_AND_OPENING_TIMES, getPhoneAndOpeningTimes(applicant.getLanguagePreference()));
         return templateVars;
     }
 
@@ -355,13 +356,13 @@ public class CommonContent {
     //Stage 1
     //Localisation method.
     //Move to TemplateContentLocalisation
-    //Leave facade in place - tidy up in Stage 3
+    //Leave facade in place - tidy up in Stage 2
     public String getPartner(CaseData caseData, Applicant partner, LanguagePreference applicantLanguagePreference) {
         return templateContentLocalisation.getPartner(caseData, partner, applicantLanguagePreference);
     }
 
     //Stage 1
-    //English getPartner method is being called directly.  Should not happen.  Add an overload to handle this prior to refactor in Stage 3.
+    //English getPartner method is being called directly.  Should not happen.  Add an overload to handle this prior to refactor in Stage 2.
     public String getPartner(CaseData caseData, Applicant partner) {
         return templateContentLocalisation.getPartner(caseData, partner, LanguagePreference.ENGLISH);
     }
@@ -377,6 +378,7 @@ public class CommonContent {
         final boolean jointApplication = !caseData.getApplicationType().isSole();
 
         templateVars.put(JOINT_CONDITIONAL_ORDER, jointApplication ? YES : NO);
+        templateVars.put(IS_SOLE, jointApplication ? NO : YES);
         templateVars.put(HUSBAND_JOINT, jointApplication
             && caseData.isDivorce()
             && MALE.equals(partner.getGender())
@@ -408,7 +410,7 @@ public class CommonContent {
 
     //Stage 1
     //IS_JOINT should be set by mainTemplateVars
-    //Call setSolicitorDetails() to set SOLICITOR_NAME and SOLICITOR_REFERENCE
+    //Call setSolicitorDetails() to set SOLICITOR_NAME and SOLICITOR_REFERENCE instead of setting directly
     //Stage 3
     //Move to RequestForInformationTemplateContent
     //APPLICANT_NAME / RESPONDENT_NAME set with different values to mainTemplateVars - do they need to be? Can we align these?
@@ -420,12 +422,16 @@ public class CommonContent {
 
         LanguagePreference languagePreference = applicant.getLanguagePreference();
 
+        templateVars.put(IS_JOINT, !caseData.getApplicationType().isSole() ? YES : NO);
         if (applicant.isRepresented()) {
             templateVars.put(APPLICANT_NAME, applicant.getFullName());
             templateVars.put(RESPONDENT_NAME, partner.getFullName());
             templateVars.put(APPLICANT_OR_APPLICANT1, docmosisCommonContent.getApplicantOrApplicant1(caseData, languagePreference));
             templateVars.put(RESPONDENT_OR_APPLICANT2, docmosisCommonContent.getRespondentOrApplicant2(caseData, languagePreference));
-            setSolicitorDetails(applicant, templateVars);
+            templateVars.put(SOLICITOR_NAME,
+                docmosisCommonContent.getSolicitorName(applicant, applicant.getSolicitor(), languagePreference));
+            templateVars.put(SOLICITOR_REFERENCE,
+                docmosisCommonContent.getSolicitorReference(applicant.getSolicitor(), languagePreference));
         }
 
         return templateVars;
@@ -575,7 +581,9 @@ public class CommonContent {
     //Is this necessary? Could just call solicitorTemplateVars now that it sets labels
     //If removed, leave facade in place and tidy up at Stage 2
     public Map<String, String> getGeneralEmailSolicitorVars(CaseData caseData, Long caseId, Applicant applicant) {
-        return solicitorTemplateVars(caseData, caseId, applicant);
+        Map<String, String> templateVars = solicitorTemplateVars(caseData, caseId, applicant);
+        setApplicantLabels(caseData, templateVars);
+        return templateVars;
     }
 
     //Stage 3
@@ -670,7 +678,7 @@ public class CommonContent {
     }
 
     //Stage 3
-    //Is this required? Could be refactored into solicitorTemplateVars once NoC methods are refactored.
+    //Is this required? Could be refactored into solicitorTemplateVars once NoC / General Email methods are refactored.
     private void setApplicantLabels(CaseData caseData, Map<String, String> templateVars) {
         if (caseData.getApplicationType() != null) {
             templateVars.put(APPLICANT1_LABEL, caseData.getApplicationType().isSole() ? APPLICANT : APPLICANT_1);
@@ -682,7 +690,7 @@ public class CommonContent {
     //Add private method getSolicitorDetails
     //Should be called by solicitorTemplateVars and requestForInformationTemplateVars
     //Stage 3
-    //Make public for access by requestForInformationTemplateVars
+    //Make public for access by requestForInformationTemplateVars once it is moved to it's own class
     private void setSolicitorDetails(Applicant applicant, Map<String, String> templateVars) {
         templateVars.put(SOLICITOR_NAME, docmosisCommonContent.getSolicitorName(
             applicant,
