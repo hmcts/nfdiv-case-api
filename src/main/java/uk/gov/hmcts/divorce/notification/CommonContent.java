@@ -276,24 +276,27 @@ public class CommonContent {
         templateVars.put(APPLICANT_2_FULL_NAME, data.getApplicant2().getFullName());
         templateVars.put(SIGN_IN_URL, getProfessionalUsersSignInUrl(id));
 
-        String issueDate = templateContentLocalisation.getIssueDate(data.getApplication().getIssueDate(), applicant.getLanguagePreference());
+        String issueDate = templateContentLocalisation.getIssueDate(
+            data.getApplication().getIssueDate(),
+            applicant.getLanguagePreference()
+        );
         templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, issueDate);
         templateVars.put(DATE_OF_ISSUE, issueDate);
         return templateVars;
     }
 
     //Stage 1
-    //Facade for solicitorTemplateVarsPreIssue.  Determine partner based on applicant and pass to solicitorTemplateVars
+    //Facade for solicitorTemplateVars.  Determine partner based on applicant and pass to solicitorTemplateVars
     //Tidy up at Stage 2
-    public Map<String, String> solicitorTemplateVarsPreIssue(CaseData data, Long id, Applicant applicant) {
+    public Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant) {
         Applicant partner = returnPartner(data, applicant);
         return solicitorTemplateVars(data, id, applicant, partner);
     }
 
     //Stage 1
-    //Facade for solicitorTemplateVars.  Determine partner based on applicant and pass to solicitorTemplateVars
+    //Facade for solicitorTemplateVarsPreIssue.  Determine partner based on applicant and pass to solicitorTemplateVars
     //Tidy up at Stage 2
-    public Map<String, String> solicitorTemplateVars(CaseData data, Long id, Applicant applicant) {
+    public Map<String, String> solicitorTemplateVarsPreIssue(CaseData data, Long id, Applicant applicant) {
         Applicant partner = returnPartner(data, applicant);
         return solicitorTemplateVars(data, id, applicant, partner);
     }

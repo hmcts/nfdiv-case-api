@@ -161,8 +161,7 @@ class CommonContentTest {
                 entry(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, TEST_LAST_NAME)),
                 entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 entry(SMART_SURVEY, templateVars.get(CommonContent.SMART_SURVEY)),
-                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY)
-            );
+                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY));
     }
 
     @Test
@@ -186,8 +185,7 @@ class CommonContentTest {
                 entry(RESPONDENT_NAME, join(" ", APPLICANT_2_FIRST_NAME, TEST_LAST_NAME)),
                 entry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
                 entry(SMART_SURVEY, templateVars.get(CommonContent.SMART_SURVEY)),
-                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT)
-            );
+                entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT));
     }
 
     @Test
