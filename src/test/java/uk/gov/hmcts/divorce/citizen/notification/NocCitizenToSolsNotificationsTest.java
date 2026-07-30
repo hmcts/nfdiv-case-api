@@ -39,6 +39,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOTICE_OF_CHANGE_CONFIRMATION_APP1_APP2_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.NFD_NOTICE_OF_CHANGE_CONFIRMATION_DOCUMENT_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.noticeofchange.event.SystemApplyNoticeOfChange.LETTER_TYPE_GRANT_OF_REPRESENTATION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.FIRST_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.LAST_NAME;
@@ -84,8 +85,7 @@ class NocCitizenToSolsNotificationsTest {
         templateVars.put(LAST_NAME, applicant.getLastName());
         templateVars.put(SOLICITOR_FIRM, applicant.getSolicitor().getFirmName());
         templateVars.put(SMART_SURVEY, SMART_SURVEY);
-
-        commonContent.getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
+        templateVars.put(PHONE_AND_OPENING_TIMES, commonContent.getPhoneAndOpeningTimes(applicant.getLanguagePreference()));
         return templateVars;
     }
 

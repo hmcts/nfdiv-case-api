@@ -36,6 +36,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AP
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_OR_APPLICANT1;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_OR_APPLICANT2;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IN_TIME;
 import static uk.gov.hmcts.divorce.notification.FinalOrderNotificationCommonContent.IS_OVERDUE;
@@ -271,7 +272,7 @@ public class CommonContent {
         templateVars.put(IS_SOLE, isSole ? YES : NO);
         templateVars.put(IS_JOINT, !isSole ? YES : NO);
 
-        templateContentLocalisation.getPhoneAndOpeningTimes(languagePreference, templateVars);
+        templateVars.put(PHONE_AND_OPENING_TIMES, templateContentLocalisation.getPhoneAndOpeningTimes(languagePreference));
         return templateVars;
     }
 
@@ -385,8 +386,7 @@ public class CommonContent {
         templateVars.put(IS_JOINT, isSole ? NO : YES);
         templateVars.put(APPLICANT1_LABEL, isSole ? APPLICANT : APPLICANT_1);
         templateVars.put(APPLICANT2_LABEL, isSole ? RESPONDENT : APPLICANT_2);
-
-        getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
+        templateVars.put(PHONE_AND_OPENING_TIMES, getPhoneAndOpeningTimes(applicant.getLanguagePreference()));
         return templateVars;
     }
 
@@ -549,8 +549,7 @@ public class CommonContent {
         }
         templateVars.put(SMART_SURVEY, getSmartSurveyWithDoNotReply(applicant.getLanguagePreference()));
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
-
-        getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
+        templateVars.put(PHONE_AND_OPENING_TIMES, getPhoneAndOpeningTimes(applicant.getLanguagePreference()));
 
         return templateVars;
     }
@@ -583,8 +582,8 @@ public class CommonContent {
 
         templateVars.put(SMART_SURVEY, getSmartSurveyWithDoNotReply(applicant.getLanguagePreference()));
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(applicant.getLanguagePreference()));
+        templateVars.put(PHONE_AND_OPENING_TIMES, getPhoneAndOpeningTimes(applicant.getLanguagePreference()));
 
-        getPhoneAndOpeningTimes(applicant.getLanguagePreference(), templateVars);
         return templateVars;
     }
 
@@ -614,8 +613,7 @@ public class CommonContent {
         templateVars.put(SMART_SURVEY, getSmartSurveyWithDoNotReply(beforeApplicant.getLanguagePreference()));
         templateVars.put(DATE_OF_ISSUE, issueDate);
         templateVars.put(WEB_FORM_TEXT, getContactWebFormText(beforeApplicant.getLanguagePreference()));
-
-        getPhoneAndOpeningTimes(beforeApplicant.getLanguagePreference(), templateVars);
+        templateVars.put(PHONE_AND_OPENING_TIMES, getPhoneAndOpeningTimes(beforeApplicant.getLanguagePreference()));
 
         return templateVars;
     }
@@ -667,9 +665,10 @@ public class CommonContent {
     //Stage 1
     //Localisation method.
     //Move to TemplateContentLocalisation
+    //Convert from void to return string for consistency and improved testability
     //Leave facade in place - tidy up in Stage 2
-    public void getPhoneAndOpeningTimes(LanguagePreference recipientLanguagePreference, Map<String, String> templateVars) {
-        templateContentLocalisation.getPhoneAndOpeningTimes(recipientLanguagePreference, templateVars);
+    public String getPhoneAndOpeningTimes(LanguagePreference languagePreference) {
+        return templateContentLocalisation.getPhoneAndOpeningTimes(languagePreference);
     }
 
     //Stage 3

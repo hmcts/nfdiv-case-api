@@ -8,12 +8,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 import static java.util.Objects.isNull;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CIVIL_PARTNER;
@@ -124,11 +122,11 @@ public class TemplateContentLocalisation {
     }
 
     //Could we set this in commonContent.mainTemplateVars() and avoid calling this method elsewhere?
-    public void getPhoneAndOpeningTimes(LanguagePreference recipientLanguagePreference, Map<String, String> templateVars) {
-        if (recipientLanguagePreference != WELSH) {
-            templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+    public String getPhoneAndOpeningTimes(LanguagePreference languagePreference) {
+        if (languagePreference == WELSH) {
+            return PHONE_AND_OPENING_TIMES_TEXT_CY;
         } else {
-            templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
+            return PHONE_AND_OPENING_TIMES_TEXT;
         }
     }
 
