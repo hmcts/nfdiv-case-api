@@ -13,8 +13,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class SolicitorAlternativeServiceMethodPage implements CcdPageConfiguration {
 
-    private static final String ALT_SERVICE_EMAIL_SHOW_CONDITION =
-        "applicant1AltServiceMethod = \"byEmail\" OR applicant1AltServiceMethod = \"emailAndDifferentWay\" ";
+    private static final String ALT_SERVICE_EMAIL_SHOW_CONDITION = "applicant1AltServiceMethod != \"inADifferentWay\"";
     public static final String PAPER_SEND_METHOD_HEADING = "## How would you like the papers to be sent by email?";
 
     public static final String SEND_PAPERS_METHOD_SOLICITOR_HINT = "If you select Solicitor Service, you will need to provide a reason";
