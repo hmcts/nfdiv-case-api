@@ -83,4 +83,10 @@ public class AlternativeServiceJourneyOptions {
         searchable = false
     )
     private String altServiceMethodJustification;
+
+    @CCD(
+        label = "Provide details about how to contact the respondent.",
+        searchable = false
+    )
+    private String solicitorContactMethodOtherDetails;
 }
