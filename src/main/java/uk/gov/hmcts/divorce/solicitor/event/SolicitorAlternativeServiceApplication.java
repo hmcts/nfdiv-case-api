@@ -4,19 +4,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
-import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
-import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.event.page.AlternativeServiceConfirmPage;
+import uk.gov.hmcts.divorce.solicitor.event.page.ConfirmServicePage;
 import uk.gov.hmcts.divorce.solicitor.event.page.ServicePaymentPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolicitorAlternativeServiceMethodPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolicitorAlternativeServiceReasonPage;
-import uk.gov.hmcts.divorce.solicitor.service.SolicitorUpdateApplicationService;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -33,35 +30,22 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class SolicitorAlternativeServiceApplication implements CCDConfig<CaseData, State, UserRole> {
 
     private static final String ALTERNATIVE_SERVICE = "Alternative Service App";
-    private static final String SERVICE_TYPE = "alternative";
+    private static final String SERVICE_TYPE_LABEL = "alternative";
 
     public static final String SOLICITOR_ALTERNATIVE_SERVICE_APPLICATION = "solicitor-alternative-service-application";
-
-    private final SolicitorUpdateApplicationService solicitorUpdateApplicationService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
 
         final List<CcdPageConfiguration> pages = asList(
-            new AlternativeServiceConfirmPage(SERVICE_TYPE, "alternativeServiceConfirmPage"),
-            new ServicePaymentPage(SERVICE_TYPE, "alternativeServicePaymentPage"),
+            new ConfirmServicePage(SERVICE_TYPE_LABEL, "alternativeServiceConfirmPage"),
+            new ServicePaymentPage(SERVICE_TYPE_LABEL, "alternativeServicePaymentPage"),
             new SolicitorAlternativeServiceReasonPage(),
             new SolicitorAlternativeServiceMethodPage()
         );
 
         pages.forEach(page -> page.addTo(pageBuilder));
-    }
-
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
-                                                                       final CaseDetails<CaseData, State> beforeDetails) {
-
-        log.info("Solicitor alternative service application about to submit callback invoked for Case Id: {}", details.getId());
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(details.getData())
-            .build();
     }
 
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -75,7 +59,6 @@ public class SolicitorAlternativeServiceApplication implements CCDConfig<CaseDat
                 .description(ALTERNATIVE_SERVICE)
                 .showSummary()
                 .showEventNotes()
-                .aboutToSubmitCallback(this::aboutToSubmit)
                 .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR));
     }
 }

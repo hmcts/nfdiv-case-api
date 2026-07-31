@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
+import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -9,7 +10,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-public class AlternativeServiceConfirmPage implements CcdPageConfiguration {
+@RequiredArgsConstructor
+public class ConfirmServicePage implements CcdPageConfiguration {
 
     private static final String NEVER_SHOW = "[STATE]=\"NEVER_SHOW\"";
 
@@ -24,14 +26,11 @@ public class AlternativeServiceConfirmPage implements CcdPageConfiguration {
             respondent.
 
             We will not share the applicant’s contact details if you've told us to keep them private
+
             """;
+
     private final String serviceType;
     private final String pageId;
-
-    public AlternativeServiceConfirmPage(String serviceType, String pageId) {
-        this.serviceType = serviceType;
-        this.pageId = pageId;
-    }
 
     @Override
     public void addTo(PageBuilder pageBuilder) {

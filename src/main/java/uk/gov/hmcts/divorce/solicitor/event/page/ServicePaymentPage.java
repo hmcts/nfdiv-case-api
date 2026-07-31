@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
+import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -8,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+@RequiredArgsConstructor
 public class ServicePaymentPage implements CcdPageConfiguration {
 
     private final String serviceType;
@@ -16,11 +18,6 @@ public class ServicePaymentPage implements CcdPageConfiguration {
     public static final String PAYMENT_HEADING = "## How will payment be made?";
 
     public static final String PAYMENT_LABEL = "Choose the method of payment for the application";
-
-    public ServicePaymentPage(String serviceType, String pageId) {
-        this.serviceType = serviceType;
-        this.pageId = pageId;
-    }
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
