@@ -18,6 +18,7 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.common.config.interceptors.RequestInterceptor;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
@@ -86,6 +87,9 @@ public class CitizenSubmitApplicationIT {
 
     @MockitoBean
     private NotificationService notificationService;
+
+    @MockitoBean
+    private CaseDataDocumentService caseDataDocumentService;
 
     @MockitoBean
     private WebMvcConfig webMvcConfig;

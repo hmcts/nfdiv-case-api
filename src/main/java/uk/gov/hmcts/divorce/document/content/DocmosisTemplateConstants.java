@@ -238,7 +238,7 @@ public final class DocmosisTemplateConstants {
     public static final String PHONE_AND_OPENING_TIMES = "phoneAndOpeningTimes";
     public static final String PHONE_AND_OPENING_TIMES_TEXT = "0300 303 0642 (Monday to Friday, 10am to 6pm)";
     public static final String PHONE_AND_OPENING_TIMES_TEXT_CY =
-        "0300 303 5171 (Dydd Llun i ddydd Iau 9am i 5pm, Dydd Gwener 9am i 4.30pm)";
+        "0300 303 5171 (Dydd Llun i ddydd Iau 9yb i 5yh, Dydd Gwener 9yb i 4.30yh)";
 
     public static final String RESPONSE_DUE_DATE = "responseDueDate";
     public static final String CO_OR_FO = "coOrFo";

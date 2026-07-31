@@ -1,7 +1,7 @@
 #!groovy
 import uk.gov.hmcts.contino.AppPipelineConfig
 import uk.gov.hmcts.contino.AppPipelineDsl
-@Library("Infrastructure")
+@Library("Infrastructure@2.4.4")
 
 import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.MetricsPublisher
@@ -159,10 +159,18 @@ withPipeline(type, product, component) {
 
   afterAlways('checkout') {
     builder.setupToolVersion()
-    builder.gradle('generateCCDConfig')
   }
 
   before('highleveldatasetup') {
+    def azureConfigName = env.DEPLOYMENT_ENVIRONMENT
+    if (!azureConfigName) {
+      error 'DEPLOYMENT_ENVIRONMENT is required to authenticate to the CCD definition processor registry'
+    }
+    dir("${WORKSPACE}") {
+     sh "./bin/az-login.sh"
+    }
+
+    builder.gradle('generateCCDConfig')
     generateDefinitions()
   }
 
@@ -257,10 +265,8 @@ def setCommonEnvVariables() {
 }
 
 def generateDefinitions() {
-  dir("${WORKSPACE}/bin") {
-    sh "./ccd-build-definition.sh"
-  }
   dir("${WORKSPACE}") {
+    sh "./bin/ccd-build-definition.sh"
     steps.archiveArtifacts artifacts: "build/ccd-config/*.xlsx"
   }
 }

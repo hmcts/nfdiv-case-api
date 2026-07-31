@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateHmctsCoversheet;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.Applicant2SolStatementOfTruth;
@@ -64,6 +65,8 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
     private final IdamService idamService;
     private final AuthTokenGenerator authTokenGenerator;
 
+    private final GenerateHmctsCoversheet generateHmctsCoverSheet;
+
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
@@ -107,6 +110,8 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
         }
 
         final CaseDetails<CaseData, State> updateDetails = submitAosService.submitAos(details);
+
+        generateHmctsCoverSheet.addToDocumentsGenerated(details);
 
         submitAosService.submitAosNotifications(details);
 
