@@ -14,7 +14,7 @@ public class SolicitorAlternativeServiceMethodPage implements CcdPageConfigurati
 
     private static final String SHOW_WHEN_NOT_ALT_SERVICE_DIFFERENT_WAY = "applicant1AltServiceMethod != \"inADifferentWay\"";
 
-    public static final String CHOOSE_SEND_PAPERS_METHOD = "## Choose how you want to send the papers to the respondent";
+    public static final String CHOOSE_SEND_PAPERS_METHOD = "Choose how you want to send the papers to the respondent";
 
     public static final String CONFIRM_RESPONDENT_METHOD_EVIDENCE =
         "You will need to provide evidence that the respondent actively uses each method you choose.";
