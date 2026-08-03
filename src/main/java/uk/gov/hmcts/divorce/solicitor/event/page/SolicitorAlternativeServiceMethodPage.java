@@ -14,7 +14,7 @@ public class SolicitorAlternativeServiceMethodPage implements CcdPageConfigurati
 
     private static final String NEVER_SHOW = "[STATE]=\"NEVER_SHOW\"";
 
-    private static final String ALT_SERVICE_EMAIL_SHOW_CONDITION = "applicant1AltServiceMethod != \"inADifferentWay\"";
+    private static final String SHOW_WHEN_NOT_ALT_SERVICE_DIFFERENT_WAY = "applicant1AltServiceMethod != \"inADifferentWay\"";
 
     public static final String CHOOSE_SEND_PAPERS_METHOD = "## Choose how you want to send the papers to the respondent";
 
@@ -40,11 +40,11 @@ public class SolicitorAlternativeServiceMethodPage implements CcdPageConfigurati
             .complex(CaseData::getApplicant1)
             .complex(Applicant::getInterimApplicationOptions)
             .complex(InterimApplicationOptions::getAlternativeServiceJourneyOptions)
-            .mandatory(AlternativeServiceJourneyOptions::getSolAltServiceMethod, ALT_SERVICE_EMAIL_SHOW_CONDITION)
+            .mandatory(AlternativeServiceJourneyOptions::getSolAltServiceMethod, SHOW_WHEN_NOT_ALT_SERVICE_DIFFERENT_WAY)
             .mandatory(AlternativeServiceJourneyOptions::getSolAltServiceSolicitorServiceReason,
                 "applicant1SolAltServiceMethod = \"solicitorService\"")
             .mandatoryWithoutDefaultValue(AlternativeServiceJourneyOptions::getAltServicePartnerEmail,
-                ALT_SERVICE_EMAIL_SHOW_CONDITION,"Respondent's email address")
+                SHOW_WHEN_NOT_ALT_SERVICE_DIFFERENT_WAY,"Respondent's email address")
             .label("choosePaperSendMethod", CHOOSE_SEND_PAPERS_METHOD)
             .label("confirmRespondentMethodEvidence", CONFIRM_RESPONDENT_METHOD_EVIDENCE)
             .label("selectAll", "Select all that apply")
