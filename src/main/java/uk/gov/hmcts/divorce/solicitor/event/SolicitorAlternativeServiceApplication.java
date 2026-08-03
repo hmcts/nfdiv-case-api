@@ -33,7 +33,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class SolicitorAlternativeServiceApplication implements CCDConfig<CaseData, State, UserRole> {
 
     private static final String ALTERNATIVE_SERVICE = "Alternative Service App";
-    private static final String SERVICE_TYPE_LABEL = "alternative";
 
     public static final String SOLICITOR_ALTERNATIVE_SERVICE_APPLICATION = "solicitor-alternative-service-application";
 

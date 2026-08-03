@@ -8,8 +8,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
 public class SolicitorAlternativeServiceMethodPage implements CcdPageConfiguration {
 
     private static final String NEVER_SHOW = "[STATE]=\"NEVER_SHOW\"";
@@ -23,18 +21,9 @@ public class SolicitorAlternativeServiceMethodPage implements CcdPageConfigurati
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
-    }
-
-    @Override
-    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
-        var page = pageBuilder.page("alternativeServiceMethod")
-            .pageLabel("Alternative Service App");
-        if (isNotBlank(pageShowCondition)) {
-            page.showCondition(pageShowCondition);
-        }
-
-        page.complex(CaseData::getLabelContent)
+        pageBuilder.page("alternativeServiceMethod")
+            .pageLabel("Alternative Service App")
+            .complex(CaseData::getLabelContent)
             .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnership, NEVER_SHOW)
             .done()
             .complex(CaseData::getApplicant1)
@@ -44,7 +33,7 @@ public class SolicitorAlternativeServiceMethodPage implements CcdPageConfigurati
             .mandatory(AlternativeServiceJourneyOptions::getSolAltServiceSolicitorServiceReason,
                 "applicant1SolAltServiceMethod = \"solicitorService\"")
             .mandatoryWithoutDefaultValue(AlternativeServiceJourneyOptions::getAltServicePartnerEmail,
-                SHOW_WHEN_NOT_ALT_SERVICE_DIFFERENT_WAY,"Respondent's email address")
+                SHOW_WHEN_NOT_ALT_SERVICE_DIFFERENT_WAY, "Respondent's email address")
             .label("choosePaperSendMethod", CHOOSE_SEND_PAPERS_METHOD)
             .label("confirmRespondentMethodEvidence", CONFIRM_RESPONDENT_METHOD_EVIDENCE)
             .label("selectAll", "Select all that apply")

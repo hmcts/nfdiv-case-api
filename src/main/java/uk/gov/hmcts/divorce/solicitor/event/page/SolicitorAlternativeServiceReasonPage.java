@@ -12,11 +12,11 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public class SolicitorAlternativeServiceReasonPage implements CcdPageConfiguration {
 
     public static final String ALTERNATIVE_SERVICE_HEADING = """
-            ## Why are you applying for alternative service?
+        ## Why are you applying for alternative service?
 
-            Explain why you have not been able to send the papers to the respondent. Give as much detail as you can. This information may be
-             considered by a judge as part of your application.
-            """;
+        Explain why you have not been able to send the papers to the respondent. Give as much detail as you can. This information may be
+         considered by a judge as part of your application.
+        """;
 
     public static final String SEND_PAPERS_LABEL = """
         ## Sending the papers to the respondent
@@ -34,23 +34,15 @@ public class SolicitorAlternativeServiceReasonPage implements CcdPageConfigurati
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
-    }
-
-    @Override
-    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
-        var page = pageBuilder.page("alternativeServiceReason")
-            .pageLabel("Alternative Service App");
-        if (isNotBlank(pageShowCondition)) {
-            page.showCondition(pageShowCondition);
-        }
-        page.label("alternativeServiceLabel", ALTERNATIVE_SERVICE_HEADING)
+        pageBuilder.page("alternativeServiceReason")
+            .pageLabel("Alternative Service App")
+            .label("alternativeServiceLabel", ALTERNATIVE_SERVICE_HEADING)
             .complex(CaseData::getApplicant1)
             .complex(Applicant::getInterimApplicationOptions)
             .complex(InterimApplicationOptions::getAlternativeServiceJourneyOptions)
             .mandatory(AlternativeServiceJourneyOptions::getAltServiceReasonForApplying)
             .label("sendingPapersPara1", SEND_PAPERS_LABEL)
-           .mandatory(AlternativeServiceJourneyOptions::getAltServiceMethod)
+            .mandatory(AlternativeServiceJourneyOptions::getAltServiceMethod)
             .done();
     }
 }
