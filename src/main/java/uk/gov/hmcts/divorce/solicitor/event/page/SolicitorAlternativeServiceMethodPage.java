@@ -40,7 +40,7 @@ public class SolicitorAlternativeServiceMethodPage implements CcdPageConfigurati
             .complex(CaseData::getApplicant1)
             .complex(Applicant::getInterimApplicationOptions)
             .complex(InterimApplicationOptions::getAlternativeServiceJourneyOptions)
-            .mandatory(AlternativeServiceJourneyOptions::getSolAltServiceMethod)
+            .mandatory(AlternativeServiceJourneyOptions::getSolAltServiceMethod, ALT_SERVICE_EMAIL_SHOW_CONDITION)
             .mandatory(AlternativeServiceJourneyOptions::getSolAltServiceSolicitorServiceReason,
                 "applicant1SolAltServiceMethod = \"solicitorService\"")
             .mandatoryWithoutDefaultValue(AlternativeServiceJourneyOptions::getAltServicePartnerEmail,
