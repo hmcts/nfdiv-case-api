@@ -187,23 +187,6 @@ public class AlternativeService {
     )
     private List<ListValue<Payment>> servicePayments;
 
-    @CCD(
-        label = """
-            Explain why you have not been able to send the papers to the respondent. Give as much detail as you can.
-
-            This information may be considered by a judge as part of your application.
-            """,
-        typeOverride = TextArea,
-        searchable = false
-    )
-    private String solAlternativeServiceReason;
-
-    @CCD(
-        label = "Solicitor service reason",
-        searchable = false
-    )
-    private String solicitorServiceReason;
-
     @SuppressWarnings("PMD")
     @JsonIgnore
     public AlternativeServiceOutcome getOutcome() {

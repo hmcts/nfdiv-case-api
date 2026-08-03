@@ -85,8 +85,15 @@ public class AlternativeServiceJourneyOptions {
     private String altServiceMethodJustification;
 
     @CCD(
-        label = "Provide details about how to contact the respondent.",
+        label = "How would you like the papers to be sent by email?",
+        hint = "If you select Solicitor Service, you will need to provide a reason",
+        access = {DefaultAccess.class}
+    )
+    private ServiceMethod solAltServiceMethod;
+
+    @CCD(
+        label = "Reason for choosing solicitor service",
         searchable = false
     )
-    private String solicitorContactMethodOtherDetails;
+    private String solAltServiceSolicitorServiceReason;
 }

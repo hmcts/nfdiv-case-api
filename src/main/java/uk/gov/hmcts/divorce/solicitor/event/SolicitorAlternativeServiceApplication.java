@@ -10,8 +10,8 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.event.page.ConfirmServicePage;
-import uk.gov.hmcts.divorce.solicitor.event.page.ServicePaymentPage;
+import uk.gov.hmcts.divorce.solicitor.event.page.AlternativeServiceConfirmPage;
+import uk.gov.hmcts.divorce.solicitor.event.page.AlternativeServicePaymentPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolicitorAlternativeServiceMethodPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolicitorAlternativeServiceReasonPage;
 
@@ -22,6 +22,9 @@ import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Slf4j
@@ -39,8 +42,8 @@ public class SolicitorAlternativeServiceApplication implements CCDConfig<CaseDat
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
 
         final List<CcdPageConfiguration> pages = asList(
-            new ConfirmServicePage(SERVICE_TYPE_LABEL, "alternativeServiceConfirmPage"),
-            new ServicePaymentPage(SERVICE_TYPE_LABEL, "alternativeServicePaymentPage"),
+            new AlternativeServiceConfirmPage(),
+            new AlternativeServicePaymentPage(),
             new SolicitorAlternativeServiceReasonPage(),
             new SolicitorAlternativeServiceMethodPage()
         );
@@ -59,6 +62,7 @@ public class SolicitorAlternativeServiceApplication implements CCDConfig<CaseDat
                 .description(ALTERNATIVE_SERVICE)
                 .showSummary()
                 .showEventNotes()
-                .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR));
+                .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
+                .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER));
     }
 }
