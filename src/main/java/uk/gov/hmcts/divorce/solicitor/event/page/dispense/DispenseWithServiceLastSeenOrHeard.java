@@ -1,0 +1,63 @@
+package uk.gov.hmcts.divorce.solicitor.event.page.dispense;
+
+import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
+import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DispenseWithServiceJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+public class DispenseWithServiceLastSeenOrHeard implements CcdPageConfiguration {
+
+    private static final String LABEL_LAST_SEEN_DESCRIPTION = """
+        Describe the last time that the applicant saw or heard from the respondent. Include the source of this information and
+        give brief details of all the enquiries made to trace them as a result.
+        """;
+    private static final String LABEL_CHECK_EXISTING_DECREE = """
+        ### Check for an existing decree absolute or final order ###
+
+        If the applicant has not heard from the respondent for more than 2 years you may need to check if they are already divorced.
+
+        You can apply online to the central Family Court to search for a divorce decree absolute or a final order.
+
+        It costs £65 for each 10 year period you search.
+
+        You'll need to search from the date that the applicant last heard from them.
+
+        If decree absolute or final order is found, they are already divorced and you do not need to continue this application.
+
+        If the court cannot find a decree absolute or a final order, you'll get a 'no trace' certificate which you cannot upload as
+        evidence to progress the application.
+        """;
+
+    @Override
+    public void addTo(PageBuilder pageBuilder) {
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
+
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+        var page = pageBuilder.page("dispenseServiceLastSeen")
+                    .pageLabel("Dispense with service app");
+
+        if (isNotBlank(pageShowCondition)) {
+            page.showCondition(pageShowCondition);
+        }
+        page
+            .complex(CaseData::getApplicant1)
+                .complex(Applicant::getInterimApplicationOptions)
+                    .complex(InterimApplicationOptions::getDispenseWithServiceJourneyOptions)
+                        .mandatory(DispenseWithServiceJourneyOptions::getDispensePartnerLastSeenDate)
+                        .label("labelLastSeenDescription", LABEL_LAST_SEEN_DESCRIPTION)
+                        .mandatory(DispenseWithServiceJourneyOptions::getDispensePartnerLastSeenDescription)
+                        .label("labelCheckExistingDecree", LABEL_CHECK_EXISTING_DECREE)
+                        .mandatory(DispenseWithServiceJourneyOptions::getDispenseHaveSearchedFinalOrder)
+                        .mandatory(DispenseWithServiceJourneyOptions::getDispenseWhyNoFinalOrderSearch,
+                            "applicant1DispenseHaveSearchedFinalOrder=\"No\"")
+                    .done()
+                .done()
+            .done();
+    }
+}

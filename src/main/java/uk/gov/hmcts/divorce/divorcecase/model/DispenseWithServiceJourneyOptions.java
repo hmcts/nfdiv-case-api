@@ -24,14 +24,16 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
 
     @CCD(
-        label = "Did you and your partner live together?",
+        label = "Did the applicant and respondent live together at any time during their relationship?",
+        hint = "This includes any period they lived together, regardless of how long ago or how short the time was.",
         access = {DefaultAccess.class},
         searchable = false
     )
     private YesOrNo dispenseLiveTogether;
 
     @CCD(
-        label = "Date when you last lived together",
+        label = "Date when they last lived together",
+        hint = "If you do not  know the exact date, please provide an approximate date.",
         access = {DefaultAccess.class},
         searchable = false
     )
@@ -39,27 +41,27 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private LocalDate dispenseLivedTogetherDate;
 
     @CCD(
-        label = "Where did you last live together?",
+        label = "Where did the applicant and respondent last live together?",
         access = {DefaultAccess.class},
         searchable = false
     )
     private AddressGlobalUK dispenseLivedTogetherAddress;
 
     @CCD(
-        label = "Was this an international address?",
+        label = "Is this an international address?",
         searchable = false
     )
     private YesOrNo dispenseLivedTogetherAddressOverseas;
 
     @CCD(
-        label = "Are you aware of where your partner lived after parting?",
+        label = "Are you aware of where the respondent lived after parting?",
         access = {DefaultAccess.class},
         searchable = false
     )
     private YesOrNo dispenseAwarePartnerLived;
 
     @CCD(
-        label = "Where did your partner live after you parted?",
+        label = "Address 1",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -75,7 +77,7 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispensePartnerPastAddressEnquiries1;
 
     @CCD(
-        label = "Where did your partner live after you parted?",
+        label = "Address 2",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -91,7 +93,9 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispensePartnerPastAddressEnquiries2;
 
     @CCD(
-        label = "When was your partner last seen or heard of?",
+        label = "When was the respondent last seen or heard of?",
+        hint = "If you are not sure about the day you can enter the last day of the month. If you are not sure about the month "
+            + "you can enter the '12' for December.",
         access = {DefaultAccess.class},
         searchable = false
     )
@@ -99,7 +103,7 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private LocalDate dispensePartnerLastSeenDate;
 
     @CCD(
-        label = "Describe the time you last saw or heard of your partner",
+        label = "Describe the time the applicant saw or heard of the respondent",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -121,7 +125,7 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private YesOrNo dispenseHavePartnerEmailAddresses;
 
     @CCD(
-        label = "Have you searched for a decree absolute or final order?",
+        label = "Have you searched for an existing decree absolute or final order?",
         access = {DefaultAccess.class},
         searchable = false
     )
@@ -136,7 +140,9 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispenseWhyNoFinalOrderSearch;
 
     @CCD(
-        label = "Tell us the email addresses you have for your partner",
+        label = "Email addresses",
+        hint = "Tell us the email addresses and any previous contact with the respondent. Explain the attempts that has been made to"
+            + " contact the respondent on these email addresses.",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
