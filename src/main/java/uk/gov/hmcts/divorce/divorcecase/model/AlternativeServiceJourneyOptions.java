@@ -86,10 +86,9 @@ public class AlternativeServiceJourneyOptions {
 
     @CCD(
         label = "How would you like the papers to be sent by email?",
-        hint = "If you select Solicitor Service, you will need to provide a reason",
-        access = {DefaultAccess.class}
+        hint = "If you select Solicitor Service, you will need to provide a reason"
     )
-    private ServiceMethod solAltServiceMethod;
+    private SolicitorServiceMethod solAltServiceMethod;
 
     @CCD(
         label = "Reason for choosing solicitor service",
