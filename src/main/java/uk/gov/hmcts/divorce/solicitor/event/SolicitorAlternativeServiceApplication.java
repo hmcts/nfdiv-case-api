@@ -11,7 +11,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.AlternativeServiceConfirmPage;
+import uk.gov.hmcts.divorce.solicitor.event.page.AlternativeServiceDetailsAndUploadPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.AlternativeServicePaymentPage;
+import uk.gov.hmcts.divorce.solicitor.event.page.SolicitorAlternativeServiceAbleToUploadEvidence;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolicitorAlternativeServiceMethodPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolicitorAlternativeServiceReasonPage;
 
@@ -23,6 +25,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
@@ -34,7 +37,7 @@ public class SolicitorAlternativeServiceApplication implements CCDConfig<CaseDat
 
     private static final String ALTERNATIVE_SERVICE = "Alternative Service App";
 
-    public static final String SOLICITOR_ALTERNATIVE_SERVICE_APPLICATION = "solicitor-alternative-service-application";
+    public static final String SOLICITOR_ALTERNATIVE_SERVICE_APPLICATION = "sol-alternative-service-app";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -44,7 +47,9 @@ public class SolicitorAlternativeServiceApplication implements CCDConfig<CaseDat
             new AlternativeServiceConfirmPage(),
             new AlternativeServicePaymentPage(),
             new SolicitorAlternativeServiceReasonPage(),
-            new SolicitorAlternativeServiceMethodPage()
+            new SolicitorAlternativeServiceMethodPage(),
+            new SolicitorAlternativeServiceAbleToUploadEvidence(),
+            new AlternativeServiceDetailsAndUploadPage()
         );
 
         pages.forEach(page -> page.addTo(pageBuilder));
@@ -55,13 +60,14 @@ public class SolicitorAlternativeServiceApplication implements CCDConfig<CaseDat
         states.add(AosOverdue);
 
         return new PageBuilder(configBuilder
-                .event(SOLICITOR_ALTERNATIVE_SERVICE_APPLICATION)
-                .forStates(states)
-                .name(ALTERNATIVE_SERVICE)
-                .description(ALTERNATIVE_SERVICE)
-                .showSummary()
-                .showEventNotes()
-                .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
-                .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER));
+            .event(SOLICITOR_ALTERNATIVE_SERVICE_APPLICATION)
+            .forStates(states)
+            .name(ALTERNATIVE_SERVICE)
+            .description(ALTERNATIVE_SERVICE)
+            .showSummary()
+            .showEventNotes()
+            .endButtonLabel("Save Application")
+            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
+            .grantHistoryOnly(CASE_WORKER, JUDGE, LEGAL_ADVISOR, SUPER_USER));
     }
 }

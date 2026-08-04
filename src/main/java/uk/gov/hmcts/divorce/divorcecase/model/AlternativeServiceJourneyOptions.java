@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 
 import java.util.Set;
@@ -96,4 +97,40 @@ public class AlternativeServiceJourneyOptions {
         searchable = false
     )
     private String solAltServiceSolicitorServiceReason;
+
+    @CCD(
+        label = "Are you able to upload evidence?",
+        hint = """
+            The evidence you provide may help the court decide whether the papers can be served in the way you've requested.
+             For example, this may include a photo or screenshot of a recent conversation by text or email, or a post by the respondent
+              on social media.""",
+        searchable = false
+    )
+    private YesOrNo solAltServiceCanUploadEvidence;
+
+    @CCD(
+        label = "Why do you think serving the papers in this way will be successful?",
+        hint = """
+            Tell us why you think the respondent will receive the papers in this way. If a friend or relative will be sending the papers
+             on behalf of the applicant, you'll need to tell us who this is.""",
+        searchable = false,
+        typeOverride = TextArea
+    )
+    private String solAltServiceSuccessfulSendReason;
+
+    @CCD(
+        label = "Why are you applying to sending the papers in this way?",
+        hint = """
+            Tell us why you think the respondent will receive the papers in this way. If a friend or relative will be sending the papers on
+             behalf of the applicant, you'll need to tell us who this is.
+
+            You should also explain why you are not able to upload evidence.
+
+            Explain in as much detail as you can so that the judge can consider whether to grant your application.
+
+            """,
+        searchable = false,
+        typeOverride = TextArea
+    )
+    private String solAltServiceWhySendThisWay;
 }
