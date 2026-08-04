@@ -97,7 +97,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    void givenValidPaymentMadeThenShouldSetPaymentDetailsAndSetPendingRefund() {
+    void givenValidPaymentMadeThenShouldSetPaymentDetailsAndSetEndState() {
         setMockClock(clock);
 
         List<ListValue<Payment>> payments = singletonList(new ListValue<>("1", Payment.builder()
@@ -120,13 +120,13 @@ class CitizenGeneralApplicationPaymentMadeTest {
 
         GeneralApplication generalApplication = response.getData().getGeneralApplications().getFirst().getValue();
 
-        assertThat(response.getState()).isEqualTo(PendingRefund);
         assertThat(generalApplication.getGeneralApplicationFee().getPaymentReference()).isEqualTo(TEST_REFERENCE);
+        verify(submissionService).setEndState(details, generalApplication);
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    void givenGeneralReferralAlreadyInProgressThenShouldKeepReferralAndSetPendingRefund() {
+    void givenGeneralReferralAlreadyInProgressThenShouldKeepReferralAndSetEndState() {
         setMockClock(clock);
 
         List<ListValue<Payment>> payments = singletonList(new ListValue<>(
@@ -153,8 +153,6 @@ class CitizenGeneralApplicationPaymentMadeTest {
         );
         details.setId(TEST_CASE_ID);
 
-        GeneralApplication generalApp = caseData.getGeneralApplications().getFirst().getValue();
-
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplicationPayment.aboutToSubmit(
             details, beforeDetails
         );
@@ -162,9 +160,9 @@ class CitizenGeneralApplicationPaymentMadeTest {
         GeneralApplication generalApplication = response.getData().getGeneralApplications().getFirst().getValue();
         GeneralReferral generalReferral = response.getData().getGeneralReferral();
 
-        assertThat(response.getState()).isEqualTo(PendingRefund);
         assertThat(generalApplication.getGeneralApplicationFee().getPaymentReference()).isEqualTo(TEST_REFERENCE);
         assertThat(generalReferral.getGeneralReferralReason()).isEqualTo(GeneralReferralReason.CASEWORKER_REFERRAL);
+        verify(submissionService).setEndState(details, generalApplication);
     }
 
     @Test
