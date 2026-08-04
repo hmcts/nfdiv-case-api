@@ -20,7 +20,8 @@ public class DispenseWithServiceLastSeenOrHeard implements CcdPageConfiguration 
 
         If the applicant has not heard from the respondent for more than 2 years you may need to check if they are already divorced.
 
-        You can apply online to the central Family Court to search for a divorce decree absolute or a final order.
+        You can apply online to the central Family Court to <a href="https://www.gov.uk/copy-decree-absolute-final-order/do-not-know-which-court"
+            target="_blank" rel="noopener noreferrer">search for a divorce decree absolute or a final order (opens in a new tab)</a>.
 
         It costs £65 for each 10 year period you search.
 

@@ -23,6 +23,8 @@ public class DispenseWithServiceRespondentEmailAddress implements CcdPageConfigu
         If you know the respondent has an email address they actively use, you could consider applying for alternative service.
         """;
 
+    private static final String HAVE_EMAIL_SHOW_CONDITION = "applicant1DispenseHavePartnerEmailAddresses=\"Yes\"";
+
     @Override
     public void addTo(PageBuilder pageBuilder) {
         addWithShowCondition(pageBuilder, ALWAYS_SHOW);
@@ -42,8 +44,10 @@ public class DispenseWithServiceRespondentEmailAddress implements CcdPageConfigu
                     .complex(InterimApplicationOptions::getDispenseWithServiceJourneyOptions)
                         .label("labelRespondentEmailAddress", LABEL_RESPONDENTS_EMAIL_ADDRESS)
                         .mandatory(DispenseWithServiceJourneyOptions::getDispenseHavePartnerEmailAddresses)
-                        .mandatory(DispenseWithServiceJourneyOptions::getDispensePartnerEmailAddresses)
-                        .label("labelYouCanUploadEmailEvidence", LABEL_ABLE_TO_UPLOAD_EMAIL_EVIDENCE)
+                        .mandatory(DispenseWithServiceJourneyOptions::getDispensePartnerEmailAddresses,
+                            HAVE_EMAIL_SHOW_CONDITION)
+                        .label("labelYouCanUploadEmailEvidence", LABEL_ABLE_TO_UPLOAD_EMAIL_EVIDENCE,
+                            HAVE_EMAIL_SHOW_CONDITION)
                     .done()
                 .done()
             .done();
