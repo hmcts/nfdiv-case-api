@@ -32,6 +32,7 @@ public class DispenseWithServiceLastSeenOrHeard implements CcdPageConfiguration 
         If the court cannot find a decree absolute or a final order, you'll get a 'no trace' certificate which you cannot upload as
         evidence to progress the application.
         """;
+    private static final String NO_TRACE_LABEL = "You will need to upload the no trace certificate at the end of this application.";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
@@ -55,6 +56,8 @@ public class DispenseWithServiceLastSeenOrHeard implements CcdPageConfiguration 
                         .mandatory(DispenseWithServiceJourneyOptions::getDispensePartnerLastSeenDescription)
                         .label("labelCheckExistingDecree", LABEL_CHECK_EXISTING_DECREE)
                         .mandatory(DispenseWithServiceJourneyOptions::getDispenseHaveSearchedFinalOrder)
+                        .label("labelWillNeedToUploadNoTraceCertificate", NO_TRACE_LABEL,
+                            "applicant1DispenseHaveSearchedFinalOrder=\"Yes\"")
                         .mandatory(DispenseWithServiceJourneyOptions::getDispenseWhyNoFinalOrderSearch,
                             "applicant1DispenseHaveSearchedFinalOrder=\"No\"")
                     .done()
