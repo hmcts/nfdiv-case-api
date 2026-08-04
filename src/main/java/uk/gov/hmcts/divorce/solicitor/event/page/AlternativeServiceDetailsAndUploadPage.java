@@ -9,6 +9,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 public class AlternativeServiceDetailsAndUploadPage implements CcdPageConfiguration {
 
     private static final String PAGE_SHOW_CONDITION = "applicant1InterimAppsCanUploadEvidence=\"Yes\"";
+    private static final String RESPONDENT_NAME_TEXT = "- the respondent's name";
+    private static final String MESSAGE_SENT_TEXT = "- the date the messages were sent";
     private static final String RESPONDENT_EMAIL = "- the respondent's email address";
     private static final String RESPONDENT_EMAIL_SHOW_CONDITION = "applicant1AltServiceMethod != \"inADifferentWay\"";
     private static final String RESPONDENT_PHONE = "- the respondent's phone number";
@@ -33,9 +35,6 @@ public class AlternativeServiceDetailsAndUploadPage implements CcdPageConfigurat
 
         It may be helpful if your images show:
 
-        - the respondent's name
-
-        - the date the messages were sent
 
         """;
 
@@ -45,6 +44,8 @@ public class AlternativeServiceDetailsAndUploadPage implements CcdPageConfigurat
             .pageLabel("Alternative Service App")
             .showCondition(PAGE_SHOW_CONDITION)
             .label("alternativeEvidenceDocsLabel", ALTERNATIVE_EVIDENCE_DOCS_LABEL)
+            .label("respondentNameText", RESPONDENT_NAME_TEXT)
+            .label("messageSentText", MESSAGE_SENT_TEXT)
             .label("respondentEmail", RESPONDENT_EMAIL, RESPONDENT_EMAIL_SHOW_CONDITION)
             .label("respondentPhone", RESPONDENT_PHONE, RESPONDENT_PHONE_SHOW_CONDITION)
             .label("respondentSocialMedia", RESPONDENT_SOCIAL_MEDIA, RESPONDENT_SOCIAL_MEDIA_SHOW_CONDITION)
