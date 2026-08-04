@@ -23,7 +23,7 @@ public class AlternativeServiceDetailsAndUploadPage implements CcdPageConfigurat
         <a href="https://www.gov.uk/certifying-a-document#certifying-a-translation" target="_blank">certified translation</a>
 
 
-         ## Applicant 1 uploaded documents;
+         ## Applicant 1 uploaded documents
         """;
     private static final String ALTERNATIVE_EVIDENCE_DOCS_LABEL = """
         ## Upload your documents
