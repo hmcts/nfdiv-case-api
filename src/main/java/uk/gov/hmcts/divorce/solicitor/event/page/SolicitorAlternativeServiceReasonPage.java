@@ -7,8 +7,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
 public class SolicitorAlternativeServiceReasonPage implements CcdPageConfiguration {
 
     public static final String ALTERNATIVE_SERVICE_HEADING = """

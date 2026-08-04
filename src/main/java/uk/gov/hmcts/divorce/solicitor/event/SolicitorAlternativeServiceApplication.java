@@ -34,7 +34,7 @@ public class SolicitorAlternativeServiceApplication implements CCDConfig<CaseDat
 
     private static final String ALTERNATIVE_SERVICE = "Alternative Service App";
 
-    public static final String SOLICITOR_ALTERNATIVE_SERVICE_APPLICATION = "solicitor-alternative-service-application";
+    public static final String SOLICITOR_ALTERNATIVE_SERVICE_APPLICATION = "sol-alternative-service-app";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
