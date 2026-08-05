@@ -9,7 +9,10 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
@@ -18,6 +21,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentDescrip
 import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentNameAddressPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentPhoneAgePage;
 import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentServiceTimeVehiclePage;
+import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationDraftSubmissionService;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -45,6 +49,8 @@ public class SolicitorBailiffServiceApplication implements CCDConfig<CaseData, S
     public static final String SOLICITOR_BAILIFF_SERVICE_APPLICATION = "sol-bailiff-service-app";
 
     private final PaymentService paymentService;
+
+    private final ServiceApplicationDraftSubmissionService serviceApplicationDraftSubmissionService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -74,7 +80,9 @@ public class SolicitorBailiffServiceApplication implements CCDConfig<CaseData, S
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER)
-            .aboutToStartCallback(this::aboutToStart));
+            .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
+        );
     }
 
     private AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> caseDetails) {
@@ -84,6 +92,24 @@ public class SolicitorBailiffServiceApplication implements CCDConfig<CaseData, S
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseDetails.getData())
+            .build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
+        final CaseDetails<CaseData, State> details,
+        final CaseDetails<CaseData, State> beforeDetails
+    ) {
+        log.info("{} about to submit callback invoked for Case Id: {}", SOLICITOR_BAILIFF_SERVICE_APPLICATION, details.getId());
+        final CaseData caseData = details.getData();
+        final Applicant applicant = caseData.getApplicant1();
+
+        InterimApplicationOptions options = applicant.getInterimApplicationOptions();
+        options.setInterimApplicationType(InterimApplicationType.BAILIFF_SERVICE);
+
+        serviceApplicationDraftSubmissionService.submitFromInterimOptions(details.getId(), caseData, applicant);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
             .build();
     }
 }
