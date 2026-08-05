@@ -13,15 +13,18 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.Permission;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.BailiffServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationDraftSubmissionService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
@@ -30,6 +33,11 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ENFORCEMENT;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_BAILIFF;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE_ANSWERS;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorBailiffServiceApplication.SOLICITOR_BAILIFF_SERVICE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
@@ -40,6 +48,9 @@ class SolicitorBailiffServiceApplicationTest {
 
     @InjectMocks
     private SolicitorBailiffServiceApplication solicitorBailiffServiceApplication;
+
+    @Mock
+    private PaymentService paymentService;
 
     @Mock
     private ServiceApplicationDraftSubmissionService serviceApplicationDraftSubmissionService;
@@ -74,6 +85,35 @@ class SolicitorBailiffServiceApplicationTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getGrants)
             .containsExactly(expectedRolesAndPermissions);
+    }
+
+    @Test
+    void shouldRecordBailiffServiceApplicationFee() {
+        InterimApplicationOptions options = InterimApplicationOptions.builder()
+            .bailiffServiceJourneyOptions(BailiffServiceJourneyOptions.builder().build())
+            .build();
+        Applicant applicant = Applicant.builder()
+            .interimApplicationOptions(options)
+            .build();
+        CaseData caseData = CaseData.builder()
+            .applicant1(applicant)
+            .build();
+
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
+            .build();
+
+        when(paymentService.getServiceCost(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF)).thenReturn(45.0);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorBailiffServiceApplication.aboutToStart(caseDetails);
+
+        verify(paymentService).getServiceCost(
+            SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF
+        );
+
+        assertThat(response.getData().getApplicant1().getInterimApplicationOptions().getBailiffServiceJourneyOptions().getBailiffServiceFeeAmount()).isEqualTo("£45.00");
     }
 
     @Test
