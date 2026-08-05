@@ -86,7 +86,7 @@ public class SolicitorBailiffServiceApplication implements CCDConfig<CaseData, S
         );
     }
 
-    private AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> caseDetails) {
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> caseDetails) {
         String bailiffServiceFeeAmount = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF));
         caseDetails.getData().getApplicant1().getInterimApplicationOptions().getBailiffServiceJourneyOptions()
             .setBailiffServiceFeeAmount(bailiffServiceFeeAmount);
