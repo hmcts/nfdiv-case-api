@@ -256,6 +256,11 @@ import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVIC
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_APPLICATION_FURTHER_DETAILS;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_APPLICATION_GRANTED;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_APPLICATION_REFUSAL_REASON;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_APPLICATION_SIGN_STATEMENT_OF_TRUTH;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_APPLICATION_STATEMENT_OF_TRUTH;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_APPLICATION_STATEMENT_OF_TRUTH_COMMENTS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_APPLICATION_STATEMENT_OF_TRUTH_SOLS_FIRM;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_APPLICATION_STATEMENT_OF_TRUTH_SOLS_NAME;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_PAYMENT_FEE_ACCOUNT_NUMBER;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_PAYMENT_FEE_ACCOUNT_REFERENCE_NUMBER;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.SERVICE_PAYMENT_FEE_DATE_OF_PAYMENT;
@@ -692,11 +697,11 @@ public class CaseTypeTab implements CCDConfig<CaseData, State, UserRole> {
             .field(DEEMED_SERVICE_DATE)
             .field(SUCCESSFUL_SERVED_BY_BAILIFF)
             .field(REASON_FAILURE_TO_SERVE_BY_BAILIFF)
-            .field("serviceApplicationStatementOfTruth")
-            .field("serviceApplicationSignStatementOfTruth")
-            .field("serviceApplicationStatementOfTruthSolsName")
-            .field("serviceApplicationStatementOfTruthSolsFirm")
-            .field("serviceApplicationStatementOfTruthComments")
+            .field(SERVICE_APPLICATION_STATEMENT_OF_TRUTH)
+            .field(SERVICE_APPLICATION_SIGN_STATEMENT_OF_TRUTH)
+            .field(SERVICE_APPLICATION_STATEMENT_OF_TRUTH_SOLS_NAME)
+            .field(SERVICE_APPLICATION_STATEMENT_OF_TRUTH_SOLS_FIRM)
+            .field(SERVICE_APPLICATION_STATEMENT_OF_TRUTH_COMMENTS)
             .field(ALTERNATIVE_SERVICE_OUTCOMES);
     }
 
