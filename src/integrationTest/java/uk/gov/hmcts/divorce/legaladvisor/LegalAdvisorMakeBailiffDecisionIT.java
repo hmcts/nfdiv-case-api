@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
+import uk.gov.hmcts.divorce.testutil.DocTemplateResolver;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -41,8 +42,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingBailiffService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffRefused;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID;
-import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_ID;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeBailiffDecision.LEGAL_ADVISOR_BAILIFF_DECISION;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SERVICE_APPLICATION_GRANTED;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.getExpectedLocalDate;
@@ -78,6 +77,9 @@ public class LegalAdvisorMakeBailiffDecisionIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private DocTemplateResolver docTemplateResolver;
+
     @MockitoBean
     private Clock clock;
 
@@ -107,10 +109,14 @@ public class LegalAdvisorMakeBailiffDecisionIT {
         throws Exception {
         setMockClock(clock);
 
+        final String bailiffApplicationApprovedId =
+            docTemplateResolver.resolveTemplateID(uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID);
+
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(BAILIFF_APPLICATION_APPROVED_ID, "NFD_Bailiff_Application_Approved.docx");
+        stubForDocAssemblyWith(uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID,
+            bailiffApplicationApprovedId);
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setServiceApplicationGranted(YES);
@@ -144,10 +150,14 @@ public class LegalAdvisorMakeBailiffDecisionIT {
     public void shouldGenerateWelshDocumentAndNotificationWhenApplicant1LanguagePreferenceIsWelsh() throws Exception {
         setMockClock(clock);
 
+        final String bailiffApplicationApprovedId =
+            docTemplateResolver.resolveTemplateID(uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID, WELSH);
+
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(BAILIFF_APPLICATION_APPROVED_ID, "NFD_Bailiff_Application_Approved_Cy.docx");
+        stubForDocAssemblyWith(uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_APPROVED_ID,
+            bailiffApplicationApprovedId);
 
         final CaseData caseData = caseData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
@@ -177,10 +187,14 @@ public class LegalAdvisorMakeBailiffDecisionIT {
         throws Exception {
         setMockClock(clock);
 
+        final String bailiffApplicationNotApprovedId =
+            docTemplateResolver.resolveTemplateID(uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_ID);
+
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(BAILIFF_APPLICATION_NOT_APPROVED_ID, "NFD_Bailiff_Application_Not_Approved.docx");
+        stubForDocAssemblyWith(uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_APPLICATION_NOT_APPROVED_ID,
+            bailiffApplicationNotApprovedId);
 
         final CaseData caseData = caseData();
         caseData.getAlternativeService().setReceivedServiceApplicationDate(LocalDate.of(2022, 1, 1));
