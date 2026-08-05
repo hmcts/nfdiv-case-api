@@ -188,8 +188,6 @@ class ApplicationSentForReviewNotificationTest {
         data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
         data.setDueDate(LOCAL_DATE);
 
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(getConfigTemplateVars());
-
         notification.sendToApplicant2Solicitor(data, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
