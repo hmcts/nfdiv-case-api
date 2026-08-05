@@ -9,9 +9,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
 public class BailiffServiceRespondentNameAddressPage implements CcdPageConfiguration {
 
-    private static final String RESPONDENTS_NAME_LABEL = "Enter the Respondent's full name";
+    private static final String RESPONDENTS_NAME_LABEL = "Enter the respondent's full name";
 
-    private static final String RESPONDENT_IN_REFUGE_LABEL = "Is the Respondent currently resident in a refuge?";
+    private static final String RESPONDENT_IN_REFUGE_LABEL = "Is the respondent currently resident in a refuge?";
 
     private static final String RESPONDENT_ADDRESS_LABEL = """
             ## Which address (in England or Wales) should bailiff service be attempted at?
