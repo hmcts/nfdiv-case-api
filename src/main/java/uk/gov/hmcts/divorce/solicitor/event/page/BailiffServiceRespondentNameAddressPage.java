@@ -40,6 +40,6 @@ public class BailiffServiceRespondentNameAddressPage implements CcdPageConfigura
                 .label("respondentAddressLabel", RESPONDENT_ADDRESS_LABEL, HIDE_IF_CONFIDENTIAL)
                 .readonly(Applicant::getNonConfidentialAddress, HIDE_IF_CONFIDENTIAL)
             .done()
-        .done();
+            .done();
     }
 }

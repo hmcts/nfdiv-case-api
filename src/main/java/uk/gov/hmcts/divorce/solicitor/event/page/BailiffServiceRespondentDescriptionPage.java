@@ -30,14 +30,39 @@ public class BailiffServiceRespondentDescriptionPage implements CcdPageConfigura
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getBailiffServiceJourneyOptions)
-                        .mandatory(BailiffServiceJourneyOptions::getBailiffPartnersHeight, ALWAYS_SHOW, NO_DEFAULT_VALUE, RESPONDENTS_HEIGHT_LABEL, RESPONDENTS_HEIGHT_HINT)
-                        .mandatory(BailiffServiceJourneyOptions::getBailiffPartnersHairColour, ALWAYS_SHOW, NO_DEFAULT_VALUE, RESPONDENTS_HAIR_LABEL)
-                        .mandatory(BailiffServiceJourneyOptions::getBailiffPartnersEyeColour, ALWAYS_SHOW, NO_DEFAULT_VALUE, RESPONDENTS_EYE_LABEL)
-                        .mandatory(BailiffServiceJourneyOptions::getBailiffPartnersEthnicGroup, ALWAYS_SHOW, NO_DEFAULT_VALUE, RESPONDENTS_ETHNIC_GROUP_LABEL, RESPONDENTS_ETHNIC_GROUP_HINT)
-                        .mandatory(BailiffServiceJourneyOptions::getBailiffPartnersDistinguishingFeatures, ALWAYS_SHOW, NO_DEFAULT_VALUE, RESPONDENTS_OTHER_FEATURES_LABEL, RESPONDENTS_OTHER_FEATURES_HINT)
+                        .mandatory(
+                            BailiffServiceJourneyOptions::getBailiffPartnersHeight,
+                            ALWAYS_SHOW,
+                            NO_DEFAULT_VALUE,
+                            RESPONDENTS_HEIGHT_LABEL,
+                            RESPONDENTS_HEIGHT_HINT
+                        )
+                        .mandatory(
+                            BailiffServiceJourneyOptions::getBailiffPartnersHairColour,
+                            ALWAYS_SHOW,
+                            NO_DEFAULT_VALUE,
+                            RESPONDENTS_HAIR_LABEL
+                        )
+                        .mandatory(
+                            BailiffServiceJourneyOptions::getBailiffPartnersEyeColour, ALWAYS_SHOW, NO_DEFAULT_VALUE, RESPONDENTS_EYE_LABEL
+                        )
+                        .mandatory(
+                            BailiffServiceJourneyOptions::getBailiffPartnersEthnicGroup,
+                            ALWAYS_SHOW,
+                            NO_DEFAULT_VALUE,
+                            RESPONDENTS_ETHNIC_GROUP_LABEL,
+                            RESPONDENTS_ETHNIC_GROUP_HINT
+                        )
+                        .mandatory(
+                            BailiffServiceJourneyOptions::getBailiffPartnersDistinguishingFeatures,
+                            ALWAYS_SHOW,
+                            NO_DEFAULT_VALUE,
+                            RESPONDENTS_OTHER_FEATURES_LABEL,
+                            RESPONDENTS_OTHER_FEATURES_HINT
+                        )
                     .done()
                 .done()
             .done()
-        .done();
+            .done();
     }
 }

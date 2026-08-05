@@ -28,14 +28,34 @@ public class BailiffServiceRespondentPhoneAgePage implements CcdPageConfiguratio
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getBailiffServiceJourneyOptions)
-                        .mandatoryWithLabel(BailiffServiceJourneyOptions::getBailiffKnowPartnersPhone, RESPONDENTS_PHONE_QUESTION_LABEL)
-                        .mandatory(BailiffServiceJourneyOptions::getBailiffPartnersPhone, RESPONDENTS_PHONE_KNOWN, NO_DEFAULT_VALUE, RESPONDENTS_PHONE_NUMBER_LABEL,  RESPONDENTS_PHONE_HINT)
+                        .mandatoryWithLabel(
+                            BailiffServiceJourneyOptions::getBailiffKnowPartnersPhone, RESPONDENTS_PHONE_QUESTION_LABEL
+                        )
+                        .mandatory(
+                            BailiffServiceJourneyOptions::getBailiffPartnersPhone,
+                            RESPONDENTS_PHONE_KNOWN,
+                            NO_DEFAULT_VALUE,
+                            RESPONDENTS_PHONE_NUMBER_LABEL,
+                            RESPONDENTS_PHONE_HINT
+                        )
                         .mandatoryWithLabel(BailiffServiceJourneyOptions::getBailiffKnowPartnersDateOfBirth, RESPONDENTS_DOB_QUESTION_LABEL)
-                        .mandatory(BailiffServiceJourneyOptions::getBailiffPartnersDateOfBirth, RESPONDENTS_DOB_KNOWN, NO_DEFAULT_VALUE, RESPONDENTS_DOB_LABEL, RESPONDENTS_DOB_HINT)
-                        .mandatory(BailiffServiceJourneyOptions::getBailiffPartnersApproximateAge, RESPONDENTS_DOB_UNKNOWN, NO_DEFAULT_VALUE, RESPONDENTS_APPROX_AGE_LABEL, RESPONDENTS_APPROX_AGE_HINT)
+                        .mandatory(
+                            BailiffServiceJourneyOptions::getBailiffPartnersDateOfBirth,
+                            RESPONDENTS_DOB_KNOWN,
+                            NO_DEFAULT_VALUE,
+                            RESPONDENTS_DOB_LABEL,
+                            RESPONDENTS_DOB_HINT
+                        )
+                        .mandatory(
+                            BailiffServiceJourneyOptions::getBailiffPartnersApproximateAge,
+                            RESPONDENTS_DOB_UNKNOWN,
+                            NO_DEFAULT_VALUE,
+                            RESPONDENTS_APPROX_AGE_LABEL,
+                            RESPONDENTS_APPROX_AGE_HINT
+                        )
                     .done()
                 .done()
             .done()
-        .done();
+            .done();
     }
 }

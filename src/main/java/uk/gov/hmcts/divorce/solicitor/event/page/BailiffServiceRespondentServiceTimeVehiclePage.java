@@ -43,16 +43,49 @@ public class BailiffServiceRespondentServiceTimeVehiclePage implements CcdPageCo
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getBailiffServiceJourneyOptions)
-                        .mandatory(BailiffServiceJourneyOptions::getBailiffBestTimeToServe, ALWAYS_SHOW, NO_DEFAULT_VALUE, BEST_TIME_TO_SERVE_LABEL, BEST_TIME_TO_SERVE_HINT)
-                        .mandatoryWithLabel(BailiffServiceJourneyOptions::getBailiffDoesPartnerHaveVehicle, RESPONDENT_ACCESS_TO_VEHICLE_LABEL)
+                        .mandatory(
+                            BailiffServiceJourneyOptions::getBailiffBestTimeToServe,
+                            ALWAYS_SHOW,
+                            NO_DEFAULT_VALUE,
+                            BEST_TIME_TO_SERVE_LABEL,
+                            BEST_TIME_TO_SERVE_HINT
+                        )
+                        .mandatoryWithLabel(
+                            BailiffServiceJourneyOptions::getBailiffDoesPartnerHaveVehicle,
+                            RESPONDENT_ACCESS_TO_VEHICLE_LABEL
+                        )
                         .label("bailiffPartnerVehicleDetailsLabel", RESPONDENT_VEHICLE_DETAILS_LABEL, RESPONDENT_VEHICLE_KNOWN)
-                        .optional(BailiffServiceJourneyOptions::getBailiffPartnerVehicleModel, RESPONDENT_VEHICLE_KNOWN, NO_DEFAULT_VALUE, RESPONDENT_VEHICLE_MODEL_LABEL, RESPONDENT_VEHICLE_MODEL_HINT)
-                        .optional(BailiffServiceJourneyOptions::getBailiffPartnerVehicleColour, RESPONDENT_VEHICLE_KNOWN, NO_DEFAULT_VALUE, RESPONDENT_VEHICLE_COLOUR_LABEL, RESPONDENT_VEHICLE_COLOUR_HINT)
-                        .optional(BailiffServiceJourneyOptions::getBailiffPartnerVehicleRegistration, RESPONDENT_VEHICLE_KNOWN, NO_DEFAULT_VALUE, RESPONDENT_VEHICLE_REGISTRATION_LABEL, RESPONDENT_VEHICLE_REGISTRATION_HINT)
-                        .optional(BailiffServiceJourneyOptions::getBailiffPartnerVehicleOtherDetails, RESPONDENT_VEHICLE_KNOWN, NO_DEFAULT_VALUE, RESPONDENT_OTHER_VEHICLES_LABEL, RESPONDENT_OTHER_VEHICLES_HINT)
+                        .optional(
+                            BailiffServiceJourneyOptions::getBailiffPartnerVehicleModel,
+                            RESPONDENT_VEHICLE_KNOWN,
+                            NO_DEFAULT_VALUE,
+                            RESPONDENT_VEHICLE_MODEL_LABEL,
+                            RESPONDENT_VEHICLE_MODEL_HINT
+                        )
+                        .optional(
+                            BailiffServiceJourneyOptions::getBailiffPartnerVehicleColour,
+                            RESPONDENT_VEHICLE_KNOWN,
+                            NO_DEFAULT_VALUE,
+                            RESPONDENT_VEHICLE_COLOUR_LABEL,
+                            RESPONDENT_VEHICLE_COLOUR_HINT
+                        )
+                        .optional(
+                            BailiffServiceJourneyOptions::getBailiffPartnerVehicleRegistration,
+                            RESPONDENT_VEHICLE_KNOWN,
+                            NO_DEFAULT_VALUE,
+                            RESPONDENT_VEHICLE_REGISTRATION_LABEL,
+                            RESPONDENT_VEHICLE_REGISTRATION_HINT
+                        )
+                        .optional(
+                            BailiffServiceJourneyOptions::getBailiffPartnerVehicleOtherDetails,
+                            RESPONDENT_VEHICLE_KNOWN,
+                            NO_DEFAULT_VALUE,
+                            RESPONDENT_OTHER_VEHICLES_LABEL,
+                            RESPONDENT_OTHER_VEHICLES_HINT
+                        )
                     .done()
                 .done()
             .done()
-        .done();
+            .done();
     }
 }

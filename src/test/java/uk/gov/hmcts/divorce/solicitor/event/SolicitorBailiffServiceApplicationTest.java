@@ -34,9 +34,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ENFORCEMENT;
-import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_BAILIFF;
-import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE_ANSWERS;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorBailiffServiceApplication.SOLICITOR_BAILIFF_SERVICE_APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -113,7 +111,13 @@ class SolicitorBailiffServiceApplicationTest {
             SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF
         );
 
-        assertThat(response.getData().getApplicant1().getInterimApplicationOptions().getBailiffServiceJourneyOptions().getBailiffServiceFeeAmount()).isEqualTo("£45.00");
+        assertThat(response
+            .getData()
+            .getApplicant1()
+            .getInterimApplicationOptions()
+            .getBailiffServiceJourneyOptions()
+            .getBailiffServiceFeeAmount()
+        ).isEqualTo("£45.00");
     }
 
     @Test

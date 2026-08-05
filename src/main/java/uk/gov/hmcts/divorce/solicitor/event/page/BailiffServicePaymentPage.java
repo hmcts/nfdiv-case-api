@@ -9,6 +9,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
 public class BailiffServicePaymentPage implements CcdPageConfiguration {
 
+    private static final String NEVER_SHOW = "applicant1InterimAppsPaymentMethod = \"NEVER_SHOW\"";
+
     private static final String BAILIFF_SERVICE_LABEL = """
             ## Request bailiff service (D89)
 
@@ -38,7 +40,7 @@ public class BailiffServicePaymentPage implements CcdPageConfiguration {
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getBailiffServiceJourneyOptions)
-                        .readonly(BailiffServiceJourneyOptions::getBailiffServiceFeeAmount, "applicant1InterimAppsPaymentMethod = \"NEVER_SHOW\"")
+                        .readonly(BailiffServiceJourneyOptions::getBailiffServiceFeeAmount, NEVER_SHOW)
                         .label("bailiffServiceLabel", BAILIFF_SERVICE_LABEL)
                     .done()
                 .done()
