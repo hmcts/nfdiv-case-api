@@ -35,7 +35,7 @@ public class BailiffServiceRespondentServiceTimeVehiclePage implements CcdPageCo
     private static final String RESPONDENT_VEHICLE_REGISTRATION_HINT = "For example, GF08 RGH";
 
     private static final String RESPONDENT_OTHER_VEHICLES_LABEL = "Details of the respondent's other vehicles";
-    private static final String RESPONDENT_OTHER_VEHICLES_HINT = "Provide the Manufacturer and model, Colour, Registration number";
+    private static final String RESPONDENT_OTHER_VEHICLES_HINT = "Provide the manufacturer and model, colour, registration number";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
