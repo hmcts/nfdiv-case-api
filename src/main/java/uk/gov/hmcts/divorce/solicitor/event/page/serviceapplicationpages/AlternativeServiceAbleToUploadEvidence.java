@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.event.page;
+package uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages;
 
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -7,7 +7,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
-public class SolicitorAlternativeServiceAbleToUploadEvidence implements CcdPageConfiguration {
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages.ServiceApplicationPageBuilder.ALTERNATIVE_SERVICE_LABEL;
+
+public class AlternativeServiceAbleToUploadEvidence implements CcdPageConfiguration {
 
     private static final String CAN_UPLOAD_EVIDENCE_HINT = """
             The evidence you provide may help the court decide whether the papers can be served in the way you've requested.
@@ -28,9 +31,15 @@ public class SolicitorAlternativeServiceAbleToUploadEvidence implements CcdPageC
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("altServiceAbleToUploadEvidence")
-            .pageLabel("Alternative Service App")
-            .complex(CaseData::getApplicant1)
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
+
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+        var page = pageBuilder.page("altServiceAbleToUploadEvidence")
+            .pageLabel(ALTERNATIVE_SERVICE_LABEL);
+
+        page.complex(CaseData::getApplicant1)
             .complex(Applicant::getInterimApplicationOptions)
             .mandatory(InterimApplicationOptions::getInterimAppsCanUploadEvidence,
                 null, NO_DEFAULT_VALUE, null, CAN_UPLOAD_EVIDENCE_HINT)
@@ -41,5 +50,9 @@ public class SolicitorAlternativeServiceAbleToUploadEvidence implements CcdPageC
                 "applicant1InterimAppsCanUploadEvidence=\"No\"",
                 NO_DEFAULT_VALUE, WHY_SEND_THIS_WAY, WHY_SEND_THIS_WAY_HINT)
             .done();
+
+        if (isNotBlank(pageShowCondition)) {
+            page.showCondition(pageShowCondition);
+        }
     }
 }

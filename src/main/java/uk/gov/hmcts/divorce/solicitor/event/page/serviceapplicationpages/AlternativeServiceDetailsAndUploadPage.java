@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.event.page;
+package uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages;
 
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -6,9 +6,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages.ServiceApplicationPageBuilder.ALTERNATIVE_SERVICE_LABEL;
+
 public class AlternativeServiceDetailsAndUploadPage implements CcdPageConfiguration {
 
-    private static final String PAGE_SHOW_CONDITION = "applicant1InterimAppsCanUploadEvidence=\"Yes\"";
+    private static final String DOC_UPLOAD_PAGE_SHOW_CONDITION = "applicant1InterimAppsCanUploadEvidence=\"Yes\"";
     private static final String RESPONDENT_NAME_TEXT = "- the respondent's name";
     private static final String MESSAGE_SENT_TEXT = "- the date the messages were sent";
     private static final String RESPONDENT_EMAIL = "- the respondent's email address";
@@ -40,10 +43,15 @@ public class AlternativeServiceDetailsAndUploadPage implements CcdPageConfigurat
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("alternativeServiceDetailsAndUpload")
-            .pageLabel("Alternative Service App")
-            .showCondition(PAGE_SHOW_CONDITION)
-            .label("alternativeEvidenceDocsLabel", ALTERNATIVE_EVIDENCE_DOCS_LABEL)
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
+
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+        var page = pageBuilder.page("alternativeServiceDetailsAndUpload")
+            .pageLabel(ALTERNATIVE_SERVICE_LABEL);
+
+        page.label("alternativeEvidenceDocsLabel", ALTERNATIVE_EVIDENCE_DOCS_LABEL)
             .label("respondentNameText", RESPONDENT_NAME_TEXT)
             .label("messageSentText", MESSAGE_SENT_TEXT)
             .label("respondentEmail", RESPONDENT_EMAIL, RESPONDENT_EMAIL_SHOW_CONDITION)
@@ -54,5 +62,11 @@ public class AlternativeServiceDetailsAndUploadPage implements CcdPageConfigurat
             .complex(Applicant::getInterimApplicationOptions)
             .optionalWithLabel(InterimApplicationOptions::getInterimAppsEvidenceDocs, "Applicant 1 uploaded documents")
             .done();
+
+        if (isNotBlank(pageShowCondition)) {
+            page.showCondition(pageShowCondition);
+        } else {
+            page.showCondition(DOC_UPLOAD_PAGE_SHOW_CONDITION);
+        }
     }
 }
