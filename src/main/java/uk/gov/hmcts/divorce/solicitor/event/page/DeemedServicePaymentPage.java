@@ -21,8 +21,7 @@ public class DeemedServicePaymentPage implements CcdPageConfiguration {
 
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
-        var page = pageBuilder.page("deemedServicePayment")
-            .pageLabel("Deemed Service App");
+        var page = pageBuilder.page("deemedServicePayment");
         if (isNotBlank(pageShowCondition)) {
             page.showCondition(pageShowCondition);
         }
