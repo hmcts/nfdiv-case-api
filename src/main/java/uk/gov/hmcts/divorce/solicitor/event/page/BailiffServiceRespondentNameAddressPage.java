@@ -9,6 +9,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
 public class BailiffServiceRespondentNameAddressPage implements CcdPageConfiguration {
 
+    private static final String NEVER_SHOW = "applicant1BailiffPartnerInARefuge = \"NEVER_SHOW\"";
+
     private static final String RESPONDENTS_NAME_LABEL = "Enter the respondent's full name";
 
     private static final String RESPONDENT_IN_REFUGE_LABEL = "Is the respondent currently resident in a refuge?";
@@ -22,7 +24,12 @@ public class BailiffServiceRespondentNameAddressPage implements CcdPageConfigura
             for bailiff service.
             """;
 
-    private static final String HIDE_IF_CONFIDENTIAL = "applicant2ContactDetailsType = \"public\"";
+    private static final String RESPONDENT_ADDRESS_PUBLIC = "applicant2ContactDetailsType = \"public\"";
+    private static final String RESPONDENT_ADDRESS_PRIVATE = "applicant2ContactDetailsType = \"private\"";
+
+    private static final String RESPONDENT_ADDRESS_FAKE_FIELD_LABEL = "### Respondent Address";
+    private static final String RESPONDENT_ADDRESS_CONFIDENTIAL_LABEL =
+        "We have a confidential address for the respondent. You can apply to attempt bailiff service at this address.";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
@@ -36,9 +43,11 @@ public class BailiffServiceRespondentNameAddressPage implements CcdPageConfigura
                 .done()
             .done()
             .complex(CaseData::getApplicant2)
-                .readonly(Applicant::getContactDetailsType, "applicant1BailiffPartnerInARefuge = \"NEVER_SHOW\"")
-                .label("respondentAddressLabel", RESPONDENT_ADDRESS_LABEL, HIDE_IF_CONFIDENTIAL)
-                .readonly(Applicant::getNonConfidentialAddress, HIDE_IF_CONFIDENTIAL)
+                .readonly(Applicant::getContactDetailsType, NEVER_SHOW)
+                .label("respondentAddressLabel", RESPONDENT_ADDRESS_LABEL)
+                .readonly(Applicant::getNonConfidentialAddress, RESPONDENT_ADDRESS_PUBLIC)
+                .label("respondentAddressFakeFieldLabel", RESPONDENT_ADDRESS_FAKE_FIELD_LABEL, RESPONDENT_ADDRESS_PRIVATE)
+                .label("respondentAddressConfidentialLabel", RESPONDENT_ADDRESS_CONFIDENTIAL_LABEL, RESPONDENT_ADDRESS_PRIVATE)
             .done()
             .done();
     }
