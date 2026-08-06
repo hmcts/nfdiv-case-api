@@ -7,7 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.BailiffServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
-public class BailiffServicePaymentPage implements CcdPageConfiguration {
+public class BailiffServicePaymentMethodPage implements CcdPageConfiguration {
 
     private static final String NEVER_SHOW = "applicant1InterimAppsPaymentMethod = \"NEVER_SHOW\"";
 
