@@ -51,12 +51,10 @@ public class AlternativeServiceDetailsAndUploadPage implements CcdPageConfigurat
         var page = pageBuilder.page("alternativeServiceDetailsAndUpload")
             .pageLabel(ALTERNATIVE_SERVICE_LABEL);
 
-        String combinedCondition = isNotBlank(pageShowCondition)
-            ? PageBuilder.andShowCondition(DOC_UPLOAD_PAGE_SHOW_CONDITION, pageShowCondition)
-            : DOC_UPLOAD_PAGE_SHOW_CONDITION;
-
         page.label("alternativeEvidenceDocsLabel", ALTERNATIVE_EVIDENCE_DOCS_LABEL)
-            .showCondition(combinedCondition)
+            .showCondition(isNotBlank(pageShowCondition)
+                ? PageBuilder.andShowCondition(DOC_UPLOAD_PAGE_SHOW_CONDITION, pageShowCondition)
+                : DOC_UPLOAD_PAGE_SHOW_CONDITION)
             .label("respondentNameText", RESPONDENT_NAME_TEXT)
             .label("messageSentText", MESSAGE_SENT_TEXT)
             .label("respondentEmail", RESPONDENT_EMAIL, RESPONDENT_EMAIL_SHOW_CONDITION)
