@@ -577,13 +577,10 @@ public class CommonContent {
     }
 
     //Stage 1
-    //Move to GeneralEmailTemplateContent or leave here?
-    //Is this necessary? Could just call solicitorTemplateVars now that it sets labels
-    //If removed, leave facade in place and tidy up at Stage 2
+    //Unnecessary - just call solicitorTemplateVars now that it sets labels
+    //Leave facade in place - tidy up in Stage 2
     public Map<String, String> getGeneralEmailSolicitorVars(CaseData caseData, Long caseId, Applicant applicant) {
-        Map<String, String> templateVars = solicitorTemplateVars(caseData, caseId, applicant);
-        setApplicantLabels(caseData, templateVars);
-        return templateVars;
+        return solicitorTemplateVars(caseData, caseId, applicant);
     }
 
     //Stage 3
