@@ -19,9 +19,6 @@ public abstract class ServiceApplicationPageBuilder {
             new AlternativeServiceDetailsAndUploadPage()
         );
 
-        for (var page : pages ) {
-            page.addWithShowCondition(pageBuilder, pageShowCondition);
-        }
-        //pages.forEach(page -> page.addWithShowCondition(pageBuilder, pageShowCondition));
+        pages.forEach(page -> page.addWithShowCondition(pageBuilder, pageShowCondition));
     }
 }
