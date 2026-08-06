@@ -225,10 +225,4 @@ public class BailiffServiceJourneyOptions {
         searchable = false
     )
     private String bailiffPartnerFirearmsLicenseDetails;
-
-    @CCD(
-        label = "Bailiff Service Fee Amount",
-        searchable = false
-    )
-    private String bailiffServiceFeeAmount;
 }

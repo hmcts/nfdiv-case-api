@@ -3,9 +3,9 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.BailiffServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 
 public class BailiffServicePaymentMethodPage implements CcdPageConfiguration {
 
@@ -25,7 +25,7 @@ public class BailiffServicePaymentMethodPage implements CcdPageConfiguration {
             We will ask you some questions about the respondent to help the bailiff identify them. It will be helpful if
             you are able to provide a photo.
 
-            There is a fee of ${applicant1BailiffServiceFeeAmount} to apply for bailiff service.
+            There is a fee of ${labelContentBailiffServiceFeeAmount} to apply for bailiff service.
             """;
 
     public static final String PAYMENT_HEADING = "## How will payment be made?";
@@ -37,13 +37,9 @@ public class BailiffServicePaymentMethodPage implements CcdPageConfiguration {
 
         pageBuilder.page("bailiffServicePayment")
             .pageLabel("Bailiff Service App")
-            .complex(CaseData::getApplicant1)
-                .complex(Applicant::getInterimApplicationOptions)
-                    .complex(InterimApplicationOptions::getBailiffServiceJourneyOptions)
-                        .readonly(BailiffServiceJourneyOptions::getBailiffServiceFeeAmount, NEVER_SHOW)
-                        .label("bailiffServiceLabel", BAILIFF_SERVICE_LABEL)
-                    .done()
-                .done()
+            .complex(CaseData::getLabelContent)
+                .readonly(LabelContent::getBailiffServiceFeeAmount, NEVER_SHOW)
+                .label("bailiffServiceLabel", BAILIFF_SERVICE_LABEL)
             .done()
             .label("paymentLabel", PAYMENT_HEADING)
             .complex(CaseData::getApplicant1)

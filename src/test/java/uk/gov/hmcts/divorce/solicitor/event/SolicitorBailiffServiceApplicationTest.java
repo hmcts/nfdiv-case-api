@@ -111,13 +111,7 @@ class SolicitorBailiffServiceApplicationTest {
             SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF
         );
 
-        assertThat(response
-            .getData()
-            .getApplicant1()
-            .getInterimApplicationOptions()
-            .getBailiffServiceJourneyOptions()
-            .getBailiffServiceFeeAmount()
-        ).isEqualTo("£45.00");
+        assertThat(response.getData().getLabelContent().getBailiffServiceFeeAmount()).isEqualTo("£45.00");
     }
 
     @Test
