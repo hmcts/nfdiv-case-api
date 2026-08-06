@@ -11,7 +11,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class DispenseWithServiceRespondentEmailAddress implements CcdPageConfiguration {
 
-    private static final String LABEL_ABLE_TO_UPLOAD_EMAIL_EVIDENCE =
+    public static final String LABEL_CAN_UPLOAD_EVIDENCE_DISPENSE_SERVICE =
         "You will be able to upload any evidence you have at the end of this application";
     private static final String LABEL_RESPONDENTS_EMAIL_ADDRESS = """
         ### The respondent's email address ###
@@ -46,7 +46,7 @@ public class DispenseWithServiceRespondentEmailAddress implements CcdPageConfigu
                         .mandatory(DispenseWithServiceJourneyOptions::getDispenseHavePartnerEmailAddresses)
                         .mandatory(DispenseWithServiceJourneyOptions::getDispensePartnerEmailAddresses,
                             HAVE_EMAIL_SHOW_CONDITION)
-                        .label("labelYouCanUploadEmailEvidence", LABEL_ABLE_TO_UPLOAD_EMAIL_EVIDENCE,
+                        .label("labelYouCanUploadEmailEvidence", LABEL_CAN_UPLOAD_EVIDENCE_DISPENSE_SERVICE,
                             HAVE_EMAIL_SHOW_CONDITION)
                     .done()
                 .done()
