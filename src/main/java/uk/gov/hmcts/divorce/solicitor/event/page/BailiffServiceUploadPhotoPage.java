@@ -16,9 +16,9 @@ public class BailiffServiceUploadPhotoPage implements CcdPageConfiguration {
         ## Upload your documents
         Upload a recent picture of the respondent\n
         Make sure your picture:\n
-        \t• clearly shows the respondent’s face\n
-        \t• does not include any other people, to avoid confusion\n
-        \t• does not include any children\n
+        • clearly shows the respondent’s face\n
+        • does not include any other people, to avoid confusion\n
+        • does not include any children\n
         Any blurred images, or images that show children or other people cannot be accepted by the court.\n
         The file must be in jpg, bmp, tiff or png format.
         """;
