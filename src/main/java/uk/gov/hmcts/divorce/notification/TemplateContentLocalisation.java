@@ -114,7 +114,7 @@ public class TemplateContentLocalisation {
 
     //Could we set this in commonContent.mainTemplateVars() and avoid calling this method elsewhere?
     public String getContactWebFormText(LanguagePreference languagePreference) {
-        if (languagePreference == WELSH) {
+        if (WELSH.equals(languagePreference)) {
             return CONTACT_TEXT_WELSH + "(" + config.getTemplateVars().get(WEBFORM_CY_URL) + ")";
         } else {
             return CONTACT_TEXT + "(" + config.getTemplateVars().get(WEBFORM_URL) + ")";
@@ -123,7 +123,7 @@ public class TemplateContentLocalisation {
 
     //Could we set this in commonContent.mainTemplateVars() and avoid calling this method elsewhere?
     public String getPhoneAndOpeningTimes(LanguagePreference languagePreference) {
-        if (languagePreference == WELSH) {
+        if (WELSH.equals(languagePreference)) {
             return PHONE_AND_OPENING_TIMES_TEXT_CY;
         } else {
             return PHONE_AND_OPENING_TIMES_TEXT;
