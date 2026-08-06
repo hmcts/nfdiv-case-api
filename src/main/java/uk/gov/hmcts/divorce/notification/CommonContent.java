@@ -653,14 +653,9 @@ public class CommonContent {
     }
 
     //Stage 1
-    //Add private method to determine if an applicant is applicant1 (hash comparison)
+    //Add private method to determine if an applicant is applicant1
     private boolean isApplicant1(CaseData caseData, Applicant applicant) {
-        Applicant applicant1 = caseData.getApplicant1();
-
-        var applicantHash = Objects.hashCode(applicant);
-        var applicant1Hash = Objects.hashCode(applicant1);
-
-        return applicantHash == applicant1Hash;
+        return applicant == caseData.getApplicant1();
     }
 
     //Stage 3
