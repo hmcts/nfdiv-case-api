@@ -16,7 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
-import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServicePaymentPage;
+import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServicePaymentMethodPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentDescriptionPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentHistoryPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentHistoryThreePage;
@@ -62,7 +62,7 @@ public class SolicitorBailiffServiceApplication implements CCDConfig<CaseData, S
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
 
         final List<CcdPageConfiguration> pages = asList(
-            new BailiffServicePaymentPage(),
+            new BailiffServicePaymentMethodPage(),
             new BailiffServiceRespondentNameAddressPage(),
             new BailiffServiceRespondentPhoneAgePage(),
             new BailiffServiceRespondentDescriptionPage(),

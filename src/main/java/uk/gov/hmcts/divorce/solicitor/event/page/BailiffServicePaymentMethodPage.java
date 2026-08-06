@@ -7,7 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.BailiffServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
-public class BailiffServicePaymentPage implements CcdPageConfiguration {
+public class BailiffServicePaymentMethodPage implements CcdPageConfiguration {
 
     private static final String NEVER_SHOW = "applicant1InterimAppsPaymentMethod = \"NEVER_SHOW\"";
 
@@ -48,8 +48,8 @@ public class BailiffServicePaymentPage implements CcdPageConfiguration {
             .label("paymentLabel", PAYMENT_HEADING)
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
-                .mandatoryWithLabel(InterimApplicationOptions::getInterimAppsPaymentMethod, PAYMENT_LABEL)
-            .done()
+                    .mandatory(InterimApplicationOptions::getInterimAppsPaymentMethod, ALWAYS_SHOW, NO_DEFAULT_VALUE, PAYMENT_LABEL)
+                .done()
             .done();
     }
 }
