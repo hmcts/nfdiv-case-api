@@ -28,8 +28,11 @@ public class BailiffServiceRespondentPhoneAgePage implements CcdPageConfiguratio
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getBailiffServiceJourneyOptions)
-                        .mandatoryWithLabel(
-                            BailiffServiceJourneyOptions::getBailiffKnowPartnersPhone, RESPONDENTS_PHONE_QUESTION_LABEL
+                        .mandatory(
+                            BailiffServiceJourneyOptions::getBailiffKnowPartnersPhone,
+                            ALWAYS_SHOW,
+                            NO_DEFAULT_VALUE,
+                            RESPONDENTS_PHONE_QUESTION_LABEL
                         )
                         .mandatory(
                             BailiffServiceJourneyOptions::getBailiffPartnersPhone,
@@ -38,7 +41,11 @@ public class BailiffServiceRespondentPhoneAgePage implements CcdPageConfiguratio
                             RESPONDENTS_PHONE_NUMBER_LABEL,
                             RESPONDENTS_PHONE_HINT
                         )
-                        .mandatoryWithLabel(BailiffServiceJourneyOptions::getBailiffKnowPartnersDateOfBirth, RESPONDENTS_DOB_QUESTION_LABEL)
+                        .mandatory(BailiffServiceJourneyOptions::getBailiffKnowPartnersDateOfBirth,
+                            ALWAYS_SHOW,
+                            NO_DEFAULT_VALUE,
+                            RESPONDENTS_DOB_QUESTION_LABEL
+                        )
                         .mandatory(
                             BailiffServiceJourneyOptions::getBailiffPartnersDateOfBirth,
                             RESPONDENTS_DOB_KNOWN,

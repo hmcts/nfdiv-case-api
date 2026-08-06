@@ -50,8 +50,10 @@ public class BailiffServiceRespondentServiceTimeVehiclePage implements CcdPageCo
                             BEST_TIME_TO_SERVE_LABEL,
                             BEST_TIME_TO_SERVE_HINT
                         )
-                        .mandatoryWithLabel(
+                        .mandatory(
                             BailiffServiceJourneyOptions::getBailiffDoesPartnerHaveVehicle,
+                            ALWAYS_SHOW,
+                            NO_DEFAULT_VALUE,
                             RESPONDENT_ACCESS_TO_VEHICLE_LABEL
                         )
                         .label("bailiffPartnerVehicleDetailsLabel", RESPONDENT_VEHICLE_DETAILS_LABEL, RESPONDENT_VEHICLE_KNOWN)

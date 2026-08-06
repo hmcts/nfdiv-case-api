@@ -48,8 +48,8 @@ public class BailiffServicePaymentMethodPage implements CcdPageConfiguration {
             .label("paymentLabel", PAYMENT_HEADING)
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
-                .mandatoryWithLabel(InterimApplicationOptions::getInterimAppsPaymentMethod, PAYMENT_LABEL)
-            .done()
+                    .mandatory(InterimApplicationOptions::getInterimAppsPaymentMethod, ALWAYS_SHOW, NO_DEFAULT_VALUE, PAYMENT_LABEL)
+                .done()
             .done();
     }
 }
