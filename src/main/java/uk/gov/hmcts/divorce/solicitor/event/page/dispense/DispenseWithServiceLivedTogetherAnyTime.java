@@ -20,8 +20,7 @@ public class DispenseWithServiceLivedTogetherAnyTime implements CcdPageConfigura
 
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
-        var page = pageBuilder.page("dispenseServiceLivedTogether")
-                    .pageLabel("Dispense with service app");
+        var page = pageBuilder.page("dispenseServiceLivedTogether");
 
         if (isNotBlank(pageShowCondition)) {
             page.showCondition(pageShowCondition);

@@ -17,9 +17,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceAddressAfterParting;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceConfirmPage;
+import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceLastKnownEmployer;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceLastSeenOrHeard;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceLivedTogetherAnyTime;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceRespondentEmailAddress;
+import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceRespondentTelephone;
+import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceSearchingOnline;
+import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceTracingAgents;
+import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceTracingOnline;
 import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationDraftSubmissionService;
 
 import java.util.List;
@@ -51,7 +56,12 @@ public class SolicitorDispenseWithServiceApplication implements CCDConfig<CaseDa
                 new DispenseWithServiceLivedTogetherAnyTime(),
                 new DispenseWithServiceAddressAfterParting(),
                 new DispenseWithServiceLastSeenOrHeard(),
-                new DispenseWithServiceRespondentEmailAddress());
+                new DispenseWithServiceRespondentEmailAddress(),
+                new DispenseWithServiceRespondentTelephone(),
+                new DispenseWithServiceTracingAgents(),
+                new DispenseWithServiceTracingOnline(),
+                new DispenseWithServiceSearchingOnline(),
+                new DispenseWithServiceLastKnownEmployer());
 
         pages.forEach(page -> page.addTo(pageBuilder));
     }

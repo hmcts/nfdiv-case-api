@@ -11,7 +11,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class DispenseWithServiceRespondentEmailAddress implements CcdPageConfiguration {
 
-    private static final String LABEL_ABLE_TO_UPLOAD_EMAIL_EVIDENCE =
+    public static final String LABEL_CAN_UPLOAD_EVIDENCE_DISPENSE_SERVICE =
         "You will be able to upload any evidence you have at the end of this application";
     private static final String LABEL_RESPONDENTS_EMAIL_ADDRESS = """
         ### The respondent's email address ###
@@ -32,8 +32,7 @@ public class DispenseWithServiceRespondentEmailAddress implements CcdPageConfigu
 
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
-        var page = pageBuilder.page("dispenseServiceRespondentEmail")
-                    .pageLabel("Dispense with service app");
+        var page = pageBuilder.page("dispenseServiceRespondentEmail");
 
         if (isNotBlank(pageShowCondition)) {
             page.showCondition(pageShowCondition);
@@ -46,7 +45,7 @@ public class DispenseWithServiceRespondentEmailAddress implements CcdPageConfigu
                         .mandatory(DispenseWithServiceJourneyOptions::getDispenseHavePartnerEmailAddresses)
                         .mandatory(DispenseWithServiceJourneyOptions::getDispensePartnerEmailAddresses,
                             HAVE_EMAIL_SHOW_CONDITION)
-                        .label("labelYouCanUploadEmailEvidence", LABEL_ABLE_TO_UPLOAD_EMAIL_EVIDENCE,
+                        .label("labelYouCanUploadEmailEvidence", LABEL_CAN_UPLOAD_EVIDENCE_DISPENSE_SERVICE,
                             HAVE_EMAIL_SHOW_CONDITION)
                     .done()
                 .done()
