@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.caseworker.event;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
@@ -8,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
@@ -19,6 +21,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
+@Slf4j
 public class CaseworkerRefund implements CCDConfig<CaseData, State, UserRole> {
     public static final String CASEWORKER_REFUND = "caseworker-refund";
 
@@ -26,7 +29,7 @@ public class CaseworkerRefund implements CCDConfig<CaseData, State, UserRole> {
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_REFUND)
-            .forStates(Submitted, Rejected, Withdrawn)
+            .forStates(Submitted, Rejected, Withdrawn, PendingRefund)
             .name("Refund")
             .description("Refund")
             .showSummary()

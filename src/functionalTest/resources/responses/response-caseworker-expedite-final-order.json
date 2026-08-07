@@ -59,6 +59,7 @@
     "grantedDate": "${json-unit.any-string}",
     "granted": ["Yes"],
     "dateFinalOrderEligibleToRespondent": "${json-unit.any-string}",
+    "finalOrderInsightSurveyStage": 0,
     "documentsGenerated": [
       {
         "id": "${json-unit.any-string}",

@@ -7,14 +7,14 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
-import uk.gov.hmcts.divorce.common.exception.InvalidDataException;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation;
 
 import java.util.Collections;
+import java.util.List;
 
-import static org.junit.Assert.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_VALIDATION_ERROR;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
@@ -26,7 +26,7 @@ class ValidateIssueTest {
     private ValidateIssue validateIssue;
 
     @Test
-    void shouldThrowExceptionWhenThereAreValidationErrors() {
+    void shouldReturnValidListWhenThereAreValidationErrors() {
 
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
@@ -37,16 +37,13 @@ class ValidateIssueTest {
             classMock.when(() -> ApplicationValidation.validateIssue(caseDetails.getData()))
                 .thenReturn(Collections.singletonList(TEST_VALIDATION_ERROR));
 
-            InvalidDataException thrown = assertThrows(InvalidDataException.class, () -> {
-                validateIssue.apply(caseDetails);
-            });
-
-            assert thrown.getErrors().contains(TEST_VALIDATION_ERROR);
+            List<String> validationErrors = validateIssue.validate(caseDetails);
+            assertThat(validationErrors).isNotEmpty();
         }
     }
 
     @Test
-    void shouldNotThrowExceptionWhenThereAreNoValidationErrors() {
+    void shouldReturnEmptyListWhenThereAreNoValidationErrors() {
         final CaseData caseData = caseData();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
@@ -56,7 +53,8 @@ class ValidateIssueTest {
             classMock.when(() -> ApplicationValidation.validateIssue(caseDetails.getData()))
                 .thenReturn(Collections.emptyList());
 
-            assert validateIssue.apply(caseDetails).equals(caseDetails);
+            List<String> validationErrors = validateIssue.validate(caseDetails);
+            assertThat(validationErrors).isEmpty();
         }
     }
 }

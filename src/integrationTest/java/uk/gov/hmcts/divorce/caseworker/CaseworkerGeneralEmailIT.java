@@ -20,6 +20,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralEmail;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
@@ -40,8 +41,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.OTHER;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT1_LABEL;
+import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT2_LABEL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICANT_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.COURT_EMAIL;
@@ -49,8 +54,10 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_COURT_EMAI
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.RESPONDENT_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_URL;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_OTHER_PARTY;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_EMAIL_PETITIONER;
@@ -117,6 +124,8 @@ public class CaseworkerGeneralEmailIT {
         IdamWireMock.stopAndReset();
     }
 
+    private static final String APPLICANT_2_FULL_NAME_TXT = "applicant_2_first_name applicant_2last_name";
+    private static final String APPLICANT_1_FULL_NAME_TXT = "test_first_name test_middle_name test_last_name";
     private static final String SMART_SURVEY_DO_NOT_REPLY = "link" + System.lineSeparator() + System.lineSeparator()
         + "##This is an automated message, do not reply to this email.";
     private static final String SMART_SURVEY_DO_NOT_REPLY_CY = "link" + System.lineSeparator() + System.lineSeparator()
@@ -199,6 +208,7 @@ public class CaseworkerGeneralEmailIT {
         Map<String, String> templateVars = defaultTemplateVars();
         templateVars.put(GENERAL_EMAIL_DETAILS, "Test Body");
         templateVars.put(SOLICITOR_NAME, TEST_SOLICITOR_NAME);
+        templateVars.put(SOLICITOR_REFERENCE, "Not provided");
         templateVars.put(GENERAL_OTHER_RECIPIENT_NAME, null);
         templateVars.put(APPLICANT_NAME, TEST_FIRST_NAME + " " + TEST_LAST_NAME);
         templateVars.put(APPLICATION_REFERENCE, formatId(TEST_CASE_ID));
@@ -207,6 +217,12 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(SMART_SURVEY, SMART_SURVEY_DO_NOT_REPLY);
         templateVars.put(WEBFORM_URL, null);
         templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        templateVars.put(APPLICANT_1_FULL_NAME, APPLICANT_1_FULL_NAME_TXT);
+        templateVars.put(APPLICANT_2_FULL_NAME, APPLICANT_2_FULL_NAME_TXT);
+        templateVars.put(APPLICANT1_LABEL, "Applicant");
+        templateVars.put(APPLICANT2_LABEL, "Respondent");
+        templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, "");
+        templateVars.put(SIGN_IN_URL, "null1616591401473378");
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 
@@ -304,6 +320,13 @@ public class CaseworkerGeneralEmailIT {
         templateVars.put(SMART_SURVEY, SMART_SURVEY_DO_NOT_REPLY);
         templateVars.put(WEBFORM_URL, null);
         templateVars.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
+        templateVars.put(SOLICITOR_REFERENCE, "Not provided");
+        templateVars.put(APPLICANT_1_FULL_NAME, "test_first_name test_last_name");
+        templateVars.put(APPLICANT_2_FULL_NAME, "applicant_2_first_name test_middle_name applicant_2last_name");
+        templateVars.put(APPLICANT1_LABEL, "Applicant");
+        templateVars.put(APPLICANT2_LABEL, "Respondent");
+        templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, "");
+        templateVars.put(SIGN_IN_URL, "null1616591401473378");
 
         Map<String, Object> templateVarsObj = populateAttachmentVars(templateVars);
 

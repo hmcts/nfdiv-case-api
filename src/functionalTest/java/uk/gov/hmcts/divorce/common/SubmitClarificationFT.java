@@ -37,7 +37,6 @@ public class SubmitClarificationFT extends FunctionalTestSuite {
     private static final String DOCUMENTS_UPLOADED_RESPONSE_JOINT =
             "classpath:responses/response-submit-clarification-documents-uploaded-joint.json";
 
-    //TODO: This id will need to be updated with the new case id for joint application if AAT database is refreshed
     private static final Long CASE_ID_JOINT = 1652180348849042L;
 
     @Test

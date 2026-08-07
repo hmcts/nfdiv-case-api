@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.event.SystemUpdateCase.SYSTEM_UPDATE_BULK_CASE;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.JURISDICTION;
 import static uk.gov.hmcts.divorce.divorcecase.NoFaultDivorce.getCaseType;
-import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt.BURY_ST_EDMUNDS;
+import static uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourtBulk.BURY_ST_EDMUNDS;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRemoveBulkCase.SYSTEM_REMOVE_BULK_CASE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_USER_USER_ID;

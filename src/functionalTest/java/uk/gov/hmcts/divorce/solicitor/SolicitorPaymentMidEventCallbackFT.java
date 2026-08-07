@@ -31,6 +31,7 @@ public class SolicitorPaymentMidEventCallbackFT extends FunctionalTestSuite {
         Map<String, Object> caseData = caseData(REQUEST);
         caseData.put(LANGUAGE_PREFERENCE_WELSH, NO);
         caseData.put(FINANCIAL_ORDER, NO);
+        caseData.put("applicant1Address", null);
 
         Response response = triggerCallback(caseData, SOLICITOR_SUBMIT, SOL_PAYMENT_MID_EVENT_URL);
 

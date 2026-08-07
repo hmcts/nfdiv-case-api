@@ -12,7 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourtBulk;
 import uk.gov.hmcts.divorce.divorcecase.model.access.BulkCaseListAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.BulkCaseRemovalAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccess;
@@ -53,7 +53,7 @@ public class BulkActionCaseData {
         label = "Court name",
         access = {CaseworkerAccess.class}
     )
-    private ConditionalOrderCourt court;
+    private ConditionalOrderCourtBulk court;
 
     @CCD(
         label = "Date and time of hearing",

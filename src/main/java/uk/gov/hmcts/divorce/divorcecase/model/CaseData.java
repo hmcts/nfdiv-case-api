@@ -35,6 +35,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerWithCAAAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CitizenAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccessExcludingSolicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.access.InternalCaseFlagsAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.SolicitorAndSystemUpdateAccess;
@@ -140,11 +141,11 @@ public class CaseData {
     private Application application = new Application();
 
     @JsonUnwrapped()
-    @CCD(access = {DefaultAccess.class})
+    @CCD(access = {DefaultAccessExcludingSolicitor.class})
     private CaseInvite caseInvite;
 
     @JsonUnwrapped()
-    @CCD(access = {DefaultAccess.class})
+    @CCD(access = {DefaultAccessExcludingSolicitor.class})
     private CaseInviteApp1 caseInviteApp1;
 
     @JsonUnwrapped()
@@ -394,6 +395,30 @@ public class CaseData {
     private List<ListValue<CaseMatch>> caseMatches = new ArrayList<>();
 
     @CCD(
+        label = "Bad Case matches",
+        typeOverride = Collection,
+        typeParameterOverride = "CaseMatch",
+        access = {CaseworkerAccess.class, CaseworkerDeleteAccess.class},
+        searchable = false
+    )
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
+    @Builder.Default
+    private List<ListValue<CaseMatch>> badCaseMatches = new ArrayList<>();
+
+    @CCD(
+        label = "New case matches",
+        typeOverride = Collection,
+        typeParameterOverride = "CaseMatch",
+        access = {CaseworkerAccess.class, CaseworkerDeleteAccess.class},
+        searchable = false
+    )
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
+    @Builder.Default
+    private List<ListValue<CaseMatch>> newCaseMatches = new ArrayList<>();
+
+
+
+    @CCD(
         label = "Launch the Flags screen",
         access = {InternalCaseFlagsAccess.class},
         searchable = false
@@ -406,6 +431,13 @@ public class CaseData {
         searchable = false
     )
     private Flags caseFlags;
+
+    @CCD(
+        label = "Service application refund due date",
+        searchable = false
+    )
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate refundDueDate;
 
     @JsonUnwrapped
     @Builder.Default

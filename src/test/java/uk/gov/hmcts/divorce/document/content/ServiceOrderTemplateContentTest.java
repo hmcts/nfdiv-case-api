@@ -31,7 +31,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.JUDIC
 import static uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType.SEPARATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONDITIONAL_ORDER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_DIVORCE_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CONTACT_EMAIL;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CTSC_CONTACT_DETAILS;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_PROCESS_CY;
@@ -44,6 +52,9 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.JUDICIAL_SEPARATION_PROCESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ORDER_TYPE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PROCESS_TO_END_YOUR_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.REFUSAL_REASON;
@@ -57,6 +68,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicDocmosisTemplateContent;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -64,6 +76,9 @@ class ServiceOrderTemplateContentTest {
 
     @Mock
     private CommonContent commonContent;
+
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
     private ServiceOrderTemplateContent serviceOrderTemplateContent;
@@ -231,6 +246,8 @@ class ServiceOrderTemplateContentTest {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("spouse");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, FORMATTED_TEST_CASE_ID);
@@ -249,6 +266,10 @@ class ServiceOrderTemplateContentTest {
         expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(ISSUE_DATE_POPULATED, true);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -261,6 +282,8 @@ class ServiceOrderTemplateContentTest {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("civil partner");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, FORMATTED_TEST_CASE_ID);
@@ -279,6 +302,10 @@ class ServiceOrderTemplateContentTest {
         expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(ISSUE_DATE_POPULATED, true);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -290,6 +317,8 @@ class ServiceOrderTemplateContentTest {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("spouse");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, FORMATTED_TEST_CASE_ID);
@@ -307,6 +336,10 @@ class ServiceOrderTemplateContentTest {
         expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(ISSUE_DATE_POPULATED, true);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
@@ -320,6 +353,8 @@ class ServiceOrderTemplateContentTest {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("civil partner");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, FORMATTED_TEST_CASE_ID);
@@ -337,6 +372,10 @@ class ServiceOrderTemplateContentTest {
         expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(ISSUE_DATE_POPULATED, true);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -348,6 +387,8 @@ class ServiceOrderTemplateContentTest {
         caseData.getAlternativeService().setServiceApplicationRefusalReason("refusal reasons");
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("spouse");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
 
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
         expectedEntries.put(CASE_REFERENCE, FORMATTED_TEST_CASE_ID);
@@ -366,6 +407,10 @@ class ServiceOrderTemplateContentTest {
         expectedEntries.put(ORDER_TYPE, CONDITIONAL_ORDER);
         expectedEntries.put(CTSC_CONTACT_DETAILS, buildCtscContactDetails());
         expectedEntries.put(ISSUE_DATE_POPULATED, true);
+        expectedEntries.put(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT);
+        expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
+        expectedEntries.put(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL);
+        expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
 
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
@@ -379,12 +424,19 @@ class ServiceOrderTemplateContentTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), WELSH)).thenReturn("priod");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(WELSH));
+
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
             entry(PARTNER, "priod"),
             entry(DIVORCE_OR_DISSOLUTION, DIVORCE_PROCESS_CY),
-            entry(CTSC_CONTACT_DETAILS, buildCtscContactDetails())
+            entry(CTSC_CONTACT_DETAILS, buildCtscContactDetails()),
+            entry(DIVORCE_AND_DISSOLUTION_HEADER, DIVORCE_AND_DISSOLUTION_HEADER_TEXT_CY),
+            entry(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT_CY),
+            entry(CONTACT_EMAIL, CONTACT_DIVORCE_EMAIL),
+            entry(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY)
         );
     }
 
@@ -396,6 +448,9 @@ class ServiceOrderTemplateContentTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YES);
 
         when(commonContent.getPartner(caseData, caseData.getApplicant2(), WELSH)).thenReturn("partner sifil");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(WELSH));
+
         Map<String, Object> templateContent = serviceOrderTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(

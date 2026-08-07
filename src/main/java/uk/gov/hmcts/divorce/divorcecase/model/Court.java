@@ -24,7 +24,6 @@ public enum Court implements HasLabel {
     @JsonProperty("northWest")
     NORTH_WEST("North West Regional Divorce Unit (Liverpool)", "AA04"),
 
-    //TODO: What is the Bury St Edmunds Site ID?
     @JsonProperty("buryStEdmunds")
     BURY_ST_EDMUNDS("Bury St Edmunds", "");
 

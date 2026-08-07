@@ -28,6 +28,8 @@ public final class DocumentConstants {
     public static final String NFD_NOTICE_OF_CHANGE_APP_INVITE_DOCUMENT_NAME = "Case invitation to Citizen";
     public static final String NFD_NOP_APP1_JS_SOLE_UNDISPUTED = "NFD_NOP_APP1_JS_SOLE_UNDISPUTED";
 
+    public static final String HEARING_REMINDER = "HEARING_REMINDER";
+
     public static final String PRONOUNCEMENT_LIST_TEMPLATE_ID = "BULK_CASE_PRONOUNCEMENT";
     public static final String PRONOUNCEMENT_LIST_DOCUMENT_NAME = "NFD_Pronouncement_List";
 
@@ -45,6 +47,7 @@ public final class DocumentConstants {
     public static final String AMENDED_APPLICATION_COVERSHEET_DOCUMENT_NAME = "amendedApplicationCoversheet";
     public static final String CONDITIONAL_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "conditionalOrderGrantedCoversheet";
     public static final String COVERSHEET_DOCUMENT_NAME = "coversheet";
+    public static final String HMCTS_COVERSHEET_NAME = "hmctsCoversheet";
     public static final String JUDICIAL_SEPARATION_ORDER_GRANTED_COVERSHEET_DOCUMENT_NAME = "judicialSeparationOrderGrantedCoversheet";
     public static final String JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVERSHEET_DOCUMENT_NAME
         = "judicialSeparationOrderGrantedSolicitorCoversheet";
@@ -72,6 +75,8 @@ public final class DocumentConstants {
     public static final String NFD_NOP_APP2_JS_SOLE = "NFD_NOP_APP2_JS_SOLE";
     public static final String NFD_NOP_APP1_SOLICITOR_JS_SOLE = "NFD_NOP_APP1_SOLICITOR_JS_SOLE";
     public static final String NFD_NOP_JS_SERVICE_SOLICITOR_TEMPLATE_ID = "NFD_NOP_JS_SERVICE_SOLICITOR";
+    public static final String NFD_FO_REQUESTED_LETTER_RESPONDENT_TEMPLATE_ID = "NFD_FO_REQUESTED_LETTER_RESPONDENT";
+    public static final String NFD_FO_REQUESTED_LETTER_RESPONDENT_DOCUMENT_NAME = "financialOrderRequestedLetterRespondent";
     public static final String JUDICIAL_SEPARATION_SOLE_APPLICATION_TEMPLATE_ID = "JUDICIAL_SEPARATION_SOLE_APPLICATION";
     public static final String JUDICIAL_SEPARATION_JOINT_APPLICATION_TEMPLATE_ID = "JUDICIAL_SEPARATION_JOINT_APPLICATION";
     public static final String JUDICIAL_SEPARATION_APPLICATION_DOCUMENT_NAME = "judicial-separation-application";
@@ -165,6 +170,7 @@ public final class DocumentConstants {
 
     public static final String COVERSHEET_APPLICANT = "COVERSHEET_APPLICANT";
     public static final String COVERSHEET_APPLICANT2_SOLICITOR = "COVERSHEET_SOLICITOR";
+    public static final String COVERSHEET_HMCTS = "COVERSHEET_HMCTS";
 
     public static final String GENERAL_LETTER_DOCUMENT_NAME = "GeneralLetter";
     public static final String GENERAL_LETTER_TEMPLATE_ID = "GENERAL_LETTER";
@@ -198,12 +204,17 @@ public final class DocumentConstants {
     public static final String RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID = "RESPONDENT_FINAL_ORDER_ANSWERS";
     public static final String RESPONDENT_FINAL_ORDER_ANSWERS_DOCUMENT_NAME = "respondentFinalOrderAnswers";
 
+    public static final String SOLE_APPLICANT_FINAL_ORDER_OVERDUE_TEMPLATE_ID = "SOLE_APPLICANT_FINAL_ORDER_OVERDUE";
+    public static final String SOLE_APPLICANT_FINAL_ORDER_OVERDUE_DOCUMENT_NAME = "soleApplicantFinalOrderOverdue";
+
     public static final String NOC_CITIZEN_LETTER_TEMPLATE_ID = "NOC_TO_SOLS_CITIZEN_LETTER";
     public static final String NOC_CITIZEN_LETTER_DOCUMENT_NAME = "Noc";
 
     public static final String PAPER_APPLICATION_RECEIVED_TEMPLATE_ID = "NFD_APPLICANT_PAPERCASE_RECEIVED";
 
     public static final String BAILIFF_SERVICE_SUCCESSFUL_TEMPLATE_ID = "BAILIFF_SERVICE_SUCCESSFUL_LETTER";
+
+    public static final String CITIZEN_COURT_ORDERS_REGENERATED_TEMPLATE_ID = "CITIZEN_COURT_ORDERS_REGENERATED";
 
     public static final String APPLICANT1 = "applicant1";
     public static final String APPLICANT2 = "applicant2";

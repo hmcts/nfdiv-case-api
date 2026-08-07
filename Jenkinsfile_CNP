@@ -1,11 +1,10 @@
 #!groovy
-
-@Library("Infrastructure")
+import uk.gov.hmcts.contino.AppPipelineConfig
+import uk.gov.hmcts.contino.AppPipelineDsl
+@Library("Infrastructure@2.4.9")
 
 import uk.gov.hmcts.contino.GradleBuilder
-import uk.gov.hmcts.contino.AppPipelineConfig
 import uk.gov.hmcts.contino.MetricsPublisher
-import uk.gov.hmcts.contino.GithubAPI
 
 def type = "java"
 def product = "nfdiv"
@@ -160,6 +159,17 @@ withPipeline(type, product, component) {
 
   afterAlways('checkout') {
     builder.setupToolVersion()
+  }
+
+  before('highleveldatasetup') {
+    def azureConfigName = env.DEPLOYMENT_ENVIRONMENT
+    if (!azureConfigName) {
+      error 'DEPLOYMENT_ENVIRONMENT is required to authenticate to the CCD definition processor registry'
+    }
+    dir("${WORKSPACE}") {
+     sh "./bin/az-login.sh"
+    }
+
     builder.gradle('generateCCDConfig')
     generateDefinitions()
   }
@@ -174,8 +184,11 @@ withPipeline(type, product, component) {
     env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
     env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
     env.CREATE_PAPER_CASE_MOCK_NOTIFICATION=true
+    env.PACT_BROKER_FULL_URL = 'https://pact-broker.platform.hmcts.net'
 
     setCommonEnvVariables()
+
+    enablePactAs([AppPipelineDsl.PactRoles.CONSUMER])
   }
 
   onMaster {
@@ -189,7 +202,11 @@ withPipeline(type, product, component) {
     env.SERVICE_AUTH_MICROSERVICE = "nfdiv_case_api"
     env.SERVICE_AUTH_PROVIDER_URL = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
     env.CREATE_PAPER_CASE_MOCK_NOTIFICATION=true
+    env.PACT_BROKER_FULL_URL = 'https://pact-broker.platform.hmcts.net'
+
     setCommonEnvVariables()
+
+    enablePactAs([AppPipelineDsl.PactRoles.CONSUMER])
   }
 
   afterAlways('functionalTest:aat') {
@@ -248,10 +265,8 @@ def setCommonEnvVariables() {
 }
 
 def generateDefinitions() {
-  dir("${WORKSPACE}/bin") {
-    sh "./ccd-build-definition.sh"
-  }
   dir("${WORKSPACE}") {
+    sh "./bin/ccd-build-definition.sh"
     steps.archiveArtifacts artifacts: "build/ccd-config/*.xlsx"
   }
 }

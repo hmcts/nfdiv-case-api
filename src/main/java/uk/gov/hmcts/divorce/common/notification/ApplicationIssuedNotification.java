@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -19,13 +20,13 @@ import java.util.Objects;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CREATE_ACCOUNT_LINK;
+import static uk.gov.hmcts.divorce.notification.CommonContent.DATE_OF_ISSUE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_REMINDER;
@@ -44,7 +45,6 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_SOLICITOR_NOTICE_OF_PROCEEDINGS_REISSUE;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_APPLICATION_ACCEPTED;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
@@ -60,6 +60,8 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     private final NotificationService notificationService;
 
     private final CommonContent commonContent;
+
+    private final DocmosisCommonContent docmosisCommonContent;
 
     private final EmailTemplatesConfig config;
 
@@ -182,7 +184,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
                 email,
                 RESPONDENT_SOLICITOR_NOTICE_OF_PROCEEDINGS,
                 soleRespondentSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId),
-                ENGLISH,
+                caseData.getApplicant2().getLanguagePreference(),
                 caseId
             );
 
@@ -272,15 +274,14 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         final Map<String, String> templateVars = commonSolicitorNoticeOfProceedingsTemplateVars(caseData, caseId, applicant2);
 
         templateVars.put(SOLICITOR_NAME, applicant2.getSolicitor().getName());
-        templateVars.put(
-            SOLICITOR_REFERENCE,
-            isNotEmpty(applicant2.getSolicitor().getReference())
-                ? applicant2.getSolicitor().getReference()
-                : NOT_PROVIDED);
+        templateVars.put(SOLICITOR_REFERENCE, docmosisCommonContent.getSolicitorReference(
+            applicant2.getSolicitor(),
+            applicant2.getLanguagePreference())
+        );
 
         templateVars.put(SUBMISSION_RESPONSE_DATE,
             caseData.getApplication().getIssueDate().plusDays(16)
-                    .format(DATE_TIME_FORMATTER));
+                    .format(getDateTimeFormatterForPreferredLanguage(applicant2.getLanguagePreference())));
 
         return templateVars;
     }
@@ -324,11 +325,6 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
     private Map<String, String> templateVars(final CaseData caseData,
                                              final Long caseId,
                                              final Applicant applicant) {
-
-        String solicitorReference = isNotEmpty(caseData.getApplicant1().getSolicitor().getReference())
-            ? caseData.getApplicant1().getSolicitor().getReference()
-            : "not provided";
-
         LanguagePreference languagePreference = applicant.getLanguagePreference();
 
         final Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, caseId, languagePreference);
@@ -336,7 +332,18 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(caseId));
         templateVars.put(APPLICATION_REFERENCE, String.valueOf(caseId));
         templateVars.put(UNION_TYPE, commonContent.getUnionType(caseData, languagePreference));
-        templateVars.put(SOLICITOR_REFERENCE, solicitorReference);
+        templateVars.put(SOLICITOR_REFERENCE, docmosisCommonContent.getSolicitorReference(
+            caseData.getApplicant1().getSolicitor(),
+            languagePreference)
+        );
+
+        final LocalDate issueDate = caseData.getApplication().getIssueDate();
+        templateVars.put(DATE_OF_ISSUE,
+            issueDate == null
+                ? ""
+                : caseData.getApplication().getIssueDate().format(getDateTimeFormatterForPreferredLanguage(languagePreference))
+        );
+
         return templateVars;
     }
 }

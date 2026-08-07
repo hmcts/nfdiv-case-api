@@ -12,9 +12,12 @@ import uk.gov.hmcts.divorce.divorcecase.task.CaseTask;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.EnumSet;
+import java.util.Set;
 
 import static java.time.LocalDateTime.now;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
 
 @Component
 @Slf4j
@@ -28,12 +31,17 @@ public class SetSubmissionAndDueDate implements CaseTask {
 
     private final Clock clock;
 
+    private static final Set<State> DUE_DATE_STATES = EnumSet.of(Holding, PendingRefund);
+
     @Override
     public CaseDetails<CaseData, State> apply(final CaseDetails<CaseData, State> caseDetails) {
 
         final CaseData caseData = caseDetails.getData();
 
-        if (caseDetails.getState().equals(Holding) || caseData.getApplication().getWelshPreviousState() == Holding) {
+        final State caseState = caseDetails.getState();
+        final State welshReviewState = caseData.getApplication().getWelshPreviousState();
+
+        if (DUE_DATE_STATES.contains(caseState) || (DUE_DATE_STATES.contains(welshReviewState))) {
             final LocalDate issueDate = caseData.getApplication().getIssueDate();
             caseData.setDueDate(holdingPeriodService.getDueDateFor(issueDate));
 

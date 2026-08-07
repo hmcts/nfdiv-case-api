@@ -124,7 +124,7 @@ class Applicant2RequestChangesNotificationTest {
         data.setApplicant2(getApplicant(Gender.FEMALE));
         data.getApplicant2().setSolicitorRepresented(YesOrNo.YES);
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
+        when(commonContent.solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
             .thenReturn(getBasicTemplateVars());
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
@@ -142,7 +142,7 @@ class Applicant2RequestChangesNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference());
+        verify(commonContent).solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
     }
 
     @Test
@@ -153,7 +153,7 @@ class Applicant2RequestChangesNotificationTest {
         data.setApplicant2(getApplicant(Gender.FEMALE));
         data.getApplicant2().setSolicitorRepresented(YesOrNo.NO);
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
-        when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference()))
+        when(commonContent.solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
             .thenReturn(getBasicTemplateVars());
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
@@ -171,7 +171,7 @@ class Applicant2RequestChangesNotificationTest {
             eq(ENGLISH),
             eq(TEST_CASE_ID)
         );
-        verify(commonContent).basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1().getLanguagePreference());
+        verify(commonContent).solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1());
     }
 
     @Test

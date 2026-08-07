@@ -61,6 +61,7 @@ public class GeneralReferralService {
             .generalReferralUrgentCase(YesOrNo.NO)
             .generalApplicationFrom(generalApplication.getGeneralApplicationParty())
             .generalApplicationReferralDate(LocalDate.now(clock))
+            .generalReferralDocument(generalApplication.getGeneralApplicationDocument())
             .generalApplicationAddedDate(generalApplication.getGeneralApplicationReceivedDate().toLocalDate())
             .generalReferralType(GeneralReferralType.DISCLOSURE_VIA_DWP)
             .generalReferralFee(generalApplication.getGeneralApplicationFee())

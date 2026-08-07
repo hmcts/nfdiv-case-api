@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.content.templatecontent.RespondentAnswersTemplateContent;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,6 +17,7 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.DISPUTE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.HowToRespondApplication.WITHOUT_DISPUTE_DIVORCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AOS_SUBMITTED_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.A_DIVORCE_APPLICATION;
@@ -61,6 +63,7 @@ class RespondentAnswersTemplateContentTest {
 
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
         acknowledgementOfService.setJurisdictionAgree(YES);
+        acknowledgementOfService.setDateAosSubmitted(LocalDateTime.of(2022, 1, 1, 1, 1, 1));
         acknowledgementOfService.setReasonCourtsOfEnglandAndWalesHaveNoJurisdiction("jurisdiction reason");
         acknowledgementOfService.setInWhichCountryIsYourLifeMainlyBased("Country");
         caseData.getApplicant2().setSolicitor(
@@ -77,6 +80,7 @@ class RespondentAnswersTemplateContentTest {
             entry(CCD_CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
             entry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
             entry(APPLICANT_2_FULL_NAME, "app2fname app2lname"),
+            entry(AOS_SUBMITTED_DATE, "1 January 2022"),
             entry("respJurisdictionAgree", YES.getValue()),
             entry("reasonCourtsOfEnglandAndWalesHaveNoJurisdiction", "jurisdiction reason"),
             entry("inWhichCountryIsYourLifeMainlyBased", "Country"),
@@ -99,6 +103,7 @@ class RespondentAnswersTemplateContentTest {
         acknowledgementOfService.setJurisdictionAgree(YES);
         acknowledgementOfService.setReasonCourtsOfEnglandAndWalesHaveNoJurisdiction("jurisdiction reason");
         acknowledgementOfService.setInWhichCountryIsYourLifeMainlyBased("Country");
+        acknowledgementOfService.setDateAosSubmitted(LocalDateTime.of(2022, 1, 1, 1, 1, 1));
         acknowledgementOfService.setHowToRespondApplication(DISPUTE_DIVORCE);
 
         caseData.getApplicant2().setSolicitor(
@@ -130,6 +135,7 @@ class RespondentAnswersTemplateContentTest {
         caseData.setDivorceOrDissolution(DISSOLUTION);
 
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
+        acknowledgementOfService.setDateAosSubmitted(LocalDateTime.of(2022, 1, 1, 1, 1, 1));
         acknowledgementOfService.setJurisdictionAgree(YES);
         acknowledgementOfService.setReasonCourtsOfEnglandAndWalesHaveNoJurisdiction("jurisdiction reason");
         acknowledgementOfService.setInWhichCountryIsYourLifeMainlyBased("Country");
@@ -162,6 +168,7 @@ class RespondentAnswersTemplateContentTest {
         caseData.getApplicant2().setLegalProceedings(YES);
 
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
+        acknowledgementOfService.setDateAosSubmitted(LocalDateTime.of(2022, 1, 1, 1, 1, 1));
         acknowledgementOfService.setJurisdictionAgree(YES);
         acknowledgementOfService.setReasonCourtsOfEnglandAndWalesHaveNoJurisdiction("jurisdiction reason");
         acknowledgementOfService.setInWhichCountryIsYourLifeMainlyBased("Country");
@@ -196,6 +203,7 @@ class RespondentAnswersTemplateContentTest {
         caseData.setDivorceOrDissolution(DISSOLUTION);
 
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
+        acknowledgementOfService.setDateAosSubmitted(LocalDateTime.of(2022, 1, 1, 1, 1, 1));
         acknowledgementOfService.setJurisdictionAgree(YES);
         acknowledgementOfService.setReasonCourtsOfEnglandAndWalesHaveNoJurisdiction("jurisdiction reason");
         acknowledgementOfService.setInWhichCountryIsYourLifeMainlyBased("Country");
@@ -230,6 +238,7 @@ class RespondentAnswersTemplateContentTest {
         caseData.getApplicant2().setLegalProceedings(YES);
 
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
+        acknowledgementOfService.setDateAosSubmitted(LocalDateTime.of(2022, 1, 1, 1, 1, 1));
         acknowledgementOfService.setJurisdictionAgree(YES);
         acknowledgementOfService.setReasonCourtsOfEnglandAndWalesHaveNoJurisdiction("jurisdiction reason");
         acknowledgementOfService.setInWhichCountryIsYourLifeMainlyBased("Country");
@@ -249,6 +258,7 @@ class RespondentAnswersTemplateContentTest {
         final Map<String, Object> templateContent = respondentAnswersTemplateContent.apply(caseData, TEST_CASE_ID);
 
         assertThat(templateContent).contains(
+            entry(AOS_SUBMITTED_DATE, "1 Ionawr 2022"),
             entry(MARRIAGE_OR_CIVIL_PARTNERSHIP, MARRIAGE_CY),
             entry(THE_APPLICATION, A_DIVORCE_APPLICATION_CY),
             entry(IS_DISPUTING, DISPUTING_DIVORCE_CY)
@@ -265,6 +275,7 @@ class RespondentAnswersTemplateContentTest {
         caseData.setDivorceOrDissolution(DISSOLUTION);
 
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
+        acknowledgementOfService.setDateAosSubmitted(LocalDateTime.of(2022, 1, 1, 1, 1, 1));
         acknowledgementOfService.setJurisdictionAgree(YES);
         acknowledgementOfService.setReasonCourtsOfEnglandAndWalesHaveNoJurisdiction("jurisdiction reason");
         acknowledgementOfService.setInWhichCountryIsYourLifeMainlyBased("Country");
@@ -298,6 +309,7 @@ class RespondentAnswersTemplateContentTest {
         caseData.getApplicant2().setLegalProceedings(YES);
 
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
+        acknowledgementOfService.setDateAosSubmitted(LocalDateTime.of(2022, 1, 1, 1, 1, 1));
         acknowledgementOfService.setJurisdictionAgree(YES);
         acknowledgementOfService.setReasonCourtsOfEnglandAndWalesHaveNoJurisdiction("jurisdiction reason");
         acknowledgementOfService.setInWhichCountryIsYourLifeMainlyBased("Country");
@@ -333,6 +345,7 @@ class RespondentAnswersTemplateContentTest {
         caseData.setDivorceOrDissolution(DISSOLUTION);
 
         final var acknowledgementOfService = caseData.getAcknowledgementOfService();
+        acknowledgementOfService.setDateAosSubmitted(LocalDateTime.of(2022, 1, 1, 1, 1, 1));
         acknowledgementOfService.setJurisdictionAgree(YES);
         acknowledgementOfService.setReasonCourtsOfEnglandAndWalesHaveNoJurisdiction("jurisdiction reason");
         acknowledgementOfService.setInWhichCountryIsYourLifeMainlyBased("Country");

@@ -1,13 +1,19 @@
 package uk.gov.hmcts.divorce.document.content;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.testutil.FeesWireMock;
+import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -58,6 +64,10 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE_AMEND_PETITION;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
+import static uk.gov.hmcts.divorce.testutil.FeesWireMock.stubForFeesLookup;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_FIRST_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_LAST_NAME;
@@ -65,6 +75,10 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
+@DirtiesContext
+@ContextConfiguration(initializers = {
+    FeesWireMock.PropertiesInitializer.class
+})
 public class ConditionalOrderRefusedForAmendmentContentIT {
 
     private static final String HMCTS_LOGO_TEXT = "[userImage:hmcts_logo_nfd_en.png]";
@@ -75,8 +89,18 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
     @Autowired
     private ConditionalOrderRefusedForAmendmentContent conditionalOrderRefusedForAmendmentContent;
 
+    @BeforeAll
+    static void setUp() {
+        FeesWireMock.start();
+    }
+
+    @AfterAll
+    static void tearDown() {
+        FeesWireMock.stopAndReset();
+    }
+
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForClarificationConditionalOrderDocument() {
+    public void shouldSuccessfullyApplyContentFromCaseDataForClarificationConditionalOrderDocument() throws Exception {
 
         CaseData caseData = caseData();
 
@@ -125,6 +149,9 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
         expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
+        expectedEntries.put("amendFee", "£10.00");
+
+        stubForFeesLookup(TestDataHelper.getFeeResponseAsJson(), EVENT_ISSUE, SERVICE_OTHER, KEYWORD_DIVORCE_AMEND_PETITION);
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
@@ -132,7 +159,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForRefusalConditionalOrderDocumentForDivorceApplication() {
+    public void shouldSuccessfullyApplyContentFromCaseDataForRefusalConditionalOrderDocumentForDivorceApplication() throws Exception {
 
         CaseData caseData = caseData();
 
@@ -182,6 +209,9 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
         expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
+        expectedEntries.put("amendFee", "£10.00");
+
+        stubForFeesLookup(TestDataHelper.getFeeResponseAsJson(), EVENT_ISSUE, SERVICE_OTHER, KEYWORD_DIVORCE_AMEND_PETITION);
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
@@ -189,7 +219,7 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForRejectRefusalOrderDocumentForCivilPartnershipApplication() {
+    public void shouldSuccessfullyApplyContentFromCaseDataForRejectRefusalOrderDocumentForCivilPartnershipApplication() throws Exception {
 
         CaseData caseData = caseData();
 
@@ -241,6 +271,9 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
         expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
+        expectedEntries.put("amendFee", "£10.00");
+
+        stubForFeesLookup(TestDataHelper.getFeeResponseAsJson(), EVENT_ISSUE, SERVICE_OTHER, KEYWORD_DIVORCE_AMEND_PETITION);
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
@@ -248,7 +281,8 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentFromCaseDataForClarificationRefusalOrderDocumentForCivilPartnershipApplication() {
+    public void shouldSuccessfullyApplyContentFromCaseDataForClarificationRefusalOrderDocumentForCivilPartnershipApplication()
+        throws Exception {
 
         CaseData caseData = caseData();
 
@@ -302,6 +336,9 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
         expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
+        expectedEntries.put("amendFee", "£10.00");
+
+        stubForFeesLookup(TestDataHelper.getFeeResponseAsJson(), EVENT_ISSUE, SERVICE_OTHER, KEYWORD_DIVORCE_AMEND_PETITION);
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
@@ -309,7 +346,8 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentInWelshFromCaseDataForRefusalConditionalOrderDocumentForDivorceApplication() {
+    public void shouldSuccessfullyApplyContentInWelshFromCaseDataForRefusalConditionalOrderDocumentForDivorceApplication()
+        throws Exception {
 
         CaseData caseData = caseData();
 
@@ -360,6 +398,9 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
         expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT_CY);
         expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT_CY);
+        expectedEntries.put("amendFee", "£10.00");
+
+        stubForFeesLookup(TestDataHelper.getFeeResponseAsJson(), EVENT_ISSUE, SERVICE_OTHER, KEYWORD_DIVORCE_AMEND_PETITION);
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
@@ -367,7 +408,8 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentInWelshFromCaseDataForRefusalConditionalOrderDocumentForOfflineDivorceApplication() {
+    public void shouldSuccessfullyApplyContentInWelshFromCaseDataForRefusalConditionalOrderDocumentForOfflineDivorceApplication()
+        throws Exception {
 
         CaseData caseData = caseData();
 
@@ -419,6 +461,9 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
         expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT_CY);
         expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT_CY);
+        expectedEntries.put("amendFee", "£10.00");
+
+        stubForFeesLookup(TestDataHelper.getFeeResponseAsJson(), EVENT_ISSUE, SERVICE_OTHER, KEYWORD_DIVORCE_AMEND_PETITION);
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 
@@ -426,7 +471,8 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
     }
 
     @Test
-    public void shouldSuccessfullyApplyContentInWelshFromCaseDataForClarificationRefusalOrderDocumentForCivilPartnershipApplication() {
+    public void shouldSuccessfullyApplyContentInWelshFromCaseDataForClarificationRefusalOrderDocumentForCivilPartnershipApplication()
+        throws Exception {
 
         CaseData caseData = caseData();
 
@@ -481,6 +527,9 @@ public class ConditionalOrderRefusedForAmendmentContentIT {
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT_CY);
         expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT_CY);
         expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT_CY);
+        expectedEntries.put("amendFee", "£10.00");
+
+        stubForFeesLookup(TestDataHelper.getFeeResponseAsJson(), EVENT_ISSUE, SERVICE_OTHER, KEYWORD_DIVORCE_AMEND_PETITION);
 
         Map<String, Object> templateContent = conditionalOrderRefusedForAmendmentContent.apply(caseData, TEST_CASE_ID);
 

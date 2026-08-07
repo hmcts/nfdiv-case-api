@@ -10,6 +10,7 @@ public final class DocmosisTemplateConstants {
     public static final String CASE_REFERENCE = "caseReference";
     public static final String ISSUE_DATE = "issueDate";
     public static final String ISSUE_DATE_POPULATED = "issueDatePopulated";
+    public static final String AOS_SUBMITTED_DATE = "aosSubmittedDate";
     public static final String NOT_YET_ISSUED = "notYetIssued";
     public static final String APPLICANT_1_FIRST_NAME = "applicant1FirstName";
     public static final String APPLICANT_1_MIDDLE_NAME = "applicant1MiddleName";
@@ -175,6 +176,7 @@ public final class DocmosisTemplateConstants {
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER = "divorceOrCivilPartnershipServiceHeader";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP = "divorceOrCivilPartnership";
     public static final String DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL = "divorceOrCivilPartnershipEmail";
+    public static final String WELSH_ENQUIRIES_EMAIL = "welshEnquiriesEmail";
     public static final String DIVORCE_SERVICE = "The Divorce Service";
     public static final String END_CP_SERVICE = "End A Civil Partnership Service";
     public static final String CONTACT_DIVORCE_EMAIL = "contactdivorce@justice.gov.uk";
@@ -236,7 +238,7 @@ public final class DocmosisTemplateConstants {
     public static final String PHONE_AND_OPENING_TIMES = "phoneAndOpeningTimes";
     public static final String PHONE_AND_OPENING_TIMES_TEXT = "0300 303 0642 (Monday to Friday, 10am to 6pm)";
     public static final String PHONE_AND_OPENING_TIMES_TEXT_CY =
-        "0300 303 5171 (Dydd Llun i ddydd Iau 9am i 5pm, Dydd Gwener 9am i 4.30pm)";
+        "0300 303 5171 (Dydd Llun i ddydd Iau 9yb i 5yh, Dydd Gwener 9yb i 4.30yh)";
 
     public static final String RESPONSE_DUE_DATE = "responseDueDate";
     public static final String CO_OR_FO = "coOrFo";

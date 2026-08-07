@@ -118,7 +118,7 @@ public class Applicant2ApprovedNotification implements ApplicantNotification {
 
     private Map<String, String> applicant1SolicitorTemplateVars(CaseData caseData, Long id) {
         Applicant applicant1 = caseData.getApplicant1();
-        Map<String, String> templateVars = commonContent.basicTemplateVars(caseData, id, applicant1.getLanguagePreference());
+        Map<String, String> templateVars = commonContent.solicitorTemplateVars(caseData, id, applicant1);
 
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);

@@ -14,9 +14,19 @@ import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Applicant2Approved;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHWFDecision;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -90,5 +100,18 @@ public class CaseTerminationService {
         removeSolicitorOrganisationPolicy(caseData.getApplicant1());
         removeSolicitorOrganisationPolicy(caseData.getApplicant2());
         unlinkPartiesFromCcdCase(details.getId());
+    }
+
+    public boolean canApplicationBeWithdrawn(State state, CaseData data) {
+        boolean isAllowedPreSubmissionState = EnumSet.of(Draft, Archived, AwaitingApplicant1Response, AwaitingApplicant2Response,
+            Applicant2Approved, AwaitingPayment, AwaitingResponseToHWFDecision).contains(state);
+        boolean isApplicationSubmittedButNotIssued = data.getApplication().getDateSubmitted() != null
+            && data.getApplication().getIssueDate() == null;
+
+        return isAllowedPreSubmissionState || isApplicationSubmittedButNotIssued;
+    }
+
+    public State getStateToTransitionTo(CaseDetails<CaseData, State> details) {
+        return (details.getData().getApplication().getDateSubmitted() == null) ? Withdrawn : PendingRefund;
     }
 }

@@ -224,7 +224,6 @@ public class Application {
     )
     private String applicant2StatementOfReconciliationComments;
 
-    // TODO move to OrderSummary?
     @CCD(
         label = "Solicitor application fee (in pounds)",
         access = {DefaultAccess.class}

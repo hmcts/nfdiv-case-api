@@ -12,7 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState;
 import uk.gov.hmcts.divorce.bulkaction.data.BulkActionCaseData;
 import uk.gov.hmcts.divorce.bulkaction.task.UpdateCourtHearingDetailsTask;
-import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourt;
+import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrderCourtBulk;
 import uk.gov.hmcts.divorce.systemupdate.service.BulkCaseDetailsUpdater;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 
@@ -46,7 +46,7 @@ class BulkCaseDetailsUpdaterTest {
 
         final CaseDetails<BulkActionCaseData, BulkActionState> mappedCaseDetails = new CaseDetails<>();
         final BulkActionCaseData bulkActionCaseData = BulkActionCaseData.builder()
-            .court(ConditionalOrderCourt.BIRMINGHAM)
+            .court(ConditionalOrderCourtBulk.BIRMINGHAM)
             .build();
         mappedCaseDetails.setData(bulkActionCaseData);
 
@@ -55,6 +55,6 @@ class BulkCaseDetailsUpdaterTest {
         var result = bulkCaseDetailsUpdater.updateCaseData(updateCourtHearingDetailsTask, startEventResponse);
 
         verify(updateCourtHearingDetailsTask).apply(any());
-        Assertions.assertThat(result.getData().getCourt()).isEqualTo(ConditionalOrderCourt.BIRMINGHAM);
+        Assertions.assertThat(result.getData().getCourt()).isEqualTo(ConditionalOrderCourtBulk.BIRMINGHAM);
     }
 }

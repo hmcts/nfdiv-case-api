@@ -118,7 +118,7 @@ class NocCitizenToSolsNotificationsTest {
 
         var templateVars = getSolTemplateVars(caseData.getApplicant1());
 
-        when(commonContent.nocSolsTemplateVars(id, caseData.getApplicant1()
+        when(commonContent.nocSolsTemplateVars(id, caseData, caseData.getApplicant1()
         )).thenReturn(templateVars);
 
         notificationHandler.sendToApplicant1Solicitor(caseData, id);
@@ -130,7 +130,7 @@ class NocCitizenToSolsNotificationsTest {
             eq(caseData.getApplicant1().getLanguagePreference()),
             eq(id)
         );
-        verify(commonContent).nocSolsTemplateVars(id, caseData.getApplicant1()
+        verify(commonContent).nocSolsTemplateVars(id, caseData, caseData.getApplicant1()
         );
     }
 
@@ -250,7 +250,7 @@ class NocCitizenToSolsNotificationsTest {
 
         var solTemplateVars = getSolTemplateVars(caseData.getApplicant2());
 
-        when(commonContent.nocSolsTemplateVars(id, caseData.getApplicant2()
+        when(commonContent.nocSolsTemplateVars(id, caseData, caseData.getApplicant2()
         )).thenReturn(solTemplateVars);
 
         notificationHandler.sendToApplicant2Solicitor(caseData, id);
@@ -262,7 +262,7 @@ class NocCitizenToSolsNotificationsTest {
             eq(caseData.getApplicant2().getLanguagePreference()),
             eq(id)
         );
-        verify(commonContent).nocSolsTemplateVars(id, caseData.getApplicant2()
+        verify(commonContent).nocSolsTemplateVars(id, caseData, caseData.getApplicant2()
         );
     }
 

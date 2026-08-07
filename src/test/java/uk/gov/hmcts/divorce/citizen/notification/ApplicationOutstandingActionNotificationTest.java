@@ -23,6 +23,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.LABEL_DIVORCE_OR_CIVIL_PARTNERSHIP_CERTIFICATE;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.LABEL_PARTNER;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_CIVIL_PARTNERSHIP_CERTIFICATE;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE;
@@ -464,7 +466,7 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE, NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, NO),
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
-                hasEntry(MISSING_NAME_CHANGE_PROOF, NO)
+                hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -516,6 +518,7 @@ class ApplicationOutstandingActionNotificationTest {
 
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
+        when(commonContent.getPartner(data, data.getApplicant2(), ENGLISH)).thenReturn("husband");
 
         notification.sendToApplicant1(data, TEST_CASE_ID);
 
@@ -529,7 +532,9 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE, NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, YES),
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
-                hasEntry(MISSING_NAME_CHANGE_PROOF, NO)
+                hasEntry(MISSING_NAME_CHANGE_PROOF, YES),
+                hasEntry(LABEL_PARTNER, "husband"),
+                hasEntry(LABEL_DIVORCE_OR_CIVIL_PARTNERSHIP_CERTIFICATE, "marriage certificate")
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)

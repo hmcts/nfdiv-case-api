@@ -36,6 +36,13 @@ public class NoResponseJourneyOptions {
     private YesOrNo noResponsePartnerHasReceivedPapers;
 
     @CCD(
+        label = "Is the evidence a certificate of service?",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private YesOrNo noResponsePartnerHasCertificateOfService;
+
+    @CCD(
         label = "I have a new postal or email address for my partner",
         access = {DefaultAccess.class},
         typeParameterOverride = "NoResponsePartnerNewEmailOrAddress",
