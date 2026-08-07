@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateHmctsCoversheet;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.ClarificationSubmittedNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.PostInformationToCourtNotification;
+import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationReason;
 import uk.gov.hmcts.divorce.divorcecase.model.ClarificationResponse;
@@ -21,6 +23,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.Clock;
 import java.util.ArrayList;
@@ -31,6 +34,7 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SubmitClarification.SUBMIT_CLARIFICATION;
@@ -63,6 +67,12 @@ class SubmitClarificationTest {
 
     @Mock
     private GenerateHmctsCoversheet generateHmctsCoverSheet;
+
+    @Mock
+    private CcdAccessService ccdAccessService;
+
+    @Mock
+    private HttpServletRequest request;
 
     @Mock
     private Clock clock;
@@ -245,6 +255,61 @@ class SubmitClarificationTest {
         assertThat(actualConditionalOrder.getRefusalClarificationAdditionalInfo()).isNull();
         assertThat(actualConditionalOrder.getRefusalAdminErrorInfo()).isNull();
         assertThat(actualConditionalOrder.getRefusalRejectionAdditionalInfo()).isNull();
+    }
+
+    @Test
+    void shouldReturnCaseDataWhenSoleCaseAndUserIsApplicant1() {
+        CaseData caseData = CaseData.builder()
+            .applicationType(ApplicationType.SOLE_APPLICATION)
+            .build();
+
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
+            .build();
+
+        when(request.getHeader("Authorization")).thenReturn("auth-token");
+        when(ccdAccessService.isApplicant1("auth-token", TEST_CASE_ID)).thenReturn(true);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = submitClarification.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldReturnErrorWhenSoleCaseAndUserIsNotApplicant1() {
+        CaseData caseData = CaseData.builder()
+            .applicationType(ApplicationType.SOLE_APPLICATION)
+            .build();
+
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
+            .build();
+
+        when(request.getHeader("Authorization")).thenReturn("auth-token");
+        when(ccdAccessService.isApplicant1("auth-token", TEST_CASE_ID)).thenReturn(false);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = submitClarification.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).containsExactly("You are not authorised to submit clarification for this case.");
+    }
+
+    @Test
+    void shouldReturnCaseDataWhenJointCase() {
+        CaseData caseData = CaseData.builder()
+            .applicationType(ApplicationType.JOINT_APPLICATION)
+            .build();
+
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
+            .build();
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = submitClarification.aboutToStart(caseDetails);
+
+        assertThat(response.getData()).isEqualTo(caseData);
+        assertThat(response.getErrors()).isNull();
     }
 }
 

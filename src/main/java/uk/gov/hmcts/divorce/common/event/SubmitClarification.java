@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.common.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,11 +18,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.time.Clock;
 import java.time.LocalDate;
 
+import static java.util.Collections.singletonList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ClarificationSubmitted;
@@ -46,6 +50,9 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
             + ".uk/government/publications/myhmcts-how-to-make-follow-up-applications-for-a-divorce-or-dissolution/respond-"
             + "to-a-conditional-order-refusal\" target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>";
 
+    private static final String NOT_AUTHORISED_TO_RESPOND_ERROR =
+        "You are not authorised to submit clarification for this case.";
+
     private final NotificationDispatcher notificationDispatcher;
 
     private final PostInformationToCourtNotification postInformationToCourtNotification;
@@ -53,6 +60,10 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
     private final ClarificationSubmittedNotification clarificationSubmittedNotification;
 
     private final GenerateHmctsCoversheet generateHmctsCoverSheet;
+
+    private final CcdAccessService ccdAccessService;
+
+    private final HttpServletRequest request;
 
     private final Clock clock;
 
@@ -83,6 +94,23 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
                 .optional(ConditionalOrder::getClarificationUploadDocuments)
             .done()
             .label("submitClarificationSolGuide", SUBMIT_CLARIFICATION_CO_SOL_GUIDE);
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
+        CaseData caseData = details.getData();
+
+        if (caseData.getApplicationType().isSole()) {
+            boolean isApplicant1 = ccdAccessService.isApplicant1(request.getHeader(AUTHORIZATION), details.getId());
+            if (!isApplicant1) {
+                return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .errors(singletonList(NOT_AUTHORISED_TO_RESPOND_ERROR))
+                    .build();
+            }
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
