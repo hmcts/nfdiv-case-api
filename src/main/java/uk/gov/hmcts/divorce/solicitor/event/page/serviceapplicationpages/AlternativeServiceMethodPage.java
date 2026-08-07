@@ -9,7 +9,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages.ServiceApplicationPages.ALTERNATIVE_SERVICE_APP;
 
 public class AlternativeServiceMethodPage implements CcdPageConfiguration {
 
@@ -29,8 +28,7 @@ public class AlternativeServiceMethodPage implements CcdPageConfiguration {
 
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
-        var page = pageBuilder.page("alternativeServiceMethod")
-            .pageLabel(ALTERNATIVE_SERVICE_APP);
+        var page = pageBuilder.page("alternativeServiceMethod");
 
         page.complex(CaseData::getLabelContent)
             .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnership, NEVER_SHOW)

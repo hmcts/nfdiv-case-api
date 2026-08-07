@@ -28,16 +28,17 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages.ServiceApplicationPages.ALTERNATIVE_SERVICE_APP;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class SolicitorAlternativeServiceApplication implements CCDConfig<CaseData, State, UserRole> {
 
+    private static final String ALTERNATIVE_SERVICE_APP = "Alternative Service App";
+
     public static final String SOLICITOR_ALTERNATIVE_SERVICE_APPLICATION = "sol-alternative-service-app";
 
-    private final ServiceApplicationDraftSubmissionService serviceApplicationBuilderService;
+    private final ServiceApplicationDraftSubmissionService serviceApplicationDraftSubmissionService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -57,7 +58,7 @@ public class SolicitorAlternativeServiceApplication implements CCDConfig<CaseDat
         InterimApplicationOptions options = applicant.getInterimApplicationOptions();
         options.setInterimApplicationType(InterimApplicationType.ALTERNATIVE_SERVICE);
 
-        serviceApplicationBuilderService.submitFromInterimOptions(details.getId(), caseData, applicant);
+        serviceApplicationDraftSubmissionService.submitFromInterimOptions(details.getId(), caseData, applicant);
 
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

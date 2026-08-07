@@ -34,7 +34,7 @@ public class SolicitorAmendAlternativeServiceApplication implements CCDConfig<Ca
 
     public static final String SOLICITOR_AMEND_ALTERNATIVE_SERVICE_APPLICATION = "sol-amend-alternative-service-app";
 
-    private final ServiceApplicationDraftSubmissionService serviceApplicationBuilderService;
+    private final ServiceApplicationDraftSubmissionService serviceApplicationDraftSubmissionService;
 
     private static final String AMEND_SHOW_CONDITION = "applicant1DraftApplicationAction=\"amend\"";
 
@@ -68,7 +68,7 @@ public class SolicitorAmendAlternativeServiceApplication implements CCDConfig<Ca
         final CaseData caseData = details.getData();
         final Applicant applicant = caseData.getApplicant1();
 
-        serviceApplicationBuilderService.submitFromInterimOptions(details.getId(), caseData, applicant);
+        serviceApplicationDraftSubmissionService.submitFromInterimOptions(details.getId(), caseData, applicant);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

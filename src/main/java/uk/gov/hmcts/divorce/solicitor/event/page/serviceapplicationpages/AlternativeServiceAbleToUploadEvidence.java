@@ -8,7 +8,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages.ServiceApplicationPages.ALTERNATIVE_SERVICE_APP;
 
 public class AlternativeServiceAbleToUploadEvidence implements CcdPageConfiguration {
 
@@ -36,8 +35,7 @@ public class AlternativeServiceAbleToUploadEvidence implements CcdPageConfigurat
 
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
-        var page = pageBuilder.page("altServiceAbleToUploadEvidence")
-            .pageLabel(ALTERNATIVE_SERVICE_APP);
+        var page = pageBuilder.page("altServiceAbleToUploadEvidence");
 
         page.complex(CaseData::getApplicant1)
             .complex(Applicant::getInterimApplicationOptions)

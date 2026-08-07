@@ -7,8 +7,6 @@ import java.util.List;
 
 public final class ServiceApplicationPages {
 
-    public static final String ALTERNATIVE_SERVICE_APP = "Alternative Service App";
-
     private ServiceApplicationPages() {
     }
 
