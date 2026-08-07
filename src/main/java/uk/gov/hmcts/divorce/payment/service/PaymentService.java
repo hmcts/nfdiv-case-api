@@ -216,7 +216,7 @@ public class PaymentService {
                     pbaNumber,
                     exception.getMessage(),
                     exception
-                );
+            );
             return getPbaErrorResponse(pbaNumber, exception);
         }
         return new PbaResponse(INTERNAL_SERVER_ERROR, ERROR_GENERIC, null);
