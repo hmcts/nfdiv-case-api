@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages.ServiceApplicationPageBuilder;
+import uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages.ServiceApplicationPages;
 import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationDraftSubmissionService;
 
 import java.util.EnumSet;
@@ -28,13 +28,12 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages.ServiceApplicationPages.ALTERNATIVE_SERVICE_APP;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class SolicitorAlternativeServiceApplication implements CCDConfig<CaseData, State, UserRole> {
-
-    private static final String ALTERNATIVE_SERVICE = "Alternative Service App";
 
     public static final String SOLICITOR_ALTERNATIVE_SERVICE_APPLICATION = "sol-alternative-service-app";
 
@@ -44,14 +43,14 @@ public class SolicitorAlternativeServiceApplication implements CCDConfig<CaseDat
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
 
-        ServiceApplicationPageBuilder.addAlternativeServicePages(pageBuilder, ALWAYS_SHOW);
+        ServiceApplicationPages.addAlternativeServicePages(pageBuilder, ALWAYS_SHOW);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
         final CaseDetails<CaseData, State> details,
         final CaseDetails<CaseData, State> beforeDetails
     ) {
-        log.info("{} about to submit callback invoked for Case Id: {}", ALTERNATIVE_SERVICE, details.getId());
+        log.info("{} about to submit callback invoked for Case Id: {}", ALTERNATIVE_SERVICE_APP, details.getId());
         final CaseData caseData = details.getData();
         final Applicant applicant = caseData.getApplicant1();
 
@@ -76,8 +75,8 @@ public class SolicitorAlternativeServiceApplication implements CCDConfig<CaseDat
             .showCondition(
                 "alternativeServiceType!=\"deemed\" AND alternativeServiceType!=\"dispensed\" AND alternativeServiceType!=\"bailiff\" "
                     + "AND alternativeServiceType!=\"alternativeService\"")
-            .name(ALTERNATIVE_SERVICE)
-            .description(ALTERNATIVE_SERVICE)
+            .name(ALTERNATIVE_SERVICE_APP)
+            .description(ALTERNATIVE_SERVICE_APP)
             .showSummary()
             .showEventNotes()
             .endButtonLabel("Save Application")

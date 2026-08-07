@@ -7,7 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages.ServiceApplicationPageBuilder.ALTERNATIVE_SERVICE_LABEL;
+import static uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages.ServiceApplicationPages.ALTERNATIVE_SERVICE_APP;
 
 public class AlternativeServiceConfirmPage implements CcdPageConfiguration {
 
@@ -32,7 +32,7 @@ public class AlternativeServiceConfirmPage implements CcdPageConfiguration {
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
         var page = pageBuilder.page("alternativeServiceConfirm")
-            .pageLabel(ALTERNATIVE_SERVICE_LABEL);
+            .pageLabel(ALTERNATIVE_SERVICE_APP);
 
         page.label("LabelAlternativeServiceConfirmPara-1", SERVICE_CONFIRM_PARAGRAPH, "")
             .complex(CaseData::getApplicant1)

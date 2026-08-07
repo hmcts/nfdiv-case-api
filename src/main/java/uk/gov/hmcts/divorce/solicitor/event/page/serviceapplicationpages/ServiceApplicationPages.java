@@ -5,9 +5,12 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 
 import java.util.List;
 
-public abstract class ServiceApplicationPageBuilder {
+public final class ServiceApplicationPages {
 
-    public static final String ALTERNATIVE_SERVICE_LABEL = "Alternative Service App";
+    public static final String ALTERNATIVE_SERVICE_APP = "Alternative Service App";
+
+    private ServiceApplicationPages() {
+    }
 
     public static void addAlternativeServicePages(final PageBuilder pageBuilder, final String pageShowCondition) {
         final List<CcdPageConfiguration> pages = List.of(

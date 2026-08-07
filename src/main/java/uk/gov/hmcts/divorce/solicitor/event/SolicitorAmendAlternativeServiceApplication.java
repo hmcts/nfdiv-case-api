@@ -14,7 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.validation.ServiceApplicationValidation;
 import uk.gov.hmcts.divorce.solicitor.event.page.AmendServiceApplicationActionPage;
-import uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages.ServiceApplicationPageBuilder;
+import uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages.ServiceApplicationPages;
 import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationDraftSubmissionService;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public class SolicitorAmendAlternativeServiceApplication implements CCDConfig<Ca
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
         new AmendServiceApplicationActionPage().addTo(pageBuilder);
-        ServiceApplicationPageBuilder.addAlternativeServicePages(pageBuilder, AMEND_SHOW_CONDITION);
+        ServiceApplicationPages.addAlternativeServicePages(pageBuilder, AMEND_SHOW_CONDITION);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {

@@ -7,7 +7,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages.ServiceApplicationPageBuilder.ALTERNATIVE_SERVICE_LABEL;
+import static uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages.ServiceApplicationPages.ALTERNATIVE_SERVICE_APP;
 
 public class AlternativeServiceDetailsAndUploadPage implements CcdPageConfiguration {
 
@@ -49,7 +49,7 @@ public class AlternativeServiceDetailsAndUploadPage implements CcdPageConfigurat
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
         var page = pageBuilder.page("alternativeServiceDetailsAndUpload")
-            .pageLabel(ALTERNATIVE_SERVICE_LABEL);
+            .pageLabel(ALTERNATIVE_SERVICE_APP);
 
         page.label("alternativeEvidenceDocsLabel", ALTERNATIVE_EVIDENCE_DOCS_LABEL)
             .showCondition(isNotBlank(pageShowCondition)
