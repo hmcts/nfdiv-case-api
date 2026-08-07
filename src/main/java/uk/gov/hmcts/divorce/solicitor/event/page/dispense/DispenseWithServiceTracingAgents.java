@@ -35,8 +35,7 @@ public class DispenseWithServiceTracingAgents implements CcdPageConfiguration {
 
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
-        var page = pageBuilder.page("dispenseServiceTracingAgents")
-                    .pageLabel("Dispense with service app");
+        var page = pageBuilder.page("dispenseServiceTracingAgents");
 
         if (isNotBlank(pageShowCondition)) {
             page.showCondition(pageShowCondition);

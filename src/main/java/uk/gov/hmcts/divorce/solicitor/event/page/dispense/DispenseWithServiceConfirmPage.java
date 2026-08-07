@@ -55,8 +55,7 @@ public class DispenseWithServiceConfirmPage implements CcdPageConfiguration {
 
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
-        var page = pageBuilder.page("dispenseServicePayment")
-                    .pageLabel("Dispense with service app");
+        var page = pageBuilder.page("dispenseServicePayment");
 
         if (isNotBlank(pageShowCondition)) {
             page.showCondition(pageShowCondition);

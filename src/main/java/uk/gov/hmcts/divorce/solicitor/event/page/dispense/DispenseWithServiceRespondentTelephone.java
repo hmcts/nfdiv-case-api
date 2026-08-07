@@ -33,8 +33,7 @@ public class DispenseWithServiceRespondentTelephone implements CcdPageConfigurat
 
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
-        var page = pageBuilder.page("dispenseServiceRespondentPhone")
-                    .pageLabel("Dispense with service app");
+        var page = pageBuilder.page("dispenseServiceRespondentPhone");
 
         if (isNotBlank(pageShowCondition)) {
             page.showCondition(pageShowCondition);

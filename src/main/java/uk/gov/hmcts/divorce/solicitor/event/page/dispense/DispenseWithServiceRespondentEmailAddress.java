@@ -32,8 +32,7 @@ public class DispenseWithServiceRespondentEmailAddress implements CcdPageConfigu
 
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
-        var page = pageBuilder.page("dispenseServiceRespondentEmail")
-                    .pageLabel("Dispense with service app");
+        var page = pageBuilder.page("dispenseServiceRespondentEmail");
 
         if (isNotBlank(pageShowCondition)) {
             page.showCondition(pageShowCondition);

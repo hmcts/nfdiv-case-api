@@ -41,8 +41,7 @@ public class DispenseWithServiceLastSeenOrHeard implements CcdPageConfiguration 
 
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
-        var page = pageBuilder.page("dispenseServiceLastSeen")
-                    .pageLabel("Dispense with service app");
+        var page = pageBuilder.page("dispenseServiceLastSeen");
 
         if (isNotBlank(pageShowCondition)) {
             page.showCondition(pageShowCondition);
