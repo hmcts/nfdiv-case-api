@@ -135,6 +135,9 @@ public enum DocumentType implements HasLabel {
     @JsonProperty("coversheet")
     COVERSHEET("Coversheet", true),
 
+    @JsonProperty("hmctsCoversheet")
+    HMCTS_COVERSHEET("HMCTS Coversheet", false),
+
     @JsonProperty("d84")
     D84("D84", false),
 

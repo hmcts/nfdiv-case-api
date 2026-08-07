@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.systemupdate.service.task.GenerateD36Form;
 
 import java.util.Optional;
 
@@ -21,6 +22,7 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.SOLE_APPLICANT_FI
 public class SoleApplicantFinalOrderOverdueDocumentPack implements DocumentPack {
 
     static final String SOLE_APPLICANT_FINAL_ORDER_OVERDUE_PACK = "sole-applicant-final-order-overdue-pack";
+    private final GenerateD36Form generateD36Form;
 
     static final DocumentPackInfo SOLE_APPLICANT_FINAL_ORDER_OVERDUE_DOCUMENT_PACK = new DocumentPackInfo(
         ImmutableMap.of(
@@ -36,6 +38,8 @@ public class SoleApplicantFinalOrderOverdueDocumentPack implements DocumentPack 
 
     @Override
     public DocumentPackInfo getDocumentPack(CaseData caseData, Applicant applicant) {
+        generateD36Form.generateD36Document(caseData);
+
         return SOLE_APPLICANT_FINAL_ORDER_OVERDUE_DOCUMENT_PACK;
     }
 

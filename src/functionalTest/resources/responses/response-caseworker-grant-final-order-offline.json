@@ -50,6 +50,7 @@
     "grantedDate": "${json-unit.any-string}",
     "granted": ["Yes"],
     "dateFinalOrderEligibleToRespondent": "2022-03-21",
+    "finalOrderInsightSurveyStage": 0,
     "confidentialDocumentsGenerated" : [
       {
         "id": "${json-unit.any-string}",
