@@ -16,6 +16,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceAddressAfterParting;
+import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceAnyChildrenAndContact;
+import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceAnyFriendsAndRelatives;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceConfirmPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceLastKnownEmployer;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceLastSeenOrHeard;
@@ -25,6 +27,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceRes
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceSearchingOnline;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceTracingAgents;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceTracingOnline;
+import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceUploadPage;
 import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationDraftSubmissionService;
 
 import java.util.List;
@@ -61,7 +64,10 @@ public class SolicitorDispenseWithServiceApplication implements CCDConfig<CaseDa
                 new DispenseWithServiceTracingAgents(),
                 new DispenseWithServiceTracingOnline(),
                 new DispenseWithServiceSearchingOnline(),
-                new DispenseWithServiceLastKnownEmployer());
+                new DispenseWithServiceLastKnownEmployer(),
+                new DispenseWithServiceAnyChildrenAndContact(),
+                new DispenseWithServiceAnyFriendsAndRelatives(),
+                new DispenseWithServiceUploadPage());
 
         pages.forEach(page -> page.addTo(pageBuilder));
     }
@@ -76,6 +82,8 @@ public class SolicitorDispenseWithServiceApplication implements CCDConfig<CaseDa
 
         InterimApplicationOptions options = applicant.getInterimApplicationOptions();
         options.setInterimApplicationType(InterimApplicationType.DISPENSE_WITH_SERVICE);
+
+        serviceApplicationBuilderService.submitFromInterimOptions(details.getId(), caseData, applicant);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
