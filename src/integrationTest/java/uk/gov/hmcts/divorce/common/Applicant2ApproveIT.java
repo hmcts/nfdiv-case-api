@@ -22,6 +22,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.CaseDataWireMock;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
+import uk.gov.hmcts.divorce.testutil.DocTemplateResolver;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -90,6 +91,9 @@ public class Applicant2ApproveIT {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private DocTemplateResolver docTemplateResolver;
+
     @MockitoBean
     private NotificationService notificationService;
 
@@ -120,9 +124,12 @@ public class Applicant2ApproveIT {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant1AndApplicant2() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        final String divorceJointApplicant2AnswersTemplateId =
+            docTemplateResolver.resolveTemplateID(DIVORCE_JOINT_APPLICANT_2_ANSWERS);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS, "NFD_CP_Joint_Applicant_2_Answers_V2.docx");
+        stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS,
+            divorceJointApplicant2AnswersTemplateId);
 
         CaseData data = validApplicant2CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
@@ -153,9 +160,12 @@ public class Applicant2ApproveIT {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant2InWelsh() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        final String divorceJointApplicant2AnswersTemplateId =
+            docTemplateResolver.resolveTemplateID(DIVORCE_JOINT_APPLICANT_2_ANSWERS);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS, "NFD_CP_Joint_Applicant_2_Answers_V2.docx");
+        stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS,
+            divorceJointApplicant2AnswersTemplateId);
 
         CaseData data = validApplicant2CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
@@ -201,9 +211,12 @@ public class Applicant2ApproveIT {
     @Test
     public void givenValidCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant1AndApplicant2WithDeniedHwf() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        final String divorceJointApplicant2AnswersTemplateId =
+            docTemplateResolver.resolveTemplateID(DIVORCE_JOINT_APPLICANT_2_ANSWERS);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS, "NFD_CP_Joint_Applicant_2_Answers_V2.docx");
+        stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS,
+            divorceJointApplicant2AnswersTemplateId);
 
         CaseData data = validApplicant2CaseData();
         data.getApplication().setApplicant1HelpWithFees(HelpWithFees.builder().needHelp(YES).build());
@@ -236,10 +249,12 @@ public class Applicant2ApproveIT {
     @Test
     public void givenValidJointCaseDataWhenCallbackIsInvokedThenSendEmailToApplicant1Solicitor() throws Exception {
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        final String divorceJointApplicant2AnswersTemplateId =
+            docTemplateResolver.resolveTemplateID(DIVORCE_JOINT_APPLICANT_2_ANSWERS);
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith(DIVORCE_JOINT_APPLICANT_2_ANSWERS,
-            "FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers.docx");
+            divorceJointApplicant2AnswersTemplateId);
 
         CaseData data = validApplicant2CaseData();
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
