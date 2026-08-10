@@ -54,6 +54,7 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
     public static final String FIND_MATCHES = "caseworker-find-matches";
     public static final String WILDCARD_SEARCH = ".*";
+    private static final int MIN_SEARCH_NAME_SEGMENT_LENGTH = 2;
     private static final EnumSet<State> EVENT_STATES = EnumSet.copyOf(POST_SUBMISSION_STATES);
     private static final String NEVER_SHOW = "caseMatches=\"NEVER_SHOW\"";
 
@@ -157,10 +158,11 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         String nameWithoutDeedPollStatement = name.replaceAll("(?i)name changed by deed poll", "").trim();
 
         // Split to separate names for search wherever there are non-alphanumeric characters (excluding accented characters)
-        return Arrays.stream(nameWithoutDeedPollStatement.split("[^\\p{L}\\p{N}]+"))
+        return Arrays.stream(nameWithoutDeedPollStatement.split("[^\\p{L}\\p{N}'\\u2019]+"))
             .map(String::trim)
             .filter(part -> !part.isEmpty()) // Ignore empty parts
             .flatMap(part -> part.contains(" ") ? Arrays.stream(part.split("\\s+")) : Stream.of(part)) // Split on spaces
+            .filter(part -> part.length() >= MIN_SEARCH_NAME_SEGMENT_LENGTH)
             .toArray(String[]::new);
     }
 
