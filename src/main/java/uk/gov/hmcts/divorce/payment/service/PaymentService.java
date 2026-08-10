@@ -211,12 +211,20 @@ public class PaymentService {
         } catch (FeignException exception) {
             HttpStatus httpStatus = Optional.ofNullable(HttpStatus.resolve(exception.status()))
                 .orElseGet(() -> INTERNAL_SERVER_ERROR);
-            log.error("For case id {} unsuccessful payment for account number {} with exception {}",
+            if (httpStatus.is5xxServerError()) {
+                log.error("For case id {} unsuccessful payment for account number {} with exception {}",
                     caseId,
                     pbaNumber,
                     exception.getMessage(),
                     exception
-            );
+                );
+            } else {
+                log.info("For case id {} unsuccessful payment for account number {} with exception {}",
+                    caseId,
+                    pbaNumber,
+                    exception.getMessage()
+                );
+            }
             return getPbaErrorResponse(pbaNumber, exception);
         }
         return new PbaResponse(INTERNAL_SERVER_ERROR, ERROR_GENERIC, null);
