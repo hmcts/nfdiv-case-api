@@ -51,8 +51,7 @@ public class DeemedServiceDetailsAndUploadPage implements CcdPageConfiguration {
 
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
-        var page = pageBuilder.page("deemedServiceDetailsAndUpload")
-            .pageLabel("Deemed Service App");
+        var page = pageBuilder.page("deemedServiceDetailsAndUpload");
         if (isNotBlank(pageShowCondition)) {
             page.showCondition(pageShowCondition);
         }
@@ -62,7 +61,7 @@ public class DeemedServiceDetailsAndUploadPage implements CcdPageConfiguration {
                         .label("deemedEvidenceLabel", DEEMED_EVIDENCE_LABEL)
                         .mandatory(DeemedServiceJourneyOptions::getDeemedEvidenceDetails)
                         .label("deemedStatementLabel", DEEMED_STATEMENT_LABEL)
-                        .optionalNoSummary(DeemedServiceJourneyOptions::getDeemedNoEvidenceStatement)
+                        .optional(DeemedServiceJourneyOptions::getDeemedNoEvidenceStatement)
                         .label("deemedEvidenceDocsLabel", DEEMED_EVIDENCE_DOCS_LABEL)
                     .done()
                     .optionalWithLabel(InterimApplicationOptions::getInterimAppsEvidenceDocs, "Applicant 1 uploaded documents")

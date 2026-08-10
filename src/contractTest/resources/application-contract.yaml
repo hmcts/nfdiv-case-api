@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: NFDIV Case API Contract Tests
+
+fee:
+  api:
+    baseUrl: ${FEE_API_URL:http://localhost:4411}
+
+pba:
+  ref:
+    data:
+      service:
+        url: ${PBA_REF_DATA_SERVICE_URL:localhost:8892}
+
