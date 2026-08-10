@@ -283,7 +283,7 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     @CCD(
         label = "Are there any children of the family?",
         hint = "This includes any children of the applicant and the respondent, and any stepchildren or other children considered as part "
-            + "of the family.\n This does not include foster children.",
+            + "of the family. This does not include foster children.",
         access = {DefaultAccess.class},
         searchable = false
     )
@@ -331,9 +331,9 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
         label = "Have you been able to contact any of your respondents's friends or relatives?",
         hint = "You should contact any friends or relatives of the respondent that you are able to, including "
             + "children, to ask about the respondent's whereabouts. You should explain that the applicant has "
-            + "started ${labelContentUnionType} application, but do not need to tell them any further details. \n\n"
+            + "started ${labelContentUnionType} application, but do not need to tell them any further details. "
             + "Give their name, addresses (if known), their relationship with the respondent, and tell us about "
-            + "Any enquiries made with them.",
+            + "any enquiries made with them.",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -341,7 +341,7 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispenseContactFriendsOrRelativesDetails;
 
     @CCD(
-        label = "What other enquiries have you made, or information do you have concerning the whereabouts of your respondent?",
+        label = "What other enquiries have you made, or information do you have concerning the whereabouts of the respondent?",
         hint = "For example, this could include enquiries made of any professional organisations they may be a member "
             + "of. Enter 'none' if you do not have any more information.",
         typeOverride = TextArea,
