@@ -39,14 +39,13 @@ public class DispenseWithServiceConfirmPage implements CcdPageConfiguration {
             If you know that the respondent is unaware of the applicant's whereabouts, you may need to request a
             <a href="https://www.gov.uk/copy-decree-absolute-final-order/do-not-know-which-court"
             target="_blank" rel="noopener noreferrer">search for a divorce decree absolute or a final order</a> from
-            the Central Family Court. This is to make sure they have not already divorced the applicant. It will
-            cost £65 for every 10 year period you search, and you will need to search from the date the applicant and
-            respondent last had contact.
+            the Central Family Court. This is to make sure they have not already divorced the applicant.
+            You you will need to search from the date the applicant and respondent last had contact.
 
             If you cannot show that you have tried everything you reasonably can to send the ${labelContentUnionType}
             papers to the respondent, it is likely that your application will be rejected.
 
-            The fee to apply to dispense with service is £60.""";
+            """;
 
     @Override
     public void addTo(PageBuilder pageBuilder) {

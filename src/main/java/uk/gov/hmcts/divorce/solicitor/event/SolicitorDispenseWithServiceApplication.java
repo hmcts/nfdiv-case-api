@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceAddressAfterParting;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceConfirmPage;
+import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceExistingDecree;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceLastKnownEmployer;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceLastSeenOrHeard;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceLivedTogetherAnyTime;
@@ -56,6 +57,7 @@ public class SolicitorDispenseWithServiceApplication implements CCDConfig<CaseDa
                 new DispenseWithServiceLivedTogetherAnyTime(),
                 new DispenseWithServiceAddressAfterParting(),
                 new DispenseWithServiceLastSeenOrHeard(),
+                new DispenseWithServiceExistingDecree(),
                 new DispenseWithServiceRespondentEmailAddress(),
                 new DispenseWithServiceRespondentTelephone(),
                 new DispenseWithServiceTracingAgents(),
