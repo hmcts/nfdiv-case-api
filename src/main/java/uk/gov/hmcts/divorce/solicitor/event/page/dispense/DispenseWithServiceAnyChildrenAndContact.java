@@ -9,6 +9,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.andShowCondition;
 
 public class DispenseWithServiceAnyChildrenAndContact implements CcdPageConfiguration {
 
@@ -42,12 +43,12 @@ public class DispenseWithServiceAnyChildrenAndContact implements CcdPageConfigur
                         .mandatory(DispenseWithServiceJourneyOptions::getDispensePartnerContactWithChildren,
                             CHILDREN_IN_FAMILY_YES)
                         .mandatory(DispenseWithServiceJourneyOptions::getDispenseHowPartnerContactChildren,
-                            RESPONDENT_CONTACT_CHILDREN_YES + " AND " + CHILDREN_IN_FAMILY_YES)
+                            andShowCondition(RESPONDENT_CONTACT_CHILDREN_YES, CHILDREN_IN_FAMILY_YES))
                         .mandatory(DispenseWithServiceJourneyOptions::getDispensePartnerLastContactChildren,
-                            RESPONDENT_CONTACT_CHILDREN_NO + " AND " + CHILDREN_IN_FAMILY_YES)
+                            andShowCondition(RESPONDENT_CONTACT_CHILDREN_NO, CHILDREN_IN_FAMILY_YES))
                         .mandatory(DispenseWithServiceJourneyOptions::getDispenseChildMaintenanceOrder, CHILDREN_IN_FAMILY_YES)
                         .mandatory(DispenseWithServiceJourneyOptions::getDispenseChildMaintenanceResults,
-                            CHILD_MAINTENANCE_ORDER_SHOW_CONDITION + " AND " + CHILDREN_IN_FAMILY_YES)
+                            andShowCondition(CHILD_MAINTENANCE_ORDER_SHOW_CONDITION, CHILDREN_IN_FAMILY_YES))
                     .done()
                 .done()
             .done();
