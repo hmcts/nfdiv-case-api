@@ -117,4 +117,43 @@ class SystemSendFinalOrderInsightSurveyTest {
 
         verify(notificationDispatcher).send(finalOrderInsightSurveyNotification, details.getData(), details.getId());
     }
+
+    @Test
+    void shouldMarkCaseEligibleWhenGrantedYesterdayAtNinePm() {
+        final CaseData caseData = caseDataWithOrderSummary();
+        caseData.getFinalOrder().setFinalOrderInsightSurveyStage(0);
+        caseData.getFinalOrder().setGrantedDate(
+            LocalDateTime.of(java.time.LocalDate.now().minusDays(1), java.time.LocalTime.of(21, 0))
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+        details.setState(State.FinalOrderComplete);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            systemSendFinalOrderInsightSurvey.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).isNullOrEmpty();
+        assertThat(response.getData().getFinalOrder().getFinalOrderInsightSurveyStage()).isEqualTo(1);
+    }
+
+    @Test
+    void shouldRejectCaseWhenGrantedTodayAtNinePm() {
+        final CaseData caseData = caseDataWithOrderSummary();
+        caseData.getFinalOrder().setFinalOrderInsightSurveyStage(0);
+        caseData.getFinalOrder().setGrantedDate(
+            LocalDateTime.of(java.time.LocalDate.now(), java.time.LocalTime.of(21, 0))
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+        details.setState(State.FinalOrderComplete);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            systemSendFinalOrderInsightSurvey.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).containsExactly(CASE_NOT_YET_ELIGIBLE_FOR_INSIGHT_SURVEY_ERROR);
+    }
 }
