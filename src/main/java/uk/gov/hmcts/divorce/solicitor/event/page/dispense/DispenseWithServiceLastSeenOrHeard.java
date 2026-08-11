@@ -1,38 +1,28 @@
 package uk.gov.hmcts.divorce.solicitor.event.page.dispense;
 
+import lombok.extern.slf4j.Slf4j;
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DispenseWithServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+
+import java.time.LocalDate;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+@Slf4j
 public class DispenseWithServiceLastSeenOrHeard implements CcdPageConfiguration {
 
     private static final String LABEL_LAST_SEEN_DESCRIPTION = """
         Describe the last time that the applicant saw or heard from the respondent. Include the source of this information and
         give brief details of all the enquiries made to trace them as a result.
         """;
-    private static final String LABEL_CHECK_EXISTING_DECREE = """
-        ### Check for an existing decree absolute or final order ###
-
-        If the applicant has not heard from the respondent for more than 2 years you may need to check if they are already divorced.
-
-        You can apply online to the central Family Court to <a href="https://www.gov.uk/copy-decree-absolute-final-order/do-not-know-which-court"
-            target="_blank" rel="noopener noreferrer">search for a divorce decree absolute or a final order (opens in a new tab)</a>.
-
-        It costs £65 for each 10 year period you search.
-
-        You'll need to search from the date that the applicant last heard from them.
-
-        If decree absolute or final order is found, they are already divorced and you do not need to continue this application.
-
-        If the court cannot find a decree absolute or a final order, you'll get a 'no trace' certificate which you cannot upload as
-        evidence to progress the application.
-        """;
-    private static final String NO_TRACE_LABEL = "You will need to upload the no trace certificate at the end of this application.";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
@@ -41,7 +31,7 @@ public class DispenseWithServiceLastSeenOrHeard implements CcdPageConfiguration 
 
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
-        var page = pageBuilder.page("dispenseServiceLastSeen");
+        var page = pageBuilder.page("dispenseServiceLastSeen", this::midEvent);
 
         if (isNotBlank(pageShowCondition)) {
             page.showCondition(pageShowCondition);
@@ -53,14 +43,28 @@ public class DispenseWithServiceLastSeenOrHeard implements CcdPageConfiguration 
                         .mandatory(DispenseWithServiceJourneyOptions::getDispensePartnerLastSeenDate)
                         .label("labelLastSeenDescription", LABEL_LAST_SEEN_DESCRIPTION)
                         .mandatory(DispenseWithServiceJourneyOptions::getDispensePartnerLastSeenDescription)
-                        .label("labelCheckExistingDecree", LABEL_CHECK_EXISTING_DECREE)
-                        .mandatory(DispenseWithServiceJourneyOptions::getDispenseHaveSearchedFinalOrder)
-                        .label("labelWillNeedToUploadNoTraceCertificate", NO_TRACE_LABEL,
-                            "applicant1DispenseHaveSearchedFinalOrder=\"Yes\"")
-                        .mandatory(DispenseWithServiceJourneyOptions::getDispenseWhyNoFinalOrderSearch,
-                            "applicant1DispenseHaveSearchedFinalOrder=\"No\"")
                     .done()
                 .done()
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
+            CaseDetails<CaseData, State> details,
+            CaseDetails<CaseData, State> detailsBefore
+    ) {
+        final CaseData data = details.getData();
+        final DispenseWithServiceJourneyOptions dispenseWithServiceJourneyOptions =
+                data.getApplicant1().getInterimApplicationOptions().getDispenseWithServiceJourneyOptions();
+
+        LocalDate lastSeenDate = dispenseWithServiceJourneyOptions.getDispensePartnerLastSeenDate();
+
+        boolean beenMoreThan2Years = lastSeenDate != null && lastSeenDate.isBefore(LocalDate.now().minusYears(2));
+        log.info("Applicant has not seen or heard from respondent for more than 2 years: {}", beenMoreThan2Years);
+        dispenseWithServiceJourneyOptions
+                .setDispensePartnerLastSeenOver2YearsAgo(beenMoreThan2Years ? YesOrNo.YES : YesOrNo.NO);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(data)
+                .build();
     }
 }

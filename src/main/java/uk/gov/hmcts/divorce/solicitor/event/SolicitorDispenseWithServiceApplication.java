@@ -19,6 +19,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceAdd
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceAnyChildrenAndContact;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceAnyFriendsAndRelatives;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceConfirmPage;
+import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceExistingDecree;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceLastKnownEmployer;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceLastSeenOrHeard;
 import uk.gov.hmcts.divorce.solicitor.event.page.dispense.DispenseWithServiceLivedTogetherAnyTime;
@@ -59,6 +60,7 @@ public class SolicitorDispenseWithServiceApplication implements CCDConfig<CaseDa
                 new DispenseWithServiceLivedTogetherAnyTime(),
                 new DispenseWithServiceAddressAfterParting(),
                 new DispenseWithServiceLastSeenOrHeard(),
+                new DispenseWithServiceExistingDecree(),
                 new DispenseWithServiceRespondentEmailAddress(),
                 new DispenseWithServiceRespondentTelephone(),
                 new DispenseWithServiceTracingAgents(),
