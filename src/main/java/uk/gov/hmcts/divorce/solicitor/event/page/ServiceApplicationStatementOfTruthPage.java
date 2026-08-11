@@ -10,7 +10,6 @@ public class ServiceApplicationStatementOfTruthPage implements CcdPageConfigurat
     @Override
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder.page("serviceApplicationStatementOfTruth")
-            .pageLabel("Submit service application")
             .complex(CaseData::getAlternativeService)
                 .readonlyNoSummary(AlternativeService::getAlternativeServiceType)
                 .mandatory(AlternativeService::getServiceApplicationStatementOfTruth)
