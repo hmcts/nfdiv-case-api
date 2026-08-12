@@ -15,7 +15,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServicePaymentMethodPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentDescriptionPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentNameAddressPage;
@@ -35,10 +34,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
-import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
-import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ENFORCEMENT;
-import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_BAILIFF;
-import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 
 @Slf4j
 @Component
@@ -48,8 +43,6 @@ public class SolicitorBailiffServiceApplication implements CCDConfig<CaseData, S
     private static final String BAILIFF_SERVICE = "Bailiff Service App";
 
     public static final String SOLICITOR_BAILIFF_SERVICE_APPLICATION = "sol-bailiff-service-app";
-
-    private final PaymentService paymentService;
 
     private final ServiceApplicationDraftSubmissionService serviceApplicationDraftSubmissionService;
 
@@ -81,18 +74,8 @@ public class SolicitorBailiffServiceApplication implements CCDConfig<CaseData, S
             .showEventNotes()
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, JUDGE)
-            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
         );
-    }
-
-    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> caseDetails) {
-        String bailiffServiceFeeAmount = formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_ENFORCEMENT, KEYWORD_BAILIFF));
-        caseDetails.getData().getLabelContent().setBailiffServiceFeeAmount(bailiffServiceFeeAmount);
-
-        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseDetails.getData())
-            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
