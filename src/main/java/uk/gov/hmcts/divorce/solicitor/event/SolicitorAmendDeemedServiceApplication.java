@@ -93,12 +93,12 @@ public class SolicitorAmendDeemedServiceApplication implements CCDConfig<CaseDat
             .forState(AosOverdue)
             .name("Amend Service App")
             .description("Amend Service App")
-            .showCondition("serviceApplicationSubmittedOnline=\"Yes\" AND alternativeServiceType=\"*\"")
+            .showCondition("serviceApplicationSubmittedOnline=\"Yes\" AND alternativeServiceType=\"deemed\"")
             .showSummary()
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .endButtonLabel("Save Application")
+            .endButtonLabel("Submit")
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }

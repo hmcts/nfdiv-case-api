@@ -11,7 +11,6 @@ public class AmendServiceApplicationActionPage implements CcdPageConfiguration {
     @Override
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder.page("amendServiceApplication")
-            .pageLabel("Amend Service Application")
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .mandatory(InterimApplicationOptions::getDraftApplicationAction)

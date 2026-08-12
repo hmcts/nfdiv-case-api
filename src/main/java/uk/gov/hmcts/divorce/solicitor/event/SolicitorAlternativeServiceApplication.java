@@ -60,7 +60,6 @@ public class SolicitorAlternativeServiceApplication implements CCDConfig<CaseDat
 
         serviceApplicationDraftSubmissionService.submitFromInterimOptions(details.getId(), caseData, applicant);
 
-
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();

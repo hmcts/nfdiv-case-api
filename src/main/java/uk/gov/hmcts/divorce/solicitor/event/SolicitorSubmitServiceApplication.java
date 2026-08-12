@@ -126,7 +126,7 @@ public class SolicitorSubmitServiceApplication implements CCDConfig<CaseData, St
             .showCondition("serviceApplicationSubmittedOnline=\"Yes\" AND alternativeServiceType=\"*\"")
             .showSummary()
             .showEventNotes()
-            .endButtonLabel("Save Application")
+            .endButtonLabel("Submit Application")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
