@@ -81,9 +81,6 @@ public class LabelContent {
     @CCD(label = "finalise divorce or legally end your civil partnership")
     private String finaliseDivorceOrLegallyEndYourCivilPartnership;
 
-    @CCD(label = "bailiff service fee")
-    private String bailiffServiceFeeAmount;
-
     public void setUnionType(DivorceOrDissolution divorceOrDissolution) {
         if (divorceOrDissolution != null && divorceOrDissolution.isDivorce()) {
             unionType = "divorce";
