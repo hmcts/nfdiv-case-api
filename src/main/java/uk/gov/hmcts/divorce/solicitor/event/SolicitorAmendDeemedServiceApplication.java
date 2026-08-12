@@ -98,7 +98,7 @@ public class SolicitorAmendDeemedServiceApplication implements CCDConfig<CaseDat
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .endButtonLabel("Submit Application")
+            .endButtonLabel("Submit")
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
