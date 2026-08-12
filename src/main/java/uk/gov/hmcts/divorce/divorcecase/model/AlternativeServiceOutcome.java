@@ -11,11 +11,13 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.util.Optional.ofNullable;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
@@ -195,16 +197,16 @@ public class AlternativeServiceOutcome {
     private FeeDetails servicePaymentFee = new FeeDetails();
 
     @CCD(
-        label = "The applicant believes that the facts stated in this application are true.",
+        access = {DefaultAccess.class},
         searchable = false
     )
-    private YesOrNo serviceApplicationStatementOfTruth;
+    private Set<AlternativeService.ApplicantStatementOfTruth> serviceApplicationStatementOfTruth;
 
     @CCD(
-        label = "I am duly authorised by the applicant to sign this statement.",
+        access = {DefaultAccess.class},
         searchable = false
     )
-    private YesOrNo serviceApplicationSignStatementOfTruth;
+    private Set<AlternativeService.AuthorisationStatementOfTruth> serviceApplicationSignStatementOfTruth;
 
     @CCD(
         label = "Your name",
