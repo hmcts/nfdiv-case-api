@@ -6,6 +6,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.BailiffServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 
 public class BailiffServiceRespondentHistoryPage implements CcdPageConfiguration {
 
@@ -22,13 +23,17 @@ public class BailiffServiceRespondentHistoryPage implements CcdPageConfiguration
     private static final String RESPONDENT_PROVIDE_DETAILS_LABEL = "Provide details of any incidents";
 
     private static final String RESPONDENT_THREATS_LABEL =
-        "Has the respondent ever made verbal or written threats, either generally or specifically in relation to the divorce application?";
+        "Has the respondent ever made verbal or written threats, either generally or specifically in relation to the "
+        + "${labelContentDivorceOrCivilPartnershipApplication}?";
 
     private static final String RESPONDENT_THREATS = "applicant1BailiffHasPartnerMadeThreats = \"Yes\"";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder.page("bailiffServiceRespondentsHistoryPage")
+            .complex(CaseData::getLabelContent)
+                .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnershipApplication, NEVER_SHOW)
+            .done()
             .label("respondentsHistoryLabel", RESPONDENTS_HISTORY_LABEL)
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
