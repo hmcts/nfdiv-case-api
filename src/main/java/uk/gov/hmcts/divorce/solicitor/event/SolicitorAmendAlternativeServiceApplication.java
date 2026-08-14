@@ -88,7 +88,7 @@ public class SolicitorAmendAlternativeServiceApplication implements CCDConfig<Ca
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .endButtonLabel("Save Application")
+            .endButtonLabel("Submit")
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
