@@ -22,12 +22,10 @@ import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentPhoneAg
 import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentServiceTimeVehiclePage;
 import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationDraftSubmissionService;
 
-import java.util.EnumSet;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
