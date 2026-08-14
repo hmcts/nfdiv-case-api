@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -25,9 +24,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -323,32 +320,11 @@ class CaseDataDocumentServiceTest {
         final var documentId = "123456";
         final CaseData caseData = caseData();
         caseData.getGeneralLetter().setGeneralLetterParties(GeneralParties.OTHER);
+        caseData.getApplicant1().setContactDetailsType(ContactDetailsType.PRIVATE);
 
         final Map<String, Object> templateContent = new HashMap<>();
         final User systemUser = mock(User.class);
         final String filename = "some_filename.pdf";
-
-        MockedStatic<DocumentUtil> classMock = mockStatic(DocumentUtil.class);
-        classMock.when(() -> DocumentUtil.isConfidential(caseData, DocumentType.OTHER)).thenReturn(true);
-        classMock.when(() -> DocumentUtil.getConfidentialDocumentType(DocumentType.OTHER))
-            .thenReturn(ConfidentialDocumentsReceived.OTHER);
-
-        var confidentialDoc = ConfidentialDivorceDocument
-            .builder()
-            .documentLink(
-                Document
-                    .builder()
-                    .filename("some_pdf.pdf")
-                    .url("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003")
-                    .binaryUrl("http://localhost:4200/assets/59a54ccc-979f-11eb-a8b3-0242ac130003/binary")
-                    .build()
-            )
-            .documentFileName(filename)
-            .confidentialDocumentsReceived(ConfidentialDocumentsReceived.OTHER)
-            .build();
-
-        classMock.when(() -> DocumentUtil.divorceDocumentFrom(any(DocumentInfo.class), any(ConfidentialDocumentsReceived.class)))
-            .thenReturn(confidentialDoc);
 
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(systemUser);
         when(systemUser.getAuthToken()).thenReturn(TEST_AUTHORIZATION_TOKEN);
@@ -393,7 +369,5 @@ class CaseDataDocumentServiceTest {
                 DOC_URL,
                 "some_pdf.pdf",
                 DOC_BINARY_URL);
-
-        classMock.close();
     }
 }

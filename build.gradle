@@ -278,6 +278,8 @@ dependencyManagement {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
     //CVE-2020-23064
     dependency group: 'org.json', name: 'json', version: '20250517'
+    dependency 'net.bytebuddy:byte-buddy:1.18.3'
+    dependency 'net.bytebuddy:byte-buddy-agent:1.18.3'
   }
 }
 
@@ -293,13 +295,13 @@ def versions = [
   springBoot   : springBoot.class.package.implementationVersion
 ]
 
-ext.libraries = [
+/*ext.libraries = [
   junit5: [
     "org.junit.jupiter:junit-jupiter:${versions.junit}",
     "org.junit.platform:junit-platform-commons:${versions.junitPlatform}",
     "org.junit.platform:junit-platform-engine:${versions.junitPlatform}"
   ]
-]
+]*/
 
 dependencies {
 // uncomment for local version
@@ -350,7 +352,7 @@ dependencies {
   implementation group: 'org.apache.commons', name: 'commons-jcs3-core', version: '3.2.1'
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
 
-  testImplementation libraries.junit5
+  //testImplementation libraries.junit5
   testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test') {
     exclude(module: 'commons-logging')
     exclude(module: 'android-json')
@@ -364,9 +366,6 @@ dependencies {
   testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.27.7'
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '4.2.1'
   testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.2.1'
-  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.2.0'
-  testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
-  testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
   testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.8'
   testImplementation group: 'org.simplify4u', name: 'slf4j2-mock', version: '2.3.0'
@@ -527,7 +526,6 @@ tasks.withType(Test).configureEach {
   maxParallelForks = Math.min(Runtime.runtime.availableProcessors().intdiv(2), 4) ?: 1
   jvmArgs(["--add-opens=java.base/java.lang=ALL-UNNAMED",
            "--add-opens=java.base/java.util=ALL-UNNAMED"])
-  systemProperty 'net.bytebuddy.experimental', 'true'
 }
 
 // exclude the logback binding is coming in via cftlib
