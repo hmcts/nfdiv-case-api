@@ -37,7 +37,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -189,7 +188,7 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
         return new PageBuilder(configBuilder
             .event(SUBMIT_AOS)
             .forStates(ArrayUtils.addAll(
-                AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived, AwaitingService, ServiceAdminRefusal))
+                AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived, AwaitingService))
             .name("Submit AoS")
             .description("Submit AoS")
             .showCondition("applicationType=\"soleApplication\" AND aosIsDrafted=\"Yes\"")
