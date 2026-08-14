@@ -44,6 +44,12 @@ public class SolicitorBailiffServiceApplication implements CCDConfig<CaseData, S
 
     public static final String SOLICITOR_BAILIFF_SERVICE_APPLICATION = "sol-bailiff-service-app";
 
+    public static final String SERVICE_APPLICATION_SHOW_CONDITION =
+        "alternativeServiceType!=\"deemed\""
+        + " AND alternativeServiceType!=\"dispensed\""
+        + " AND alternativeServiceType!=\"bailiff\""
+        + " AND alternativeServiceType!=\"alternativeService\"";
+
     private final ServiceApplicationDraftSubmissionService serviceApplicationDraftSubmissionService;
 
     @Override
@@ -62,12 +68,10 @@ public class SolicitorBailiffServiceApplication implements CCDConfig<CaseData, S
     }
 
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        var states = EnumSet.complementOf(POST_SUBMISSION_STATES);
-        states.add(AosOverdue);
-
         return new PageBuilder(configBuilder
             .event(SOLICITOR_BAILIFF_SERVICE_APPLICATION)
-            .forStates(states)
+            .forState(AosOverdue)
+            .showCondition(SERVICE_APPLICATION_SHOW_CONDITION)
             .name(BAILIFF_SERVICE)
             .description(BAILIFF_SERVICE)
             .showSummary()
