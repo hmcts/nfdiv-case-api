@@ -51,7 +51,7 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
             + "to-a-conditional-order-refusal\" target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>";
 
     private static final String NOT_AUTHORISED_TO_RESPOND_ERROR =
-        "You are not authorised to submit clarification for this case.";
+        "Respondents are not eligible to submit Conditional Order clarification. The Applicant must submit.";
 
     private final NotificationDispatcher notificationDispatcher;
 
