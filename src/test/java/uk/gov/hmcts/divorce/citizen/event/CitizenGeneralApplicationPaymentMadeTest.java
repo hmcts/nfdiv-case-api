@@ -110,7 +110,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
         final var caseData = buildTestData();
         final var details = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getApplicant1().setGeneralAppServiceRequest(TEST_SERVICE_REFERENCE);
+        caseData.getApplicant1().setGeneralAppServiceRequest(null);
         caseData.getApplicant1().setGeneralAppPayments(payments);
         details.setId(TEST_CASE_ID);
 
@@ -144,7 +144,7 @@ class CitizenGeneralApplicationPaymentMadeTest {
         final var caseData = buildTestData();
         final var details = CaseDetails.<CaseData, State>builder().data(caseData).build();
         caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getApplicant1().setGeneralAppServiceRequest(TEST_SERVICE_REFERENCE);
+        caseData.getApplicant1().setGeneralAppServiceRequest(null);
         caseData.getApplicant1().setGeneralAppPayments(payments);
         caseData.setGeneralReferral(
             GeneralReferral.builder()
@@ -152,8 +152,6 @@ class CitizenGeneralApplicationPaymentMadeTest {
                 .build()
         );
         details.setId(TEST_CASE_ID);
-
-        GeneralApplication generalApp = caseData.getGeneralApplications().getFirst().getValue();
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = citizenGeneralApplicationPayment.aboutToSubmit(
             details, beforeDetails
