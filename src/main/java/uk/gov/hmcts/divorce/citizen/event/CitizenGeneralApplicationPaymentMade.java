@@ -126,13 +126,15 @@ public class CitizenGeneralApplicationPaymentMade implements CCDConfig<CaseData,
                 .build();
         }
 
-        if (submissionService.canBeAutoReferred(data, generalApplication.getGeneralApplicationType())) {
+        final boolean canBeAutoReferred = submissionService.canBeAutoReferred(data, generalApplication.getGeneralApplicationType());
+
+        submissionService.setEndState(details, generalApplication);
+
+        if (canBeAutoReferred) {
             GeneralReferral automaticReferral = generalReferralService.buildGeneralReferral(generalApplication);
             data.setGeneralReferral(automaticReferral);
             generalApplication.setGeneralApplicationReferredOnDate(data.getGeneralReferral().getGeneralApplicationReferralDate());
         }
-
-        submissionService.setEndState(details, generalApplication);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
