@@ -293,7 +293,8 @@ class SubmitClarificationTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = submitClarification.aboutToStart(caseDetails);
 
         assertThat(response.getErrors())
-            .containsExactly("Respondents are not eligible to submit Conditional Order clarification. The Applicant must submit.");
+            .containsExactly("Respondents cannot submit clarifications for a Conditional Order application. The clarifications "
+                + "must be submitted by the applicant or their solicitor.");
     }
 
     @Test
