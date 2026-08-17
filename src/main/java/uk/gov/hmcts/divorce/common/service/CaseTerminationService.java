@@ -112,6 +112,9 @@ public class CaseTerminationService {
     }
 
     public State getStateToTransitionTo(CaseDetails<CaseData, State> details) {
+        if (State.Rejected.equals(details.getState())) {
+            return Withdrawn;
+        }
         return (details.getData().getApplication().getDateSubmitted() == null) ? Withdrawn : PendingRefund;
     }
 }
