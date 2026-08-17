@@ -5,16 +5,17 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.NoRespondentAddressJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
@@ -99,10 +100,15 @@ public class CitizenAddPartnerContactDetails implements CCDConfig<CaseData, Stat
     }
 
     private boolean respondentAddressPresent(final CaseData caseData) {
-        return caseData.getApplicant2().getAddress() != null
-            && !AddressUtil.getPostalAddress(caseData.getApplicant2().getAddress()).isEmpty();
+        final AddressGlobalUK applicant2Address = caseData.getApplicant2().getAddress();
+
+        return applicant2Address != null && Stream.of(
+            applicant2Address.getAddressLine1(),
+            applicant2Address.getPostCode(),
+            applicant2Address.getCountry()
+        ).noneMatch(String::isBlank);
     }
-  
+
     private void setAddressKnownFlags(CaseData caseData) {
         final Application application = caseData.getApplication();
 

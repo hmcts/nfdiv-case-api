@@ -89,6 +89,19 @@ class CitizenAddPartnerContactDetailsTest {
     }
 
     @Test
+    void shouldNotReturnErrorIfRespondentAddressIsIncomplete() {
+        final var caseDetails = new CaseDetails<CaseData, State>();
+        caseDetails.setData(getCaseData(true));
+        caseDetails.setState(State.AwaitingDocuments);
+        caseDetails.getData().getApplication().setApplicant1CannotUpload(YesOrNo.YES);
+        caseDetails.getData().getApplicant2().getAddress().setPostCode("");
+
+        var response = citizenAddPartnerContactDetails.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
     void shouldApplyDataToRespondentAddress() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         caseDetails.setData(getCaseData(false));
