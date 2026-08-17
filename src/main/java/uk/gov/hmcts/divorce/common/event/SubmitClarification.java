@@ -76,6 +76,7 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
             .description("Submit clarification for conditional order")
             .showSummary()
             .showEventNotes()
+            .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE_DELETE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR, CREATOR, APPLICANT_2)
             .grantHistoryOnly(
@@ -97,6 +98,7 @@ public class SubmitClarification implements CCDConfig<CaseData, State, UserRole>
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(CaseDetails<CaseData, State> details) {
+        log.info("Submit Clarification about to start callback invoked for Case Id: {}", details.getId());
         CaseData caseData = details.getData();
 
         if (caseData.getApplicationType().isSole()) {
