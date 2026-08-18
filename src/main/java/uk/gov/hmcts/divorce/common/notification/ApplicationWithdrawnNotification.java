@@ -42,7 +42,7 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
             commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
         templateVars.put(IS_RESPONDENT, NO);
         templateVars.put(RESPONDENT_PARTNER, "");
-        templateVars.put(IS_PENDING_REFUND, shouldAddRefundText(caseData, true) ? YES : NO);
+        templateVars.put(IS_PENDING_REFUND, shouldAddRefundText(caseData, caseDetails.getState(), true) ? YES : NO);
 
 
         notificationService.sendEmail(
@@ -63,7 +63,7 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
             log.info("Sending application withdrawn notification to applicant 2 for: {}", id);
             final Map<String, String> templateVars =
                 commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-            templateVars.put(IS_PENDING_REFUND, shouldAddRefundText(caseData, false) ? YES : NO);
+            templateVars.put(IS_PENDING_REFUND, shouldAddRefundText(caseData, caseDetails.getState(), false) ? YES : NO);
 
             if (caseData.getApplicationType().isSole()) {
                 templateVars.put(IS_RESPONDENT, YES);
@@ -145,7 +145,10 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
         return caseData.getApplicationType().isSole() && !isNull(caseData.getApplication().getIssueDate());
     }
 
-    private boolean shouldAddRefundText(CaseData caseData, boolean isApplicant1) {
+    private boolean shouldAddRefundText(CaseData caseData, State state, boolean isApplicant1) {
+        if (State.Rejected.equals(state)) {
+            return false;
+        }
         boolean isCaseSubmittedButNotIssued = caseData.getApplication().getDateSubmitted() != null
             && caseData.getApplication().getIssueDate() == null;
         if (isApplicant1 && isCaseSubmittedButNotIssued) {
