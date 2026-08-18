@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.payment.service.PaymentService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -26,6 +27,10 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.DIVORCE_WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.payment.FeesAndPaymentsUtil.formatAmount;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE_AMEND_PETITION;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_OTHER;
 
 @Component
 @RequiredArgsConstructor
@@ -34,12 +39,15 @@ public class ConditionalOrderRefusedForAmendmentContent implements ConditionalOr
     public static final String LEGAL_ADVISOR_COMMENTS = "legalAdvisorComments";
     private static final String IS_SOLE = "isSole";
     private static final String IS_JOINT = "isJoint";
+    private static final String AMEND_FEE = "amendFee";
 
     private final Clock clock;
 
     private final ConditionalOrderCommonContent conditionalOrderCommonContent;
 
     private final DocmosisCommonContent docmosisCommonContent;
+
+    private final PaymentService paymentService;
 
     @Override
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference) {
@@ -75,6 +83,9 @@ public class ConditionalOrderRefusedForAmendmentContent implements ConditionalOr
             LEGAL_ADVISOR_COMMENTS, conditionalOrderCommonContent.generateLegalAdvisorComments(caseData.getConditionalOrder()));
 
         templateContent.put(PARTNER, conditionalOrderCommonContent.getPartner(caseData));
+
+        templateContent.put(AMEND_FEE,
+            formatAmount(paymentService.getServiceCost(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DIVORCE_AMEND_PETITION)));
 
         return templateContent;
     }
