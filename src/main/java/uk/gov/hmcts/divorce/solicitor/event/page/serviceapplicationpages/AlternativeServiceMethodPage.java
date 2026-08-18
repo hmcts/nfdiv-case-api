@@ -1,4 +1,4 @@
-package uk.gov.hmcts.divorce.solicitor.event.page;
+package uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages;
 
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
@@ -8,7 +8,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 
-public class SolicitorAlternativeServiceMethodPage implements CcdPageConfiguration {
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+public class AlternativeServiceMethodPage implements CcdPageConfiguration {
 
     private static final String NEVER_SHOW = "[STATE]=\"NEVER_SHOW\"";
 
@@ -21,9 +23,14 @@ public class SolicitorAlternativeServiceMethodPage implements CcdPageConfigurati
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("alternativeServiceMethod")
-            .pageLabel("Alternative Service App")
-            .complex(CaseData::getLabelContent)
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
+
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+        var page = pageBuilder.page("alternativeServiceMethod");
+
+        page.complex(CaseData::getLabelContent)
             .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnership, NEVER_SHOW)
             .done()
             .complex(CaseData::getApplicant1)
@@ -52,5 +59,9 @@ public class SolicitorAlternativeServiceMethodPage implements CcdPageConfigurati
                 "applicant1AltServiceDifferentWaysCONTAINS\"other\"",
                 NO_DEFAULT_VALUE)
             .done();
+
+        if (isNotBlank(pageShowCondition)) {
+            page.showCondition(pageShowCondition);
+        }
     }
 }

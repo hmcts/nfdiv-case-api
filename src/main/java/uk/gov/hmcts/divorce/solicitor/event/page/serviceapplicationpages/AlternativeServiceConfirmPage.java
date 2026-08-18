@@ -1,10 +1,12 @@
-package uk.gov.hmcts.divorce.solicitor.event.page;
+package uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages;
 
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class AlternativeServiceConfirmPage implements CcdPageConfiguration {
 
@@ -23,11 +25,20 @@ public class AlternativeServiceConfirmPage implements CcdPageConfiguration {
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("alternativeServiceConfirm")
-            .pageLabel("Alternative Service App")
-            .label("LabelAlternativeServiceConfirmPara-1", SERVICE_CONFIRM_PARAGRAPH, "")
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
+
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+        var page = pageBuilder.page("alternativeServiceConfirm");
+
+        page.label("LabelAlternativeServiceConfirmPara-1", SERVICE_CONFIRM_PARAGRAPH, "")
             .complex(CaseData::getApplicant1)
             .complex(Applicant::getInterimApplicationOptions)
             .mandatoryNoSummary(InterimApplicationOptions::getAgreeToShareDetailsWithRespondentCheckbox);
+
+        if (isNotBlank(pageShowCondition)) {
+            page.showCondition(pageShowCondition);
+        }
     }
 }
