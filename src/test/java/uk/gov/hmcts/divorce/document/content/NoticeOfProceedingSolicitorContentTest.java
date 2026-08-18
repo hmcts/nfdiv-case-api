@@ -47,6 +47,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.AP
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.HAS_CASE_BEEN_REISSUED;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.REISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.RELATION;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent.ADD_FO_LETTER_CONTENT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_JOINT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
@@ -122,6 +123,56 @@ class NoticeOfProceedingSolicitorContentTest {
                 entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
                 entry(IS_JOINT, false),
                 entry(IS_DIVORCE, true))
+            .doesNotContain(
+                entry(HAS_CASE_BEEN_REISSUED, true),
+                entry(REISSUE_DATE, "30 April 2022"));
+    }
+
+    @Test
+    void shouldMapTemplateContentForSoleDivorceApplicationAndFORequested() {
+        Applicant applicant1 = applicantRepresentedBySolicitor();
+        applicant1.getSolicitor().setOrganisationPolicy(organisationPolicy());
+        applicant1.getSolicitor().setAddress(ADDRESS);
+        applicant1.getSolicitor().setReference("12345");
+        applicant1.setFinancialOrder(YesOrNo.YES);
+
+        CaseData caseData = CaseData.builder()
+            .applicant1(applicant1)
+            .applicant2(respondent())
+            .divorceOrDissolution(DIVORCE)
+            .applicationType(SOLE_APPLICATION)
+            .application(Application.builder()
+                .issueDate(APPLICATION_ISSUE_DATE)
+                .build())
+            .build();
+
+        when(holdingPeriodService.getRespondByDateFor(APPLICATION_ISSUE_DATE))
+            .thenReturn(APPLICATION_ISSUE_DATE.plusDays(16));
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), ENGLISH)).thenReturn("husband");
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(getBasicDocmosisTemplateContent(ENGLISH));
+
+        final Map<String, Object> templateContent = applicantSolicitorNopContent.apply(caseData, TEST_CASE_ID, true);
+
+        assertThat(templateContent)
+            .contains(
+                entry(ISSUE_DATE, "30 March 2022"),
+                entry(DUE_DATE, "15 April 2022"),
+                entry(RELATION, "husband"),
+                entry(CASE_REFERENCE, FORMATTED_TEST_CASE_ID),
+                entry(APPLICANT_1_FIRST_NAME, "test_first_name"),
+                entry(APPLICANT_1_LAST_NAME, "test_last_name"),
+                entry(APPLICANT_2_FIRST_NAME, "applicant_2_first_name"),
+                entry(APPLICANT_2_LAST_NAME, "test_last_name"),
+                entry(SOLICITOR_NAME, "The Solicitor"),
+                entry(SOLICITOR_ADDRESS, TEST_ORG_NAME + '\n' + ADDRESS),
+                entry(SOLICITOR_REFERENCE, "12345"),
+                entry(APPLICANT_SOLICITOR_LABEL, "Applicant's solicitor"),
+                entry(APPLICANT_SOLICITOR_REGISTERED, true),
+                entry(SOLICITOR_NAME_WITH_DEFAULT_VALUE, "The Solicitor"),
+                entry(IS_JOINT, false),
+                entry(IS_DIVORCE, true),
+                entry(ADD_FO_LETTER_CONTENT, true))
             .doesNotContain(
                 entry(HAS_CASE_BEEN_REISSUED, true),
                 entry(REISSUE_DATE, "30 April 2022"));
