@@ -29,7 +29,7 @@ import uk.gov.hmcts.divorce.solicitor.service.task.ProgressDraftConditionalOrder
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.sortByNewest;

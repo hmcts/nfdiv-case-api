@@ -3,7 +3,7 @@ package uk.gov.hmcts.divorce.systemupdate.service;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionCaseTypeConfig;
@@ -82,7 +82,7 @@ public class CcdUpdateService {
         }
     }
 
-    @Retryable(retryFor = {CcdManagementException.class})
+    @Retryable(includes = {CcdManagementException.class})
     public void submitEventWithRetry(final String caseId,
                                      final String eventId,
                                      final CaseTask caseTask,
@@ -128,7 +128,7 @@ public class CcdUpdateService {
         }
     }
 
-    @Retryable(retryFor = {FeignException.class, RuntimeException.class})
+    @Retryable(includes = {FeignException.class, RuntimeException.class})
     public void updateBulkCaseWithRetries(final BulkCaseTask bulkCaseTask,
                                           final String eventId,
                                           final User authorization,
@@ -174,7 +174,7 @@ public class CcdUpdateService {
 
     }
 
-    @Retryable(retryFor = {FeignException.class, RuntimeException.class})
+    @Retryable(includes = {FeignException.class, RuntimeException.class})
     public void updateBulkCaseWithRetries(final String eventId,
                                           final User authorization,
                                           final String serviceAuth,
@@ -218,7 +218,7 @@ public class CcdUpdateService {
         }
     }
 
-    @Retryable(retryFor = {FeignException.class, RuntimeException.class})
+    @Retryable(includes = {FeignException.class, RuntimeException.class})
     public void updateBulkCaseWithRetries(final Function<CaseDetails, CaseDetails> updateDetailsTask,
                                           final String eventId,
                                           final User authorization,

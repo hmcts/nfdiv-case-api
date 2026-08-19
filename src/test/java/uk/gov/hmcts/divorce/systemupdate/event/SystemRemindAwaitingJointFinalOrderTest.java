@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -21,8 +21,6 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
@@ -33,7 +31,7 @@ import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validJointApplicant1CaseData;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class SystemRemindAwaitingJointFinalOrderTest {
 
     @Mock
@@ -75,8 +73,6 @@ class SystemRemindAwaitingJointFinalOrderTest {
             .state(AwaitingJointFinalOrder).id(TEST_CASE_ID).data(caseData)
             .build();
 
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
-
         final var response = systemRemindAwaitingJointFinalOrder.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).containsExactly(CASE_ALREADY_PROCESSED_ERROR);
@@ -93,8 +89,6 @@ class SystemRemindAwaitingJointFinalOrderTest {
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
             .state(AwaitingJointFinalOrder).id(TEST_CASE_ID).data(caseData)
             .build();
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
 
         final var response = systemRemindAwaitingJointFinalOrder.aboutToSubmit(details, details);
 
@@ -116,8 +110,6 @@ class SystemRemindAwaitingJointFinalOrderTest {
         final CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
             .state(AwaitingJointFinalOrder).id(TEST_CASE_ID).data(caseData)
             .build();
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
 
         final var response = systemRemindAwaitingJointFinalOrder.aboutToSubmit(details, details);
 
