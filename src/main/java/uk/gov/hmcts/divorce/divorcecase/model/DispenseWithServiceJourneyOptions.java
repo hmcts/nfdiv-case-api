@@ -95,7 +95,7 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     @CCD(
         label = "When was the respondent last seen or heard of?",
         hint = "If you are not sure about the day you can enter the last day of the month. If you are not sure about the month "
-            + "you can enter the '12' for December.",
+            + "you can enter '12' for December.",
         access = {DefaultAccess.class},
         searchable = false
     )

@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.time.LocalDate;
+import java.util.Collections;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -23,6 +24,8 @@ public class DispenseWithServiceLastSeenOrHeard implements CcdPageConfiguration 
         Describe the last time that the applicant saw or heard from the respondent. Include the source of this information and
         give brief details of all the enquiries made to trace them as a result.
         """;
+
+    private static final String FUTURE_DATE_ERROR = "You cannot enter a date in the future";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
@@ -58,8 +61,15 @@ public class DispenseWithServiceLastSeenOrHeard implements CcdPageConfiguration 
 
         LocalDate lastSeenDate = dispenseWithServiceJourneyOptions.getDispensePartnerLastSeenDate();
 
+        boolean isFutureDate = lastSeenDate != null && lastSeenDate.isAfter(LocalDate.now());
+        if (isFutureDate) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                    .data(data)
+                    .errors(Collections.singletonList(FUTURE_DATE_ERROR))
+                    .build();
+        }
+
         boolean beenMoreThan2Years = lastSeenDate != null && lastSeenDate.isBefore(LocalDate.now().minusYears(2));
-        log.info("Applicant has not seen or heard from respondent for more than 2 years: {}", beenMoreThan2Years);
         dispenseWithServiceJourneyOptions
                 .setDispensePartnerLastSeenOver2YearsAgo(beenMoreThan2Years ? YesOrNo.YES : YesOrNo.NO);
 
