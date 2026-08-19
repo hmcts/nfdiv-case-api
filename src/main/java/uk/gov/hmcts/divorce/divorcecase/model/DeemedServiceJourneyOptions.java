@@ -19,6 +19,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 public class DeemedServiceJourneyOptions implements ApplicationAnswers {
 
     @CCD(
+        label = "Supporting statement",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
