@@ -103,6 +103,7 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
         String solicitorEmail = caseData.getApplicant1().getSolicitor().getEmail();
         final Map<String, String> templateVars =
             commonContent.solicitorTemplateVarsPreIssue(caseData, caseDetails.getId(), caseData.getApplicant1());
+        templateVars.put(IS_PENDING_REFUND, shouldAddRefundText(caseData, caseDetails.getState(), true) ? YES : NO);
 
         addApplicantLabelVars(templateVars, caseData, caseData.getApplicant1());
 
@@ -129,6 +130,7 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
         String solicitorEmail = caseData.getApplicant2().getSolicitor().getEmail();
         final Map<String, String> templateVars =
             commonContent.solicitorTemplateVarsPreIssue(caseData, caseDetails.getId(), caseData.getApplicant2());
+        templateVars.put(IS_PENDING_REFUND, shouldAddRefundText(caseData, caseDetails.getState(), false) ? YES : NO);
 
         addApplicantLabelVars(templateVars, caseData, caseData.getApplicant2());
 
@@ -145,7 +147,6 @@ public class ApplicationWithdrawnNotification implements ApplicantNotification {
         final LanguagePreference languagePreference = applicant.getLanguagePreference();
         templateVars.put(APPLICANT_OR_APPLICANT1, docmosisCommonContent.getApplicantOrApplicant1(caseData, languagePreference));
         templateVars.put(RESPONDENT_OR_APPLICANT2, docmosisCommonContent.getRespondentOrApplicant2(caseData, languagePreference));
-        templateVars.put(IS_PENDING_REFUND, shouldAddRefundText(caseData, true) ? YES : NO);
     }
 
     private boolean shouldSendNotificationToApplicant2(final CaseData caseData, final State state) {
