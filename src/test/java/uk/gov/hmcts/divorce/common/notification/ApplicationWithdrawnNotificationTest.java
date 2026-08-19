@@ -564,4 +564,36 @@ class ApplicationWithdrawnNotificationTest {
 
         verifyNoInteractions(notificationService);
     }
+
+    @Test
+    void shouldSendEmailToJointApplicant2WithoutRefundTextWhenCaseStateIsRejected() {
+        final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setId(TEST_CASE_ID);
+        caseDetails.setState(State.Rejected);
+        CaseData data = validCaseDataForIssueApplication();
+        data.setApplicationType(JOINT_APPLICATION);
+        caseDetails.setData(data);
+
+        Map<String, String> divorceTemplateVars = new HashMap<>(getMainTemplateVars());
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
+            .thenReturn(divorceTemplateVars);
+
+        applicationWithdrawnNotification.sendToApplicant2(caseDetails);
+
+        verify(notificationService).sendEmail(
+            eq(TEST_USER_EMAIL),
+            eq(CITIZEN_APPLICATION_WITHDRAWN),
+            argThat(allOf(
+                hasEntry(APPLICATION_REFERENCE, formatId(TEST_CASE_ID)),
+                hasEntry(IS_DIVORCE, YES),
+                hasEntry(IS_DISSOLUTION, NO),
+                hasEntry(IS_RESPONDENT, NO),
+                hasEntry(IS_PENDING_REFUND, NO),
+                hasEntry(RESPONDENT_PARTNER, "")
+            )),
+            eq(ENGLISH),
+            eq(TEST_CASE_ID)
+        );
+        verify(commonContent).mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1());
+    }
 }
