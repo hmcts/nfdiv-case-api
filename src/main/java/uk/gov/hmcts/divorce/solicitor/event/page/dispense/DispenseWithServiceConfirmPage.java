@@ -60,7 +60,6 @@ public class DispenseWithServiceConfirmPage implements CcdPageConfiguration {
             page.showCondition(pageShowCondition);
         }
         page.complex(CaseData::getLabelContent)
-                .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnership, NEVER_SHOW)
                 .readonlyNoSummary(LabelContent::getUnionType, NEVER_SHOW)
             .done()
             .label("LabelDispenseServicePaymentParagraph", SERVICE_INFORMATION_PARAGRAPH)
