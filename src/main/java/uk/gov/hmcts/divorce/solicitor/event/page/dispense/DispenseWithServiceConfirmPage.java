@@ -20,7 +20,7 @@ public class DispenseWithServiceConfirmPage implements CcdPageConfiguration {
     private static final String SERVICE_INFORMATION_PARAGRAPH = """
             ## Apply to dispense with service (D13b) ##
 
-            To dispense with service means progressing the ${labelContentDivorceOrCivilPartnership} without serving
+            To dispense with service means progressing the ${labelContentUnionType} without serving
             the papers on the respondent. In most cases, the ${labelContentUnionType} cannot be completed without the
             respondent's knowledge. Therefore, dispensing with service is considered by the court to be a last resort.
 

@@ -23,7 +23,7 @@ public class DispenseWithServiceAddressAfterParting implements CcdPageConfigurat
         Include all addresses you know of that the respondent has lived at since they parted
         """;
 
-    private static final String ENQUIRIES_2_ERROR = "You need to provide details of enquiries made for the second address";
+    private static final String ENQUIRIES_2_ERROR = "You need to provide details of enquiries made about the second address you provided";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
@@ -32,7 +32,7 @@ public class DispenseWithServiceAddressAfterParting implements CcdPageConfigurat
 
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
-        var page = pageBuilder.page("dispenseServiceAfterParting");
+        var page = pageBuilder.page("dispenseServiceAfterParting", this::midEvent);
 
         if (isNotBlank(pageShowCondition)) {
             page.showCondition(pageShowCondition);
