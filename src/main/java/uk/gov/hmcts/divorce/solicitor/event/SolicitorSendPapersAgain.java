@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.solicitor.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -88,21 +87,8 @@ public class SolicitorSendPapersAgain implements CCDConfig<CaseData, State, User
         log.info("Solicitor {} about to submit callback invoked with Case Id: {}", SEND_PAPERS_AGAIN, details.getId());
 
         CaseData caseData = details.getData();
-        State state = details.getState();
 
-        final CaseDetails<CaseData, State> afterServiceType = issueApplicationService.updateServiceType(details);
-
-        List<String> validationErrors = issueApplicationService.validateIssueApplication(afterServiceType);
-
-        if (CollectionUtils.isNotEmpty(validationErrors)) {
-            log.info("Data not valid for application issue, case id: {}, errors: {}", details.getId(), validationErrors);
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(validationErrors)
-                .build();
-        }
-
-        final CaseDetails<CaseData, State> result = issueApplicationService.issueApplication(afterServiceType);
+        final CaseDetails<CaseData, State> result = issueApplicationService.issueApplication(details);
 
         caseData.getApplication().setSolicitorSentPapersAgain(YesOrNo.YES);
 

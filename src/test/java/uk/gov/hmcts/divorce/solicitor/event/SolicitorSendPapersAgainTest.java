@@ -20,7 +20,6 @@ import uk.gov.hmcts.divorce.solicitor.notification.SolicitorSendPapersAgainNotif
 import uk.gov.hmcts.divorce.testutil.TestDataHelper;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,15 +27,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorSendPapersAgain.SOLICITOR_RESEND_PAPERS;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_VALIDATION_ERROR;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.LOCAL_DATE_TIME;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.invalidCaseData;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorSendPapersAgainTest {
@@ -65,29 +61,9 @@ class SolicitorSendPapersAgainTest {
     }
 
     @Test
-    void aboutToSubmitShouldReturnErrorIfEmailIsRemoved() {
-
-        final var caseData = invalidCaseData();
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setId(TEST_CASE_ID);
-        details.setCreatedDate(LOCAL_DATE_TIME);
-
-        when(issueApplicationService.updateServiceType(details)).thenReturn(details);
-        when(issueApplicationService.validateIssueApplication(details)).thenReturn(Collections.singletonList(TEST_VALIDATION_ERROR));
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSendPapersAgain.aboutToSubmit(details, null);
-
-        assertThat(response.getErrors())
-            .contains(TEST_VALIDATION_ERROR);
-    }
-
-    @Test
     void shouldCallIssueApplicationServiceAndReturnCaseData() {
 
         final var caseData = TestDataHelper.caseData();
-        final var expectedCaseData = CaseData.builder().build();
-        final var expectedCaseDataWithServiceType = CaseData.builder().build();
         caseData.getApplication().setSolSignStatementOfTruth(YES);
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
@@ -95,28 +71,15 @@ class SolicitorSendPapersAgainTest {
         details.setId(TEST_CASE_ID);
         details.setCreatedDate(LOCAL_DATE_TIME);
 
-        final CaseDetails<CaseData, State> expectedDetailsWithServiceType = new CaseDetails<>();
-        expectedDetailsWithServiceType.setData(expectedCaseDataWithServiceType);
-        expectedDetailsWithServiceType.setId(TEST_CASE_ID);
-        expectedDetailsWithServiceType.setCreatedDate(LOCAL_DATE_TIME);
+        final var expectedCaseData = details.getData();
+        expectedCaseData.getApplication().setSolicitorSentPapersAgain(YES);
 
-        final CaseDetails<CaseData, State> expectedDetails = new CaseDetails<>();
-        expectedDetails.setData(expectedCaseData);
-        expectedDetails.setId(TEST_CASE_ID);
-        expectedDetails.setCreatedDate(LOCAL_DATE_TIME);
-        expectedDetails.setState(AwaitingService);
-
-        when(issueApplicationService.issueApplication(expectedDetailsWithServiceType)).thenReturn(expectedDetails);
-        when(issueApplicationService.updateServiceType(details)).thenReturn(expectedDetailsWithServiceType);
-        when(issueApplicationService.validateIssueApplication(expectedDetailsWithServiceType)).thenReturn(Collections.emptyList());
+        when(issueApplicationService.issueApplication(details)).thenReturn(details);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSendPapersAgain.aboutToSubmit(details, null);
 
         assertThat(response.getData()).isEqualTo(expectedCaseData);
-        assertThat(response.getState()).isEqualTo(AwaitingService);
-        verify(issueApplicationService).updateServiceType(details);
-        verify(issueApplicationService).issueApplication(expectedDetailsWithServiceType);
-        verify(issueApplicationService).validateIssueApplication(expectedDetailsWithServiceType);
+        verify(issueApplicationService).issueApplication(details);
     }
 
     @Test
