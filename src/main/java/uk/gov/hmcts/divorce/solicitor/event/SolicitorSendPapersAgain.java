@@ -71,7 +71,6 @@ public class SolicitorSendPapersAgain implements CCDConfig<CaseData, State, User
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE))
             .page("sendPapersAgain", this::midEvent)
-            .pageLabel(SEND_PAPERS_AGAIN)
             .label("respondentNewAddressLabel", RESPONDENT_NEW_ADDRESS_LABEL)
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
             .complex(CaseData::getApplication)
