@@ -18,8 +18,8 @@ public class DispenseWithServiceTracingAgents implements CcdPageConfiguration {
 
         You could consider employing a tracing agent to try to find the respondent's whereabouts or their contact details.
 
-        If the tracing agent can find up to date details, you can use those to progress the ${labelContentUnionType} application another way.
-        You do not need to continue this application to dispense with service.
+        If the tracing agent can find up to date details, you can use those to progress the ${labelContentUnionType} application
+        another way. You do not need to continue this application to dispense with service.
 
         If the tracing agent fails to find the respondent, they should contact you with the results of any searches they do, which
         you can use as evidence.
