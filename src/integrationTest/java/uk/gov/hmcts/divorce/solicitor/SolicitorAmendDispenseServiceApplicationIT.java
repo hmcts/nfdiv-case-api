@@ -49,7 +49,7 @@ class SolicitorAmendDispenseServiceApplicationIT {
     private ServiceApplicationDraftSubmissionService serviceApplicationBuilderService;
 
     @Test
-    void shouldAmendDeemedServiceApplication() throws Exception {
+    void shouldAmendDispenseServiceApplication() throws Exception {
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()
                 .interimApplicationOptions(InterimApplicationOptions.builder()
@@ -73,7 +73,7 @@ class SolicitorAmendDispenseServiceApplicationIT {
     }
 
     @Test
-    void shouldWithdrawDeemedServiceApplication() throws Exception {
+    void shouldWithdrawDispenseServiceApplication() throws Exception {
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()
                 .interimApplicationOptions(InterimApplicationOptions.builder()

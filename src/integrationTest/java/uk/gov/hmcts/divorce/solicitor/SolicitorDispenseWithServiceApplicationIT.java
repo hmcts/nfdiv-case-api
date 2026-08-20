@@ -50,7 +50,7 @@ class SolicitorDispenseWithServiceApplicationIT {
     private ServiceApplicationDraftSubmissionService serviceApplicationBuilderService;
 
     @Test
-    void shouldSetInterimApplicationTypeToDeemedServiceAndSubmitDraftFromInterimOptions() throws Exception {
+    void shouldSetInterimApplicationTypeToDispenseServiceAndSubmitDraftFromInterimOptions() throws Exception {
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()
                 .interimApplicationOptions(InterimApplicationOptions.builder().build())

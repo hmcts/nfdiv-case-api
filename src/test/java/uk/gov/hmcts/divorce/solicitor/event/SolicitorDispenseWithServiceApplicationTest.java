@@ -44,7 +44,7 @@ class SolicitorDispenseWithServiceApplicationTest {
     private ServiceApplicationDraftSubmissionService serviceApplicationBuilderService;
 
     @Test
-    void shouldAddSolicitorDeemedServiceApplicationEventToConfigBuilder() {
+    void shouldAddSolicitorDispenseServiceApplicationEventToConfigBuilder() {
         final ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
         solicitorDispenseWithServiceApplication.configure(configBuilder);
