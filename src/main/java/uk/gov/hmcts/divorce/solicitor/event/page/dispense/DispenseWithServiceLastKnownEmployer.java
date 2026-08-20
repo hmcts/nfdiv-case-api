@@ -16,7 +16,7 @@ public class DispenseWithServiceLastKnownEmployer implements CcdPageConfiguratio
     private static final String LABEL_LAST_KNOWN_EMPLOYER = """
         ### Contacting the respondent's last known employer ###
 
-        If you know where the respondent last worked, you should try contacting the employer. The may be able to confirm whether the
+        If you know where the respondent last worked, you should try contacting the employer. They may be able to confirm whether the
         respondent still works there, or help you trace the respondent.
 
         If the employer can confirm that the respondent still works there, you should not proceed with this application to dispense
@@ -25,7 +25,7 @@ public class DispenseWithServiceLastKnownEmployer implements CcdPageConfiguratio
         You could also ask the employer to send a stamped envelope containing the papers to the respondent on behalf of the applicant.
         We will send you the papers on request. You do not need to tell the employer what the envelope contains.
 
-        Once the employer confirms that they have sent the envelope, if the respondent does not respond within 14days you can continue this
+        Once the employer confirms that they have sent the envelope, if the respondent does not respond within 14 days you can continue this
         application.
         """;
 
