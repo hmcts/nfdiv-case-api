@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.DispenseWithServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.andShowCondition;
 
 public class DispenseWithServiceExistingDecree implements CcdPageConfiguration {
 
@@ -28,10 +29,11 @@ public class DispenseWithServiceExistingDecree implements CcdPageConfiguration {
         """;
     private static final String NO_TRACE_LABEL = "You will need to upload the no trace certificate at the end of this application.";
     private static final String NEVER_SHOW = "applicant1DispenseAwarePartnerLived =\"NEVER_SHOW\"";
+    private static final String LAST_SEEN_OVER_2_YEARS_AGO_SHOW_CONDITION = "applicant1DispensePartnerLastSeenOver2YearsAgo=\"Yes\"";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        addWithShowCondition(pageBuilder, "applicant1DispensePartnerLastSeenOver2YearsAgo=\"Yes\"");
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
     }
 
     @Override
@@ -39,7 +41,9 @@ public class DispenseWithServiceExistingDecree implements CcdPageConfiguration {
         var page = pageBuilder.page("dispenseServiceExistingDecree");
 
         if (isNotBlank(pageShowCondition)) {
-            page.showCondition(pageShowCondition);
+            page.showCondition(andShowCondition(pageShowCondition, LAST_SEEN_OVER_2_YEARS_AGO_SHOW_CONDITION));
+        } else {
+            page.showCondition(LAST_SEEN_OVER_2_YEARS_AGO_SHOW_CONDITION);
         }
         page
             .complex(CaseData::getApplicant1)
