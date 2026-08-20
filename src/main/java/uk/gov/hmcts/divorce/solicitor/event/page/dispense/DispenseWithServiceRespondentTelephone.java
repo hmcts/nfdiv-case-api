@@ -21,7 +21,7 @@ public class DispenseWithServiceRespondentTelephone implements CcdPageConfigurat
 
         The applicant should only attempt to contact the respondent if it is safe to do so.
 
-        If you know the respondent partner has a telephone they actively use, you could consider applying for alternative service.
+        If you know the respondent has a telephone they actively use, you could consider applying for alternative service.
         """;
 
     private static final String HAVE_TELEPHONE_SHOW_CONDITION = "applicant1DispenseHavePartnerPhoneNumbers=\"Yes\"";

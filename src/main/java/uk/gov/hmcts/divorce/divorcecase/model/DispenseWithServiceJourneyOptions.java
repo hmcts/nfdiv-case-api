@@ -213,7 +213,7 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispenseTracingOnlineResults;
 
     @CCD(
-        label = "Have you tried finding your partner's details online by searching the internet?",
+        label = "Have you tried finding the respondent's details online by searching the internet?",
         access = {DefaultAccess.class},
         searchable = false
     )
@@ -331,7 +331,7 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
         label = "Have you been able to contact any of your respondents's friends or relatives?",
         hint = "You should contact any friends or relatives of the respondent that you are able to, including "
             + "children, to ask about the respondent's whereabouts. You should explain that the applicant has "
-            + "started ${labelContentUnionType} application, but do not need to tell them any further details. "
+            + "started a ${labelContentUnionType} application, but do not need to tell them any further details. "
             + "Give their name, addresses (if known), their relationship with the respondent, and tell us about "
             + "any enquiries made with them.",
         typeOverride = TextArea,
