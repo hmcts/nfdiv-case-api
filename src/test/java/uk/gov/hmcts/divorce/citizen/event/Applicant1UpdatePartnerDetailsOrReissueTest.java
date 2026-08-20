@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
@@ -15,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetPostIssueState;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
@@ -25,15 +24,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.NoResponseSendPapersAgainOrTrySome
 import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.divorcecase.validation.ApplicationValidation;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -96,37 +93,31 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
     void shouldRejectTheUpdateIfServiceDateValidationFails() {
         final CaseData caseData = validCaseDataForReIssueApplication();
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseData.setApplication(Application.builder().serviceDocumentsRegeneratedDate(LocalDate.now()
+            .minusDays(REISSUE_OFFSET_DAYS - 1)).build());
         caseDetails.setId(12345L);
         caseDetails.setData(caseData);
 
-        try (MockedStatic<ApplicationValidation> classMock = Mockito.mockStatic(ApplicationValidation.class)) {
-            classMock.when(() -> ApplicationValidation.validateServiceDate(caseData, REISSUE_OFFSET_DAYS))
-                .thenReturn(List.of(SERVICE_DOCUMENTS_ALREADY_REGENERATED));
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant1UpdatePartnerDetailsOrReissue.aboutToStart(caseDetails);
 
-            final AboutToStartOrSubmitResponse<CaseData, State> response =
-                applicant1UpdatePartnerDetailsOrReissue.aboutToStart(caseDetails);
-
-            assertThat(response.getErrors()).hasSize(1);
-            assertThat(response.getErrors()).contains(SERVICE_DOCUMENTS_ALREADY_REGENERATED);
-        }
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(SERVICE_DOCUMENTS_ALREADY_REGENERATED);
     }
 
     @Test
     void shouldAllowTheUpdateIfServiceDateValidationPasses() {
         final CaseData caseData = validCaseDataForReIssueApplication();
+        caseData.setApplication(Application.builder().serviceDocumentsRegeneratedDate(LocalDate.now()
+            .minusDays(REISSUE_OFFSET_DAYS)).build());
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(12345L);
         caseDetails.setData(caseData);
 
-        try (MockedStatic<ApplicationValidation> classMock = Mockito.mockStatic(ApplicationValidation.class)) {
-            classMock.when(() -> ApplicationValidation.validateServiceDate(caseData, REISSUE_OFFSET_DAYS))
-                .thenReturn(Collections.emptyList());
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant1UpdatePartnerDetailsOrReissue.aboutToStart(caseDetails);
 
-            final AboutToStartOrSubmitResponse<CaseData, State> response =
-                applicant1UpdatePartnerDetailsOrReissue.aboutToStart(caseDetails);
-
-            assertThat(response.getErrors()).isNull();
-        }
+        assertThat(response.getErrors()).isNull();
     }
 
     @Test
@@ -135,21 +126,18 @@ class Applicant1UpdatePartnerDetailsOrReissueTest {
 
         caseData.getAcknowledgementOfService().setDateAosSubmitted(
             LocalDateTime.of(2021, 10, 26, 10, 0, 0));
+        caseData.setApplication(Application.builder().serviceDocumentsRegeneratedDate(LocalDate.now()
+            .minusDays(REISSUE_OFFSET_DAYS)).build());
 
         final CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setId(12345L);
         caseDetails.setData(caseData);
 
-        try (MockedStatic<ApplicationValidation> classMock = Mockito.mockStatic(ApplicationValidation.class)) {
-            classMock.when(() -> ApplicationValidation.validateServiceDate(caseData, REISSUE_OFFSET_DAYS))
-                .thenReturn(Collections.emptyList());
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            applicant1UpdatePartnerDetailsOrReissue.aboutToStart(caseDetails);
 
-            final AboutToStartOrSubmitResponse<CaseData, State> response =
-                applicant1UpdatePartnerDetailsOrReissue.aboutToStart(caseDetails);
-
-            assertThat(response.getErrors()).hasSize(1);
-            assertThat(response.getErrors()).contains("Partner has responded to application.");
-        }
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains("Partner has responded to application.");
     }
 
     @Test
