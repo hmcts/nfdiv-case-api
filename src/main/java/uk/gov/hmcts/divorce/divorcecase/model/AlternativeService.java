@@ -2,12 +2,15 @@ package uk.gov.hmcts.divorce.divorcecase.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAccessOnlyAccess;
@@ -17,6 +20,7 @@ import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Date;
@@ -129,6 +133,37 @@ public class AlternativeService {
     )
     private YesOrNo serviceApplicationSubmittedOnline;
 
+    @CCD(
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private Set<ApplicantStatementOfTruth> serviceApplicationStatementOfTruth;
+
+    @CCD(
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private Set<AuthorisationStatementOfTruth> serviceApplicationSignStatementOfTruth;
+
+    @CCD(
+        label = "Your name",
+        searchable = false
+    )
+    private String serviceApplicationStatementOfTruthSolsName;
+
+    @CCD(
+        label = "Name of your firm",
+        searchable = false
+    )
+    private String serviceApplicationStatementOfTruthSolsFirm;
+
+    @CCD(
+        label = "Additional comments",
+        typeOverride = TextArea,
+        searchable = false
+    )
+    private String serviceApplicationStatementOfTruthComments;
+
     @JsonUnwrapped
     @Builder.Default
     @CCD(access = {CaseworkerAccessOnlyAccess.class})
@@ -156,6 +191,26 @@ public class AlternativeService {
     )
     private List<ListValue<Payment>> servicePayments;
 
+    @Getter
+    @AllArgsConstructor
+    public enum ApplicantStatementOfTruth implements HasLabel {
+
+        @JsonProperty("Yes")
+        CONFIRM("The applicant believes that the facts stated in this application are true.");
+
+        private final String label;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum AuthorisationStatementOfTruth implements HasLabel {
+
+        @JsonProperty("Yes")
+        CONFIRM("I am duly authorised by the applicant to sign this statement.");
+
+        private final String label;
+    }
+
     @SuppressWarnings("PMD")
     @JsonIgnore
     public AlternativeServiceOutcome getOutcome() {
@@ -182,6 +237,11 @@ public class AlternativeService {
             .successfulServedByBailiff(bailiff.getSuccessfulServedByBailiff())
             .reasonFailureToServeByBailiff(bailiff.getReasonFailureToServeByBailiff())
             .servicePaymentFee(servicePaymentFee)
+            .serviceApplicationStatementOfTruth(serviceApplicationStatementOfTruth)
+            .serviceApplicationSignStatementOfTruth(serviceApplicationSignStatementOfTruth)
+            .serviceApplicationStatementOfTruthSolsName(serviceApplicationStatementOfTruthSolsName)
+            .serviceApplicationStatementOfTruthSolsFirm(serviceApplicationStatementOfTruthSolsFirm)
+            .serviceApplicationStatementOfTruthComments(serviceApplicationStatementOfTruthComments)
             .build();
     }
 

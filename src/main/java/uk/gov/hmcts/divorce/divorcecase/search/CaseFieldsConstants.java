@@ -278,6 +278,11 @@ public final class CaseFieldsConstants {
     public static final String SERVICE_APPLICATION_FURTHER_DETAILS = "serviceApplicationFurtherDetails";
     public static final String REFUSAL_REASON = "refusalReason";
     public static final String SERVICE_APPLICATION_REFUSAL_REASON = "serviceApplicationRefusalReason";
+    public static final String SERVICE_APPLICATION_SIGN_STATEMENT_OF_TRUTH = "serviceApplicationSignStatementOfTruth";
+    public static final String SERVICE_APPLICATION_STATEMENT_OF_TRUTH = "serviceApplicationStatementOfTruth";
+    public static final String SERVICE_APPLICATION_STATEMENT_OF_TRUTH_COMMENTS = "serviceApplicationStatementOfTruthComments";
+    public static final String SERVICE_APPLICATION_STATEMENT_OF_TRUTH_SOLS_NAME = "serviceApplicationStatementOfTruthSolsName";
+    public static final String SERVICE_APPLICATION_STATEMENT_OF_TRUTH_SOLS_FIRM = "serviceApplicationStatementOfTruthSolsFirm";
     public static final String DEEMED_SERVICE_DATE = "deemedServiceDate";
     public static final String SUCCESSFUL_SERVED_BY_BAILIFF = "successfulServedByBailiff";
     public static final String REASON_FAILURE_TO_SERVE_BY_BAILIFF = "reasonFailureToServeByBailiff";
