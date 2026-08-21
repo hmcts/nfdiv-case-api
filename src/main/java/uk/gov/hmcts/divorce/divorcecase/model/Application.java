@@ -615,6 +615,13 @@ public class Application {
     )
     private String cwWithdrawApplicationDetails;
 
+    @CCD(
+        label = "Solicitor sent papers",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private YesOrNo solicitorSentPapersAgain;
+
     @JsonIgnore
     public boolean hasBeenPaidFor() {
         return null != applicationFeeOrderSummary
