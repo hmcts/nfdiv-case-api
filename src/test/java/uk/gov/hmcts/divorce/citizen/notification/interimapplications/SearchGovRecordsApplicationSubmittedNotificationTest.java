@@ -61,7 +61,7 @@ class SearchGovRecordsApplicationSubmittedNotificationTest {
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
 
-        notification.sendToApplicant1(data, TEST_CASE_ID, generalApplication);
+        notification.sendToApplicant(data, TEST_CASE_ID, generalApplication);
 
         verify(notificationService).sendEmail(
             TEST_USER_EMAIL,

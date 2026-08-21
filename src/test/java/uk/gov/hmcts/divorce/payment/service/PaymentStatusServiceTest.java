@@ -19,6 +19,8 @@ import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.payment.client.PaymentClient;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus;
+import uk.gov.hmcts.divorce.payment.rule.ApplicationPaymentMadeRule;
+import uk.gov.hmcts.divorce.payment.rule.FinalOrderPaymentMadeRule;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -78,6 +80,12 @@ class PaymentStatusServiceTest {
 
     @Mock
     private ServiceRequestSearchService serviceRequestSearchService;
+
+    @Mock
+    private ApplicationPaymentMadeRule applicationPaymentMadeRule;
+
+    @Mock
+    private FinalOrderPaymentMadeRule finalOrderPaymentMadeRule;
 
     @InjectMocks
     private PaymentStatusService paymentStatusService;
@@ -188,17 +196,23 @@ class PaymentStatusServiceTest {
 
         when(caseDetailsConverter.convertToCaseDetailsFromReformModel(same(cd))).thenReturn(caseDetails);
         when(paymentClient.getPaymentByReference(TEST_SERVICE_AUTH_TOKEN, SERVICE_AUTHORIZATION, reference))
-                .thenReturn(new uk.gov.hmcts.divorce.payment.model.Payment(SUCCESS.getLabel()));
+            .thenReturn(new uk.gov.hmcts.divorce.payment.model.Payment(SUCCESS.getLabel()));
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveSystemUpdateUserDetails().getAuthToken()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(finalOrderPaymentMadeRule.paymentMadeEvent()).thenReturn(RESPONDENT_FINAL_ORDER_PAYMENT_MADE);
 
         paymentStatusService.hasSuccessFulPayment(List.of(cd));
 
         verify(user).getAuthToken();
         verify(authTokenGenerator).generate();
-        verify(ccdUpdateService).submitEventWithRetry(TEST_CASE_ID.toString(),
-                RESPONDENT_FINAL_ORDER_PAYMENT_MADE, updateSuccessfulPaymentStatus, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEventWithRetry(
+            eq(TEST_CASE_ID.toString()),
+            eq(RESPONDENT_FINAL_ORDER_PAYMENT_MADE),
+            any(UpdateSuccessfulPaymentStatus.class),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)
+        );
     }
 
     @Test
@@ -212,13 +226,19 @@ class PaymentStatusServiceTest {
         when(idamService.retrieveSystemUpdateUserDetails()).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTHORIZATION);
         when(idamService.retrieveSystemUpdateUserDetails().getAuthToken()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(applicationPaymentMadeRule.paymentMadeEvent()).thenReturn(CITIZEN_PAYMENT_MADE);
 
         paymentStatusService.hasSuccessFulPayment(List.of(cd));
 
         verify(user).getAuthToken();
         verify(authTokenGenerator).generate();
-        verify(ccdUpdateService).submitEventWithRetry(TEST_CASE_ID.toString(),
-                CITIZEN_PAYMENT_MADE, updateSuccessfulPaymentStatus, user, SERVICE_AUTHORIZATION);
+        verify(ccdUpdateService).submitEventWithRetry(
+            eq(TEST_CASE_ID.toString()),
+            eq(CITIZEN_PAYMENT_MADE),
+            any(UpdateSuccessfulPaymentStatus.class),
+            eq(user),
+            eq(SERVICE_AUTHORIZATION)
+        );
     }
 
     @Test

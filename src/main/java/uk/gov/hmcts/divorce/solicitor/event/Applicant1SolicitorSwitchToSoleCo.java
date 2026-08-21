@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
@@ -21,7 +22,6 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.util.List;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
@@ -44,6 +44,7 @@ public class Applicant1SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
     public static final String SHOW_CONDITION = "coApplicant1EnableSolicitorSwitchToSoleCo=\"Yes\" AND coApplicant2IsSubmitted!=\"Yes\"";
     public static final String ERROR_OTHER_PARTY_HAS_SUBMITTED = "The Conditional Order on this case has been submitted by both parties.";
 
+    private final SwitchToSoleService switchToSoleService;
     private final NotificationDispatcher notificationDispatcher;
     private final SolicitorSwitchToSoleCoNotification applicant1SolicitorSwitchToSoleCoNotification;
     private final DocumentGenerator documentGenerator;
@@ -93,9 +94,9 @@ public class Applicant1SolicitorSwitchToSoleCo implements CCDConfig<CaseData, St
                 .build();
         }
 
-        data.setApplicationType(SOLE_APPLICATION);
+        switchToSoleService.switchApplicationType(data);
+
         data.getApplication().setSwitchedToSoleCo(YES);
-        data.getLabelContent().setApplicationType(SOLE_APPLICATION);
         data.getConditionalOrder().setSwitchedToSole(YES);
 
         documentGenerator.generateAndStoreCaseDocument(

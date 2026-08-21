@@ -12,6 +12,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -84,6 +87,54 @@ class SwitchToSoleServiceTest {
 
         assertThat(caseData.getApplicant1()).isEqualTo(applicant2BeforeSwitch);
         assertThat(caseData.getApplicant2()).isEqualTo(applicant1BeforeSwitch);
+    }
+
+    @Test
+    void shouldSwitchGeneralApplicationLabels() {
+        CaseData caseData = validJointApplicant1CaseData();
+        caseData.setGeneralApplications(List.of(
+            ListValue.<GeneralApplication>builder().value(
+                GeneralApplication.builder()
+                    .generalApplicationType(GeneralApplicationType.WITHDRAW_POST_ISSUE)
+                    .generalApplicationParty(GeneralParties.APPLICANT2)
+                    .build()
+            ).build(),
+            ListValue.<GeneralApplication>builder().value(
+                GeneralApplication.builder()
+                    .generalApplicationType(GeneralApplicationType.EXPEDITE)
+                    .generalApplicationParty(GeneralParties.APPLICANT)
+                    .build()
+            ).build(),
+            ListValue.<GeneralApplication>builder().value(
+                GeneralApplication.builder()
+                    .generalApplicationType(GeneralApplicationType.DISCLOSURE_VIA_DWP)
+                    .generalApplicationParty(null)
+                    .build()
+            ).build()
+        ));
+
+        switchToSoleService.switchApplicantData(caseData);
+
+        assertThat(caseData.getGeneralApplications()).isEqualTo(List.of(
+            ListValue.<GeneralApplication>builder().value(
+                GeneralApplication.builder()
+                    .generalApplicationType(GeneralApplicationType.WITHDRAW_POST_ISSUE)
+                    .generalApplicationParty(GeneralParties.APPLICANT)
+                    .build()
+            ).build(),
+            ListValue.<GeneralApplication>builder().value(
+                GeneralApplication.builder()
+                    .generalApplicationType(GeneralApplicationType.EXPEDITE)
+                    .generalApplicationParty(GeneralParties.RESPONDENT)
+                    .build()
+            ).build(),
+            ListValue.<GeneralApplication>builder().value(
+                GeneralApplication.builder()
+                    .generalApplicationType(GeneralApplicationType.DISCLOSURE_VIA_DWP)
+                    .generalApplicationParty(null)
+                    .build()
+            ).build()
+        ));
     }
 
     @Test
