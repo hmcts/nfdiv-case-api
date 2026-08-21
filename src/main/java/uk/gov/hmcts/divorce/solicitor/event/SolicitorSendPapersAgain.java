@@ -67,6 +67,7 @@ public class SolicitorSendPapersAgain implements CCDConfig<CaseData, State, User
             .showSummary()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
+            .endButtonLabel("Submit Application")
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE))
             .page("sendPapersAgain", this::midEvent)
