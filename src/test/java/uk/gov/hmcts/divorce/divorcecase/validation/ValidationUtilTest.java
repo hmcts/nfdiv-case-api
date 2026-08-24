@@ -861,7 +861,7 @@ class ValidationUtilTest {
         List<String> errors = ValidationUtil.validateHasMarriageBroken(caseData);
 
         assertThat(errors).isNotEmpty();
-        assertThat(errors.size()).isEqualTo(1);
+        assertThat(errors).hasSize(1);
         assertThat(errors).contains("To continue, applicant 1 must believe and declare that their marriage has irretrievably broken");
     }
 
@@ -875,7 +875,7 @@ class ValidationUtilTest {
         List<String> errors = ValidationUtil.validateHasMarriageBroken(caseData);
 
         assertThat(errors).isNotEmpty();
-        assertThat(errors.size()).isEqualTo(1);
+        assertThat(errors).hasSize(1);
         assertThat(errors).contains("To continue, applicant 2 must believe and declare that their marriage has irretrievably broken");
     }
 
