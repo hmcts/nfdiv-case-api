@@ -137,6 +137,7 @@ public class CommonContent {
     public static final String APPLICANT_1 = "Applicant 1";
     public static final String APPLICANT_2 = "Applicant 2";
     public static final String RESPONDENT = "Respondent";
+    public static final String ISSUE_DATE_LABEL = "issueDateLabel";
     public static final String APPLICANT1_LABEL = "applicant1Label";
     public static final String APPLICANT2_LABEL = "applicant2Label";
 
