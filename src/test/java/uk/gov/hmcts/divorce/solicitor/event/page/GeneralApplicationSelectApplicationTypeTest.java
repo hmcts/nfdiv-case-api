@@ -41,7 +41,7 @@ class GeneralApplicationSelectApplicationTypeTest {
 
         assertEquals(1, response.getErrors().size());
         assertThat(response.getErrors()).containsExactly("The selected application type is a Service Application and cannot be "
-            + "processed through the General application event. Please use the appropriate Service Application event to continue.");
+            + "processed through the General Application event. Please use the appropriate Service Application event to continue.");
     }
 
     private static Stream<GeneralApplicationType> generalApplicationTypeStream() {

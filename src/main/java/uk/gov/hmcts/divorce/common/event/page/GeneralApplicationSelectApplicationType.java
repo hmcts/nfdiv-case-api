@@ -18,7 +18,7 @@ public class GeneralApplicationSelectApplicationType implements CcdPageConfigura
             + "-how-to-make-follow-up-applications-for-a-divorce-or-dissolution/general-applications-alternative-service-and-deemed-"
             + "and-dispensed\" target=\"_blank\" rel=\"noopener noreferrer\">Solicitor Guidance</a>";
     private static final String SERVICE_APPLICATION_TYPE_NOT_ALLOWED_ERROR = "The selected application type is a Service Application and "
-        + "cannot be processed through the General application event. Please use the appropriate Service Application event to continue.";
+        + "cannot be processed through the General Application event. Please use the appropriate Service Application event to continue.";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {
