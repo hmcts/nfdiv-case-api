@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
+import uk.gov.hmcts.divorce.common.service.OriginalJointSnapshotService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -31,6 +32,9 @@ class Applicant1SolicitorSwitchToSoleFoTest {
 
     @Mock
     private GeneralReferralService generalReferralService;
+
+    @Mock
+    private OriginalJointSnapshotService originalJointSnapshotService;
 
     @InjectMocks
     private Applicant1SolicitorSwitchToSoleFo applicant1SolicitorSwitchToSoleFo;

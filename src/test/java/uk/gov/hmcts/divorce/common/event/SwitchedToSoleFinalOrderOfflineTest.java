@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.notification.SwitchedToSoleFoNotification;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
+import uk.gov.hmcts.divorce.common.service.OriginalJointSnapshotService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
@@ -49,6 +50,9 @@ class SwitchedToSoleFinalOrderOfflineTest {
 
     @Mock
     private GeneralReferralService generalReferralService;
+
+    @Mock
+    private OriginalJointSnapshotService originalJointSnapshotService;
 
     @InjectMocks
     private SwitchedToSoleFinalOrderOffline switchedToSoleFinalOrderOffline;

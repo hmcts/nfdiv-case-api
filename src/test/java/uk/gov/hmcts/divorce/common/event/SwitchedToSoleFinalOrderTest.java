@@ -13,6 +13,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.notification.SwitchedToSoleFoNotification;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
+import uk.gov.hmcts.divorce.common.service.OriginalJointSnapshotService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -52,6 +53,9 @@ class SwitchedToSoleFinalOrderTest {
 
     @Mock
     private GeneralReferralService generalReferralService;
+
+    @Mock
+    private OriginalJointSnapshotService originalJointSnapshotService;
 
     @InjectMocks
     private SwitchedToSoleFinalOrder switchedToSoleFinalOrder;

@@ -7,9 +7,13 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
-
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.*;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderReissueContext;
+import uk.gov.hmcts.divorce.divorcecase.model.OriginalJointPartySnapshot;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
 
 import java.util.ArrayList;
@@ -18,7 +22,11 @@ import java.util.List;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderComplete;
-import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.*;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_DOCUMENT_NAME;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.FINAL_ORDER_TEMPLATE_ID;
@@ -93,7 +101,8 @@ public class CaseworkerReissueFinalOrderJointContext implements CCDConfig<CaseDa
 
         List<String> errors = new ArrayList<>();
 
-        if (ctx == null || isBlank(ctx.getOriginalApplicant1FullNameForReissue()) || isBlank(ctx.getOriginalApplicant2FullNameForReissue())) {
+        if (ctx == null || isBlank(ctx.getOriginalApplicant1FullNameForReissue())
+            || isBlank(ctx.getOriginalApplicant2FullNameForReissue())) {
             errors.add(ERROR_MISSING_PARTY_DATA);
         }
         if (!errors.isEmpty()) {
