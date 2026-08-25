@@ -550,6 +550,9 @@ class ApplicationIssuedNotificationTest {
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2().getLanguagePreference()))
                 .thenReturn(commonTemplateVars());
 
+        when(docmosisCommonContent.getSolicitorReference(caseData.getApplicant2().getSolicitor(),
+            caseData.getApplicant2().getLanguagePreference())).thenReturn("Not provided");
+
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
         verify(notificationService).sendEmail(
@@ -579,6 +582,9 @@ class ApplicationIssuedNotificationTest {
 
         when(commonContent.basicTemplateVars(caseData, TEST_CASE_ID, caseData.getApplicant2().getLanguagePreference()))
                 .thenReturn(commonTemplateVars());
+
+        when(docmosisCommonContent.getSolicitorReference(caseData.getApplicant2().getSolicitor(),
+            caseData.getApplicant2().getLanguagePreference())).thenReturn("TEST");
 
         notification.sendToApplicant2Solicitor(caseData, TEST_CASE_ID);
 
@@ -733,6 +739,7 @@ class ApplicationIssuedNotificationTest {
 
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DIVORCE)
+            .applicationType(SOLE_APPLICATION)
             .applicant1(applicantRepresentedBySolicitor())
             .application(Application.builder()
                 .serviceMethod(SOLICITOR_SERVICE)
@@ -755,6 +762,7 @@ class ApplicationIssuedNotificationTest {
         personalServiceTemplateVars.put("union type", "divorce");
         personalServiceTemplateVars.put("solicitor reference", "not provided");
         personalServiceTemplateVars.put(DATE_OF_ISSUE, "");
+        personalServiceTemplateVars.put("addFOLetterContent", "no");
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,
@@ -775,6 +783,7 @@ class ApplicationIssuedNotificationTest {
 
         final CaseData caseData = CaseData.builder()
             .divorceOrDissolution(DISSOLUTION)
+            .applicationType(SOLE_APPLICATION)
             .applicant1(applicant1)
             .application(Application.builder()
                 .serviceMethod(SOLICITOR_SERVICE)
@@ -797,6 +806,7 @@ class ApplicationIssuedNotificationTest {
         personalServiceTemplateVars.put("union type", "dissolution");
         personalServiceTemplateVars.put("solicitor reference", "someRef");
         personalServiceTemplateVars.put(DATE_OF_ISSUE, "");
+        personalServiceTemplateVars.put("addFOLetterContent", "no");
 
         verify(notificationService).sendEmail(
             TEST_SOLICITOR_EMAIL,

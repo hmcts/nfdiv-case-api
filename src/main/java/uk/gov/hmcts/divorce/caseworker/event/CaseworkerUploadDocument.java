@@ -14,8 +14,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.hasAddedDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.hasDeletedDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.sortByNewest;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED;
@@ -73,6 +78,10 @@ public class CaseworkerUploadDocument implements CCDConfig<CaseData, State, User
                 .build();
         }
 
+        if (hasAddedDocuments(after, before)) {
+            setDocumentDateAdded(after, before);
+        }
+
         caseData.getDocuments().setDocumentsUploaded(sortByNewest(
             beforeDetails.getData().getDocuments().getDocumentsUploaded(),
             caseData.getDocuments().getDocumentsUploaded()
@@ -81,5 +90,20 @@ public class CaseworkerUploadDocument implements CCDConfig<CaseData, State, User
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
+    }
+
+    private void setDocumentDateAdded(final List<ListValue<DivorceDocument>> after,
+                                      final List<ListValue<DivorceDocument>> before) {
+        final Set<String> existingIds = Optional.ofNullable(before)
+            .orElse(List.of())
+            .stream()
+            .map(ListValue::getId)
+            .collect(Collectors.toSet());
+
+        after.stream()
+            .filter(listValue -> !existingIds.contains(listValue.getId()))
+            .map(ListValue::getValue)
+            .filter(divorceDocument -> divorceDocument.getDocumentDateAdded() == null)
+            .forEach(divorceDocument -> divorceDocument.setDocumentDateAdded(LocalDate.now()));
     }
 }

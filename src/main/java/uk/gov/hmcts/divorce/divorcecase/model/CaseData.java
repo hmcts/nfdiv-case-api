@@ -88,10 +88,6 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.RESPONDENT_ANSWER
 @Builder(toBuilder = true)
 public class CaseData {
 
-    @JsonUnwrapped
-    @Builder.Default
-    private DummyFields exuiDummyFields = new DummyFields();
-
     @CCD(
         label = "Application type",
         access = {DefaultAccess.class, CaseworkerWithCAAAccess.class},
@@ -393,6 +389,30 @@ public class CaseData {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
     @Builder.Default
     private List<ListValue<CaseMatch>> caseMatches = new ArrayList<>();
+
+    @CCD(
+        label = "Bad Case matches",
+        typeOverride = Collection,
+        typeParameterOverride = "CaseMatch",
+        access = {CaseworkerAccess.class, CaseworkerDeleteAccess.class},
+        searchable = false
+    )
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
+    @Builder.Default
+    private List<ListValue<CaseMatch>> badCaseMatches = new ArrayList<>();
+
+    @CCD(
+        label = "New case matches",
+        typeOverride = Collection,
+        typeParameterOverride = "CaseMatch",
+        access = {CaseworkerAccess.class, CaseworkerDeleteAccess.class},
+        searchable = false
+    )
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)  // Only include in JSON if non-empty
+    @Builder.Default
+    private List<ListValue<CaseMatch>> newCaseMatches = new ArrayList<>();
+
+
 
     @CCD(
         label = "Launch the Flags screen",
