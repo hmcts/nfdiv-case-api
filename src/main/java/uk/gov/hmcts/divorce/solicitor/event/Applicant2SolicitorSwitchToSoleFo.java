@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
+import uk.gov.hmcts.divorce.common.service.OriginalJointSnapshotService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -40,6 +41,8 @@ public class Applicant2SolicitorSwitchToSoleFo implements CCDConfig<CaseData, St
     private final SwitchToSoleService switchToSoleService;
 
     private final GeneralReferralService generalReferralService;
+
+    private final OriginalJointSnapshotService originalJointSnapshotService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -105,6 +108,8 @@ public class Applicant2SolicitorSwitchToSoleFo implements CCDConfig<CaseData, St
         Long caseId = details.getId();
         log.info("Applicant 2 Solicitor Switched To Sole FO aboutToSubmit callback invoked for Case Id: {}", caseId);
         CaseData caseData = details.getData();
+
+        originalJointSnapshotService.captureIfAbsent(caseData);
 
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getLabelContent().setApplicationType(SOLE_APPLICATION);

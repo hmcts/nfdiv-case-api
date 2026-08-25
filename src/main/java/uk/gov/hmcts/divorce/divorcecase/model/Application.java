@@ -615,6 +615,9 @@ public class Application {
     )
     private String cwWithdrawApplicationDetails;
 
+    @CCD(label = "Original joint party snapshot", searchable = false)
+    private OriginalJointPartySnapshot originalJointPartySnapshot;
+
     @JsonIgnore
     public boolean hasBeenPaidFor() {
         return null != applicationFeeOrderSummary

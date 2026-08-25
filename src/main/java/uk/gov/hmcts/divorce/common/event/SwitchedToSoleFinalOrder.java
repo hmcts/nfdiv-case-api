@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.event.page.FinalOrderExplainTheDelay;
 import uk.gov.hmcts.divorce.common.notification.SwitchedToSoleFoNotification;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
+import uk.gov.hmcts.divorce.common.service.OriginalJointSnapshotService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -54,6 +55,8 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
 
     private final GeneralReferralService generalReferralService;
 
+    private final OriginalJointSnapshotService originalJointSnapshotService;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
@@ -81,6 +84,8 @@ public class SwitchedToSoleFinalOrder implements CCDConfig<CaseData, State, User
         Long caseId = details.getId();
         log.info("Switched To Sole FO aboutToSubmit callback invoked for Case Id: {}", caseId);
         CaseData caseData = details.getData();
+
+        originalJointSnapshotService.captureIfAbsent(caseData);
 
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getLabelContent().setApplicationType(SOLE_APPLICATION);

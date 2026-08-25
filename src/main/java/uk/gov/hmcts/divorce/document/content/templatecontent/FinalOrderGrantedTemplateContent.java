@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.FinalOrderReissueContext;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
@@ -86,14 +87,30 @@ public class FinalOrderGrantedTemplateContent implements TemplateContent {
         templateContent.put(FO_GRANTED_DATE, caseData.getFinalOrder().getGrantedDate()
                 .format(getDateTimeFormatterForPreferredLanguage(languagePreference)));
         templateContent.put(CCD_CASE_REFERENCE, formatId(ccdCaseReference));
-        templateContent.put(IS_SOLE, caseData.getApplicationType().isSole());
+        FinalOrderReissueContext context = caseData.getFinalOrder().getReissueContext();
+        boolean useOverride = null != context && null != context.getOriginalApplicationTypeForReissue()
+            && isNotEmpty(context.getOriginalApplicant1FullNameForReissue())
+            && isNotEmpty(context.getOriginalApplicant2FullNameForReissue());
+
+        boolean isSoleForDoc = useOverride
+            ? context.getOriginalApplicationTypeForReissue().isSole()
+            : caseData.getApplicationType().isSole();
+
+        String applicant1NameForDoc = useOverride
+            ? context.getOriginalApplicant1FullNameForReissue()
+            : caseData.getApplicant1().getFullName();
+
+        String applicant2NameForDoc = useOverride
+            ? context.getOriginalApplicant2FullNameForReissue()
+            : caseData.getApplicant2().getFullName();
+
+        templateContent.put(IS_SOLE, isSoleForDoc);
+        templateContent.put(APPLICANT_1_FULL_NAME, applicant1NameForDoc);
+        templateContent.put(APPLICANT_2_FULL_NAME, applicant2NameForDoc);
 
         ConditionalOrder conditionalOrder = caseData.getConditionalOrder();
         templateContent.put(CO_PRONOUNCED_DATE, isNotEmpty(conditionalOrder.getGrantedDate())
             ? conditionalOrder.getGrantedDate().format(getDateTimeFormatterForPreferredLanguage(languagePreference)) : EMPTY);
-
-        templateContent.put(APPLICANT_1_FULL_NAME, caseData.getApplicant1().getFullName());
-        templateContent.put(APPLICANT_2_FULL_NAME, caseData.getApplicant2().getFullName());
 
         boolean isDivorce = caseData.isDivorce();
 

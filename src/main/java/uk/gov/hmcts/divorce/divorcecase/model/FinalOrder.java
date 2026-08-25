@@ -312,6 +312,9 @@ public class FinalOrder {
     )
     private List<ListValue<Payment>> finalOrderPayments;
 
+    @CCD(label = "Final Order reissue context", searchable = false)
+    private FinalOrderReissueContext reissueContext;
+
     @JsonIgnore
     public void updateFinalOrderWithApp2SolPaymentDetails(
         OrderSummary finalOrderFeeOrderSummary,

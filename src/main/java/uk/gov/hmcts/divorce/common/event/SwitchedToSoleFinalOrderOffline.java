@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.notification.SwitchedToSoleFoNotification;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
+import uk.gov.hmcts.divorce.common.service.OriginalJointSnapshotService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.OfflineWhoApplying;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -44,6 +45,8 @@ public class SwitchedToSoleFinalOrderOffline implements CCDConfig<CaseData, Stat
 
     private final GeneralReferralService generalReferralService;
 
+    private final OriginalJointSnapshotService originalJointSnapshotService;
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
@@ -64,6 +67,8 @@ public class SwitchedToSoleFinalOrderOffline implements CCDConfig<CaseData, Stat
         Long caseId = details.getId();
         log.info("Switched To Sole FO Offline aboutToSubmit callback invoked for Case Id: {}", caseId);
         CaseData caseData = details.getData();
+
+        originalJointSnapshotService.captureIfAbsent(caseData);
 
         caseData.setApplicationType(SOLE_APPLICATION);
         caseData.getLabelContent().setApplicationType(SOLE_APPLICATION);
