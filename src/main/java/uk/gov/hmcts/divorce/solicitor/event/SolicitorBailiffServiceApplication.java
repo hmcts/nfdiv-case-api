@@ -86,9 +86,13 @@ public class SolicitorBailiffServiceApplication implements CCDConfig<CaseData, S
         final CaseData caseData = details.getData();
         final Applicant applicant2 = caseData.getApplicant2();
 
-        if (!applicant2.isConfidentialContactDetails()) {
-            applicant2.setNonConfidentialAddress(applicant2.getAddress());
+        if (applicant2.isConfidentialContactDetails()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .build();
         }
+
+        applicant2.setNonConfidentialAddress(applicant2.getAddress());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
