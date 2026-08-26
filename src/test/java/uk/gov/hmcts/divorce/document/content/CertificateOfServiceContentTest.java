@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DI
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DOCUMENTS_ISSUED_ON;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_A_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -40,7 +42,7 @@ class CertificateOfServiceContentTest {
     private CertificateOfServiceContent certificateOfServiceContent;
 
     @Test
-    void shouldReturnTemplateContentForCertificateOfService() {
+    void shouldReturnTemplateContentForCertificateOfServiceDivorce() {
 
         setMockClock(clock);
 
@@ -48,16 +50,42 @@ class CertificateOfServiceContentTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
         caseData.setApplicant2(getApplicant2(MALE));
 
-        Map<String, Object> expectedEntries = new LinkedHashMap<>();
-        expectedEntries.put(CCD_CASE_REFERENCE, 1616591401473378L);
-        expectedEntries.put(PETITIONER_FULL_NAME, TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME);
-        expectedEntries.put(RESPONDENT_FULL_NAME, TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME);
-        expectedEntries.put(DOCUMENTS_ISSUED_ON, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
-        expectedEntries.put(IS_DIVORCE, "Yes");
-        expectedEntries.put(DIVORCE_OR_DISSOLUTION, DIVORCE_APPLICATION);
+        Map<String, Object> expectedEntries = buildTestData(caseData, DIVORCE_APPLICATION, "Yes");
 
         Map<String, Object> templateContent = certificateOfServiceContent.apply(caseData, 1616591401473378L);
 
         assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
+    void shouldReturnTemplateContentForCertificateOfServiceDissolution() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
+        caseData.setApplicant2(getApplicant2(MALE));
+        caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
+
+        Map<String, Object> expectedEntries = buildTestData(caseData, TO_END_A_CIVIL_PARTNERSHIP, "No");
+
+        Map<String, Object> templateContent = certificateOfServiceContent.apply(caseData, 1616591401473378L);
+
+        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    private Map<String, Object> buildTestData(CaseData caseData, String divorceOrDissolution, String isDivorce) {
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
+        caseData.setApplicant2(getApplicant2(MALE));
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+
+        expectedEntries.put(CCD_CASE_REFERENCE, 1616591401473378L);
+        expectedEntries.put(PETITIONER_FULL_NAME, TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME);
+        expectedEntries.put(RESPONDENT_FULL_NAME, TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME);
+        expectedEntries.put(DOCUMENTS_ISSUED_ON, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
+        expectedEntries.put(IS_DIVORCE, isDivorce);
+        expectedEntries.put(DIVORCE_OR_DISSOLUTION, divorceOrDissolution);
+
+        return expectedEntries;
     }
 }
