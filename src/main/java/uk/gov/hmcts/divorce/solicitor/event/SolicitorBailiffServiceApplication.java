@@ -85,7 +85,26 @@ public class SolicitorBailiffServiceApplication implements CCDConfig<CaseData, S
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, SUPER_USER, JUDGE)
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .aboutToStartCallback(this::aboutToStart)
         );
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+        log.info("{} about to start callback invoked for Case Id: {}", SOLICITOR_BAILIFF_SERVICE_APPLICATION, details.getId());
+        final CaseData caseData = details.getData();
+        final Applicant applicant2 = caseData.getApplicant2();
+
+        if (applicant2.isConfidentialContactDetails()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .build();
+        }
+
+        applicant2.setNonConfidentialAddress(applicant2.getAddress());
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(

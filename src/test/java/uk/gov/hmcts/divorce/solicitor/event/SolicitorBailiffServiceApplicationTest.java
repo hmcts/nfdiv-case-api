@@ -25,6 +25,9 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PUBLIC;
+import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -34,6 +37,8 @@ import static uk.gov.hmcts.divorce.solicitor.event.SolicitorBailiffServiceApplic
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddress;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorBailiffServiceApplicationTest {
@@ -74,6 +79,42 @@ class SolicitorBailiffServiceApplicationTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getGrants)
             .containsExactly(expectedRolesAndPermissions);
+    }
+
+    @Test
+    void shouldSetRespondentNonConfidentialAddressWhenContactDetailsTypeIsPublic() {
+        Applicant applicant = getApplicantWithAddress(MALE);
+        applicant.setContactDetailsType(PUBLIC);
+        CaseData caseData = caseData();
+        caseData.setApplicant2(applicant);
+
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
+            .build();
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorBailiffServiceApplication.aboutToStart(caseDetails);
+
+        assertThat(response.getData().getApplicant2().getNonConfidentialAddress()).isEqualTo(applicant.getAddress());
+    }
+
+    @Test
+    void shouldNotSetRespondentNonConfidentialAddressWhenContactDetailsTypeIsPrivate() {
+        Applicant applicant = getApplicantWithAddress(MALE);
+        applicant.setContactDetailsType(PRIVATE);
+        CaseData caseData = caseData();
+        caseData.setApplicant2(applicant);
+
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
+            .build();
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorBailiffServiceApplication.aboutToStart(caseDetails);
+
+        assertThat(response.getData().getApplicant2().getNonConfidentialAddress()).isNull();
     }
 
     @Test
