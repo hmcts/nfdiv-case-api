@@ -122,7 +122,7 @@ public class SolicitorAmendDispenseServiceApplication implements CCDConfig<CaseD
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .endButtonLabel("Submit")
+            .endButtonLabel("Save Application")
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
