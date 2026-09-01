@@ -17,11 +17,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.serviceapplicationpages.ServiceApplicationPages;
 import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationDraftSubmissionService;
 
-import java.util.EnumSet;
-
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.ALWAYS_SHOW;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.SOLICITOR_SERVICE_APPLICATION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -66,12 +63,9 @@ public class SolicitorAlternativeServiceApplication implements CCDConfig<CaseDat
     }
 
     private PageBuilder addEventConfig(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
-        var states = EnumSet.complementOf(POST_SUBMISSION_STATES);
-        states.add(AosOverdue);
-
         return new PageBuilder(configBuilder
             .event(SOLICITOR_ALTERNATIVE_SERVICE_APPLICATION)
-            .forStates(states)
+            .forStates(SOLICITOR_SERVICE_APPLICATION_STATES)
             .showCondition(
                 "alternativeServiceType!=\"deemed\" AND alternativeServiceType!=\"dispensed\" AND alternativeServiceType!=\"bailiff\" "
                     + "AND alternativeServiceType!=\"alternativeService\"")

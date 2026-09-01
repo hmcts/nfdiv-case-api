@@ -22,7 +22,7 @@ import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationDraftSubmissionS
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.SOLICITOR_SERVICE_APPLICATION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -90,7 +90,7 @@ public class SolicitorAmendDeemedServiceApplication implements CCDConfig<CaseDat
 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_AMEND_DEEMED_SERVICE_APPLICATION)
-            .forState(AosOverdue)
+            .forStates(SOLICITOR_SERVICE_APPLICATION_STATES)
             .name("Amend Service App")
             .description("Amend Service App")
             .showCondition("serviceApplicationSubmittedOnline=\"Yes\" AND alternativeServiceType=\"deemed\"")

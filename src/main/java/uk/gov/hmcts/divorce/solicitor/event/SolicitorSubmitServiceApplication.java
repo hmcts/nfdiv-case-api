@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.singletonList;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.SOLICITOR_SERVICE_APPLICATION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -120,7 +120,7 @@ public class SolicitorSubmitServiceApplication implements CCDConfig<CaseData, St
 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_SUBMIT_SERVICE_APPLICATION)
-            .forState(AosOverdue)
+            .forStates(SOLICITOR_SERVICE_APPLICATION_STATES)
             .name("Submit Service App")
             .description("Submit Service App")
             .showCondition("serviceApplicationSubmittedOnline=\"Yes\" AND alternativeServiceType=\"*\"")
