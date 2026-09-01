@@ -80,8 +80,8 @@ class SwitchedToSoleFinalOrderTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = switchedToSoleFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
-        assertThat(response.getData().getLabelContent().getApplicant2()).isEqualTo("respondent");
+        verify(switchToSoleService).switchApplicationType(caseData);
+
         assertThat(response.getData().getFinalOrder().getFinalOrderSwitchedToSole()).isEqualTo(YES);
     }
 
@@ -98,10 +98,9 @@ class SwitchedToSoleFinalOrderTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = switchedToSoleFinalOrder.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
-        assertThat(response.getData().getLabelContent().getApplicant2()).isEqualTo("respondent");
         assertThat(response.getData().getFinalOrder().getFinalOrderSwitchedToSole()).isEqualTo(YES);
 
+        verify(switchToSoleService).switchApplicationType(caseData);
         verify(switchToSoleService).switchUserRoles(caseData, caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
     }

@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.never;
@@ -294,7 +295,7 @@ class PaymentSetupServiceTest {
         when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE))
             .thenReturn(orderSummary);
 
-        OrderSummary response = paymentSetupService.createGeneralApplicationOrderSummary(TEST_CASE_ID);
+        OrderSummary response = paymentSetupService.createGeneralApplicationOrderSummary(TEST_CASE_ID, GeneralApplicationFee.FEE0228);
 
         verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, KEYWORD_WITHOUT_NOTICE);
         assertThat(response).isEqualTo(orderSummary);
