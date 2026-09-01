@@ -187,7 +187,8 @@ public class SubmitAos implements CCDConfig<CaseData, State, UserRole> {
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
             .event(SUBMIT_AOS)
-            .forStates(ArrayUtils.addAll(AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived, AwaitingService))
+            .forStates(ArrayUtils.addAll(
+                AOS_STATES, AosDrafted, AosOverdue, OfflineDocumentReceived, AwaitingService))
             .name("Submit AoS")
             .description("Submit AoS")
             .showCondition("applicationType=\"soleApplication\" AND aosIsDrafted=\"Yes\"")
