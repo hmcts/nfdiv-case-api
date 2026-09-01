@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -20,7 +19,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.Gender;
 import uk.gov.hmcts.divorce.divorcecase.model.JurisdictionConnections;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -33,7 +31,6 @@ import java.util.Collections;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -98,16 +95,9 @@ class CaseworkerIssueApplicationTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        AddressGlobalUK address = caseData.getApplicant2().getAddress();
-
-        MockedStatic<AddressUtil> classMock = mockStatic(AddressUtil.class);
-        classMock.when(() -> AddressUtil.getPostalAddress(address)).thenReturn(null);
-
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToStart(details);
 
         assertThat(response.getData().getApplication().getBeingIssuedWithoutAddress()).isEqualTo(YES);
-
-        classMock.close();
     }
 
     @Test
@@ -120,16 +110,9 @@ class CaseworkerIssueApplicationTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        AddressGlobalUK address = caseData.getApplicant2().getAddress();
-
-        MockedStatic<AddressUtil> classMock = mockStatic(AddressUtil.class);
-        classMock.when(() -> AddressUtil.getPostalAddress(address)).thenReturn("");
-
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToStart(details);
 
         assertThat(response.getData().getApplication().getBeingIssuedWithoutAddress()).isEqualTo(YES);
-
-        classMock.close();
     }
 
     @Test
@@ -142,16 +125,9 @@ class CaseworkerIssueApplicationTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        AddressGlobalUK address = caseData.getApplicant2().getAddress();
-
-        MockedStatic<AddressUtil> classMock = mockStatic(AddressUtil.class);
-        classMock.when(() -> AddressUtil.getPostalAddress(address)).thenReturn("Test Address");
-
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToStart(details);
 
         assertThat(response.getData().getApplication().getBeingIssuedWithoutAddress()).isNull();
-
-        classMock.close();
     }
 
     @Test
@@ -164,16 +140,9 @@ class CaseworkerIssueApplicationTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
-        AddressGlobalUK address = caseData.getApplicant2().getAddress();
-
-        MockedStatic<AddressUtil> classMock = mockStatic(AddressUtil.class);
-        classMock.when(() -> AddressUtil.getPostalAddress(address)).thenReturn(null);
-
         final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToStart(details);
 
         assertThat(response.getData().getApplication().getBeingIssuedWithoutAddress()).isNull();
-
-        classMock.close();
     }
 
     @Test
