@@ -18,8 +18,10 @@ import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -71,7 +73,8 @@ public final class ValidationUtil {
                 ? caseData.getApplicant1().getApplicantPrayer().validatePrayerApplicant1(caseData)
                 : emptyList(),
             validateMarriageDate(caseData, "MarriageDate", compareMarriageDateToSubmittedDate),
-            validateJurisdictionConnections(caseData)
+            validateJurisdictionConnections(caseData),
+            validateHasMarriageBroken(caseData)
         );
     }
 
@@ -161,6 +164,22 @@ public final class ValidationUtil {
         }
 
         return caseData.getApplication().getJurisdiction().validateJurisdiction(caseData);
+    }
+
+    public static List<String> validateHasMarriageBroken(CaseData caseData) {
+        List<String> errors = new ArrayList<>();
+
+        if (caseData.getApplication().getApplicant1ScreenHasMarriageBroken() != null
+            && !caseData.getApplication().getApplicant1ScreenHasMarriageBroken().toBoolean()) {
+            errors.add("To continue, applicant 1 must believe and declare that their marriage has irretrievably broken");
+        }
+
+        if (caseData.getApplication().getApplicant2ScreenHasMarriageBroken() != null
+            && !caseData.getApplication().getApplicant2ScreenHasMarriageBroken().toBoolean()) {
+            errors.add("To continue, applicant 2 must believe and declare that their marriage has irretrievably broken");
+        }
+
+        return errors.isEmpty() ? Collections.emptyList() : errors;
     }
 
     public static List<String> validateCasesAcceptedToListForHearing(BulkActionCaseData caseData) {
