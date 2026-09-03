@@ -8,7 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
+import uk.gov.hmcts.divorce.common.notification.ServiceApplicationDecisionNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -31,7 +31,7 @@ public class CaseworkerConfirmServiceRefusal implements CCDConfig<CaseData, Stat
     public static final String CASEWORKER_CONFIRM_SERVICE_REFUSAL = "caseworker-confirm-service-refusal";
 
     private final NotificationDispatcher notificationDispatcher;
-    private final ServiceApplicationNotification serviceApplicationNotification;
+    private final ServiceApplicationDecisionNotification serviceApplicationDecisionNotification;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -56,7 +56,7 @@ public class CaseworkerConfirmServiceRefusal implements CCDConfig<CaseData, Stat
         //Set field temporarily to validate service application refused.
         caseData.getAlternativeService().setServiceApplicationGranted(YesOrNo.NO);
 
-        notificationDispatcher.send(serviceApplicationNotification, caseData, details.getId());
+        notificationDispatcher.send(serviceApplicationDecisionNotification, caseData, details.getId());
 
         return SubmittedCallbackResponse.builder().build();
     }

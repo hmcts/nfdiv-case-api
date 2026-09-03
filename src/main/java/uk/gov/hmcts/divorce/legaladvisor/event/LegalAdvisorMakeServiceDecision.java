@@ -9,7 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
+import uk.gov.hmcts.divorce.common.notification.ServiceApplicationDecisionNotification;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
@@ -75,7 +75,7 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
     private final ServiceOrderTemplateContent serviceOrderTemplateContent;
 
-    private final ServiceApplicationNotification serviceApplicationNotification;
+    private final ServiceApplicationDecisionNotification serviceApplicationDecisionNotification;
 
     private final NotificationDispatcher notificationDispatcher;
 
@@ -208,12 +208,12 @@ public class LegalAdvisorMakeServiceDecision implements CCDConfig<CaseData, Stat
 
         log.info("ServiceApplication decision. End State is {} Due date is {}", endState, caseDataCopy.getDueDate());
 
-        log.info("Sending ServiceApplicationNotification case ID: {}", details.getId());
+        log.info("Sending serviceApplicationDecisionNotification case ID: {}", details.getId());
 
         boolean shouldNotifyApplicantAutomatically = !NOTIFICATION_FROM_CASEWORKER_STATES.contains(endState);
 
         if (shouldNotifyApplicantAutomatically) {
-            notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
+            notificationDispatcher.send(serviceApplicationDecisionNotification, caseDataCopy, details.getId());
         }
 
         caseDataCopy.archiveAlternativeServiceApplicationOnCompletion();

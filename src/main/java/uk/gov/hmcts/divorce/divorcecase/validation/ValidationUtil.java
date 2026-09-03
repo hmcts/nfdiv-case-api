@@ -275,4 +275,19 @@ public final class ValidationUtil {
         return emptyList();
     }
 
+    public static List<String> validateServiceMethod(CaseData caseData) {
+        Application application = caseData.getApplication();
+        Applicant applicant2 = caseData.getApplicant2();
+
+        if (application.isSolicitorServiceMethod() && applicant2.isConfidentialContactDetails()) {
+            return singletonList("You may not select Solicitor Service if the respondent is confidential.");
+        } else if (!validateCaseFieldsForCourtService(caseData).isEmpty()) {
+            return singletonList("Solicitor cannot select court service because the respondent has an international address.");
+        } else if (application.isPersonalServiceMethod()) {
+            return singletonList("You may not select Personal Service. Please select Solicitor or Court Service.");
+        }
+
+        return emptyList();
+    }
+
 }
