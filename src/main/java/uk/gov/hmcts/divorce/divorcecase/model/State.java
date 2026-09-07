@@ -616,7 +616,7 @@ public enum State {
         AwaitingJudgeClarification, PendingServiceAppResponse, GeneralConsiderationComplete, AwaitingGeneralReferralPayment,
         AwaitingGeneralConsideration, GeneralApplicationReceived, PendingHearingOutcome, PendingHearingDate,
         AwaitingGeneralApplicationPayment, AwaitingDocuments, AwaitingGenAppHWFPartPayment, AwaitingGenAppHWFEvidence,
-        AwaitingGenAppDocuments, ApplicationStayed
+        AwaitingGenAppDocuments, ApplicationStayed, ServiceAdminRefusal
     };
 
     public static final State[] POST_SUBMISSION_PRE_AWAITING_CO_STATES = {
