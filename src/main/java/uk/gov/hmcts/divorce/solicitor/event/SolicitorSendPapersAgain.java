@@ -21,7 +21,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 import java.util.List;
 
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.SOLICITOR_SERVICE_APPLICATION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -60,7 +60,7 @@ public class SolicitorSendPapersAgain implements CCDConfig<CaseData, State, User
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(SOLICITOR_RESEND_PAPERS)
-            .forStates(AosOverdue)
+            .forStates(SOLICITOR_SERVICE_APPLICATION_STATES)
             .name(SEND_PAPERS_AGAIN)
             .description(SEND_PAPERS_AGAIN)
             .showCondition("applicationType=\"soleApplication\" AND solicitorSentPapersAgain!=\"Yes\"")
