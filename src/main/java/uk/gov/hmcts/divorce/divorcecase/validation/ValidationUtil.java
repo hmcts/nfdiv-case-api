@@ -174,7 +174,8 @@ public final class ValidationUtil {
             errors.add("To continue, applicant 1 must believe and declare that their marriage has irretrievably broken");
         }
 
-        if (caseData.getApplication().getApplicant2ScreenHasMarriageBroken() != null
+        if (caseData.getApplicationType() == ApplicationType.JOINT_APPLICATION
+            && caseData.getApplication().getApplicant2ScreenHasMarriageBroken() != null
             && !caseData.getApplication().getApplicant2ScreenHasMarriageBroken().toBoolean()) {
             errors.add("To continue, applicant 2 must believe and declare that their marriage has irretrievably broken");
         }
