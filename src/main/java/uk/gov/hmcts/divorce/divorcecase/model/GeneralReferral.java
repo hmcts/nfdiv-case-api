@@ -98,7 +98,8 @@ public class GeneralReferral {
     @CCD(
         label = "Choose General Referral Fee Type",
         typeOverride = FixedRadioList,
-        typeParameterOverride = "GeneralApplicationFee"
+        typeParameterOverride = "GeneralApplicationFee",
+        searchable = false
     )
     private GeneralApplicationFee generalReferralFeeType;
 
