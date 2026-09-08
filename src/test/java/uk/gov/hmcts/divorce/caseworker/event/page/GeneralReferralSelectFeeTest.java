@@ -6,14 +6,23 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.ComplexType;
+import uk.gov.hmcts.ccd.sdk.api.Event;
+import uk.gov.hmcts.ccd.sdk.api.FieldCollection;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.RETURNS_SELF;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
@@ -33,6 +42,16 @@ class GeneralReferralSelectFeeTest {
 
     @InjectMocks
     private GeneralReferralSelectFee page;
+
+    @Mock
+    private PageBuilder pageBuilder;
+
+    @SuppressWarnings("unchecked")
+    private final FieldCollection.FieldCollectionBuilder<CaseData, State, Event.EventBuilder<CaseData, UserRole, State>>
+        fieldCollectionBuilder = mock(FieldCollection.FieldCollectionBuilder.class, RETURNS_SELF);
+
+    @Mock
+    private ComplexType complexType;
 
     @Test
     void shouldSetGeneralReferralOrderSummaryIfWithNoticeFeeIsChosen() {
@@ -85,5 +104,14 @@ class GeneralReferralSelectFeeTest {
     private void stubOrderSummaryCreation(OrderSummary orderSummary, String keyword) {
         when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, keyword))
             .thenReturn(orderSummary);
+    }
+
+    @Test
+    void shouldAddGeneralReferralSelectFeeTypePageConfiguration() {
+        when(pageBuilder.page(eq("generalReferralSelectFeeType"), any())).thenReturn(fieldCollectionBuilder);
+
+        page.addTo(pageBuilder);
+
+        verify(pageBuilder).page(eq("generalReferralSelectFeeType"), any());
     }
 }
