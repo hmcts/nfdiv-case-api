@@ -95,6 +95,13 @@ public class GeneralReferral {
     )
     private YesOrNo generalReferralFeeRequired;
 
+    @CCD(
+        label = "Choose General Referral Fee Type",
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "GeneralApplicationFee"
+    )
+    private GeneralApplicationFee generalReferralFeeType;
+
     @JsonUnwrapped(prefix = "generalReferralFee")
     @Builder.Default
     private FeeDetails generalReferralFee = new FeeDetails();
