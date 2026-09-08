@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.caseworker.event.page;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,8 +22,6 @@ import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.RETURNS_SELF;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
@@ -46,9 +45,9 @@ class GeneralReferralSelectFeeTest {
     @Mock
     private PageBuilder pageBuilder;
 
-    @SuppressWarnings("unchecked")
-    private final FieldCollection.FieldCollectionBuilder<CaseData, State, Event.EventBuilder<CaseData, UserRole, State>>
-        fieldCollectionBuilder = mock(FieldCollection.FieldCollectionBuilder.class, RETURNS_SELF);
+    @Mock(answer = Answers.RETURNS_SELF)
+    private FieldCollection.FieldCollectionBuilder<CaseData, State, Event.EventBuilder<CaseData, UserRole, State>>
+        fieldCollectionBuilder;
 
     @Mock
     private ComplexType complexType;
