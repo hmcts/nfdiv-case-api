@@ -24,13 +24,13 @@ public class MarriageDetails {
 
     @CCD(
         label = "The applicant's full name as on ${labelContentMarriageOrCivilPartnership} certificate",
-        hint = "Exactly as it appears on the certificate. Include any additional text such as 'formally known as'."
+        hint = "Exactly as it appears on the certificate. Include any additional text such as 'formerly known as'."
     )
     private String applicant1Name;
 
     @CCD(
         label = "${labelContentTheApplicant2UC} full name as on ${labelContentMarriageOrCivilPartnership} certificate",
-        hint = "Exactly as it appears on the certificate. Include any additional text such as 'formally known as'."
+        hint = "Exactly as it appears on the certificate. Include any additional text such as 'formerly known as'."
     )
     private String applicant2Name;
 

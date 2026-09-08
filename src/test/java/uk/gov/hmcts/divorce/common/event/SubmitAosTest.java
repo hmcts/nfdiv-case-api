@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateHmctsCoversheet;
 import uk.gov.hmcts.divorce.common.service.SubmitAosService;
 import uk.gov.hmcts.divorce.divorcecase.model.AcknowledgementOfService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -56,6 +57,9 @@ class SubmitAosTest {
 
     @Mock
     private AuthTokenGenerator authTokenGenerator;
+
+    @Mock
+    private GenerateHmctsCoversheet generateHmctsCoverSheet;
 
     @InjectMocks
     private SubmitAos submitAos;

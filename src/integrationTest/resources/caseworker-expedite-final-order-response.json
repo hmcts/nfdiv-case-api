@@ -92,6 +92,7 @@
         "id": "${json-unit.any-string}"
       }
     ],
+    "finalOrderInsightSurveyStage": 0,
     "expeditedFinalOrderAuthorisation": {
       "expeditedFinalOrderGeneralOrder": {
         "generalOrderDocument": {

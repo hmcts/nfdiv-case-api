@@ -18,6 +18,7 @@ import java.util.Map;
 
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinancialOrderRequestedLetter.shouldGenerateFinancialOrderLetter;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ReissueOption.OFFLINE_AOS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod.COURT_SERVICE;
@@ -45,6 +46,7 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SO
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WELSH_ENQUIRIES_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.WHO_APPLIED;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent.ADD_FO_LETTER_CONTENT;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
@@ -235,6 +237,8 @@ public class NoticeOfProceedingContent {
         templateContent.put(IS_RESPONDENT_EMAIL_PRESENT, ObjectUtils.isNotEmpty(applicant2.getEmail()));
 
         templateContent.put(WELSH_ENQUIRIES_EMAIL, config.getTemplateVars().get(WELSH_ENQUIRIES_EMAIL));
+
+        templateContent.put(ADD_FO_LETTER_CONTENT, shouldGenerateFinancialOrderLetter(caseData));
 
         generateDivorceOrDissolutionContent(templateContent, caseData, partner, languagePreference);
 

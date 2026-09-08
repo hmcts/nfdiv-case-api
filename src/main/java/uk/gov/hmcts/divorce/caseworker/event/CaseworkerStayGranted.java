@@ -9,8 +9,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.EnumSet;
+
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ApplicationStayed;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingHearingDate;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingHearingOutcome;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -27,7 +31,7 @@ public class CaseworkerStayGranted implements CCDConfig<CaseData, State, UserRol
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_STAY_GRANTED)
-            .forStateTransition(GeneralConsiderationComplete, ApplicationStayed)
+            .forStateTransition(EnumSet.of(GeneralConsiderationComplete, PendingHearingDate, PendingHearingOutcome), ApplicationStayed)
             .showEventNotes()
             .name("Stay granted")
             .description("Stay granted")

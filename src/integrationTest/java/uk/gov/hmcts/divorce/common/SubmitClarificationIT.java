@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateHmctsCoversheet;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -95,6 +96,9 @@ public class SubmitClarificationIT {
 
     @MockitoBean
     private Clock clock;
+
+    @MockitoBean
+    private GenerateHmctsCoversheet generateHmctsCoverSheet;
 
     @BeforeAll
     static void setUp() {

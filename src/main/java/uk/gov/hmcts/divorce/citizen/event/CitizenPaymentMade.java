@@ -22,6 +22,7 @@ import java.util.List;
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHWFDecision;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CITIZEN;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -48,7 +49,7 @@ public class CitizenPaymentMade implements CCDConfig<CaseData, State, UserRole> 
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         configBuilder
             .event(CITIZEN_PAYMENT_MADE)
-            .forStates(AwaitingPayment, AwaitingResponseToHWFDecision)
+            .forStates(AwaitingPayment, AwaitingResponseToHWFDecision, Rejected)
             .showCondition(NEVER_SHOW)
             .ttlIncrement(36524)
             .name("Payment made")

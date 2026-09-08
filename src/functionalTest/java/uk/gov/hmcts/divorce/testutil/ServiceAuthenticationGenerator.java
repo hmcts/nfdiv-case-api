@@ -4,7 +4,6 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.Map;
 
@@ -12,7 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@TestPropertySource("classpath:application.yaml")
 @Service
 public class ServiceAuthenticationGenerator {
 

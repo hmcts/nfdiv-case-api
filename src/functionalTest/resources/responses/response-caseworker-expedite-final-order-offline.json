@@ -104,6 +104,7 @@
         }
       }
     ],
+    "finalOrderInsightSurveyStage": 0,
     "expeditedFinalOrderAuthorisation" : {
       "expeditedFinalOrderGeneralOrder": {
         "generalOrderDocument": {

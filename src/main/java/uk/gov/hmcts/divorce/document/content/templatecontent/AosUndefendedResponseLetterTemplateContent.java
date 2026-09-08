@@ -36,8 +36,8 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RE
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
 @Slf4j
@@ -74,13 +74,15 @@ public class AosUndefendedResponseLetterTemplateContent implements TemplateConte
         templateContent.put(APPLICANT_1_FIRST_NAME, caseData.getApplicant1().getFirstName());
         templateContent.put(APPLICANT_1_LAST_NAME, caseData.getApplicant1().getLastName());
         templateContent.put(APPLICANT_1_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck());
-        templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(DATE_TIME_FORMATTER));
+        templateContent.put(ISSUE_DATE, caseData.getApplication().getIssueDate().format(
+            getDateTimeFormatterForPreferredLanguage(caseData.getApplicant1().getLanguagePreference())));
         templateContent.put(CASE_REFERENCE, formatId(ccdCaseReference));
         templateContent.put(IS_DIVORCE, caseData.isDivorce());
-        templateContent.put(RELATION, commonContent.getPartner(caseData, caseData.getApplicant2()));
+        templateContent.put(RELATION,
+            commonContent.getPartner(caseData, caseData.getApplicant2(), caseData.getApplicant1().getLanguagePreference()));
         templateContent.put(DATE_TO_WAIT_UNTIL_APPLY_FOR_CO,
             holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate())
-                .format(DATE_TIME_FORMATTER));
+                .format(getDateTimeFormatterForPreferredLanguage(caseData.getApplicant1().getLanguagePreference())));
 
         if (caseData.isDivorce()) {
             templateContent.put(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, DIVORCE_SERVICE);

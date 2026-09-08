@@ -9,7 +9,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.common.config.ControllerConstants.SERVICE_AUTHORIZATION;
 
 
-@FeignClient(name = "pba-ref-data-client", url = "${pba.ref.data.service..url}")
+@FeignClient(name = "pba-ref-data-client", url = "${pba.ref.data.service.url}")
 public interface PbaRefDataClient {
 
     @GetMapping(value = "/refdata/external/v1/organisations/pbas")
