@@ -34,8 +34,7 @@ public class DeemedServiceConfirmPage implements CcdPageConfiguration {
 
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
-        var page = pageBuilder.page("deemedServiceConfirm")
-                    .pageLabel("Deemed Service App");
+        var page = pageBuilder.page("deemedServiceConfirm");
 
         if (isNotBlank(pageShowCondition)) {
             page.showCondition(pageShowCondition);

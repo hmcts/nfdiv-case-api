@@ -24,14 +24,16 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
 
     @CCD(
-        label = "Did you and your partner live together?",
+        label = "Did the applicant and respondent live together at any time during their relationship?",
+        hint = "This includes any period they lived together, regardless of how long ago or how short the time was.",
         access = {DefaultAccess.class},
         searchable = false
     )
     private YesOrNo dispenseLiveTogether;
 
     @CCD(
-        label = "Date when you last lived together",
+        label = "Date when they last lived together",
+        hint = "If you do not  know the exact date, please provide an approximate date.",
         access = {DefaultAccess.class},
         searchable = false
     )
@@ -39,27 +41,27 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private LocalDate dispenseLivedTogetherDate;
 
     @CCD(
-        label = "Where did you last live together?",
+        label = "Where did the applicant and respondent last live together?",
         access = {DefaultAccess.class},
         searchable = false
     )
     private AddressGlobalUK dispenseLivedTogetherAddress;
 
     @CCD(
-        label = "Was this an international address?",
+        label = "Is this an international address?",
         searchable = false
     )
     private YesOrNo dispenseLivedTogetherAddressOverseas;
 
     @CCD(
-        label = "Are you aware of where your partner lived after parting?",
+        label = "Are you aware of where the respondent lived after parting?",
         access = {DefaultAccess.class},
         searchable = false
     )
     private YesOrNo dispenseAwarePartnerLived;
 
     @CCD(
-        label = "Where did your partner live after you parted?",
+        label = "Address 1",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -75,7 +77,7 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispensePartnerPastAddressEnquiries1;
 
     @CCD(
-        label = "Where did your partner live after you parted?",
+        label = "Address 2",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -91,7 +93,9 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispensePartnerPastAddressEnquiries2;
 
     @CCD(
-        label = "When was your partner last seen or heard of?",
+        label = "When was the respondent last seen or heard of?",
+        hint = "If you are not sure about the day you can enter the last day of the month. If you are not sure about the month "
+            + "you can enter '12' for December.",
         access = {DefaultAccess.class},
         searchable = false
     )
@@ -99,7 +103,7 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private LocalDate dispensePartnerLastSeenDate;
 
     @CCD(
-        label = "Describe the time you last saw or heard of your partner",
+        label = "Describe the time the applicant saw or heard of the respondent",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -114,14 +118,14 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private YesOrNo dispensePartnerLastSeenOver2YearsAgo;
 
     @CCD(
-        label = "Do you have any email addresses for your partner?",
+        label = "Do you have any email addresses for the respondent?",
         access = {DefaultAccess.class},
         searchable = false
     )
     private YesOrNo dispenseHavePartnerEmailAddresses;
 
     @CCD(
-        label = "Have you searched for a decree absolute or final order?",
+        label = "Have you searched for an existing decree absolute or final order?",
         access = {DefaultAccess.class},
         searchable = false
     )
@@ -136,7 +140,9 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispenseWhyNoFinalOrderSearch;
 
     @CCD(
-        label = "Tell us the email addresses you have for your partner",
+        label = "Email addresses",
+        hint = "Tell us the email addresses and any previous contact with the respondent. Explain the attempts that has been made to"
+            + " contact the respondent on these email addresses.",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -144,14 +150,16 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispensePartnerEmailAddresses;
 
     @CCD(
-        label = "Do you have any phone numbers for your partner?",
+        label = "Do you have any phone numbers for the respondent?",
         access = {DefaultAccess.class},
         searchable = false
     )
     private YesOrNo dispenseHavePartnerPhoneNumbers;
 
     @CCD(
-        label = "Tell us the phone numbers you have for your partner",
+        label = "Telephone numbers",
+        hint = "Tell us the phone numbers and any previous contact with the respondent. Explain the attempts that has been made to"
+            + " contact the respondent on these phone numbers.",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -159,7 +167,7 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispensePartnerPhoneNumbers;
 
     @CCD(
-        label = "Have you tried using a tracing agent to find your partner?",
+        label = "Have you tried using a tracing agent to find the respondent?",
         access = {DefaultAccess.class},
         searchable = false
     )
@@ -182,14 +190,14 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispenseTracingAgentResults;
 
     @CCD(
-        label = "Have you tried tracing your partner online?",
+        label = "Have you tried tracing the respondent online?",
         access = {DefaultAccess.class},
         searchable = false
     )
     private YesOrNo dispenseTriedTracingOnline;
 
     @CCD(
-        label = "Explain why you have not tried tracing your partner online",
+        label = "Explain why you have not tried tracing the respondent online",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -205,14 +213,14 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispenseTracingOnlineResults;
 
     @CCD(
-        label = "Have you tried finding your partner's details online by searching the internet?",
+        label = "Have you tried finding the respondent's details online by searching the internet?",
         access = {DefaultAccess.class},
         searchable = false
     )
     private YesOrNo dispenseTriedSearchingOnline;
 
     @CCD(
-        label = "Explain why you have not tried searching for your partner online",
+        label = "Explain why you have not tried searching for the respondent online",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -228,7 +236,7 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispenseSearchingOnlineResults;
 
     @CCD(
-        label = "Have you tried contacting your partner's last known employer?",
+        label = "Have you tried contacting the respondent's last known employer?",
         access = {DefaultAccess.class},
         searchable = false
     )
@@ -243,14 +251,14 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispenseWhyNoContactingEmployer;
 
     @CCD(
-        label = "Employer Name",
+        label = "Name of employer",
         access = {DefaultAccess.class},
         searchable = false
     )
     private String dispenseEmployerName;
 
     @CCD(
-        label = "Employer Address",
+        label = "Address of employer",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -258,14 +266,14 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispenseEmployerAddress;
 
     @CCD(
-        label = "Partner's Occupation",
+        label = "Respondent's Occupation",
         access = {DefaultAccess.class},
         searchable = false
     )
     private String dispensePartnerOccupation;
 
     @CCD(
-        label = "What were the results of your contact with your partner's last known employer?",
+        label = "Results of your enquiry with the employer?",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -274,20 +282,22 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
 
     @CCD(
         label = "Are there any children of the family?",
+        hint = "This includes any children of the applicant and the respondent, and any stepchildren or other children considered as part "
+            + "of the family. This does not include foster children.",
         access = {DefaultAccess.class},
         searchable = false
     )
     private YesOrNo dispenseChildrenOfFamily;
 
     @CCD(
-        label = "Does your partner have any contact with them?",
+        label = "Does the respondent have any contact with them?",
         access = {DefaultAccess.class},
         searchable = false
     )
     private YesOrNo dispensePartnerContactWithChildren;
 
     @CCD(
-        label = "When and how does your partner have contact with them?",
+        label = "When and how does the respondent have contact with them?",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -295,7 +305,7 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispenseHowPartnerContactChildren;
 
     @CCD(
-        label = "To the best of your knowledge, when did your partner last have contact with them?",
+        label = "To the best of your knowledge, when did the respondent last have contact with them?",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -303,14 +313,14 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispensePartnerLastContactChildren;
 
     @CCD(
-        label = "Is there a court order or a child Maintenance Service calculation in place for child maintenance?",
+        label = "Is there a court order or a Child Maintenance Service calculation in place for child maintenance?",
         access = {DefaultAccess.class},
         searchable = false
     )
     private YesOrNo dispenseChildMaintenanceOrder;
 
     @CCD(
-        label = "Explain the results of any enquiries made to the Child Maintenance service",
+        label = "Explain the results of any enquiries made to the Child Maintenance Service about the respondent's whereabouts",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -318,7 +328,12 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispenseChildMaintenanceResults;
 
     @CCD(
-        label = "Have you been able to contact any of your partner's friends or relatives?",
+        label = "Have you been able to contact any of your respondents's friends or relatives?",
+        hint = "You should contact any friends or relatives of the respondent that you are able to, including "
+            + "children, to ask about the respondent's whereabouts. You should explain that the applicant has "
+            + "started a ${labelContentUnionType} application, but do not need to tell them any further details. "
+            + "Give their name, addresses (if known), their relationship with the respondent, and tell us about "
+            + "any enquiries made with them.",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -326,7 +341,9 @@ public class DispenseWithServiceJourneyOptions implements ApplicationAnswers {
     private String dispenseContactFriendsOrRelativesDetails;
 
     @CCD(
-        label = "What other enquiries have you made, or information do you have concerning the whereabouts of your partner?",
+        label = "What other enquiries have you made, or information do you have concerning the whereabouts of the respondent?",
+        hint = "For example, this could include enquiries made of any professional organisations they may be a member "
+            + "of. Enter 'none' if you do not have any more information.",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
