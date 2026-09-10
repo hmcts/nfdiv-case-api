@@ -24,7 +24,7 @@ public class BailiffServiceRespondentNameAddressPage implements CcdPageConfigura
             for bailiff service.
             """;
 
-    private static final String RESPONDENT_ADDRESS_PUBLIC = "applicant2ContactDetailsType = \"public\"";
+    private static final String RESPONDENT_ADDRESS_PUBLIC = "applicant2ContactDetailsType != \"private\"";
     private static final String RESPONDENT_ADDRESS_PRIVATE = "applicant2ContactDetailsType = \"private\"";
 
     private static final String RESPONDENT_ADDRESS_FAKE_FIELD_LABEL = "### Respondent Address";

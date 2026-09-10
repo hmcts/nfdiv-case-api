@@ -15,7 +15,6 @@ public class SolServiceApplicationPaymentSummaryPage implements CcdPageConfigura
     public void addTo(final PageBuilder pageBuilder) {
         pageBuilder
             .page("solServiceAppPaySummary")
-            .pageLabel("Submit service application")
             .complex(CaseData::getAlternativeService)
                 .complex(AlternativeService::getServicePaymentFee)
                     .mandatoryNoSummary(FeeDetails::getOrderSummary, PBA, "")

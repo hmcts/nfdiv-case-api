@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -59,6 +60,9 @@ class Applicant1ResubmitNotificationTest {
 
     @Mock
     private CommonContent commonContent;
+
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
 
     @Mock
     private EmailTemplatesConfig emailTemplatesConfig;

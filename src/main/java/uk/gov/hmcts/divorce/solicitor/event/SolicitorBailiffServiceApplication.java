@@ -114,6 +114,9 @@ public class SolicitorBailiffServiceApplication implements CCDConfig<CaseData, S
         log.info("{} about to submit callback invoked for Case Id: {}", SOLICITOR_BAILIFF_SERVICE_APPLICATION, details.getId());
         final CaseData caseData = details.getData();
         final Applicant applicant = caseData.getApplicant1();
+        final Applicant applicant2 = caseData.getApplicant2();
+
+        applicant2.setNonConfidentialAddress(null);
 
         InterimApplicationOptions options = applicant.getInterimApplicationOptions();
         options.setInterimApplicationType(InterimApplicationType.BAILIFF_SERVICE);
