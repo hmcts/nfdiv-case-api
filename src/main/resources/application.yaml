@@ -476,16 +476,16 @@ docmosis:
       REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V5.docx
       DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V5.docx
       RESPONDENT_ANSWERS: FL-NFD-GOR-ENG-Respondent-Answers-Eng-V4.docx
-      CERTIFICATE_OF_SERVICE: FL-NFD-GOR-ENG-Certificate_Of_Service_V2.docx
-      SERVICE_ORDER: FL-NFD-GOR-ENG-Service-Order-V5.docx
-      BULK_CASE_PRONOUNCEMENT: FL-NFD-GOR-ENG-Pronouncement-List-V3.docx
-      CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V3.docx
-      CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT: FL-NFD-GOR-ENG-Do-Not-Attend-Court-CO-Granted-Letter_V2.docx
-      CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V3.docx
-      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V6.docx
-      CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS_V2.docx
-      CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor_V2.docx
-      CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor_V3.docx
+      CERTIFICATE_OF_SERVICE: FL-NFD-GOR-ENG-Certificate_Of_Service_V5.docx
+      SERVICE_ORDER: FL-NFD-GOR-ENG-Service-Order-V7.docx
+      BULK_CASE_PRONOUNCEMENT: FL-NFD-GOR-ENG-Pronouncement-List-V5.docx
+      CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V4.docx
+      CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT: FL-NFD-GOR-ENG-Do-Not-Attend-Court-CO-Granted-Letter_V3.docx
+      CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V5.docx
+      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V7.docx
+      CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS_V3.docx
+      CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor_V3.docx
+      CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor_V4.docx
       CERTIFICATE_OF_ENTITLEMENT_OFFLINE_RESPONDENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent_V1.docx
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: FL-NFD-GOR-ENG-Sole-Applicant-1-Answers_V5.docx
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-1-Answers_V1.docx
@@ -574,17 +574,17 @@ docmosis:
       DIVORCE_DRAFT_APPLICATION: FL-NFD-APP-ENG-CP_Mini_Draft_Application_Template_V2.docx #TODO: Set correct template when available
       DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V5.docx #TODO: update template once available
       JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Solicitor-Cover-Letter-JS_V2.docx
-      CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V3.docx
+      CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V5.docx
       RESPONDENT_ANSWERS: FL-NFD-GOR-WEL-Respondent-Answers-Cy-V3.docx
       CERTIFICATE_OF_SERVICE: FL-NFD-GOR-WEL-Certificate-Of-Service_V2.docx
       SERVICE_ORDER: FL-NFD-GOR-WEL-Service-Order-V3-Cy.docx
-      BULK_CASE_PRONOUNCEMENT: FL-NFD-GOR-ENG-Pronouncement-List-V3.docx  #TODO: update content
+      BULK_CASE_PRONOUNCEMENT: FL-NFD-GOR-ENG-Pronouncement-List-V5.docx  #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-WEL-Certificate-Of-Entitlement_V3.docx
       CERTIFICATE_OF_ENTITLEMENT_DO_NOT_ATTEND_COURT: FL-NFD-GOR-WEL-Do-Not-Attend-Court-CO-Granted-Letter_V2.docx
-      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V6.docx #TODO: update content
-      CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS_V2.docx #TODO: update content
-      CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor_V2.docx #TODO: update content
-      CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor_V3.docx #TODO: update content
+      CERTIFICATE_OF_ENTITLEMENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-V7.docx #TODO: update content
+      CERTIFICATE_OF_ENTITLEMENT_JS_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS_V3.docx #TODO: update content
+      CERTIFICATE_OF_ENTITLEMENT_JS_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-JS-Solicitor_V3.docx #TODO: update content
+      CERTIFICATE_OF_ENTITLEMENT_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Solicitor_V4.docx #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT_OFFLINE_RESPONDENT_COVER_LETTER: FL-NFD-GOR-ENG-Entitlement-Cover-Letter-Offline-Respondent_V1.docx  #TODO: update content
       DIVORCE_SOLE_APPLICANT_1_ANSWERS: FL-NFD-GOR-ENG-Sole-Applicant-1-Answers_V5.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-1-Answers_V1.docx #TODO: update content
