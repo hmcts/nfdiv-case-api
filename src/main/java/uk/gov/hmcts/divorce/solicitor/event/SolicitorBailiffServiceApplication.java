@@ -17,9 +17,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServicePaymentMethodPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentDescriptionPage;
+import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentHistoryPage;
+import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentHistoryThreePage;
+import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentHistoryTwoPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentNameAddressPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentPhoneAgePage;
 import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceRespondentServiceTimeVehiclePage;
+import uk.gov.hmcts.divorce.solicitor.event.page.BailiffServiceUploadPhotoPage;
 import uk.gov.hmcts.divorce.solicitor.service.ServiceApplicationDraftSubmissionService;
 
 import java.util.List;
@@ -59,7 +63,11 @@ public class SolicitorBailiffServiceApplication implements CCDConfig<CaseData, S
             new BailiffServiceRespondentNameAddressPage(),
             new BailiffServiceRespondentPhoneAgePage(),
             new BailiffServiceRespondentDescriptionPage(),
-            new BailiffServiceRespondentServiceTimeVehiclePage()
+            new BailiffServiceRespondentServiceTimeVehiclePage(),
+            new BailiffServiceRespondentHistoryPage(),
+            new BailiffServiceRespondentHistoryTwoPage(),
+            new BailiffServiceRespondentHistoryThreePage(),
+            new BailiffServiceUploadPhotoPage()
         );
 
         pages.forEach(page -> page.addTo(pageBuilder));
