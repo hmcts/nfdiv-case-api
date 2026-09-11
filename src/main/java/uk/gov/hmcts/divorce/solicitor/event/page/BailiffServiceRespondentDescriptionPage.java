@@ -26,7 +26,7 @@ public class BailiffServiceRespondentDescriptionPage implements CcdPageConfigura
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("bailiffServiceRespondentsDetailsPage")
+        pageBuilder.page("bailiffServiceRespDetailsPage")
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getBailiffServiceJourneyOptions)

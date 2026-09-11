@@ -39,7 +39,7 @@ public class BailiffServiceRespondentServiceTimeVehiclePage implements CcdPageCo
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("bailiffServiceRespondentsServiceTimeVehiclePage")
+        pageBuilder.page("bailiffServiceRespServiceTimeVehiclePage")
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getBailiffServiceJourneyOptions)

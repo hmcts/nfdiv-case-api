@@ -33,7 +33,7 @@ public class BailiffServiceRespondentNameAddressPage implements CcdPageConfigura
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("bailiffServiceRespondentsNameAddressPage")
+        pageBuilder.page("bailiffServiceRespNameAddressPage")
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getBailiffServiceJourneyOptions)

@@ -30,7 +30,7 @@ public class BailiffServiceRespondentHistoryTwoPage implements CcdPageConfigurat
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("bailiffServiceRespondentsHistoryTwoPage")
+        pageBuilder.page("bailiffServiceRespHistoryTwoPage")
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getBailiffServiceJourneyOptions)
