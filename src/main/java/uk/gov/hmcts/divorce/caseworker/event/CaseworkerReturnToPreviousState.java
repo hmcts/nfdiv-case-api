@@ -40,8 +40,7 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
     private static final String WARNING_LABEL = """
 The state change may impact the due date for ***20 weeks***, AoS, Conditional Order or Final Order timelines.
 You **must** review and update any affected due dates before completing this event.
-Failure to do so may result in the case progressing incorrectly.
-""";
+Failure to do so may result in the case progressing incorrectly.""";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
