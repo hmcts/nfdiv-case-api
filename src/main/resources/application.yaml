@@ -463,19 +463,19 @@ core_case_data:
 docmosis:
   templates:
     english:
-      DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx
-      DIVORCE_APPLICATION_JOINT: FL-NFD-APP-ENG-Divorce-Application-Joint_V1.docx
-      DIVORCE_DRAFT_APPLICATION: FL-NFD-APP-ENG-CP_Mini_Draft_Application_Template_V1.docx
-      REJECTED_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order_V5.docx
-      CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline_V5.docx
-      CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V4.docx
-      JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V3.docx
-      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V3.docx
-      JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Refusal-Solicitor-Cover-Letter_V3.docx
-      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Clarification-Refusal-Solicitor-Cover-Letter_V3.docx
-      REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V4.docx
-      DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V3.docx
-      RESPONDENT_ANSWERS: FL-NFD-GOR-ENG-Respondent-Answers-Eng-V3.docx
+      DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V9.docx
+      DIVORCE_APPLICATION_JOINT: FL-NFD-APP-ENG-Divorce-Application-Joint_V3.docx
+      DIVORCE_DRAFT_APPLICATION: FL-NFD-APP-ENG-CP_Mini_Draft_Application_Template_V2.docx
+      REJECTED_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Refusal-Order_V6.docx
+      CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Order-Offline_V7.docx
+      CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V5.docx
+      JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V4.docx
+      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V4.docx
+      JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Refusal-Solicitor-Cover-Letter_V4.docx
+      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Clarification-Refusal-Solicitor-Cover-Letter_V4.docx
+      REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V5.docx
+      DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V5.docx
+      RESPONDENT_ANSWERS: FL-NFD-GOR-ENG-Respondent-Answers-Eng-V4.docx
       CERTIFICATE_OF_SERVICE: FL-NFD-GOR-ENG-Certificate_Of_Service_V2.docx
       SERVICE_ORDER: FL-NFD-GOR-ENG-Service-Order-V5.docx
       BULK_CASE_PRONOUNCEMENT: FL-NFD-GOR-ENG-Pronouncement-List-V3.docx
@@ -569,10 +569,10 @@ docmosis:
       HEARING_REMINDER: FL-NFD-GOR-ENG-Hearing-Reminder-V1.docx
       NFD_FO_REQUESTED_LETTER_RESPONDENT: FL-NFD-GOR-ENG-FO-Requested-Respondent-Letter_V1.docx
     welsh:
-      DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V7.docx #TODO: Set correct template when available
+      DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V9.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V2.docx
-      DIVORCE_DRAFT_APPLICATION: FL-NFD-APP-ENG-CP_Mini_Draft_Application_Template_V1.docx #TODO: Set correct template when available
-      DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V3.docx #TODO: update template once available
+      DIVORCE_DRAFT_APPLICATION: FL-NFD-APP-ENG-CP_Mini_Draft_Application_Template_V2.docx #TODO: Set correct template when available
+      DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V5.docx #TODO: update template once available
       JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Solicitor-Cover-Letter-JS_V2.docx
       CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V3.docx
       RESPONDENT_ANSWERS: FL-NFD-GOR-WEL-Respondent-Answers-Cy-V3.docx
@@ -608,13 +608,13 @@ docmosis:
       NFD_RESP_RESPONDED_AWAITING_CO_UNDEFENDED: FL-NFD-GOR-ENG-Respondent-Responded-Undefended-Awaiting-CO.docx #TODO: add translated content
       GENERAL_LETTER: FL-NFD-GOR-ENG-General-Letter-V1.docx
       REJECTED_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Refusal-Order_V3.docx
-      REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V4.docx #TODO: update welsh content
+      REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V5.docx #TODO: update welsh content
       CLARIFICATION_REFUSAL_ORDER: FL-NFD-GOR-WEL-Conditional-Order-Clarification-Refusal-Order_V4.docx
-      CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V4.docx #TODO: update welsh content
-      JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V3.docx #TODO: update welsh content
-      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V3.docx #TODO: update welsh content
+      CLARIFICATION_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Clarification-Refusal-Cover-Letter_V5.docx #TODO: update welsh content
+      JUDICIAL_SEPARATION_ORDER_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V4.docx #TODO: update welsh content
+      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Amended-Or-Clarification-Refusal-Cover-Letter_V4.docx #TODO: update welsh content
       JUDICIAL_SEPARATION_ORDER_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-WEL-Judicial-Separation-Conditional-Order-Refusal-Solicitor-Cover-Letter_V3.docx
-      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Clarification-Refusal-Solicitor-Cover-Letter_V3.docx #TODO: update welsh content
+      JUDICIAL_SEPARATION_ORDER_CLARIFICATION_REFUSAL_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Judicial-Separation-Conditional-Order-Clarification-Refusal-Solicitor-Cover-Letter_V4.docx #TODO: update welsh content
       NFD_NOP_A1_SOLE_APP1_CIT_CS: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Sole_V4.docx
       NFD_NOP_A2_SOLE_APP1_CIT_PS: FL-NFD-GOR-WEL-Notice-Of-Proceedings-Overseas-Sole_V5.docx
       NFD_NOP_AL2_SOLE_APP1_CIT_PS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-AL2-V7.docx #TODO: add Welsh translation
