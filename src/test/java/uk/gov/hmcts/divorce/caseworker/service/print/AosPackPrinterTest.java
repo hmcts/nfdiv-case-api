@@ -6,14 +6,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinancialOrderRequestedLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
+import uk.gov.hmcts.divorce.divorcecase.model.ServiceMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.SupplementaryCaseType;
 import uk.gov.hmcts.divorce.document.model.ConfidentialDivorceDocument;
@@ -29,7 +29,6 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -720,24 +719,23 @@ class AosPackPrinterTest {
 
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
-            .documents(CaseDocuments.builder().documentsGenerated(asList(doc1)).build())
+            .applicant2(Applicant.builder()
+                .solicitorRepresented(NO).build())
+            .application(Application.builder()
+                .serviceMethod(ServiceMethod.PERSONAL_SERVICE)
+                .build())
+            .applicant1(Applicant.builder()
+                .financialOrder(YES).build())
+            .documents(CaseDocuments.builder().documentsGenerated(singletonList(doc1)).build())
             .build();
 
         when(bulkPrintService.printWithD10Form(printCaptor.capture())).thenReturn(randomUUID());
 
-        try (MockedStatic<GenerateFinancialOrderRequestedLetter> classMock =
-                 mockStatic(GenerateFinancialOrderRequestedLetter.class)) {
-
-            classMock.when(() ->
-                GenerateFinancialOrderRequestedLetter.shouldGenerateFinancialOrderLetter(caseData)
-            ).thenReturn(true);
-
-            aosPackPrinter.sendAosLetterAndRespondentAosPackToApplicant(caseData, TEST_CASE_ID);
-        }
+        aosPackPrinter.sendAosLetterAndRespondentAosPackToApplicant(caseData, TEST_CASE_ID);
 
         verify(bulkPrintService).printWithD10Form(printCaptor.capture());
 
         final Print print = printCaptor.getValue();
-        assertThat(print.getLetters().get(0).getDivorceDocument()).isSameAs(doc1.getValue());
+        assertThat(print.getLetters().getFirst().getDivorceDocument()).isSameAs(doc1.getValue());
     }
 }
