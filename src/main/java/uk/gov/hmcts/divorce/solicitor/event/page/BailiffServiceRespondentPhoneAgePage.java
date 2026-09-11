@@ -24,7 +24,7 @@ public class BailiffServiceRespondentPhoneAgePage implements CcdPageConfiguratio
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("bailiffServiceRespondentsPhoneAgePage")
+        pageBuilder.page("bailiffServiceRespPhoneAgePage")
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getBailiffServiceJourneyOptions)

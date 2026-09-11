@@ -30,7 +30,7 @@ public class BailiffServiceRespondentHistoryPage implements CcdPageConfiguration
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("bailiffServiceRespondentsHistoryPage")
+        pageBuilder.page("bailiffServiceRespHistoryPage")
             .complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnershipApplication, NEVER_SHOW)
             .done()

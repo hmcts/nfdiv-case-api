@@ -24,7 +24,7 @@ public class BailiffServiceRespondentHistoryThreePage implements CcdPageConfigur
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("bailiffServiceRespondentsHistoryThreePage")
+        pageBuilder.page("bailiffServiceRespHistoryThreePage")
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getBailiffServiceJourneyOptions)
