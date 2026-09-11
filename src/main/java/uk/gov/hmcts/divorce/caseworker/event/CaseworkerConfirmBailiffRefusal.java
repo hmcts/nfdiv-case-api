@@ -8,7 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
+import uk.gov.hmcts.divorce.common.notification.ServiceApplicationDecisionNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -38,7 +38,7 @@ public class CaseworkerConfirmBailiffRefusal implements CCDConfig<CaseData, Stat
 
     private final BailiffNotApprovedOrderContent templateContentNotApproved;
 
-    private final ServiceApplicationNotification serviceApplicationNotification;
+    private final ServiceApplicationDecisionNotification serviceApplicationDecisionNotification;
 
     private final NotificationDispatcher notificationDispatcher;
 
@@ -79,8 +79,8 @@ public class CaseworkerConfirmBailiffRefusal implements CCDConfig<CaseData, Stat
             BAILIFF_APPLICATION_NOT_APPROVED_FILE_NAME
         );
 
-        log.info("Sending ServiceApplicationNotification (refused) case ID: {}", details.getId());
-        notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
+        log.info("Sending serviceApplicationDecisionNotification (refused) case ID: {}", details.getId());
+        notificationDispatcher.send(serviceApplicationDecisionNotification, caseDataCopy, details.getId());
 
         log.info("Archiving service application for case ID: {}", details.getId());
         caseDataCopy.archiveAlternativeServiceApplicationOnCompletion();
