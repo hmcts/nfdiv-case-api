@@ -11,7 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
+import uk.gov.hmcts.divorce.common.service.CitizenServiceApplicationSubmissionService;
 import uk.gov.hmcts.divorce.common.service.PaymentValidatorService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -35,6 +35,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SYSTEMUPDATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
 @Component
@@ -48,7 +49,7 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
 
     private final PaymentValidatorService paymentValidatorService;
 
-    private final InterimApplicationSubmissionService interimApplicationSubmissionService;
+    private final CitizenServiceApplicationSubmissionService submissionService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -62,7 +63,7 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
             .aboutToSubmitCallback(this::aboutToSubmit)
             .submittedCallback(this::submitted)
             .showCondition(NEVER_SHOW)
-            .grant(CREATE_READ_UPDATE, CREATOR)
+            .grant(CREATE_READ_UPDATE, CREATOR, SYSTEMUPDATE)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, JUDGE, LEGAL_ADVISOR, APPLICANT_1_SOLICITOR));
     }
 
@@ -109,7 +110,7 @@ public class CitizenServicePaymentMade implements CCDConfig<CaseData, State, Use
 
         CaseData data = details.getData();
 
-        interimApplicationSubmissionService.sendServiceApplicationNotifications(
+        submissionService.sendNotifications(
             details.getId(), data.getAlternativeService().getAlternativeServiceType(), data
         );
 
