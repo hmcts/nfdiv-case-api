@@ -53,6 +53,9 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
     private static final String WARNING_LABEL = "### There is no address for the Respondent, "
         + "you need to provide a reason for issuing the application without the address for the respondent";
+    private static final String APPLICATION_ALREADY_ISSUED_ERROR =
+        "This application has already been issued. Please use the Reissue application event.";
+
 
     private final IssueApplicationService issueApplicationService;
 
@@ -71,6 +74,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             .forStates(Submitted, AwaitingDocuments, InformationRequested, RequestedInformationSubmitted, AwaitingDwpResponse)
             .name("Application issue")
             .description("Application issued")
+            .showCondition("issueDate!=\"*\"")
             .showSummary()
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
@@ -94,6 +98,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             .done()
             .label("warningIssueWithoutAddress", WARNING_LABEL, "beingIssuedWithoutAddress=\"Yes\"")
             .complex(CaseData::getApplication)
+                .readonlyNoSummary(Application::getIssueDate, ALWAYS_HIDE)
                 .mandatory(Application::getReasonIssuedWithoutAddress, "beingIssuedWithoutAddress=\"Yes\"")
                 .complex(Application::getMarriageDetails)
                     .optional(MarriageDetails::getDate)
@@ -107,6 +112,12 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
         CaseData caseData = details.getData();
+
+        if (null != caseData.getApplication().getIssueDate()) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(List.of(APPLICATION_ALREADY_ISSUED_ERROR))
+                .build();
+        }
 
         String app2Address = AddressUtil.getPostalAddress(caseData.getApplicant2().getAddress());
 

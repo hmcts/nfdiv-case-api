@@ -37,6 +37,11 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
     private static final String CANNOT_MOVE_TO_AWAITING_SERVICE_CONSIDERATION_ERROR
         = "Return to previous state cannot be used to transfer the case to Awaiting service consideration. "
         + "Please use the response to service application event.";
+    private static final String WARNING_LABEL = """
+The state change may impact the due date for ***20 weeks***, AoS, Conditional Order or Final Order timelines.
+You **must** review and update any affected due dates before completing this event.
+Failure to do so may result in the case progressing incorrectly.
+""";
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -56,7 +61,8 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
             .complex(CaseData::getApplication)
                 .readonly(Application::getCurrentState)
                 .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "State to transfer case to")
-            .done();
+            .done()
+            .label("warningText", WARNING_LABEL);
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
