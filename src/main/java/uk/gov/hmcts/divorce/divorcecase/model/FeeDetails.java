@@ -35,7 +35,6 @@ public class FeeDetails {
 
     @CCD(
         label = "How will payment be made?",
-        hint = "How will payment be made?",
         typeOverride = FixedList,
         typeParameterOverride = "ServicePaymentMethod"
     )
