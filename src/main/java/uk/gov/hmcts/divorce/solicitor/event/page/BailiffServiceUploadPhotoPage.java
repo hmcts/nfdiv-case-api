@@ -6,6 +6,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 public class BailiffServiceUploadPhotoPage implements CcdPageConfiguration {
 
     private static final String RESPONDENT_PHOTO_LABEL = "Are you able to upload a recent photo of the respondent?";
@@ -25,8 +27,17 @@ public class BailiffServiceUploadPhotoPage implements CcdPageConfiguration {
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("bailiffServiceUploadPhotoPage")
-            .complex(CaseData::getApplicant1)
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
+
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+
+        var page = pageBuilder.page("bailiffServiceUploadPhotoPage");
+        if (isNotBlank(pageShowCondition)) {
+            page.showCondition(pageShowCondition);
+        }
+        page.complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .mandatory(
                         InterimApplicationOptions::getInterimAppsCanUploadEvidence, ALWAYS_SHOW, NO_DEFAULT_VALUE, RESPONDENT_PHOTO_LABEL

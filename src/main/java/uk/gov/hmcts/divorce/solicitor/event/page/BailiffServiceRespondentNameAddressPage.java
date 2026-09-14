@@ -7,6 +7,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.BailiffServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 public class BailiffServiceRespondentNameAddressPage implements CcdPageConfiguration {
 
     private static final String NEVER_SHOW = "applicant1BailiffPartnerInARefuge = \"NEVER_SHOW\"";
@@ -33,8 +35,17 @@ public class BailiffServiceRespondentNameAddressPage implements CcdPageConfigura
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("bailiffServiceRespNameAddressPage")
-            .complex(CaseData::getApplicant1)
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
+
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+
+        var page = pageBuilder.page("bailiffServiceRespNameAddressPage");
+        if (isNotBlank(pageShowCondition)) {
+            page.showCondition(pageShowCondition);
+        }
+        page.complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getBailiffServiceJourneyOptions)
                         .mandatoryWithLabel(BailiffServiceJourneyOptions::getBailiffPartnersName, RESPONDENTS_NAME_LABEL)

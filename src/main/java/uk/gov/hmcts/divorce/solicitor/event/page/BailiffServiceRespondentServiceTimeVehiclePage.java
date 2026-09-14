@@ -7,6 +7,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.BailiffServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 public class BailiffServiceRespondentServiceTimeVehiclePage implements CcdPageConfiguration {
 
     private static final String BEST_TIME_TO_SERVE_LABEL = "When is best for the bailiff to serve the papers on the respondent?";
@@ -39,8 +41,17 @@ public class BailiffServiceRespondentServiceTimeVehiclePage implements CcdPageCo
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("bailiffServiceRespServiceTimeVehiclePage")
-            .complex(CaseData::getApplicant1)
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
+
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+
+        var page = pageBuilder.page("bailiffServiceRespServiceTimeVehiclePage");
+        if (isNotBlank(pageShowCondition)) {
+            page.showCondition(pageShowCondition);
+        }
+        page.complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getBailiffServiceJourneyOptions)
                         .mandatory(
