@@ -74,7 +74,6 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
             .forStates(Submitted, AwaitingDocuments, InformationRequested, RequestedInformationSubmitted, AwaitingDwpResponse)
             .name("Application issue")
             .description("Application issued")
-            .showCondition("issueDate!=\"*\"")
             .showSummary()
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
