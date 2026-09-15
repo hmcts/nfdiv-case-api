@@ -529,16 +529,16 @@ docmosis:
       CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter_V4.docx
       CO_GRANTED_SOL_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Sol-Cover-Letter_V3.docx
       CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent_V1.docx
-      CO_PRONOUNCED_SOL_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Sol-Cover-Letter-Offline-Respondent_V1.docx
-      JUDICIAL_SEPARATION_ORDER_PRONOUNCED: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-JS_V1.docx
-      JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter-JS_V2.docx
-      JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Solicitor-Cover-Letter-JS_V2.docx
-      CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order-V3.docx
-      FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order_V7.docx
-      FINAL_ORDER_CAN_APPLY_RESPONDENT: FL-NFD-GOR-ENG-Respondent-Can-Apply-Final-Order_V6.docx
-      SOLE_APPLICANT_FINAL_ORDER_OVERDUE: FL-NFD-GOR-ENG-Sole-Applicant-Final-Order-Overdue.docx
-      FINAL_ORDER_GRANTED: FL-NFD-GOR-ENG-Final-Order-Granted_V3.docx
-      FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V4.docx
+      CO_PRONOUNCED_SOL_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Sol-Cover-Letter-Offline-Respondent_V3.docx
+      JUDICIAL_SEPARATION_ORDER_PRONOUNCED: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-JS_V3.docx
+      JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter-JS_V3.docx
+      JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Solicitor-Cover-Letter-JS_V3.docx
+      CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order-V4.docx
+      FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Final-Order_V8.docx
+      FINAL_ORDER_CAN_APPLY_RESPONDENT: FL-NFD-GOR-ENG-Respondent-Can-Apply-Final-Order_V7.docx
+      SOLE_APPLICANT_FINAL_ORDER_OVERDUE: FL-NFD-GOR-ENG-Sole-Applicant-Final-Order-Overdue-V2.docx
+      FINAL_ORDER_GRANTED: FL-NFD-GOR-ENG-Final-Order-Granted_V5.docx
+      FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V5.docx
       NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed_V2.docx
       NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Undisputed_V2.docx
       NFD_NOP_APP1_JS_SOLE_UNDISPUTED: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant1_JS_Sole_Undisputed_V1.docx
@@ -573,7 +573,7 @@ docmosis:
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V2.docx
       DIVORCE_DRAFT_APPLICATION: FL-NFD-APP-ENG-CP_Mini_Draft_Application_Template_V1.docx #TODO: Set correct template when available
       DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V3.docx #TODO: update template once available
-      JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Solicitor-Cover-Letter-JS_V2.docx
+      JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Solicitor-Cover-Letter-JS_V3.docx #TODO: update template once available
       CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V3.docx
       RESPONDENT_ANSWERS: FL-NFD-GOR-WEL-Respondent-Answers-Cy-V3.docx
       CERTIFICATE_OF_SERVICE: FL-NFD-GOR-WEL-Certificate-Of-Service_V2.docx
@@ -637,14 +637,14 @@ docmosis:
       CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-WEL-Conditional-Order-Pronounced-V5.docx
       CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent_V1.docx #TODO: update welsh content
       CO_PRONOUNCED_SOL_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-WEL-CO-Pronounced-Sol-Cover-Letter-Offline-Respondent_V2.docx
-      JUDICIAL_SEPARATION_ORDER_PRONOUNCED: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-JS_V1.docx #TODO: update welsh content
-      JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter-JS_V2.docx #TODO: update welsh content
-      CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order-V3.docx #TODO: update welsh content
+      JUDICIAL_SEPARATION_ORDER_PRONOUNCED: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-JS_V3.docx #TODO: update welsh content
+      JUDICIAL_SEPARATION_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter-JS_V3.docx #TODO: update welsh content
+      CONDITIONAL_ORDER_CAN_APPLY: FL-NFD-GOR-ENG-Can-Apply-Conditional-Order-V4.docx #TODO: update welsh content
       FINAL_ORDER_CAN_APPLY: FL-NFD-GOR-WEL-Can-Apply-Final-Order_V7.docx
       FINAL_ORDER_CAN_APPLY_RESPONDENT: FL-NFD-GOR-WEL-Respondent-Can-Apply-Final-Order_V6.docx
       SOLE_APPLICANT_FINAL_ORDER_OVERDUE: FL-NFD-GOR-WEL-Sole-Applicant-Final-Order-Overdue.docx
       FINAL_ORDER_GRANTED: FL-NFD-GOR-WEL-Final-Order-Granted-V3.docx
-      FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V4.docx #TODO: update welsh content
+      FINAL_ORDER_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Final-Order-Cover-Letter_V5.docx #TODO: update welsh content
       NFD_NOP_APP1_JS_SOLE_DISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_JS_Sole_Disputed_V2.docx
       NFD_NOP_APP1_SOL_JS_SOLE_UNDISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_Solicitor_JS_Sole_Undisputed_V2.docx
       NFD_NOP_APP1_JS_SOLE_UNDISPUTED: FL-NFD-GOR-WEL-Notice_Of_Proceedings_Applicant1_JS_Sole_Undisputed_V2.docx
