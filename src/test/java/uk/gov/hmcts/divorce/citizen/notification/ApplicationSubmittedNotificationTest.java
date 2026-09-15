@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -32,6 +33,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_JOIN
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_REFERENCE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -49,6 +51,9 @@ class ApplicationSubmittedNotificationTest {
 
     @Mock
     private CommonContent commonContent;
+
+    @Mock
+    private DocmosisCommonContent docmosisCommonContent;
 
     @InjectMocks
     private ApplicationSubmittedNotification notification;
@@ -109,6 +114,7 @@ class ApplicationSubmittedNotificationTest {
             .builder()
             .name(TEST_SOLICITOR_NAME)
             .email(TEST_SOLICITOR_EMAIL)
+            .reference(TEST_REFERENCE)
             .build());
 
         when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant1()
@@ -136,6 +142,7 @@ class ApplicationSubmittedNotificationTest {
             .builder()
             .name(TEST_SOLICITOR_NAME)
             .email(TEST_SOLICITOR_EMAIL)
+            .reference(TEST_REFERENCE)
             .build());
 
         when(commonContent.basicTemplateVars(data, TEST_CASE_ID, data.getApplicant2()

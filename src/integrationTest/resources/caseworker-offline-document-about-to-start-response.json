@@ -18,7 +18,7 @@
       "list_items": [
         {
           "code": "${json-unit.ignore}",
-          "label": "doc1.pdf"
+          "label": "aos / doc1.pdf"
         }
       ]
     },

@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfPr
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinancialOrderRequestedLetter;
 import uk.gov.hmcts.divorce.caseworker.service.task.ResetAosFields;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
@@ -65,6 +66,8 @@ public class ReIssueApplicationService {
 
     private final ValidateIssue validateIssue;
 
+    private final GenerateFinancialOrderRequestedLetter generateFinancialOrderRequestedLetter;
+
     public CaseDetails<CaseData, State> process(final CaseDetails<CaseData, State> caseDetails) {
 
         CaseData caseData = caseDetails.getData();
@@ -103,7 +106,8 @@ public class ReIssueApplicationService {
                 generateApplicant1NoticeOfProceeding,
                 generateApplicant2NoticeOfProceedings,
                 generateD10Form,
-                resetAosFields
+                resetAosFields,
+                generateFinancialOrderRequestedLetter
             ).run(caseDetails);
         } else if (OFFLINE_AOS.equals(reissueOption)) {
             log.info("For case id {} processing reissue for offline aos ", caseDetails.getId());
@@ -119,7 +123,8 @@ public class ReIssueApplicationService {
                 generateApplication,
                 generateD10Form,
                 generateD84Form,
-                resetAosFields
+                resetAosFields,
+                generateFinancialOrderRequestedLetter
             ).run(caseDetails);
         } else if (REISSUE_CASE.equals(reissueOption)) {
             log.info("For case id {} processing complete reissue ", caseDetails.getId());
@@ -132,7 +137,8 @@ public class ReIssueApplicationService {
                 generateApplication,
                 generateD10Form,
                 generateD84Form,
-                resetAosFields
+                resetAosFields,
+                generateFinancialOrderRequestedLetter
             ).run(caseDetails);
         } else {
             log.info("For case id {} invalid reissue option hence not processing reissue application ", caseDetails.getId());
