@@ -476,7 +476,7 @@ docmosis:
       REJECTED_REFUSAL_ORDER_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Rejected-Refusal-Cover-Letter_V4.docx
       DIVORCE_GENERAL_ORDER: FL-NFD-GOR-ENG-General-Order-V3.docx
       RESPONDENT_ANSWERS: FL-NFD-GOR-ENG-Respondent-Answers-Eng-V3.docx
-      CERTIFICATE_OF_SERVICE: FL-NFD-GOR-ENG-Certificate_Of_Service_V2.docx
+      CERTIFICATE_OF_SERVICE: FL-NFD-GOR-ENG-Certificate_Of_Service_V4.docx
       SERVICE_ORDER: FL-NFD-GOR-ENG-Service-Order-V5.docx
       BULK_CASE_PRONOUNCEMENT: FL-NFD-GOR-ENG-Pronouncement-List-V3.docx
       CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-ENG-Certificate_Of_Entitlement_V3.docx
@@ -491,7 +491,7 @@ docmosis:
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-1-Answers_V1.docx
       DIVORCE_JOINT_APPLICANT_2_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers_V1.docx
       SERVICE_REFUSAL: FL-NFD-GOR-ENG-Refusal-Order-Deemed-Dispensed-Service-V4.docx
-      BAILIFF_APPLICATION_APPROVED: FL-NFD-GOR-ENG-Bailiff-Application-Approved-V1.docx
+      BAILIFF_APPLICATION_APPROVED: FL-NFD-GOR-ENG-Bailiff-Application-Approved-V3.docx
       BAILIFF_APPLICATION_NOT_APPROVED: FL-NFD-GOR-ENG-Bailiff-Application-Not-Approved-V1.docx
       CONDITIONAL_ORDER_ANSWERS: FL-NFD-GOR-ENG-Conditional_Order_Answers_V1.docx
       CONDITIONAL_ORDER_REMINDER: FL-NFD-GOR-ENG-Conditional-Order-Reminder_V1.docx
@@ -576,7 +576,7 @@ docmosis:
       JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Solicitor-Cover-Letter-JS_V2.docx
       CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V3.docx
       RESPONDENT_ANSWERS: FL-NFD-GOR-WEL-Respondent-Answers-Cy-V3.docx
-      CERTIFICATE_OF_SERVICE: FL-NFD-GOR-WEL-Certificate-Of-Service_V2.docx
+      CERTIFICATE_OF_SERVICE: FL-NFD-GOR-WEL-Certificate-Of-Service_V3.docx
       SERVICE_ORDER: FL-NFD-GOR-WEL-Service-Order-V3-Cy.docx
       BULK_CASE_PRONOUNCEMENT: FL-NFD-GOR-ENG-Pronouncement-List-V3.docx  #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-WEL-Certificate-Of-Entitlement_V3.docx
@@ -590,7 +590,7 @@ docmosis:
       DIVORCE_JOINT_APPLICANT_1_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-1-Answers_V1.docx #TODO: update content
       DIVORCE_JOINT_APPLICANT_2_ANSWERS: FL-NFD-APP-ENG-Draft-Divorce-Application-Joint-Applicant-2-Answers_V1.docx #TODO: update content
       SERVICE_REFUSAL: FL-NFD-GOR-WEL-Refusal-Order-Deemed-Dispensed-Service_V5.docx
-      BAILIFF_APPLICATION_APPROVED: FL-NFD-GOR-WEL-Bailiff-Application-Approved_V2.docx
+      BAILIFF_APPLICATION_APPROVED: FL-NFD-GOR-WEL-Bailiff-Application-Approved_V3.docx
       BAILIFF_APPLICATION_NOT_APPROVED: FL-NFD-GOR-WEL-Bailiff-Application-Not-Approved_V2.docx
       CONDITIONAL_ORDER_ANSWERS: FL-NFD-GOR-WEL-Conditional_Order_Answers_V2.docx
       CONDITIONAL_ORDER_REMINDER: FL-NFD-GOR-ENG-Conditional-Order-Reminder_V1.docx
