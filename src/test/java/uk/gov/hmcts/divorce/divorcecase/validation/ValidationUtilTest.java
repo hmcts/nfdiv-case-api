@@ -853,4 +853,52 @@ class ValidationUtilTest {
         assertThat(errors).contains("Partner has responded to application.");
     }
 
+    @Test
+    void shouldReturnErrorsWhenApplicant1HasNotConfirmedMarriageBroken() {
+        CaseData caseData = caseData();
+        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YesOrNo.NO);
+
+        List<String> errors = ValidationUtil.validateHasMarriageBroken(caseData);
+
+        assertThat(errors).isNotEmpty();
+        assertThat(errors).hasSize(1);
+        assertThat(errors).contains("To continue, applicant 1 must believe and declare that their marriage has irretrievably broken");
+    }
+
+    @Test
+    void shouldReturnErrorsWhenApplicant2HasNotConfirmedMarriageBroken() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YesOrNo.NO);
+
+        List<String> errors = ValidationUtil.validateHasMarriageBroken(caseData);
+
+        assertThat(errors).isNotEmpty();
+        assertThat(errors).hasSize(1);
+        assertThat(errors).contains("To continue, applicant 2 must believe and declare that their marriage has irretrievably broken");
+    }
+
+    @Test
+    void shouldReturnNoErrorsWhenApplicant1HasConfirmedMarriageBrokenInSoleCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
+
+        List<String> errors = ValidationUtil.validateHasMarriageBroken(caseData);
+
+        assertThat(errors).isEmpty();
+    }
+
+    @Test
+    void shouldReturnNoErrorsWhenApplicant1AndApplicant2HasConfirmedMarriageBrokenInJointCase() {
+        CaseData caseData = caseData();
+        caseData.setApplicationType(ApplicationType.JOINT_APPLICATION);
+        caseData.getApplication().setApplicant1ScreenHasMarriageBroken(YES);
+        caseData.getApplication().setApplicant2ScreenHasMarriageBroken(YES);
+
+        List<String> errors = ValidationUtil.validateHasMarriageBroken(caseData);
+
+        assertThat(errors).isEmpty();
+    }
 }
