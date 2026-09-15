@@ -12,6 +12,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant1DeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerAndSuperUserAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 
@@ -29,7 +30,7 @@ public class FeeDetails {
 
     @CCD(
         label = "Here are your order details",
-        access = {CaseworkerAndSuperUserAccess.class, CaseworkerDeleteAccess.class}
+        access = {CaseworkerAndSuperUserAccess.class, CaseworkerDeleteAccess.class, Applicant1DeleteAccess.class}
     )
     private OrderSummary orderSummary;
 
