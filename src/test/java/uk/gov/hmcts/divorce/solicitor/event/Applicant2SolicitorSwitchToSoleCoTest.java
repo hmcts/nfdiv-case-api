@@ -26,7 +26,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingLegalAdvisorReferral;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.JSAwaitingLA;
@@ -102,9 +101,7 @@ class Applicant2SolicitorSwitchToSoleCoTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             applicant2SolicitorSwitchToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
         assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);
-        assertThat(response.getData().getLabelContent().getApplicant2()).isEqualTo("respondent");
         assertThat(response.getData().getConditionalOrder().getSwitchedToSole()).isEqualTo(YES);
 
         verify(switchToSoleService).switchUserRoles(caseData, TEST_CASE_ID);
@@ -115,6 +112,8 @@ class Applicant2SolicitorSwitchToSoleCoTest {
             any(),
             anyLong(),
             eq(caseData.getApplicant1()));
+
+        verify(switchToSoleService).switchApplicationType(caseData);
     }
 
     @Test

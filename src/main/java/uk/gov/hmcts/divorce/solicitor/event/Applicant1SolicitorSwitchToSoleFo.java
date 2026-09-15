@@ -7,6 +7,7 @@ import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.divorce.citizen.service.SwitchToSoleService;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -19,7 +20,6 @@ import static java.util.Collections.singletonList;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.ApplyForFinalOrder.APPLY_FOR_FINAL_ORDER;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
@@ -37,6 +37,7 @@ public class Applicant1SolicitorSwitchToSoleFo implements CCDConfig<CaseData, St
     public static final String APPLICANT_1_SOLICITOR_SWITCH_TO_SOLE_FO = "app1-sol-switch-to-sole-fo";
 
     private final GeneralReferralService generalReferralService;
+    private final SwitchToSoleService switchToSoleService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -104,8 +105,8 @@ public class Applicant1SolicitorSwitchToSoleFo implements CCDConfig<CaseData, St
         log.info("Applicant 1 Solicitor Switched To Sole FO aboutToSubmit callback invoked for Case Id: {}", caseId);
         CaseData caseData = details.getData();
 
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getLabelContent().setApplicationType(SOLE_APPLICATION);
+        switchToSoleService.switchApplicationType(caseData);
+
         caseData.getFinalOrder().setFinalOrderSwitchedToSole(YES);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
