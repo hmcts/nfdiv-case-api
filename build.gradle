@@ -246,7 +246,9 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/divorce/common/config/**',
   '**/uk/gov/hmcts/divorce/divorcecase/model/**',
   '**/uk/gov/hmcts/divorce/divorcecase/tab/**',
-  '**/uk/gov/hmcts/divorce/systemupdate/event/SystemCorrectTtl.java'
+  '**/uk/gov/hmcts/divorce/systemupdate/event/SystemCorrectTtl.java',
+  '**/uk/gov/hmcts/divorce/caseworker/event/CaseworkerDummyEventEXUI4347.java',
+  '**/uk/gov/hmcts/divorce/caseworker/event/CaseworkerDummyEventEXUI4347SetData.java'
 ]
 
 sonarqube {
@@ -329,7 +331,7 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'ccd-case-document-am-client', version: '1.59.2'
 
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core'
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.9.0'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.9.1'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
@@ -482,6 +484,7 @@ bootWithCCD {
       environment key, value
     }
     environment 'CITIZEN_UPDATE_CASE_STATE_ENABLED', 'true'
+    environment 'EXUI_DUMMY_EVENTS_ENABLED', 'true'
     environment 'LOGGING_LEVEL_UK_GOV_HMCTS_DIVORCE', 'info'
     environment 'ROLE_ASSIGNMENT_URL', 'http://localhost:4096'
     environment 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
