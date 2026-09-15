@@ -315,4 +315,19 @@ class CaseworkerIssueApplicationTest {
         caseData.getApplication().getMarriageDetails().setPlaceOfMarriage("London");
         return caseData;
     }
+
+    @Test
+    void shouldReturnErrorWhenApplicationAlreadyIssuedOnAboutToStart() {
+        final var caseData = caseData();
+        caseData.getApplication().setIssueDate(LocalDate.now());
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToStart(details);
+
+        assertThat(response.getErrors())
+            .contains("This application has already been issued. Please use the Reissue application event.");
+    }
 }
