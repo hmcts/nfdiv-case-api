@@ -23,6 +23,7 @@
     "applicant2ContactDetailsType": "public",
     "applicant2FinancialOrder": "No",
     "applicant2Offline": "Yes",
+    "issueDate": "2022-01-01",
     "supplementaryCaseType": "judicialSeparation",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "coScannedD84Form": {

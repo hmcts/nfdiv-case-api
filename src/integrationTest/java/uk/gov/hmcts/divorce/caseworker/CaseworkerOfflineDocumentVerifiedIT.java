@@ -291,6 +291,7 @@ public class CaseworkerOfflineDocumentVerifiedIT {
                 )
                 .build()
         );
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 01, 01));
 
         final var jsonStringResponse = mockMvc.perform(post(ABOUT_TO_SUBMIT_URL)
                 .contentType(APPLICATION_JSON)
