@@ -73,7 +73,7 @@ class SolicitorAmendBailiffServiceApplicationIT {
     }
 
     @Test
-    void shouldWithdrawDeemedServiceApplication() throws Exception {
+    void shouldWithdrawBailiffServiceApplication() throws Exception {
         CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder()
                 .interimApplicationOptions(InterimApplicationOptions.builder()
