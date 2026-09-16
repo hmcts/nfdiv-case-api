@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
@@ -92,6 +93,8 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SMART_SURVEY;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
+import static uk.gov.hmcts.divorce.notification.CommonContent.UPLOAD_DOCUMENTS_TEXT;
+import static uk.gov.hmcts.divorce.notification.CommonContent.UPLOAD_DOCUMENTS_TEXT_WELSH;
 import static uk.gov.hmcts.divorce.notification.CommonContent.USED_HELP_WITH_FEES;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_CY_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.WEBFORM_URL;
@@ -1156,6 +1159,21 @@ class CommonContentTest {
                 entry(APPLICANT_1_FULL_NAME, "test_first_name test_middle_name test_last_name"),
                 entry(APPLICANT_2_FULL_NAME, "applicant_2_first_name test_last_name")
             );
+    }
+
+    @Test
+    void shouldReturnCorrectContactWebFormTextBasedOnLanguagePreference() {
+        Map<String, String> templateVars = new HashMap<>();
+        templateVars.put(WEBFORM_CY_URL, "https://welsh-webform-url.com");
+        templateVars.put(WEBFORM_URL, "https://english-webform-url.com");
+
+        when(emailTemplatesConfig.getTemplateVars()).thenReturn(templateVars);
+
+        String resultForWelsh = commonContent.getContactWebFormForDocumentsText(LanguagePreference.WELSH);
+        String resultForEnglish = commonContent.getContactWebFormForDocumentsText(LanguagePreference.ENGLISH);
+
+        assertEquals(UPLOAD_DOCUMENTS_TEXT_WELSH + "(https://welsh-webform-url.com)", resultForWelsh);
+        assertEquals(UPLOAD_DOCUMENTS_TEXT + "(https://english-webform-url.com)", resultForEnglish);
     }
 }
 
