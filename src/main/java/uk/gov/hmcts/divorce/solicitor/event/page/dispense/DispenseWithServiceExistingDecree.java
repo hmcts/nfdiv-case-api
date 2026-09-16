@@ -12,7 +12,7 @@ import static uk.gov.hmcts.divorce.common.ccd.PageBuilder.andShowCondition;
 
 public class DispenseWithServiceExistingDecree implements CcdPageConfiguration {
 
-    private static final String LABEL_CHECK_EXISTING_DECREE = """
+    private static final String LABEL_CHECK_EXISTING_DECREE_DIVORCE = """
         ### Check for an existing decree absolute or final order ###
 
         If the applicant has not heard from the respondent for more than 2 years you may need to check if they are already divorced.
@@ -23,6 +23,22 @@ public class DispenseWithServiceExistingDecree implements CcdPageConfiguration {
         You'll need to search from the date that the applicant last heard from them.
 
         If decree absolute or final order is found, they are already divorced and you do not need to continue this application.
+
+        If the court cannot find a decree absolute or a final order, you'll get a 'no trace' certificate which you cannot upload as
+        evidence to progress the application.
+        """;
+
+    private static final String LABEL_CHECK_EXISTING_DECREE_DISSOLUTION = """
+        ### Check for an existing decree absolute or final order ###
+
+        If the applicant has not heard from the respondent for more than 2 years you may need to check if their civil partnership has already ended.
+
+        You can apply online to the Central Family Court to <a href="https://www.gov.uk/copy-decree-absolute-final-order/do-not-know-which-court"
+            target="_blank" rel="noopener noreferrer">search for a divorce decree absolute or a final order (opens in a new tab)</a>.
+
+        You'll need to search from the date that the applicant last heard from them.
+
+        If decree absolute or final order is found, their civil partnership has already ended and you do not need to continue this application.
 
         If the court cannot find a decree absolute or a final order, you'll get a 'no trace' certificate which you cannot upload as
         evidence to progress the application.
@@ -50,7 +66,10 @@ public class DispenseWithServiceExistingDecree implements CcdPageConfiguration {
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getDispenseWithServiceJourneyOptions)
                         .readonlyNoSummary(DispenseWithServiceJourneyOptions::getDispensePartnerLastSeenOver2YearsAgo, NEVER_SHOW)
-                        .label("labelCheckExistingDecree", LABEL_CHECK_EXISTING_DECREE)
+                        .label("labelCheckExistingDecreeDivorce",
+                                LABEL_CHECK_EXISTING_DECREE_DIVORCE, "divorceOrDissolution=\"divorce\"")
+                        .label("labelCheckExistingDecreeDissolution",
+                                LABEL_CHECK_EXISTING_DECREE_DISSOLUTION, "divorceOrDissolution=\"dissolution\"")
                         .mandatory(DispenseWithServiceJourneyOptions::getDispenseHaveSearchedFinalOrder)
                         .label("labelWillNeedToUploadNoTraceCertificate", NO_TRACE_LABEL,
                             "applicant1DispenseHaveSearchedFinalOrder=\"Yes\"")

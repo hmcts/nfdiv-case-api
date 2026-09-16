@@ -36,10 +36,25 @@ public class DispenseWithServiceConfirmPage implements CcdPageConfiguration {
             think they're still in the UK
             - if known, asking their employer to deliver the documents to the respondent on your behalf
 
+            """;
+
+    private static final String SERVICE_INFORMATION_PARAGRAPH_2_DIVORCE = """
             If you know that the respondent is unaware of the applicant's whereabouts, you may need to request a
             <a href="https://www.gov.uk/copy-decree-absolute-final-order/do-not-know-which-court"
             target="_blank" rel="noopener noreferrer">search for a divorce decree absolute or a final order</a> from
             the Central Family Court. This is to make sure they have not already divorced the applicant.
+            You will need to search from the date the applicant and respondent last had contact.
+
+            If you cannot show that you have tried everything you reasonably can to send the ${labelContentUnionType}
+            papers to the respondent, it is likely that your application will be rejected.
+
+            """;
+
+    private static final String SERVICE_INFORMATION_PARAGRAPH_2_DISSOLUTION = """
+            If you know that the respondent is unaware of the applicant's whereabouts, you may need to request a
+            <a href="https://www.gov.uk/copy-decree-absolute-final-order/do-not-know-which-court"
+            target="_blank" rel="noopener noreferrer">search for a divorce decree absolute or a final order</a> from
+            the Central Family Court. This is to make sure their civil partnership has not already ended.
             You will need to search from the date the applicant and respondent last had contact.
 
             If you cannot show that you have tried everything you reasonably can to send the ${labelContentUnionType}
@@ -61,13 +76,18 @@ public class DispenseWithServiceConfirmPage implements CcdPageConfiguration {
         }
         page.complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getUnionType, NEVER_SHOW)
-            .done()
-            .label("LabelDispenseServicePaymentParagraph", SERVICE_INFORMATION_PARAGRAPH)
-            .label("LabelDispenseServicePaymentHeading", LABEL_HOW_PAYMENT)
-            .complex(CaseData::getApplicant1)
-                .complex(Applicant::getInterimApplicationOptions)
-                    .mandatoryWithLabel(InterimApplicationOptions::getInterimAppsPaymentMethod, PAYMENT_LABEL)
                 .done()
-            .done();
+                .readonlyNoSummary(CaseData::getDivorceOrDissolution, NEVER_SHOW)
+                .label("LabelDispenseServicePaymentParagraph", SERVICE_INFORMATION_PARAGRAPH)
+                .label("LabelDispenseServicePaymentParagraph2Div",
+                        SERVICE_INFORMATION_PARAGRAPH_2_DIVORCE, "divorceOrDissolution=\"divorce\"")
+                .label("LabelDispenseServicePaymentParagraph2Diss",
+                        SERVICE_INFORMATION_PARAGRAPH_2_DISSOLUTION, "divorceOrDissolution=\"dissolution\"")
+                .label("LabelDispenseServicePaymentHeading", LABEL_HOW_PAYMENT)
+                .complex(CaseData::getApplicant1)
+                    .complex(Applicant::getInterimApplicationOptions)
+                        .mandatoryWithLabel(InterimApplicationOptions::getInterimAppsPaymentMethod, PAYMENT_LABEL)
+                    .done()
+                .done();
     }
 }
