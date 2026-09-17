@@ -13,7 +13,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
+import uk.gov.hmcts.divorce.common.notification.ServiceApplicationDecisionNotification;
 import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceOutcome;
@@ -87,7 +87,7 @@ class LegalAdvisorMakeServiceDecisionTest {
     private ServiceOrderTemplateContent serviceOrderTemplateContent;
 
     @Mock
-    private ServiceApplicationNotification serviceApplicationNotification;
+    private ServiceApplicationDecisionNotification serviceApplicationDecisionNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -209,7 +209,7 @@ class LegalAdvisorMakeServiceDecisionTest {
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
 
-        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
+        verify(notificationDispatcher).send(serviceApplicationDecisionNotification, response.getData(), caseDetails.getId());
     }
 
     @Test
@@ -312,7 +312,7 @@ class LegalAdvisorMakeServiceDecisionTest {
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
 
-        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
+        verify(notificationDispatcher).send(serviceApplicationDecisionNotification, response.getData(), caseDetails.getId());
     }
 
     @Test
@@ -381,7 +381,7 @@ class LegalAdvisorMakeServiceDecisionTest {
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
 
-        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
+        verify(notificationDispatcher).send(serviceApplicationDecisionNotification, response.getData(), caseDetails.getId());
     }
 
     @Test
@@ -448,7 +448,7 @@ class LegalAdvisorMakeServiceDecisionTest {
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
 
-        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), caseDetails.getId());
+        verify(notificationDispatcher).send(serviceApplicationDecisionNotification, response.getData(), caseDetails.getId());
     }
 
     @Test
@@ -563,7 +563,7 @@ class LegalAdvisorMakeServiceDecisionTest {
             .extracting("value")
             .containsExactly(deemedOrDispensedDoc);
     }
-    
+
     @Nested
     class DispenseServiceApplicationRefusalEndStates {
         @Test
@@ -611,7 +611,7 @@ class LegalAdvisorMakeServiceDecisionTest {
                 .extracting("value")
                 .containsExactly(deemedOrDispensedDoc);
 
-            verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), details.getId());
+            verify(notificationDispatcher).send(serviceApplicationDecisionNotification, response.getData(), details.getId());
         }
 
         @Test
@@ -765,7 +765,7 @@ class LegalAdvisorMakeServiceDecisionTest {
                 .extracting("value")
                 .containsExactly(serviceDoc);
 
-            verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), details.getId());
+            verify(notificationDispatcher).send(serviceApplicationDecisionNotification, response.getData(), details.getId());
         }
 
         @Test
@@ -919,7 +919,7 @@ class LegalAdvisorMakeServiceDecisionTest {
                 .extracting("value")
                 .containsExactly(serviceDoc);
 
-            verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), details.getId());
+            verify(notificationDispatcher).send(serviceApplicationDecisionNotification, response.getData(), details.getId());
         }
 
         @Test

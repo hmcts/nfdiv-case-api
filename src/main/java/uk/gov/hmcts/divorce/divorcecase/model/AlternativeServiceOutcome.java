@@ -11,11 +11,13 @@ import uk.gov.hmcts.ccd.sdk.api.CCD;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.util.Optional.ofNullable;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
@@ -193,6 +195,37 @@ public class AlternativeServiceOutcome {
     @Builder.Default
     @CCD(searchable = false)
     private FeeDetails servicePaymentFee = new FeeDetails();
+
+    @CCD(
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private Set<AlternativeService.ApplicantStatementOfTruth> serviceApplicationStatementOfTruth;
+
+    @CCD(
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private Set<AlternativeService.AuthorisationStatementOfTruth> serviceApplicationSignStatementOfTruth;
+
+    @CCD(
+        label = "Your name",
+        searchable = false
+    )
+    private String serviceApplicationStatementOfTruthSolsName;
+
+    @CCD(
+        label = "Name of your firm",
+        searchable = false
+    )
+    private String serviceApplicationStatementOfTruthSolsFirm;
+
+    @CCD(
+        label = "Additional comments",
+        typeOverride = TextArea,
+        searchable = false
+    )
+    private String serviceApplicationStatementOfTruthComments;
 
     public String getServiceApplicationOutcomeLabel() {
         return " ";
