@@ -4,9 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
-import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
@@ -34,8 +35,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DISSOLUTION;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DISSOLUTION_URL;
-import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.APPLICANT2_APPLICANT1_SOLICITOR_REPRESENTED_REQUESTED_CHANGES;
@@ -52,7 +51,8 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getBasicTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class Applicant2RequestChangesNotificationTest {
 
     @Mock
@@ -60,9 +60,6 @@ class Applicant2RequestChangesNotificationTest {
 
     @Mock
     private CommonContent commonContent;
-
-    @Mock
-    private EmailTemplatesConfig emailTemplatesConfig;
 
     @InjectMocks
     private Applicant2RequestChangesNotification notification;
@@ -74,7 +71,6 @@ class Applicant2RequestChangesNotificationTest {
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DIVORCE_URL, "sign in divorce link"));
 
         notification.sendToApplicant1(data, TEST_CASE_ID);
 
@@ -102,7 +98,6 @@ class Applicant2RequestChangesNotificationTest {
         templateVars.putAll(Map.of(IS_DISSOLUTION, YES, IS_DIVORCE, NO));
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DISSOLUTION_URL, "sign in dissolution link"));
 
         notification.sendToApplicant1(data, TEST_CASE_ID);
 
@@ -130,7 +125,6 @@ class Applicant2RequestChangesNotificationTest {
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
         when(commonContent.solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
             .thenReturn(getBasicTemplateVars());
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DIVORCE_URL, "sign in divorce link"));
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 
@@ -160,7 +154,6 @@ class Applicant2RequestChangesNotificationTest {
         data.getApplication().setApplicant2ExplainsApplicant1IncorrectInformation("Not correct!");
         when(commonContent.solicitorTemplateVars(data, TEST_CASE_ID, data.getApplicant1()))
             .thenReturn(getBasicTemplateVars());
-        when(emailTemplatesConfig.getTemplateVars()).thenReturn(Map.of(SIGN_IN_DIVORCE_URL, "sign in divorce link"));
 
         notification.sendToApplicant1Solicitor(data, TEST_CASE_ID);
 

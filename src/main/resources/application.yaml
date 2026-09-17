@@ -21,6 +21,12 @@ spring:
     name: NFDIV Case API
   config:
     import: "optional:configtree:/mnt/secrets/nfdiv/"
+  http:
+    converters:
+      preferred-json-mapper: jackson2
+  jackson:
+    deserialization:
+      fail-on-null-for-primitives: false
   main:
     allow-bean-definition-overriding: true
   lifecycle:
