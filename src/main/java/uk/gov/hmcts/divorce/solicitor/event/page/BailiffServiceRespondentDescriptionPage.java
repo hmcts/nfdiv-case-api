@@ -7,6 +7,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.BailiffServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 public class BailiffServiceRespondentDescriptionPage implements CcdPageConfiguration {
 
     private static final String RESPONDENTS_HEIGHT_LABEL = "How tall is the respondent?";
@@ -26,8 +28,17 @@ public class BailiffServiceRespondentDescriptionPage implements CcdPageConfigura
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("bailiffServiceRespondentsDetailsPage")
-            .complex(CaseData::getApplicant1)
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
+
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+
+        var page = pageBuilder.page("bailiffServiceRespDetailsPage");
+        if (isNotBlank(pageShowCondition)) {
+            page.showCondition(pageShowCondition);
+        }
+        page.complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getBailiffServiceJourneyOptions)
                         .mandatory(

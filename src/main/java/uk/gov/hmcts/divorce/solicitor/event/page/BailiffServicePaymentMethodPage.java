@@ -7,6 +7,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 public class BailiffServicePaymentMethodPage implements CcdPageConfiguration {
 
     private static final String NEVER_SHOW = "applicant1InterimAppsPaymentMethod = \"NEVER_SHOW\"";
@@ -32,9 +34,17 @@ public class BailiffServicePaymentMethodPage implements CcdPageConfiguration {
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
 
-        pageBuilder.page("bailiffServicePayment")
-            .complex(CaseData::getLabelContent)
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+
+        var page = pageBuilder.page("bailiffServicePayment");
+        if (isNotBlank(pageShowCondition)) {
+            page.showCondition(pageShowCondition);
+        }
+        page.complex(CaseData::getLabelContent)
                 .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnershipApplication, NEVER_SHOW)
             .done()
             .label("bailiffServiceLabel", BAILIFF_SERVICE_LABEL)

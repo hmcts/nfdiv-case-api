@@ -6,7 +6,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.BailiffServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.LabelContent;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class BailiffServiceRespondentHistoryPage implements CcdPageConfiguration {
 
@@ -30,11 +31,17 @@ public class BailiffServiceRespondentHistoryPage implements CcdPageConfiguration
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("bailiffServiceRespondentsHistoryPage")
-            .complex(CaseData::getLabelContent)
-                .readonlyNoSummary(LabelContent::getDivorceOrCivilPartnershipApplication, NEVER_SHOW)
-            .done()
-            .label("respondentsHistoryLabel", RESPONDENTS_HISTORY_LABEL)
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
+
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+
+        var page = pageBuilder.page("bailiffServiceRespHistoryPage");
+        if (isNotBlank(pageShowCondition)) {
+            page.showCondition(pageShowCondition);
+        }
+        page.label("respondentsHistoryLabel", RESPONDENTS_HISTORY_LABEL)
             .complex(CaseData::getApplicant1)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getBailiffServiceJourneyOptions)
