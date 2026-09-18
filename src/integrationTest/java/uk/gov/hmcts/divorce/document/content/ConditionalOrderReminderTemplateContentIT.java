@@ -35,8 +35,6 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CT
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_AND_DISSOLUTION_HEADER_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FAMILY_COURT_LOGO;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HMCTS_LOGO;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_JOINT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PHONE_AND_OPENING_TIMES_TEXT;
@@ -50,9 +48,6 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class ConditionalOrderReminderTemplateContentIT {
-
-    private static final String HMCTS_LOGO_TEXT = "[userImage:hmcts_logo_nfd_en.png]";
-    private static final String FAMILY_COURT_LOGO_TEXT = "[userImage:family_court_logo_nfd_en.png]";
 
     @Autowired
     private ConditionalOrderReminderTemplateContent conditionalOrderReminderTemplateContent;
@@ -95,8 +90,6 @@ public class ConditionalOrderReminderTemplateContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
-        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
-        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = conditionalOrderReminderTemplateContent.getTemplateContent(
             caseData,
@@ -144,8 +137,6 @@ public class ConditionalOrderReminderTemplateContentIT {
         expectedEntries.put(COURTS_AND_TRIBUNALS_SERVICE_HEADER, COURTS_AND_TRIBUNALS_SERVICE_HEADER_TEXT);
         expectedEntries.put(PHONE_AND_OPENING_TIMES, PHONE_AND_OPENING_TIMES_TEXT);
         expectedEntries.put(CTSC_CONTACT_DETAILS, ctscContactDetails);
-        expectedEntries.put(HMCTS_LOGO,  HMCTS_LOGO_TEXT);
-        expectedEntries.put(FAMILY_COURT_LOGO, FAMILY_COURT_LOGO_TEXT);
 
         Map<String, Object> templateContent = conditionalOrderReminderTemplateContent.getTemplateContent(
             caseData,
