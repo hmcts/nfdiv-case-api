@@ -107,7 +107,6 @@ public class SolicitorAmendBailiffServiceApplication implements CCDConfig<CaseDa
         final Applicant applicant1 = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
 
-        applicant1.getInterimApplicationOptions().setDraftApplicationAction(null);
         applicant2.setNonConfidentialAddress(null);
 
         serviceApplicationBuilderService.submitFromInterimOptions(details.getId(), caseData, applicant1);
