@@ -14,7 +14,7 @@ public class BailiffServicePaymentMethodPage implements CcdPageConfiguration {
     private static final String BAILIFF_SERVICE_LABEL = """
             ## Request bailiff service (D89)
 
-            Request to have the papers service on the respondent by a county court bailiff.
+            Request to have the papers served on the respondent by a county court bailiff.
 
             Court bailiffs can only serve documents to an address in England or Wales where postal delivery has
             already been tried.
