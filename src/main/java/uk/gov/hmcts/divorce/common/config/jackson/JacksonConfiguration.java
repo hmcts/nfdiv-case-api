@@ -122,6 +122,9 @@ public class JacksonConfiguration {
         SimpleModule deserialization = new SimpleModule();
         deserialization.addDeserializer(HasRole.class, new HasRoleDeserializer());
         deserialization.addDeserializer(InternalHealth.class, new InternalHealthDeserializer());
+        deserialization.addDeserializer(AddressGlobalUK.class, new Jackson2AddressGlobalUKDeserializer());
+        deserialization.addDeserializer(DynamicList.class, new Jackson2DynamicListDeserializer());
+        deserialization.addDeserializer(OrderSummary.class, new Jackson2OrderSummaryDeserializer());
         deserialization.addDeserializer(DivorceDocument.class, new DivorceDocumentDeserializer());
         deserialization.addDeserializer(OrganisationPolicy.class, new Jackson2OrganisationPolicyDeserializer());
         mapper.registerModule(deserialization);
@@ -252,6 +255,89 @@ public class JacksonConfiguration {
 
             Map<String, Object> policy = parser.readValueAs(Map.class);
             return createOrganisationPolicy(policy);
+        }
+    }
+
+    private static class Jackson2AddressGlobalUKDeserializer extends StdDeserializer<AddressGlobalUK> {
+
+        Jackson2AddressGlobalUKDeserializer() {
+            super(AddressGlobalUK.class);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public AddressGlobalUK deserialize(
+            com.fasterxml.jackson.core.JsonParser parser,
+            com.fasterxml.jackson.databind.DeserializationContext context
+        ) throws IOException {
+            Map<String, Object> address = parser.readValueAs(Map.class);
+            return new AddressGlobalUK(
+                (String) address.get("AddressLine1"),
+                (String) address.get("AddressLine2"),
+                (String) address.get("AddressLine3"),
+                (String) address.get("PostTown"),
+                (String) address.get("County"),
+                (String) address.get("PostCode"),
+                (String) address.get("Country")
+            );
+        }
+    }
+
+    private static class Jackson2OrderSummaryDeserializer extends StdDeserializer<OrderSummary> {
+
+        Jackson2OrderSummaryDeserializer() {
+            super(OrderSummary.class);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public OrderSummary deserialize(
+            com.fasterxml.jackson.core.JsonParser parser,
+            com.fasterxml.jackson.databind.DeserializationContext context
+        ) throws IOException {
+            Map<String, Object> summary = parser.readValueAs(Map.class);
+            List<Map<String, Object>> feeItems = (List<Map<String, Object>>) summary.get("Fees");
+            List<ListValue<Fee>> fees = null;
+            if (feeItems != null) {
+                fees = new ArrayList<>();
+                for (Map<String, Object> feeItem : feeItems) {
+                    Map<String, Object> feeData = (Map<String, Object>) feeItem.get("value");
+                    Fee fee = new Fee(
+                        (String) feeData.get("FeeAmount"),
+                        (String) feeData.get("FeeCode"),
+                        (String) feeData.get("FeeDescription"),
+                        (String) feeData.get("FeeVersion")
+                    );
+                    fees.add(new ListValue<>((String) feeItem.get("id"), fee));
+                }
+            }
+            return new OrderSummary(
+                (String) summary.get("PaymentReference"),
+                fees,
+                (String) summary.get("PaymentTotal")
+            );
+        }
+    }
+
+    private static class Jackson2DynamicListDeserializer extends StdDeserializer<DynamicList> {
+
+        Jackson2DynamicListDeserializer() {
+            super(DynamicList.class);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public DynamicList deserialize(
+            com.fasterxml.jackson.core.JsonParser parser,
+            com.fasterxml.jackson.databind.DeserializationContext context
+        ) throws IOException {
+            Map<String, Object> dynamicList = parser.readValueAs(Map.class);
+            DynamicListElement value = createDynamicListElement((Map<String, Object>) dynamicList.get("value"));
+            List<Map<String, Object>> itemData = (List<Map<String, Object>>) dynamicList.get("list_items");
+            List<DynamicListElement> items = itemData == null
+                ? null
+                : itemData.stream().map(JacksonConfiguration::createDynamicListElement).toList();
+            return new DynamicList(value, items);
         }
     }
 
