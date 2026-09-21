@@ -171,13 +171,13 @@ public final class ValidationUtil {
 
         if (caseData.getApplication().getApplicant1ScreenHasMarriageBroken() != null
             && !caseData.getApplication().getApplicant1ScreenHasMarriageBroken().toBoolean()) {
-            errors.add("To continue, applicant 1 must believe and declare that their marriage has irretrievably broken");
+            errors.add("To continue, applicant 1 must believe and declare that their marriage has irretrievably broken down.");
         }
 
         if (caseData.getApplicationType() == ApplicationType.JOINT_APPLICATION
             && caseData.getApplication().getApplicant2ScreenHasMarriageBroken() != null
             && !caseData.getApplication().getApplicant2ScreenHasMarriageBroken().toBoolean()) {
-            errors.add("To continue, applicant 2 must believe and declare that their marriage has irretrievably broken");
+            errors.add("To continue, applicant 2 must believe and declare that their marriage has irretrievably broken down.");
         }
 
         return errors.isEmpty() ? Collections.emptyList() : errors;

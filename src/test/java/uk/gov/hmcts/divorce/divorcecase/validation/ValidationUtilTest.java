@@ -862,7 +862,7 @@ class ValidationUtilTest {
 
         assertThat(errors).isNotEmpty();
         assertThat(errors).hasSize(1);
-        assertThat(errors).contains("To continue, applicant 1 must believe and declare that their marriage has irretrievably broken");
+        assertThat(errors).contains("To continue, applicant 1 must believe and declare that their marriage has irretrievably broken down.");
     }
 
     @Test
@@ -876,7 +876,7 @@ class ValidationUtilTest {
 
         assertThat(errors).isNotEmpty();
         assertThat(errors).hasSize(1);
-        assertThat(errors).contains("To continue, applicant 2 must believe and declare that their marriage has irretrievably broken");
+        assertThat(errors).contains("To continue, applicant 2 must believe and declare that their marriage has irretrievably broken down.");
     }
 
     @Test
