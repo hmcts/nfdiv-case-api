@@ -15,8 +15,7 @@ class CoreCaseDataConfiguration {
     }
 
     @Bean
-    SearchCriteria searchCriteria(ObjectMapper objectMapper) {
+    SearchCriteria searchCriteria(tools.jackson.databind.ObjectMapper objectMapper) {
         return new SearchCriteria(objectMapper);
     }
 }
-

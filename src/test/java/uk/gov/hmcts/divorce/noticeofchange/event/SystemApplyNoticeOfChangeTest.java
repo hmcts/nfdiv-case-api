@@ -3,6 +3,7 @@ package uk.gov.hmcts.divorce.noticeofchange.event;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -262,7 +262,7 @@ class SystemApplyNoticeOfChangeTest {
 
     private Map<String, Object> expectedData(final CaseData caseData) {
 
-        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build();
+        ObjectMapper objectMapper = JsonMapper.builder().build();
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         return objectMapper.convertValue(caseData, new TypeReference<>() {
         });

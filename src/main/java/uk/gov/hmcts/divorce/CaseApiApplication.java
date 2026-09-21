@@ -7,6 +7,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import uk.gov.hmcts.divorce.document.DocAssemblyClient;
@@ -25,12 +27,16 @@ import uk.gov.hmcts.reform.ccd.client.CaseUserApi;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.document.am.feign.CaseDocumentClientApi;
 import uk.gov.hmcts.reform.idam.client.IdamApi;
+import uk.gov.hmcts.reform.sendletter.SendLetterAutoConfiguration;
+import uk.gov.hmcts.reform.sendletter.api.proxy.SendLetterApiProxy;
 
 import java.util.TimeZone;
 
-@SpringBootApplication(
-    scanBasePackages = {"uk.gov.hmcts.ccd.sdk", "uk.gov.hmcts.divorce", "uk.gov.hmcts.reform.idam.client",
-        "uk.gov.hmcts.reform.sendletter", "uk.gov.hmcts.reform.ccd.document.am.feign","uk.gov.hmcts.divorce.idam"}
+@SpringBootApplication(excludeName = "uk.gov.hmcts.reform.sendletter.SendLetterAutoConfiguration")
+@ComponentScan(
+    basePackages = {"uk.gov.hmcts.ccd.sdk", "uk.gov.hmcts.divorce", "uk.gov.hmcts.reform.idam.client",
+        "uk.gov.hmcts.reform.sendletter", "uk.gov.hmcts.reform.ccd.document.am.feign", "uk.gov.hmcts.divorce.idam"},
+    excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SendLetterAutoConfiguration.class)
 )
 @EnableFeignClients(
     clients = {
@@ -48,7 +54,8 @@ import java.util.TimeZone;
         PbaRefDataClient.class,
         PaymentPbaClient.class,
         CaseEventsApi.class,
-        PaymentClient.class
+        PaymentClient.class,
+        SendLetterApiProxy.class
     }
 )
 @EnableScheduling
