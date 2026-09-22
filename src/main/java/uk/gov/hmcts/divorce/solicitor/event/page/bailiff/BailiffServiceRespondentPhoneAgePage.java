@@ -1,11 +1,18 @@
 package uk.gov.hmcts.divorce.solicitor.event.page.bailiff;
 
+import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.BailiffServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.State;
+
+import java.time.LocalDate;
+import java.util.Collections;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -24,6 +31,8 @@ public class BailiffServiceRespondentPhoneAgePage implements CcdPageConfiguratio
     private static final String RESPONDENTS_APPROX_AGE_LABEL = "Respondent's approximate age";
     private static final String RESPONDENTS_APPROX_AGE_HINT = "For example, 65 years old";
 
+    private static final String ERROR_FUTURE_DOB = "The respondents date of birth must be in the past.";
+
     @Override
     public void addTo(PageBuilder pageBuilder) {
         addWithShowCondition(pageBuilder, ALWAYS_SHOW);
@@ -32,7 +41,7 @@ public class BailiffServiceRespondentPhoneAgePage implements CcdPageConfiguratio
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
 
-        var page = pageBuilder.page("bailiffServiceRespPhoneAgePage");
+        var page = pageBuilder.page("bailiffServiceRespPhoneAgePage", this::midEvent);
         if (isNotBlank(pageShowCondition)) {
             page.showCondition(pageShowCondition);
         }
@@ -76,4 +85,30 @@ public class BailiffServiceRespondentPhoneAgePage implements CcdPageConfiguratio
             .done()
             .done();
     }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(
+        CaseDetails<CaseData, State> caseDetails,
+        CaseDetails<CaseData, State> beforeDetails
+    ) {
+        final BailiffServiceJourneyOptions bailiffServiceJourneyOptions =
+            caseDetails.getData().getApplicant1().getInterimApplicationOptions().getBailiffServiceJourneyOptions();
+
+        if (YesOrNo.NO.equals(bailiffServiceJourneyOptions.getBailiffKnowPartnersDateOfBirth())) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseDetails.getData())
+                .build();
+        }
+
+        if (bailiffServiceJourneyOptions.getBailiffPartnersDateOfBirth().isAfter(LocalDate.now())) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseDetails.getData())
+                .errors(Collections.singletonList(ERROR_FUTURE_DOB))
+                .build();
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseDetails.getData())
+            .build();
+    }
+
 }
