@@ -12,6 +12,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import uk.gov.hmcts.ccd.sdk.api.HasRole;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
+import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.reform.ccd.document.am.healthcheck.InternalHealth;
 
 import static com.fasterxml.jackson.core.JsonGenerator.Feature.AUTO_CLOSE_JSON_CONTENT;
@@ -34,6 +38,10 @@ public class JacksonConfiguration {
         SimpleModule deserialization = new SimpleModule();
         deserialization.addDeserializer(HasRole.class, new HasRoleDeserializer());
         deserialization.addDeserializer(AddressGlobalUK.class, new AddressGlobalUKDeserializer());
+        deserialization.addDeserializer(DynamicList.class, new DynamicListDeserializer());
+        deserialization.addDeserializer(OrderSummary.class, new OrderSummaryDeserializer());
+        deserialization.addDeserializer(OrganisationPolicy.class, new OrganisationPolicyDeserializer());
+        deserialization.addDeserializer(DivorceDocument.class, new DivorceDocumentDeserializer());
         deserialization.addDeserializer(InternalHealth.class, new InternalHealthDeserializer());
         mapper.registerModule(deserialization);
 

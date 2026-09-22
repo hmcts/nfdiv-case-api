@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -108,8 +107,7 @@ public class SystemUpdateCaseWithCourtHearingIT {
     @MockitoBean
     private BulkPrintService bulkPrintService;
 
-    @Captor
-    private ArgumentCaptor<Print> printCaptor;
+    private final ArgumentCaptor<Print> printCaptor = ArgumentCaptor.forClass(Print.class);
 
     @BeforeAll
     static void setUp() {

@@ -3,8 +3,12 @@ package uk.gov.hmcts.divorce.common.config.jackson;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
+import uk.gov.hmcts.ccd.sdk.type.Organisation;
+import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,6 +53,33 @@ class JacksonCompatibilityTest {
             .extracting(AddressGlobalUK::getAddressLine1, AddressGlobalUK::getPostTown,
                 AddressGlobalUK::getPostCode, AddressGlobalUK::getCountry)
             .containsExactly("applicant 2 line", "applicant 2 town", "A2", "UK");
+    }
+
+    @Test
+    void roundTripsOrganisationPolicyWithJackson2() throws Exception {
+        ObjectMapper mapper = new JacksonConfiguration().getMapper();
+        OrganisationPolicy<UserRole> source = OrganisationPolicy.<UserRole>builder()
+            .organisation(Organisation.builder().organisationId("Org").organisationName("Organisation").build())
+            .orgPolicyReference("reference")
+            .prepopulateToUsersOrganisation(YesOrNo.YES)
+            .orgPolicyCaseAssignedRole(UserRole.APPLICANT_2_SOLICITOR)
+            .build();
+
+        String json = mapper.writeValueAsString(source);
+        OrganisationPolicy<?> restored = mapper.readValue(json, OrganisationPolicy.class);
+
+        assertThat(json)
+            .contains("\"OrganisationID\":\"Org\"")
+            .contains("\"OrganisationName\":\"Organisation\"")
+            .contains("\"OrgPolicyReference\":\"reference\"")
+            .contains("\"PrepopulateToUsersOrganisation\":\"Yes\"")
+            .contains("\"OrgPolicyCaseAssignedRole\":\"[APPTWOSOLICITOR]\"");
+        assertThat(restored.getOrganisation())
+            .extracting(Organisation::getOrganisationId, Organisation::getOrganisationName)
+            .containsExactly("Org", "Organisation");
+        assertThat(restored.getOrgPolicyReference()).isEqualTo("reference");
+        assertThat(restored.getPrepopulateToUsersOrganisation()).isEqualTo(YesOrNo.YES);
+        assertThat(restored.getOrgPolicyCaseAssignedRole()).isEqualTo(UserRole.APPLICANT_2_SOLICITOR);
     }
 
     private static AddressGlobalUK address(String line1, String town, String postCode, String country) {
