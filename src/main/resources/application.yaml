@@ -19,12 +19,14 @@ management:
 spring:
   application:
     name: NFDIV Case API
+  autoconfigure:
+    exclude: uk.gov.hmcts.reform.ccd.client.CoreCaseDataClientAutoConfiguration
   config:
     import: "optional:configtree:/mnt/secrets/nfdiv/"
   http:
     converters:
       preferred-json-mapper: jackson2
-  jackson:
+  jackson2:
     deserialization:
       fail-on-null-for-primitives: false
   main:

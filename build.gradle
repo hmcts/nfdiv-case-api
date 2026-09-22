@@ -300,7 +300,7 @@ dependencies {
     exclude group: 'org.apache.poi', module: 'poi'
     exclude group: 'com.launchdarkly', module: 'launchdarkly-java-server-sdk'
   }
-  implementation(group: 'com.github.hmcts', name: 'core-case-data-store-client', version: '6.1.0') {
+  implementation(group: 'com.github.hmcts', name: 'core-case-data-store-client', version: '5.3.0') {
     exclude group: 'org.springframework.boot', module: 'spring-boot-jackson'
   }
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '4.0.0'
