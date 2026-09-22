@@ -24,7 +24,7 @@ public class JacksonConfiguration {
     @Primary
     @Bean
     public ObjectMapper getMapper() {
-        ObjectMapper mapper = JsonMapper.builder()
+        final ObjectMapper mapper = JsonMapper.builder()
             .configure(ACCEPT_CASE_INSENSITIVE_ENUMS, true)
             .enable(INFER_BUILDER_TYPE_BINDINGS)
             .disable(AUTO_CLOSE_JSON_CONTENT)
