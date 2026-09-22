@@ -635,5 +635,15 @@ public enum State {
         Rejected,
         Archived
     ));
+
+    public static final EnumSet<State> SOLICITOR_SERVICE_APPLICATION_STATES = EnumSet.of(
+        AosOverdue,
+        AwaitingHWFDecision,
+        AwaitingDocuments,
+        AwaitingRequestedInformation,
+        NewPaperCase,
+        RequestedInformationSubmitted,
+        Submitted
+    );
 }
 

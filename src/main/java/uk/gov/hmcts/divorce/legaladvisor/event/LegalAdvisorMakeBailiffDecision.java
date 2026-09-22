@@ -8,7 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
+import uk.gov.hmcts.divorce.common.notification.ServiceApplicationDecisionNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -50,7 +50,7 @@ public class LegalAdvisorMakeBailiffDecision implements CCDConfig<CaseData, Stat
 
     private final Clock clock;
 
-    private final ServiceApplicationNotification serviceApplicationNotification;
+    private final ServiceApplicationDecisionNotification serviceApplicationDecisionNotification;
 
     private final NotificationDispatcher notificationDispatcher;
 
@@ -123,8 +123,8 @@ public class LegalAdvisorMakeBailiffDecision implements CCDConfig<CaseData, Stat
                 BAILIFF_APPLICATION_APPROVED_FILE_NAME
             );
 
-            log.info("Sending ServiceApplicationNotification (granted) case ID: {}", details.getId());
-            notificationDispatcher.send(serviceApplicationNotification, caseDataCopy, details.getId());
+            log.info("Sending serviceApplicationDecisionNotification (granted) case ID: {}", details.getId());
+            notificationDispatcher.send(serviceApplicationDecisionNotification, caseDataCopy, details.getId());
         } else {
             endState = BailiffRefused;
         }
