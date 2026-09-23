@@ -4,7 +4,7 @@ Enter a description.
 
 ### JIRA link (if applicable) ###
 
-https://tools.hmcts.net/jira/browse/NFDIV-
+https://hmcts.atlassian.net/browse/NFDIV-
 
 ### Pull request checklist ###
 
