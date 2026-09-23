@@ -26,6 +26,7 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
+import static uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType.PRIVATE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -35,6 +36,8 @@ import static uk.gov.hmcts.divorce.solicitor.event.SolicitorAmendBailiffServiceA
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicant2WithAddress;
+import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getApplicantWithAddress;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorAmendBailiffServiceApplicationTest {
@@ -157,5 +160,40 @@ class SolicitorAmendBailiffServiceApplicationTest {
 
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorAmendBailiffServiceApplication.aboutToStart(details);
         assertThat(response.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldNotPopulateNonConfidentialAddressWhenApplicant2IsConfidential() {
+        final Applicant applicant2 = getApplicant2WithAddress();
+        applicant2.setContactDetailsType(PRIVATE);
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(applicant2)
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorAmendBailiffServiceApplication.aboutToStart(details);
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getData().getApplicant2().getNonConfidentialAddress()).isNull();
+    }
+
+    @Test
+    void shouldPopulateNonConfidentialAddressWhenApplicant2IsNotConfidential() {
+        final Applicant applicant2 = getApplicant2WithAddress();
+
+        final CaseData caseData = CaseData.builder()
+            .applicant2(applicant2)
+            .build();
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorAmendBailiffServiceApplication.aboutToStart(details);
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getData().getApplicant2().getNonConfidentialAddress()).isNotNull();
     }
 }
