@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.common.config.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import uk.gov.hmcts.ccd.sdk.jackson.UnwrappedPrefixModule;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.Organisation;
 import uk.gov.hmcts.ccd.sdk.type.OrganisationPolicy;
@@ -16,7 +17,7 @@ class JacksonCompatibilityTest {
 
     @Test
     void serializesSdkAddressPropertiesWithJackson2() throws Exception {
-        ObjectMapper mapper = new JacksonConfiguration().getMapper();
+        ObjectMapper mapper = mapper();
 
         String json = mapper.writeValueAsString(address("line 1", "town", "postcode", "UK"));
 
@@ -29,7 +30,7 @@ class JacksonCompatibilityTest {
 
     @Test
     void roundTripsPrefixedApplicantAddressesWithJackson2() throws Exception {
-        ObjectMapper mapper = new JacksonConfiguration().getMapper();
+        ObjectMapper mapper = mapper();
         CaseData source = CaseData.builder()
             .applicant1(Applicant.builder()
                 .address(address("applicant 1 line", "applicant 1 town", "A1", "UK"))
@@ -57,7 +58,7 @@ class JacksonCompatibilityTest {
 
     @Test
     void roundTripsOrganisationPolicyWithJackson2() throws Exception {
-        ObjectMapper mapper = new JacksonConfiguration().getMapper();
+        ObjectMapper mapper = mapper();
         OrganisationPolicy<UserRole> source = OrganisationPolicy.<UserRole>builder()
             .organisation(Organisation.builder().organisationId("Org").organisationName("Organisation").build())
             .orgPolicyReference("reference")
@@ -80,6 +81,11 @@ class JacksonCompatibilityTest {
         assertThat(restored.getOrgPolicyReference()).isEqualTo("reference");
         assertThat(restored.getPrepopulateToUsersOrganisation()).isEqualTo(YesOrNo.YES);
         assertThat(restored.getOrgPolicyCaseAssignedRole()).isEqualTo(UserRole.APPLICANT_2_SOLICITOR);
+    }
+
+    private static ObjectMapper mapper() {
+        // The SDK registers this module on every ObjectMapper bean; this test builds the mapper outside Spring.
+        return new JacksonConfiguration().getMapper().registerModule(new UnwrappedPrefixModule());
     }
 
     private static AddressGlobalUK address(String line1, String town, String postCode, String country) {
