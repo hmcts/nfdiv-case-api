@@ -93,13 +93,8 @@ public class BailiffServiceRespondentPhoneAgePage implements CcdPageConfiguratio
         final BailiffServiceJourneyOptions bailiffServiceJourneyOptions =
             caseDetails.getData().getApplicant1().getInterimApplicationOptions().getBailiffServiceJourneyOptions();
 
-        if (YesOrNo.NO.equals(bailiffServiceJourneyOptions.getBailiffKnowPartnersDateOfBirth())) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseDetails.getData())
-                .build();
-        }
-
-        if (bailiffServiceJourneyOptions.getBailiffPartnersDateOfBirth().isAfter(LocalDate.now())) {
+        if (YesOrNo.YES.equals(bailiffServiceJourneyOptions.getBailiffKnowPartnersDateOfBirth())
+            && bailiffServiceJourneyOptions.getBailiffPartnersDateOfBirth().isAfter(LocalDate.now())) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseDetails.getData())
                 .errors(Collections.singletonList(ERROR_FUTURE_DOB))
