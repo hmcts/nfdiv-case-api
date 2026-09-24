@@ -56,7 +56,7 @@ public class SolicitorDraftGeneralApplicationApplicant2 implements CCDConfig<Cas
                 new GeneralApplicationD11Page5(CaseData::getApplicant2, "applicant2"),
                 new GeneralApplicationD11Page6("applicant2"),
                 new GeneralApplicationD11Page7("applicant2"),
-                new GeneralApplicationD11Page8(CaseData::getApplicant1, CaseData::getApplicant2),
+                new GeneralApplicationD11Page8(CaseData::getApplicant2, CaseData::getApplicant1),
                 new GeneralApplicationD11Page9("applicant2")
         );
 
