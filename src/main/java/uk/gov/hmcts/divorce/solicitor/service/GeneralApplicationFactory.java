@@ -28,7 +28,7 @@ public class GeneralApplicationFactory {
             .generalApplicationParty(GeneralParties.from(isApplicant1, applicationType))
             .generalApplicationReceivedDate(LocalDateTime.now(clock))
             .generalApplicationType(mapByLabel(journeyOptions.getGeneralApplicationD11JourneyOptions().getSolType()))
-            .generalApplicationOtherTypeDetails(journeyOptions.getOtherGeneralApplicationTypeDetails())
+            .generalApplicationOtherTypeDetails(journeyOptions.getGeneralApplicationD11JourneyOptions().getTypeOtherDetails())
             .generalApplicationSubmittedOnline(YesOrNo.YES)
             .generalApplicationDocuments(submissionService.collectSupportingDocuments(journeyOptions))
             .build();

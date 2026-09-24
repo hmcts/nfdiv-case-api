@@ -87,8 +87,7 @@ public class GeneralApplicationD11JourneyOptions implements ApplicationAnswers {
 
     @CCD(
         label = "Why are you making this application?",
-        hint= "Provide as much information as you can. This will help the court decide whether to grant your \n" +
-                "application.",
+        hint = "Provide as much information as you can. This will help the court decide whether to grant your application.",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false

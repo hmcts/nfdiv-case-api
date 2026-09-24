@@ -31,7 +31,8 @@ public class GeneralApplicationD11Page2 implements CcdPageConfiguration {
         """;
 
     public static final String STATEMENT_HINT = """
-        You should provide as much detail as you can. Your statement and any evidence you provide will help the court decide whether to grant your application.
+        You should provide as much detail as you can. Your statement and any evidence you provide will help the court decide whether to
+        grant your application.
         """;
 
     @Override

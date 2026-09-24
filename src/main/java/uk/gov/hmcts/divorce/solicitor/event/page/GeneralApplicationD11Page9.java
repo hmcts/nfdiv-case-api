@@ -16,7 +16,7 @@ public class GeneralApplicationD11Page9 implements CcdPageConfiguration {
         ## We need up to date information for the other party
 
         You can <a href="https://contact-us-about-a-divorce-application.form.service.justice.gov.uk/"
-                                 target="_blank" rel="noopener noreferrer">update their details using our online form (opens in new tab)</a>.
+                                target="_blank" rel="noopener noreferrer">update their details using our online form (opens in new tab)</a>.
 
         You could also contact them and ask them to update their details, if it’s safe to do so.
         """;

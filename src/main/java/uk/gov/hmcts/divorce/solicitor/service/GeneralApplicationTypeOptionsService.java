@@ -51,7 +51,7 @@ public class GeneralApplicationTypeOptionsService {
     private boolean isRespondentSolicitor(CaseData data) {
         Applicant applicant2 = data.getApplicant2();
         return data.getApplicationType() == ApplicationType.SOLE_APPLICATION
-            && applicant2 != null
+            && null != applicant2
             && YesOrNo.YES.equals(applicant2.getSolicitorRepresented());
     }
 
