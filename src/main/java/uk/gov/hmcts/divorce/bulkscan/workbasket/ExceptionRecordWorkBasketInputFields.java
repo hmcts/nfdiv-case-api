@@ -11,6 +11,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import java.util.List;
 
 import static java.util.List.of;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.CONTAINS_PAYMENTS;
+import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.FORM_TYPE;
 
 @Component
 public class ExceptionRecordWorkBasketInputFields implements CCDConfig<ExceptionRecord, ExceptionRecordState, UserRole> {
@@ -18,8 +20,8 @@ public class ExceptionRecordWorkBasketInputFields implements CCDConfig<Exception
     @Override
     public void configure(final ConfigBuilder<ExceptionRecord, ExceptionRecordState, UserRole> configBuilder) {
         final List<SearchField<UserRole>> workBasketFieldList = of(
-            SearchField.<UserRole>builder().label("Form type").id("formType").build(),
-            SearchField.<UserRole>builder().label("Contains payments").id("containsPayments").build()
+            SearchField.<UserRole>builder().label("Form type").id(FORM_TYPE).build(),
+            SearchField.<UserRole>builder().label("Contains payments").id(CONTAINS_PAYMENTS).build()
         );
 
         configBuilder.workBasketInputFields().fields(workBasketFieldList);

@@ -19,10 +19,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
+import uk.gov.hmcts.divorce.document.DocumentConstants;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.payment.service.PaymentService;
 import uk.gov.hmcts.divorce.testutil.CdamWireMock;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
+import uk.gov.hmcts.divorce.testutil.DocTemplateResolver;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.SendLetterWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -102,6 +104,9 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private DocTemplateResolver docTemplateResolver;
+
     @MockitoBean
     private WebMvcConfig webMvcConfig;
 
@@ -135,6 +140,10 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
 
     @Test
     void shouldSendLettersToOfflineApplicantsInJointCase() throws Exception {
+        final String coversheetApplicant =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.COVERSHEET_APPLICANT);
+        final String finalOrderCanApplyTemplateId =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.FINAL_ORDER_CAN_APPLY_TEMPLATE_ID);
 
         final CaseData caseData = validJointApplicant1CaseData();
         caseData.getApplicant1().setEmail(null);
@@ -152,8 +161,8 @@ public class SystemProgressCaseToAwaitingFinalOrderIT {
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(COVERSHEET_DOC_ID, "NFD_Applicant_Coversheet.docx");
-        stubForDocAssemblyWith(CAN_APPLY_FOR_FINAL_ORDER_DOC_ID, "FL-NFD-GOR-ENG-Can-Apply-Final-Order_V7.docx");
+        stubForDocAssemblyWith(COVERSHEET_DOC_ID, coversheetApplicant);
+        stubForDocAssemblyWith(CAN_APPLY_FOR_FINAL_ORDER_DOC_ID, finalOrderCanApplyTemplateId);
         stubApplyForFinalOrderPackSendLetter();
 
         final Document document = Document.builder().build();

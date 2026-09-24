@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.common.config.EmailTemplatesConfig;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.document.content.DocmosisCommonContent;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -19,6 +20,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DISSOLUTIO
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_DIVORCE_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SIGN_IN_URL;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_NAME;
+import static uk.gov.hmcts.divorce.notification.CommonContent.SOLICITOR_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.SUBMISSION_RESPONSE_DATE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.JOINT_APPLICANT1_APPLICANT1_CHANGES_MADE;
@@ -37,6 +39,8 @@ public class Applicant1ResubmitNotification implements ApplicantNotification {
     private final NotificationService notificationService;
 
     private final CommonContent commonContent;
+
+    private final DocmosisCommonContent docmosisCommonContent;
 
     private final EmailTemplatesConfig configVars;
 
@@ -119,6 +123,9 @@ public class Applicant1ResubmitNotification implements ApplicantNotification {
         templateVars.put(IS_DIVORCE, caseData.isDivorce() ? YES : NO);
         templateVars.put(IS_DISSOLUTION, !caseData.isDivorce() ? YES : NO);
         templateVars.put(SOLICITOR_NAME, applicant2.getSolicitor().getName());
+        templateVars.put(SOLICITOR_REFERENCE, docmosisCommonContent.getSolicitorReference(
+            applicant2.getSolicitor(),
+            applicant2.getLanguagePreference()));
         templateVars.put(SIGN_IN_URL, commonContent.getProfessionalUsersSignInUrl(id));
 
         return templateVars;

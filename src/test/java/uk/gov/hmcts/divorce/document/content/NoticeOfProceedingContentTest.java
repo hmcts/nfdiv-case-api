@@ -118,6 +118,7 @@ import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YO
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_APPLICATION_TO_END_YOUR_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_DIVORCE;
 import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent.YOUR_DIVORCE_CY;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent.ADD_FO_LETTER_CONTENT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -331,6 +332,91 @@ class NoticeOfProceedingContentTest {
                         entry(IS_OFFLINE, false),
                         entry(IS_RESPONDENT_EMAIL_PRESENT, false),
                         entry(IS_REISSUED_OFFLINE_AS_AOS, false)
+            );
+    }
+
+    @Test
+    public void shouldSuccessfullyApplyDivorceContentForNoticeOfProceedingsWelshAndFORequested() {
+        CaseData caseData = caseData();
+        caseData.getApplicant1().setFirstName(TEST_FIRST_NAME);
+        caseData.getApplicant1().setLastName(TEST_LAST_NAME);
+        caseData.getApplicant1().setGender(MALE);
+        caseData.getApplicant1().setFinancialOrder(YES);
+        caseData.getApplicant2().setGender(FEMALE);
+        caseData.getApplicant2().setFirstName(APPLICANT_2_FIRST_NAME);
+        caseData.getApplicant2().setLastName(APPLICANT_2_LAST_NAME);
+        caseData.getApplicant2().setAddress(
+            AddressGlobalUK
+                .builder()
+                .addressLine1("line1")
+                .addressLine2("line2")
+                .country("Germany")
+                .build()
+        );
+        caseData.getApplicant2().setLanguagePreferenceWelsh(YES);
+        caseData.getApplicant2().setAddressOverseas(YES);
+        caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
+        caseData.getApplication().setIssueDate(LocalDate.of(2021, 6, 18));
+        caseData.setCaseInvite(
+            new CaseInvite("app2@email.com", "ACCESS_CODE", "app2_id")
+        );
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(caseData.getApplicant2().getLanguagePreference()))
+            .thenReturn(getBasicDocmosisTemplateContentWithCtscContactDetails(WELSH));
+
+        when(commonContent.getPartner(caseData, caseData.getApplicant2(), WELSH)).thenReturn("priod");
+        when(holdingPeriodService.getDueDateFor(LocalDate.of(2021, 6, 18)))
+            .thenReturn(LocalDate.of(2021, 11, 6));
+
+        Map<String, Object> templateContent = noticeOfProceedingContent.apply(
+            caseData,
+            TEST_CASE_ID,
+            caseData.getApplicant2(),
+            WELSH);
+
+        assertThat(templateContent)
+            .contains(
+                entry(CASE_REFERENCE, formatId(1616591401473378L)),
+                entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
+                entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
+                entry(ISSUE_DATE, "18 June 2021"),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_EMAIL, CONTACT_DIVORCE_EMAIL),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_PROCEEDINGS, DIVORCE_PROCEEDINGS_CY),
+                entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP, FOR_A_DIVORCE_CY),
+                entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP_APPLICATION, DIVORCE_APPLICATION_CY),
+                entry(DIVORCE_OR_END_CIVIL_PARTNERSHIP_PROCESS, DIVORCE_PROCESS_CY),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_APPLICATION, YOUR_DIVORCE_CY),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP, DIVORCE_CY),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_URL, DIVORCE_URL),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE, DIVORCE_SERVICE),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_SERVICE_HEADER, THE_DIVORCE_SERVICE),
+                entry(SUBMISSION_RESPONSE_DATE, "6 November 2021"),
+                entry(DIVORCE_OR_END_A_CIVIL_PARTNERSHIP, DIVORCE_CY),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_PAPERS, DIVORCE_PAPERS),
+                entry(SERVE_PAPERS_BEFORE_DATE, "16 July 2021"),
+                entry(DIVORCE_OR_END_YOUR_CIVIL_PARTNERSHIP, DIVORCE_CY),
+                entry(BEEN_MARRIED_OR_ENTERED_INTO_CIVIL_PARTNERSHIP, BEEN_MARRIED_TO),
+                entry(MARRIAGE_OR_CIVIL_PARTNER, MARRIAGE_CY),
+                entry("ctscContactDetails", getCtscContactDetails()),
+                entry(APPLICANT_2_ADDRESS, "line1\nline2\nGermany"),
+                entry(APPLICANT_1_SOLICITOR_NAME, "Not represented"),
+                entry(DISPLAY_EMAIL_CONFIRMATION, true),
+                entry("applicant2FirstName", APPLICANT_2_FIRST_NAME),
+                entry("applicant2LastName", APPLICANT_2_LAST_NAME),
+                entry(DIVORCE_OR_END_THEIR_CIVIL_PARTNERSHIP, FOR_A_DIVORCE),
+                entry(RESPOND_BY_DATE, "4 July 2021"),
+                entry(IS_COURT_SERVICE, false),
+                entry(IS_PERSONAL_SERVICE, true),
+                entry(ACCESS_CODE, "ACCESS_CODE"),
+                entry(CAN_SERVE_BY_EMAIL, false),
+                entry(IS_RESPONDENT_BASED_IN_UK, false),
+                entry(IS_RESPONDENT_SOLICITOR_PERSONAL_SERVICE, false),
+                entry(IS_DIVORCE, true),
+                entry(DIVORCE_OR_CIVIL_PARTNERSHIP_DOCUMENTS, DIVORCE_DOCUMENTS),
+                entry(IS_OFFLINE, false),
+                entry(IS_RESPONDENT_EMAIL_PRESENT, false),
+                entry(IS_REISSUED_OFFLINE_AS_AOS, false),
+                entry(ADD_FO_LETTER_CONTENT, true)
             );
     }
 

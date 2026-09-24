@@ -490,4 +490,18 @@ class CaseworkerFindMatchesTest {
 
         assertEquals(expectedSplits, result.length);
     }
+
+    @Test
+    void shouldExcludeSingleCharacterNameSegments() {
+        String[] result = caseworkerFindMatches.normalizeAndSplit("firstName m lastName");
+
+        assertThat(result).containsExactly("firstName", "lastName");
+    }
+
+    @Test
+    void shouldPreserveApostrophesWithinNameSegments() {
+        String[] result = caseworkerFindMatches.normalizeAndSplit("O'Connor");
+
+        assertThat(result).containsExactly("O'Connor");
+    }
 }

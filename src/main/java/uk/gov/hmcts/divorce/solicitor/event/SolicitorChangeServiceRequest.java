@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinancialOrderRequestedLetter;
 import uk.gov.hmcts.divorce.caseworker.service.task.SetNoticeOfProceedingDetailsForRespondent;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.notification.ApplicationIssuedNotification;
@@ -73,6 +74,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
     private final AuthTokenGenerator authTokenGenerator;
 
     private final ReIssueApplicationService reIssueApplicationService;
+    private final GenerateFinancialOrderRequestedLetter generateFinancialOrderRequestedLetter;
 
     @Value("${aos_pack.due_date_offset_days}")
     private long dueDateOffsetDays;
@@ -143,7 +145,12 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
         }
 
         log.info("Regenerate NOP for App and Respondent, and D10 for case id: {}", details.getId());
-        caseTasks(generateApplicant1NoticeOfProceeding, generateApplicant2NoticeOfProceedings, generateD10Form).run(details);
+        caseTasks(
+            generateApplicant1NoticeOfProceeding,
+            generateApplicant2NoticeOfProceedings,
+            generateD10Form,
+            generateFinancialOrderRequestedLetter)
+            .run(details);
         State state = application.isCourtServiceMethod() ? AwaitingAos : AwaitingService;
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

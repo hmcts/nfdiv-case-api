@@ -24,8 +24,10 @@ import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.FinalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.HelpWithFees;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.document.DocumentConstants;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
+import uk.gov.hmcts.divorce.testutil.DocTemplateResolver;
 import uk.gov.hmcts.divorce.testutil.FeesWireMock;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.divorce.testutil.PaymentWireMock;
@@ -93,6 +95,9 @@ public class RespondentApplyForFinalOrderIT {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private DocTemplateResolver docTemplateResolver;
+
     @MockitoBean
     private WebMvcConfig webMvcConfig;
 
@@ -132,10 +137,13 @@ public class RespondentApplyForFinalOrderIT {
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
+        final String respondentFinalOrderAnswersTemplateId =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID);
+
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "FL-NFD-GOR-ENG-Respondent_Final_Order_Answers_V1.docx");
+            respondentFinalOrderAnswersTemplateId);
 
         performRespondentApplyForFinalRequest(caseDetails.getData(), ABOUT_TO_SUBMIT_URL)
             .andExpect(status().isOk())
@@ -163,10 +171,13 @@ public class RespondentApplyForFinalOrderIT {
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
+        final String respondentFinalOrderAnswersTemplateId =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID);
+
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "FL-NFD-GOR-ENG-Respondent_Final_Order_Answers_V1.docx");
+            respondentFinalOrderAnswersTemplateId);
 
         performRespondentApplyForFinalRequest(caseDetails.getData(), ABOUT_TO_SUBMIT_URL)
             .andExpect(status().isOk())
@@ -183,10 +194,13 @@ public class RespondentApplyForFinalOrderIT {
 
         when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
+        final String respondentFinalOrderAnswersTemplateId =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.RESPONDENT_FINAL_ORDER_ANSWERS_TEMPLATE_ID);
+
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
         stubForDocAssemblyWith("5cd725e8-f053-4493-9cbe-bb69d1905ae3",
-            "FL-NFD-GOR-ENG-Respondent_Final_Order_Answers_V1.docx");
+            respondentFinalOrderAnswersTemplateId);
 
         performRespondentApplyForFinalRequest(caseDetails.getData(), SUBMITTED_URL).andExpect(status().isOk());
 
