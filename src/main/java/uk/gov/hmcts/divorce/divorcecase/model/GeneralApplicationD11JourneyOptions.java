@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
+import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant1DeleteAccess;
@@ -69,6 +70,14 @@ public class GeneralApplicationD11JourneyOptions implements ApplicationAnswers {
     private GeneralApplicationType type;
 
     @CCD(
+            label = "What application are you making",
+            hint = "Select the type of application you want to apply for.",
+            access = {DefaultAccess.class},
+            searchable = false
+    )
+    private DynamicList solType;
+
+    @CCD(
         label = "Specify, what other application?",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
@@ -77,7 +86,9 @@ public class GeneralApplicationD11JourneyOptions implements ApplicationAnswers {
     private String typeOtherDetails;
 
     @CCD(
-        label = "Why this application?",
+        label = "Why are you making this application?",
+        hint= "Provide as much information as you can. This will help the court decide whether to grant your \n" +
+                "application.",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -85,12 +96,26 @@ public class GeneralApplicationD11JourneyOptions implements ApplicationAnswers {
     private String reason;
 
     @CCD(
-        label = "Statement of evidence",
+        label = "Provide statement",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
     )
     private String statementOfEvidence;
+
+    @CCD(
+            label = "Is this an urgent application?",
+            access = {DefaultAccess.class},
+            searchable = false
+    )
+    private YesOrNo urgentCase;
+
+    @CCD(
+            label = "Why is this an urgent application?",
+            typeOverride = TextArea,
+            searchable = false
+    )
+    private String urgentCaseReason;
 
     @JsonIgnore
     public boolean evidenceOfPartnerSupportRequired() {
