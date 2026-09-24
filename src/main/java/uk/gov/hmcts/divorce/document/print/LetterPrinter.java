@@ -6,12 +6,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetterDetails;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.document.DocumentGenerator;
+import uk.gov.hmcts.divorce.document.GeneralLetterRecipient;
+import uk.gov.hmcts.divorce.document.GeneralLetterRecipientResolver;
 import uk.gov.hmcts.divorce.document.model.LetterPack;
 import uk.gov.hmcts.divorce.document.print.documentpack.DocumentPackInfo;
 import uk.gov.hmcts.divorce.document.print.model.Letter;
@@ -34,6 +34,8 @@ import static uk.gov.hmcts.divorce.document.model.DocumentType.GENERAL_LETTER;
 public class LetterPrinter {
 
     private final DocumentGenerator documentGenerator;
+
+    private final GeneralLetterRecipientResolver generalLetterRecipientResolver;
 
     private final BulkPrintService bulkPrintService;
 
@@ -65,6 +67,7 @@ public class LetterPrinter {
                     caseIdString,
                     letterName,
                     applicant.getFullName(),
+                    applicant.getCorrespondenceAddressWithoutConfidentialCheck(),
                     applicant.getCorrespondenceAddressIsOverseas()
                 );
                 final UUID letterId = bulkPrintService.print(print);
@@ -94,21 +97,9 @@ public class LetterPrinter {
                 documents.addAll(letterDetails.getGeneralLetterAttachmentLinks());
             }
 
-            GeneralParties parties = Optional.ofNullable(firstElement(caseData.getGeneralLetters()))
-                .map(element -> element.getValue().getGeneralLetterParties())
-                .orElse(GeneralParties.OTHER);
-
-            var recipientName = switch (parties) {
-                case RESPONDENT -> caseData.getApplicant2().getFullName();
-                case APPLICANT -> caseData.getApplicant1().getFullName();
-                case OTHER -> parties.name();
-            };
-
-            YesOrNo correspondenceAddressOverseas = switch (parties) {
-                case RESPONDENT -> caseData.getApplicant2().getCorrespondenceAddressIsOverseas();
-                case APPLICANT -> caseData.getApplicant1().getCorrespondenceAddressIsOverseas();
-                case OTHER -> YesOrNo.NO;
-            };
+            final GeneralLetterRecipient recipient = generalLetterRecipientResolver.resolve(
+                caseData, letterDetails.getGeneralLetterParties()
+            );
 
             List<Letter> generalLetters = mapToLetters(documents, GENERAL_LETTER);
             letters.addAll(generalLetters);
@@ -118,8 +109,9 @@ public class LetterPrinter {
                 caseId,
                 caseId,
                 letterName,
-                recipientName,
-                correspondenceAddressOverseas
+                recipient.recipientName(),
+                recipient.recipientAddress(),
+                recipient.correspondenceAddressOverseas()
             );
 
             final UUID letterId = bulkPrintService.print(print);

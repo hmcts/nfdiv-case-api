@@ -228,6 +228,7 @@ public class RegenerateCourtOrdersNotification implements ApplicantNotification 
                 caseIdString,
                 LETTER_TYPE_COURT_ORDERS_REGENERATED,
                 applicant.getFullName(),
+                applicant.getCorrespondenceAddressWithoutConfidentialCheck(),
                 applicant.getAddressOverseas()
             );
 

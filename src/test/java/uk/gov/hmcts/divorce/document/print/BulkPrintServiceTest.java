@@ -47,6 +47,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.SYSTEM_UPDATE_AUTH_TOKEN;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_SERVICE_AUTH_TOKEN;
@@ -59,6 +60,7 @@ class BulkPrintServiceTest {
     private static final String CASE_REFERENCE_NUMBER_KEY = "caseReferenceNumber";
     private static final String CASE_IDENTIFIER_KEY = "caseIdentifier";
     private static final String RECIPIENTS = "recipients";
+    private static final String RECIPIENT_ADDRESS = "123 Test Street";
 
     @Mock
     private SendLetterApi sendLetterApi;
@@ -123,6 +125,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
+            RECIPIENT_ADDRESS,
             YesOrNo.NO
         );
 
@@ -154,6 +157,31 @@ class BulkPrintServiceTest {
             divorceDocumentListValue.getValue().getDocumentLink()
         );
         verify(authTokenGenerator).generate();
+    }
+
+    @Test
+    void shouldSkipPrintingWhenRecipientAddressIsBlank() {
+        final List<String> roles = List.of("caseworker-divorce", "caseworker-divorce-solicitor");
+        final String userId = UUID.randomUUID().toString();
+        final User systemUpdateUser = solicitorUser(roles, userId);
+
+        given(idamService.retrieveSystemUpdateUserDetails()).willReturn(systemUpdateUser);
+        given(authTokenGenerator.generate()).willReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        final Print print = new Print(
+            List.of(),
+            "1234",
+            "5678",
+            "letterType",
+            "Test User",
+            "   ",
+            YesOrNo.NO
+        );
+
+        final UUID letterId = bulkPrintService.print(print);
+
+        assertThat(letterId).isNull();
+        verifyNoInteractions(sendLetterApi, documentManagementClient);
     }
 
     @Test
@@ -198,6 +226,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
+            RECIPIENT_ADDRESS,
             YesOrNo.NO
         );
 
@@ -274,6 +303,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
+            RECIPIENT_ADDRESS,
             YesOrNo.NO
         );
 
@@ -353,6 +383,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
+            RECIPIENT_ADDRESS,
             YesOrNo.NO
         );
 
@@ -409,6 +440,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
+            RECIPIENT_ADDRESS,
             YesOrNo.NO
         );
 
@@ -439,6 +471,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
+            RECIPIENT_ADDRESS,
             YesOrNo.NO
         );
 
@@ -469,6 +502,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
+            RECIPIENT_ADDRESS,
             YesOrNo.NO
         );
 
@@ -526,6 +560,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
+            RECIPIENT_ADDRESS,
             YesOrNo.NO
         );
 
@@ -581,6 +616,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
+            RECIPIENT_ADDRESS,
             YesOrNo.NO
         );
 
@@ -623,6 +659,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
+            RECIPIENT_ADDRESS,
             YesOrNo.NO
         );
 
@@ -690,6 +727,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
+            RECIPIENT_ADDRESS,
             YesOrNo.YES
         );
 
@@ -765,6 +803,7 @@ class BulkPrintServiceTest {
             "5678",
             "letterType",
             "Test User",
+            RECIPIENT_ADDRESS,
             YesOrNo.NO
         );
 
