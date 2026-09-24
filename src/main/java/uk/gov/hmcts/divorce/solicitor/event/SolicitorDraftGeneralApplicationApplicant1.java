@@ -65,7 +65,7 @@ public class SolicitorDraftGeneralApplicationApplicant1 implements CCDConfig<Cas
         log.info("{} about to start callback invoked for Case Id: {}", SOLICITOR_DRAFT_GEN_APP_APPLICANT1, details.getId());
         final CaseData data = details.getData();
 
-        generalApplicationDraftJourneyService.prepareAboutToStart(details, data.getApplicant2());
+        generalApplicationDraftJourneyService.prepareAboutToStart(details, data.getApplicant1());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)
