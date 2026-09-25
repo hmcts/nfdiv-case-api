@@ -20,7 +20,7 @@ plugins {
   id 'com.github.ben-manes.versions' version '0.61.0'
   id 'au.com.dius.pact' version '4.7.5'
   id 'hmcts.ccd.sdk' version '6.30.0'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.2358'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.2401'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -246,7 +246,9 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/divorce/common/config/**',
   '**/uk/gov/hmcts/divorce/divorcecase/model/**',
   '**/uk/gov/hmcts/divorce/divorcecase/tab/**',
-  '**/uk/gov/hmcts/divorce/systemupdate/event/SystemCorrectTtl.java'
+  '**/uk/gov/hmcts/divorce/systemupdate/event/SystemCorrectTtl.java',
+  '**/uk/gov/hmcts/divorce/caseworker/event/CaseworkerDummyEventEXUI4347.java',
+  '**/uk/gov/hmcts/divorce/caseworker/event/CaseworkerDummyEventEXUI4347SetData.java'
 ]
 
 sonarqube {
@@ -313,7 +315,7 @@ dependencies {
   implementation group: "com.fasterxml.jackson.core", name: "jackson-databind"
   implementation group: "com.fasterxml.jackson.core", name: "jackson-core"
   implementation group: "com.fasterxml.jackson.core", name: "jackson-annotations"
-  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.15.0'
+  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.17.1'
   implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.8') {
     exclude group: 'org.apache.commons', module: 'commons-compress'
     exclude group: 'com.google.guava', module: 'guava'
@@ -339,10 +341,10 @@ dependencies {
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '4.2.1'
 
   implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.29'
-  implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '6.2.0-RELEASE'
+  implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '6.2.1-RELEASE'
   implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.6.0'
   implementation group: 'commons-validator', name: 'commons-validator', version: '1.11.0'
-  implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.2.4'
+  implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.3.0'
 
   implementation group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   implementation group: 'org.apache.commons', name: 'commons-jcs3-core', version: '3.2.1'
@@ -382,7 +384,7 @@ dependencies {
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
-  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.62.0'
+  cftlibTestImplementation 'com.microsoft.playwright:playwright:1.63.0'
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:2.3.0'
 }
 
@@ -482,6 +484,7 @@ bootWithCCD {
       environment key, value
     }
     environment 'CITIZEN_UPDATE_CASE_STATE_ENABLED', 'true'
+    environment 'EXUI_DUMMY_EVENTS_ENABLED', 'true'
     environment 'LOGGING_LEVEL_UK_GOV_HMCTS_DIVORCE', 'info'
     environment 'ROLE_ASSIGNMENT_URL', 'http://localhost:4096'
     environment 'CASE_DATA_STORE_BASEURL', 'http://localhost:4452'
