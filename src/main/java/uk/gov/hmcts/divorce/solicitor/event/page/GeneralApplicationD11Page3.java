@@ -24,7 +24,7 @@ public class GeneralApplicationD11Page3 implements CcdPageConfiguration {
         You can provide a statement and upload any documents you have in support of your application.
         """;
 
-    public static final String UPLOAD_LABEL = "Upload evidence (optional)";
+    public static final String UPLOAD_LABEL = "Upload evidence";
 
     @Override
     public void addTo(final PageBuilder pageBuilder) {

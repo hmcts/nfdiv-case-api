@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
@@ -54,6 +55,7 @@ public class GeneralApplicationFactoryTest {
             .build();
 
         InterimApplicationOptions options = InterimApplicationOptions.builder()
+            .interimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11)
             .generalApplicationD11JourneyOptions(d11)
             .build();
 
@@ -87,6 +89,7 @@ public class GeneralApplicationFactoryTest {
             .build();
 
         InterimApplicationOptions options = InterimApplicationOptions.builder()
+            .interimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11)
             .generalApplicationD11JourneyOptions(d11)
             .build();
 
@@ -115,6 +118,7 @@ public class GeneralApplicationFactoryTest {
 
         InterimApplicationOptions options = InterimApplicationOptions.builder()
             .generalApplicationD11JourneyOptions(GeneralApplicationD11JourneyOptions.builder().solType(solType).build())
+            .interimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11)
             .build();
 
         when(submissionService.collectSupportingDocuments(options)).thenReturn(List.of());
@@ -141,6 +145,7 @@ public class GeneralApplicationFactoryTest {
 
         InterimApplicationOptions options = InterimApplicationOptions.builder()
             .generalApplicationD11JourneyOptions(GeneralApplicationD11JourneyOptions.builder().solType(solType).build())
+            .interimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11)
             .build();
 
         when(submissionService.collectSupportingDocuments(options)).thenReturn(List.of());

@@ -50,12 +50,15 @@ public class SolicitorDraftGeneralApplicationApplicant1 implements CCDConfig<Cas
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
 
         final List<CcdPageConfiguration> pages = asList(
-            new GeneralApplicationD11Page1(CaseData::getApplicant1), new GeneralApplicationD11Page2(CaseData::getApplicant1,
-                "applicant1"), new GeneralApplicationD11Page3(CaseData::getApplicant1, "applicant1"),
-            new GeneralApplicationD11Page4(CaseData::getApplicant1), new GeneralApplicationD11Page5(CaseData::getApplicant1,
-                "applicant1"), new GeneralApplicationD11Page6("applicant1"),
-            new GeneralApplicationD11Page7("applicant1"), new GeneralApplicationD11Page8(CaseData::getApplicant1,
-                CaseData::getApplicant2), new GeneralApplicationD11Page9("applicant1")
+            new GeneralApplicationD11Page1(CaseData::getApplicant1),
+            new GeneralApplicationD11Page2(CaseData::getApplicant1, "applicant1"),
+            new GeneralApplicationD11Page3(CaseData::getApplicant1, "applicant1"),
+            new GeneralApplicationD11Page4(CaseData::getApplicant1),
+            new GeneralApplicationD11Page5(CaseData::getApplicant1, "applicant1"),
+            new GeneralApplicationD11Page6("applicant1"),
+            new GeneralApplicationD11Page7("applicant1"),
+            new GeneralApplicationD11Page8(CaseData::getApplicant1, CaseData::getApplicant2),
+            new GeneralApplicationD11Page9("applicant1")
         );
 
         pages.forEach(page -> page.addTo(pageBuilder));

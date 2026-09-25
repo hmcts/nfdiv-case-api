@@ -47,6 +47,7 @@ public class GeneralApplicationDraftSubmissionService {
             details.getId(), applicant, caseData, generalApplication);
 
         generalApplication.setGeneralApplicationDocument(applicationDocument);
+        caseData.updateCaseWithGeneralApplication(generalApplication);
     }
 
     private boolean isApplicant1(Long caseId) {

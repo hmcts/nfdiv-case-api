@@ -44,7 +44,7 @@ public class GeneralApplicationD11Page1 implements CcdPageConfiguration {
                 .label("LabelGeneralApplicationD11Para-1", GENERAL_APPLICATION_D11_PARAGRAPH)
             .complex(applicantRef)
                 .complex(Applicant::getInterimApplicationOptions)
-                    .mandatoryWithLabel(InterimApplicationOptions::getAgreeToShareDetailsWithRespondentCheckbox, "I understand")
+                    .mandatory(InterimApplicationOptions::getGeneralApplicationAcknowledgementCheckbox)
                     .label("solGeneralApplicationPaymentHeader", PAYMENT_HEADING)
                     .mandatoryWithLabel(InterimApplicationOptions::getInterimAppsPaymentMethod, PAYMENT_LABEL)
                 .done()

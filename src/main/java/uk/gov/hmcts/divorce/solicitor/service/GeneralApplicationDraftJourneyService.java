@@ -4,12 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
-import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.divorcecase.model.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +26,8 @@ public class GeneralApplicationDraftJourneyService {
     }
 
     public void prepareAboutToSubmit(CaseDetails<CaseData, State> details, Applicant applicant) {
+        InterimApplicationOptions options = applicant.getInterimApplicationOptions();
+        options.setInterimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11);
         generalApplicationDraftSubmissionService.buildGeneralApplication(
             details,
             details.getData(),

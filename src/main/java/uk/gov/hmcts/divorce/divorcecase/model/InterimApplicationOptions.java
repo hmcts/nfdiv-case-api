@@ -171,7 +171,7 @@ public class InterimApplicationOptions {
         access = {DefaultAccess.class},
         searchable = false
     )
-    private Set<Acknowledgement> agreeToShareDetailsWithRespondentCheckbox;
+    private Set<GeneralApplicationAcknowledgement> generalApplicationAcknowledgementCheckbox;
 
     @JsonIgnore
     public ApplicationAnswers getApplicationAnswers() {
@@ -206,11 +206,22 @@ public class InterimApplicationOptions {
     public GeneralApplicationType getGeneralApplicationType() {
         if (SEARCH_GOV_RECORDS.equals(interimApplicationType)) {
             return GeneralApplicationType.DISCLOSURE_VIA_DWP;
-        } else if (DIGITISED_GENERAL_APPLICATION_D11.equals(interimApplicationType)) {
-            return generalApplicationD11JourneyOptions.getType();
-        } else {
-            return null;
         }
+        if (DIGITISED_GENERAL_APPLICATION_D11.equals(interimApplicationType)) {
+            if (null != generalApplicationD11JourneyOptions && null != generalApplicationD11JourneyOptions.getType()) {
+                return generalApplicationD11JourneyOptions.getType();
+            }
+            if (null != generalApplicationD11JourneyOptions && null != generalApplicationD11JourneyOptions.getSolType() &&
+                null != generalApplicationD11JourneyOptions.getSolType().getValue()) {
+                String label = generalApplicationD11JourneyOptions.getSolType().getValue().getLabel();
+                for (GeneralApplicationType type : GeneralApplicationType.values()) {
+                    if (type.getLabel().equals(label)) {
+                        return type;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @JsonIgnore
@@ -221,7 +232,7 @@ public class InterimApplicationOptions {
     @JsonIgnore
     public String getOtherGeneralApplicationTypeDetails() {
         if (DIGITISED_GENERAL_APPLICATION_D11.equals(interimApplicationType)
-            && generalApplicationD11JourneyOptions.getType().equals(GeneralApplicationType.OTHER)) {
+            && (GeneralApplicationType.OTHER.equals(getGeneralApplicationType()))) {
             return generalApplicationD11JourneyOptions.getTypeOtherDetails();
         }
         return null;
@@ -229,10 +240,10 @@ public class InterimApplicationOptions {
 
     @Getter
     @AllArgsConstructor
-    public enum Acknowledgement implements HasLabel {
+    public enum GeneralApplicationAcknowledgement implements HasLabel {
 
         @JsonProperty("Yes")
-        CONFIRM("I understand that the answers may be shared with the respondent");
+        CONFIRM("I understand");
 
         private final String label;
     }
