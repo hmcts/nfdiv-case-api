@@ -22,6 +22,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.REFERENCE_NUMBER_SEND_DOCS;
 import static uk.gov.hmcts.divorce.common.notification.SoleApplicationNotDisputedNotification.DOC_UPLOADED;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -245,7 +246,8 @@ class SoleApplicationNotDisputedNotificationTest {
                 hasEntry("apply for CO date", data.getDueDate().format(DATE_TIME_FORMATTER)),
                 hasEntry(IS_DIVORCE, YES),
                 hasEntry(IS_DISSOLUTION, NO),
-                hasEntry(DOC_UPLOADED, NO)
+                hasEntry(DOC_UPLOADED, NO),
+                hasEntry(REFERENCE_NUMBER_SEND_DOCS, formatId(TEST_CASE_ID))
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
