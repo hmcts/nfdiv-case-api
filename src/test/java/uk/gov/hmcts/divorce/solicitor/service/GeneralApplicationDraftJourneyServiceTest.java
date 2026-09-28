@@ -63,7 +63,10 @@ public class GeneralApplicationDraftJourneyServiceTest {
 
     @Test
     void shouldPassDetailsToSubmissionServiceOnAboutToSubmit() {
-        Applicant applicant = Applicant.builder().build();
+        InterimApplicationOptions interimOptions = InterimApplicationOptions.builder()
+            .generalApplicationD11JourneyOptions(GeneralApplicationD11JourneyOptions.builder().build())
+            .build();
+        Applicant applicant = Applicant.builder().interimApplicationOptions(interimOptions).build();
         CaseData caseData = CaseData.builder().build();
         CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)

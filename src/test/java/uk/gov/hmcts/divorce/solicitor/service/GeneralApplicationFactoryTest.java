@@ -11,12 +11,12 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.Clock;

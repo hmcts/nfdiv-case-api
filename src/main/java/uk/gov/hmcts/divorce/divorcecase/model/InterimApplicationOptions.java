@@ -211,8 +211,8 @@ public class InterimApplicationOptions {
             if (null != generalApplicationD11JourneyOptions && null != generalApplicationD11JourneyOptions.getType()) {
                 return generalApplicationD11JourneyOptions.getType();
             }
-            if (null != generalApplicationD11JourneyOptions && null != generalApplicationD11JourneyOptions.getSolType() &&
-                null != generalApplicationD11JourneyOptions.getSolType().getValue()) {
+            if (null != generalApplicationD11JourneyOptions && null != generalApplicationD11JourneyOptions.getSolType()
+                && null != generalApplicationD11JourneyOptions.getSolType().getValue()) {
                 String label = generalApplicationD11JourneyOptions.getSolType().getValue().getLabel();
                 for (GeneralApplicationType type : GeneralApplicationType.values()) {
                     if (type.getLabel().equals(label)) {
