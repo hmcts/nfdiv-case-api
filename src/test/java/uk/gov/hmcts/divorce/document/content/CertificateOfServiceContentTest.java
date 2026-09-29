@@ -5,8 +5,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 
 import java.time.Clock;
@@ -16,10 +18,13 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
+import static uk.gov.hmcts.divorce.document.content.BailiffServiceApplicationTemplateContent.CONFIDENTIAL_ADDRESS_EN;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DOCUMENTS_ISSUED_ON;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_A_CIVIL_PARTNERSHIP;
@@ -49,8 +54,10 @@ class CertificateOfServiceContentTest {
         final CaseData caseData = caseData();
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
         caseData.setApplicant2(getApplicant2(MALE));
+        caseData.getApplicant2().setContactDetailsType(ContactDetailsType.PRIVATE);
 
         Map<String, Object> expectedEntries = buildTestData(caseData, DIVORCE_APPLICATION, "Yes");
+        expectedEntries.put(APPLICANT_2_ADDRESS, CONFIDENTIAL_ADDRESS_EN);
 
         Map<String, Object> templateContent = certificateOfServiceContent.apply(caseData, 1616591401473378L);
 
@@ -66,8 +73,29 @@ class CertificateOfServiceContentTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
         caseData.setApplicant2(getApplicant2(MALE));
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
+        caseData.getApplicant2().setNonConfidentialAddress(AddressGlobalUK.builder().country("UK").build());
 
         Map<String, Object> expectedEntries = buildTestData(caseData, TO_END_A_CIVIL_PARTNERSHIP, "No");
+        expectedEntries.put(APPLICANT_2_ADDRESS, AddressGlobalUK.builder().country("UK").build());
+
+        Map<String, Object> templateContent = certificateOfServiceContent.apply(caseData, 1616591401473378L);
+
+        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
+    void shouldReturnTemplateContentForCertificateOfServiceDissolutionWhenLanguagePreferenceIsWelshForNonConfidentialAddress() {
+
+        setMockClock(clock);
+
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
+        caseData.setApplicant2(getApplicant2(MALE));
+        caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
+        caseData.getApplicant2().setNonConfidentialAddress(AddressGlobalUK.builder().country("UK").build());
+
+        Map<String, Object> expectedEntries = buildTestData(caseData, END_CIVIL_PARTNERSHIP_CY, "No");
+        expectedEntries.put(APPLICANT_2_ADDRESS, AddressGlobalUK.builder().country("UK").build());
 
         Map<String, Object> templateContent = certificateOfServiceContent.apply(caseData, 1616591401473378L);
 
@@ -75,8 +103,6 @@ class CertificateOfServiceContentTest {
     }
 
     private Map<String, Object> buildTestData(CaseData caseData, String divorceOrDissolution, String isDivorce) {
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
-        caseData.setApplicant2(getApplicant2(MALE));
         Map<String, Object> expectedEntries = new LinkedHashMap<>();
 
         expectedEntries.put(CCD_CASE_REFERENCE, 1616591401473378L);
@@ -85,6 +111,7 @@ class CertificateOfServiceContentTest {
         expectedEntries.put(DOCUMENTS_ISSUED_ON, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         expectedEntries.put(IS_DIVORCE, isDivorce);
         expectedEntries.put(DIVORCE_OR_DISSOLUTION, divorceOrDissolution);
+
 
         return expectedEntries;
     }
