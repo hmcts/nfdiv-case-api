@@ -133,7 +133,7 @@ public class GeneralApplicationD11TemplateContent {
         templateContent.put(STATEMENT_OF_EVIDENCE, applicationAnswers.getStatementOfEvidence());
         templateContent.put(SUPPORTING_EVIDENCE_UPLOADED, YesOrNo.from(hasUploadedAllSupportingEvidence).getValue());
 
-        final GeneralApplicationType applicationType = applicationAnswers.getType();
+        final GeneralApplicationType applicationType = interimApplicationOptions.getGeneralApplicationType();
         templateContent.put(
                 APPLICATION_TYPE,
                 docmosisCommonContent.getGeneralApplicationTypeLabel(applicationType, isDivorce)
