@@ -99,7 +99,7 @@ public class SolicitorDraftGeneralApplicationApplicant2 implements CCDConfig<Cas
             .showEventNotes()
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .endButtonLabel("Submit Application")
+            .endButtonLabel("Save Application")
             .grant(CREATE_READ_UPDATE_DELETE, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }

@@ -70,7 +70,7 @@ public class GeneralApplicationD11JourneyOptions implements ApplicationAnswers {
     private GeneralApplicationType type;
 
     @CCD(
-            label = "What application are you making",
+            label = "What application are you making?",
             hint = "Select the type of application you want to apply for.",
             access = {DefaultAccess.class},
             searchable = false
