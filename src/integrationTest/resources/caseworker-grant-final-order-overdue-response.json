@@ -96,6 +96,7 @@
         }
       }
     ],
+    "finalOrderInsightSurveyStage": 0,
     "confidentialDocumentsGenerated": [
       {
         "id": "${json-unit.any-string}",

@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfPr
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplication;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinancialOrderRequestedLetter;
 import uk.gov.hmcts.divorce.caseworker.service.task.ResetAosFields;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToApplicant;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosPackToRespondent;
@@ -87,6 +88,9 @@ class ReIssueApplicationServiceTest {
     @Mock
     private ResetAosFields resetAosFields;
 
+    @Mock
+    private GenerateFinancialOrderRequestedLetter generateFinancialOrderRequestedLetter;
+
     @InjectMocks
     private ReIssueApplicationService reIssueApplicationService;
 
@@ -108,6 +112,7 @@ class ReIssueApplicationServiceTest {
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
         when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateFinancialOrderRequestedLetter.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
@@ -142,6 +147,7 @@ class ReIssueApplicationServiceTest {
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
         when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateFinancialOrderRequestedLetter.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
@@ -177,6 +183,7 @@ class ReIssueApplicationServiceTest {
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
         when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateFinancialOrderRequestedLetter.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
@@ -212,6 +219,7 @@ class ReIssueApplicationServiceTest {
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
         when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateFinancialOrderRequestedLetter.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
@@ -246,6 +254,7 @@ class ReIssueApplicationServiceTest {
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
         when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateFinancialOrderRequestedLetter.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
@@ -287,6 +296,7 @@ class ReIssueApplicationServiceTest {
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
         when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateFinancialOrderRequestedLetter.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
@@ -334,6 +344,7 @@ class ReIssueApplicationServiceTest {
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
         when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateFinancialOrderRequestedLetter.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 
@@ -381,6 +392,7 @@ class ReIssueApplicationServiceTest {
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD84Form.apply(caseDetails)).thenReturn(caseDetails);
         when(resetAosFields.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateFinancialOrderRequestedLetter.apply(caseDetails)).thenReturn(caseDetails);
 
         final CaseDetails<CaseData, State> response = reIssueApplicationService.process(caseDetails);
 

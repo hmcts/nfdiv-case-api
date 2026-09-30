@@ -21,9 +21,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.document.DocumentConstants;
 import uk.gov.hmcts.divorce.notification.EmailTemplateName;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.testutil.DocAssemblyWireMock;
+import uk.gov.hmcts.divorce.testutil.DocTemplateResolver;
 import uk.gov.hmcts.divorce.testutil.IdamWireMock;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 
@@ -54,6 +56,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEM
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DISPENSED;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServiceApplicationRefusalReason.ADMIN_REFUSAL;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.legaladvisor.event.LegalAdvisorMakeServiceDecision.LEGAL_ADVISOR_SERVICE_DECISION;
@@ -90,15 +93,15 @@ import static uk.gov.hmcts.divorce.testutil.TestResourceUtil.expectedResponse;
 public class LegalAdvisorMakeServiceDecisionIT {
 
     private static final String UUID = "5cd725e8-f053-4493-9cbe-bb69d1905ae3";
-    private static final String SERVICE_ORDER_TEMPLATE_FILE = "FL-NFD-GOR-ENG-Service-Order-V4.docx";
-    private static final String SERVICE_ORDER_REFUSAL_TEMPLATE_FILE = "NFD_Refusal_Order_Deemed_Dispensed_Service_V2.docx";
-    private static final String SERVICE_ORDER_REFUSAL_TEMPLATE_FILE_WELSH = "NFD_Refusal_Order_Deemed_Dispensed_Service_V2_Cy.docx";
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private DocTemplateResolver docTemplateResolver;
 
     @MockitoBean
     private Clock clock;
@@ -127,13 +130,15 @@ public class LegalAdvisorMakeServiceDecisionIT {
     @Test
     public void shouldUpdateStateToHoldingAndSetDecisionDateAndGenerateOrderToDispenseDocIfApplicationIsGrantedAndTypeIsDispensed()
         throws Exception {
+        final String serviceOrderTemplateId =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.SERVICE_ORDER_TEMPLATE_ID);
         setMockClock(clock);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, SERVICE_ORDER_TEMPLATE_FILE);
+        stubForDocAssemblyWith(UUID, serviceOrderTemplateId);
 
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
@@ -179,13 +184,15 @@ public class LegalAdvisorMakeServiceDecisionIT {
     @Test
     public void shouldUpdateStateToGeneralConsiderationCompleteAndSetDecisionDateIfApplicationIsGrantedAndTypeIsAlternativeService()
         throws Exception {
+        final String serviceOrderTemplateId =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.SERVICE_ORDER_TEMPLATE_ID);
         setMockClock(clock);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, SERVICE_ORDER_TEMPLATE_FILE);
+        stubForDocAssemblyWith(UUID, serviceOrderTemplateId);
 
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
@@ -231,13 +238,15 @@ public class LegalAdvisorMakeServiceDecisionIT {
     @Test
     public void shouldUpdateStateToHoldingAndSetDecisionDateAndGenerateDeemedServiceOrderDocIfApplicationIsGrantedAndTypeIsDeemed()
         throws Exception {
+        final String serviceOrderTemplateId =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.SERVICE_ORDER_TEMPLATE_ID);
         setMockClock(clock);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, SERVICE_ORDER_TEMPLATE_FILE);
+        stubForDocAssemblyWith(UUID, serviceOrderTemplateId);
 
         final CaseData caseData = CaseData.builder()
             .applicationType(SOLE_APPLICATION)
@@ -284,13 +293,15 @@ public class LegalAdvisorMakeServiceDecisionIT {
     @Test
     public void shouldUpdateStateToAwaitingAoSAndSetDecisionDateIfApplicationIsNotGrantedAndTypeIsDeemed()
         throws Exception {
+        final String serviceRefusalTemplateId =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.SERVICE_REFUSAL_TEMPLATE_ID);
         setMockClock(clock);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, SERVICE_ORDER_REFUSAL_TEMPLATE_FILE);
+        stubForDocAssemblyWith(UUID, serviceRefusalTemplateId);
 
         final CaseData caseData = CaseData.builder()
             .applicant1(getApplicant())
@@ -336,13 +347,15 @@ public class LegalAdvisorMakeServiceDecisionIT {
     @Test
     public void shouldUpdateStateToAwaitingAoSAndSetDecisionDateIfApplicationIsNotGrantedAndTypeIsAlternative()
         throws Exception {
+        final String serviceRefusalTemplateId =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.SERVICE_REFUSAL_TEMPLATE_ID);
         setMockClock(clock);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, SERVICE_ORDER_REFUSAL_TEMPLATE_FILE);
+        stubForDocAssemblyWith(UUID, serviceRefusalTemplateId);
 
         final CaseData caseData = CaseData.builder()
             .applicant1(getApplicant())
@@ -388,13 +401,15 @@ public class LegalAdvisorMakeServiceDecisionIT {
     @Test
     public void shouldUpdateStateToAwaitingAoSAndSetDecisionDateIfApplicationIsNotGrantedAndTypeIsDispensed()
         throws Exception {
+        final String serviceRefusalTemplateId =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.SERVICE_REFUSAL_TEMPLATE_ID);
         setMockClock(clock);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, SERVICE_ORDER_REFUSAL_TEMPLATE_FILE);
+        stubForDocAssemblyWith(UUID, serviceRefusalTemplateId);
 
         final CaseData caseData = CaseData.builder()
             .applicant1(getApplicant())
@@ -440,13 +455,15 @@ public class LegalAdvisorMakeServiceDecisionIT {
     @Test
     public void shouldUpdateStateToServiceAdminRefusalIfApplicationIsNotGrantedAndRefusalReasonIsAdminRefusal()
         throws Exception {
+        final String serviceRefusalTemplateId =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.SERVICE_REFUSAL_TEMPLATE_ID);
         setMockClock(clock);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, SERVICE_ORDER_REFUSAL_TEMPLATE_FILE);
+        stubForDocAssemblyWith(UUID, serviceRefusalTemplateId);
 
         final CaseData caseData = CaseData.builder()
             .applicant1(getApplicant())
@@ -485,13 +502,15 @@ public class LegalAdvisorMakeServiceDecisionIT {
     @Test
     public void shouldGenerateWelshRefusalDocumentIfApplicant1LanguagePreferenceIsWelshIfApplicationIsNotGrantedAndTypeIsDeemed()
         throws Exception {
+        final String serviceRefusalTemplateId =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.SERVICE_REFUSAL_TEMPLATE_ID, WELSH);
         setMockClock(clock);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, SERVICE_ORDER_REFUSAL_TEMPLATE_FILE_WELSH);
+        stubForDocAssemblyWith(UUID, serviceRefusalTemplateId);
 
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().languagePreferenceWelsh(YES).build())
@@ -526,13 +545,15 @@ public class LegalAdvisorMakeServiceDecisionIT {
     @Test
     public void shouldGenerateWelshRefusalDocumentIfApplicant1LanguagePreferenceIsWelshIfApplicationIsNotGrantedAndTypeIsDispensed()
         throws Exception {
+        final String serviceRefusalTemplateId =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.SERVICE_REFUSAL_TEMPLATE_ID, WELSH);
         setMockClock(clock);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, SERVICE_ORDER_REFUSAL_TEMPLATE_FILE_WELSH);
+        stubForDocAssemblyWith(UUID, serviceRefusalTemplateId);
 
         final CaseData caseData = CaseData.builder()
             .applicant1(Applicant.builder().languagePreferenceWelsh(YES).build())
@@ -567,13 +588,15 @@ public class LegalAdvisorMakeServiceDecisionIT {
     @Test
     public void shouldSendRejectedEmailNotificationToSolicitorIfApplicantRepresentedAndApplicationIsNotGrantedAndTypeIsDeemed()
         throws Exception {
+        final String serviceRefusalTemplateId =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.SERVICE_REFUSAL_TEMPLATE_ID);
         setMockClock(clock);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, SERVICE_ORDER_REFUSAL_TEMPLATE_FILE);
+        stubForDocAssemblyWith(UUID, serviceRefusalTemplateId);
 
         final CaseData caseData = CaseData.builder()
             .applicant1(getApplicant())
@@ -621,13 +644,15 @@ public class LegalAdvisorMakeServiceDecisionIT {
     @Test
     public void shouldSendGrantedEmailNotificationToSolicitorIfApplicantRepresentedAndApplicationIsGrantedAndTypeIsDeemed()
         throws Exception {
+        final String serviceOrderTemplateId =
+            docTemplateResolver.resolveTemplateID(DocumentConstants.SERVICE_ORDER_TEMPLATE_ID);
         setMockClock(clock);
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);
-        stubForDocAssemblyWith(UUID, SERVICE_ORDER_TEMPLATE_FILE);
+        stubForDocAssemblyWith(UUID, serviceOrderTemplateId);
 
         final CaseData caseData = CaseData.builder()
             .applicant1(getApplicant())

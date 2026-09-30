@@ -307,7 +307,7 @@ public enum State {
     AwaitingAnswer,
 
     @CCD(
-        label = "AwaitingJS/Nullity",
+        label = "AwaitingJS",
         hint = CASE_TITLE,
         access = {DefaultStateAccessExcludingCAA.class}
     )
@@ -609,7 +609,7 @@ public enum State {
         AwaitingJudgeClarification, PendingServiceAppResponse, GeneralConsiderationComplete, AwaitingGeneralReferralPayment,
         AwaitingGeneralConsideration, GeneralApplicationReceived, PendingHearingOutcome, PendingHearingDate,
         AwaitingGeneralApplicationPayment, AwaitingDocuments, AwaitingGenAppHWFPartPayment, AwaitingGenAppHWFEvidence,
-        ApplicationStayed
+        ApplicationStayed, ServiceAdminRefusal
     };
 
     public static final State[] POST_SUBMISSION_PRE_AWAITING_CO_STATES = {

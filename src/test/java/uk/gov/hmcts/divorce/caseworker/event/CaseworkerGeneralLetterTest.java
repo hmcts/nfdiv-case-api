@@ -25,6 +25,8 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralLetter.CASEWORKER_CREATE_GENERAL_LETTER;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralLetter.GENERAL_LETTER_ATTACHMENTS_PDF_ONLY_ERROR;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGeneralLetter.GENERAL_LETTER_ATTACHMENTS_REQUIRED_ERROR;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -63,7 +65,7 @@ class CaseworkerGeneralLetterTest {
             DivorceDocument
                     .builder()
                     .documentLink(
-                            Document.builder().build()
+                            Document.builder().filename("attachment.pdf").build()
                     )
                     .build()
         );
@@ -111,7 +113,39 @@ class CaseworkerGeneralLetterTest {
 
         assertThat(response.getErrors()).isNotEmpty();
         assertThat(response.getErrors()).hasSize(1);
-        assertThat(response.getErrors()).contains("Please ensure all General Letter attachments have been uploaded before continuing");
+        assertThat(response.getErrors()).contains(GENERAL_LETTER_ATTACHMENTS_REQUIRED_ERROR);
+    }
+
+    @Test
+    void shouldReturnErrorIfGeneralLetterAttachmentIsNotPdf() {
+        ListValue<DivorceDocument> generalLetterAttachment = new ListValue<>(
+            "1",
+            DivorceDocument
+                .builder()
+                .documentLink(
+                    Document.builder().filename("attachment.jpg").build()
+                )
+                .build()
+        );
+        final CaseData caseData = caseData();
+
+        caseData.setGeneralLetter(
+            GeneralLetter
+                .builder()
+                .generalLetterParties(APPLICANT)
+                .generalLetterDetails("some details")
+                .generalLetterAttachments(singletonList(generalLetterAttachment))
+                .build()
+        );
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = generalLetter.midEvent(details, details);
+
+        assertThat(response.getErrors()).isNotEmpty();
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(GENERAL_LETTER_ATTACHMENTS_PDF_ONLY_ERROR);
     }
 
     @Test

@@ -33,6 +33,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
@@ -52,7 +54,9 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
 
     public static final String FIND_MATCHES = "caseworker-find-matches";
     public static final String WILDCARD_SEARCH = ".*";
+    private static final int MIN_SEARCH_NAME_SEGMENT_LENGTH = 2;
     private static final EnumSet<State> EVENT_STATES = EnumSet.copyOf(POST_SUBMISSION_STATES);
+    private static final String NEVER_SHOW = "caseMatches=\"NEVER_SHOW\"";
 
     static {
         EVENT_STATES.remove(State.Archived);
@@ -72,17 +76,20 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
             .name("Find matches")
             .description("Find matches")
             .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .showEventNotes()
             .grant(CREATE_READ_UPDATE_DELETE, CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, JUDGE))
             .page("findmatch")
             .pageLabel("Search for matching cases which have same marriage date and full names")
             .readonlyNoSummary(CaseData::getCaseMatches)
+            .readonlyNoSummary(CaseData::getNewCaseMatches, NEVER_SHOW)
+            .readonlyNoSummary(CaseData::getBadCaseMatches, NEVER_SHOW)
             .done();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
-        log.info("{} about to start findmatches callback invoked for Case Id: {}", FIND_MATCHES, details.getId());
+        log.info("{} about to start callback invoked for Case Id: {}", FIND_MATCHES, details.getId());
         CaseData caseData = details.getData();
         MarriageDetails marriageDetails = caseData.getApplication().getMarriageDetails();
 
@@ -94,20 +101,56 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         }
 
         List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> caseMatchDetails = getFreshMatches(details, marriageDetails);
-
-        log.info("Case ID: " + details.getId() + " nfdiv case matching search result: " + caseMatchDetails.size());
+        log.info("Case ID: {} nfdiv case matching search result: {}", details.getId(), caseMatchDetails.size());
         List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> oldcaseMatchDetails = getOldDivorceFreshMatches(marriageDetails);
-        log.info("Case ID: " + details.getId() + " old divorce case matching search result: " + oldcaseMatchDetails.size());
+        log.info("Case ID: {} old divorce case matching search result: {}", details.getId(), oldcaseMatchDetails.size());
 
         List<CaseMatch> newMatches = new ArrayList<>();
         newMatches.addAll(transformToMatchingCasesList(caseMatchDetails));
         newMatches.addAll(transformOldCaseToMatchingCasesList(oldcaseMatchDetails));
 
         setToNewMatches(caseData, newMatches);
+
+        int caseMatchesCount = caseData.getCaseMatches() != null ? caseData.getCaseMatches().size() : 0;
+        log.info("Case ID: {} filtered cases matching search result: {}", details.getId(), caseMatchesCount);
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
 
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(final CaseDetails<CaseData, State> details,
+                                                                       final CaseDetails<CaseData, State> beforeDetails) {
+        log.info("{} about to submit callback invoked for Case Id: {}", FIND_MATCHES, details.getId());
+        final CaseData caseData = details.getData();
+
+        Set<String> existingRefs = caseData.getCaseMatches().stream().map(
+            match -> match.getValue().getCaseLink().getCaseReference()
+        ).collect(Collectors.toSet());
+
+        Set<String> badMatchRefs = caseData.getBadCaseMatches().stream().map(
+            match -> match.getValue().getCaseLink().getCaseReference()
+        ).collect(Collectors.toSet());
+
+        List<ListValue<CaseMatch>> newBadMatches = caseData.getNewCaseMatches().stream()
+            .filter(match -> {
+                String ref = match.getValue().getCaseLink().getCaseReference();
+                return !existingRefs.contains(ref) && !badMatchRefs.contains(ref);
+            }).toList();
+
+        if (!newBadMatches.isEmpty()) {
+            log.info("Case ID: {} new bad case matches count: {}", details.getId(), newBadMatches.size());
+
+            log.info("Updating bad matches for Case ID: {}", details.getId());
+            caseData.getBadCaseMatches().addAll(newBadMatches);
+
+            log.info("Case ID: {} total bad matches count: {}", details.getId(), caseData.getBadCaseMatches().size());
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
     }
 
     public String[] normalizeAndSplit(String name) {
@@ -115,10 +158,11 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
         String nameWithoutDeedPollStatement = name.replaceAll("(?i)name changed by deed poll", "").trim();
 
         // Split to separate names for search wherever there are non-alphanumeric characters (excluding accented characters)
-        return Arrays.stream(nameWithoutDeedPollStatement.split("[^\\p{L}\\p{N}]+"))
+        return Arrays.stream(nameWithoutDeedPollStatement.split("[^\\p{L}\\p{N}'\\u2019]+"))
             .map(String::trim)
             .filter(part -> !part.isEmpty()) // Ignore empty parts
             .flatMap(part -> part.contains(" ") ? Arrays.stream(part.split("\\s+")) : Stream.of(part)) // Split on spaces
+            .filter(part -> part.length() >= MIN_SEARCH_NAME_SEGMENT_LENGTH)
             .toArray(String[]::new);
     }
 
@@ -240,16 +284,28 @@ public class CaseworkerFindMatches implements CCDConfig<CaseData, State, UserRol
     }
 
     public void setToNewMatches(CaseData data, List<CaseMatch> newMatches) {
-        List<ListValue<CaseMatch>> storedMatches = data.getCaseMatches();
-        storedMatches.clear();
+        List<ListValue<CaseMatch>> caseMatches = data.getCaseMatches();
+        caseMatches.clear();
 
         if (!newMatches.isEmpty()) {
-            storedMatches.addAll(newMatches.stream()
+            data.setNewCaseMatches(newMatches.stream()
                 .map(match -> ListValue.<CaseMatch>builder().value(match).build())
                 .toList());
-        }
-        if (storedMatches.isEmpty()) {
+
+            Set<String> badMatchRefs = data.fromListValueToList(data.getBadCaseMatches()).stream()
+                .map(match -> match.getCaseLink().getCaseReference())
+                .collect(Collectors.toSet());
+
+            caseMatches.addAll(newMatches.stream()
+                .filter(match -> {
+                    String ref = match.getCaseLink().getCaseReference();
+                    return !badMatchRefs.contains(ref);
+                })
+                .map(match -> ListValue.<CaseMatch>builder().value(match).build())
+                .toList());
+        } else {
             data.setCaseMatches(null);
+            data.setNewCaseMatches(null);
         }
     }
 

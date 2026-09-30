@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.caseworker.service.ReIssueApplicationService;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant1NoticeOfProceeding;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateApplicant2NoticeOfProceedings;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateD10Form;
+import uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinancialOrderRequestedLetter;
 import uk.gov.hmcts.divorce.common.notification.ApplicationIssuedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
@@ -74,6 +75,9 @@ class SolicitorChangeServiceRequestTest {
 
     @Mock
     GenerateD10Form generateD10Form;
+
+    @Mock
+    GenerateFinancialOrderRequestedLetter generateFinancialOrderRequestedLetter;
 
     @Mock
     ApplicationIssuedNotification applicationIssuedNotification;
@@ -216,6 +220,7 @@ class SolicitorChangeServiceRequestTest {
         when(generateApplicant1NoticeOfProceeding.apply(caseDetails)).thenReturn(caseDetails);
         when(generateApplicant2NoticeOfProceedings.apply(caseDetails)).thenReturn(caseDetails);
         when(generateD10Form.apply(caseDetails)).thenReturn(caseDetails);
+        when(generateFinancialOrderRequestedLetter.apply(caseDetails)).thenReturn(caseDetails);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = solicitorChangeServiceRequest.aboutToSubmit(
             caseDetails, caseDetails);
@@ -223,6 +228,7 @@ class SolicitorChangeServiceRequestTest {
         verify(generateApplicant1NoticeOfProceeding).apply(caseDetails);
         verify(generateApplicant2NoticeOfProceedings).apply(caseDetails);
         verify(generateD10Form).apply(caseDetails);
+        verify(generateFinancialOrderRequestedLetter).apply(caseDetails);
 
         assertThat(response.getWarnings()).isNull();
         assertThat(response.getErrors()).isNull();
