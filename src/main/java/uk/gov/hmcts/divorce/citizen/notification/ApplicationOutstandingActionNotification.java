@@ -32,6 +32,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.PARTNER;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 
 @Component
 @RequiredArgsConstructor
@@ -54,6 +55,8 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
     public static final String MISSING_NAME_CHANGE_PROOF = "nameChangeProof";
     public static final String LABEL_PARTNER = "labelPartner";
     public static final String LABEL_DIVORCE_OR_CIVIL_PARTNERSHIP_CERTIFICATE = "labelDivorceOrCivilPartnershipCertificate";
+    public static final String UPLOAD_DOCUMENTS_URL = "uploadDocumentsUrl";
+    public static final String REFERENCE_NUMBER_SEND_DOCS = "referenceNumberSendDocs";
     private static final String DIVORCE_CERTIFICATE = "marriage certificate";
     private static final String CIVIL_PARTNERSHIP_CERTIFICATE = "civil partnership certificate";
     private static final String CY_DIVORCE_CERTIFICATE = "tystysgrif priodas";
@@ -95,7 +98,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     private Map<String, String> applicant1TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant1(), caseData.getApplicant2());
-        templateVars.putAll(courtDocumentDetails(caseData, true));
+        templateVars.putAll(courtDocumentDetails(caseData, true, id));
         boolean soleServingAnotherWay = caseData.getApplicationType().isSole()
             && caseData.getApplication().getApplicant1WantsToHavePapersServedAnotherWay() == YesOrNo.YES;
         templateVars.putAll(serveAnotherWayTemplateVars(soleServingAnotherWay, caseData));
@@ -104,7 +107,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
 
     private Map<String, String> applicant2TemplateVars(final CaseData caseData, final Long id) {
         Map<String, String> templateVars = commonContent.mainTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
-        templateVars.putAll(courtDocumentDetails(caseData, false));
+        templateVars.putAll(courtDocumentDetails(caseData, false, id));
         templateVars.putAll(serveAnotherWayTemplateVars(false, caseData));
         return templateVars;
     }
@@ -126,7 +129,7 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         return templateVars;
     }
 
-    private Map<String, String> courtDocumentDetails(CaseData caseData, boolean isApplicant1) {
+    private Map<String, String> courtDocumentDetails(CaseData caseData, boolean isApplicant1, Long id) {
         Map<String, String> templateVars = new HashMap<>();
         boolean needsToSendDocuments = !isEmpty(caseData.getApplication().getMissingDocumentTypes());
         boolean isDivorceAndSendDocumentsToCourt = needsToSendDocuments && caseData.isDivorce();
@@ -135,7 +138,13 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         templateVars.put(SEND_DOCUMENTS_TO_COURT, needsToSendDocuments ? YES : NO);
         templateVars.put(SEND_DOCUMENTS_TO_COURT_DIVORCE, isDivorceAndSendDocumentsToCourt ? YES : NO);
         templateVars.put(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, isDissolutionAndSendDocumentsToCourt ? YES : NO);
-        templateVars.put(JOINT_CONDITIONAL_ORDER, !caseData.getApplicationType().isSole() ? YES : NO);
+        templateVars.put(JOINT_CONDITIONAL_ORDER, !caseData.getApplicationType().isSole() && needsToSendDocuments ? YES : NO);
+
+        Applicant applicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
+        templateVars.put(UPLOAD_DOCUMENTS_URL, needsToSendDocuments
+            ? commonContent.getContactWebFormForDocumentsText(applicant.getLanguagePreference())
+            : "");
+        templateVars.put(REFERENCE_NUMBER_SEND_DOCS, needsToSendDocuments ? formatId(id) : "");
 
         templateVars.putAll(missingDocsTemplateVars(caseData, isApplicant1));
 
@@ -184,7 +193,6 @@ public class ApplicationOutstandingActionNotification implements ApplicantNotifi
         templateVars.put(LABEL_DIVORCE_OR_CIVIL_PARTNERSHIP_CERTIFICATE, isMissingNameChangeEvidence
             ? getLabelForDivorceOrCivilPartnershipCertificate(caseData, applicant.getLanguagePreference())
             : "");
-
 
         return templateVars;
     }
