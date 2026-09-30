@@ -24,10 +24,10 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CC
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DOCUMENTS_ISSUED_ON;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.TO_END_A_CIVIL_PARTNERSHIP;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.DATE_TIME_FORMATTER;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
@@ -75,7 +75,7 @@ class CertificateOfServiceContentTest {
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
         caseData.getApplicant2().setNonConfidentialAddress(AddressGlobalUK.builder().country("UK").build());
 
-        Map<String, Object> expectedEntries = buildTestData(caseData, TO_END_A_CIVIL_PARTNERSHIP, "No");
+        Map<String, Object> expectedEntries = buildTestData(caseData, END_CIVIL_PARTNERSHIP, "No");
         expectedEntries.put(APPLICANT_2_ADDRESS, AddressGlobalUK.builder().country("UK").build());
 
         Map<String, Object> templateContent = certificateOfServiceContent.apply(caseData, 1616591401473378L);
