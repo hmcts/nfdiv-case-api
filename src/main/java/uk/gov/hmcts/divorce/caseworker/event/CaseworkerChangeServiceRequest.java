@@ -66,6 +66,7 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
             .name(CHANGE_SERVICE_REQUEST)
             .description(CHANGE_SERVICE_REQUEST)
             .showSummary()
+            .showCondition("alternativeServiceType!=\"*\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER, SUPER_USER)

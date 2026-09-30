@@ -84,7 +84,7 @@ public class SolicitorChangeServiceRequest implements CCDConfig<CaseData, State,
         new PageBuilder(configBuilder
             .event(SOLICITOR_CHANGE_SERVICE_REQUEST)
             .forStates(POST_SUBMISSION_PRE_AWAITING_CO_STATES)
-            .showCondition("issueDate=\"*\" AND applicationType=\"soleApplication\"")
+            .showCondition("issueDate=\"*\" AND applicationType=\"soleApplication\" AND alternativeServiceType!=\"*\"")
             .name(CHANGE_SERVICE_REQUEST)
             .description(CHANGE_SERVICE_REQUEST)
             .showSummary()
