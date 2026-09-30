@@ -51,6 +51,9 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
 
     private final GenerateD10Form generateD10Form;
 
+    private static final String EVENT_SHOW_CONDITION = "alternativeServiceType!=\"deemed\" AND alternativeServiceType!=\"dispensed\" "
+        + "AND alternativeServiceType!=\"bailiff\" AND alternativeServiceType!=\"alternativeService\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
@@ -66,7 +69,7 @@ public class CaseworkerChangeServiceRequest implements CCDConfig<CaseData, State
             .name(CHANGE_SERVICE_REQUEST)
             .description(CHANGE_SERVICE_REQUEST)
             .showSummary()
-            .showCondition("alternativeServiceType!=\"*\"")
+            .showCondition(EVENT_SHOW_CONDITION)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .grant(CREATE_READ_UPDATE,
                 CASE_WORKER, SUPER_USER)
