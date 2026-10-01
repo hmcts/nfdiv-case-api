@@ -101,7 +101,7 @@ class BailiffApprovedOrderContentTest {
         final Applicant applicant2 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
             .lastName(TEST_LAST_NAME)
-            .nonConfidentialAddress(AddressGlobalUK.builder().country("UK").build())
+            .address(AddressGlobalUK.builder().country("UK").build())
             .build();
 
         final CaseData caseData = CaseData.builder()
@@ -169,7 +169,7 @@ class BailiffApprovedOrderContentTest {
         final Applicant applicant2 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
             .lastName(TEST_LAST_NAME)
-            .nonConfidentialAddress(AddressGlobalUK.builder().country("UK").build())
+            .address(AddressGlobalUK.builder().country("UK").build())
             .build();
 
         final CaseData caseData = CaseData.builder()

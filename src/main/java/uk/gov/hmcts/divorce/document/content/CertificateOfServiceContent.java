@@ -70,7 +70,7 @@ public class CertificateOfServiceContent {
                     : CONFIDENTIAL_ADDRESS_EN);
         } else {
             templateContent.put(
-                APPLICANT_2_ADDRESS, caseData.getApplicant2().getNonConfidentialAddress());
+                APPLICANT_2_ADDRESS, caseData.getApplicant2().getAddress());
         }
 
         return templateContent;

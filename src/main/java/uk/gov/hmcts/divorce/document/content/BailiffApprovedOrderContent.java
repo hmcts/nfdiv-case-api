@@ -75,7 +75,7 @@ public class BailiffApprovedOrderContent {
                     : CONFIDENTIAL_ADDRESS_EN);
         } else {
             templateContent.put(
-                APPLICANT_2_ADDRESS, applicant2.getNonConfidentialAddress());
+                APPLICANT_2_ADDRESS, applicant2.getAddress());
         }
 
         templateContent.put(CCD_CASE_REFERENCE, ccdCaseReference);

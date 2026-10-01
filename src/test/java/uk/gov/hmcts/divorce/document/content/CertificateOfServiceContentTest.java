@@ -73,7 +73,7 @@ class CertificateOfServiceContentTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
         caseData.setApplicant2(getApplicant2(MALE));
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
-        caseData.getApplicant2().setNonConfidentialAddress(AddressGlobalUK.builder().country("UK").build());
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
 
         Map<String, Object> expectedEntries = buildTestData(caseData, END_CIVIL_PARTNERSHIP, "No");
         expectedEntries.put(APPLICANT_2_ADDRESS, AddressGlobalUK.builder().country("UK").build());
@@ -92,7 +92,7 @@ class CertificateOfServiceContentTest {
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
         caseData.setApplicant2(getApplicant2(MALE));
         caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
-        caseData.getApplicant2().setNonConfidentialAddress(AddressGlobalUK.builder().country("UK").build());
+        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
 
         Map<String, Object> expectedEntries = buildTestData(caseData, END_CIVIL_PARTNERSHIP_CY, "No");
         expectedEntries.put(APPLICANT_2_ADDRESS, AddressGlobalUK.builder().country("UK").build());
