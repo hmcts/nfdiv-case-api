@@ -165,6 +165,8 @@ public class CommonContent {
     public static final String WEB_FORM_TEXT = "webformText";
     public static final String CONTACT_TEXT = "[Contact us using our online form]";
     public static final String CONTACT_TEXT_WELSH = "[Cysylltwch â ni drwy ddefnyddio ein ffurflen ar-lein]";
+    public static final String UPLOAD_DOCUMENTS_TEXT = "[upload your documents using our online form]";
+    public static final String UPLOAD_DOCUMENTS_TEXT_WELSH = "[lwytho eich dogfennau drwy ddefnyddio ein ffurflen ar-lein]";
     public static final String MISSING_FIELD_MESSAGE = "Notification failed with missing field '%s' for Case Id: %s";
     public static final String DO_NOT_REPLY = "This is an automated message, do not reply to this email.";
     public static final String DO_NOT_REPLY_WELSH = "Neges awtomataidd yw hon, peidiwch ag ymateb i’r e-bost hwn.";
@@ -547,6 +549,14 @@ public class CommonContent {
             return CONTACT_TEXT_WELSH + "(" + config.getTemplateVars().get(WEBFORM_CY_URL) + ")";
         } else {
             return CONTACT_TEXT + "(" + config.getTemplateVars().get(WEBFORM_URL) + ")";
+        }
+    }
+
+    public String getContactWebFormForDocumentsText(LanguagePreference languagePreference) {
+        if (languagePreference == WELSH) {
+            return UPLOAD_DOCUMENTS_TEXT_WELSH + "(" + config.getTemplateVars().get(WEBFORM_CY_URL) + ")";
+        } else {
+            return UPLOAD_DOCUMENTS_TEXT + "(" + config.getTemplateVars().get(WEBFORM_URL) + ")";
         }
     }
 
