@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.divorcecase.validation;
 
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.CaseLink;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
@@ -275,4 +276,17 @@ public final class ValidationUtil {
         return emptyList();
     }
 
+    public static List<String> validateRespondentSolicitorContactDetails(final CaseData caseData, String eventName) {
+        Applicant respondent = caseData.getApplicant2();
+        Solicitor respondentSolicitor = respondent.getSolicitor();
+
+        return respondent.isRepresented() && (respondentSolicitor == null
+            || StringUtils.isEmpty(respondentSolicitor.getAddress()))
+            ? singletonList(String.format("""
+            %s application event cannot be completed because the respondent is marked as represented but solicitor details are missing.
+            Update the respondent's solicitor details or use the Notice of Change event to update their representation status
+             before issuing the application.
+            """, eventName))
+            : emptyList();
+    }
 }
