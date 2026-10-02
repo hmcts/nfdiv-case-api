@@ -155,6 +155,7 @@ public class HearingReminderNotification implements ApplicantNotification {
             caseIdString,
             HEARING_REMINDER_LETTER_TYPE,
             applicant.getFullName(),
+            applicant.getCorrespondenceAddressWithoutConfidentialCheck(),
             applicant.getAddressOverseas()
         );
 
