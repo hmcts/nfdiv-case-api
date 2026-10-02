@@ -177,6 +177,19 @@ class CaseworkerIssueApplicationTest {
     }
 
     @Test
+    void shouldFailValidationWhenRespondentIsSolicitorRepresentedWithoutSolicitorContactDetailsProvided() {
+        final CaseData caseData = CaseData.builder()
+            .applicant2(Applicant.builder().solicitorRepresented(YES).build())
+            .build();
+
+        final CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).id(TEST_CASE_ID).build();
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToStart(caseDetails);
+
+        assertThat(response.getErrors()).anyMatch(error -> error.contains("Issue application event cannot be completed "));
+    }
+
+    @Test
     void shouldCallIssueApplicationServiceAndReturnCaseData() {
 
         final var caseData = caseDataWithAllMandatoryFields();
