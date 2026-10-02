@@ -156,6 +156,12 @@ public class AlternativeService {
     )
     private List<ListValue<Payment>> servicePayments;
 
+    @CCD(
+        label = "Was the application submitted before the case was issued?",
+        searchable = false
+    )
+    private YesOrNo serviceApplicationSubmittedBeforeIssue;
+
     @SuppressWarnings("PMD")
     @JsonIgnore
     public AlternativeServiceOutcome getOutcome() {
@@ -164,6 +170,7 @@ public class AlternativeService {
             .receivedServiceApplicationDate(receivedServiceApplicationDate)
             .receivedServiceAddedDate(receivedServiceAddedDate)
             .serviceApplicationAnswers(serviceApplicationAnswers)
+            .serviceApplicationSubmittedBeforeIssue(serviceApplicationSubmittedBeforeIssue)
             .serviceApplicationDocuments(serviceApplicationDocuments)
             .serviceApplicationSubmittedOnline(serviceApplicationSubmittedOnline)
             .serviceApplicationDocsUploadedPreSubmission(serviceApplicationDocsUploadedPreSubmission)
