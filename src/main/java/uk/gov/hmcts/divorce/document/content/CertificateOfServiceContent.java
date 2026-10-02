@@ -12,8 +12,17 @@ import java.util.Map;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.content.BailiffServiceApplicationTemplateContent.CONFIDENTIAL_ADDRESS_CY;
+import static uk.gov.hmcts.divorce.document.content.BailiffServiceApplicationTemplateContent.CONFIDENTIAL_ADDRESS_EN;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION_CY;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DOCUMENTS_ISSUED_ON;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
@@ -37,6 +46,32 @@ public class CertificateOfServiceContent {
         templateContent.put(RESPONDENT_FULL_NAME, caseData.getApplicant2().getFullName());
         templateContent.put(DOCUMENTS_ISSUED_ON, LocalDate.now(clock).format(DATE_TIME_FORMATTER));
         templateContent.put(IS_DIVORCE, caseData.isDivorce() ? YES.getValue() : NO.getValue());
+
+        var applicant1LanguagePreference = caseData.getApplicant1().getLanguagePreference();
+
+        if (caseData.getDivorceOrDissolution().isDivorce()) {
+            templateContent.put(
+                DIVORCE_OR_DISSOLUTION, WELSH.equals(applicant1LanguagePreference)
+                    ? DIVORCE_APPLICATION_CY
+                    : DIVORCE_APPLICATION
+            );
+        } else {
+            templateContent.put(
+                DIVORCE_OR_DISSOLUTION, WELSH.equals(applicant1LanguagePreference)
+                    ? END_CIVIL_PARTNERSHIP_CY
+                    : END_CIVIL_PARTNERSHIP
+            );
+        }
+
+        if (caseData.getApplicant2().isConfidentialContactDetails()) {
+            templateContent.put(
+                APPLICANT_2_ADDRESS, WELSH.equals(applicant1LanguagePreference)
+                    ? CONFIDENTIAL_ADDRESS_CY
+                    : CONFIDENTIAL_ADDRESS_EN);
+        } else {
+            templateContent.put(
+                APPLICANT_2_ADDRESS, caseData.getApplicant2().getAddress());
+        }
 
         return templateContent;
     }
