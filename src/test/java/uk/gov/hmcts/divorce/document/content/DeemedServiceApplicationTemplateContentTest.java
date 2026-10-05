@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DeemedServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -42,7 +43,7 @@ class DeemedServiceApplicationTemplateContentTest {
 
     @Test
     void shouldReturnTemplateContentForEnglish() {
-        final CaseData caseData = buildTestData();
+        final CaseData caseData = buildTestData(false);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
         when(docmosisCommonContent.getApplicationType(LanguagePreference.ENGLISH, caseData))
             .thenReturn(DIVORCE_APPLICATION);
@@ -61,13 +62,14 @@ class DeemedServiceApplicationTemplateContentTest {
         expectedEntries.put("deemedNoEvidenceStatement", DEEMED_NO_EVIDENCE_STATEMENT);
         expectedEntries.put("statementOfTruth", "Yes");
         expectedEntries.put("serviceApplicationReceivedDate", "1 January 2023");
+        expectedEntries.put("isApplicant1Represented", false);
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
 
     @Test
     void shouldReturnTemplateContentForWelsh() {
-        final CaseData caseData = buildTestData();
+        final CaseData caseData = buildTestData(false);
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
         when(docmosisCommonContent.getApplicationType(LanguagePreference.WELSH, caseData))
             .thenReturn(DIVORCE_APPLICATION_CY);
@@ -86,11 +88,40 @@ class DeemedServiceApplicationTemplateContentTest {
         expectedEntries.put("deemedNoEvidenceStatement", DEEMED_NO_EVIDENCE_STATEMENT);
         expectedEntries.put("statementOfTruth", "Ydw");
         expectedEntries.put("serviceApplicationReceivedDate", "1 Ionawr 2023");
+        expectedEntries.put("isApplicant1Represented", false);
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
 
-    private CaseData buildTestData() {
+    @Test
+    void shouldReturnTemplateContentForEnglishForSolicitorInitiatedApplication() {
+        final CaseData caseData = buildTestData(true);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
+        when(docmosisCommonContent.getApplicationType(LanguagePreference.ENGLISH, caseData))
+            .thenReturn(DIVORCE_APPLICATION);
+
+        final Map<String, Object> result = templateContent.getTemplateContent(
+            caseData, TEST_CASE_ID, caseData.getApplicant1()
+        );
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put("ccdCaseReference", formatId(1616591401473378L));
+        expectedEntries.put("applicant1FullName", TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME);
+        expectedEntries.put("applicant2FullName", TEST_FIRST_NAME);
+        expectedEntries.put("deemedEvidenceUploaded", true);
+        expectedEntries.put("divorceOrDissolution", "divorce application");
+        expectedEntries.put("deemedEvidenceDetails", DEEMED_EVIDENCE);
+        expectedEntries.put("deemedNoEvidenceStatement", DEEMED_NO_EVIDENCE_STATEMENT);
+        expectedEntries.put("statementOfTruth", "Yes");
+        expectedEntries.put("serviceApplicationReceivedDate", "1 January 2023");
+        expectedEntries.put("isApplicant1Represented", true);
+        expectedEntries.put("applicant1SolicitorName", "Test Solicitor");
+        expectedEntries.put("applicant1SolicitorFirmName", "Test Org");
+
+        assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    private CaseData buildTestData(boolean isApplicant1Represented) {
         final CaseData caseData = caseData();
         caseData.setApplicant2(Applicant.builder().firstName(TEST_FIRST_NAME).build());
         caseData.getApplicant1().setInterimApplicationOptions(
@@ -108,6 +139,13 @@ class DeemedServiceApplicationTemplateContentTest {
                 .receivedServiceApplicationDate(LocalDate.of(2023, 1, 1))
                 .build()
         );
+
+        if (isApplicant1Represented) {
+            caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+            caseData.getApplicant1().setSolicitor(Solicitor.builder().name("Test Solicitor").firmName("Test Org").build());
+        } else {
+            caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+        }
 
         return caseData;
     }

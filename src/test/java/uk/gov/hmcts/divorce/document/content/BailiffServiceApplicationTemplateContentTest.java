@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.YesOrNoOrNotKnown;
 
 import java.time.LocalDate;
@@ -112,7 +113,70 @@ class BailiffServiceApplicationTemplateContentTest {
             entry("bailiffDoesPartnerHaveMentalIssues", YesOrNoOrNotKnown.YES.getValue()),
             entry("bailiffPartnerMentalIssuesDetails", TEST_MENTAL_DETAILS),
             entry("bailiffDoesPartnerHoldFirearmsLicense", YesOrNoOrNotKnown.YES.getValue()),
-            entry("bailiffPartnerFirearmsLicenseDetails", TEST_FIREARMS_DETAILS)
+            entry("bailiffPartnerFirearmsLicenseDetails", TEST_FIREARMS_DETAILS),
+            entry("isApplicant1Represented", false)
+        );
+
+        assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
+    void shouldReturnTemplateContentForSolicitorInitiatedApplication() {
+        CaseData caseData = buildTestData();
+        Applicant applicant = caseData.getApplicant1();
+        applicant.setLanguagePreferenceWelsh(YesOrNo.NO);
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitor(Solicitor.builder().name("Test Solicitor").firmName("Test Org").build());
+
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(LanguagePreference.ENGLISH))
+            .thenReturn(new HashMap<>());
+        when(docmosisCommonContent.getApplicationType(LanguagePreference.ENGLISH, caseData))
+            .thenReturn(DIVORCE_APPLICATION);
+
+        Map<String, Object> result = templateContent.getTemplateContent(caseData, TEST_CASE_ID, applicant);
+
+        Map<String, Object> expectedEntries = Map.ofEntries(
+            entry("ccdCaseReference", formatId(TEST_CASE_ID)),
+            entry("applicant1FullName", applicant.getFullName()),
+            entry("applicant2FullName", caseData.getApplicant2().getFullName()),
+            entry("divorceOrDissolution", "divorce application"),
+            entry("serviceApplicationReceivedDate", "1 January 2023"),
+            entry("evidenceUploaded", YesOrNo.YES),
+            entry("recipientAddress", CONFIDENTIAL_ADDRESS_EN),
+            entry("bailiffKnowPartnersPhone", true),
+            entry("bailiffPartnersPhone", TEST_PHONE),
+            entry("bailiffKnowPartnersDateOfBirth", true),
+            entry("bailiffPartnersDateOfBirth", "1 January 1990"),
+            entry("bailiffPartnersApproximateAge", TEST_PARTNER_AGE),
+            entry("bailiffPartnersHeight", TEST_PARTNER_HEIGHT),
+            entry("bailiffPartnersHairColour", TEST_PARTNER_HAIR),
+            entry("bailiffPartnersEyeColour", TEST_PARTNER_EYES),
+            entry("bailiffPartnersEthnicGroup", TEST_PARTNER_ETHNICITY),
+            entry("bailiffPartnersDistinguishingFeatures", TEST_PARTNER_FEATURES),
+            entry("bailiffBestTimeToServe", TEST_BEST_TIME_TO_SERVE),
+            entry("bailiffPartnerInARefuge", YesOrNoOrNotKnown.NO.getValue()),
+            entry("bailiffDoesPartnerHaveVehicle", YesOrNoOrNotKnown.YES.getValue()),
+            entry("bailiffPartnerVehicleModel", TEST_VEHICLE_MODEL),
+            entry("bailiffPartnerVehicleColour", TEST_VEHICLE_COLOUR),
+            entry("bailiffPartnerVehicleRegistration", TEST_VEHICLE_REG),
+            entry("bailiffPartnerVehicleOtherDetails", TEST_VEHICLE_OTHER),
+            entry("bailiffHasPartnerBeenViolent", YesOrNoOrNotKnown.YES.getValue()),
+            entry("bailiffPartnerViolenceDetails", TEST_VIOLENCE_DETAILS),
+            entry("bailiffHasPartnerMadeThreats", YesOrNoOrNotKnown.YES.getValue()),
+            entry("bailiffPartnerThreatsDetails", TEST_THREATS_DETAILS),
+            entry("bailiffHavePoliceBeenInvolved", YesOrNoOrNotKnown.YES.getValue()),
+            entry("bailiffPoliceInvolvedDetails", TEST_POLICE_DETAILS),
+            entry("bailiffHaveSocialServicesBeenInvolved", YesOrNoOrNotKnown.YES.getValue()),
+            entry("bailiffSocialServicesInvolvedDetails", TEST_SOCIAL_DETAILS),
+            entry("bailiffAreThereDangerousAnimals", YesOrNoOrNotKnown.YES.getValue()),
+            entry("bailiffDangerousAnimalsDetails", TEST_ANIMAL_DETAILS),
+            entry("bailiffDoesPartnerHaveMentalIssues", YesOrNoOrNotKnown.YES.getValue()),
+            entry("bailiffPartnerMentalIssuesDetails", TEST_MENTAL_DETAILS),
+            entry("bailiffDoesPartnerHoldFirearmsLicense", YesOrNoOrNotKnown.YES.getValue()),
+            entry("bailiffPartnerFirearmsLicenseDetails", TEST_FIREARMS_DETAILS),
+            entry("isApplicant1Represented", true),
+            entry("applicant1SolicitorName", "Test Solicitor"),
+            entry("applicant1SolicitorFirmName", "Test Org")
         );
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);

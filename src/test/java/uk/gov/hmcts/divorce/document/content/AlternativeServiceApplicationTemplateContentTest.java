@@ -14,6 +14,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
+import uk.gov.hmcts.divorce.divorcecase.model.SolicitorServiceMethod;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -76,6 +78,7 @@ class AlternativeServiceApplicationTemplateContentTest {
         expectedEntries.put("altServicePartnerOtherDetails", null);
         expectedEntries.put("statementOfTruth", "Yes");
         expectedEntries.put("serviceApplicationReceivedDate", "1 January 2023");
+        expectedEntries.put("isApplicant1Represented", false);
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -112,6 +115,7 @@ class AlternativeServiceApplicationTemplateContentTest {
         expectedEntries.put("altServicePartnerOtherDetails", null);
         expectedEntries.put("statementOfTruth", "Ydw");
         expectedEntries.put("serviceApplicationReceivedDate", "1 Ionawr 2023");
+        expectedEntries.put("isApplicant1Represented", false);
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -149,6 +153,50 @@ class AlternativeServiceApplicationTemplateContentTest {
         expectedEntries.put("altServicePartnerOtherDetails", null);
         expectedEntries.put("statementOfTruth", "Yes");
         expectedEntries.put("serviceApplicationReceivedDate", "1 January 2023");
+        expectedEntries.put("isApplicant1Represented", false);
+
+        assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
+    void shouldReturnTemplateContentForEnglishForSolicitorInitiatedApplication() {
+        final CaseData caseData = buildTestDataWithRepresentation(AlternativeServiceMethod.EMAIL, null);
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
+        when(docmosisCommonContent.getApplicationType(LanguagePreference.ENGLISH, caseData))
+            .thenReturn(DIVORCE_APPLICATION);
+
+        final Map<String, Object> result = templateContent.getTemplateContent(
+            caseData, TEST_CASE_ID, caseData.getApplicant1()
+        );
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put("ccdCaseReference", formatId(1616591401473378L));
+        expectedEntries.put("applicant1FullName", TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME);
+        expectedEntries.put("applicant2FullName", TEST_FIRST_NAME);
+        expectedEntries.put("altServiceEvidenceUploaded", true);
+        expectedEntries.put("divorceOrDissolution", "divorce application");
+        expectedEntries.put("altServiceReasonForApplying", ALTERNATIVE_SERVICE_REASON);
+        expectedEntries.put("altServiceEvidenceDetails", ALTERNATIVE_SERVICE_METHOD_JUSTIFICATION);
+        expectedEntries.put("byEmail", "true");
+        expectedEntries.put("emailAndDifferent", "false");
+        expectedEntries.put("byTextMessage", "false");
+        expectedEntries.put("byWhatsApp", "false");
+        expectedEntries.put("bySocialMedia", "false");
+        expectedEntries.put("byOther", "false");
+        expectedEntries.put("altServicePartnerEmail", TEST_USER_EMAIL);
+        expectedEntries.put("altServicePartnerPhone", null);
+        expectedEntries.put("altServicePartnerWANum", null);
+        expectedEntries.put("altServicePartnerSocialDetails", null);
+        expectedEntries.put("altServicePartnerOtherDetails", null);
+        expectedEntries.put("statementOfTruth", "Yes");
+        expectedEntries.put("serviceApplicationReceivedDate", "1 January 2023");
+        expectedEntries.put("isApplicant1Represented", true);
+        expectedEntries.put("applicant1SolicitorName", "Test Solicitor");
+        expectedEntries.put("solicitorServiceMethodReason", "Test Reason");
+        expectedEntries.put("solicitorAltServiceMethod", "Solicitor Service");
+        expectedEntries.put("isSolicitorServiceMethod", true);
+        expectedEntries.put("applicant1SolicitorFirmName", "Test Org");
+        expectedEntries.put("solAltServiceSuccessfulSendReason", "Test Reason");
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -179,6 +227,50 @@ class AlternativeServiceApplicationTemplateContentTest {
                         .altServicePartnerOtherDetails(otherDetails)
                         .altServiceDifferentWays(alternativeServiceDifferentWays)
                         .altServiceMethodJustification(ALTERNATIVE_SERVICE_METHOD_JUSTIFICATION)
+                        .build()
+                )
+                .build()
+        );
+        caseData.setAlternativeService(
+            AlternativeService.builder()
+                .receivedServiceApplicationDate(LocalDate.of(2023, 1, 1))
+                .build()
+        );
+
+        return caseData;
+    }
+
+    private CaseData buildTestDataWithRepresentation(AlternativeServiceMethod alternativeServiceMethod,
+                                   Set<AlternativeServiceDifferentWays> alternativeServiceDifferentWays) {
+        final String phoneNumber = alternativeServiceDifferentWays != null
+            && alternativeServiceDifferentWays.contains(AlternativeServiceDifferentWays.TEXT_MESSAGE) ? "0123456789" : null;
+        final String waNum = alternativeServiceDifferentWays != null
+            && alternativeServiceDifferentWays.contains(AlternativeServiceDifferentWays.WHATSAPP) ? "0123456789" : null;
+        final String socialDetails = alternativeServiceDifferentWays != null
+            && alternativeServiceDifferentWays.contains(AlternativeServiceDifferentWays.SOCIAL_MEDIA) ? "socialMediaDetails" : null;
+        final String otherDetails = alternativeServiceDifferentWays != null
+            && alternativeServiceDifferentWays.contains(AlternativeServiceDifferentWays.OTHER) ? "otherDetails" : null;
+        final CaseData caseData = caseData();
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitor(Solicitor.builder().name("Test Solicitor").firmName("Test Org").build());
+        caseData.setApplicant2(Applicant.builder().firstName(TEST_FIRST_NAME).build());
+        caseData.getApplicant1().setInterimApplicationOptions(
+            InterimApplicationOptions.builder()
+                .interimAppsCanUploadEvidence(YesOrNo.YES)
+                .alternativeServiceJourneyOptions(
+                    AlternativeServiceJourneyOptions.builder()
+                        .altServiceReasonForApplying(ALTERNATIVE_SERVICE_REASON)
+                        .altServiceMethod(alternativeServiceMethod)
+                        .altServicePartnerEmail(TEST_USER_EMAIL)
+                        .altServicePartnerPhone(phoneNumber)
+                        .altServicePartnerWANum(waNum)
+                        .altServicePartnerSocialDetails(socialDetails)
+                        .altServicePartnerOtherDetails(otherDetails)
+                        .altServiceDifferentWays(alternativeServiceDifferentWays)
+                        .altServiceMethodJustification(ALTERNATIVE_SERVICE_METHOD_JUSTIFICATION)
+                        .solAltServiceMethod(SolicitorServiceMethod.SOLICITOR_SERVICE)
+                        .solAltServiceSolicitorServiceReason("Test Reason")
+                        .solAltServiceSuccessfulSendReason("Test Reason")
                         .build()
                 )
                 .build()
