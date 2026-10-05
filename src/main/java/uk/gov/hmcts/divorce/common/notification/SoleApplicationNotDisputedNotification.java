@@ -16,7 +16,6 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.REFERENCE_NUMBER_SEND_DOCS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
@@ -49,6 +48,7 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
     private static final String ISSUE_DATE_PLUS_141_DAYS = "issue date plus 141 days";
     public static final String DOC_NOT_UPLOADED = "docNotUploaded";
     public static final String DOC_UPLOADED = "docUploaded";
+    public static final String REFERENCE_NUMBER_SEND_DOCS = "referenceNumberSendDocs";
 
     private final NotificationService notificationService;
 
