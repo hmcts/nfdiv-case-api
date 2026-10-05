@@ -1,7 +1,13 @@
 buildscript {
   repositories {
-    mavenLocal()
-    mavenCentral()
+    def pipelineEnvironments = [
+      'preview', 'aat', 'prod', 'demo', 'perftest', 'ithc'
+    ]
+
+    if (!(System.getenv('ENVIRONMENT') in pipelineEnvironments)) {
+      mavenLocal()
+      mavenCentral()
+    }
   }
   dependencies {
     classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '3.2.1263'
