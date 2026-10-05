@@ -122,7 +122,7 @@ class BailiffApprovedOrderContentTest {
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_2_FIRST_NAME, TEST_FIRST_NAME),
             entry(APPLICANT_2_LAST_NAME, TEST_LAST_NAME),
-            entry(APPLICANT_2_ADDRESS, AddressGlobalUK.builder().country("UK").build())
+            entry(APPLICANT_2_ADDRESS, "UK")
         );
     }
 
@@ -184,7 +184,7 @@ class BailiffApprovedOrderContentTest {
         assertThat(result).contains(
             entry(THE_APPLICATION, END_CIVIL_PARTNERSHIP_CY),
             entry(DIVORCE_OR_DISSOLUTION, ENDING_CIVIL_PARTNERSHIP_CY),
-            entry(APPLICANT_2_ADDRESS, AddressGlobalUK.builder().country("UK").build())
+            entry(APPLICANT_2_ADDRESS, "UK")
         );
     }
 }

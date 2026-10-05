@@ -76,7 +76,7 @@ class CertificateOfServiceContentTest {
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
 
         Map<String, Object> expectedEntries = buildTestData(caseData, END_CIVIL_PARTNERSHIP, "No");
-        expectedEntries.put(APPLICANT_2_ADDRESS, AddressGlobalUK.builder().country("UK").build());
+        expectedEntries.put(APPLICANT_2_ADDRESS, "UK");
 
         Map<String, Object> templateContent = certificateOfServiceContent.apply(caseData, 1616591401473378L);
 
@@ -95,7 +95,7 @@ class CertificateOfServiceContentTest {
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
 
         Map<String, Object> expectedEntries = buildTestData(caseData, END_CIVIL_PARTNERSHIP_CY, "No");
-        expectedEntries.put(APPLICANT_2_ADDRESS, AddressGlobalUK.builder().country("UK").build());
+        expectedEntries.put(APPLICANT_2_ADDRESS, "UK");
 
         Map<String, Object> templateContent = certificateOfServiceContent.apply(caseData, 1616591401473378L);
 
