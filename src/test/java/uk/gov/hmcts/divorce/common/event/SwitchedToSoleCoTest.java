@@ -103,8 +103,10 @@ class SwitchedToSoleCoTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
         assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);
+
+        verify(switchToSoleService).switchApplicationType(caseData);
+        verifyNoMoreInteractions(switchToSoleService);
     }
 
     @Test
@@ -120,11 +122,10 @@ class SwitchedToSoleCoTest {
 
         final AboutToStartOrSubmitResponse<CaseData, State> response = switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        assertThat(response.getData().getApplicationType()).isEqualTo(SOLE_APPLICATION);
         assertThat(response.getData().getApplication().getSwitchedToSoleCo()).isEqualTo(YES);
-        assertThat(response.getData().getLabelContent().getApplicant2()).isEqualTo("respondent");
         assertThat(response.getData().getConditionalOrder().getSwitchedToSole()).isEqualTo(YES);
 
+        verify(switchToSoleService).switchApplicationType(caseData);
         verify(switchToSoleService).switchUserRoles(caseData, caseId);
         verify(switchToSoleService).switchApplicantData(caseData);
     }
@@ -212,6 +213,7 @@ class SwitchedToSoleCoTest {
 
         switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
+        verify(switchToSoleService).switchApplicationType(caseData);
         verify(switchToSoleService).switchApplicantData(caseData);
         verifyNoMoreInteractions(switchToSoleService);
     }
@@ -233,7 +235,8 @@ class SwitchedToSoleCoTest {
 
         switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        verifyNoInteractions(switchToSoleService);
+        verify(switchToSoleService).switchApplicationType(caseData);
+        verifyNoMoreInteractions(switchToSoleService);
     }
 
     @Test
@@ -247,7 +250,8 @@ class SwitchedToSoleCoTest {
 
         switchedToSoleCo.aboutToSubmit(caseDetails, caseDetails);
 
-        verifyNoInteractions(switchToSoleService);
+        verify(switchToSoleService).switchApplicationType(caseData);
+        verifyNoMoreInteractions(switchToSoleService);
     }
 
     @Test

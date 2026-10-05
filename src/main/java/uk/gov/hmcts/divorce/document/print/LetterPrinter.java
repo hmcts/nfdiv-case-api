@@ -98,15 +98,18 @@ public class LetterPrinter {
                 .map(element -> element.getValue().getGeneralLetterParties())
                 .orElse(GeneralParties.OTHER);
 
+            final Applicant applicant1 = caseData.getApplicant1();
+            final Applicant applicant2 = caseData.getApplicant2();
+
             var recipientName = switch (parties) {
-                case RESPONDENT -> caseData.getApplicant2().getFullName();
-                case APPLICANT -> caseData.getApplicant1().getFullName();
+                case APPLICANT -> applicant1.getFullName();
+                case APPLICANT2, RESPONDENT -> applicant2.getFullName();
                 case OTHER -> parties.name();
             };
 
             YesOrNo correspondenceAddressOverseas = switch (parties) {
-                case RESPONDENT -> caseData.getApplicant2().getCorrespondenceAddressIsOverseas();
-                case APPLICANT -> caseData.getApplicant1().getCorrespondenceAddressIsOverseas();
+                case APPLICANT -> applicant1.getCorrespondenceAddressIsOverseas();
+                case APPLICANT2, RESPONDENT -> applicant2.getCorrespondenceAddressIsOverseas();
                 case OTHER -> YesOrNo.NO;
             };
 

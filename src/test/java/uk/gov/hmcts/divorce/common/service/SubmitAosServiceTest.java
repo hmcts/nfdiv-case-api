@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosResponseLetterPackToApplicant;
+import uk.gov.hmcts.divorce.common.service.task.ExpireUnpaidSearchGovRecordsApplications;
 import uk.gov.hmcts.divorce.common.service.task.GenerateAndLinkRespondentAnswers;
 import uk.gov.hmcts.divorce.common.service.task.SaveLegalProceedingDocumentsToCaseDocuments;
 import uk.gov.hmcts.divorce.common.service.task.SendAosNotifications;
@@ -40,6 +41,9 @@ class SubmitAosServiceTest {
     @Mock
     private SaveLegalProceedingDocumentsToCaseDocuments saveLegalProceedingDocumentsToCaseDocuments;
 
+    @Mock
+    private ExpireUnpaidSearchGovRecordsApplications expireUnpaidSearchGovRecordsApplications;
+
     @InjectMocks
     private SubmitAosService submitAosService;
 
@@ -51,6 +55,7 @@ class SubmitAosServiceTest {
         when(setSubmitAosState.apply(caseDetails)).thenReturn(caseDetails);
         when(setSubmissionAndDueDate.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(generateAndLinkRespondentAnswers.apply(caseDetails)).thenReturn(expectedCaseDetails);
+        when(expireUnpaidSearchGovRecordsApplications.apply(caseDetails)).thenReturn(expectedCaseDetails);
         when(saveLegalProceedingDocumentsToCaseDocuments.apply(caseDetails)).thenReturn(expectedCaseDetails);
 
         final CaseDetails<CaseData, State> result = submitAosService.submitAos(caseDetails);
@@ -60,6 +65,7 @@ class SubmitAosServiceTest {
         verify(setSubmitAosState).apply(caseDetails);
         verify(setSubmissionAndDueDate).apply(caseDetails);
         verify(generateAndLinkRespondentAnswers).apply(caseDetails);
+        verify(expireUnpaidSearchGovRecordsApplications).apply(caseDetails);
         verify(saveLegalProceedingDocumentsToCaseDocuments).apply(caseDetails);
     }
 
@@ -86,6 +92,7 @@ class SubmitAosServiceTest {
 
         when(setSubmitAosState.apply(caseDetails)).thenReturn(caseDetails);
         when(setSubmissionAndDueDate.apply(caseDetails)).thenReturn(expectedCaseDetails);
+        when(expireUnpaidSearchGovRecordsApplications.apply(caseDetails)).thenReturn(expectedCaseDetails);
 
         final CaseDetails<CaseData, State> result = submitAosService.submitOfflineAos(caseDetails);
 
@@ -93,5 +100,6 @@ class SubmitAosServiceTest {
 
         verify(setSubmitAosState).apply(caseDetails);
         verify(setSubmissionAndDueDate).apply(caseDetails);
+        verify(expireUnpaidSearchGovRecordsApplications).apply(caseDetails);
     }
 }
