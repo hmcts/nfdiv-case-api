@@ -12,6 +12,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DispenseWithServiceJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 
 import java.time.LocalDate;
@@ -85,6 +86,7 @@ class DispenseWithServiceApplicationTemplateContentTest {
         expectedEntries.put("applicant2FullName", TEST_FIRST_NAME);
         expectedEntries.put("divorceOrDissolution", "divorce application");
         expectedEntries.put("serviceApplicationReceivedDate", "1 January 2023");
+        expectedEntries.put("isApplicant1Represented", false);
 
         return expectedEntries;
     }
@@ -226,6 +228,28 @@ class DispenseWithServiceApplicationTemplateContentTest {
         );
 
         Map<String, Object> expectedEntries = getNoEntries();
+
+        assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
+    void shouldReturnTemplateDataContentForEnglishForSolicitorInitiatedApplication() {
+        final CaseData caseData = buildYesTestData();
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitor(Solicitor.builder().name("Test Solicitor").firmName("Test Org").build());
+
+        when(docmosisCommonContent.getApplicationType(LanguagePreference.ENGLISH, caseData))
+            .thenReturn(DIVORCE_APPLICATION);
+
+        final Map<String, Object> result = templateContent.getTemplateContent(
+            caseData, TEST_CASE_ID, caseData.getApplicant1()
+        );
+
+        Map<String, Object> expectedEntries = getYesEntries();
+        expectedEntries.put("isApplicant1Represented", true);
+        expectedEntries.put("applicant1SolicitorName", "Test Solicitor");
+        expectedEntries.put("applicant1SolicitorFirmName", "Test Org");
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
