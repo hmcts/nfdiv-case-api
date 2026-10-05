@@ -104,15 +104,17 @@ public class LegalAdvisorMoreInfoDecisionNotification implements ApplicantNotifi
 
         Applicant applicant = caseData.getApplicant2();
 
-        notificationService.sendEmail(
-            applicant.getSolicitor().getEmail(),
-            SOLICITOR_CO_REFUSED_SOLE_JOINT,
-            commonContent.getCoRefusedSolicitorTemplateVars(caseData, caseId, applicant, MORE_INFO),
-            applicant.getLanguagePreference(),
-            caseId
-        );
+        if (!caseData.getApplicationType().isSole()) {
+            notificationService.sendEmail(
+                applicant.getSolicitor().getEmail(),
+                SOLICITOR_CO_REFUSED_SOLE_JOINT,
+                commonContent.getCoRefusedSolicitorTemplateVars(caseData, caseId, applicant, MORE_INFO),
+                applicant.getLanguagePreference(),
+                caseId
+            );
 
-        log.info("Successfully sent CO refused notification to applicant 2 solicitor as required more info for case : {}", caseId);
+            log.info("Successfully sent CO refused notification to applicant 2 solicitor as required more info for case : {}", caseId);
+        }
     }
 
     @Override

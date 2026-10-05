@@ -314,7 +314,7 @@ public enum State {
     AwaitingAnswer,
 
     @CCD(
-        label = "AwaitingJS/Nullity",
+        label = "AwaitingJS",
         hint = CASE_TITLE,
         access = {DefaultStateAccessExcludingCAA.class}
     )
