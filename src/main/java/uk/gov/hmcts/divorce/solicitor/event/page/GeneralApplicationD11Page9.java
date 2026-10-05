@@ -3,6 +3,8 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 public class GeneralApplicationD11Page9 implements CcdPageConfiguration {
 
     private final String detailsNotCorrectCondition;
@@ -22,10 +24,20 @@ public class GeneralApplicationD11Page9 implements CcdPageConfiguration {
         """;
 
     @Override
-    public void addTo(final PageBuilder pageBuilder) {
-        pageBuilder
-            .page("SolGenAppD11DetailsNotCorrect")
-            .showCondition(detailsNotCorrectCondition)
+    public void addTo(PageBuilder pageBuilder) {
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
+
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+        var page = pageBuilder.page("SolGenAppD11DetailsNotCorrect");
+
+        String combinedCondition = detailsNotCorrectCondition;
+
+        if (isNotBlank(pageShowCondition)) {
+            combinedCondition = pageShowCondition + " AND (" + detailsNotCorrectCondition + ")";
+        }
+        page.showCondition(combinedCondition)
             .label("solGeneralAppD11UpdateLabel", UPDATE_DETAILS_LABEL);
     }
 }

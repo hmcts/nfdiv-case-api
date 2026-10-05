@@ -8,6 +8,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 public class GeneralApplicationD11Page2 implements CcdPageConfiguration {
 
     private final TypedPropertyGetter<CaseData, Applicant> applicantRef;
@@ -15,12 +17,6 @@ public class GeneralApplicationD11Page2 implements CcdPageConfiguration {
     private final String otherApplicationCondition;
 
     private final String urgentCaseCondition;
-
-    public GeneralApplicationD11Page2(TypedPropertyGetter<CaseData, Applicant> applicantRef, String applicantFieldPrefix) {
-        this.applicantRef = applicantRef;
-        this.otherApplicationCondition = applicantFieldPrefix + "GenAppSolType=\"other\"";
-        this.urgentCaseCondition = applicantFieldPrefix + "GenAppUrgentCase=\"Yes\"";
-    }
 
     public static final String OTHER_MORE_INFO_LABEL = """
         Please provide more information about the general application
@@ -35,11 +31,25 @@ public class GeneralApplicationD11Page2 implements CcdPageConfiguration {
         grant your application.
         """;
 
+    public GeneralApplicationD11Page2(TypedPropertyGetter<CaseData, Applicant> applicantRef, String applicantFieldPrefix) {
+        this.applicantRef = applicantRef;
+        this.otherApplicationCondition = applicantFieldPrefix + "GenAppSolType=\"other\"";
+        this.urgentCaseCondition = applicantFieldPrefix + "GenAppUrgentCase=\"Yes\"";
+    }
+
     @Override
-    public void addTo(final PageBuilder pageBuilder) {
-        pageBuilder
-            .page("SolGenAppD11Details")
-            .complex(applicantRef)
+    public void addTo(PageBuilder pageBuilder) {
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
+
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+        var page = pageBuilder.page("SolGenAppD11Details");
+
+        if (isNotBlank(pageShowCondition)) {
+            page.showCondition(pageShowCondition);
+        }
+        page.complex(applicantRef)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getGeneralApplicationD11JourneyOptions)
                         .mandatory(GeneralApplicationD11JourneyOptions::getSolType)

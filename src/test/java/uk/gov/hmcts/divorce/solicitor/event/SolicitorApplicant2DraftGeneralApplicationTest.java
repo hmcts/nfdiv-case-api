@@ -29,16 +29,16 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorDraftGeneralApplicationApplicant2.SOLICITOR_DRAFT_GEN_APP_APPLICANT2;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorApplicant2DraftGeneralApplication.SOLICITOR_APPLICANT2_DRAFT_GEN_APP;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
-class SolicitorDraftGeneralApplicationApplicant2Test {
+class SolicitorApplicant2DraftGeneralApplicationTest {
 
     @InjectMocks
-    private SolicitorDraftGeneralApplicationApplicant2 solicitorDraftGeneralApplicationApplicant2;
+    private SolicitorApplicant2DraftGeneralApplication solicitorApplicant2DraftGeneralApplication;
 
     @Mock
     private GeneralApplicationDraftJourneyService generalApplicationDraftJourneyService;
@@ -47,18 +47,18 @@ class SolicitorDraftGeneralApplicationApplicant2Test {
     void shouldAddEventToConfigBuilder() {
         ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        solicitorDraftGeneralApplicationApplicant2.configure(configBuilder);
+        solicitorApplicant2DraftGeneralApplication.configure(configBuilder);
 
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
-            .contains(SOLICITOR_DRAFT_GEN_APP_APPLICANT2);
+            .contains(SOLICITOR_APPLICANT2_DRAFT_GEN_APP);
     }
 
     @Test
     void shouldGrantCrudToApplicant1SolicitorAndReadOnlyToCaseRoles() {
         ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        solicitorDraftGeneralApplicationApplicant2.configure(configBuilder);
+        solicitorApplicant2DraftGeneralApplication.configure(configBuilder);
 
         SetMultimap<UserRole, Permission> expected = ImmutableSetMultimap.<UserRole, Permission>builder()
             .put(APPLICANT_2_SOLICITOR, C)
@@ -87,7 +87,7 @@ class SolicitorDraftGeneralApplicationApplicant2Test {
             .build();
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
-            solicitorDraftGeneralApplicationApplicant2.aboutToStart(caseDetails);
+            solicitorApplicant2DraftGeneralApplication.aboutToStart(caseDetails);
 
         assertThat(response.getData()).isEqualTo(caseData);
         verify(generalApplicationDraftJourneyService).prepareAboutToStart(caseDetails, applicant1);
@@ -104,7 +104,7 @@ class SolicitorDraftGeneralApplicationApplicant2Test {
             .build();
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
-            solicitorDraftGeneralApplicationApplicant2.aboutToSubmit(caseDetails, caseDetails);
+            solicitorApplicant2DraftGeneralApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData()).isEqualTo(caseData);
         verify(generalApplicationDraftJourneyService).prepareAboutToSubmit(caseDetails, applicant1);

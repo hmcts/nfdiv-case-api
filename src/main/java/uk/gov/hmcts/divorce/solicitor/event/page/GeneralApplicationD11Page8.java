@@ -8,6 +8,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 public class GeneralApplicationD11Page8 implements CcdPageConfiguration {
 
     private final TypedPropertyGetter<CaseData, Applicant> applicant1Ref;
@@ -26,10 +28,18 @@ public class GeneralApplicationD11Page8 implements CcdPageConfiguration {
         """;
 
     @Override
-    public void addTo(final PageBuilder pageBuilder) {
-        pageBuilder
-            .page("SolGenAppD11PartyDetails")
-            .label("solGeneralAppD11PartyDetailsLabel", PARTY_DETAILS_LABEL)
+    public void addTo(PageBuilder pageBuilder) {
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
+
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+        var page = pageBuilder.page("SolGenAppD11PartyDetails");
+
+        if (isNotBlank(pageShowCondition)) {
+            page.showCondition(pageShowCondition);
+        }
+        page.label("solGeneralAppD11PartyDetailsLabel", PARTY_DETAILS_LABEL)
             .complex(applicant2Ref)
                 .readonlyNoSummary(Applicant::getAddress)
                 .readonlyNoSummary(Applicant::getEmail)

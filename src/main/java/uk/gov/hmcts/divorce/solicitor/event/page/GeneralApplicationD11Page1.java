@@ -7,6 +7,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 public class GeneralApplicationD11Page1 implements CcdPageConfiguration {
 
     private final TypedPropertyGetter<CaseData, Applicant> applicantRef;
@@ -37,11 +39,18 @@ public class GeneralApplicationD11Page1 implements CcdPageConfiguration {
     public static final String PAYMENT_HEADING = "## How will payment be made?";
 
     @Override
-    public void addTo(final PageBuilder pageBuilder) {
+    public void addTo(PageBuilder pageBuilder) {
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
 
-        pageBuilder
-            .page("SolGenAppD11")
-                .label("LabelGeneralApplicationD11Para-1", GENERAL_APPLICATION_D11_PARAGRAPH)
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+        var page = pageBuilder.page("SolGenAppD11");
+
+        if (isNotBlank(pageShowCondition)) {
+            page.showCondition(pageShowCondition);
+        }
+        page.label("LabelGeneralApplicationD11Para-1", GENERAL_APPLICATION_D11_PARAGRAPH)
             .complex(applicantRef)
                 .complex(Applicant::getInterimApplicationOptions)
                     .mandatory(InterimApplicationOptions::getGeneralApplicationAcknowledgementCheckbox)

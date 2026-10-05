@@ -8,6 +8,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.DraftApplicationAction;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -33,6 +34,17 @@ public class GeneralApplicationDraftSubmissionService {
     public void buildGeneralApplication(CaseDetails<CaseData, State> details, CaseData caseData, Applicant applicant) {
         InterimApplicationOptions options = applicant.getInterimApplicationOptions();
 
+        if (options != null
+            && options.getDraftApplicationAction() != null
+            && DraftApplicationAction.WITHDRAW.equals(options.getDraftApplicationAction())) {
+
+            log.info("Clearing interim options and general application for case id: {}", details.getId());
+
+            applicant.setInterimApplicationOptions(null);
+            caseData.setGeneralApplication(null);
+            return;
+        }
+
         boolean isApplicant1 = isApplicant1(details.getId());
 
         log.info("Building general application from interim options for case id: {}", details.getId());
@@ -47,7 +59,7 @@ public class GeneralApplicationDraftSubmissionService {
             details.getId(), applicant, caseData, generalApplication);
 
         generalApplication.setGeneralApplicationDocument(applicationDocument);
-        caseData.updateCaseWithGeneralApplication(generalApplication);
+        //caseData.updateCaseWithGeneralApplication(generalApplication);
     }
 
     private boolean isApplicant1(Long caseId) {

@@ -17,14 +17,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
-import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationDraftJourneyService;
+import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationDraftSubmissionService;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.hmcts.divorce.solicitor.event.SolicitorDraftGeneralApplicationApplicant1.SOLICITOR_DRAFT_GEN_APP_APPLICANT1;
+import static uk.gov.hmcts.divorce.solicitor.event.SolicitorApplicant1DraftGeneralApplication.SOLICITOR_APPLICANT1_DRAFT_GEN_APP;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.ABOUT_TO_SUBMIT_URL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTH_HEADER_VALUE;
@@ -36,7 +37,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.callbackRequest;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-class SolicitorDraftGeneralApplicationApplicant1IT {
+class SolicitorApplicant1AmendGeneralApplicationIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -54,7 +55,7 @@ class SolicitorDraftGeneralApplicationApplicant1IT {
     private WebMvcConfig webMvcConfig;
 
     @MockitoBean
-    private GeneralApplicationDraftJourneyService generalApplicationDraftJourneyService;
+    private GeneralApplicationDraftSubmissionService generalApplicationDraftSubmissionService;
 
     @Test
     void shouldSubmitDraftFromInterimOptions() throws Exception {
@@ -69,12 +70,12 @@ class SolicitorDraftGeneralApplicationApplicant1IT {
                 .header(SERVICE_AUTHORIZATION, AUTH_HEADER_VALUE)
                 .header(AUTHORIZATION, TEST_AUTHORIZATION_TOKEN)
                 .content(objectMapper.writeValueAsString(
-                    callbackRequest(caseData, SOLICITOR_DRAFT_GEN_APP_APPLICANT1)))
+                    callbackRequest(caseData, SOLICITOR_APPLICANT1_DRAFT_GEN_APP)))
                 .accept(APPLICATION_JSON))
             .andExpect(status().isOk());
 
-        verify(generalApplicationDraftJourneyService)
-            .prepareAboutToSubmit(caseDetailsCaptor.capture(), applicantCaptor.capture());
+        verify(generalApplicationDraftSubmissionService)
+            .buildGeneralApplication(caseDetailsCaptor.capture(), any(CaseData.class), applicantCaptor.capture());
 
         assertThat(caseDetailsCaptor.getValue().getId()).isEqualTo(TEST_CASE_ID);
     }

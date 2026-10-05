@@ -24,6 +24,7 @@ import java.util.Set;
 
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
+import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11;
 import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.SEARCH_GOV_RECORDS;
 
@@ -106,6 +107,16 @@ public class InterimApplicationOptions {
         searchable = false
     )
     private SolicitorPaymentMethod interimAppsPaymentMethod;
+
+    @CCD(
+        label = "Do you want to Amend your draft service application or withdraw it?",
+        hint = "if you withdraw it, you'll be able to start a new service application.",
+        access = {DefaultAccess.class},
+        typeOverride = FixedRadioList,
+        typeParameterOverride = "DraftApplicationAction",
+        searchable = false
+    )
+    private DraftApplicationAction draftApplicationAction;
 
     @CCD(
         label = "Will you be using Help with Fees for this application?",

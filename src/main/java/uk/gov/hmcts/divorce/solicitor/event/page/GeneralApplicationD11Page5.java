@@ -8,17 +8,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 public class GeneralApplicationD11Page5 implements CcdPageConfiguration {
 
     private final TypedPropertyGetter<CaseData, Applicant> applicantRef;
 
     private final String evidenceOfConsentRequired;
-
-    public GeneralApplicationD11Page5(TypedPropertyGetter<CaseData, Applicant> applicantRef, String applicantFieldPrefix) {
-        this.applicantRef = applicantRef;
-        this.evidenceOfConsentRequired = applicantFieldPrefix + "GenAppHearingNotRequired=\"yesPartnerAgreesWithApplication\" "
-            + "OR " + applicantFieldPrefix + "GenAppHearingNotRequired=\"yesPartnerAgreesWithNoHearing\"";
-    }
 
     private static final String UPLOAD_LABEL = "Upload evidence";
 
@@ -37,11 +33,25 @@ public class GeneralApplicationD11Page5 implements CcdPageConfiguration {
         - Their contact details
         """;
 
+    public GeneralApplicationD11Page5(TypedPropertyGetter<CaseData, Applicant> applicantRef, String applicantFieldPrefix) {
+        this.applicantRef = applicantRef;
+        this.evidenceOfConsentRequired = applicantFieldPrefix + "GenAppHearingNotRequired=\"yesPartnerAgreesWithApplication\" "
+            + "OR " + applicantFieldPrefix + "GenAppHearingNotRequired=\"yesPartnerAgreesWithNoHearing\"";
+    }
+
     @Override
-    public void addTo(final PageBuilder pageBuilder) {
-        pageBuilder
-            .page("SolGenAppD11ConsentEvidence")
-            .showCondition(evidenceOfConsentRequired)
+    public void addTo(PageBuilder pageBuilder) {
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
+
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+        var page = pageBuilder.page("SolGenAppD11ConsentEvidence");
+        String combinedCondition = evidenceOfConsentRequired;
+        if (isNotBlank(pageShowCondition)) {
+            combinedCondition = pageShowCondition + " AND (" + evidenceOfConsentRequired + ")";
+        }
+        page.showCondition(combinedCondition)
             .label("solGenAppConsentEvidenceLabel", CONSENT_UPLOAD_LABEL)
             .complex(applicantRef)
                 .complex(Applicant::getInterimApplicationOptions)

@@ -8,16 +8,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 public class GeneralApplicationD11Page3 implements CcdPageConfiguration {
 
     private final TypedPropertyGetter<CaseData, Applicant> applicantRef;
 
     private final String canUploadEvidenceCondition;
-
-    public GeneralApplicationD11Page3(TypedPropertyGetter<CaseData, Applicant> applicantRef, String applicantFieldPrefix) {
-        this.applicantRef = applicantRef;
-        this.canUploadEvidenceCondition = applicantFieldPrefix + "InterimAppsCanUploadEvidence=\"Yes\"";
-    }
 
     public static final String EVIDENCE_SECTION_LABEL = """
         ## Provide a statement or upload evidence
@@ -26,11 +23,24 @@ public class GeneralApplicationD11Page3 implements CcdPageConfiguration {
 
     public static final String UPLOAD_LABEL = "Upload evidence";
 
+    public GeneralApplicationD11Page3(TypedPropertyGetter<CaseData, Applicant> applicantRef, String applicantFieldPrefix) {
+        this.applicantRef = applicantRef;
+        this.canUploadEvidenceCondition = applicantFieldPrefix + "InterimAppsCanUploadEvidence=\"Yes\"";
+    }
+
     @Override
-    public void addTo(final PageBuilder pageBuilder) {
-        pageBuilder
-            .page("SolGenAppD11Evidence")
-            .label("solGeneralApplicationEvidenceLabel", EVIDENCE_SECTION_LABEL)
+    public void addTo(PageBuilder pageBuilder) {
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
+
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+        var page = pageBuilder.page("SolGenAppD11Evidence");
+
+        if (isNotBlank(pageShowCondition)) {
+            page.showCondition(pageShowCondition);
+        }
+        page.label("solGeneralApplicationEvidenceLabel", EVIDENCE_SECTION_LABEL)
             .showCondition(canUploadEvidenceCondition)
             .complex(applicantRef)
                 .complex(Applicant::getInterimApplicationOptions)
