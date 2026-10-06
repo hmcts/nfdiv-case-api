@@ -18,6 +18,8 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class BailiffServiceRespondentPhoneAgePage implements CcdPageConfiguration {
 
+    public static final String ERROR_FUTURE_DOB = "The respondent's date of birth must be in the past.";
+
     private static final String RESPONDENTS_PHONE_QUESTION_LABEL = "Do you know the respondent's phone number?";
     private static final String RESPONDENTS_PHONE_KNOWN = "applicant1BailiffKnowPartnersPhone = \"Yes\"";
     private static final String RESPONDENTS_PHONE_NUMBER_LABEL = "Respondent's Phone Number";
@@ -30,8 +32,6 @@ public class BailiffServiceRespondentPhoneAgePage implements CcdPageConfiguratio
     private static final String RESPONDENTS_DOB_UNKNOWN = "applicant1BailiffKnowPartnersDateOfBirth = \"No\"";
     private static final String RESPONDENTS_APPROX_AGE_LABEL = "Respondent's approximate age";
     private static final String RESPONDENTS_APPROX_AGE_HINT = "For example, 65 years old";
-
-    private static final String ERROR_FUTURE_DOB = "The respondents date of birth must be in the past.";
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
