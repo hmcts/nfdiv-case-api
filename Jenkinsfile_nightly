@@ -6,10 +6,13 @@ properties([
 ])
 
 @Library("Infrastructure@2.11.2")
+import uk.gov.hmcts.contino.Environment
 
 def type = "java"
 def product = "nfdiv"
 def component = "case-api"
+
+env.ENVIRONMENT = new Environment(env).nonProdName
 
 withNightlyPipeline(type, product, component) {
   enableFortifyScan()
