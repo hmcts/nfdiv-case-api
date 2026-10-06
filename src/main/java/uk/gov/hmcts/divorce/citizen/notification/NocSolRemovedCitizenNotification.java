@@ -74,6 +74,7 @@ public class NocSolRemovedCitizenNotification {
             caseIdString,
             LETTER_TYPE_NOTIFY_CITIZEN_SOL_STOPPED_REP,
             applicant.getFullName(),
+            applicant.getCorrespondenceAddressWithoutConfidentialCheck(),
             applicant.getAddressOverseas()
         );
 
