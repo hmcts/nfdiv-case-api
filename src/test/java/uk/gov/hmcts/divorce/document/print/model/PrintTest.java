@@ -15,8 +15,9 @@ class PrintTest {
         final String caseId = UUID.randomUUID().toString();
         final String letterType = RandomStringUtils.random(20, true, false);
         final String recipientName = RandomStringUtils.random(20, true, false);
+        final String recipientAddress = RandomStringUtils.random(20, true, false);
 
-        Print print = new Print(null, caseId, null, letterType, recipientName, YesOrNo.NO);
+        Print print = new Print(null, caseId, null, letterType, recipientName, recipientAddress, YesOrNo.NO);
 
         final List<String> recipients = print.getRecipients();
         final List<String> expected_recipients = List.of(caseId, recipientName, letterType);
@@ -30,8 +31,9 @@ class PrintTest {
         final String caseId = UUID.randomUUID().toString();
         final String letterType = RandomStringUtils.random(20, true, false);
         final String recipientName = RandomStringUtils.random(20, true, false);
+        final String recipientAddress = RandomStringUtils.random(20, true, false);
 
-        Print print = new Print(null, caseId, null, letterType, recipientName, YesOrNo.YES);
+        Print print = new Print(null, caseId, null, letterType, recipientName, recipientAddress, YesOrNo.YES);
 
         final List<String> recipients = print.getRecipients();
         final List<String> expected_recipients = List.of(caseId, recipientName, letterType);
