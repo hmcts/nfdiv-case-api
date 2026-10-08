@@ -16,7 +16,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.AmendGeneralApplicationActionPa
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationD11Pages;
 import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationDraftSubmissionService;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GENERAL_APPLICATION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -74,11 +74,12 @@ public class SolicitorApplicant2AmendGeneralApplication implements CCDConfig<Cas
 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_APPLICANT2_AMEND_GEN_APP)
-            .forStates(POST_SUBMISSION_STATES)
+            .forStates(GENERAL_APPLICATION_STATES)
             .name("Amend General Application")
             .description("Amend General Application")
             .showSummary()
             .showEventNotes()
+            .showCondition("applicant2InterimApplicationType=\"digitisedGeneralApplicationD11\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
             .endButtonLabel("Submit")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)

@@ -2,7 +2,6 @@ package uk.gov.hmcts.divorce.solicitor.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
@@ -27,7 +26,6 @@ public class GeneralApplicationFactory {
             .generalApplicationReceivedDate(LocalDateTime.now(clock))
             .generalApplicationType(journeyOptions.getGeneralApplicationType())
             .generalApplicationOtherTypeDetails(journeyOptions.getOtherGeneralApplicationTypeDetails())
-            .generalApplicationSubmittedOnline(YesOrNo.YES)
             .generalApplicationDocuments(submissionService.collectSupportingDocuments(journeyOptions))
             .build();
     }

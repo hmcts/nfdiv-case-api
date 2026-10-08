@@ -15,7 +15,7 @@ import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationD11Pages;
 import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationDraftJourneyService;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.ALWAYS_SHOW;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GENERAL_APPLICATION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -77,11 +77,12 @@ public class SolicitorApplicant1DraftGeneralApplication implements CCDConfig<Cas
 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_APPLICANT1_DRAFT_GEN_APP)
-            .forStates(POST_SUBMISSION_STATES)
+            .forStates(GENERAL_APPLICATION_STATES)
             .name(DRAFT_GENERAL_APPLICATION)
             .description(DRAFT_GENERAL_APPLICATION)
             .showSummary()
             .showEventNotes()
+            .showCondition("applicant1InterimApplicationType!=\"digitisedGeneralApplicationD11\"")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .endButtonLabel("Save Application")

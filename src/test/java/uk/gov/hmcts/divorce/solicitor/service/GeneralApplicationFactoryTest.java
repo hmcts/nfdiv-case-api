@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
@@ -71,7 +70,6 @@ public class GeneralApplicationFactoryTest {
         assertThat(result.getGeneralApplicationParty()).isEqualTo(GeneralParties.APPLICANT);
         assertThat(result.getGeneralApplicationReceivedDate()).isEqualTo(fixedNow);
         assertThat(result.getGeneralApplicationType()).isEqualTo(GeneralApplicationType.EXPEDITE);
-        assertThat(result.getGeneralApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
     }
 
     @Test

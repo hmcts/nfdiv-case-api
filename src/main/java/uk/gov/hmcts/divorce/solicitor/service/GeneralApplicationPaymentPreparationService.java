@@ -51,13 +51,15 @@ public class GeneralApplicationPaymentPreparationService {
             DynamicList pbaNumbers = pbaService.populatePbaDynamicList();
             fee.setPbaNumbers(pbaNumbers);
 
-            fee.setServiceRequestReference(
-                paymentSetupService.createGeneralApplicationPaymentServiceRequest(
-                    orderSummary, caseId, applicant.getFullName()
-                )
+            String serviceRequestReference = paymentSetupService.createGeneralApplicationPaymentServiceRequest(
+                orderSummary, caseId, applicant.getFullName()
             );
+
+            fee.setServiceRequestReference(serviceRequestReference);
+            applicant.setActiveGeneralApplication(serviceRequestReference);
         } else {
             fee.setServiceRequestReference(null);
+            applicant.setActiveGeneralApplication(null);
         }
     }
 }

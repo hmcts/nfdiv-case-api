@@ -36,12 +36,12 @@ public class GeneralApplicationD11Page3 implements CcdPageConfiguration {
     @Override
     public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
         var page = pageBuilder.page("SolGenAppD11Evidence");
-
+        String combinedCondition = canUploadEvidenceCondition;
         if (isNotBlank(pageShowCondition)) {
-            page.showCondition(pageShowCondition);
+            combinedCondition = pageShowCondition + " AND (" + canUploadEvidenceCondition + ")";
         }
         page.label("solGeneralApplicationEvidenceLabel", EVIDENCE_SECTION_LABEL)
-            .showCondition(canUploadEvidenceCondition)
+            .showCondition(combinedCondition)
             .complex(applicantRef)
                 .complex(Applicant::getInterimApplicationOptions)
                     .complex(InterimApplicationOptions::getGeneralApplicationD11JourneyOptions)

@@ -23,8 +23,7 @@ public class GeneralApplicationD11Page1 implements CcdPageConfiguration {
             Use this form to make a general application to the court.
 
             You can find more information about the types of applications you can make in the guidance on general
-            applications <a href="https://www.gov.uk/copy-decree-absolute-final-order/do-not-know-which-court"
-                                 target="_blank" rel="noopener noreferrer">Link to Solicitor's General Application guidance</a>
+            applications <a href="https://www.gov.uk/government/publications/myhmcts-how-to-make-follow-up-applications-for-a-divorce-or-dissolution/general-applications-alternative-service-and-deemed-and-dispensed">Link to Solicitor's General Application guidance</a>
 
             ## Before you continue: we will share your application ##
 
