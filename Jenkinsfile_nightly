@@ -5,11 +5,14 @@ properties([
   pipelineTriggers([cron('H 8 * * 1-5')])
 ])
 
-@Library("Infrastructure@2.5.4")
+@Library("Infrastructure@2.12.1")
+import uk.gov.hmcts.contino.Environment
 
 def type = "java"
 def product = "nfdiv"
 def component = "case-api"
+
+env.ENVIRONMENT = new Environment(env).nonProdName
 
 withNightlyPipeline(type, product, component) {
   enableFortifyScan()

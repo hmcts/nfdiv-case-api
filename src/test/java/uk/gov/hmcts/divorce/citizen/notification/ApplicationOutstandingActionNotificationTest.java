@@ -33,6 +33,7 @@ import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingAc
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_NAME_CHANGE_PROOF;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.PAPERS_SERVED_ANOTHER_WAY;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.REFERENCE_NUMBER_SEND_DOCS;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT_DISSOLUTION;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT_DIVORCE;
@@ -51,6 +52,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERE
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -376,7 +378,8 @@ class ApplicationOutstandingActionNotificationTest {
             argThat(allOf(
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
                 hasEntry(SEND_DOCUMENTS_TO_COURT_DIVORCE, NO),
-                hasEntry(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, YES)
+                hasEntry(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, YES),
+                hasEntry(REFERENCE_NUMBER_SEND_DOCS, formatId(TEST_CASE_ID))
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
