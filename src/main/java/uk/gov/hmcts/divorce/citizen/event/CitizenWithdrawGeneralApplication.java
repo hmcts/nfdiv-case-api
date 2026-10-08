@@ -116,7 +116,7 @@ public class CitizenWithdrawGeneralApplication implements CCDConfig<CaseData, St
         return isSearchGovApplication ? searchGovApplicationStartState : details.getState();
     }
 
-    private Optional<GeneralApplication> handleRemovalOfGeneralApplication(CaseData data, int genAppIndex) {
+    public Optional<GeneralApplication> handleRemovalOfGeneralApplication(CaseData data, int genAppIndex) {
         GeneralApplication generalApplication = data.getGeneralApplications().get(genAppIndex).getValue();
         if (generalApplication == null) {
             return Optional.empty();
