@@ -54,6 +54,8 @@ public class GeneralApplicationD11TemplateContent {
     public static final String STATEMENT_OF_EVIDENCE = "statementOfEvidence";
     public static final String SUPPORTING_EVIDENCE_UPLOADED = "supportingEvidenceUploaded";
     public static final String GENERAL_APPLICANT_FULL_NAME = "generalApplicantFullName";
+    public static final String IS_APP_REPRESENTED = "isApplicantRepresented";
+    public static final String URGENT_CASE = "urgentCase";
 
     private static final String CONFIDENTIAL_PARTNER_PLACEHOLDER = "Details are confidential";
 
@@ -84,6 +86,7 @@ public class GeneralApplicationD11TemplateContent {
         templateContent.put(CASE_RESPONDENT_OR_APPLICANT2_LABEL, caseRespondentOrApplicant2Label);
         templateContent.put(GENERAL_APPLICANT_LABEL, isApplicant1 ? caseApplicantLabel : caseRespondentOrApplicant2Label);
         templateContent.put(GENERAL_APPLICANT_FULL_NAME, isApplicant1 ? applicant1.getFullName() : applicant2.getFullName());
+        templateContent.put(IS_APP_REPRESENTED, applicant.getSolicitorRepresented());
         templateContent.put(
             APPLICATION_DATE,
             dateTimeFormatter.format(generalApplication.getGeneralApplicationReceivedDate().toLocalDate())
@@ -142,6 +145,7 @@ public class GeneralApplicationD11TemplateContent {
             IS_OTHER_APPLICATION_TYPE, YesOrNo.from(GeneralApplicationType.OTHER.equals(applicationType)).getValue()
         );
         templateContent.put(APPLICATION_TYPE_OTHER_DETAILS, applicationAnswers.getTypeOtherDetails());
+        templateContent.put(URGENT_CASE, applicationAnswers.getUrgentCase());
 
 
         return templateContent;
