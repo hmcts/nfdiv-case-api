@@ -72,6 +72,7 @@ public class SolicitorAmendBailiffServiceApplication implements CCDConfig<CaseDa
         log.info("{} About to start callback invoked for Case Id: {}", SOLICITOR_AMEND_BAILIFF_SERVICE_APPLICATION, details.getId());
 
         final CaseData caseData = details.getData();
+        final Applicant applicant2 = caseData.getApplicant2();
 
         List<String> validationError = ServiceApplicationValidation.validateNotAlreadySubmitted(caseData);
 
@@ -80,8 +81,6 @@ public class SolicitorAmendBailiffServiceApplication implements CCDConfig<CaseDa
                 .errors(validationError)
                 .build();
         }
-
-        final Applicant applicant2 = caseData.getApplicant2();
 
         if (applicant2.isConfidentialContactDetails()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
