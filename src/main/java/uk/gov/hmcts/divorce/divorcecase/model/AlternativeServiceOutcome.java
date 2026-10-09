@@ -46,9 +46,16 @@ public class AlternativeServiceOutcome {
     private LocalDate receivedServiceAddedDate;
 
     @CCD(
+        label = "Was the application submitted before the case was issued?",
+        displayOrder = 3,
+        searchable = false
+    )
+    private YesOrNo serviceApplicationSubmittedBeforeIssue;
+
+    @CCD(
         label = "What type of service application was received",
         typeParameterOverride = "AlternativeServiceType",
-        displayOrder = 3
+        displayOrder = 4
     )
     private AlternativeServiceType alternativeServiceType;
 
@@ -70,7 +77,7 @@ public class AlternativeServiceOutcome {
         label = "How will payment be made?",
         typeOverride = FixedList,
         typeParameterOverride = "ServicePaymentMethod",
-        displayOrder = 4
+        displayOrder = 5
     )
     private ServicePaymentMethod paymentMethod;
 
@@ -88,13 +95,13 @@ public class AlternativeServiceOutcome {
 
     @CCD(
         label = "Outcome of service application",
-        displayOrder = 5
+        displayOrder = 6
     )
     private String serviceApplicationOutcomeLabel;
 
     @CCD(
         label = "Service Application Granted",
-        displayOrder = 6
+        displayOrder = 7
     )
     private YesOrNo serviceApplicationGranted;
 
@@ -102,7 +109,7 @@ public class AlternativeServiceOutcome {
         label = "Please provide further details",
         typeOverride = TextArea,
         searchable = false,
-        displayOrder = 7
+        displayOrder = 8
     )
     private String furtherDetails;
 
@@ -120,28 +127,28 @@ public class AlternativeServiceOutcome {
         label = "Refusal reason",
         typeOverride = FixedRadioList,
         typeParameterOverride = "ServiceApplicationRefusalReason",
-        displayOrder = 7
+        displayOrder = 9
     )
     private ServiceApplicationRefusalReason refusalReason;
 
     @CCD(
         label = "Reason for refusal",
         typeOverride = TextArea,
-        displayOrder = 8,
+        displayOrder = 10,
         searchable = false
     )
     private String serviceApplicationRefusalReason;
 
     @CCD(
         label = "Service Application Decision date",
-        displayOrder = 9
+        displayOrder = 11
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate serviceApplicationDecisionDate;
 
     @CCD(
         label = "Deemed service date",
-        displayOrder = 10
+        displayOrder = 12
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate deemedServiceDate;
@@ -151,40 +158,40 @@ public class AlternativeServiceOutcome {
      */
     @CCD(
         label = "Court name",
-        displayOrder = 11
+        displayOrder = 13
     )
     private String localCourtName;
 
     @CCD(
         label = "Email address",
         typeOverride = Email,
-        displayOrder = 12
+        displayOrder = 14
     )
     private String localCourtEmail;
 
     @CCD(
         label = "Certificate of Service",
-        displayOrder = 13
+        displayOrder = 15
     )
     private DivorceDocument certificateOfServiceDocument;
 
     @CCD(
         label = "Certificate of service date",
-        displayOrder = 14
+        displayOrder = 16
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate certificateOfServiceDate;
 
     @CCD(
         label = "Did bailiff serve successfully?",
-        displayOrder = 15
+        displayOrder = 17
     )
     private YesOrNo successfulServedByBailiff;
 
     @CCD(
         label = "Reason for failure to serve",
         typeOverride = TextArea,
-        displayOrder = 16,
+        displayOrder = 18,
         searchable = false
     )
     private String reasonFailureToServeByBailiff;

@@ -159,6 +159,7 @@ withPipeline(type, product, component) {
 
   afterAlways('checkout') {
     builder.setupToolVersion()
+    builder.gradle('generateCCDConfig')
   }
 
   before('highleveldatasetup') {
