@@ -23,8 +23,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
-import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.LABEL_DIVORCE_OR_CIVIL_PARTNERSHIP_CERTIFICATE;
-import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.LABEL_PARTNER;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_CIVIL_PARTNERSHIP_CERTIFICATE;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE;
@@ -32,8 +30,6 @@ import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingAc
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_MARRIAGE_CERTIFICATE;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_MARRIAGE_CERTIFICATE_TRANSLATION;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.MISSING_NAME_CHANGE_PROOF;
-import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.PAPERS_SERVED_ANOTHER_WAY;
-import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.REFERENCE_NUMBER_SEND_DOCS;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT_DISSOLUTION;
 import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.SEND_DOCUMENTS_TO_COURT_DIVORCE;
@@ -52,7 +48,6 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERE
 import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.OUTSTANDING_ACTIONS;
-import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.FORMATTED_TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_APPLICANT_2_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
@@ -137,18 +132,6 @@ class ApplicationOutstandingActionNotificationTest {
             eq(WELSH),
             eq(TEST_CASE_ID)
         );
-    }
-
-    @Test
-    void shouldNotCallSendEmailToApplicant1IfNoAwaitingDocuments() {
-        CaseData data = caseData();
-        data.setApplicant2(getApplicant2(MALE));
-        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
-        data.setApplicationType(SOLE_APPLICATION);
-
-        notification.sendToApplicant1(data, TEST_CASE_ID);
-
-        verifyNoInteractions(notificationService);
     }
 
     @Test
@@ -242,17 +225,6 @@ class ApplicationOutstandingActionNotificationTest {
     }
 
     @Test
-    void shouldNotCallSendEmailToApplicant2IfNoAwaitingDocuments() {
-        CaseData data = validApplicant2CaseData();
-        data.getApplication().getMarriageDetails().setMarriedInUk(YesOrNo.NO);
-        data.getApplicant2().setEmail(null);
-
-        notification.sendToApplicant2(data, TEST_CASE_ID);
-
-        verifyNoInteractions(notificationService);
-    }
-
-    @Test
     void shouldCallSendEmailForPapersServedAnotherWay() {
         CaseData data = caseData();
         data.setApplicationType(SOLE_APPLICATION);
@@ -279,7 +251,6 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE, YES),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, YES),
-                hasEntry(PAPERS_SERVED_ANOTHER_WAY, YES),
                 hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, CommonContent.NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, CommonContent.NO)
             )),
@@ -313,8 +284,7 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(APPLICATION_REFERENCE, FORMATTED_TEST_CASE_ID),
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE, YES),
-                hasEntry(MISSING_NAME_CHANGE_PROOF, YES),
-                hasEntry(PAPERS_SERVED_ANOTHER_WAY, YES)
+                hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -344,7 +314,6 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(SEND_DOCUMENTS_TO_COURT, CommonContent.NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE, CommonContent.NO),
                 hasEntry(MISSING_NAME_CHANGE_PROOF, CommonContent.NO),
-                hasEntry(PAPERS_SERVED_ANOTHER_WAY, YES),
                 hasEntry(MISSING_FOREIGN_MARRIAGE_CERTIFICATE, CommonContent.NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, CommonContent.NO)
             )),
@@ -378,8 +347,7 @@ class ApplicationOutstandingActionNotificationTest {
             argThat(allOf(
                 hasEntry(SEND_DOCUMENTS_TO_COURT, YES),
                 hasEntry(SEND_DOCUMENTS_TO_COURT_DIVORCE, NO),
-                hasEntry(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, YES),
-                hasEntry(REFERENCE_NUMBER_SEND_DOCS, formatId(TEST_CASE_ID))
+                hasEntry(SEND_DOCUMENTS_TO_COURT_DISSOLUTION, YES)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -469,7 +437,7 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE, NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, NO),
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
-                hasEntry(MISSING_NAME_CHANGE_PROOF, YES)
+                hasEntry(MISSING_NAME_CHANGE_PROOF, NO)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)
@@ -521,7 +489,6 @@ class ApplicationOutstandingActionNotificationTest {
 
         when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(getMainTemplateVars());
-        when(commonContent.getPartner(data, data.getApplicant2(), ENGLISH)).thenReturn("husband");
 
         notification.sendToApplicant1(data, TEST_CASE_ID);
 
@@ -535,9 +502,7 @@ class ApplicationOutstandingActionNotificationTest {
                 hasEntry(MISSING_FOREIGN_CIVIL_PARTNERSHIP_CERTIFICATE, NO),
                 hasEntry(MISSING_MARRIAGE_CERTIFICATE_TRANSLATION, YES),
                 hasEntry(MISSING_CIVIL_PARTNERSHIP_CERTIFICATE_TRANSLATION, NO),
-                hasEntry(MISSING_NAME_CHANGE_PROOF, YES),
-                hasEntry(LABEL_PARTNER, "husband"),
-                hasEntry(LABEL_DIVORCE_OR_CIVIL_PARTNERSHIP_CERTIFICATE, "marriage certificate")
+                hasEntry(MISSING_NAME_CHANGE_PROOF, NO)
             )),
             eq(ENGLISH),
             eq(TEST_CASE_ID)

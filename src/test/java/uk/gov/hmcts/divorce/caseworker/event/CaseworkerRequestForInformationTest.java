@@ -4,11 +4,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.caseworker.service.notification.RequestForInformationNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -16,6 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformation;
 import uk.gov.hmcts.divorce.divorcecase.model.RequestForInformationJointParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.divorce.notification.exception.NotificationTemplateException;
 
@@ -26,6 +29,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mockStatic;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.APPLICANT_1;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.APPLICANT_2;
@@ -41,6 +45,7 @@ import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformat
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.USE_CORRECT_PARTY_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.USE_CREATE_GENERAL_EMAIL_FOR_RESPONDENT_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.USE_CREATE_GENERAL_LETTER_FOR_RESPONDENT_ERROR;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRequestForInformation.WARNING_SHOULD_NOT_REQUEST_RESPONDENT_ADDRESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
@@ -88,6 +93,75 @@ class CaseworkerRequestForInformationTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(CASEWORKER_REQUEST_FOR_INFORMATION);
+    }
+
+    @Test
+    void shouldReturnWarningIfSoleRespondentAddressIsBlank() {
+        CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, false, false);
+        CaseData caseData = caseDetails.getData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setApplicant2(getApplicant2WithAddress());
+        AddressGlobalUK address = AddressGlobalUK.builder()
+            .addressLine1("")
+            .build();
+
+        caseData.getApplicant2().setAddress(address);
+
+        try (MockedStatic<AddressUtil> classMock = mockStatic(AddressUtil.class)) {
+            classMock.when(() -> AddressUtil.isBlank(address))
+                .thenReturn(true);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                caseworkerRequestForInformation.aboutToStart(caseDetails);
+
+            assertThat(response.getWarnings()).containsExactly(WARNING_SHOULD_NOT_REQUEST_RESPONDENT_ADDRESS);
+        }
+    }
+
+    @Test
+    void shouldNotReturnWarningIfJointApplicant2AddressIsBlank() {
+        CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, false, false);
+        CaseData caseData = caseDetails.getData();
+        caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplicant2(getApplicant2WithAddress());
+        AddressGlobalUK address = AddressGlobalUK.builder()
+            .addressLine1("")
+            .build();
+
+        caseData.getApplicant2().setAddress(address);
+
+        try (MockedStatic<AddressUtil> classMock = mockStatic(AddressUtil.class)) {
+            classMock.when(() -> AddressUtil.isBlank(address))
+                .thenReturn(true);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                caseworkerRequestForInformation.aboutToStart(caseDetails);
+
+            assertThat(response.getWarnings()).isNull();
+        }
+    }
+
+    @Test
+    void shouldNotReturnWarningIfSoleRespondentAddressIsPresent() {
+        CaseDetails<CaseData, State> caseDetails = getRequestForInformationCaseDetails(BOTH, false, false);
+        CaseData caseData = caseDetails.getData();
+        caseData.setApplicationType(SOLE_APPLICATION);
+        caseData.setApplicant2(getApplicant2WithAddress());
+        AddressGlobalUK address = AddressGlobalUK.builder()
+            .addressLine1("")
+            .build();
+
+        caseData.getApplicant2().setAddress(address);
+
+        try (MockedStatic<AddressUtil> classMock = mockStatic(AddressUtil.class)) {
+            classMock.when(() -> AddressUtil.isBlank(address))
+                .thenReturn(false);
+
+            final AboutToStartOrSubmitResponse<CaseData, State> response =
+                caseworkerRequestForInformation.aboutToStart(caseDetails);
+
+            assertThat(response.getWarnings()).isNull();
+        }
     }
 
     @Test

@@ -19,7 +19,10 @@
   "solSignStatementOfTruth": "YES",
   "jurisdictionApplicant1Residence": "YES",
   "jurisdictionApplicant2Residence": "YES",
+  "applicant1KnowsApplicant2Address": "Yes",
+  "applicant1FoundApplicant2Address": "Yes",
   "jurisdictionConnections": ["A"],
+  "marriageMarriedInUk": "Yes",
   "applicationFeeOrderSummary": {
     "PaymentTotal": "55000",
     "PaymentReference": null,
