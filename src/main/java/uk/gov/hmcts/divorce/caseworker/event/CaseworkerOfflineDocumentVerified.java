@@ -44,6 +44,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -121,6 +122,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         = "Request for Information Response Notification for Case Id {} failed with message: {}";
     public static final String REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR
         = "Request for Information Response Partner Notification for Case Id {} failed with message: {}";
+    public static final String CANNOT_PROCESS_D84_ERROR =
+        "The application cannot be progressed as the 20-week holding period from the date of issue has not yet elapsed.";
     public static final String SCANNED_DOCUMENT_SUBTYPE_MISMATCH_ERROR =
         "The selected scanned documents subtype does not match the document type selected for verification.";
     private static final String SCANNED_DOCUMENT_LABEL_SEPARATOR = " / ";
@@ -338,6 +341,11 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             if (respondentRequested) {
                 return FinalOrderValidation.validateCanRespondentApplyFinalOrder(data);
+            }
+        } else if (CO_D84.equals(documentType)) {
+            LocalDate holdingPeriodEndDate = holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate());
+            if (!holdingPeriodEndDate.isBefore(LocalDate.now(clock))) {
+                return Collections.singletonList(CANNOT_PROCESS_D84_ERROR);
             }
         }
 
