@@ -10,7 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification;
+import uk.gov.hmcts.divorce.common.notification.ServiceApplicationDecisionNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceOutcome;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -51,7 +51,7 @@ class CaseworkerConfirmBailiffRefusalTest {
     private BailiffNotApprovedOrderContent bailiffNotApprovedOrderContent;
 
     @Mock
-    private ServiceApplicationNotification serviceApplicationNotification;
+    private ServiceApplicationDecisionNotification serviceApplicationDecisionNotification;
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
@@ -89,7 +89,7 @@ class CaseworkerConfirmBailiffRefusalTest {
         ListValue<AlternativeServiceOutcome> listValue = response.getData().getAlternativeServiceOutcomes().get(0);
         assertThat(listValue.getValue().getServiceApplicationDecisionDate()).isEqualTo(serviceDecisionDate);
 
-        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), details.getId());
+        verify(notificationDispatcher).send(serviceApplicationDecisionNotification, response.getData(), details.getId());
     }
 
     @Test
@@ -120,7 +120,7 @@ class CaseworkerConfirmBailiffRefusalTest {
                 eq(BAILIFF_APPLICATION_NOT_APPROVED_FILE_NAME)
             );
 
-        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), details.getId());
+        verify(notificationDispatcher).send(serviceApplicationDecisionNotification, response.getData(), details.getId());
     }
 
     @Test
@@ -152,6 +152,6 @@ class CaseworkerConfirmBailiffRefusalTest {
                 eq(BAILIFF_APPLICATION_NOT_APPROVED_FILE_NAME)
             );
 
-        verify(notificationDispatcher).send(serviceApplicationNotification, response.getData(), details.getId());
+        verify(notificationDispatcher).send(serviceApplicationDecisionNotification, response.getData(), details.getId());
     }
 }

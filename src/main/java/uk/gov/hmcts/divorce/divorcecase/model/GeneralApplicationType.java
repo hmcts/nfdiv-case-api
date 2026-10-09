@@ -9,15 +9,6 @@ import uk.gov.hmcts.ccd.sdk.api.HasLabel;
 @AllArgsConstructor
 public enum GeneralApplicationType implements HasLabel {
 
-    @JsonProperty("dispensedWithService")
-    DISPENSED_WITH_SERVICE("Dispensed with service"),
-
-    @JsonProperty("deemedService")
-    DEEMED_SERVICE("Deemed service"),
-
-    @JsonProperty("otherAlternativeServiceMethod")
-    OTHER_ALTERNATIVE_SERVICE_METHODS("Alternative service"),
-
     @JsonProperty("expedite")
     EXPEDITE("Expedite"),
 
@@ -37,7 +28,16 @@ public enum GeneralApplicationType implements HasLabel {
     AMEND_APPLICATION("Amend Application"),
 
     @JsonProperty("other")
-    OTHER("Other");
+    OTHER("Other"),
+
+    @JsonProperty("dispensedWithService")
+    DISPENSED_WITH_SERVICE("Dispensed with service"),
+
+    @JsonProperty("deemedService")
+    DEEMED_SERVICE("Deemed service"),
+
+    @JsonProperty("otherAlternativeServiceMethod")
+    OTHER_ALTERNATIVE_SERVICE_METHODS("Alternative service");
 
     private final String label;
 }
