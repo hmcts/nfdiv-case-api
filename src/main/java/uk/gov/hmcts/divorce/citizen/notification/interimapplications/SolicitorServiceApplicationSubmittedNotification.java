@@ -3,14 +3,20 @@ package uk.gov.hmcts.divorce.citizen.notification.interimapplications;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.notification.CommonContent.MADE_PAYMENT;
+import static uk.gov.hmcts.divorce.notification.CommonContent.NO;
+import static uk.gov.hmcts.divorce.notification.CommonContent.USED_HELP_WITH_FEES;
+import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_SERVICE_APPLICATION_SUBMITTED;
 
 @Component
@@ -41,9 +47,13 @@ public class SolicitorServiceApplicationSubmittedNotification implements Applica
 
     private void addServiceApplicationTypeVars(Map<String, String> templateVars, CaseData caseData) {
 
-        AlternativeServiceType serviceType = caseData.getAlternativeService().getAlternativeServiceType();
+        AlternativeService alternativeService = caseData.getAlternativeService();
+        AlternativeServiceType serviceType = alternativeService.getAlternativeServiceType();
 
         commonContent.addServiceApplicationTypeVars(templateVars, serviceType);
 
+        boolean usedHWF = ServicePaymentMethod.FEE_PAY_BY_HWF.equals(alternativeService.getServicePaymentFee().getPaymentMethod());
+        templateVars.put(MADE_PAYMENT, !usedHWF ? YES : NO);
+        templateVars.put(USED_HELP_WITH_FEES, usedHWF ? YES : NO);
     }
 }
