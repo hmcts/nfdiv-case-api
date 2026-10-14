@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOption
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationHearingNotRequired;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -121,6 +122,8 @@ class GeneralApplicationD11TemplateContentTest {
         expectedEntries.put("phoneAndOpeningTimes","0300 303 0642 (Monday to Friday, 10am to 6pm)");
         expectedEntries.put("courtsAndTribunalsServiceHeader","HM Courts & Tribunals Service");
         expectedEntries.put("contactEmail","contactdivorce@justice.gov.uk");
+        expectedEntries.put("isApplicantRepresented",YesOrNo.NO);
+        expectedEntries.put("urgentCase", null);
 
         return expectedEntries;
     }
@@ -129,7 +132,9 @@ class GeneralApplicationD11TemplateContentTest {
         caseData = caseData();
         caseData.getGeneralApplication().setGeneralApplicationReceivedDate(LocalDateTime.of(2025, Month.AUGUST, 1, 0, 0));
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
-        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder().build());
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
+            .interimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11).build());
         caseData.getApplicant2().setFirstName(TEST_FIRST_NAME);
         buildD11GeneralApplication(caseData);
         expectedEntries = buildExpectedTemplateContent(caseData);

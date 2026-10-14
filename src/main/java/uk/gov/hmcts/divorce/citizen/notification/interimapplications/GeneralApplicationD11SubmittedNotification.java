@@ -31,6 +31,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.USED_HELP_WITH_FEE
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_APPLICATION_D11_AWAITING_DOCUMENTS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_APPLICATION_D11_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_GENERAL_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
@@ -51,6 +52,7 @@ public class GeneralApplicationD11SubmittedNotification implements GeneralApplic
     private static final String ADD_ADDITIONAL_INFO = "addAdditionalInfo";
     private static final String ADD_ADDITIONAL_INFO_DIVORCE = "addAdditionalInfoDivorce";
     private static final String ADD_ADDITIONAL_INFO_DISSOLUTION = "addAdditionalInfoDissolution";
+    private static final String SEARCH_GOV_RECORDS = "searchGovernmentRecords";
 
     public void sendToApplicant(final CaseData caseData, final Long caseId, GeneralApplication generalApplication) {
         final GeneralParties generalParties = generalApplication.getGeneralApplicationParty();
@@ -75,6 +77,35 @@ public class GeneralApplicationD11SubmittedNotification implements GeneralApplic
             awaitingDocuments ? GENERAL_APPLICATION_D11_AWAITING_DOCUMENTS : GENERAL_APPLICATION_D11_SUBMITTED,
             templateVars,
             applicant.getLanguagePreference(),
+            caseId
+        );
+    }
+
+    public void sendToSolicitor(final CaseData caseData,
+                                 final Long caseId,
+                                 final boolean isApplicant1,
+                                 final GeneralApplication generalApplication) {
+
+        Applicant actingApplicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
+
+        final GeneralParties generalParties = generalApplication.getGeneralApplicationParty();
+
+        log.info("Sending d11 Solicitor general application submitted notification to {} solicitor on case id {}",
+            generalParties.getLabel(), caseId);
+
+        Map<String, String> templateVars = commonContent.getGeneralEmailSolicitorVars(caseData, caseId, actingApplicant);
+
+        templateVars.put(EMAIL_BODY_LINE1, getContentBasedOnGenAppType(generalApplication.getGeneralApplicationType(),
+            actingApplicant.getLanguagePreference(), caseData.isDivorce()));
+
+        GeneralApplicationType generalApplicationType = generalApplication.getGeneralApplicationType();
+        templateVars.put(SEARCH_GOV_RECORDS, GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplicationType) ? YES : NO);
+
+        notificationService.sendEmail(
+            actingApplicant.getSolicitor().getEmail(),
+            SOLICITOR_GENERAL_APPLICATION_SUBMITTED,
+            templateVars,
+            actingApplicant.getLanguagePreference(),
             caseId
         );
     }
