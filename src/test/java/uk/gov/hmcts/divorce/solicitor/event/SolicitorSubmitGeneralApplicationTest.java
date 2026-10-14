@@ -13,7 +13,9 @@ import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.Permission;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.GeneralApplicationD11SubmittedNotification;
 import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
@@ -23,10 +25,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationSubmitPaymentService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
@@ -55,6 +61,9 @@ public class SolicitorSubmitGeneralApplicationTest {
 
     @Mock
     private CitizenGeneralApplicationSubmissionService citizenGeneralApplicationSubmissionService;
+
+    @Mock
+    private GeneralApplicationD11SubmittedNotification generalApplicationD11SubmittedNotification;
 
     @Mock
     private CcdAccessService ccdAccessService;
@@ -229,4 +238,69 @@ public class SolicitorSubmitGeneralApplicationTest {
         assertThat(response.getData().getGeneralApplication().getGeneralApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
     }
 
+    @Test
+    void shouldSendSubmittedNotificationToApplicant1SolicitorWhenApplicant1IsActing() {
+        GeneralApplication ga = GeneralApplication.builder().build();
+
+        CaseData caseData = CaseData.builder().build();
+        caseData.setGeneralApplications(List.of(ListValue.<GeneralApplication>builder()
+                .id("1")
+                .value(ga)
+                .build()));
+
+        CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
+                .id(TEST_CASE_ID)
+                .data(caseData)
+                .build();
+
+        CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder()
+                .id(TEST_CASE_ID)
+                .data(CaseData.builder().build())
+                .build();
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(ccdAccessService.isApplicant1(TEST_SERVICE_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(true);
+
+        SubmittedCallbackResponse response = solicitorSubmitGeneralApplication.submitted(details, beforeDetails);
+
+        verify(generalApplicationD11SubmittedNotification).sendToSolicitor(
+                eq(caseData), eq(TEST_CASE_ID), eq(caseData.getApplicant1()), eq(caseData.getApplicant2()), eq(ga));
+        assertThat(response).isNotNull();
+    }
+
+
+    @Test
+    void shouldSendSubmittedNotificationToApplicant2SolicitorWhenApplicant2IsActing() {
+        GeneralApplication ga = GeneralApplication.builder().build();
+
+        CaseData caseData = CaseData.builder().build();
+        caseData.setGeneralApplications(List.of(ListValue.<GeneralApplication>builder()
+                .id("1")
+                .value(ga)
+                .build()));
+
+        CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
+                .id(TEST_CASE_ID)
+                .data(caseData)
+                .build();
+
+        CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder()
+                .id(TEST_CASE_ID)
+                .data(CaseData.builder().build())
+                .build();
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(ccdAccessService.isApplicant1(TEST_SERVICE_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(false);
+
+        SubmittedCallbackResponse response = solicitorSubmitGeneralApplication.submitted(details, beforeDetails);
+
+        verify(generalApplicationD11SubmittedNotification).sendToSolicitor(
+                eq(caseData),
+                eq(TEST_CASE_ID),
+                eq(caseData.getApplicant2()),
+                eq(caseData.getApplicant1()),
+                eq(ga)
+        );
+        assertThat(response).isNotNull();
+    }
 }

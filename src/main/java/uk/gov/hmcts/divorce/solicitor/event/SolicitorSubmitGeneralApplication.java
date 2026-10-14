@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.citizen.notification.interimapplications.GeneralApplicationD11SubmittedNotification;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
@@ -25,7 +26,10 @@ import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentSummar
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationStatementOfTruthPage;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationSubmitPaymentService;
+import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -54,6 +58,8 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
     private final CcdAccessService ccdAccessService;
 
     private final HttpServletRequest request;
+
+    private final GeneralApplicationD11SubmittedNotification generalApplicationD11SubmittedNotification;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -117,6 +123,31 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
             .build();
     }
 
+    public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
+                                               CaseDetails<CaseData, State> beforeDetails) {
+
+        log.info("{} submitted callback invoked for Case Id: {}", SOLICITOR_SUBMIT_GENERAL_APPLICATION, details.getId());
+
+        CaseData caseData = details.getData();
+
+        var generalApps = new ArrayList<>(
+            Optional.ofNullable(caseData.getGeneralApplications())
+                .orElseGet(Collections::emptyList)
+        );
+
+        GeneralApplication newGeneralApplication = generalApps.getFirst().getValue();
+
+        if (isApplicant1(details.getId())) {
+            generalApplicationD11SubmittedNotification.sendToSolicitor(caseData, details.getId(), caseData.getApplicant1(),
+                caseData.getApplicant2(), newGeneralApplication);
+        } else {
+            generalApplicationD11SubmittedNotification.sendToSolicitor(caseData, details.getId(), caseData.getApplicant2(),
+                caseData.getApplicant1(), newGeneralApplication);
+        }
+
+        return SubmittedCallbackResponse.builder().build();
+    }
+
     private Optional<GeneralApplication> findActiveGeneralApplicationForSolicitor(CaseData caseData, Applicant actingApplicant) {
         Optional<GeneralApplication> byServiceRequest =
             citizenGeneralApplicationSubmissionService.findActiveGeneralApplication(caseData, actingApplicant);
@@ -167,6 +198,7 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
             .endButtonLabel("Submit Application")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }

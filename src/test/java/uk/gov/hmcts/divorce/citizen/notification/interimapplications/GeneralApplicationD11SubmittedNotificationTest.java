@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
@@ -16,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
@@ -23,6 +25,8 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
@@ -110,6 +114,37 @@ class GeneralApplicationD11SubmittedNotificationTest {
             templateVars,
             ENGLISH,
             TEST_CASE_ID
+        );
+    }
+
+    @Test
+    void shouldSendSolicitorNotificationWithSearchGovRecordsYesForDisclosureViaDwp() {
+        CaseData data = validCaseDataForIssueApplication();
+
+        Applicant actingApplicant = data.getApplicant1();
+        actingApplicant.setSolicitor(Solicitor.builder().email("sol1@test.com").build());
+
+        Applicant partner = data.getApplicant2();
+
+        GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationParty(GeneralParties.APPLICANT)
+            .generalApplicationType(GeneralApplicationType.WITHDRAW_POST_ISSUE)
+            .build();
+
+        Map<String, String> templateVars = new HashMap<>();
+        when(commonContent.getGeneralEmailSolicitorVars(data, TEST_CASE_ID, actingApplicant))
+            .thenReturn(templateVars);
+
+        notification.sendToSolicitor(data, TEST_CASE_ID, actingApplicant, partner, generalApplication);
+
+        assertThat(templateVars).containsKey("emailBodyLine1");
+
+        verify(notificationService).sendEmail(
+            eq("sol1@test.com"),
+            eq(uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_GENERAL_APPLICATION_SUBMITTED),
+            eq(templateVars),
+            eq(actingApplicant.getLanguagePreference()),
+            eq(TEST_CASE_ID)
         );
     }
 }
