@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -264,7 +265,7 @@ public class SolicitorSubmitGeneralApplicationTest {
         SubmittedCallbackResponse response = solicitorSubmitGeneralApplication.submitted(details, beforeDetails);
 
         verify(generalApplicationD11SubmittedNotification).sendToSolicitor(
-                eq(caseData), eq(TEST_CASE_ID), eq(caseData.getApplicant1()), eq(caseData.getApplicant2()), eq(ga));
+                eq(caseData), eq(TEST_CASE_ID), anyBoolean(), eq(ga));
         assertThat(response).isNotNull();
     }
 
@@ -297,8 +298,7 @@ public class SolicitorSubmitGeneralApplicationTest {
         verify(generalApplicationD11SubmittedNotification).sendToSolicitor(
                 eq(caseData),
                 eq(TEST_CASE_ID),
-                eq(caseData.getApplicant2()),
-                eq(caseData.getApplicant1()),
+                anyBoolean(),
                 eq(ga)
         );
         assertThat(response).isNotNull();

@@ -83,9 +83,10 @@ public class GeneralApplicationD11SubmittedNotification implements GeneralApplic
 
     public void sendToSolicitor(final CaseData caseData,
                                  final Long caseId,
-                                 final Applicant actingApplicant,
-                                 final Applicant partner,
+                                 final boolean isApplicant1,
                                  final GeneralApplication generalApplication) {
+
+        Applicant actingApplicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
 
         final GeneralParties generalParties = generalApplication.getGeneralApplicationParty();
 

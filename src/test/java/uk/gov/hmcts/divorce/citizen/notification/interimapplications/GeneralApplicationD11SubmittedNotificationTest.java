@@ -124,8 +124,6 @@ class GeneralApplicationD11SubmittedNotificationTest {
         Applicant actingApplicant = data.getApplicant1();
         actingApplicant.setSolicitor(Solicitor.builder().email("sol1@test.com").build());
 
-        Applicant partner = data.getApplicant2();
-
         GeneralApplication generalApplication = GeneralApplication.builder()
             .generalApplicationParty(GeneralParties.APPLICANT)
             .generalApplicationType(GeneralApplicationType.WITHDRAW_POST_ISSUE)
@@ -135,7 +133,7 @@ class GeneralApplicationD11SubmittedNotificationTest {
         when(commonContent.getGeneralEmailSolicitorVars(data, TEST_CASE_ID, actingApplicant))
             .thenReturn(templateVars);
 
-        notification.sendToSolicitor(data, TEST_CASE_ID, actingApplicant, partner, generalApplication);
+        notification.sendToSolicitor(data, TEST_CASE_ID, true, generalApplication);
 
         assertThat(templateVars).containsKey("emailBodyLine1");
 

@@ -137,13 +137,13 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
 
         GeneralApplication newGeneralApplication = generalApps.getFirst().getValue();
 
-        if (isApplicant1(details.getId())) {
-            generalApplicationD11SubmittedNotification.sendToSolicitor(caseData, details.getId(), caseData.getApplicant1(),
-                caseData.getApplicant2(), newGeneralApplication);
-        } else {
-            generalApplicationD11SubmittedNotification.sendToSolicitor(caseData, details.getId(), caseData.getApplicant2(),
-                caseData.getApplicant1(), newGeneralApplication);
-        }
+        boolean isApplicant1 = isApplicant1(details.getId());
+        generalApplicationD11SubmittedNotification.sendToSolicitor(
+            caseData,
+            details.getId(),
+            isApplicant1,
+            newGeneralApplication
+        );
 
         return SubmittedCallbackResponse.builder().build();
     }
