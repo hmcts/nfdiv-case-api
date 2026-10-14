@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import java.util.ArrayList;
@@ -19,10 +20,10 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 @Service
 public class GeneralApplicationTypeOptionsService {
 
-    public DynamicList buildOptions(State state, CaseData data, DynamicList existingSelection) {
+    public DynamicList buildOptions(State state, CaseData data, DynamicList existingSelection, GeneralParties isApplicant1) {
         boolean postIssue = state != Draft;
         boolean sole = data.getApplicationType() == ApplicationType.SOLE_APPLICATION;
-        boolean respondentSolicitor = isRespondentSolicitor(data);
+        boolean respondentSolicitor = isRespondentSolicitor(data, isApplicant1);
 
         List<GeneralApplicationType> allowed = allowedTypes(postIssue, sole, respondentSolicitor);
 
@@ -48,9 +49,10 @@ public class GeneralApplicationTypeOptionsService {
             .build();
     }
 
-    private boolean isRespondentSolicitor(CaseData data) {
+    private boolean isRespondentSolicitor(CaseData data, GeneralParties isApplicant1) {
         Applicant applicant2 = data.getApplicant2();
         return data.getApplicationType() == ApplicationType.SOLE_APPLICATION
+            && GeneralParties.RESPONDENT.equals(isApplicant1)
             && null != applicant2
             && YesOrNo.YES.equals(applicant2.getSolicitorRepresented());
     }

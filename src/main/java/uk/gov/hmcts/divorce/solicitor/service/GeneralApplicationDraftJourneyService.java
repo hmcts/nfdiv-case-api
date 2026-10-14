@@ -8,6 +8,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
@@ -19,7 +20,7 @@ public class GeneralApplicationDraftJourneyService {
     private final GeneralApplicationTypeOptionsService generalApplicationTypeOptionsService;
     private final GeneralApplicationDraftSubmissionService generalApplicationDraftSubmissionService;
 
-    public void prepareAboutToStart(CaseDetails<CaseData, State> details, Applicant applicant) {
+    public void prepareAboutToStart(CaseDetails<CaseData, State> details, Applicant applicant, GeneralParties isApplicant1) {
         CaseData data = details.getData();
         data.setGeneralApplication(GeneralApplication.builder().build());
 
@@ -27,7 +28,7 @@ public class GeneralApplicationDraftJourneyService {
         GeneralApplicationD11JourneyOptions journey = interim.getGeneralApplicationD11JourneyOptions();
 
         DynamicList existing = journey.getSolType();
-        DynamicList options = generalApplicationTypeOptionsService.buildOptions(details.getState(), data, existing);
+        DynamicList options = generalApplicationTypeOptionsService.buildOptions(details.getState(), data, existing, isApplicant1);
         journey.setSolType(options);
     }
 

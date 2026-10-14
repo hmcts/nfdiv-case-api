@@ -10,6 +10,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
@@ -51,14 +52,16 @@ public class GeneralApplicationDraftJourneyServiceTest {
             .build();
 
         DynamicList builtOptions = DynamicList.builder().build();
-        when(generalApplicationTypeOptionsService.buildOptions(State.AwaitingService, caseData, journeyOptions.getSolType()))
+        when(generalApplicationTypeOptionsService
+            .buildOptions(State.AwaitingService, caseData, journeyOptions.getSolType(), GeneralParties.APPLICANT))
             .thenReturn(builtOptions);
 
-        generalApplicationDraftJourneyService.prepareAboutToStart(details, applicant);
+        generalApplicationDraftJourneyService.prepareAboutToStart(details, applicant, GeneralParties.APPLICANT);
 
         assertThat(caseData.getGeneralApplication()).isNotNull();
         assertThat(journeyOptions.getSolType()).isEqualTo(builtOptions);
-        verify(generalApplicationTypeOptionsService).buildOptions(State.AwaitingService, caseData, journeyOptions.getSolType());
+        verify(generalApplicationTypeOptionsService)
+            .buildOptions(State.AwaitingService, caseData, journeyOptions.getSolType(), GeneralParties.APPLICANT);
     }
 
     @Test
