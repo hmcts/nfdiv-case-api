@@ -40,4 +40,15 @@ public class GeneralApplicationDraftJourneyService {
             applicant
         );
     }
+
+    public void prepareAboutToSubmitForSearchGovRecords(CaseDetails<CaseData, State> details) {
+        Applicant applicant = details.getData().getApplicant1();
+        InterimApplicationOptions options = applicant.getInterimApplicationOptions();
+        options.setInterimApplicationType(InterimApplicationType.SEARCH_GOV_RECORDS);
+        generalApplicationDraftSubmissionService.buildGeneralApplication(
+            details,
+            details.getData(),
+            applicant
+        );
+    }
 }
