@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorServiceMethod.SOLICITOR_SERVICE;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.ALTERNATIVE_SERVICE_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ALTERNATIVE_SERVICE_BY_OTHER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ALTERNATIVE_SERVICE_BY_SOCIAL_MEDIA;
@@ -33,10 +34,17 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AL
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ALTERNATIVE_SERVICE_PARTNER_WA_NUM;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ALTERNATIVE_SERVICE_REASON_FOR_APPLYING;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_FIRM_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_APP1_REPRESENTED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_RECEIVED_DATE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOL_ALTERNATIVE_SERVICE_METHOD;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOL_ALTERNATIVE_SERVICE_METHOD_REASON;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOL_ALTERNATIVE_SERVICE_METHOD_SOLICITOR_SERVICE;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SOL_ALTERNATIVE_SERVICE_METHOD_SUCCESS_REASON;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.STATEMENT_OF_TRUTH;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
@@ -98,6 +106,17 @@ public class AlternativeServiceApplicationTemplateContent implements TemplateCon
             YesOrNo.YES.equals(interimApplicationOptions.getInterimAppsCanUploadEvidence()));
         templateContent.put(DIVORCE_OR_DISSOLUTION, docmosisCommonContent.getApplicationType(languagePreference, caseData));
         templateContent.put(STATEMENT_OF_TRUTH, LanguagePreference.WELSH.equals(languagePreference) ? "Ydw" : "Yes");
+
+        templateContent.put(IS_APP1_REPRESENTED, applicant.isRepresented());
+        if (applicant.isRepresented()) {
+            templateContent.put(APPLICANT_1_SOLICITOR_NAME, applicant.getSolicitor().getName());
+            templateContent.put(APPLICANT_1_SOLICITOR_FIRM_NAME, applicant.getSolicitor().getPreferredFirmName());
+            templateContent.put(SOL_ALTERNATIVE_SERVICE_METHOD, applicationAnswers.getSolAltServiceMethod().getLabel());
+            templateContent.put(SOL_ALTERNATIVE_SERVICE_METHOD_REASON, applicationAnswers.getSolAltServiceSolicitorServiceReason());
+            templateContent.put(SOL_ALTERNATIVE_SERVICE_METHOD_SOLICITOR_SERVICE,
+                SOLICITOR_SERVICE.equals(applicationAnswers.getSolAltServiceMethod()) ? true : false);
+            templateContent.put(SOL_ALTERNATIVE_SERVICE_METHOD_SUCCESS_REASON, applicationAnswers.getSolAltServiceSuccessfulSendReason());
+        }
 
         return templateContent;
     }
