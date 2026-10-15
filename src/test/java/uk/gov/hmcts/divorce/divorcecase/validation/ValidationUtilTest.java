@@ -270,16 +270,20 @@ class ValidationUtilTest {
     @Test
     void shouldReturnTrueWhenCaseHasAwaitingDocuments() {
         CaseData caseData = new CaseData();
+        caseData.setApplicationType(ApplicationType.SOLE_APPLICATION);
+
         caseData.setDivorceOrDissolution(DIVORCE);
         caseData.getApplication().setApplicant1WantsToHavePapersServedAnotherWay(YES);
-        assertTrue(caseData.getApplication().hasAwaitingApplicant1Documents());
+        assertTrue(caseData.getApplication().mustServeAnotherWay(caseData.getApplicationType()));
     }
 
     @Test
     void shouldReturnFalseWhenCaseDoesNotHaveAwaitingDocuments() {
         CaseData caseData = new CaseData();
         caseData.setDivorceOrDissolution(DIVORCE);
-        assertFalse(caseData.getApplication().hasAwaitingApplicant1Documents());
+        caseData.getApplication().setApplicant1KnowsApplicant2Address(YES);
+        caseData.getApplication().setApplicant1FoundApplicant2Address(YES);
+        assertFalse(caseData.getApplication().mustServeAnotherWay(caseData.getApplicationType()));
     }
 
     @Test

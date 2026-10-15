@@ -298,6 +298,7 @@ public class SwitchToSoleService {
         SwitchedToSole switchedToSole = SwitchedToSole.builder()
             .applicant1KnowsApplicant2EmailAddress(application.getApplicant1KnowsApplicant2EmailAddress())
             .applicant1KnowsApplicant2Address(application.getApplicant1KnowsApplicant2Address())
+            .applicant1FoundApplicant2Address(application.getApplicant1FoundApplicant2Address())
             .app2ContactMethodIsDigital(application.getApp2ContactMethodIsDigital())
             .applicant1WantsToHavePapersServedAnotherWay(application.getApplicant1WantsToHavePapersServedAnotherWay())
             .applicant2ConfirmApplicant1Information(application.getApplicant2ConfirmApplicant1Information())

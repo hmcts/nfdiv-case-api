@@ -10,9 +10,12 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+
+import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenWithdrawServiceApplication.CITIZEN_WITHDRAW_SERVICE_APPLICATION;
@@ -38,19 +41,39 @@ class CitizenWithdrawServiceApplicationTest {
     }
 
     @Test
-    void shouldClearAllDataFielsPertainingToServiceApplication() {
+    void shouldClearServiceApplicationFieldsAndTransitionPreIssueCaseToAwaitingDocuments() {
         CaseData caseData = CaseData.builder()
             .alternativeService(AlternativeService.builder()
                 .alternativeServiceType(AlternativeServiceType.DEEMED)
                 .build())
             .build();
 
-        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).build();
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).state(State.AwaitingServicePayment).build();
         caseDetails.setId(TEST_CASE_ID);
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             citizenWithdrawServiceApplication.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getAlternativeService().getAlternativeServiceType()).isNull();
+        assertThat(response.getState()).isEqualTo(State.AwaitingDocuments);
+    }
+
+    @Test
+    void shouldClearAllDataFieldsPertainingToServiceApplicationAndTransitionCaseToAosOverdue() {
+        CaseData caseData = CaseData.builder()
+            .alternativeService(AlternativeService.builder()
+                .alternativeServiceType(AlternativeServiceType.DEEMED)
+                .build())
+            .application(Application.builder().issueDate(LocalDate.of(2022,8,25)).build())
+            .build();
+
+        final var caseDetails = CaseDetails.<CaseData, State>builder().data(caseData).state(State.AwaitingServicePayment).build();
+        caseDetails.setId(TEST_CASE_ID);
+
+        final AboutToStartOrSubmitResponse<CaseData, State> response =
+            citizenWithdrawServiceApplication.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData().getAlternativeService().getAlternativeServiceType()).isNull();
+        assertThat(response.getState()).isEqualTo(State.AosOverdue);
     }
 }

@@ -129,6 +129,9 @@ public class CaseworkerAlternativeServiceApplication implements CCDConfig<CaseDa
 
         final AlternativeService serviceApplication = afterData.getAlternativeService();
 
+        serviceApplication.setServiceApplicationSubmittedBeforeIssue(YesOrNo.from(!afterData.getApplication().hasBeenIssued()));
+        serviceApplication.setReceivedServiceAddedDate(LocalDate.now(clock));
+        
         State endState = AwaitingServiceConsideration;
 
         if (YesOrNo.YES == serviceApplication.getAlternativeServiceFeeRequired()) {

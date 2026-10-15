@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingServicePayment;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CREATOR;
@@ -37,7 +38,7 @@ public class CitizenWithdrawServiceApplication implements CCDConfig<CaseData, St
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CITIZEN_WITHDRAW_SERVICE_APPLICATION)
-            .forStateTransition(AwaitingServicePayment, AosOverdue)
+            .forStates(AwaitingServicePayment)
             .name("Service Application Withdrawn")
             .description("Service Application Withdrawn")
             .showEventNotes()
@@ -60,9 +61,11 @@ public class CitizenWithdrawServiceApplication implements CCDConfig<CaseData, St
         CaseData caseData = details.getData();
         caseData.setAlternativeService(AlternativeService.builder().build());
 
+        State newState = caseData.getApplication().getIssueDate() != null ? AosOverdue : AwaitingDocuments;
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(details.getData())
-            .state(details.getState())
+            .state(newState)
             .build();
     }
 }

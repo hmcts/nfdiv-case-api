@@ -4,9 +4,11 @@ import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.ccd.sdk.type.Document;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -347,5 +349,35 @@ class CaseDataTest {
         caseData.reclassifyScannedDocumentToChosenDocumentType(DocumentType.FINAL_ORDER_APPLICATION, clock, scannedDocument);
 
         assertThat(caseData.getFinalOrder().getScannedD36Form()).isEqualTo(document);
+    }
+
+    @Test
+    void shouldSetPreIssueFlagToNoForPostIssueGeneralApplication() {
+        final CaseData caseData = new CaseData();
+        final GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationType(GeneralApplicationType.EXPEDITE)
+            .build();
+        caseData.setApplication(Application.builder().issueDate(LocalDate.now()).build());
+        caseData.setGeneralApplication(generalApplication);
+
+        caseData.updateCaseWithGeneralApplication(generalApplication);
+
+        assertThat(caseData.getGeneralApplications().getFirst().getValue().getGeneralApplicationSubmittedBeforeIssue())
+            .isEqualTo(YesOrNo.NO);
+    }
+
+    @Test
+    void shouldSetPreIssueFlagToYesForPreIssueGeneralApplication() {
+        final CaseData caseData = new CaseData();
+        final GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationType(GeneralApplicationType.EXPEDITE)
+            .build();
+        caseData.setApplication(Application.builder().issueDate(null).build());
+        caseData.setGeneralApplication(generalApplication);
+
+        caseData.updateCaseWithGeneralApplication(generalApplication);
+
+        assertThat(caseData.getGeneralApplications().getFirst().getValue().getGeneralApplicationSubmittedBeforeIssue())
+            .isEqualTo(YesOrNo.YES);
     }
 }
