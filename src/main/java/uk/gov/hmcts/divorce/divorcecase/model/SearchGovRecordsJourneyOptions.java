@@ -27,14 +27,17 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.TextArea;
 @JsonNaming(PropertyNamingStrategies.UpperCamelCaseStrategy.class)
 public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
     @CCD(
-        label = "Which government departments do you need us to search for your partner's details?",
+        label = "Which government departments do you need us to search for the respondent's details?",
+        hint = "Select all that apply",
         access = {DefaultAccess.class},
         searchable = false
     )
     private Set<SearchGovRecordsWhichDepartment> whichDepartments;
 
     @CCD(
-        label = "What have you already done to try to find your partner’s details?",
+        label = "What have you already done to try to find the respondent’s details?",
+        hint = "Tell us about anything you've already done to try to find the respondent's contact details, "
+            + "and the result of these actions",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -42,7 +45,7 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
     private String reasonForApplying;
 
     @CCD(
-        label = "Why do you think these departments are most suited to getting the contact details of your partner?",
+        label = "Why do you think these departments are most suited to getting the contact details of the respondent?",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -50,28 +53,29 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
     private String whyTheseDepartments;
 
     @CCD(
-        label = "For any other government departments",
+        label = "Please specify which government departments",
         access = {DefaultAccess.class},
         searchable = false
     )
     private String otherDepartmentNames;
 
     @CCD(
-        label = "Enter your partner's name",
+        label = "Enter the respondent's name",
         access = {DefaultAccess.class},
         searchable = false
     )
     private String partnerName;
 
     @CCD(
-        label = "Do you know your partner's date of birth?",
+        label = "Do you know the respondent's date of birth?",
         access = {DefaultAccess.class},
         searchable = false
     )
     private YesOrNo knowPartnerDateOfBirth;
 
     @CCD(
-        label = "Enter your partner's date of birth",
+        label = "Enter the respondents's date of birth",
+        hint = "For example, 23 3 2000",
         access = {DefaultAccess.class},
         searchable = false
     )
@@ -79,28 +83,31 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
     private LocalDate partnerDateOfBirth;
 
     @CCD(
-        label = "Enter your partner's approximate age",
+        label = "Enter the respondents's approximate age",
+        hint = "For example, 65 years old",
         access = {DefaultAccess.class},
         searchable = false
     )
     private String partnerApproximateAge;
 
     @CCD(
-        label = "Do you know your wife's National Insurance number?",
+        label = "Do you know the respondent's National Insurance number?",
+        hint = "If you're able to provide the respondent's National Insurance number it will help with the search",
         access = {DefaultAccess.class},
         searchable = false
     )
     private YesOrNo knowPartnerNationalInsurance;
 
     @CCD(
-        label = "Enter your wife's National Insurance number",
+        label = "Enter the respondent's National Insurance number",
+        hint = "For example, JB 34 66 84 D",
         access = {DefaultAccess.class},
         searchable = false
     )
     private String partnerNationalInsurance;
 
     @CCD(
-        label = "What is your partner's last known address?",
+        label = "What is the respondent's last known address?",
         access = {DefaultAccess.class},
         searchable = false
     )
@@ -114,7 +121,8 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
     private String partnerLastKnownAddressDates;
 
     @CCD(
-        label = "Do you know of any other addresses related to your partner?",
+        label = "Do you know of any other addresses related to the respondent?",
+        hint = "If you are able to provide any other addresses, it may help with the search",
         access = {DefaultAccess.class},
         searchable = false
     )
