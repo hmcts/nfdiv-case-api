@@ -76,12 +76,8 @@ public class GeneralApplicationDraftSubmissionService {
 
         paymentPreparationService.prepareDraftGeneralApplicationFee(details.getId(), applicant, options, generalApplication);
 
-        /*
         DivorceDocument applicationDocument = submissionService.generateGeneralApplicationAnswerDocument(
             details.getId(), applicant, caseData, generalApplication);
-         */
-
-        DivorceDocument applicationDocument = DivorceDocument.builder().build();
 
         generalApplication.setGeneralApplicationDocument(applicationDocument);
         caseData.updateCaseWithGeneralApplication(generalApplication);

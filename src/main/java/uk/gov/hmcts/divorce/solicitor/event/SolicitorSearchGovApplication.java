@@ -9,10 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.searchgov.SearchGovAnyOtherAddressesPage;
@@ -31,6 +28,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
+import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE_DELETE;
 
 @Slf4j
 @Component
@@ -80,7 +78,7 @@ public class SolicitorSearchGovApplication implements CCDConfig<CaseData, State,
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
             .endButtonLabel("Save Application")
-            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
+            .grant(CREATE_READ_UPDATE_DELETE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
 }
