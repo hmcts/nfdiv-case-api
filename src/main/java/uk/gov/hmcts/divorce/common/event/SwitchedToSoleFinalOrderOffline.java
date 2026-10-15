@@ -18,7 +18,6 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
-import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.FinalOrderRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_1_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
@@ -65,8 +64,8 @@ public class SwitchedToSoleFinalOrderOffline implements CCDConfig<CaseData, Stat
         log.info("Switched To Sole FO Offline aboutToSubmit callback invoked for Case Id: {}", caseId);
         CaseData caseData = details.getData();
 
-        caseData.setApplicationType(SOLE_APPLICATION);
-        caseData.getLabelContent().setApplicationType(SOLE_APPLICATION);
+        switchToSoleService.switchApplicationType(caseData);
+
         caseData.getFinalOrder().setFinalOrderSwitchedToSole(YES);
 
         // triggered by system update user coming from Offline Document Verified

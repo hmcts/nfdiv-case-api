@@ -242,6 +242,7 @@ public class CaseworkerGeneralEmail implements CCDConfig<CaseData, State, UserRo
         return switch (recipient) {
             case APPLICANT -> isEmailValid(caseData.getApplicant1());
             case RESPONDENT -> isEmailValid(caseData.getApplicant2());
+            case APPLICANT2 -> isEmailValid(caseData.getApplicant2());
             case OTHER -> isNotEmpty(caseData.getGeneralEmail().getGeneralEmailOtherRecipientEmail());
         };
     }

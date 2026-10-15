@@ -154,23 +154,10 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
 
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details,
                                                                   final CaseDetails<CaseData, State> detailsBefore) {
-
-        final CaseData caseData = details.getData();
-        State state = caseData.getApplication().getStateToTransitionApplicationTo();
-        List<String> validationErrors = new ArrayList<>();
-
-        if (!PRE_RETURN_TO_PREVIOUS_STATES.contains(state)) {
-            validationErrors.add(INVALID_STATE_ERROR);
-        }
-
-        if (POST_ISSUE_STATES.contains(state) && caseData.getApplication().getIssueDate() == null) {
-            validationErrors.add(CASE_MUST_BE_ISSUED_ERROR);
-        } else if (EnumSet.complementOf(POST_ISSUE_STATES).contains(state) && caseData.getApplication().getIssueDate() != null) {
-            validationErrors.add(CASE_ALREADY_ISSUED_ERROR);
-        }
+        List<String> validationErrors = validateStateUpdate(details);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
+            .data(details.getData())
             .errors(validationErrors)
             .build();
     }
@@ -216,5 +203,23 @@ public class CaseworkerRejectGeneralApplication implements CCDConfig<CaseData, S
                 && generalApplication.getGeneralApplicationType().equals(GeneralApplicationType.DISCLOSURE_VIA_DWP);
             generalApplicationRejectedNotification.send(caseData, caseId, isApplicant1, isSearchGovRecords);
         }
+    }
+
+    public static List<String> validateStateUpdate(final CaseDetails<CaseData, State> details) {
+        final CaseData caseData = details.getData();
+        State state = caseData.getApplication().getStateToTransitionApplicationTo();
+        List<String> validationErrors = new ArrayList<>();
+
+        if (!PRE_RETURN_TO_PREVIOUS_STATES.contains(state)) {
+            validationErrors.add(INVALID_STATE_ERROR);
+        }
+
+        if (POST_ISSUE_STATES.contains(state) && caseData.getApplication().getIssueDate() == null) {
+            validationErrors.add(CASE_MUST_BE_ISSUED_ERROR);
+        } else if (EnumSet.complementOf(POST_ISSUE_STATES).contains(state) && caseData.getApplication().getIssueDate() != null) {
+            validationErrors.add(CASE_ALREADY_ISSUED_ERROR);
+        }
+
+        return validationErrors;
     }
 }
