@@ -15,6 +15,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil;
 import uk.gov.hmcts.divorce.systemupdate.service.InvalidReissueOptionException;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
@@ -114,6 +115,16 @@ public class CaseworkerReissueApplication implements CCDConfig<CaseData, State, 
             log.info("Reissue event not available because issue date is null. Case ID: {}", details.getId());
             validationErrors.add(REISSUE_ISSUE_ERROR_MESSAGE);
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .errors(validationErrors)
+                .build();
+        }
+
+        validationErrors = ValidationUtil
+            .validateRespondentSolicitorContactDetails(caseData, "Reissue");
+
+        if (CollectionUtils.isNotEmpty(validationErrors)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
                 .errors(validationErrors)
                 .build();
         }
