@@ -41,7 +41,7 @@ public class SolicitorApplicant2AmendGeneralApplication implements CCDConfig<Cas
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
 
-        new AmendGeneralApplicationActionPage(CaseData::getApplicant2).addTo(pageBuilder);
+        new AmendGeneralApplicationActionPage(CaseData::getApplicant2, "general").addTo(pageBuilder);
 
         GeneralApplicationD11Pages.addPages(
             pageBuilder,

@@ -71,6 +71,7 @@ public class SolicitorSearchGovApplication implements CCDConfig<CaseData, State,
         return new PageBuilder(configBuilder
             .event(SOLICITOR_SEARCH_GOV_APPLICATION)
             .forStates(SOLICITOR_SERVICE_APPLICATION_AND_SEARCH_GOV_STATES)
+            .showCondition("applicant1InterimApplicationType!=\"searchGovRecords\"")
             .name("Draft Search Gov")
             .description("Draft Search Government Records")
             .showSummary()
