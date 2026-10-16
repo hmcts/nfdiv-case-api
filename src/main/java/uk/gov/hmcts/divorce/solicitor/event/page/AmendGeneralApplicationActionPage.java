@@ -11,12 +11,13 @@ public class AmendGeneralApplicationActionPage implements CcdPageConfiguration {
 
     private final TypedPropertyGetter<CaseData, Applicant> applicantRef;
 
-    public static final String ACTION_LABEL = "Do you want to amend your draft general application or withdraw it?";
+    private final String actionLabel;
 
     public static final String ACTION_HINT = "If you withdraw it, you’ll be able to start a new general application.";
 
-    public AmendGeneralApplicationActionPage(TypedPropertyGetter<CaseData, Applicant> applicantRef) {
+    public AmendGeneralApplicationActionPage(TypedPropertyGetter<CaseData, Applicant> applicantRef, String appType) {
         this.applicantRef = applicantRef;
+        this.actionLabel = String.format("Do you want to amend your draft %s application or withdraw it?", appType);
     }
 
     @Override
@@ -24,7 +25,7 @@ public class AmendGeneralApplicationActionPage implements CcdPageConfiguration {
         pageBuilder.page("amendGeneralApplication")
             .complex(applicantRef)
                 .complex(Applicant::getInterimApplicationOptions)
-                    .mandatory(InterimApplicationOptions::getDraftApplicationAction, ALWAYS_SHOW, null, ACTION_LABEL,
+                    .mandatory(InterimApplicationOptions::getDraftApplicationAction, ALWAYS_SHOW, null, actionLabel,
                         ACTION_HINT)
                 .done()
             .done();
