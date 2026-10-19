@@ -84,6 +84,7 @@ public class BailiffServiceSuccessfulNotification implements ApplicantNotificati
             caseIdString,
             BAILIFF_SERVICE_SUCCESSFUL_LETTER_ID,
             applicant.getFullName(),
+            applicant.getCorrespondenceAddressWithoutConfidentialCheck(),
             applicant.getAddressOverseas()
         );
 
