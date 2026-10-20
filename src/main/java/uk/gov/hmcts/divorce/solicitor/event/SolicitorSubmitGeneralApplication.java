@@ -15,10 +15,13 @@ import uk.gov.hmcts.divorce.citizen.notification.interimapplications.GeneralAppl
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -58,6 +61,8 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
     private final CcdAccessService ccdAccessService;
 
     private final HttpServletRequest request;
+
+    private final GeneralReferralService generalReferralService;
 
     private final GeneralApplicationD11SubmittedNotification generalApplicationD11SubmittedNotification;
 
@@ -108,19 +113,46 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
                 .build();
         }
 
-        caseData.getGeneralApplication().setGeneralApplicationSubmittedOnline(YesOrNo.YES);
+        final GeneralApplication generalApplication = caseData.getGeneralApplication();
+
+        final boolean canBeAutoReferred =
+            citizenGeneralApplicationSubmissionService.canBeAutoReferred(caseData, generalApplication.getGeneralApplicationType());
+
+        if (canBeAutoReferred) {
+            GeneralReferral automaticReferral = generalReferralService.buildGeneralReferral(generalApplication);
+            caseData.setGeneralReferral(automaticReferral);
+            generalApplication.setGeneralApplicationReferredOnDate(caseData.getGeneralReferral().getGeneralApplicationReferralDate());
+        }
+
+        generalApplication.setGeneralApplicationSubmittedOnline(YesOrNo.YES);
         currentApplicant.setActiveGeneralApplication(null);
         currentApplicant.archiveInterimApplicationOptions();
 
-        ServicePaymentMethod paymentMethod = caseData.getGeneralApplication().getGeneralApplicationFee().getPaymentMethod();
-        State targetState = ServicePaymentMethod.FEE_PAY_BY_ACCOUNT.equals(paymentMethod)
-            ? State.GeneralApplicationReceived
-            : State.AwaitingGeneralApplicationPayment;
+        State targetState = getTargetState(caseData, generalApplication, canBeAutoReferred);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .state(targetState)
             .build();
+    }
+
+    private static State getTargetState(CaseData caseData, GeneralApplication generalApplication, boolean canBeAutoReferred) {
+        ServicePaymentMethod paymentMethod = caseData.getGeneralApplication().getGeneralApplicationFee().getPaymentMethod();
+
+        State targetState = ServicePaymentMethod.FEE_PAY_BY_ACCOUNT.equals(paymentMethod)
+            ? State.GeneralApplicationReceived
+            : State.AwaitingGeneralApplicationPayment;
+
+        if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplication.getGeneralApplicationType())) {
+            if (ServicePaymentMethod.FEE_PAY_BY_HWF.equals(paymentMethod)) {
+                targetState = State.AwaitingGeneralReferralPayment;
+            }
+
+            if (ServicePaymentMethod.FEE_PAY_BY_ACCOUNT.equals(paymentMethod) && canBeAutoReferred) {
+                targetState = State.AwaitingGeneralConsideration;
+            }
+        }
+        return targetState;
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
@@ -194,7 +226,8 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
             .showSummary()
             .showEventNotes()
             .showCondition("applicant1InterimApplicationType=\"digitisedGeneralApplicationD11\" "
-                + "OR applicant2InterimApplicationType=\"digitisedGeneralApplicationD11\"")
+                + "OR applicant2InterimApplicationType=\"digitisedGeneralApplicationD11\" "
+                + "OR applicant1InterimApplicationType=\"searchGovRecords\"")
             .endButtonLabel("Submit Application")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
