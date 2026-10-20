@@ -576,7 +576,7 @@ docmosis:
       JUDICIAL_SEPARATION_ORDER_GRANTED_SOLICITOR_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Solicitor-Cover-Letter-JS_V3.docx #TODO: update template once available
       CERTIFICATE_OF_ENTITLEMENT_JUDICIAL_SEPARATION: FL-NFD-GOR-ENG-Certificate-Of-Entitlement-Judicial-Separation_V5.docx
       RESPONDENT_ANSWERS: FL-NFD-GOR-WEL-Respondent-Answers-Cy-V3.docx
-      CERTIFICATE_OF_SERVICE: FL-NFD-GOR-WEL-Certificate-Of-Service_V3.docx
+      CERTIFICATE_OF_SERVICE: FL-NFD-GOR-ENG-Certificate_Of_Service_V4.docx #Welsh not required
       SERVICE_ORDER: FL-NFD-GOR-WEL-Service-Order-V3-Cy.docx
       BULK_CASE_PRONOUNCEMENT: FL-NFD-GOR-ENG-Pronouncement-List-V5.docx  #TODO: update content
       CERTIFICATE_OF_ENTITLEMENT: FL-NFD-GOR-WEL-Certificate-Of-Entitlement_V3.docx

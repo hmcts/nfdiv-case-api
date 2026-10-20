@@ -18,14 +18,11 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.Gender.MALE;
-import static uk.gov.hmcts.divorce.document.content.BailiffServiceApplicationTemplateContent.CONFIDENTIAL_ADDRESS_EN;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DOCUMENTS_ISSUED_ON;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.END_CIVIL_PARTNERSHIP_CY;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.PETITIONER_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RESPONDENT_FULL_NAME;
 import static uk.gov.hmcts.divorce.notification.CommonContent.IS_DIVORCE;
@@ -57,7 +54,6 @@ class CertificateOfServiceContentTest {
         caseData.getApplicant2().setContactDetailsType(ContactDetailsType.PRIVATE);
 
         Map<String, Object> expectedEntries = buildTestData(caseData, DIVORCE_APPLICATION, "Yes");
-        expectedEntries.put(APPLICANT_2_ADDRESS, CONFIDENTIAL_ADDRESS_EN);
 
         Map<String, Object> templateContent = certificateOfServiceContent.apply(caseData, 1616591401473378L);
 
@@ -76,26 +72,6 @@ class CertificateOfServiceContentTest {
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
 
         Map<String, Object> expectedEntries = buildTestData(caseData, END_CIVIL_PARTNERSHIP, "No");
-        expectedEntries.put(APPLICANT_2_ADDRESS, "UK");
-
-        Map<String, Object> templateContent = certificateOfServiceContent.apply(caseData, 1616591401473378L);
-
-        assertThat(templateContent).containsExactlyInAnyOrderEntriesOf(expectedEntries);
-    }
-
-    @Test
-    void shouldReturnTemplateContentForCertificateOfServiceDissolutionWhenLanguagePreferenceIsWelshForNonConfidentialAddress() {
-
-        setMockClock(clock);
-
-        final CaseData caseData = caseData();
-        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.YES);
-        caseData.setApplicant2(getApplicant2(MALE));
-        caseData.setDivorceOrDissolution(DivorceOrDissolution.DISSOLUTION);
-        caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
-
-        Map<String, Object> expectedEntries = buildTestData(caseData, END_CIVIL_PARTNERSHIP_CY, "No");
-        expectedEntries.put(APPLICANT_2_ADDRESS, "UK");
 
         Map<String, Object> templateContent = certificateOfServiceContent.apply(caseData, 1616591401473378L);
 
