@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.MarriageDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.divorcecase.util.AddressUtil;
+import uk.gov.hmcts.divorce.divorcecase.validation.ValidationUtil;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
@@ -118,6 +119,16 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
         }
 
         String app2Address = AddressUtil.getPostalAddress(caseData.getApplicant2().getAddress());
+
+        List<String> validationErrors = ValidationUtil
+            .validateRespondentSolicitorContactDetails(caseData, "Issue");
+
+        if (CollectionUtils.isNotEmpty(validationErrors)) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(validationErrors)
+                .build();
+        }
 
         boolean soleApplicationBeingIssuedWithoutApp2Address =
             caseData.getApplicationType() == ApplicationType.SOLE_APPLICATION

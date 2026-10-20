@@ -853,4 +853,28 @@ class ValidationUtilTest {
         assertThat(errors).contains("Partner has responded to application.");
     }
 
+    @Test
+    void shouldReturnErrorsWhenRespondentIsRepresentedWithoutSolicitorContactDetails() {
+        CaseData caseData = caseData();
+        caseData.setApplicant2(Applicant.builder().solicitor(Solicitor.builder().build())
+            .solicitorRepresented(YES).build());
+
+        List<String> errors = ValidationUtil.validateRespondentSolicitorContactDetails(caseData, "Issue");
+
+        assertThat(errors).isNotEmpty();
+        assertThat(errors.size()).isEqualTo(1);
+        assertThat(errors).anyMatch(error -> error.contains("Issue application event cannot be completed "));
+    }
+
+    @Test
+    void shouldReturnNoErrorsWhenRespondentIsRepresentedWithSolicitorContactDetails() {
+        CaseData caseData = caseData();
+        caseData.setApplicant2(Applicant.builder().solicitor(Solicitor.builder()
+                .firmName("firmName").address("UK").build())
+            .solicitorRepresented(YES).build());
+
+        List<String> errors = ValidationUtil.validateRespondentSolicitorContactDetails(caseData, "Issue");
+
+        assertThat(errors).isEmpty();
+    }
 }
