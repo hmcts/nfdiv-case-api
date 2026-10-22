@@ -16,6 +16,7 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.citizen.notification.ApplicationOutstandingActionNotification.REFERENCE_NUMBER_SEND_DOCS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
@@ -35,6 +36,7 @@ import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_APPLICANT_AOS_SUBMITTED_AWAITING_CO;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLE_RESPONDENT_AOS_SUBMITTED_AWAITING_CO;
+import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
@@ -80,6 +82,8 @@ public class SoleApplicationNotDisputedNotification implements ApplicantNotifica
         Map<String, String> templateVars = notDisputedTemplateVars(caseData, id, caseData.getApplicant2(), caseData.getApplicant1());
         templateVars.put(DOC_UPLOADED, caseData.getApplicant2().getUnableToUploadEvidence() == YesOrNo.YES ? NO : YES);
         templateVars.put(DOC_NOT_UPLOADED, caseData.getApplicant2().getUnableToUploadEvidence() == YesOrNo.YES ? YES : NO);
+        templateVars.put(REFERENCE_NUMBER_SEND_DOCS,
+            caseData.getApplicant2().getUnableToUploadEvidence() == YesOrNo.YES ? formatId(id) : "");
 
         notificationService.sendEmail(
             caseData.getApplicant2EmailAddress(),

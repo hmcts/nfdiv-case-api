@@ -32,27 +32,11 @@
       "list_items": [
         {
           "code": "${json-unit.any-string}",
-          "label": "PBA0087672"
+          "label": "PBA0082312"
         },
         {
           "code": "${json-unit.any-string}",
           "label": "PBA0082311"
-        },
-        {
-          "code": "${json-unit.any-string}",
-          "label": "PBA3344555"
-        },
-        {
-          "code": "${json-unit.any-string}",
-          "label": "PBA4564561"
-        },
-        {
-          "code": "${json-unit.any-string}",
-          "label": "PBA0082423"
-        },
-        {
-          "code": "${json-unit.any-string}",
-          "label": "PBA0023444"
         }
       ]
     },
