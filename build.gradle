@@ -73,9 +73,9 @@ java {
 
 idea {
   module {
-    testSourceDirs += file('src/integrationTest/java')
-    testSourceDirs += file('src/functionalTest/java')
-    testSourceDirs += file('src/contractTest/java')
+    testSources.from file('src/integrationTest/java')
+    testSources.from file('src/functionalTest/java')
+    testSources.from file('src/contractTest/java')
   }
 }
 
@@ -218,9 +218,10 @@ pmd {
 jacocoTestReport {
   executionData(test, integration)
   reports {
-    xml.getRequired().set(true)
     csv.getRequired().set(false)
-    xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+    html.getRequired().set(true)
+    xml.getRequired().set(true)
+    xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml"))
   }
 }
 
