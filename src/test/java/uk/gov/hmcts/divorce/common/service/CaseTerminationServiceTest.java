@@ -169,6 +169,19 @@ class CaseTerminationServiceTest {
     }
 
     @Test
+    void shouldReturnStateAsWithdrawnWhenCaseIsRejectedEvenIfSubmitted() {
+        final var caseDetails = new CaseDetails<CaseData, State>();
+        var caseData = validApplicant2CaseData();
+        caseData.getApplication().setDateSubmitted(LocalDateTime.now());
+        caseDetails.setData(caseData);
+        caseDetails.setState(State.Rejected);
+
+        var stateToTransitionTo = caseTerminationService.getStateToTransitionTo(caseDetails);
+
+        assertThat(stateToTransitionTo).isEqualTo(State.Withdrawn);
+    }
+
+    @Test
     void shouldReturnTrueWhenCaseIsInDraftState() {
         final var caseDetails = new CaseDetails<CaseData, State>();
         var caseData = validApplicant2CaseData();

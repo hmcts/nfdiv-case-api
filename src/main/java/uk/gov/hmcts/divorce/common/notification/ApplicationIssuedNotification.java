@@ -20,9 +20,11 @@ import java.util.Objects;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinancialOrderRequestedLetter.shouldGenerateFinancialOrderLetter;
 import static uk.gov.hmcts.divorce.divorcecase.search.CaseFieldsConstants.DUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NOT_PROVIDED;
+import static uk.gov.hmcts.divorce.document.content.NoticeOfProceedingSolicitorContent.ADD_FO_LETTER_CONTENT;
 import static uk.gov.hmcts.divorce.notification.CommonContent.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.APPLICATION_REFERENCE;
 import static uk.gov.hmcts.divorce.notification.CommonContent.CREATE_ACCOUNT_LINK;
@@ -336,6 +338,7 @@ public class ApplicationIssuedNotification implements ApplicantNotification {
             caseData.getApplicant1().getSolicitor(),
             languagePreference)
         );
+        templateVars.put(ADD_FO_LETTER_CONTENT, shouldGenerateFinancialOrderLetter(caseData) ? YES : NO);
 
         final LocalDate issueDate = caseData.getApplication().getIssueDate();
         templateVars.put(DATE_OF_ISSUE,

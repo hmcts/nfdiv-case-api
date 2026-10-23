@@ -24,16 +24,23 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAnswer;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingConditionalOrder;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDwpResponse;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.BailiffRefused;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Holding;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.IssuedToBailiff;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.ServiceAdminRefusal;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.WelshTranslationReview;
 
 @Component
 @Slf4j
 public class SetSubmitAosState implements CaseTask {
+
+    private static List<State> STATES_REFUND_NOT_APPLICABLE =
+        Arrays.asList(AwaitingDwpResponse, IssuedToBailiff, BailiffRefused, ServiceAdminRefusal);
 
     @Override
     public CaseDetails<CaseData, State> apply(CaseDetails<CaseData, State> caseDetails) {
@@ -45,7 +52,7 @@ public class SetSubmitAosState implements CaseTask {
             .filter(state -> !AwaitingConditionalOrder.equals(state)).toList();
 
         if (applicableStates.contains(caseDetails.getState())) {
-            final State state = getState(caseData);
+            final State state = getState(caseData, caseDetails.getState());
             caseDetails.setState(state);
             log.info("Setting submit AoS state to {} for CaseID: {}", state, caseDetails.getId());
         } else {
@@ -63,9 +70,11 @@ public class SetSubmitAosState implements CaseTask {
         return caseDetails;
     }
 
-    private State getState(CaseData caseData) {
-        if (hasServicePayment(caseData.getAlternativeService())
-            || hasGeneralReferralPayment(caseData.getGeneralReferral())) {
+    private State getState(CaseData caseData, State currentState) {
+        boolean hasMadePayment = hasServicePayment(caseData.getAlternativeService())
+            || hasGeneralReferralPayment(caseData.getGeneralReferral());
+
+        if (hasMadePayment && !STATES_REFUND_NOT_APPLICABLE.contains(currentState)) {
             return PendingRefund;
         }
 

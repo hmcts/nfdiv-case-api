@@ -16,6 +16,7 @@ import java.util.Map;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.gov.hmcts.divorce.caseworker.service.task.GenerateFinancialOrderRequestedLetter.shouldGenerateFinancialOrderLetter;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ADDRESS_BASED_OVERSEAS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
@@ -59,6 +60,8 @@ public class NoticeOfProceedingSolicitorContent {
     private final CommonContent commonContent;
 
     private final DocmosisCommonContent docmosisCommonContent;
+
+    public static final String ADD_FO_LETTER_CONTENT = "addFOLetterContent";
 
     public Map<String, Object> apply(final CaseData caseData, final Long ccdCaseReference, boolean isApplicantSolicitor) {
 
@@ -147,6 +150,8 @@ public class NoticeOfProceedingSolicitorContent {
                 YesOrNo.YES.equals(applicant2.getAddressOverseas()) || !AddressUtil.isUnitedKingdom(applicant2.getAddress())
             );
         }
+
+        templateContent.put(ADD_FO_LETTER_CONTENT, isApplicantSolicitor && shouldGenerateFinancialOrderLetter(caseData));
 
         return templateContent;
     }

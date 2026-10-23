@@ -12,8 +12,11 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAnswer;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJsNullity;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.PendingRefund;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
@@ -26,6 +29,15 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 public class SystemIssueAosDisputed implements CCDConfig<CaseData, State, UserRole> {
 
+    public static final State[] EVENT_STATES_AOS_DISPUTED_UNDISPUTED = ArrayUtils.addAll(
+        AOS_STATES,
+        AwaitingAos,
+        AosOverdue,
+        OfflineDocumentReceived,
+        PendingRefund,
+        AwaitingAnswer,
+        AwaitingJsNullity);
+
     public static final String SYSTEM_ISSUE_AOS_DISPUTED = "system-issue-aos-disputed";
 
     @Override
@@ -33,7 +45,7 @@ public class SystemIssueAosDisputed implements CCDConfig<CaseData, State, UserRo
 
         new PageBuilder(configBuilder
             .event(SYSTEM_ISSUE_AOS_DISPUTED)
-            .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingAos, AosOverdue, OfflineDocumentReceived))
+            .forStates(EVENT_STATES_AOS_DISPUTED_UNDISPUTED)
             .name("AoS disputed")
             .description("AoS disputed")
             .grant(CREATE_READ_UPDATE, SYSTEMUPDATE)

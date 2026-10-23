@@ -3,7 +3,6 @@ package uk.gov.hmcts.divorce.document.content;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
@@ -11,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
+import uk.gov.hmcts.divorce.document.GeneralLetterRecipientResolver;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
@@ -20,7 +20,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
@@ -46,7 +45,6 @@ class GeneralLetterTemplateContentTest {
     @Mock
     private Clock clock;
 
-    @InjectMocks
     private GeneralLetterTemplateContent generalLetterTemplateContent;
 
     @Mock
@@ -66,6 +64,13 @@ class GeneralLetterTemplateContentTest {
     @BeforeEach
     void setUp() {
         setMockClock(clock, LocalDate.of(2022, 3, 16));
+        var generalLetterRecipientResolver = new GeneralLetterRecipientResolver(commonContent);
+        generalLetterTemplateContent = new GeneralLetterTemplateContent(
+            docmosisCommonContent,
+            commonContent,
+            generalLetterRecipientResolver,
+            clock
+        );
     }
 
     @Test
@@ -131,8 +136,6 @@ class GeneralLetterTemplateContentTest {
 
         final Map<String, Object> templateContent = generalLetterTemplateContent
                 .apply(caseData, TEST_CASE_ID, caseData.getApplicant1().getLanguagePreference());
-
-        verifyNoInteractions(commonContent);
 
         assertThat(templateContent).contains(
                 entry(ISSUE_DATE, "16 March 2022"),
