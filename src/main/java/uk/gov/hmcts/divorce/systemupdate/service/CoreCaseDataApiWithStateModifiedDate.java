@@ -18,8 +18,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @FeignClient(
     name = "core-case-data-api2",
     primary = false,
-    url = "${core_case_data.api.url}",
-    configuration = CoreCaseDataConfiguration.class
+    url = "${core_case_data.api.url}"
 )
 public interface CoreCaseDataApiWithStateModifiedDate {
 

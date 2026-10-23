@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -25,8 +25,6 @@ import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService.CASE_ALREADY_PROCESSED_ERROR;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
@@ -35,7 +33,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondent;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class SystemNotifyJointApplicantCanSwitchToSoleTest {
 
     @Mock
@@ -87,7 +85,7 @@ class SystemNotifyJointApplicantCanSwitchToSoleTest {
     }
 
     @Test
-    void shouldSenNotificationToApplicant1WhenApplicant2ConditionalOrderIsOverdue() {
+    void shouldSendNotificationToApplicant1WhenApplicant2ConditionalOrderIsOverdue() {
         final CaseData caseData = caseData();
         caseData.setApplicant2(respondent());
         caseData.setConditionalOrder(ConditionalOrder.builder()
@@ -100,8 +98,6 @@ class SystemNotifyJointApplicantCanSwitchToSoleTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemNotifyJointApplicantCanSwitchToSole.aboutToSubmit(details, details);
@@ -118,7 +114,7 @@ class SystemNotifyJointApplicantCanSwitchToSoleTest {
     }
 
     @Test
-    void shouldSenNotificationToApplicant2WhenApplicant1ConditionalOrderIsOverdue() {
+    void shouldSendNotificationToApplicant2WhenApplicant1ConditionalOrderIsOverdue() {
         final CaseData caseData = caseData();
         caseData.setApplicant2(respondent());
         caseData.setConditionalOrder(ConditionalOrder.builder()
@@ -131,8 +127,6 @@ class SystemNotifyJointApplicantCanSwitchToSoleTest {
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
-
-        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn("auth header");
 
         final AboutToStartOrSubmitResponse<CaseData, State> response =
             systemNotifyJointApplicantCanSwitchToSole.aboutToSubmit(details, details);

@@ -43,7 +43,7 @@ class ValidationControllerTest {
 
         ResponseEntity<OcrValidationResponse> response = controller.validate(D8.getName(), request);
 
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isEqualTo(expectedResponse);
     }
 
@@ -61,7 +61,7 @@ class ValidationControllerTest {
 
         ResponseEntity<OcrValidationResponse> response = controller.validate(D8S.getName(), request);
 
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isEqualTo(expectedResponse);
     }
 
@@ -78,7 +78,7 @@ class ValidationControllerTest {
 
         ResponseEntity<OcrValidationResponse> response = controller.validate(invalidFormType, request);
 
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isEqualTo(expectedResponse);
     }
 }
