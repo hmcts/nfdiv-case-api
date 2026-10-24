@@ -21,13 +21,14 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_BAILIFF_SERVICE;
 import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_DEEMED_SERVICE;
 import static uk.gov.hmcts.divorce.citizen.notification.GeneralApplicationReceivedNotification.IS_DISPENSE_SERVICE;
-import static uk.gov.hmcts.divorce.common.notification.ServiceApplicationNotification.IS_ALTERNATIVE_SERVICE;
+import static uk.gov.hmcts.divorce.common.notification.ServiceApplicationDecisionNotification.IS_ALTERNATIVE_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.ALTERNATIVE_SERVICE;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.BAILIFF;
 import static uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType.DEEMED;
@@ -60,7 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.solicitorTemplateVars
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 
 @ExtendWith(MockitoExtension.class)
-class ServiceApplicationNotificationTest {
+class ServiceApplicationDecisionNotificationTest {
 
     @Mock
     private NotificationService notificationService;
@@ -69,7 +70,7 @@ class ServiceApplicationNotificationTest {
     private CommonContent commonContent;
 
     @InjectMocks
-    private ServiceApplicationNotification serviceApplicationNotification;
+    private ServiceApplicationDecisionNotification serviceApplicationNotification;
 
     private static final YesOrNo NOT_GRANTED = YesOrNo.NO;
     private static final YesOrNo GRANTED = YesOrNo.YES;
@@ -171,6 +172,8 @@ class ServiceApplicationNotificationTest {
 
         when(commonContent.mainTemplateVars(data, ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
+
+        stubAddServiceApplicationTypeVars(templateVars, DISPENSED);
 
         serviceApplicationNotification.sendToApplicant1(data, ID);
 
@@ -288,6 +291,8 @@ class ServiceApplicationNotificationTest {
         when(commonContent.mainTemplateVars(data, ID, data.getApplicant1(), data.getApplicant2()))
             .thenReturn(templateVars);
 
+        stubAddServiceApplicationTypeVars(templateVars, BAILIFF);
+
         serviceApplicationNotification.sendToApplicant1(data, ID);
 
         verify(notificationService).sendEmail(
@@ -338,6 +343,7 @@ class ServiceApplicationNotificationTest {
         if (applicationGranted != null) {
             when(commonContent.mainTemplateVars(data, ID, data.getApplicant1(), data.getApplicant2()))
                 .thenReturn(templateVars);
+            stubAddServiceApplicationTypeVars(templateVars, alternativeServiceType);
         }
 
         serviceApplicationNotification.sendToApplicant1(data, ID);
@@ -354,6 +360,9 @@ class ServiceApplicationNotificationTest {
 
         when(commonContent.solicitorTemplateVarsPreIssue(data, ID, data.getApplicant1()))
             .thenReturn(templateVars);
+
+        stubAddServiceApplicationTypeVars(templateVars, BAILIFF);
+
 
         serviceApplicationNotification.sendToApplicant1Solicitor(data, ID);
 
@@ -387,6 +396,8 @@ class ServiceApplicationNotificationTest {
         when(commonContent.solicitorTemplateVarsPreIssue(data, ID, data.getApplicant1()))
             .thenReturn(templateVars);
 
+        stubAddServiceApplicationTypeVars(templateVars, DEEMED);
+
         serviceApplicationNotification.sendToApplicant1Solicitor(data, ID);
 
         verify(notificationService).sendEmail(
@@ -415,5 +426,18 @@ class ServiceApplicationNotificationTest {
             .build());
         data.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
         return data;
+    }
+
+    private void stubAddServiceApplicationTypeVars(Map<String, String> templateVars, AlternativeServiceType serviceType) {
+        doAnswer(invocation -> {
+            Map<String, String> vars = invocation.getArgument(0);
+            AlternativeServiceType type = invocation.getArgument(1);
+
+            vars.put(IS_DEEMED_SERVICE, DEEMED.equals(type) ? YES : NO);
+            vars.put(IS_DISPENSE_SERVICE, DISPENSED.equals(type) ? YES : NO);
+            vars.put(IS_BAILIFF_SERVICE, BAILIFF.equals(type) ? YES : NO);
+            vars.put(IS_ALTERNATIVE_SERVICE, ALTERNATIVE_SERVICE.equals(type) ? YES : NO);
+            return null;
+        }).when(commonContent).addServiceApplicationTypeVars(templateVars, serviceType);
     }
 }

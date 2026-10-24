@@ -18,9 +18,12 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.BAILIFF_SERVICE_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_FIRM_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_APP1_REPRESENTED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_RECEIVED_DATE;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -104,6 +107,12 @@ public class BailiffServiceApplicationTemplateContent implements TemplateContent
                 : caseData.getApplicant2().getCorrespondenceAddress()
         );
         templateContent.put(DIVORCE_OR_DISSOLUTION, docmosisCommonContent.getApplicationType(languagePreference, caseData));
+
+        templateContent.put(IS_APP1_REPRESENTED, applicant.isRepresented());
+        if (applicant.isRepresented()) {
+            templateContent.put(APPLICANT_1_SOLICITOR_NAME, applicant.getSolicitor().getName());
+            templateContent.put(APPLICANT_1_SOLICITOR_FIRM_NAME, applicant.getSolicitor().getPreferredFirmName());
+        }
 
         BailiffServiceJourneyOptions applicationAnswers = applicant.getInterimApplicationOptions().getBailiffServiceJourneyOptions();
         return bailiffApplicationContent(templateContent, applicationAnswers, dateTimeFormatter);

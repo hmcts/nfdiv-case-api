@@ -17,12 +17,15 @@ import java.util.Map;
 
 import static uk.gov.hmcts.divorce.document.DocumentConstants.DEEMED_SERVICE_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_FIRM_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DEEMED_EVIDENCE_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DEEMED_EVIDENCE_UPLOADED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DEEMED_NO_EVIDENCE_STATEMENT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_OR_DISSOLUTION;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_APP1_REPRESENTED;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.SERVICE_APPLICATION_RECEIVED_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.STATEMENT_OF_TRUTH;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
@@ -63,6 +66,12 @@ public class DeemedServiceApplicationTemplateContent implements TemplateContent 
         templateContent.put(DEEMED_NO_EVIDENCE_STATEMENT, applicationAnswers.getDeemedNoEvidenceStatement());
         templateContent.put(DIVORCE_OR_DISSOLUTION, docmosisCommonContent.getApplicationType(languagePreference, caseData));
         templateContent.put(STATEMENT_OF_TRUTH, LanguagePreference.WELSH.equals(languagePreference) ? "Ydw" : "Yes");
+
+        templateContent.put(IS_APP1_REPRESENTED, applicant.isRepresented());
+        if (applicant.isRepresented()) {
+            templateContent.put(APPLICANT_1_SOLICITOR_NAME, applicant.getSolicitor().getName());
+            templateContent.put(APPLICANT_1_SOLICITOR_FIRM_NAME, applicant.getSolicitor().getPreferredFirmName());
+        }
 
         return templateContent;
     }

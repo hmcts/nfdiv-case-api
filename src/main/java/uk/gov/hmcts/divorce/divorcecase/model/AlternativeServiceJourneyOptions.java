@@ -83,4 +83,26 @@ public class AlternativeServiceJourneyOptions {
         searchable = false
     )
     private String altServiceMethodJustification;
+
+    @CCD(
+        label = "How would you like the papers to be sent by email?",
+        hint = "If you select Solicitor Service, you will need to provide a reason"
+    )
+    private SolicitorServiceMethod solAltServiceMethod;
+
+    @CCD(
+        label = "Reason for choosing solicitor service",
+        searchable = false
+    )
+    private String solAltServiceSolicitorServiceReason;
+
+    @CCD(
+        label = "Why do you think serving the papers in this way will be successful?",
+        hint = """
+            Tell us why you think the respondent will receive the papers in this way. If a friend or relative will be sending the papers
+             on behalf of the applicant, you'll need to tell us who this is.""",
+        searchable = false,
+        typeOverride = TextArea
+    )
+    private String solAltServiceSuccessfulSendReason;
 }
