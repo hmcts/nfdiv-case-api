@@ -67,14 +67,18 @@ jobs:
         id: ccd-diff
         run: |
           REPORT="$(npx -q @hmcts/ccd-diff build/master build/branch)"
-          REPORT="${REPORT//'%'/'%25'}"
-          REPORT="${REPORT//$'\n'/'%0A'}"
-          REPORT="${REPORT//$'\r'/'%0D'}"
-          echo $REPORT
-          echo "::set-output name=content::$REPORT"
-      - name: Display
-        run: |
-          echo "${{ steps.ccd-diff.outputs.content }}"
+
+          MAX_COMMENT_LENGTH=60000
+          if [ "${#REPORT}" -gt "$MAX_COMMENT_LENGTH" ]; then
+            REPORT="${REPORT:0:$MAX_COMMENT_LENGTH}"
+            REPORT+=$'\n\n---\nReport truncated because it exceeded GitHub output size limits.\nSee job logs for full output.'
+          fi
+
+          {
+            echo "content<<EOF"
+            printf '%s\n' "$REPORT"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
       - name: Add report
         uses: thollander/actions-comment-pull-request@v3
         with:

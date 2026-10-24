@@ -1,5 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,7 +12,11 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
+import uk.gov.hmcts.divorce.citizen.service.InterimApplicationOptionsService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationHearingNotRequired;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.NoResponseJourneyOptions;
@@ -20,16 +25,19 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.DocumentRemovalService;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.document.model.DocumentType;
+import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenStartInterimApplication.CITIZEN_START_INTERIM_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
+import static uk.gov.hmcts.divorce.testutil.TestConstants.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.caseData;
 
@@ -38,6 +46,15 @@ class CitizenStartInterimApplicationTest {
 
     @Mock
     DocumentRemovalService documentRemovalService;
+
+    @Mock
+    CcdAccessService ccdAccessService;
+
+    @Mock
+    HttpServletRequest request;
+
+    @Mock
+    InterimApplicationOptionsService interimApplicationOptionsService;
 
     @InjectMocks
     private CitizenStartInterimApplication citizenStartInterimApplication;
@@ -61,11 +78,14 @@ class CitizenStartInterimApplicationTest {
         final CaseDetails<CaseData, State> beforeDetails = buildCaseDetails(options);
         final CaseDetails<CaseData, State> afterDetails = buildCaseDetails(options);
 
+        when(request.getHeader(AUTHORIZATION)).thenReturn(AUTHORIZATION);
+        when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
+
         AboutToStartOrSubmitResponse<CaseData, State> response = citizenStartInterimApplication.aboutToSubmit(
             afterDetails, beforeDetails
         );
 
-        verifyNoInteractions(documentRemovalService);
+        verifyNoInteractions(interimApplicationOptionsService);
 
         InterimApplicationOptions responseApplicationOptions = response.getData().getApplicant1().getInterimApplicationOptions();
         assertThat(responseApplicationOptions).isEqualTo(options);
@@ -82,39 +102,14 @@ class CitizenStartInterimApplicationTest {
         final CaseDetails<CaseData, State> beforeDetails = buildCaseDetails(beforeOptions);
         final CaseDetails<CaseData, State> afterDetails = buildCaseDetails(afterOptions);
 
+        when(request.getHeader(AUTHORIZATION)).thenReturn(AUTHORIZATION);
+        when(ccdAccessService.isApplicant1(AUTHORIZATION, TEST_CASE_ID)).thenReturn(true);
+
         AboutToStartOrSubmitResponse<CaseData, State> response = citizenStartInterimApplication.aboutToSubmit(
             afterDetails, beforeDetails
         );
 
-        verify(documentRemovalService).deleteDocument(beforeOptions.getInterimAppsEvidenceDocs());
-
-        InterimApplicationOptions responseApplicationOptions = response.getData().getApplicant1().getInterimApplicationOptions();
-        assertThat(responseApplicationOptions.getInterimApplicationType()).isEqualTo(InterimApplicationType.DEEMED_SERVICE);
-        assertThat(responseApplicationOptions.getInterimAppsUseHelpWithFees()).isNull();
-        assertThat(responseApplicationOptions.getInterimAppsHaveHwfReference()).isNull();
-        assertThat(responseApplicationOptions.getInterimAppsHwfRefNumber()).isNull();
-        assertThat(responseApplicationOptions.getInterimAppsCanUploadEvidence()).isNull();
-        assertThat(responseApplicationOptions.getInterimAppsCannotUploadDocs()).isNull();
-        assertThat(responseApplicationOptions.getInterimAppsEvidenceDocs()).isNull();
-    }
-
-    @Test
-    void shouldHandleBlankDocumentsList() {
-        InterimApplicationOptions beforeOptions = buildInterimApplicationOptions();
-        beforeOptions.setInterimApplicationType(InterimApplicationType.DISPENSE_WITH_SERVICE);
-
-        InterimApplicationOptions afterOptions = buildInterimApplicationOptions();
-        afterOptions.setInterimApplicationType(InterimApplicationType.DEEMED_SERVICE);
-        afterOptions.setInterimAppsEvidenceDocs(null);
-
-        final CaseDetails<CaseData, State> beforeDetails = buildCaseDetails(beforeOptions);
-        final CaseDetails<CaseData, State> afterDetails = buildCaseDetails(afterOptions);
-
-        citizenStartInterimApplication.aboutToSubmit(
-            afterDetails, beforeDetails
-        );
-
-        verifyNoInteractions(documentRemovalService);
+        verify(interimApplicationOptionsService).resetInterimApplicationOptions(afterDetails.getData().getApplicant1());
     }
 
     private InterimApplicationOptions buildInterimApplicationOptions() {
@@ -134,6 +129,29 @@ class CitizenStartInterimApplicationTest {
                     .noResponseRespondentAddressInEnglandWales(YesOrNo.YES)
                     .build()
             ).build();
+    }
+
+    private InterimApplicationOptions buildInterimApplicationOptionsForD11App() {
+        return InterimApplicationOptions.builder()
+            .interimAppsHaveHwfReference(YesOrNo.YES)
+            .interimAppsHwfRefNumber("test number")
+            .interimAppsCanUploadEvidence(YesOrNo.YES)
+            .interimAppsCannotUploadDocs(YesOrNo.YES)
+            .generalApplicationD11JourneyOptions(
+                GeneralApplicationD11JourneyOptions.builder()
+                    .hearingNotRequired(GeneralApplicationHearingNotRequired.YES_DOES_NOT_NEED_CONSENT)
+                    .type(GeneralApplicationType.AMEND_APPLICATION)
+                    .reason("reason")
+                    .partnerAgreesDocs(List.of(
+                        ListValue.<DivorceDocument>builder().value(
+                            DivorceDocument.builder()
+                                .documentType(DocumentType.NAME_CHANGE_EVIDENCE)
+                                .build()
+                        ).build())
+                    )
+                    .build()
+            )
+            .build();
     }
 
     private CaseDetails<CaseData, State> buildCaseDetails(InterimApplicationOptions options) {

@@ -28,7 +28,7 @@ public class GeneralLetterRecipientResolver {
 
     private GeneralLetterRecipient resolveByParty(CaseData caseData, GeneralParties party) {
         return switch (party) {
-            case RESPONDENT -> new GeneralLetterRecipient(
+            case APPLICANT2, RESPONDENT -> new GeneralLetterRecipient(
                 party,
                 getRecipientName(caseData.getApplicant2().getFirstName(), caseData.getApplicant2().getLastName()),
                 caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck(),
