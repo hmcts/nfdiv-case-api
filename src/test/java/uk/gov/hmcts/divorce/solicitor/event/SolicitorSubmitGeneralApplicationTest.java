@@ -235,7 +235,7 @@ public class SolicitorSubmitGeneralApplicationTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(State.AwaitingGeneralApplicationPayment);
+        assertThat(response.getState()).isEqualTo(State.AwaitingGeneralReferralPayment);
         assertThat(response.getData().getGeneralApplication().getGeneralApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
     }
 

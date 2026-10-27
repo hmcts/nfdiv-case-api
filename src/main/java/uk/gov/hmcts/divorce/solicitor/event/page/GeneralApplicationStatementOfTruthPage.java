@@ -21,7 +21,7 @@ public class GeneralApplicationStatementOfTruthPage implements CcdPageConfigurat
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder.page("generalApplicationStatementOfTruth")
             .complex(CaseData::getGeneralApplication)
-            .readonlyNoSummary(GeneralApplication::getGeneralApplicationType)
+            .readonlyWithLabel(GeneralApplication::getGeneralApplicationType, "General application Type")
             .mandatory(GeneralApplication::getGeneralApplicationStatementOfTruth)
             .mandatory(GeneralApplication::getGeneralApplicationSignStatementOfTruth)
             .label("sOTInfo", GENERAL_APPLICATION_SOT_INFO_LABEL)

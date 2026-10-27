@@ -115,7 +115,7 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
         ServicePaymentMethod paymentMethod = caseData.getGeneralApplication().getGeneralApplicationFee().getPaymentMethod();
         State targetState = ServicePaymentMethod.FEE_PAY_BY_ACCOUNT.equals(paymentMethod)
             ? State.GeneralApplicationReceived
-            : State.AwaitingGeneralApplicationPayment;
+            : State.AwaitingGeneralReferralPayment;
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
