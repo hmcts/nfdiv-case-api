@@ -20,14 +20,14 @@ public class SearchGovConfirmPage implements CcdPageConfiguration {
     private static final String SEARCH_GOV_INFORMATION_PARAGRAPH = """
             ## Apply to ask the court to search government records (D11) ##
 
-            You can ask the court to search a government department's records, such as HM Revenue and Customer (HMRC) or the Department
+            You can ask the court to search a government department's records, such as HM Revenue and Customs (HMRC) or the Department
             for Work and Pensions (DWP), for the respondent's contact details.
 
             You will need the respondent's:
             - full name
             - date of birth
 
-            It will help with the search if you can also provide the National Insurance number and their last known address, but it is not
+            It will help with the search if you can also provide the National Insurance number, but it is not
             mandatory.
 
             Government record searches are typically completed within 6-8 weeks. If the search is successful, the respondent's contact

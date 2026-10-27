@@ -37,7 +37,7 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
     @CCD(
         label = "What have you already done to try to find the respondent’s details?",
         hint = "Tell us about anything you've already done to try to find the respondent's contact details, "
-            + "and the result of these actions",
+            + "and the results of these actions",
         typeOverride = TextArea,
         access = {DefaultAccess.class},
         searchable = false
@@ -60,7 +60,7 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
     private String otherDepartmentNames;
 
     @CCD(
-        label = "Enter the respondent's name",
+        label = "Enter the respondent's full name",
         access = {DefaultAccess.class},
         searchable = false
     )
