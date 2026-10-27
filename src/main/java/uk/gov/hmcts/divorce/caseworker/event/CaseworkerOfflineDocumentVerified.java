@@ -194,7 +194,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                     + "OR (d36ApplicationType=\"sole\" AND dateFinalOrderEligibleToRespondent=\"*\")")
             .done()
             .page("judgeGrantedExpeditedCO")
-            .showCondition("typeOfDocumentAttached=\"D84\" AND coBeingExpedited=\"Yes\"")
+            .showCondition("typeOfDocumentAttached=\"D84\" AND coExpediteCheckRequired=\"Yes\"")
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getJudgeGrantedExpedite)
             .done()
