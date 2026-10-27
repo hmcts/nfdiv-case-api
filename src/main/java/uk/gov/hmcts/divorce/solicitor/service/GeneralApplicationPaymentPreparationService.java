@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -31,7 +32,8 @@ public class GeneralApplicationPaymentPreparationService {
         long caseId,
         Applicant applicant,
         InterimApplicationOptions options,
-        GeneralApplication generalApplication
+        GeneralApplication generalApplication,
+        String existingServiceRequestReference
     ) {
         generalApplication.setGeneralApplicationFeeType(options.isHearingRequired() ? FEE0227 : FEE0228);
 
@@ -51,7 +53,9 @@ public class GeneralApplicationPaymentPreparationService {
             DynamicList pbaNumbers = pbaService.populatePbaDynamicList();
             fee.setPbaNumbers(pbaNumbers);
 
-            String serviceRequestReference = paymentSetupService.createGeneralApplicationPaymentServiceRequest(
+            String serviceRequestReference = StringUtils.isNotBlank(existingServiceRequestReference)
+                ? existingServiceRequestReference
+                : paymentSetupService.createGeneralApplicationPaymentServiceRequest(
                 orderSummary, caseId, applicant.getFullName()
             );
 

@@ -25,6 +25,9 @@ import java.util.OptionalInt;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.findActiveGeneralApplicationIndex;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
+import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_HWF;
+import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
 
 @Slf4j
 @Service
@@ -52,15 +55,8 @@ public class GeneralApplicationDraftSubmissionService {
 
             log.info("Clearing interim options and general application for case id: {}", details.getId());
 
-            OptionalInt genAppIndex = findActiveGeneralApplicationIndex(caseData, applicant);
-
-            if (genAppIndex.isEmpty() && StringUtils.isBlank(applicant.getGeneralAppServiceRequest())) {
-                genAppIndex = findHwfDraftIndexForApplicant(caseData, applicant);
-            }
-
-            if (genAppIndex.isPresent()) {
-                citizenWithdrawGeneralApplication.handleRemovalOfGeneralApplication(caseData, genAppIndex.getAsInt());
-            }
+            OptionalInt draftIndex = findDraftIndex(caseData, applicant);
+            draftIndex.ifPresent(index -> citizenWithdrawGeneralApplication.handleRemovalOfGeneralApplication(caseData, index));
 
             applicant.setInterimApplicationOptions(null);
             return;
@@ -69,18 +65,68 @@ public class GeneralApplicationDraftSubmissionService {
         boolean isApplicant1 = isApplicant1(details.getId());
 
         log.info("Building general application from interim options for case id: {}", details.getId());
+        OptionalInt draftIndex = findDraftIndex(caseData, applicant);
+        List<ListValue<GeneralApplication>> generalApplications = caseData.getGeneralApplications();
+
+        GeneralApplication existingDraft = null;
+        if (draftIndex.isPresent()) {
+            existingDraft = generalApplications.get(draftIndex.getAsInt()).getValue();
+        }
 
         GeneralApplication generalApplication = generalApplicationFactory.createFromJourneyOptions(options, isApplicant1,
             caseData.getApplicationType());
         caseData.setGeneralApplication(generalApplication);
 
-        paymentPreparationService.prepareDraftGeneralApplicationFee(details.getId(), applicant, options, generalApplication);
+        String reusableServiceRequestReference = resolveReusableServiceRequestReference(existingDraft, options, generalApplication);
+
+        paymentPreparationService.prepareDraftGeneralApplicationFee(details.getId(), applicant, options, generalApplication,
+            reusableServiceRequestReference);
 
         DivorceDocument applicationDocument = submissionService.generateGeneralApplicationAnswerDocument(
             details.getId(), applicant, caseData, generalApplication);
 
         generalApplication.setGeneralApplicationDocument(applicationDocument);
-        caseData.updateCaseWithGeneralApplication(generalApplication);
+
+        if (draftIndex.isPresent()) {
+            generalApplications.get(draftIndex.getAsInt()).setValue(generalApplication);
+        } else {
+            caseData.updateCaseWithGeneralApplication(generalApplication);
+        }
+        applicant.getInterimApplicationOptions().setDraftApplicationAction(null);
+    }
+
+    private String resolveReusableServiceRequestReference(
+        GeneralApplication existingDraft,
+        InterimApplicationOptions options,
+        GeneralApplication rebuiltDraft
+    ) {
+        if (existingDraft == null
+            || existingDraft.getGeneralApplicationFee() == null
+            || StringUtils.isBlank(existingDraft.getGeneralApplicationFee().getServiceRequestReference())) {
+            return null;
+        }
+
+        ServicePaymentMethod newMethod =
+            FEES_HELP_WITH.equals(options.getInterimAppsPaymentMethod()) ? FEE_PAY_BY_HWF : FEE_PAY_BY_ACCOUNT;
+
+        ServicePaymentMethod oldMethod = existingDraft.getGeneralApplicationFee().getPaymentMethod();
+
+        boolean sameAccountMethod = FEE_PAY_BY_ACCOUNT.equals(oldMethod) && FEE_PAY_BY_ACCOUNT.equals(newMethod);
+        boolean sameFeeType = existingDraft.getGeneralApplicationFeeType() == rebuiltDraft.getGeneralApplicationFeeType();
+
+        return (sameAccountMethod && sameFeeType)
+            ? existingDraft.getGeneralApplicationFee().getServiceRequestReference()
+            : null;
+    }
+
+    private OptionalInt findDraftIndex(CaseData caseData, Applicant applicant) {
+        OptionalInt draftIndex = findActiveGeneralApplicationIndex(caseData, applicant);
+
+        if (draftIndex.isEmpty() && StringUtils.isBlank(applicant.getGeneralAppServiceRequest())) {
+            draftIndex = findHwfDraftIndexForApplicant(caseData, applicant);
+        }
+
+        return draftIndex;
     }
 
     private boolean isApplicant1(Long caseId) {
@@ -103,7 +149,7 @@ public class GeneralApplicationDraftSubmissionService {
                 && !YesOrNo.YES.equals(ga.getGeneralApplicationSubmittedOnline())
                 && actingParty.equals(ga.getGeneralApplicationParty())
                 && ga.getGeneralApplicationFee() != null
-                && ServicePaymentMethod.FEE_PAY_BY_HWF.equals(ga.getGeneralApplicationFee().getPaymentMethod())) {
+                && FEE_PAY_BY_HWF.equals(ga.getGeneralApplicationFee().getPaymentMethod())) {
                 return OptionalInt.of(i);
             }
         }

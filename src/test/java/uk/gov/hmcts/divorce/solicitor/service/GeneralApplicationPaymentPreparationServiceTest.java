@@ -67,7 +67,8 @@ public class GeneralApplicationPaymentPreparationServiceTest {
                 .hearingNotRequired(GeneralApplicationHearingNotRequired.NO).build())
             .build();
 
-        generalApplicationPaymentPreparationService.prepareDraftGeneralApplicationFee(TEST_CASE_ID, applicant, options, generalApplication);
+        generalApplicationPaymentPreparationService.prepareDraftGeneralApplicationFee(TEST_CASE_ID, applicant, options, generalApplication,
+            null);
 
         assertThat(feeDetails.getPaymentMethod()).isEqualTo(ServicePaymentMethod.FEE_PAY_BY_ACCOUNT);
         assertThat(feeDetails.getServiceRequestReference()).isEqualTo("SR-123");
@@ -97,8 +98,7 @@ public class GeneralApplicationPaymentPreparationServiceTest {
         GeneralApplication generalApplication = GeneralApplication.builder().generalApplicationFee(feeDetails).build();
 
         generalApplicationPaymentPreparationService.prepareDraftGeneralApplicationFee(
-            TEST_CASE_ID, applicant, options, generalApplication
-        );
+            TEST_CASE_ID, applicant, options, generalApplication, null);
 
         assertThat(generalApplication.getGeneralApplicationFeeType()).isEqualTo(FEE0228);
         assertThat(feeDetails.getPaymentMethod()).isEqualTo(ServicePaymentMethod.FEE_PAY_BY_ACCOUNT);
@@ -119,14 +119,46 @@ public class GeneralApplicationPaymentPreparationServiceTest {
         GeneralApplication generalApplication = GeneralApplication.builder().generalApplicationFee(feeDetails).build();
 
         generalApplicationPaymentPreparationService.prepareDraftGeneralApplicationFee(
-            TEST_CASE_ID, applicant, options, generalApplication
-        );
+            TEST_CASE_ID, applicant, options, generalApplication, "ref");
 
         assertThat(feeDetails.getPaymentMethod()).isEqualTo(ServicePaymentMethod.FEE_PAY_BY_HWF);
         assertThat(feeDetails.getServiceRequestReference()).isNull();
 
         verifyNoInteractions(pbaService);
         verify(paymentSetupService, never()).createGeneralApplicationOrderSummary(anyLong(), any());
+        verify(paymentSetupService, never()).createGeneralApplicationPaymentServiceRequest(any(), anyLong(), anyString());
+    }
+
+    @Test
+    void shouldReuseExistingServiceRequestReferenceWhenProvidedForPbaPayment() {
+        Applicant applicant = Applicant.builder().firstName("John").lastName("Smith").build();
+
+        OrderSummary orderSummary = OrderSummary.builder().build();
+        DynamicList pbaNumbers = DynamicList.builder().build();
+
+        when(paymentSetupService.createGeneralApplicationOrderSummary(TEST_CASE_ID, FEE0228))
+            .thenReturn(orderSummary);
+        when(pbaService.populatePbaDynamicList()).thenReturn(pbaNumbers);
+
+        InterimApplicationOptions options = InterimApplicationOptions.builder()
+            .interimAppsPaymentMethod(SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT)
+            .build();
+
+        FeeDetails feeDetails = FeeDetails.builder().build();
+        GeneralApplication generalApplication = GeneralApplication.builder().generalApplicationFee(feeDetails).build();
+
+        String existingReference = "SR-EXISTING-999";
+
+        generalApplicationPaymentPreparationService.prepareDraftGeneralApplicationFee(
+            TEST_CASE_ID, applicant, options, generalApplication, existingReference
+        );
+
+        assertThat(generalApplication.getGeneralApplicationFeeType()).isEqualTo(FEE0228);
+        assertThat(feeDetails.getPaymentMethod()).isEqualTo(ServicePaymentMethod.FEE_PAY_BY_ACCOUNT);
+        assertThat(feeDetails.getServiceRequestReference()).isEqualTo(existingReference);
+
+        verify(paymentSetupService).createGeneralApplicationOrderSummary(TEST_CASE_ID, FEE0228);
+        verify(pbaService).populatePbaDynamicList();
         verify(paymentSetupService, never()).createGeneralApplicationPaymentServiceRequest(any(), anyLong(), anyString());
     }
 }
