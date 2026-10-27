@@ -336,6 +336,22 @@ public class ConditionalOrder {
     )
     private YesOrNo isAdminClarificationSubmitted;
 
+    @CCD(
+        label = "Conditional Order being expedited",
+        access = {CaseworkerAccess.class},
+        searchable = false
+    )
+    private YesOrNo beingExpedited;
+
+    @CCD(
+        label = "Has a Judge granted an expedited Conditional Order application in this case?",
+        hint = "Select \"Yes\" only where a Judge has approved an expedited Conditional Order application before the statutory "
+            + "20-week holding period has elapsed.",
+        access = {CaseworkerAccess.class},
+        searchable = false
+    )
+    private YesOrNo judgeGrantedExpedite;
+
     @JsonIgnore
     public boolean areClaimsGranted() {
         return nonNull(claimsGranted) && claimsGranted.toBoolean();

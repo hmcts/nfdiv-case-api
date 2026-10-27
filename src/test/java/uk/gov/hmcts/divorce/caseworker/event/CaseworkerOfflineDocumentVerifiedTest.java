@@ -20,6 +20,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponseNotification;
 import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponsePartnerNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
@@ -65,6 +66,7 @@ import java.util.List;
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
@@ -1547,10 +1549,11 @@ class CaseworkerOfflineDocumentVerifiedTest {
     }
 
     @Test
-    void shouldThrowErrorIfD84CannotBeProcessedSinceHoldingPeriodHasNotElapsed() {
+    void shouldThrowErrorIfD84CannotBeProcessedSinceHoldingPeriodHasNotElapsedAndJudgeHasNotGrantedExpedite() {
         CaseData caseData = caseData();
         caseData.getDocuments().setTypeOfDocumentAttached(CO_D84);
         caseData.getApplication().setIssueDate(LocalDate.of(2022, 1, 1));
+        caseData.getConditionalOrder().setJudgeGrantedExpedite(YesOrNo.NO);
         CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
         caseDetails.setData(caseData);
 
@@ -1843,6 +1846,28 @@ class CaseworkerOfflineDocumentVerifiedTest {
             );
         });
     }
+
+    @Test
+    void shouldSetBeingExpeditedToYesWhenHoldingPeriodNotElapsed() {
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        CaseData caseData = new CaseData();
+        caseData.getDocuments().setTypeOfDocumentAttached(CO_D84);
+        LocalDate issueDate = LocalDate.of(2022, 1, 1);
+        caseData.getApplication().setIssueDate(issueDate);
+
+        caseDetails.setData(caseData);
+
+        LocalDate holdingPeriodEndDate = LocalDate.of(2022, 1, 10);
+        mockCurrentDate(LocalDate.of(2022, 1, 5));
+
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(holdingPeriodEndDate);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.midEvent(caseDetails, caseDetails);
+
+        assertEquals(YES, response.getData().getConditionalOrder().getBeingExpedited());
+    }
+
 
     private void mockCurrentDate(LocalDate currentDate) {
         Clock fixedClock = Clock.fixed(currentDate.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());

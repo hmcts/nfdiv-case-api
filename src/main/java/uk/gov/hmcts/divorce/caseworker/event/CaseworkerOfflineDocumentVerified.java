@@ -157,7 +157,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR, JUDGE))
-            .page("documentTypeReceived")
+            .page("documentTypeReceived", this::midEvent)
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
 
             .complex(CaseData::getDocuments)
@@ -179,6 +179,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             ))
             .done()
             .complex(CaseData::getConditionalOrder)
+                .readonlyNoSummary(ConditionalOrder::getBeingExpedited, ALWAYS_HIDE)
                 .label("scannedCoLabel", "Conditional Order", "scannedSubtypeReceived=\"D84\"")
                 .mandatory(ConditionalOrder::getD84ApplicationType,
                     "typeOfDocumentAttached=\"D84\" OR scannedSubtypeReceived=\"D84\"")
@@ -191,6 +192,11 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                     "typeOfDocumentAttached=\"D36\" OR scannedSubtypeReceived=\"D36\"")
                 .mandatory(FinalOrder::getD36WhoApplying, "d36ApplicationType=\"switchToSole\" "
                     + "OR (d36ApplicationType=\"sole\" AND dateFinalOrderEligibleToRespondent=\"*\")")
+            .done()
+            .page("judgeGrantedExpeditedCO")
+            .showCondition("typeOfDocumentAttached=\"D84\" AND coBeingExpedited=\"Yes\"")
+            .complex(CaseData::getConditionalOrder)
+                .mandatory(ConditionalOrder::getJudgeGrantedExpedite)
             .done()
             .page("selectSenderOfDocument")
             .showCondition("typeOfDocumentAttached=\"RFIR\"")
@@ -270,6 +276,23 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .build();
     }
 
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
+                                                                  CaseDetails<CaseData, State> beforeDetails) {
+        final CaseData caseData = details.getData();
+        caseData.getConditionalOrder().setBeingExpedited(NO);
+
+        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            LocalDate holdingPeriodEndDate = holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate());
+            if (!holdingPeriodEndDate.isBefore(LocalDate.now(clock))) {
+                caseData.getConditionalOrder().setBeingExpedited(YES);
+            }
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
+    }
+
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
@@ -314,6 +337,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             //setting ScannedSubtypeReceived to null as only scanned docs that have not been actioned should be filtered in case list
             details.getData().getDocuments().setScannedSubtypeReceived(null);
+            details.getData().getConditionalOrder().setBeingExpedited(null);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
@@ -344,7 +368,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             }
         } else if (CO_D84.equals(documentType)) {
             LocalDate holdingPeriodEndDate = holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate());
-            if (!holdingPeriodEndDate.isBefore(LocalDate.now(clock))) {
+            if (!holdingPeriodEndDate.isBefore(LocalDate.now(clock)) && !data.getConditionalOrder().getJudgeGrantedExpedite().toBoolean()) {
                 return Collections.singletonList(CANNOT_PROCESS_D84_ERROR);
             }
         }
