@@ -341,7 +341,7 @@ public class ConditionalOrder {
         access = {CaseworkerAccess.class},
         searchable = false
     )
-    private YesOrNo beingExpedited;
+    private YesOrNo expediteCheckRequired;
 
     @CCD(
         label = "Has a Judge granted an expedited Conditional Order application in this case?",

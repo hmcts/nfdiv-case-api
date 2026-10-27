@@ -179,7 +179,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             ))
             .done()
             .complex(CaseData::getConditionalOrder)
-                .readonlyNoSummary(ConditionalOrder::getBeingExpedited, ALWAYS_HIDE)
+                .readonlyNoSummary(ConditionalOrder::getExpediteCheckRequired, ALWAYS_HIDE)
                 .label("scannedCoLabel", "Conditional Order", "scannedSubtypeReceived=\"D84\"")
                 .mandatory(ConditionalOrder::getD84ApplicationType,
                     "typeOfDocumentAttached=\"D84\" OR scannedSubtypeReceived=\"D84\"")
@@ -279,12 +279,12 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
                                                                   CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
-        caseData.getConditionalOrder().setBeingExpedited(NO);
+        caseData.getConditionalOrder().setExpediteCheckRequired(NO);
 
         if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
             LocalDate holdingPeriodEndDate = holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate());
             if (!holdingPeriodEndDate.isBefore(LocalDate.now(clock))) {
-                caseData.getConditionalOrder().setBeingExpedited(YES);
+                caseData.getConditionalOrder().setExpediteCheckRequired(YES);
             }
         }
 
@@ -337,7 +337,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             //setting ScannedSubtypeReceived to null as only scanned docs that have not been actioned should be filtered in case list
             details.getData().getDocuments().setScannedSubtypeReceived(null);
-            details.getData().getConditionalOrder().setBeingExpedited(null);
+            details.getData().getConditionalOrder().setExpediteCheckRequired(null);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
@@ -368,7 +368,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             }
         } else if (CO_D84.equals(documentType)) {
             LocalDate holdingPeriodEndDate = holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate());
-            if (!holdingPeriodEndDate.isBefore(LocalDate.now(clock)) && !data.getConditionalOrder().getJudgeGrantedExpedite().toBoolean()) {
+            if (!holdingPeriodEndDate.isBefore(LocalDate.now(clock)) && !YES.equals(data.getConditionalOrder().getJudgeGrantedExpedite())) {
                 return Collections.singletonList(CANNOT_PROCESS_D84_ERROR);
             }
         }

@@ -66,7 +66,7 @@ import java.util.List;
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
@@ -1865,7 +1865,7 @@ class CaseworkerOfflineDocumentVerifiedTest {
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.midEvent(caseDetails, caseDetails);
 
-        assertEquals(YES, response.getData().getConditionalOrder().getBeingExpedited());
+        assertEquals(YES, response.getData().getConditionalOrder().getExpediteCheckRequired());
     }
 
 
