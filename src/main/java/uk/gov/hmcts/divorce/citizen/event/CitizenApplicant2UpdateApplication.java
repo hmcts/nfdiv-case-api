@@ -1,7 +1,6 @@
 package uk.gov.hmcts.divorce.citizen.event;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
@@ -12,27 +11,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 
+import java.util.EnumSet;
+
 import static uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration.NEVER_SHOW;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosDrafted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant2Response;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingClarification;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingFinalOrderPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFDecision;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFEvidence;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingHWFPartPayment;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingJointFinalOrder;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingRequestedInformation;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingResponseToHWFDecision;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingService;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderDrafted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.ConditionalOrderPending;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.OfflineDocumentReceived;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
-import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Archived;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingApplicant1Response;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.NewPaperCase;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Rejected;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.Withdrawn;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2;
 import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_READ_UPDATE;
 
@@ -42,16 +32,22 @@ public class CitizenApplicant2UpdateApplication implements CCDConfig<CaseData, S
 
     public static final String CITIZEN_APPLICANT2_UPDATE = "citizen-applicant2-update-application";
 
+    private static final EnumSet<State> CITIZEN_UPDATE_STATES = EnumSet.complementOf(EnumSet.of(
+        AwaitingApplicant1Response,
+        Draft,
+        AwaitingPayment,
+        NewPaperCase,
+        Withdrawn,
+        Rejected,
+        Archived
+    ));
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
 
         configBuilder
             .event(CITIZEN_APPLICANT2_UPDATE)
-            .forStates(ArrayUtils.addAll(AOS_STATES, AwaitingApplicant2Response, AosDrafted, AosOverdue,
-                ConditionalOrderDrafted, ConditionalOrderPending, AwaitingClarification, AwaitingService,
-                AwaitingFinalOrder, AwaitingFinalOrderPayment, AwaitingJointFinalOrder, OfflineDocumentReceived,
-                AwaitingRequestedInformation, InformationRequested, RequestedInformationSubmitted, Submitted,
-                AwaitingHWFDecision, AwaitingHWFEvidence, AwaitingHWFPartPayment, AwaitingResponseToHWFDecision))
+            .forStates(CITIZEN_UPDATE_STATES)
             .name("Patch a joint case")
             .showCondition(NEVER_SHOW)
             .description("Patch a joint divorce or dissolution as applicant 2")

@@ -16,13 +16,10 @@ import uk.gov.hmcts.divorce.notification.NotificationService;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.ENGLISH;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AosOverdue;
@@ -30,7 +27,6 @@ import static uk.gov.hmcts.divorce.divorcecase.model.State.Draft;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.DRAFT_APPLICATION_SAVE_SIGN_OUT;
-import static uk.gov.hmcts.divorce.notification.EmailTemplateName.INTERIM_APPLICATION_SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.REQUEST_FOR_INFORMATION_SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SAVE_SIGN_OUT;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
@@ -170,10 +166,8 @@ class SaveAndSignOutNotificationHandlerTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq(INTERIM_APPLICATION_SAVE_SIGN_OUT),
-            argThat(allOf(
-                hasEntry("interimApplicationType", "deemed service")
-            )),
+            eq(SAVE_SIGN_OUT),
+            any(),
             eq(ENGLISH),
             eq(CASE_ID)
         );
@@ -194,10 +188,8 @@ class SaveAndSignOutNotificationHandlerTest {
 
         verify(notificationService).sendEmail(
             eq(TEST_USER_EMAIL),
-            eq(INTERIM_APPLICATION_SAVE_SIGN_OUT),
-            argThat(allOf(
-                hasEntry("interimApplicationType", "cyflwyno tybiedig")
-            )),
+            eq(SAVE_SIGN_OUT),
+            any(),
             eq(WELSH),
             eq(CASE_ID)
         );

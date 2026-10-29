@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.divorce.caseworker.service.task.SendAosResponseLetterPackToApplicant;
+import uk.gov.hmcts.divorce.common.service.task.ExpireUnpaidSearchGovRecordsApplications;
 import uk.gov.hmcts.divorce.common.service.task.GenerateAndLinkRespondentAnswers;
 import uk.gov.hmcts.divorce.common.service.task.SaveLegalProceedingDocumentsToCaseDocuments;
 import uk.gov.hmcts.divorce.common.service.task.SendAosNotifications;
@@ -26,12 +27,14 @@ public class SubmitAosService {
     private final SaveLegalProceedingDocumentsToCaseDocuments saveLegalProceedingDocumentsToCaseDocuments;
     private final SendAosNotifications sendAosNotifications;
     private final SendAosResponseLetterPackToApplicant sendAosResponseLetterPackToApplicant;
+    private final ExpireUnpaidSearchGovRecordsApplications expireUnpaidSearchGovRecordsApplications;
 
     public CaseDetails<CaseData, State> submitAos(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
             setSubmitAosState,
             setSubmissionAndDueDate,
             saveLegalProceedingDocumentsToCaseDocuments,
+            expireUnpaidSearchGovRecordsApplications,
             generateAndLinkRespondentAnswers
         ).run(caseDetails);
     }
@@ -39,6 +42,7 @@ public class SubmitAosService {
     public CaseDetails<CaseData, State> submitOfflineAos(final CaseDetails<CaseData, State> caseDetails) {
         return caseTasks(
             setSubmitAosState,
+            expireUnpaidSearchGovRecordsApplications,
             setSubmissionAndDueDate
         ).run(caseDetails);
     }

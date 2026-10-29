@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CtscContactDetails;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 
@@ -191,5 +192,23 @@ public class DocmosisCommonContent {
         } else {
             return caseData.isDivorce() ? DIVORCE_APPLICATION : END_CIVIL_PARTNERSHIP;
         }
+    }
+
+    public String getGeneralApplicationTypeLabel(GeneralApplicationType applicationType, boolean isDivorce) {
+        return switch (applicationType) {
+            case GeneralApplicationType.WITHDRAW_POST_ISSUE -> String.format(
+                "Withdraw the %s", isDivorce ? "divorce application" : "application to end the civil partnership"
+            );
+            case GeneralApplicationType.DELAY -> "Delay or pause (or ‘put a stay on’) an application";
+            case GeneralApplicationType.EXTEND -> "More time to serve an application (or ‘extend service’)";
+            case GeneralApplicationType.ISSUE_DIVORCE_WITHOUT_CERT -> String.format(
+                "Continue without a %s certificate", isDivorce ? "marriage" : "civil partnership"
+            );
+            case GeneralApplicationType.EXPEDITE ->
+                "Complete a divorce or end a civil partnership more quickly (or ‘expedite’ an application)";
+            case GeneralApplicationType.AMEND_APPLICATION -> "Amend an existing application";
+            case GeneralApplicationType.OTHER -> "Something else";
+            default -> applicationType.getLabel();
+        };
     }
 }
