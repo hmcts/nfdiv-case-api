@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
@@ -261,11 +260,9 @@ class SystemApplyNoticeOfChangeTest {
     }
 
     private Map<String, Object> expectedData(final CaseData caseData) {
+        objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
 
-        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build();
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        return objectMapper.convertValue(caseData, new TypeReference<>() {
-        });
+        return objectMapper.convertValue(caseData, new TypeReference<>() {});
     }
 
     private ChangeOrganisationRequest<CaseRoleID> getChangeOrganisationRequestField(String role, String roleLabel) {
