@@ -31,6 +31,7 @@ public class InterimApplicationOptionsService {
 
         applicant.setInterimApplicationOptions(
             options.toBuilder()
+                .interimAppsIUnderstand(null)
                 .interimAppsUseHelpWithFees(null)
                 .interimAppsHwfRefNumber(null)
                 .interimAppsHaveHwfReference(null)
