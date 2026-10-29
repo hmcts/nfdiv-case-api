@@ -26,7 +26,7 @@ plugins {
   id 'com.github.ben-manes.versions' version '0.66.0'
   id 'au.com.dius.pact' version '4.7.5'
   id 'hmcts.ccd.sdk' version '6.38.3'
-  id 'com.github.hmcts.rse-cft-lib' version '0.19.2454'
+  id 'com.github.hmcts.rse-cft-lib' version '0.19.2457'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -385,8 +385,8 @@ dependencies {
   functionalTestImplementation sourceSets.test.runtimeClasspath
   functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.2'
 
-  contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.5'
-  contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.5'
+  contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.6'
+  contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.6'
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
