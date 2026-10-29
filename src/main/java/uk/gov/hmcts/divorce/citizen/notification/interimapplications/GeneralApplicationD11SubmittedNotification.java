@@ -14,6 +14,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
+import uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 import uk.gov.hmcts.divorce.notification.GeneralApplicationNotification;
 import uk.gov.hmcts.divorce.notification.NotificationService;
@@ -31,6 +32,7 @@ import static uk.gov.hmcts.divorce.notification.CommonContent.USED_HELP_WITH_FEE
 import static uk.gov.hmcts.divorce.notification.CommonContent.YES;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_APPLICATION_D11_AWAITING_DOCUMENTS;
 import static uk.gov.hmcts.divorce.notification.EmailTemplateName.GENERAL_APPLICATION_D11_SUBMITTED;
+import static uk.gov.hmcts.divorce.notification.EmailTemplateName.SOLICITOR_GENERAL_APPLICATION_SUBMITTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
 @Component
@@ -51,6 +53,7 @@ public class GeneralApplicationD11SubmittedNotification implements GeneralApplic
     private static final String ADD_ADDITIONAL_INFO = "addAdditionalInfo";
     private static final String ADD_ADDITIONAL_INFO_DIVORCE = "addAdditionalInfoDivorce";
     private static final String ADD_ADDITIONAL_INFO_DISSOLUTION = "addAdditionalInfoDissolution";
+    private static final String SEARCH_GOV_RECORDS = "searchGovernmentRecords";
 
     public void sendToApplicant(final CaseData caseData, final Long caseId, GeneralApplication generalApplication) {
         final GeneralParties generalParties = generalApplication.getGeneralApplicationParty();
@@ -77,6 +80,44 @@ public class GeneralApplicationD11SubmittedNotification implements GeneralApplic
             applicant.getLanguagePreference(),
             caseId
         );
+    }
+
+    public void sendToSolicitor(final CaseData caseData,
+                                 final Long caseId,
+                                 final boolean isApplicant1,
+                                 final GeneralApplication generalApplication) {
+
+        Applicant actingApplicant = isApplicant1 ? caseData.getApplicant1() : caseData.getApplicant2();
+
+        final GeneralParties generalParties = generalApplication.getGeneralApplicationParty();
+
+        log.info("Sending d11 Solicitor general application submitted notification to {} solicitor on case id {}",
+            generalParties.getLabel(), caseId);
+
+        Map<String, String> templateVars = commonContent.getGeneralEmailSolicitorVars(caseData, caseId, actingApplicant);
+
+        templateVars.put(EMAIL_BODY_LINE1, getSolicitorContentBasedOnGenAppType(generalApplication.getGeneralApplicationType(),
+            actingApplicant.getLanguagePreference(), caseData.isDivorce()));
+
+        templateVars.put(DocmosisTemplateConstants.ISSUE_DATE, getIssueDateInPreferredLanguage(caseData, actingApplicant));
+
+        GeneralApplicationType generalApplicationType = generalApplication.getGeneralApplicationType();
+        templateVars.put(SEARCH_GOV_RECORDS, GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplicationType) ? YES : NO);
+
+        notificationService.sendEmail(
+            actingApplicant.getSolicitor().getEmail(),
+            SOLICITOR_GENERAL_APPLICATION_SUBMITTED,
+            templateVars,
+            actingApplicant.getLanguagePreference(),
+            caseId
+        );
+    }
+
+    public String getIssueDateInPreferredLanguage(CaseData data, Applicant applicant) {
+        final LocalDate issueDate = data.getApplication().getIssueDate();
+        return
+            issueDate == null ? "N/A" : issueDate.format(
+                getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference()));
     }
 
     private Map<String, String> genAppTemplateVars(
@@ -126,6 +167,47 @@ public class GeneralApplicationD11SubmittedNotification implements GeneralApplic
                 ? GEN_APP_SUBMITTED_CY
                 : GEN_APP_SUBMITTED_EN
         );
+    }
+
+    private String getSolicitorContentBasedOnGenAppType(GeneralApplicationType generalApplicationType,
+                                                        LanguagePreference languagePreference,
+                                                        boolean isDivorce) {
+        Map<GeneralApplicationType, String> translationMap =
+            languagePreference == LanguagePreference.WELSH
+                ? getWelshSolicitorTranslationMap(isDivorce)
+                : getEnglishSolicitorTranslationMap(isDivorce);
+
+        return translationMap.getOrDefault(
+            generalApplicationType,
+            languagePreference == LanguagePreference.WELSH ? GEN_APP_SUBMITTED_CY : GEN_APP_SUBMITTED_EN
+        );
+    }
+
+    private Map<GeneralApplicationType, String> getEnglishSolicitorTranslationMap(boolean isDivorce) {
+        String divorceOrDissolution = isDivorce ? "divorce" : "dissolution";
+        String marriageCertificate = isDivorce ? MARRIAGE : CIVIL_PARTNERSHIP;
+
+        return Map.of(
+            GeneralApplicationType.AMEND_APPLICATION,
+            String.format("Your application to amend this %s case has been submitted", divorceOrDissolution),
+            GeneralApplicationType.EXPEDITE,
+            String.format("Your application to expedite this %s case has been submitted", divorceOrDissolution),
+            GeneralApplicationType.EXTEND,
+            String.format("Your application for more time to serve this %s case has been submitted", divorceOrDissolution),
+            GeneralApplicationType.ISSUE_DIVORCE_WITHOUT_CERT,
+            String.format("Your application to continue this %s case without a %s certificate has been submitted",
+                divorceOrDissolution, marriageCertificate),
+            GeneralApplicationType.DELAY,
+            String.format("Your application to delay or pause this %s case has been submitted", divorceOrDissolution),
+            GeneralApplicationType.OTHER,
+            String.format("Your general application relating to this %s case has been submitted", divorceOrDissolution),
+            GeneralApplicationType.WITHDRAW_POST_ISSUE,
+            String.format("Your application to withdraw this %s case has been submitted", divorceOrDissolution)
+        );
+    }
+
+    private Map<GeneralApplicationType, String> getWelshSolicitorTranslationMap(boolean isDivorce) {
+        return getEnglishSolicitorTranslationMap(isDivorce);
     }
 
     private Map<GeneralApplicationType, String> getEnglishTranslationMap(boolean isDivorce) {
