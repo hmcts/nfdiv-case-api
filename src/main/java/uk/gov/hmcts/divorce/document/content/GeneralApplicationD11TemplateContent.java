@@ -54,6 +54,8 @@ public class GeneralApplicationD11TemplateContent {
     public static final String STATEMENT_OF_EVIDENCE = "statementOfEvidence";
     public static final String SUPPORTING_EVIDENCE_UPLOADED = "supportingEvidenceUploaded";
     public static final String GENERAL_APPLICANT_FULL_NAME = "generalApplicantFullName";
+    public static final String GENERAL_APPLICANT_SOLICITOR_FULL_NAME = "generalApplicantSolicitorFullName";
+    public static final String GENERAL_APPLICANT_SOLICITOR_FIRM_NAME = "generalApplicantSolicitorFirmName";
     public static final String IS_APP_REPRESENTED = "isApplicantRepresented";
     public static final String URGENT_CASE = "urgentCase";
 
@@ -87,6 +89,11 @@ public class GeneralApplicationD11TemplateContent {
         templateContent.put(GENERAL_APPLICANT_LABEL, isApplicant1 ? caseApplicantLabel : caseRespondentOrApplicant2Label);
         templateContent.put(GENERAL_APPLICANT_FULL_NAME, isApplicant1 ? applicant1.getFullName() : applicant2.getFullName());
         templateContent.put(IS_APP_REPRESENTED, applicant.getSolicitorRepresented());
+        if (applicant.isRepresented()) {
+            templateContent.put(GENERAL_APPLICANT_SOLICITOR_FULL_NAME, applicant.getSolicitor().getName());
+            templateContent.put(GENERAL_APPLICANT_SOLICITOR_FIRM_NAME, applicant.getSolicitor().getPreferredFirmName());
+        }
+
         templateContent.put(
             APPLICATION_DATE,
             dateTimeFormatter.format(generalApplication.getGeneralApplicationReceivedDate().toLocalDate())

@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.event.CitizenWithdrawGeneralApplication;
 import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -119,7 +118,7 @@ public class GeneralApplicationDraftSubmissionService {
             : null;
     }
 
-    private OptionalInt findDraftIndex(CaseData caseData, Applicant applicant) {
+    public OptionalInt findDraftIndex(CaseData caseData, Applicant applicant) {
         OptionalInt draftIndex = findActiveGeneralApplicationIndex(caseData, applicant);
 
         if (draftIndex.isEmpty() && StringUtils.isBlank(applicant.getGeneralAppServiceRequest())) {
@@ -146,10 +145,10 @@ public class GeneralApplicationDraftSubmissionService {
             GeneralApplication ga = generalApplications.get(i).getValue();
 
             if (ga != null
-                && !YesOrNo.YES.equals(ga.getGeneralApplicationSubmittedOnline())
                 && actingParty.equals(ga.getGeneralApplicationParty())
                 && ga.getGeneralApplicationFee() != null
-                && FEE_PAY_BY_HWF.equals(ga.getGeneralApplicationFee().getPaymentMethod())) {
+                && FEE_PAY_BY_HWF.equals(ga.getGeneralApplicationFee().getPaymentMethod())
+                && null == ga.getGeneralApplicationFee().getHelpWithFeesReferenceNumber()) {
                 return OptionalInt.of(i);
             }
         }

@@ -14,9 +14,7 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.Permission;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.GeneralApplicationD11SubmittedNotification;
-import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
@@ -24,11 +22,14 @@ import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationDraftSubmissionService;
 import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationSubmitPaymentService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -61,7 +62,7 @@ public class SolicitorSubmitGeneralApplicationTest {
     private GeneralApplicationSubmitPaymentService submitPaymentService;
 
     @Mock
-    private CitizenGeneralApplicationSubmissionService citizenGeneralApplicationSubmissionService;
+    private GeneralApplicationDraftSubmissionService generalApplicationDraftSubmissionService;
 
     @Mock
     private GeneralApplicationD11SubmittedNotification generalApplicationD11SubmittedNotification;
@@ -117,8 +118,8 @@ public class SolicitorSubmitGeneralApplicationTest {
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(ccdAccessService.isApplicant1(TEST_SERVICE_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(true);
-        when(citizenGeneralApplicationSubmissionService.findActiveGeneralApplication(caseData, caseData.getApplicant1()))
-            .thenReturn(Optional.empty());
+        when(generalApplicationDraftSubmissionService.findDraftIndex(caseData, caseData.getApplicant1()))
+            .thenReturn(OptionalInt.empty());
 
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitGeneralApplication.aboutToStart(caseDetails);
 
@@ -128,18 +129,21 @@ public class SolicitorSubmitGeneralApplicationTest {
 
     @Test
     void shouldPopulateGeneralApplicationWhenActiveDraftExistsForApplicant1OnAboutToStart() {
-        CaseData caseData = CaseData.builder().build();
+        final GeneralApplication activeGeneralApplication = GeneralApplication.builder().build();
+        ListValue<GeneralApplication> generalApplicationListValue1 = ListValue.<GeneralApplication>builder()
+            .id(UUID.randomUUID().toString())
+            .value(activeGeneralApplication)
+            .build();
+        CaseData caseData = CaseData.builder().generalApplications(List.of(generalApplicationListValue1)).build();
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
             .data(caseData)
             .build();
 
-        final GeneralApplication activeGeneralApplication = GeneralApplication.builder().build();
-
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(ccdAccessService.isApplicant1(TEST_SERVICE_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(true);
-        when(citizenGeneralApplicationSubmissionService.findActiveGeneralApplication(caseData, caseData.getApplicant1()))
-            .thenReturn(Optional.of(activeGeneralApplication));
+        when(generalApplicationDraftSubmissionService.findDraftIndex(caseData, caseData.getApplicant1()))
+            .thenReturn(OptionalInt.of(0));
 
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitGeneralApplication.aboutToStart(caseDetails);
 
@@ -148,18 +152,21 @@ public class SolicitorSubmitGeneralApplicationTest {
 
     @Test
     void shouldPopulateGeneralApplicationWhenActiveDraftExistsForApplicant2OnAboutToStart() {
-        CaseData caseData = CaseData.builder().build();
+        final GeneralApplication activeGeneralApplication = GeneralApplication.builder().build();
+        ListValue<GeneralApplication> generalApplicationListValue1 = ListValue.<GeneralApplication>builder()
+            .id(UUID.randomUUID().toString())
+            .value(activeGeneralApplication)
+            .build();
+        CaseData caseData = CaseData.builder().generalApplications(List.of(generalApplicationListValue1)).build();
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
             .data(caseData)
             .build();
 
-        final GeneralApplication activeGeneralApplication = GeneralApplication.builder().build();
-
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(ccdAccessService.isApplicant1(TEST_SERVICE_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(false);
-        when(citizenGeneralApplicationSubmissionService.findActiveGeneralApplication(caseData, caseData.getApplicant2()))
-            .thenReturn(Optional.of(activeGeneralApplication));
+        when(generalApplicationDraftSubmissionService.findDraftIndex(caseData, caseData.getApplicant1()))
+            .thenReturn(OptionalInt.of(0));
 
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitGeneralApplication.aboutToStart(caseDetails);
 
@@ -212,7 +219,6 @@ public class SolicitorSubmitGeneralApplicationTest {
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(State.GeneralApplicationReceived);
-        assertThat(response.getData().getGeneralApplication().getGeneralApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
     }
 
     @Test
@@ -236,7 +242,6 @@ public class SolicitorSubmitGeneralApplicationTest {
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(State.AwaitingGeneralReferralPayment);
-        assertThat(response.getData().getGeneralApplication().getGeneralApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
     }
 
     @Test

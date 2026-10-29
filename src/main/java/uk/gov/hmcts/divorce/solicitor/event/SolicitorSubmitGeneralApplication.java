@@ -3,36 +3,33 @@ package uk.gov.hmcts.divorce.solicitor.event;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.ccd.sdk.api.CCDConfig;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
-import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.GeneralApplicationD11SubmittedNotification;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationPaymentSummaryPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationStatementOfTruthPage;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationDraftSubmissionService;
 import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationSubmitPaymentService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -53,21 +50,21 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
 
     private final GeneralApplicationSubmitPaymentService submitPaymentService;
 
-    private final CitizenGeneralApplicationSubmissionService citizenGeneralApplicationSubmissionService;
-
     private final CcdAccessService ccdAccessService;
 
     private final HttpServletRequest request;
 
     private final GeneralApplicationD11SubmittedNotification generalApplicationD11SubmittedNotification;
 
+    private final GeneralApplicationDraftSubmissionService generalApplicationDraftSubmissionService;
+
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         PageBuilder pageBuilder = addEventConfig(configBuilder);
 
         List<CcdPageConfiguration> pages = List.of(
-            new GeneralApplicationStatementOfTruthPage(),
-            new GeneralApplicationPaymentSummaryPage()
+                new GeneralApplicationStatementOfTruthPage(),
+                new GeneralApplicationPaymentSummaryPage()
         );
         pages.forEach(page -> page.addTo(pageBuilder));
     }
@@ -76,20 +73,20 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
         CaseData caseData = details.getData();
         Applicant actingApplicant = isApplicant1(details.getId()) ? caseData.getApplicant1() : caseData.getApplicant2();
 
-        Optional<GeneralApplication> activeGa = findActiveGeneralApplicationForSolicitor(caseData, actingApplicant);
+        OptionalInt activeIndex = generalApplicationDraftSubmissionService.findDraftIndex(caseData, actingApplicant);
 
-        if (activeGa.isEmpty()) {
+        if (activeIndex.isEmpty()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(singletonList("No active draft general application found for the acting applicant"))
-                .build();
+                    .data(caseData)
+                    .errors(singletonList("No active draft general application found for the acting applicant"))
+                    .build();
         }
 
-        caseData.setGeneralApplication(activeGa.get());
+        caseData.setGeneralApplication(caseData.getGeneralApplications().get(activeIndex.getAsInt()).getValue());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .build();
+                .data(caseData)
+                .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
@@ -103,24 +100,31 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
         Optional<String> paymentError = submitPaymentService.processSubmitPayment(details.getId(), caseData, currentApplicant);
         if (paymentError.isPresent()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(singletonList(paymentError.get()))
-                .build();
+                    .data(caseData)
+                    .errors(singletonList(paymentError.get()))
+                    .build();
         }
 
-        caseData.getGeneralApplication().setGeneralApplicationSubmittedOnline(YesOrNo.YES);
+        GeneralApplication submittedGa = caseData.getGeneralApplication();
+
+        OptionalInt activeIndex = generalApplicationDraftSubmissionService.findDraftIndex(caseData, currentApplicant);
+        List<ListValue<GeneralApplication>> generalApplications = caseData.getGeneralApplications();
+
+        if (activeIndex.isPresent() && generalApplications != null) {
+            generalApplications.get(activeIndex.getAsInt()).setValue(submittedGa);
+        }
         currentApplicant.setActiveGeneralApplication(null);
         currentApplicant.archiveInterimApplicationOptions();
 
         ServicePaymentMethod paymentMethod = caseData.getGeneralApplication().getGeneralApplicationFee().getPaymentMethod();
         State targetState = ServicePaymentMethod.FEE_PAY_BY_ACCOUNT.equals(paymentMethod)
-            ? State.GeneralApplicationReceived
-            : State.AwaitingGeneralReferralPayment;
+                ? State.GeneralApplicationReceived
+                : State.AwaitingGeneralReferralPayment;
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-            .data(caseData)
-            .state(targetState)
-            .build();
+                .data(caseData)
+                .state(targetState)
+                .build();
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
@@ -131,54 +135,21 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
         CaseData caseData = details.getData();
 
         var generalApps = new ArrayList<>(
-            Optional.ofNullable(caseData.getGeneralApplications())
-                .orElseGet(Collections::emptyList)
+                Optional.ofNullable(caseData.getGeneralApplications())
+                        .orElseGet(Collections::emptyList)
         );
 
         GeneralApplication newGeneralApplication = generalApps.getFirst().getValue();
 
         boolean isApplicant1 = isApplicant1(details.getId());
         generalApplicationD11SubmittedNotification.sendToSolicitor(
-            caseData,
-            details.getId(),
-            isApplicant1,
-            newGeneralApplication
+                caseData,
+                details.getId(),
+                isApplicant1,
+                newGeneralApplication
         );
 
         return SubmittedCallbackResponse.builder().build();
-    }
-
-    private Optional<GeneralApplication> findActiveGeneralApplicationForSolicitor(CaseData caseData, Applicant actingApplicant) {
-        Optional<GeneralApplication> byServiceRequest =
-            citizenGeneralApplicationSubmissionService.findActiveGeneralApplication(caseData, actingApplicant);
-
-        if (byServiceRequest.isPresent()) {
-            return byServiceRequest;
-        }
-
-        if (StringUtils.isBlank(actingApplicant.getGeneralAppServiceRequest())) {
-            return findLatestDraftForActingApplicant(caseData, actingApplicant);
-        }
-
-        return Optional.empty();
-    }
-
-    private Optional<GeneralApplication> findLatestDraftForActingApplicant(CaseData caseData, Applicant actingApplicant) {
-        if (caseData.getGeneralApplications() == null) {
-            return Optional.empty();
-        }
-
-        GeneralParties actingParty = actingApplicant == caseData.getApplicant1()
-            ? GeneralParties.APPLICANT
-            : GeneralParties.RESPONDENT;
-
-        return caseData.getGeneralApplications().stream()
-            .map(ListValue::getValue)
-            .filter(Objects::nonNull)
-            .filter(ga -> !YesOrNo.YES.equals(ga.getGeneralApplicationSubmittedOnline()))
-            .filter(ga -> actingParty.equals(ga.getGeneralApplicationParty()))
-            .filter(ga -> ServicePaymentMethod.FEE_PAY_BY_HWF.equals(ga.getGeneralApplicationFee().getPaymentMethod()))
-            .findFirst();
     }
 
     private boolean isApplicant1(Long caseId) {
@@ -187,19 +158,19 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
-            .event(SOLICITOR_SUBMIT_GENERAL_APPLICATION)
-            .forStates(State.GENERAL_APPLICATION_STATES)
-            .name("Submit General Application")
-            .description("Submit General Application")
-            .showSummary()
-            .showEventNotes()
-            .showCondition("applicant1InterimApplicationType=\"digitisedGeneralApplicationD11\" "
-                + "OR applicant2InterimApplicationType=\"digitisedGeneralApplicationD11\"")
-            .endButtonLabel("Submit Application")
-            .aboutToStartCallback(this::aboutToStart)
-            .aboutToSubmitCallback(this::aboutToSubmit)
-            .submittedCallback(this::submitted)
-            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
-            .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
+                .event(SOLICITOR_SUBMIT_GENERAL_APPLICATION)
+                .forStates(State.GENERAL_APPLICATION_STATES)
+                .name("Submit General Application")
+                .description("Submit General Application")
+                .showSummary()
+                .showEventNotes()
+                .showCondition("applicant1InterimApplicationType=\"digitisedGeneralApplicationD11\" "
+                        + "OR applicant2InterimApplicationType=\"digitisedGeneralApplicationD11\"")
+                .endButtonLabel("Submit Application")
+                .aboutToStartCallback(this::aboutToStart)
+                .aboutToSubmitCallback(this::aboutToSubmit)
+                .submittedCallback(this::submitted)
+                .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
+                .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
 }

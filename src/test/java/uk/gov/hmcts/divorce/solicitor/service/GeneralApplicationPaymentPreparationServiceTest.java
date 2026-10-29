@@ -49,7 +49,7 @@ public class GeneralApplicationPaymentPreparationServiceTest {
     void shouldPreparePbaPaymentWhenPaymentMethodIsNotHelpWithFeesAndHearingIsRequired() {
         Applicant applicant = Applicant.builder().firstName("John").lastName("Smith").build();
 
-        OrderSummary orderSummary = OrderSummary.builder().build();
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("190").build();
         DynamicList pbaNumbers = DynamicList.builder().build();
 
         when(paymentSetupService.createGeneralApplicationOrderSummary(TEST_CASE_ID, FEE0227)).thenReturn(orderSummary);
@@ -82,7 +82,7 @@ public class GeneralApplicationPaymentPreparationServiceTest {
     void shouldPreparePbaPaymentWithFee0228WhenHearingIsNotRequired() {
         Applicant applicant = Applicant.builder().firstName("John").lastName("Smith").build();
 
-        OrderSummary orderSummary = OrderSummary.builder().build();
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("192").build();
 
         when(paymentSetupService.createGeneralApplicationOrderSummary(TEST_CASE_ID, FEE0228))
             .thenReturn(orderSummary);
@@ -133,7 +133,7 @@ public class GeneralApplicationPaymentPreparationServiceTest {
     void shouldReuseExistingServiceRequestReferenceWhenProvidedForPbaPayment() {
         Applicant applicant = Applicant.builder().firstName("John").lastName("Smith").build();
 
-        OrderSummary orderSummary = OrderSummary.builder().build();
+        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("190").build();
         DynamicList pbaNumbers = DynamicList.builder().build();
 
         when(paymentSetupService.createGeneralApplicationOrderSummary(TEST_CASE_ID, FEE0228))

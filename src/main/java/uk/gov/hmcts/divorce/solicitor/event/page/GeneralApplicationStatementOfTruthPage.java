@@ -17,18 +17,22 @@ public class GeneralApplicationStatementOfTruthPage implements CcdPageConfigurat
         application, you may include them below.
         """;
 
+    private static final String ALWAYS_HIDE = "generalApplicationStatementOfTruth=\"ALWAYS_HIDE\"";
+
     @Override
     public void addTo(PageBuilder pageBuilder) {
         pageBuilder.page("generalApplicationStatementOfTruth")
             .complex(CaseData::getGeneralApplication)
-            .readonlyWithLabel(GeneralApplication::getGeneralApplicationType, "General application Type")
+            .readonlyNoSummary(GeneralApplication::getGeneralApplicationType, ALWAYS_HIDE)
+            .label("generalApplicationTypeLabel", "**General application Type**\n\n${generalApplicationType}")
             .mandatory(GeneralApplication::getGeneralApplicationStatementOfTruth)
             .mandatory(GeneralApplication::getGeneralApplicationSignStatementOfTruth)
             .label("sOTInfo", GENERAL_APPLICATION_SOT_INFO_LABEL)
             .mandatory(GeneralApplication::getGeneralApplicationStatementOfTruthSolsName)
             .mandatory(GeneralApplication::getGeneralApplicationStatementOfTruthSolsFirm)
             .label("sOTComments", GENERAL_APPLICATION_SOT_COMMENTS_LABEL)
-            .optionalNoSummary(GeneralApplication::getGeneralApplicationStatementOfTruthComments)
+            .optional(GeneralApplication::getGeneralApplicationStatementOfTruthComments)
+            .readonlyNoSummary(GeneralApplication::getSolGeneralApplicationFeeInPounds, ALWAYS_HIDE)
             .done();
     }
 }

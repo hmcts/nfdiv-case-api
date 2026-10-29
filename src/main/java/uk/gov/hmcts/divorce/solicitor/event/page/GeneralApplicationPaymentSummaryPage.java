@@ -1,6 +1,5 @@
 package uk.gov.hmcts.divorce.solicitor.event.page;
 
-import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -21,9 +20,12 @@ public class GeneralApplicationPaymentSummaryPage implements CcdPageConfiguratio
     public void addTo(final PageBuilder pageBuilder) {
         pageBuilder
             .page("generalApplicationPaymentSummary")
+                .label("generalApplicationTypeLabel1", "**General application Type**\n\n${generalApplicationType}")
+                .label("labelSolPaymentPara1",
+                        "Amount to pay: **£${solGeneralApplicationFeeInPounds}**", PBA)
             .complex(CaseData::getGeneralApplication)
                 .complex(GeneralApplication::getGeneralApplicationFee)
-                    .mandatoryNoSummary(FeeDetails::getOrderSummary, PBA, "")
+                    .mandatory(FeeDetails::getOrderSummary, PBA, "")
                     .readonly(FeeDetails::getPaymentMethod)
                     .label("paymentMethodLabel",
                 "You can change the payment method by using the \"Amend General Application\" event")

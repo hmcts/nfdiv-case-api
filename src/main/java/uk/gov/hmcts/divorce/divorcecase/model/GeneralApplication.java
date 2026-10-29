@@ -164,6 +164,13 @@ public class GeneralApplication {
     )
     private String generalApplicationStatementOfTruthComments;
 
+    @CCD(
+        label = "Solicitor general application fee (in pounds)",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private String solGeneralApplicationFeeInPounds;
+
     @JsonIgnore
     public void recordPayment(String paymentReference, LocalDate dateOfPayment) {
 

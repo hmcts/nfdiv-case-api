@@ -572,7 +572,7 @@ docmosis:
       CITIZEN_COURT_ORDERS_REGENERATED: FL-NFD-GOR-ENG-Court-Orders-Regenerated-Citizen-V2.docx
       HEARING_REMINDER: FL-NFD-GOR-ENG-Hearing-Reminder-V1.docx
       NFD_FO_REQUESTED_LETTER_RESPONDENT: FL-NFD-GOR-ENG-FO-Requested-Respondent-Letter_V2.docx
-      D11_GENERAL_APPLICATION: FL-NFD-GOR-ENG-General-Application-D11_V1.docx
+      D11_GENERAL_APPLICATION: FL-NFD-GOR-ENG-General-Application-D11_V2.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V9.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V2.docx

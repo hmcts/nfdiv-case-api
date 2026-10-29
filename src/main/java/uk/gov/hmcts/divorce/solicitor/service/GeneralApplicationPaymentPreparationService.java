@@ -14,6 +14,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0228;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
@@ -49,6 +52,11 @@ public class GeneralApplicationPaymentPreparationService {
             OrderSummary orderSummary = paymentSetupService.createGeneralApplicationOrderSummary(caseId, generalApplication
                 .getGeneralApplicationFeeType());
             fee.setOrderSummary(orderSummary);
+
+            generalApplication.setSolGeneralApplicationFeeInPounds(
+                NumberFormat.getNumberInstance().format(
+                    new BigDecimal(orderSummary.getPaymentTotal()).movePointLeft(2))
+            );
 
             DynamicList pbaNumbers = pbaService.populatePbaDynamicList();
             fee.setPbaNumbers(pbaNumbers);
