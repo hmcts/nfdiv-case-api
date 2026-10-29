@@ -237,7 +237,7 @@ class GenerateApplicant2NoticeOfProceedingsTest {
 
         final Map<String, Object> templateContent = new HashMap<>();
 
-        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant2(), ENGLISH)).thenReturn(templateContent);
+        when(noticeOfProceedingContent.apply(caseData, TEST_CASE_ID, caseData.getApplicant1(), ENGLISH)).thenReturn(templateContent);
 
         final var result = generateApplicant2NoticeOfProceedings.apply(caseDetails(caseData));
 
