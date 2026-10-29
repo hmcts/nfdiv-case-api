@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -15,7 +14,6 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseInvite;
 import uk.gov.hmcts.divorce.divorcecase.model.ReissueOption;
 import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.divorcecase.util.AccessCodeGenerator;
 import uk.gov.hmcts.divorce.document.CaseDataDocumentService;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingContent;
 import uk.gov.hmcts.divorce.document.content.NoticeOfProceedingJointContent;
@@ -34,7 +32,6 @@ import java.util.Map;
 
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -69,7 +66,6 @@ import static uk.gov.hmcts.divorce.document.DocumentConstants.NOTICE_OF_PROCEEDI
 import static uk.gov.hmcts.divorce.document.model.DocumentType.COVERSHEET;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.NOTICE_OF_PROCEEDINGS_APP_2;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;
-import static uk.gov.hmcts.divorce.testutil.TestConstants.ACCESS_CODE;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
 
 @ExtendWith(MockitoExtension.class)
@@ -111,8 +107,6 @@ class GenerateApplicant2NoticeOfProceedingsTest {
     @Test
     void shouldGenerateRS2AndCoversheetWhenSoleWithAppRepresentedAndOffline() {
         setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, YES);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
@@ -136,14 +130,11 @@ class GenerateApplicant2NoticeOfProceedingsTest {
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
-        classMock.close();
     }
 
     @Test
     void shouldGenerateRS1WhenSoleWithAppRepresentedAndOnline() {
         setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, YES);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
@@ -171,14 +162,11 @@ class GenerateApplicant2NoticeOfProceedingsTest {
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
-        classMock.close();
     }
 
     @Test
     void shouldGenerateCoverLetterWhenSoleWithAppRepresentedAndOnlineAndSolicitorService() {
         setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, YES);
         caseData.getApplication().setServiceMethod(SOLICITOR_SERVICE);
@@ -209,14 +197,11 @@ class GenerateApplicant2NoticeOfProceedingsTest {
             );
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
-        classMock.close();
     }
 
     @Test
     void shouldGenerateNoPWhenSoleWithAppNotRepresentedAndAddressSelectedAsOverseas() {
         setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplicant2().setAddress(AddressGlobalUK.builder().country("UK").build());
@@ -239,14 +224,11 @@ class GenerateApplicant2NoticeOfProceedingsTest {
             );
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
-        classMock.close();
     }
 
     @Test
     void shouldGenerateJSWhenSole() {
         setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
@@ -271,7 +253,6 @@ class GenerateApplicant2NoticeOfProceedingsTest {
             );
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
-        classMock.close();
     }
 
     @Test
@@ -314,8 +295,6 @@ class GenerateApplicant2NoticeOfProceedingsTest {
     @Test
     void shouldGenerateAS1WhenJointWithAppRepresented() {
         setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(JOINT_APPLICATION, NO, YES);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
@@ -331,14 +310,11 @@ class GenerateApplicant2NoticeOfProceedingsTest {
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNull();
-        classMock.close();
     }
 
     @Test
     void shouldGenerateJA1WhenJointWithAppNotRepresented() {
         setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(JOINT_APPLICATION, NO, NO);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
@@ -355,14 +331,11 @@ class GenerateApplicant2NoticeOfProceedingsTest {
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNull();
-        classMock.close();
     }
 
     @Test
     void shouldGenerateJointCitizenJudicialSeparationNoticeOfProceedingsAndCoversheet() {
         setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(JOINT_APPLICATION, NO, NO);
         caseData.getApplicant2().setEmail("notnull@something.com");
@@ -390,14 +363,11 @@ class GenerateApplicant2NoticeOfProceedingsTest {
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNull();
-        classMock.close();
     }
 
     @Test
     void shouldGenerateJointCitizenJudicialSeparationNoticeOfProceedingsAndCoversheetForApplicant2Solicitor() {
         setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(JOINT_APPLICATION, YES, YES);
         caseData.getApplicant2().setEmail("notnull@something.com");
@@ -425,14 +395,11 @@ class GenerateApplicant2NoticeOfProceedingsTest {
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNull();
-        classMock.close();
     }
 
     @Test
     void shouldNotGenerateAccessCodeWhenAccessCodeAlreadyPresent() {
         setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
@@ -449,14 +416,11 @@ class GenerateApplicant2NoticeOfProceedingsTest {
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isEqualTo("ABCD2234");
-        classMock.close();
     }
 
     @Test
     void shouldGenerateNoPWhenSoleAndRespondentIsOverseas() {
         setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplicant2().setAddress(
@@ -488,14 +452,11 @@ class GenerateApplicant2NoticeOfProceedingsTest {
             );
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
-        classMock.close();
     }
 
     @Test
     void shouldGenerateR2WhenSoleWithAppNotRepresentedAndReissuedAsOfflineAos() {
         setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
@@ -524,14 +485,11 @@ class GenerateApplicant2NoticeOfProceedingsTest {
             );
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
-        classMock.close();
     }
 
     @Test
     void shouldGenerateNoPWhenSoleWithAppNotRepresentedAndNotCourtService() {
         setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplication().setServiceMethod(PERSONAL_SERVICE);
@@ -555,14 +513,11 @@ class GenerateApplicant2NoticeOfProceedingsTest {
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
-        classMock.close();
     }
 
     @Test
     void shouldGenerateNoPWithCoversheetWhenSoleUnrepresentedRespondentIsOffline() {
         setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
@@ -586,14 +541,11 @@ class GenerateApplicant2NoticeOfProceedingsTest {
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
-        classMock.close();
     }
 
     @Test
     void shouldGenerateNoPWithCoversheetIfThereAreOutdatedCoversheetsFromPreviousIssues() {
         setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getDocuments().setDocumentsGenerated(
@@ -626,14 +578,11 @@ class GenerateApplicant2NoticeOfProceedingsTest {
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
-        classMock.close();
     }
 
     @Test
     void shouldGenerateNoPWithoutCoversheetWhenSoleWithAppNotRepresentedAndOnline() {
         setMockClock(clock);
-        MockedStatic<AccessCodeGenerator> classMock = mockStatic(AccessCodeGenerator.class);
-        classMock.when(AccessCodeGenerator::generateAccessCode).thenReturn(ACCESS_CODE);
 
         final CaseData caseData = caseData(SOLE_APPLICATION, NO, NO);
         caseData.getApplication().setServiceMethod(COURT_SERVICE);
@@ -651,7 +600,6 @@ class GenerateApplicant2NoticeOfProceedingsTest {
 
         assertThat(result.getData()).isEqualTo(caseData);
         assertThat(result.getData().getCaseInvite().accessCode()).isNotNull();
-        classMock.close();
     }
 
     private void verifyInteractions(CaseData caseData, Map<String, Object> templateContent,
