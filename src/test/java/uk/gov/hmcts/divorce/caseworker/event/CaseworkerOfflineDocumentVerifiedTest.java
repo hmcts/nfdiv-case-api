@@ -20,6 +20,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocument;
 import uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponseNotification;
 import uk.gov.hmcts.divorce.citizen.notification.CitizenRequestForInformationResponsePartnerNotification;
 import uk.gov.hmcts.divorce.citizen.notification.conditionalorder.Applicant1AppliedForConditionalOrderNotification;
@@ -56,6 +57,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,6 +66,7 @@ import java.util.List;
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
@@ -72,6 +75,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.ScannedDocumentType.FORM;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.CANNOT_PROCESS_D84_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.CASEWORKER_OFFLINE_DOCUMENT_VERIFIED;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.NO_REQUEST_FOR_INFORMATION_ERROR;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerOfflineDocumentVerified.NO_REQUEST_FOR_INFORMATION_POST_ISSUE_ERROR;
@@ -515,8 +519,15 @@ class CaseworkerOfflineDocumentVerifiedTest {
                     .build()
             )
             .build();
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 1, 1));
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
+
+        LocalDate issueDate = LocalDate.of(2022, 1, 1);
+        LocalDate holdingPeriodEndDate = LocalDate.of(2022, 1, 10);
+        mockCurrentDate(LocalDate.of(2022, 1, 11));
+
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(holdingPeriodEndDate);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
@@ -574,8 +585,15 @@ class CaseworkerOfflineDocumentVerifiedTest {
                     .build()
             )
             .build();
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 1, 1));
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
+
+        LocalDate issueDate = LocalDate.of(2022, 1, 1);
+        LocalDate holdingPeriodEndDate = LocalDate.of(2022, 1, 10);
+        mockCurrentDate(LocalDate.of(2022, 1, 11));
+
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(holdingPeriodEndDate);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
@@ -635,8 +653,15 @@ class CaseworkerOfflineDocumentVerifiedTest {
                     .build()
             )
             .build();
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 1, 1));
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
+
+        LocalDate issueDate = LocalDate.of(2022, 1, 1);
+        LocalDate holdingPeriodEndDate = LocalDate.of(2022, 1, 10);
+        mockCurrentDate(LocalDate.of(2022, 1, 11));
+
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(holdingPeriodEndDate);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
@@ -705,8 +730,15 @@ class CaseworkerOfflineDocumentVerifiedTest {
                     .build()
             )
             .build();
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 1, 1));
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
+
+        LocalDate issueDate = LocalDate.of(2022, 1, 1);
+        LocalDate holdingPeriodEndDate = LocalDate.of(2022, 1, 10);
+        mockCurrentDate(LocalDate.of(2022, 1, 11));
+
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(holdingPeriodEndDate);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
@@ -772,8 +804,15 @@ class CaseworkerOfflineDocumentVerifiedTest {
                     .build()
             )
             .build();
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 1, 1));
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
+
+        LocalDate issueDate = LocalDate.of(2022, 1, 1);
+        LocalDate holdingPeriodEndDate = LocalDate.of(2022, 1, 10);
+        mockCurrentDate(LocalDate.of(2022, 1, 11));
+
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(holdingPeriodEndDate);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
@@ -1267,8 +1306,15 @@ class CaseworkerOfflineDocumentVerifiedTest {
                     .build()
             )
             .build();
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 1, 1));
         details.setId(TEST_CASE_ID);
         details.setData(caseData);
+
+        LocalDate issueDate = LocalDate.of(2022, 1, 1);
+        LocalDate holdingPeriodEndDate = LocalDate.of(2022, 1, 10);
+        mockCurrentDate(LocalDate.of(2022, 1, 11));
+
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(holdingPeriodEndDate);
 
         AboutToStartOrSubmitResponse<CaseData, State> response =
             caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
@@ -1466,7 +1512,14 @@ class CaseworkerOfflineDocumentVerifiedTest {
             .build();
         caseData.getDocuments().setScannedSubtypeReceived(D84);
         caseData.setApplicationType(JOINT_APPLICATION);
+        caseData.setApplication(Application.builder().issueDate(LocalDate.of(2022, 1, 1)).build());
         details.setData(caseData);
+
+        LocalDate issueDate = LocalDate.of(2022, 1, 1);
+        LocalDate holdingPeriodEndDate = LocalDate.of(2022, 1, 10);
+        mockCurrentDate(LocalDate.of(2022, 1, 11));
+
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(holdingPeriodEndDate);
 
         caseworkerOfflineDocumentVerified.aboutToSubmit(details, details);
 
@@ -1493,6 +1546,28 @@ class CaseworkerOfflineDocumentVerifiedTest {
         }
 
         assertThat(response.getErrors()).containsExactly(ERROR_TOO_EARLY_FOR_RESPONDENT_FINAL_ORDER);
+    }
+
+    @Test
+    void shouldThrowErrorIfD84CannotBeProcessedSinceHoldingPeriodHasNotElapsedAndJudgeHasNotGrantedExpedite() {
+        CaseData caseData = caseData();
+        caseData.getDocuments().setTypeOfDocumentAttached(CO_D84);
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 1, 1));
+        caseData.getConditionalOrder().setJudgeGrantedExpedite(YesOrNo.NO);
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        caseDetails.setData(caseData);
+
+        LocalDate issueDate = LocalDate.of(2022, 1, 1);
+        LocalDate holdingPeriodEndDate = LocalDate.of(2022, 1, 10);
+        mockCurrentDate(LocalDate.of(2022, 1, 5));
+
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(holdingPeriodEndDate);
+
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerOfflineDocumentVerified.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors()).contains(CANNOT_PROCESS_D84_ERROR);
     }
 
     @Test
@@ -1770,5 +1845,33 @@ class CaseworkerOfflineDocumentVerifiedTest {
                 TEST_CASE_ID
             );
         });
+    }
+
+    @Test
+    void shouldSetBeingExpeditedToYesWhenHoldingPeriodNotElapsed() {
+        CaseDetails<CaseData, State> caseDetails = new CaseDetails<>();
+        CaseData caseData = new CaseData();
+        caseData.getDocuments().setTypeOfDocumentAttached(CO_D84);
+        LocalDate issueDate = LocalDate.of(2022, 1, 1);
+        caseData.getApplication().setIssueDate(issueDate);
+
+        caseDetails.setData(caseData);
+
+        LocalDate holdingPeriodEndDate = LocalDate.of(2022, 1, 10);
+        mockCurrentDate(LocalDate.of(2022, 1, 5));
+
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(holdingPeriodEndDate);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            caseworkerOfflineDocumentVerified.midEvent(caseDetails, caseDetails);
+
+        assertEquals(YES, response.getData().getConditionalOrder().getExpediteCheckRequired());
+    }
+
+
+    private void mockCurrentDate(LocalDate currentDate) {
+        Clock fixedClock = Clock.fixed(currentDate.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+        when(clock.instant()).thenReturn(fixedClock.instant());
+        when(clock.getZone()).thenReturn(fixedClock.getZone());
     }
 }

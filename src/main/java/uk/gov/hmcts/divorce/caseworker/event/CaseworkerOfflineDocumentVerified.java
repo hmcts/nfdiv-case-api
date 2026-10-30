@@ -44,6 +44,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -121,6 +122,8 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
         = "Request for Information Response Notification for Case Id {} failed with message: {}";
     public static final String REQUEST_FOR_INFORMATION_RESPONSE_PARTNER_NOTIFICATION_FAILED_ERROR
         = "Request for Information Response Partner Notification for Case Id {} failed with message: {}";
+    public static final String CANNOT_PROCESS_D84_ERROR =
+        "The application cannot be progressed as the 20-week holding period from the date of issue has not yet elapsed.";
     public static final String SCANNED_DOCUMENT_SUBTYPE_MISMATCH_ERROR =
         "The selected scanned documents subtype does not match the document type selected for verification.";
     private static final String SCANNED_DOCUMENT_LABEL_SEPARATOR = " / ";
@@ -154,7 +157,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .showSummary()
             .grant(CREATE_READ_UPDATE, CASE_WORKER_BULK_SCAN, CASE_WORKER, SUPER_USER)
             .grantHistoryOnly(LEGAL_ADVISOR, SOLICITOR, JUDGE))
-            .page("documentTypeReceived")
+            .page("documentTypeReceived", this::midEvent)
             .readonlyNoSummary(CaseData::getApplicationType, ALWAYS_HIDE)
 
             .complex(CaseData::getDocuments)
@@ -176,6 +179,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             ))
             .done()
             .complex(CaseData::getConditionalOrder)
+                .readonlyNoSummary(ConditionalOrder::getExpediteCheckRequired, ALWAYS_HIDE)
                 .label("scannedCoLabel", "Conditional Order", "scannedSubtypeReceived=\"D84\"")
                 .mandatory(ConditionalOrder::getD84ApplicationType,
                     "typeOfDocumentAttached=\"D84\" OR scannedSubtypeReceived=\"D84\"")
@@ -188,6 +192,11 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                     "typeOfDocumentAttached=\"D36\" OR scannedSubtypeReceived=\"D36\"")
                 .mandatory(FinalOrder::getD36WhoApplying, "d36ApplicationType=\"switchToSole\" "
                     + "OR (d36ApplicationType=\"sole\" AND dateFinalOrderEligibleToRespondent=\"*\")")
+            .done()
+            .page("judgeGrantedExpeditedCO")
+            .showCondition("typeOfDocumentAttached=\"D84\" AND coExpediteCheckRequired=\"Yes\"")
+            .complex(CaseData::getConditionalOrder)
+                .mandatory(ConditionalOrder::getJudgeGrantedExpedite)
             .done()
             .page("selectSenderOfDocument")
             .showCondition("typeOfDocumentAttached=\"RFIR\"")
@@ -267,6 +276,23 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
             .build();
     }
 
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
+                                                                  CaseDetails<CaseData, State> beforeDetails) {
+        final CaseData caseData = details.getData();
+        caseData.getConditionalOrder().setExpediteCheckRequired(NO);
+
+        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+            LocalDate holdingPeriodEndDate = holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate());
+            if (!holdingPeriodEndDate.isBefore(LocalDate.now(clock))) {
+                caseData.getConditionalOrder().setExpediteCheckRequired(YES);
+            }
+        }
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .build();
+    }
+
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(CaseDetails<CaseData, State> details,
                                                                        CaseDetails<CaseData, State> beforeDetails) {
         log.info("{} about to submit callback invoked for Case Id: {}", CASEWORKER_OFFLINE_DOCUMENT_VERIFIED, details.getId());
@@ -311,6 +337,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             //setting ScannedSubtypeReceived to null as only scanned docs that have not been actioned should be filtered in case list
             details.getData().getDocuments().setScannedSubtypeReceived(null);
+            details.getData().getConditionalOrder().setExpediteCheckRequired(null);
 
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
@@ -338,6 +365,11 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
 
             if (respondentRequested) {
                 return FinalOrderValidation.validateCanRespondentApplyFinalOrder(data);
+            }
+        } else if (CO_D84.equals(documentType)) {
+            LocalDate holdingPeriodEndDate = holdingPeriodService.getDueDateFor(data.getApplication().getIssueDate());
+            if (!holdingPeriodEndDate.isBefore(LocalDate.now(clock)) && !YES.equals(data.getConditionalOrder().getJudgeGrantedExpedite())) {
+                return Collections.singletonList(CANNOT_PROCESS_D84_ERROR);
             }
         }
 
