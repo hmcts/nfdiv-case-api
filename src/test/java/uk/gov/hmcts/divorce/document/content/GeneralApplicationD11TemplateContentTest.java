@@ -122,7 +122,7 @@ class GeneralApplicationD11TemplateContentTest {
         expectedEntries.put("phoneAndOpeningTimes","0300 303 0642 (Monday to Friday, 10am to 6pm)");
         expectedEntries.put("courtsAndTribunalsServiceHeader","HM Courts & Tribunals Service");
         expectedEntries.put("contactEmail","contactdivorce@justice.gov.uk");
-        expectedEntries.put("isApplicantRepresented",YesOrNo.NO);
+        expectedEntries.put("isApplicantRepresented",false);
         expectedEntries.put("urgentCase", null);
 
         return expectedEntries;

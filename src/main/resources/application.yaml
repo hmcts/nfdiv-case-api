@@ -679,7 +679,7 @@ docmosis:
       CITIZEN_COURT_ORDERS_REGENERATED: FL-NFD-GOR-WEL-Court-Orders-Regenerated-Citizen-V1.docx
       HEARING_REMINDER: FL-NFD-GOR-WEL-Hearing-Reminder.docx
       NFD_FO_REQUESTED_LETTER_RESPONDENT: FL-NFD-GOR-ENG-FO-Requested-Respondent-Letter_V2.docx #TODO: update welsh content
-      D11_GENERAL_APPLICATION: FL-NFD-GOR-ENG-General-Application-D11_V1.docx
+      D11_GENERAL_APPLICATION: FL-NFD-GOR-ENG-General-Application-D11_V2.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}

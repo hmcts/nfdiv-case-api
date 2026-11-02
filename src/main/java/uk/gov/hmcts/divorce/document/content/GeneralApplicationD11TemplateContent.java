@@ -88,7 +88,7 @@ public class GeneralApplicationD11TemplateContent {
         templateContent.put(CASE_RESPONDENT_OR_APPLICANT2_LABEL, caseRespondentOrApplicant2Label);
         templateContent.put(GENERAL_APPLICANT_LABEL, isApplicant1 ? caseApplicantLabel : caseRespondentOrApplicant2Label);
         templateContent.put(GENERAL_APPLICANT_FULL_NAME, isApplicant1 ? applicant1.getFullName() : applicant2.getFullName());
-        templateContent.put(IS_APP_REPRESENTED, applicant.getSolicitorRepresented());
+        templateContent.put(IS_APP_REPRESENTED, applicant.isRepresented());
         if (applicant.isRepresented()) {
             templateContent.put(GENERAL_APPLICANT_SOLICITOR_FULL_NAME, applicant.getSolicitor().getName());
             templateContent.put(GENERAL_APPLICANT_SOLICITOR_FIRM_NAME, applicant.getSolicitor().getPreferredFirmName());
