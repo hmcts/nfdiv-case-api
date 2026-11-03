@@ -286,6 +286,8 @@ dependencyManagement {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
     //CVE-2020-23064
     dependency group: 'org.json', name: 'json', version: '20250517'
+    dependency 'net.bytebuddy:byte-buddy:1.18.3'
+    dependency 'net.bytebuddy:byte-buddy-agent:1.18.3'
     dependency group: 'io.rest-assured', name:'rest-assured',version: '5.5.6'
   }
 }
@@ -302,13 +304,13 @@ def versions = [
   springBoot   : springBoot.class.package.implementationVersion
 ]
 
-//ext.libraries = [
-//  junit5: [
-//    "org.junit.jupiter:junit-jupiter:${versions.junit}",
-//    "org.junit.platform:junit-platform-commons:${versions.junitPlatform}",
-//    "org.junit.platform:junit-platform-engine:${versions.junitPlatform}"
-//  ]
-//]
+/*ext.libraries = [
+  junit5: [
+    "org.junit.jupiter:junit-jupiter:${versions.junit}",
+    "org.junit.platform:junit-platform-commons:${versions.junitPlatform}",
+    "org.junit.platform:junit-platform-engine:${versions.junitPlatform}"
+  ]
+]*/
 
 dependencies {
 // uncomment for local version
@@ -391,8 +393,8 @@ dependencies {
   functionalTestImplementation sourceSets.test.runtimeClasspath
   functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '6.1.2'
 
-  contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.5'
-  contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.5'
+  contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.6'
+  contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.6'
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
@@ -400,7 +402,9 @@ dependencies {
   cftlibTestImplementation 'org.junit-pioneer:junit-pioneer:2.3.0'
 }
 
-application { mainClass = 'uk.gov.hmcts.divorce.CaseApiApplication' }
+application {
+  mainClass = 'uk.gov.hmcts.divorce.CaseApiApplication'
+}
 
 tasks.register('loadEnvSecrets') {
   doLast {
