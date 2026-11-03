@@ -6,6 +6,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 public class GeneralApplicationD8bPage1 implements CcdPageConfiguration {
 
     private static final String GENERAL_APPLICATION_D8B_PARAGRAPH = """
@@ -29,7 +31,18 @@ public class GeneralApplicationD8bPage1 implements CcdPageConfiguration {
 
     @Override
     public void addTo(PageBuilder pageBuilder) {
-        pageBuilder.page("SolGenAppD8b").label("LabelGeneralApplicationD8bPara-1", GENERAL_APPLICATION_D8B_PARAGRAPH)
+        addWithShowCondition(pageBuilder, ALWAYS_SHOW);
+    }
+
+    @Override
+    public void addWithShowCondition(PageBuilder pageBuilder, String pageShowCondition) {
+        var page = pageBuilder.page("SolGenAppD8b");
+
+        if (isNotBlank(pageShowCondition)) {
+            page.showCondition(pageShowCondition);
+        }
+
+        page.label("LabelGeneralApplicationD8bPara-1", GENERAL_APPLICATION_D8B_PARAGRAPH)
             .complex(CaseData::getApplicant2)
             .complex(Applicant::getInterimApplicationOptions)
             .label("solGeneralApplicationD8bPaymentHeader", PAYMENT_HEADING)
