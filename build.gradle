@@ -1,3 +1,5 @@
+import uk.gov.hmcts.rse.AuthMode
+
 buildscript {
   repositories {
     def pipelineEnvironments = [
@@ -330,7 +332,7 @@ dependencies {
     exclude group: 'org.apache.poi', module: 'poi'
     exclude group: 'com.launchdarkly', module: 'launchdarkly-java-server-sdk'
   }
-  implementation group: 'com.github.hmcts', name: 'core-case-data-store-client', version: '6.0.0'
+  implementation group: 'com.github.hmcts', name: 'core-case-data-store-client', version: '5.4.0'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '4.0.0'
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '8.0.0'
   implementation group: 'com.github.hmcts', name: 'send-letter-client', version: '6.0.0'
@@ -338,10 +340,14 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'ccd-case-document-am-client', version: '2.0.0'
 
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core'
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '3.0.3'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+  implementation(group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '3.1.1') {
+    exclude group: 'org.springframework.boot', module: 'spring-boot-jackson'
+  }
+  implementation('org.springframework.boot:spring-boot-starter-webmvc') {
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-jackson'
+  }
+  implementation 'org.springframework.boot:spring-boot-jackson2'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '5.0.1'
 
@@ -502,7 +508,7 @@ bootWithCCD {
 cftlibTest {
   // IDAM simulator will be started on port 5000,
   // S2S simulator on port 8489
-  authMode = uk.gov.hmcts.rse.AuthMode.Local
+  authMode = AuthMode.Local
   group = 'verification'
 
   systemProperties([
