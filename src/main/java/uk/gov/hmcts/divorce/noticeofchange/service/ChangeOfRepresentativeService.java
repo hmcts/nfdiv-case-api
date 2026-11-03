@@ -72,8 +72,13 @@ public class ChangeOfRepresentativeService {
             addedRepresentative = updateRepresentative(updatedBy, loggedInUserEmail, orgToAdd);
         } else {
             var userDetails = idamService.retrieveUser(request.getHeader(AUTHORIZATION)).getUserDetails();
-            var beforeSolicitor = isApplicant1 ? beforeCaseData.getApplicant1().getSolicitor()
-                    : beforeCaseData.getApplicant2().getSolicitor();
+            Solicitor beforeSolicitor = null;
+            if (beforeCaseData != null) {
+                Applicant beforeApplicant = isApplicant1 ? beforeCaseData.getApplicant1() : beforeCaseData.getApplicant2();
+                if (beforeApplicant != null) {
+                    beforeSolicitor = beforeApplicant.getSolicitor();
+                }
+            }
             updatedBy = userDetails.getName();
             addedRepresentative = updateRepresentative(currentSolicitor);
             if (beforeSolicitor != null && beforeSolicitor.getOrganisationPolicy() != null) {

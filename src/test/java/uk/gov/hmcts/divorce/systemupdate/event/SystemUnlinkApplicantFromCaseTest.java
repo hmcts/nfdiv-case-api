@@ -109,8 +109,6 @@ class SystemUnlinkApplicantFromCaseTest {
         caseData.setAcknowledgementOfService(acknowledgementOfService);
         caseDetails.setId(TEST_CASE_ID);
 
-        User user = new User("dummy-user-token", UserInfo.builder().uid(TEST_AUTHORIZATION_TOKEN).build());
-
         final AboutToStartOrSubmitResponse<CaseData, State>  response =
             systemUnlinkApplicantFromCase.aboutToSubmit(caseDetails, caseDetails);
 
