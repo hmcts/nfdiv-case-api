@@ -552,6 +552,15 @@ configurations.contractTestImplementation {
   exclude group: 'org.simplify4u', module: 'slf4j2-mock'
 }
 
+configurations.configureEach {
+  resolutionStrategy.eachDependency { details ->
+    if (details.requested.group == 'org.apache.groovy') {
+      details.useVersion('4.0.23')
+      details.because('Keep Groovy 4 compatibility for BEFTA/RestAssured on Boot 4 migration')
+    }
+  }
+}
+
 tasks.register('installChromium', JavaExec) {
   // group = "Execution"
   // description = "Run the main class with JavaExecTask"
