@@ -37,6 +37,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -208,6 +209,57 @@ class ChangeOfRepresentativeServiceTest {
         changeOrganisationRequest.setOrganisationToRemove(Organisation
                 .builder().organisationId(TEST_ORG_ID).organisationName(TEST_ORGANISATION_NAME).build());
         return changeOrganisationRequest;
+    }
+
+    @Test
+    void shouldHandleCaseworkerNoticeOfChangeWhenBeforeCaseDataIsNull() {
+        CaseData applicant2CaseData = buildCaseDataApplicant2();
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
+        when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN)).thenReturn(solicitorUser());
+
+        changeOfRepresentativeService.buildChangeOfRepresentative(
+            applicant2CaseData, null, CASEWORKER_NOTICE_OF_CHANGE.getValue(), false
+        );
+
+        var changeOfRepresentative = Optional.ofNullable(applicant2CaseData.getChangeOfRepresentatives())
+            .orElse(Collections.emptyList())
+            .stream()
+            .map(ListValue::getValue)
+            .findFirst()
+            .orElseThrow();
+
+        assertEquals(CASEWORKER_NOTICE_OF_CHANGE.getValue(), changeOfRepresentative.getUpdatedVia());
+        assertEquals("Respondent", changeOfRepresentative.getParty());
+        assertNull(changeOfRepresentative.getRemovedRepresentative());
+    }
+
+    @Test
+    void shouldHandleCaseworkerNoticeOfChangeWhenBeforeApplicantIsNull() {
+        CaseData applicant2CaseData = buildCaseDataApplicant2();
+
+        CaseData beforeData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .build();
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
+        when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN)).thenReturn(solicitorUser());
+
+        changeOfRepresentativeService.buildChangeOfRepresentative(
+            applicant2CaseData, beforeData, CASEWORKER_NOTICE_OF_CHANGE.getValue(), false
+        );
+
+        var changeOfRepresentative = Optional.ofNullable(applicant2CaseData.getChangeOfRepresentatives())
+            .orElse(Collections.emptyList())
+            .stream()
+            .map(ListValue::getValue)
+            .findFirst()
+            .orElseThrow();
+
+        assertEquals(CASEWORKER_NOTICE_OF_CHANGE.getValue(), changeOfRepresentative.getUpdatedVia());
+        assertEquals("Respondent", changeOfRepresentative.getParty());
+        assertNull(changeOfRepresentative.getRemovedRepresentative());
     }
 
     private User solicitorUser() {
