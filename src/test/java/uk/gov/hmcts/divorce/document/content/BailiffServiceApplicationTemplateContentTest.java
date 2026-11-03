@@ -23,7 +23,7 @@ import java.util.Map;
 
 import static java.util.Map.entry;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.document.content.BailiffServiceApplicationTemplateContent.CONFIDENTIAL_ADDRESS_EN;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.DIVORCE_APPLICATION;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
