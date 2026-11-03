@@ -194,7 +194,7 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
                     + "OR (d36ApplicationType=\"sole\" AND dateFinalOrderEligibleToRespondent=\"*\")")
             .done()
             .page("judgeGrantedExpeditedCO")
-            .showCondition("typeOfDocumentAttached=\"D84\" AND coExpediteCheckRequired=\"Yes\"")
+            .showCondition("(typeOfDocumentAttached=\"D84\" OR scannedSubtypeReceived=\"D84\") AND coExpediteCheckRequired=\"Yes\"")
             .complex(CaseData::getConditionalOrder)
                 .mandatory(ConditionalOrder::getJudgeGrantedExpedite)
             .done()
@@ -279,9 +279,10 @@ public class CaseworkerOfflineDocumentVerified implements CCDConfig<CaseData, St
     public AboutToStartOrSubmitResponse<CaseData, State> midEvent(CaseDetails<CaseData, State> details,
                                                                   CaseDetails<CaseData, State> beforeDetails) {
         final CaseData caseData = details.getData();
+        CaseDocuments.ScannedDocumentSubtypes scannedSubtypeReceived = caseData.getDocuments().getScannedSubtypeReceived();
         caseData.getConditionalOrder().setExpediteCheckRequired(NO);
 
-        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached())) {
+        if (CO_D84.equals(caseData.getDocuments().getTypeOfDocumentAttached()) || D84.equals(scannedSubtypeReceived)) {
             LocalDate holdingPeriodEndDate = holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate());
             if (!holdingPeriodEndDate.isBefore(LocalDate.now(clock))) {
                 caseData.getConditionalOrder().setExpediteCheckRequired(YES);
