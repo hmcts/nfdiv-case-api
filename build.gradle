@@ -284,8 +284,8 @@ dependencyManagement {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
     //CVE-2020-23064
     dependency group: 'org.json', name: 'json', version: '20250517'
-    dependency 'net.bytebuddy:byte-buddy:1.18.3'
-    dependency 'net.bytebuddy:byte-buddy-agent:1.18.3'
+    dependency 'net.bytebuddy:byte-buddy:1.18.17-jdk5'
+    dependency 'net.bytebuddy:byte-buddy-agent:1.18.17-jdk5'
   }
 }
 
@@ -323,7 +323,7 @@ dependencies {
   implementation group: "com.fasterxml.jackson.core", name: "jackson-databind"
   implementation group: "com.fasterxml.jackson.core", name: "jackson-core"
   implementation group: "com.fasterxml.jackson.core", name: "jackson-annotations"
-  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.17.4'
+  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.17.5'
   implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.8') {
     exclude group: 'org.apache.commons', module: 'commons-compress'
     exclude group: 'com.google.guava', module: 'guava'
@@ -387,8 +387,8 @@ dependencies {
   functionalTestImplementation sourceSets.test.runtimeClasspath
   functionalTestImplementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '5.3.2'
 
-  contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.6'
-  contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.6'
+  contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.7'
+  contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.7'
 
   // Provides fast-reload of just the NFDIV service.
   cftlibImplementation 'org.springframework.boot:spring-boot-devtools'
