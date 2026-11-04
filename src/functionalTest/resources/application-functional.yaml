@@ -1,7 +1,9 @@
 spring:
   application:
     name: NFDIV Case API Functional Tests
-
+  mvc:
+    converters:
+      preferred-json-mapper: jackson2
   main:
     allow-bean-definition-overriding: true
 # because functional tests load up SpringBootTest
