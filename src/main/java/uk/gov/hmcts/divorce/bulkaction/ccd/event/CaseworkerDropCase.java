@@ -19,7 +19,7 @@ import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.util.EnumSet;
 
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Created;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Dropped;
 import static uk.gov.hmcts.divorce.bulkaction.ccd.BulkActionState.Listed;

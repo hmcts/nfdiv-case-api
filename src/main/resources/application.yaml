@@ -25,6 +25,9 @@ spring:
     allow-bean-definition-overriding: true
   lifecycle:
     timeout-per-shutdown-phase: 2m
+  mvc:
+    converters:
+      preferred-json-mapper: jackson2
 
 springdoc:
   packagesToScan: uk.gov.hmcts.divorce,uk.gov.hmcts.ccd.sdk.runtime

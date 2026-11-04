@@ -21,12 +21,12 @@ import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import java.time.Clock;
 import java.time.LocalDate;
 
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.citizen.event.CitizenIntendToSwitchToSoleFO.INTEND_SWITCH_TO_SOLE_FO;
 import static uk.gov.hmcts.divorce.testutil.ClockTestUtil.setMockClock;

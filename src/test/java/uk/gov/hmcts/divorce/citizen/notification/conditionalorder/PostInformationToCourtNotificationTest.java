@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -38,7 +38,7 @@ import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getConditionalOrderTe
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant1CaseData;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validApplicant2CaseData;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class PostInformationToCourtNotificationTest {
 
     @Mock
@@ -107,8 +107,6 @@ class PostInformationToCourtNotificationTest {
     void shouldNotSendEmailToApplicant2WhenSoleApplication() {
         CaseData data = validApplicant2CaseData();
         data.setApplicationType(SOLE_APPLICATION);
-        when(commonContent.conditionalOrderTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
-            .thenReturn(getConditionalOrderTemplateVars(ApplicationType.JOINT_APPLICATION));
 
         postInformationToCourtNotification.sendToApplicant2(data, TEST_CASE_ID);
 

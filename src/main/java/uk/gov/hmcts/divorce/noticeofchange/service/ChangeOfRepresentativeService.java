@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.noticeofchange.model.ChangeOfRepresentationAuthor.SOLICITOR_NOTICE_OF_CHANGE;
 
@@ -72,8 +72,13 @@ public class ChangeOfRepresentativeService {
             addedRepresentative = updateRepresentative(updatedBy, loggedInUserEmail, orgToAdd);
         } else {
             var userDetails = idamService.retrieveUser(request.getHeader(AUTHORIZATION)).getUserDetails();
-            var beforeSolicitor = isApplicant1 ? beforeCaseData.getApplicant1().getSolicitor()
-                    : beforeCaseData.getApplicant2().getSolicitor();
+            Solicitor beforeSolicitor = null;
+            if (beforeCaseData != null) {
+                Applicant beforeApplicant = isApplicant1 ? beforeCaseData.getApplicant1() : beforeCaseData.getApplicant2();
+                if (beforeApplicant != null) {
+                    beforeSolicitor = beforeApplicant.getSolicitor();
+                }
+            }
             updatedBy = userDetails.getName();
             addedRepresentative = updateRepresentative(currentSolicitor);
             if (beforeSolicitor != null && beforeSolicitor.getOrganisationPolicy() != null) {

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
@@ -61,7 +61,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseWithCourtHearing;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class EntitlementGrantedConditionalOrderNotificationTest {
 
     @Mock
@@ -112,7 +112,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplication().setIssueDate(LocalDate.of(2021, 8, 8));
 
-        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant2(data, TEST_CASE_ID);
@@ -178,7 +178,7 @@ class EntitlementGrantedConditionalOrderNotificationTest {
         data.getApplicant2().setEmail(TEST_APPLICANT_2_USER_EMAIL);
         data.getApplication().setIssueDate(LocalDate.of(2021, 8, 8));
 
-        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant1(), data.getApplicant2()))
+        when(commonContent.mainTemplateVars(data, TEST_CASE_ID, data.getApplicant2(), data.getApplicant1()))
             .thenReturn(getMainTemplateVars());
 
         entitlementGrantedConditionalOrderNotification.sendToApplicant2(data, TEST_CASE_ID);

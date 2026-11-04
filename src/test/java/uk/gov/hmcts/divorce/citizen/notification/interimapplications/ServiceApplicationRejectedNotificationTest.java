@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.notification.CommonContent;
@@ -27,7 +27,7 @@ import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_USER_EMAIL;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.getMainTemplateVars;
 import static uk.gov.hmcts.divorce.testutil.TestDataHelper.validCaseDataForIssueApplication;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class ServiceApplicationRejectedNotificationTest {
 
     @Mock

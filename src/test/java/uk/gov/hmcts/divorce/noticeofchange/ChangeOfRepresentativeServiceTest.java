@@ -1,16 +1,12 @@
 package uk.gov.hmcts.divorce.noticeofchange;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import uk.gov.hmcts.ccd.sdk.type.ChangeOrganisationRequest;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListItem;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
@@ -37,11 +33,11 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -215,12 +211,55 @@ class ChangeOfRepresentativeServiceTest {
         return changeOrganisationRequest;
     }
 
-    private Map<String, Object> expectedData(final CaseData caseData) {
+    @Test
+    void shouldHandleCaseworkerNoticeOfChangeWhenBeforeCaseDataIsNull() {
+        CaseData applicant2CaseData = buildCaseDataApplicant2();
 
-        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build();
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        return objectMapper.convertValue(caseData, new TypeReference<>() {
-        });
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
+        when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN)).thenReturn(solicitorUser());
+
+        changeOfRepresentativeService.buildChangeOfRepresentative(
+            applicant2CaseData, null, CASEWORKER_NOTICE_OF_CHANGE.getValue(), false
+        );
+
+        var changeOfRepresentative = Optional.ofNullable(applicant2CaseData.getChangeOfRepresentatives())
+            .orElse(Collections.emptyList())
+            .stream()
+            .map(ListValue::getValue)
+            .findFirst()
+            .orElseThrow();
+
+        assertEquals(CASEWORKER_NOTICE_OF_CHANGE.getValue(), changeOfRepresentative.getUpdatedVia());
+        assertEquals("Respondent", changeOfRepresentative.getParty());
+        assertNull(changeOfRepresentative.getRemovedRepresentative());
+    }
+
+    @Test
+    void shouldHandleCaseworkerNoticeOfChangeWhenBeforeApplicantIsNull() {
+        CaseData applicant2CaseData = buildCaseDataApplicant2();
+
+        CaseData beforeData = CaseData.builder()
+            .applicationType(SOLE_APPLICATION)
+            .divorceOrDissolution(DivorceOrDissolution.DIVORCE)
+            .build();
+
+        when(httpServletRequest.getHeader(AUTHORIZATION)).thenReturn(APP_1_SOL_AUTH_TOKEN);
+        when(idamService.retrieveUser(APP_1_SOL_AUTH_TOKEN)).thenReturn(solicitorUser());
+
+        changeOfRepresentativeService.buildChangeOfRepresentative(
+            applicant2CaseData, beforeData, CASEWORKER_NOTICE_OF_CHANGE.getValue(), false
+        );
+
+        var changeOfRepresentative = Optional.ofNullable(applicant2CaseData.getChangeOfRepresentatives())
+            .orElse(Collections.emptyList())
+            .stream()
+            .map(ListValue::getValue)
+            .findFirst()
+            .orElseThrow();
+
+        assertEquals(CASEWORKER_NOTICE_OF_CHANGE.getValue(), changeOfRepresentative.getUpdatedVia());
+        assertEquals("Respondent", changeOfRepresentative.getParty());
+        assertNull(changeOfRepresentative.getRemovedRepresentative());
     }
 
     private User solicitorUser() {

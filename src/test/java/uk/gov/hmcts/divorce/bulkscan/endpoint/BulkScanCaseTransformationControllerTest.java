@@ -47,7 +47,7 @@ class BulkScanCaseTransformationControllerTest {
         ResponseEntity<SuccessfulTransformationResponse> response =
             controller.transformExceptionRecordIntoCase(TEST_SERVICE_AUTH_TOKEN, exceptionRecord);
 
-        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
 
         CaseCreationDetails caseCreationDetails = requireNonNull(response.getBody()).getCaseCreationDetails();
         assertThat(caseCreationDetails.getCaseData()).isEqualTo(transformedData);
