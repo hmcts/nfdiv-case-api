@@ -289,9 +289,6 @@ dependencyManagement {
     dependency 'net.bytebuddy:byte-buddy:1.18.3'
     dependency 'net.bytebuddy:byte-buddy-agent:1.18.3'
   }
-  imports {
-    mavenBom "org.springframework.cloud:spring-cloud-dependencies:2025.1.4"
-  }
 }
 
 repositories {
@@ -354,7 +351,7 @@ dependencies {
   implementation 'org.springframework.boot:spring-boot-jackson2'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
-  implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '5.0.4'
 
   implementation group: 'org.elasticsearch', name: 'elasticsearch', version: '7.17.29'
   implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '6.2.1-RELEASE'
@@ -380,8 +377,8 @@ dependencies {
   testImplementation group: 'com.github.stefanbirkner', name: 'system-lambda', version: '1.2.1'
   testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.7'
   testImplementation group: 'org.assertj', name: 'assertj-guava', version: '3.27.7'
-  testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
-  testImplementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '5.0.4'
+  testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '5.0.4'
   testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.2.0'
   testImplementation 'io.rest-assured:rest-assured:6.2.0'
   testImplementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.8'
