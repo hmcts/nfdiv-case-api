@@ -339,7 +339,10 @@ dependencies {
   implementation(group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '3.1.1') {
     exclude group: 'org.springframework.boot', module: 'spring-boot-jackson'
   }
-  implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+  implementation('org.springframework.boot:spring-boot-starter-webmvc') {
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-json'
+    exclude group: 'org.springframework.boot', module: 'spring-boot-jackson'
+  }
   implementation 'org.springframework.boot:spring-boot-jackson2'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
