@@ -327,8 +327,6 @@ dependencies {
   implementation 'com.fasterxml.jackson.core:jackson-databind'
   implementation 'com.fasterxml.jackson.core:jackson-core'
   implementation 'com.fasterxml.jackson.core:jackson-annotations'
-  implementation 'com.fasterxml.jackson.module:jackson-module-parameter-names'
-  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.17.4'
   implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.8') {
