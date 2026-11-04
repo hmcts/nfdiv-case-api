@@ -284,7 +284,7 @@ dependencyManagement {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
     //CVE-2020-23064
     dependency group: 'org.json', name: 'json', version: '20250517'
-    dependency 'net.bytebuddy:byte-buddy:1.18.3'
+    dependency 'net.bytebuddy:byte-buddy:1.18.17-jdk5'
     dependency 'net.bytebuddy:byte-buddy-agent:1.18.17-jdk5'
   }
 }
