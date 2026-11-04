@@ -542,18 +542,18 @@ configurations.contractTestImplementation {
   exclude group: 'org.simplify4u', module: 'slf4j2-mock'
 }
 
-configurations.functionalTestRuntimeClasspath {
-  resolutionStrategy.eachDependency { details ->
-    if (details.requested.group == 'org.apache.groovy') {
-      details.useVersion('4.0.23')
-      details.because('Keep Groovy 4 compatibility for BEFTA/RestAssured on Boot 4 migration')
-    }
-  }
-}
-
 configurations.configureEach {
   exclude group: 'org.springframework.boot', module: 'spring-boot-jackson'
   exclude group: 'org.springframework.boot', module: 'spring-boot-starter-json'
+
+  resolutionStrategy.eachDependency { details ->
+    if (details.requested.group == 'org.apache.groovy') {
+      details.useVersion('4.0.23')
+      details.because(
+        'Align Groovy version for BEFTA/RestAssured compatibility during Spring Boot 4 migration'
+      )
+    }
+  }
 }
 
 tasks.register('installChromium', JavaExec) {
