@@ -95,7 +95,9 @@ configurations {
 }
 
 tasks.withType(JavaCompile).configureEach {
-  options.compilerArgs << "-Xlint:unchecked" << "-Werror"
+  options.compilerArgs << '-parameters'
+  options.compilerArgs << '-Xlint:unchecked'
+  options.compilerArgs << '-Werror'
 }
 
 // https://github.com/gradle/gradle/issues/16791
@@ -299,7 +301,8 @@ repositories {
 def versions = [
   junit        : '5.14.4',
   junitPlatform: '1.14.4',
-  lombok       : '1.18.44',
+  lombok       : '1.18.48',
+  jackson      : '2.22.4',
   springBoot   : springBoot.class.package.implementationVersion
 ]
 
@@ -319,6 +322,13 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.26.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.26.1'
   implementation group: 'com.google.guava', name: 'guava', version: '33.7.2-jre'
+
+  implementation platform(group: "com.fasterxml.jackson", name: "jackson-bom", version: versions.jackson)
+  implementation 'com.fasterxml.jackson.core:jackson-databind'
+  implementation 'com.fasterxml.jackson.core:jackson-core'
+  implementation 'com.fasterxml.jackson.core:jackson-annotations'
+  implementation 'com.fasterxml.jackson.module:jackson-module-parameter-names'
+  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.17.4'
   implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.8') {
