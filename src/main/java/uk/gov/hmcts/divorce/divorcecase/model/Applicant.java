@@ -469,6 +469,11 @@ public class Applicant {
             ).build()
         ));
 
+        resetInterimApplicationOptions();
+    }
+
+    @JsonIgnore
+    public void resetInterimApplicationOptions() {
         setInterimApplicationOptions(new InterimApplicationOptions());
     }
 
