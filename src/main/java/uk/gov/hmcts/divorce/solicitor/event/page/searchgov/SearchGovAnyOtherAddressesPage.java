@@ -36,13 +36,13 @@ public class SearchGovAnyOtherAddressesPage implements CcdPageConfiguration {
             .label("searchGovOtherAddressesLabel1", LABEL_ENTER_ADDITIONAL_ADDRESS,
                 "applicant1SearchGovRecordsKnowPartnerAdditionalAddresses=\"Yes\"")
             .mandatory(SearchGovRecordsJourneyOptions::getPartnerAdditionalAddress1,
-                "applicant1SearchGovRecordsKnowPartnerAdditionalAddresses=\"Yes\"")
+                "applicant1SearchGovRecordsKnowPartnerAdditionalAddresses=\"Yes\"", false)
             .mandatory(SearchGovRecordsJourneyOptions::getPartnerAdditionalAddressDates1,
-                "applicant1SearchGovRecordsKnowPartnerAdditionalAddresses=\"Yes\"")
+                "applicant1SearchGovRecordsKnowPartnerAdditionalAddresses=\"Yes\"", false)
             .optional(SearchGovRecordsJourneyOptions::getPartnerAdditionalAddress2,
-                "applicant1SearchGovRecordsKnowPartnerAdditionalAddresses=\"Yes\"")
+                "applicant1SearchGovRecordsKnowPartnerAdditionalAddresses=\"Yes\"", false)
             .optional(SearchGovRecordsJourneyOptions::getPartnerAdditionalAddressDates2,
-                "applicant1SearchGovRecordsKnowPartnerAdditionalAddresses=\"Yes\"")
+                "applicant1SearchGovRecordsKnowPartnerAdditionalAddresses=\"Yes\"", false)
             .done()
             .done()
             .done();
