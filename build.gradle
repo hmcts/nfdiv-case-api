@@ -302,9 +302,18 @@ def versions = [
   junit        : '5.14.4',
   junitPlatform: '1.14.4',
   lombok       : '1.18.48',
-  jackson      : '2.22.4',
+  jackson3     : '3.2.4',
   springBoot   : springBoot.class.package.implementationVersion
 ]
+
+ccdSdk {
+  jackson2CompatibilityGuard {
+    allowedSourceFiles = ['build.gradle']
+  }
+  jackson2ClasspathGuard {
+    allowedSourceFiles = ['build.gradle']
+  }
+}
 
 /*ext.libraries = [
   junit5: [
@@ -323,12 +332,10 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: '2.26.1'
   implementation group: 'com.google.guava', name: 'guava', version: '33.7.2-jre'
 
-  implementation platform(group: "com.fasterxml.jackson", name: "jackson-bom", version: versions.jackson)
-  implementation 'com.fasterxml.jackson.core:jackson-databind'
-  implementation 'com.fasterxml.jackson.core:jackson-core'
-  implementation 'com.fasterxml.jackson.core:jackson-annotations'
-  implementation 'com.fasterxml.jackson.module:jackson-module-parameter-names'
-  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+  implementation platform(group: "tools.jackson", name: "jackson-bom", version: versions.jackson3)
+  implementation 'tools.jackson.core:jackson-databind'
+  implementation 'tools.jackson.core:jackson-core'
+  implementation 'com.fasterxml.jackson.core:jackson-annotations:2.22'
 
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.17.4'
   implementation(group: 'com.github.hmcts', name: 'befta-fw', version: '9.2.8') {
@@ -348,7 +355,6 @@ dependencies {
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core'
   implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1'
   implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-  implementation 'org.springframework.boot:spring-boot-jackson2'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '5.0.2'
@@ -373,7 +379,6 @@ dependencies {
 
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-webmvc-test'
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator-test'
-  testImplementation 'com.fasterxml.jackson.module:jackson-module-parameter-names'
   testImplementation group: 'com.jayway.awaitility', name: 'awaitility', version: '1.7.0'
   testImplementation group: 'com.github.stefanbirkner', name: 'system-lambda', version: '1.2.1'
   testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.7'
