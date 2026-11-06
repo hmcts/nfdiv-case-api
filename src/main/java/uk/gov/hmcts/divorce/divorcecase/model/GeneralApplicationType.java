@@ -37,7 +37,16 @@ public enum GeneralApplicationType implements HasLabel {
     AMEND_APPLICATION("Amend Application"),
 
     @JsonProperty("other")
-    OTHER("Other");
+    OTHER("Other"),
+
+    @JsonProperty("withdrawPostIssue")
+    WITHDRAW_POST_ISSUE("Withdraw Application"),
+
+    @JsonProperty("delay")
+    DELAY("Delay or pause (or ‘put a stay on’) an application"),
+
+    @JsonProperty("extend")
+    EXTEND("More time to serve an application (or ‘extend service’)");
 
     private final String label;
 }

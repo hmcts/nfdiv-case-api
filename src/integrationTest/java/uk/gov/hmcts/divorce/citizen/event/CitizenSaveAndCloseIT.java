@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.divorce.citizen.notification.SaveAndSignOutNotificationHandler;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
 import uk.gov.hmcts.divorce.idam.IdamService;
 import uk.gov.hmcts.divorce.idam.User;
@@ -55,10 +54,6 @@ public class CitizenSaveAndCloseIT {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    @SuppressWarnings("PMD.UnusedPrivateField")
-    private SaveAndSignOutNotificationHandler saveAndSignOutNotificationHandler;
 
     @Autowired
     private ObjectMapper objectMapper;

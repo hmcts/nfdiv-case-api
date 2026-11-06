@@ -21,7 +21,6 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.common.event.SwitchedToSoleFinalOrderOffline.SWITCH_TO_SOLE_FO_OFFLINE;
@@ -103,6 +102,7 @@ class SwitchedToSoleFinalOrderOfflineTest {
 
         switchedToSoleFinalOrderOffline.aboutToSubmit(caseDetails, caseDetails);
 
+        verify(switchToSoleService).switchApplicationType(caseData);
         verify(switchToSoleService).switchApplicantData(caseData);
         verifyNoMoreInteractions(switchToSoleService);
     }
@@ -124,7 +124,8 @@ class SwitchedToSoleFinalOrderOfflineTest {
 
         switchedToSoleFinalOrderOffline.aboutToSubmit(caseDetails, caseDetails);
 
-        verifyNoInteractions(switchToSoleService);
+        verify(switchToSoleService).switchApplicationType(caseData);
+        verifyNoMoreInteractions(switchToSoleService);
     }
 
     @Test

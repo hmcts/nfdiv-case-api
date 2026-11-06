@@ -15,6 +15,9 @@ import uk.gov.hmcts.divorce.payment.client.PaymentClient;
 import uk.gov.hmcts.divorce.payment.model.Payment;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestDto;
 import uk.gov.hmcts.divorce.payment.model.ServiceRequestStatus;
+import uk.gov.hmcts.divorce.payment.rule.ApplicationPaymentMadeRule;
+import uk.gov.hmcts.divorce.payment.rule.FinalOrderPaymentMadeRule;
+import uk.gov.hmcts.divorce.payment.rule.PaymentMadeRule;
 import uk.gov.hmcts.divorce.systemupdate.convert.CaseDetailsConverter;
 import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -29,8 +32,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
-import static uk.gov.hmcts.divorce.citizen.event.CitizenPaymentMade.CITIZEN_PAYMENT_MADE;
-import static uk.gov.hmcts.divorce.citizen.event.RespondentFinalOrderPaymentMade.RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
 import static uk.gov.hmcts.divorce.divorcecase.model.PaymentStatus.SUCCESS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingPayment;
 import static uk.gov.hmcts.divorce.systemupdate.event.SystemRejectCasesWithPaymentOverdue.APPLICATION_REJECTED_FEE_NOT_PAID;
@@ -54,7 +55,9 @@ public class PaymentStatusService {
 
     private final ServiceRequestSearchService serviceRequestSearchService;
 
-    private final UpdateSuccessfulPaymentStatus updateSuccessfulPaymentStatus;
+    private final ApplicationPaymentMadeRule applicationPaymentMadeRule;
+
+    private final FinalOrderPaymentMadeRule finalOrderPaymentMadeRule;
 
     public void hasSuccessFulPayment(List<uk.gov.hmcts.reform.ccd.client.model.CaseDetails> casesInAwaitingPaymentState) {
         log.info("PaymentStatusService: {} cases in AwaitingPayment state",
@@ -93,14 +96,16 @@ public class PaymentStatusService {
         List<Long> successfulPaymentCaseIds = new ArrayList<>();
         casesWithSuccessfulPayment.forEach(successfulPaymentCase -> {
 
-            String eventId = AwaitingPayment == successfulPaymentCase.getState()
-                    ? CITIZEN_PAYMENT_MADE : RESPONDENT_FINAL_ORDER_PAYMENT_MADE;
+            PaymentMadeRule paymentRule = AwaitingPayment.equals(successfulPaymentCase.getState())
+                    ? applicationPaymentMadeRule : finalOrderPaymentMadeRule;
 
             Long caseId = successfulPaymentCase.getId();
 
-            log.info("{} event called for {} with successful payment: ", eventId, caseId);
+            log.info("{} event called for {} with successful payment: ", paymentRule.paymentMadeEvent(), caseId);
 
-            ccdUpdateService.submitEventWithRetry(caseId.toString(), eventId, updateSuccessfulPaymentStatus, user, s2sToken);
+            ccdUpdateService.submitEventWithRetry(
+                caseId.toString(), paymentRule.paymentMadeEvent(), new UpdateSuccessfulPaymentStatus(paymentRule), user, s2sToken
+            );
             successfulPaymentCaseIds.add(caseId);
         });
 

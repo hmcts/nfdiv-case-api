@@ -10,7 +10,7 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.caseworker.service.task.GenerateHmctsCoversheet;
-import uk.gov.hmcts.divorce.common.service.InterimApplicationSubmissionService;
+import uk.gov.hmcts.divorce.common.service.CitizenServiceApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeServiceType;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
@@ -56,7 +56,7 @@ class CitizenSubmitServiceApplicationTest {
     private Clock clock;
 
     @Mock
-    InterimApplicationSubmissionService interimApplicationSubmissionService;
+    CitizenServiceApplicationSubmissionService submissionService;
 
     @Mock
     DocumentRemovalService documentRemovalService;
@@ -134,7 +134,7 @@ class CitizenSubmitServiceApplicationTest {
         )).thenReturn(TEST_SERVICE_REFERENCE);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+        when(submissionService.generateServiceApplicationAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -178,7 +178,7 @@ class CitizenSubmitServiceApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+        when(submissionService.generateServiceApplicationAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -222,7 +222,7 @@ class CitizenSubmitServiceApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+        when(submissionService.generateServiceApplicationAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -258,7 +258,7 @@ class CitizenSubmitServiceApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+        when(submissionService.generateServiceApplicationAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -294,7 +294,7 @@ class CitizenSubmitServiceApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+        when(submissionService.generateServiceApplicationAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -343,7 +343,7 @@ class CitizenSubmitServiceApplicationTest {
         caseDetails.setId(TEST_CASE_ID);
 
         DivorceDocument generatedApplication = DivorceDocument.builder().build();
-        when(interimApplicationSubmissionService.generateServiceApplicationAnswerDocument(
+        when(submissionService.generateServiceApplicationAnswerDocument(
             TEST_CASE_ID, caseData.getApplicant1(), caseData
         )).thenReturn(generatedApplication);
 
@@ -379,7 +379,7 @@ class CitizenSubmitServiceApplicationTest {
 
         citizenSubmitServiceApplication.submitted(caseDetails, caseDetails);
 
-        verify(interimApplicationSubmissionService).sendServiceApplicationNotifications(
+        verify(submissionService).sendNotifications(
             TEST_CASE_ID, AlternativeServiceType.DEEMED, caseData
         );
     }
@@ -405,7 +405,7 @@ class CitizenSubmitServiceApplicationTest {
 
         citizenSubmitServiceApplication.submitted(caseDetails, caseDetails);
 
-        verifyNoInteractions(interimApplicationSubmissionService);
+        verifyNoInteractions(submissionService);
     }
 
     private CaseData buildCaseData(InterimApplicationType interimApplicationType) {
