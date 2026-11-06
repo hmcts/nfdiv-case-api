@@ -74,7 +74,7 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
     private YesOrNo knowPartnerDateOfBirth;
 
     @CCD(
-        label = "Enter the respondents's date of birth",
+        label = "Enter the respondent's date of birth",
         hint = "For example, 23 3 2000",
         access = {DefaultAccess.class},
         searchable = false
@@ -83,7 +83,7 @@ public class SearchGovRecordsJourneyOptions implements ApplicationAnswers {
     private LocalDate partnerDateOfBirth;
 
     @CCD(
-        label = "Enter the respondents's approximate age",
+        label = "Enter the respondent's approximate age",
         hint = "For example, 65 years old",
         access = {DefaultAccess.class},
         searchable = false
