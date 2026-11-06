@@ -2,6 +2,7 @@ package uk.gov.hmcts.divorce.solicitor.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
@@ -12,6 +13,9 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
+
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0228;
@@ -31,7 +35,8 @@ public class GeneralApplicationPaymentPreparationService {
         long caseId,
         Applicant applicant,
         InterimApplicationOptions options,
-        GeneralApplication generalApplication
+        GeneralApplication generalApplication,
+        String existingServiceRequestReference
     ) {
         generalApplication.setGeneralApplicationFeeType(options.isHearingRequired() ? FEE0227 : FEE0228);
 
@@ -48,10 +53,17 @@ public class GeneralApplicationPaymentPreparationService {
                 .getGeneralApplicationFeeType());
             fee.setOrderSummary(orderSummary);
 
+            generalApplication.setSolGeneralApplicationFeeInPounds(
+                NumberFormat.getNumberInstance().format(
+                    new BigDecimal(orderSummary.getPaymentTotal()).movePointLeft(2))
+            );
+
             DynamicList pbaNumbers = pbaService.populatePbaDynamicList();
             fee.setPbaNumbers(pbaNumbers);
 
-            String serviceRequestReference = paymentSetupService.createGeneralApplicationPaymentServiceRequest(
+            String serviceRequestReference = StringUtils.isNotBlank(existingServiceRequestReference)
+                ? existingServiceRequestReference
+                : paymentSetupService.createGeneralApplicationPaymentServiceRequest(
                 orderSummary, caseId, applicant.getFullName()
             );
 

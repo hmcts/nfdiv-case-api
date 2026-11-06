@@ -527,7 +527,7 @@ docmosis:
       NFD_NOP_JS_SUBMITTED_RESPONDENT_SOLICITOR: FL-NFD-GOR-ENG-Judicial-Separation-Submitted-NOP-Respondent-Solicitor_V3.docx
       JUDICIAL_SEPARATION_SWITCH_TO_SOLE_SOLICITOR: FL-NFD-GOR-ENG-Judicial-Separation-Switch-To-Sole-Solicitor_V3.docx
       NFD_NOP_JS_SERVICE_SOLICITOR: FL-NFD-GOR-ENG-Judicial-Separation-NOP-Solicitor-Service_V4.docx
-      CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-ENG-Conditional-Order-Pronounced_V7.docx
+      CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-ENG-Conditional-Order-Pronounced_V8.docx
       NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Joint-JS_V3.docx
       NFD_NOP_APP1APP2_SOL_JS_JOINT: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_Solicitor_JS_Joint_V3.docx
       CO_GRANTED_COVER_LETTER: FL-NFD-GOR-ENG-Conditional-Order-Granted-Cover-Letter_V5.docx
@@ -572,7 +572,7 @@ docmosis:
       CITIZEN_COURT_ORDERS_REGENERATED: FL-NFD-GOR-ENG-Court-Orders-Regenerated-Citizen-V2.docx
       HEARING_REMINDER: FL-NFD-GOR-ENG-Hearing-Reminder-V1.docx
       NFD_FO_REQUESTED_LETTER_RESPONDENT: FL-NFD-GOR-ENG-FO-Requested-Respondent-Letter_V2.docx
-      D11_GENERAL_APPLICATION: FL-NFD-GOR-ENG-General-Application-D11_V1.docx
+      D11_GENERAL_APPLICATION: FL-NFD-GOR-ENG-General-Application-D11_V2.docx
     welsh:
       DIVORCE_APPLICATION_SOLE: FL-NFD-GOR-ENG-Application-Sole_V9.docx #TODO: Set correct template when available
       DIVORCE_APPLICATION_JOINT: FL-NFD-APP-WEL-Divorce-Application-Joint_V2.docx
@@ -639,7 +639,7 @@ docmosis:
       CO_GRANTED_SOL_COVER_LETTER: FL-NFD-GOR-WEL-Conditional-Order-Granted-Sol-Cover-Letter_V2.docx
       NFD_NOP_JA1_JOINT_APP1APP2_CIT_JS: FL-NFD-GOR-ENG-Notice-Of-Proceedings-Joint-JS_V3.docx #TODO: uodate welsh content
       NFD_NOP_APP1APP2_SOL_JS_JOINT: FL-NFD-GOR-ENG-Notice_Of_Proceedings_Applicant_Solicitor_JS_Joint_V3.docx #TODO: update welsh content
-      CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-WEL-Conditional-Order-Pronounced-V5.docx
+      CONDITIONAL_ORDER_PRONOUNCED: FL-NFD-GOR-WEL-Conditional-Order-Pronounced-V6.docx
       CO_PRONOUNCED_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-ENG-CO-Pronounced-Cover-Letter-Offline-Respondent_V3.docx #TODO: update welsh content
       CO_PRONOUNCED_SOL_COVER_LETTER_OFFLINE_RESPONDENT: FL-NFD-GOR-WEL-CO-Pronounced-Sol-Cover-Letter-Offline-Respondent_V2.docx
       JUDICIAL_SEPARATION_ORDER_PRONOUNCED: FL-NFD-GOR-ENG-Conditional-Order-Pronounced-JS_V3.docx #TODO: update welsh content
@@ -679,7 +679,7 @@ docmosis:
       CITIZEN_COURT_ORDERS_REGENERATED: FL-NFD-GOR-WEL-Court-Orders-Regenerated-Citizen-V1.docx
       HEARING_REMINDER: FL-NFD-GOR-WEL-Hearing-Reminder.docx
       NFD_FO_REQUESTED_LETTER_RESPONDENT: FL-NFD-GOR-ENG-FO-Requested-Respondent-Letter_V2.docx #TODO: update welsh content
-      D11_GENERAL_APPLICATION: FL-NFD-GOR-ENG-General-Application-D11_V1.docx
+      D11_GENERAL_APPLICATION: FL-NFD-GOR-ENG-General-Application-D11_V2.docx
   templateVars:
     respondentSignInDivorceUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DIVORCE_URL:https://nfdiv-apply-for-divorce.aat.platform.hmcts.net/respondent}
     respondentSignInDissolutionUrl: ${NOTIFY_TEMPLATE_RESPONDENT_SIGN_IN_DISSOLUTION_URL:https://nfdiv-end-civil-partnership.aat.platform.hmcts.net/respondent}

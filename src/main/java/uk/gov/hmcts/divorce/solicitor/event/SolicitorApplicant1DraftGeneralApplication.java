@@ -9,6 +9,7 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationD11Pages;
@@ -53,7 +54,7 @@ public class SolicitorApplicant1DraftGeneralApplication implements CCDConfig<Cas
         log.info("{} about to start callback invoked for Case Id: {}", SOLICITOR_APPLICANT1_DRAFT_GEN_APP, details.getId());
         final CaseData data = details.getData();
 
-        generalApplicationDraftJourneyService.prepareAboutToStart(details, data.getApplicant1());
+        generalApplicationDraftJourneyService.prepareAboutToStart(details, data.getApplicant1(), GeneralParties.APPLICANT);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(data)

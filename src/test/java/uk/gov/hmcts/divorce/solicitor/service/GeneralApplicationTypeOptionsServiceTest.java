@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,7 +29,8 @@ public class GeneralApplicationTypeOptionsServiceTest {
             .applicant2(Applicant.builder().solicitorRepresented(YesOrNo.NO).build())
             .build();
 
-        DynamicList result = generalApplicationTypeOptionsService.buildOptions(State.Draft, caseData, null);
+        DynamicList result = generalApplicationTypeOptionsService.buildOptions(State.Draft, caseData, null,
+            GeneralParties.APPLICANT2);
 
         assertThat(result.getListItems()).extracting(DynamicListElement::getLabel)
             .containsExactly(
@@ -47,7 +49,8 @@ public class GeneralApplicationTypeOptionsServiceTest {
             .applicant2(Applicant.builder().build())
             .build();
 
-        DynamicList result = generalApplicationTypeOptionsService.buildOptions(State.AwaitingService, caseData, null);
+        DynamicList result = generalApplicationTypeOptionsService.buildOptions(State.AwaitingService, caseData, null,
+            GeneralParties.APPLICANT2);
 
         assertThat(result.getListItems()).extracting(DynamicListElement::getLabel)
             .containsExactly(
@@ -65,7 +68,8 @@ public class GeneralApplicationTypeOptionsServiceTest {
             .applicant1(Applicant.builder().build())
             .build();
 
-        DynamicList result = generalApplicationTypeOptionsService.buildOptions(State.AwaitingService, caseData, null);
+        DynamicList result = generalApplicationTypeOptionsService.buildOptions(State.AwaitingService, caseData, null,
+            GeneralParties.APPLICANT);
 
         assertThat(result.getListItems()).extracting(DynamicListElement::getLabel)
             .containsExactly(
@@ -84,7 +88,8 @@ public class GeneralApplicationTypeOptionsServiceTest {
             .applicant2(Applicant.builder().solicitorRepresented(YesOrNo.YES).build())
             .build();
 
-        DynamicList result = generalApplicationTypeOptionsService.buildOptions(State.AwaitingService, caseData, null);
+        DynamicList result = generalApplicationTypeOptionsService.buildOptions(State.AwaitingService, caseData, null,
+            GeneralParties.RESPONDENT);
 
         assertThat(result.getListItems()).extracting(DynamicListElement::getLabel)
             .containsExactly(
@@ -105,7 +110,8 @@ public class GeneralApplicationTypeOptionsServiceTest {
             .value(DynamicListElement.builder().label(GeneralApplicationType.EXTEND.getLabel()).build())
             .build();
 
-        DynamicList result = generalApplicationTypeOptionsService.buildOptions(State.AwaitingService, caseData, existing);
+        DynamicList result = generalApplicationTypeOptionsService.buildOptions(State.AwaitingService, caseData, existing,
+            GeneralParties.RESPONDENT);
 
         assertThat(result.getValue()).isNotNull();
         assertThat(result.getValue().getLabel()).isEqualTo(GeneralApplicationType.EXTEND.getLabel());
@@ -122,7 +128,8 @@ public class GeneralApplicationTypeOptionsServiceTest {
             .value(DynamicListElement.builder().label(GeneralApplicationType.AMEND_APPLICATION.getLabel()).build())
             .build();
 
-        DynamicList result = generalApplicationTypeOptionsService.buildOptions(State.AwaitingService, caseData, existing);
+        DynamicList result = generalApplicationTypeOptionsService.buildOptions(State.AwaitingService, caseData, existing,
+            GeneralParties.RESPONDENT);
 
         assertThat(result.getValue()).isNull();
     }

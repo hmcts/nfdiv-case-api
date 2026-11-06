@@ -17,8 +17,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DraftApplicationAction;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationHearingNotRequired;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -90,7 +94,8 @@ public class GeneralApplicationDraftSubmissionServiceTest {
         assertThat(generalApplication.getGeneralApplicationDocument()).isEqualTo(applicationDocument);
 
         verify(generalApplicationFactory).createFromJourneyOptions(options, true, caseData.getApplicationType());
-        verify(paymentPreparationService).prepareDraftGeneralApplicationFee(TEST_CASE_ID, applicant, options, generalApplication);
+        verify(paymentPreparationService).prepareDraftGeneralApplicationFee(TEST_CASE_ID, applicant, options, generalApplication,
+            null);
         verify(submissionService).generateGeneralApplicationAnswerDocument(TEST_CASE_ID, applicant, caseData, generalApplication);
     }
 
@@ -119,7 +124,8 @@ public class GeneralApplicationDraftSubmissionServiceTest {
         assertThat(generalApplication.getGeneralApplicationDocument()).isEqualTo(applicationDocument);
 
         verify(generalApplicationFactory).createFromJourneyOptions(options, false, caseData.getApplicationType());
-        verify(paymentPreparationService).prepareDraftGeneralApplicationFee(TEST_CASE_ID, applicant, options, generalApplication);
+        verify(paymentPreparationService).prepareDraftGeneralApplicationFee(TEST_CASE_ID, applicant, options, generalApplication,
+            null);
         verify(submissionService).generateGeneralApplicationAnswerDocument(TEST_CASE_ID, applicant, caseData, generalApplication);
     }
 
@@ -141,7 +147,8 @@ public class GeneralApplicationDraftSubmissionServiceTest {
         when(generalApplicationFactory.createFromJourneyOptions(options, true, caseData.getApplicationType()))
             .thenReturn(generalApplication);
         doThrow(new RuntimeException("payment failed"))
-            .when(paymentPreparationService).prepareDraftGeneralApplicationFee(TEST_CASE_ID, applicant, options, generalApplication);
+            .when(paymentPreparationService).prepareDraftGeneralApplicationFee(TEST_CASE_ID, applicant, options, generalApplication,
+                null);
 
         CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
 
@@ -200,5 +207,61 @@ public class GeneralApplicationDraftSubmissionServiceTest {
         assertEquals(1, caseData.getGeneralApplications().size());
         assertThat(caseData.getGeneralApplications().getFirst().getValue()).isEqualTo(olderNonMatchingDraft);
         assertThat(applicant.getInterimApplicationOptions()).isNull();
+    }
+
+    @Test
+    void shouldReuseExistingServiceRequestReferenceWhenAmendingExistingDraft() {
+        String existingServiceRequestReference = "SR-EXISTING-123";
+
+        InterimApplicationOptions options = InterimApplicationOptions.builder()
+            .generalApplicationD11JourneyOptions(GeneralApplicationD11JourneyOptions.builder()
+                .hearingNotRequired(GeneralApplicationHearingNotRequired.NO).build())
+            .interimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11).build();
+        Applicant applicant = Applicant.builder()
+            .interimApplicationOptions(options)
+            .generalAppServiceRequest(existingServiceRequestReference)
+            .build();
+
+        GeneralApplication existingDraft = GeneralApplication.builder()
+            .generalApplicationSubmittedOnline(YesOrNo.NO)
+            .generalApplicationParty(GeneralParties.APPLICANT)
+            .generalApplicationFeeType(GeneralApplicationFee.FEE0227)
+            .generalApplicationFee(FeeDetails.builder()
+                .paymentMethod(ServicePaymentMethod.FEE_PAY_BY_ACCOUNT)
+                .serviceRequestReference(existingServiceRequestReference)
+                .build())
+            .build();
+
+        CaseData caseData = CaseData.builder()
+            .applicationType(ApplicationType.SOLE_APPLICATION)
+            .applicant1(applicant)
+            .generalApplications(new ArrayList<>(List.of(
+                ListValue.<GeneralApplication>builder().id("1").value(existingDraft).build()
+            )))
+            .build();
+
+        GeneralApplication rebuiltDraft = GeneralApplication.builder().build();
+        DivorceDocument applicationDocument = DivorceDocument.builder().build();
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_AUTHORIZATION_TOKEN);
+        when(ccdAccessService.isApplicant1(TEST_AUTHORIZATION_TOKEN, TEST_CASE_ID)).thenReturn(true);
+        when(generalApplicationFactory.createFromJourneyOptions(options, true, caseData.getApplicationType()))
+            .thenReturn(rebuiltDraft);
+        when(submissionService.generateGeneralApplicationAnswerDocument(TEST_CASE_ID, applicant, caseData, rebuiltDraft))
+            .thenReturn(applicationDocument);
+
+        CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
+            .build();
+
+        generalApplicationDraftSubmissionService.buildGeneralApplication(details, caseData, applicant);
+
+        verify(paymentPreparationService).prepareDraftGeneralApplicationFee(
+            TEST_CASE_ID, applicant, options, rebuiltDraft, existingServiceRequestReference
+        );
+
+        assertEquals(1, caseData.getGeneralApplications().size());
+        assertThat(caseData.getGeneralApplications().getFirst().getValue()).isEqualTo(rebuiltDraft);
     }
 }

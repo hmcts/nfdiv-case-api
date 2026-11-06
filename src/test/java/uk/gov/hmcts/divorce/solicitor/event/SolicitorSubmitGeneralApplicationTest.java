@@ -31,12 +31,15 @@ import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
+import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationDraftSubmissionService;
 import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationSubmitPaymentService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -67,6 +70,9 @@ public class SolicitorSubmitGeneralApplicationTest {
 
     @Mock
     private GeneralApplicationSubmitPaymentService submitPaymentService;
+
+    @Mock
+    private GeneralApplicationDraftSubmissionService generalApplicationDraftSubmissionService;
 
     @Mock
     private CitizenGeneralApplicationSubmissionService citizenGeneralApplicationSubmissionService;
@@ -128,8 +134,8 @@ public class SolicitorSubmitGeneralApplicationTest {
 
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(ccdAccessService.isApplicant1(TEST_SERVICE_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(true);
-        when(citizenGeneralApplicationSubmissionService.findActiveGeneralApplication(caseData, caseData.getApplicant1()))
-            .thenReturn(Optional.empty());
+        when(generalApplicationDraftSubmissionService.findDraftIndex(caseData, caseData.getApplicant1()))
+            .thenReturn(OptionalInt.empty());
 
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitGeneralApplication.aboutToStart(caseDetails);
 
@@ -139,18 +145,21 @@ public class SolicitorSubmitGeneralApplicationTest {
 
     @Test
     void shouldPopulateGeneralApplicationWhenActiveDraftExistsForApplicant1OnAboutToStart() {
-        CaseData caseData = CaseData.builder().build();
+        final GeneralApplication activeGeneralApplication = GeneralApplication.builder().build();
+        ListValue<GeneralApplication> generalApplicationListValue1 = ListValue.<GeneralApplication>builder()
+            .id(UUID.randomUUID().toString())
+            .value(activeGeneralApplication)
+            .build();
+        CaseData caseData = CaseData.builder().generalApplications(List.of(generalApplicationListValue1)).build();
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
             .data(caseData)
             .build();
 
-        final GeneralApplication activeGeneralApplication = GeneralApplication.builder().build();
-
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(ccdAccessService.isApplicant1(TEST_SERVICE_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(true);
-        when(citizenGeneralApplicationSubmissionService.findActiveGeneralApplication(caseData, caseData.getApplicant1()))
-            .thenReturn(Optional.of(activeGeneralApplication));
+        when(generalApplicationDraftSubmissionService.findDraftIndex(caseData, caseData.getApplicant1()))
+            .thenReturn(OptionalInt.of(0));
 
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitGeneralApplication.aboutToStart(caseDetails);
 
@@ -159,18 +168,21 @@ public class SolicitorSubmitGeneralApplicationTest {
 
     @Test
     void shouldPopulateGeneralApplicationWhenActiveDraftExistsForApplicant2OnAboutToStart() {
-        CaseData caseData = CaseData.builder().build();
+        final GeneralApplication activeGeneralApplication = GeneralApplication.builder().build();
+        ListValue<GeneralApplication> generalApplicationListValue1 = ListValue.<GeneralApplication>builder()
+            .id(UUID.randomUUID().toString())
+            .value(activeGeneralApplication)
+            .build();
+        CaseData caseData = CaseData.builder().generalApplications(List.of(generalApplicationListValue1)).build();
         CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
             .id(TEST_CASE_ID)
             .data(caseData)
             .build();
 
-        final GeneralApplication activeGeneralApplication = GeneralApplication.builder().build();
-
         when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         when(ccdAccessService.isApplicant1(TEST_SERVICE_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(false);
-        when(citizenGeneralApplicationSubmissionService.findActiveGeneralApplication(caseData, caseData.getApplicant2()))
-            .thenReturn(Optional.of(activeGeneralApplication));
+        when(generalApplicationDraftSubmissionService.findDraftIndex(caseData, caseData.getApplicant1()))
+            .thenReturn(OptionalInt.of(0));
 
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitGeneralApplication.aboutToStart(caseDetails);
 
@@ -224,7 +236,6 @@ public class SolicitorSubmitGeneralApplicationTest {
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(State.GeneralApplicationReceived);
-        assertThat(response.getData().getGeneralApplication().getGeneralApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
     }
 
     @Test
@@ -248,8 +259,7 @@ public class SolicitorSubmitGeneralApplicationTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(State.AwaitingGeneralApplicationPayment);
-        assertThat(response.getData().getGeneralApplication().getGeneralApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
+        assertThat(response.getState()).isEqualTo(State.AwaitingGeneralReferralPayment);
     }
 
     @Test
