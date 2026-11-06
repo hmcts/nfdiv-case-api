@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.SearchGovRecordsJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.SearchGovRecordsWhichDepartment;
+import uk.gov.hmcts.divorce.divorcecase.model.Solicitor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -85,6 +86,7 @@ class SearchGovRecordsApplicationTemplateContentTest {
         expectedEntries.put("phoneAndOpeningTimes","0300 303 0642 (Monday to Friday, 10am to 6pm)");
         expectedEntries.put("courtsAndTribunalsServiceHeader","HM Courts & Tribunals Service");
         expectedEntries.put("contactEmail","contactdivorce@justice.gov.uk");
+        expectedEntries.put("isApplicantRepresented", false);
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -133,6 +135,60 @@ class SearchGovRecordsApplicationTemplateContentTest {
         expectedEntries.put("phoneAndOpeningTimes","0300 303 0642 (Monday to Friday, 10am to 6pm)");
         expectedEntries.put("courtsAndTribunalsServiceHeader","HM Courts & Tribunals Service");
         expectedEntries.put("contactEmail","contactdivorce@justice.gov.uk");
+        expectedEntries.put("isApplicantRepresented", false);
+
+        assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
+    }
+
+    @Test
+    void shouldReturnTemplateContentForEnglishForSolicitorInitiatedApplication() {
+        final CaseData caseData = caseData();
+        caseData.getGeneralApplication().setGeneralApplicationReceivedDate(LocalDateTime.of(2025, Month.AUGUST, 1, 0, 0));
+        caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder().build());
+        buildSearchGovRecords(caseData, true);
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.YES);
+        caseData.getApplicant1().setSolicitor(Solicitor.builder().name("Test Solicitor").firmName("Test Org").build());
+
+        final Map<String, Object> basicDocmosisTemplateContent = getBasicDocmosisTemplateContent(ENGLISH);
+        when(docmosisCommonContent.getBasicDocmosisTemplateContent(
+            caseData.getApplicant1().getLanguagePreference())).thenReturn(basicDocmosisTemplateContent);
+
+        final Map<String, Object> result = templateContent.getTemplateContent(
+            caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getGeneralApplication()
+        );
+
+        Map<String, Object> expectedEntries = new LinkedHashMap<>();
+        expectedEntries.put("ccdCaseReference", formatId(1616591401473378L));
+        expectedEntries.put("applicant1FullName", TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME);
+        expectedEntries.put("applicant2FullName", caseData.getApplicant2().getFullName());
+        expectedEntries.put("applicationDate", "1 August 2025");
+        expectedEntries.put("whySearchGovRecords", "Test reason");
+        expectedEntries.put("departmentsToSearch",
+            "[Department for Work and Pensions, Other government departments, HM Revenue & Customs]");
+        expectedEntries.put("otherDepartmentsToSearch", true);
+        expectedEntries.put("otherDepartments", "Test department");
+        expectedEntries.put("reasonWhySearchTheseDepartments", "Test reason");
+        expectedEntries.put("partnerName", "Partner name");
+        expectedEntries.put("knowPartnerDateOfBirth", "Yes");
+        expectedEntries.put("partnerDateOfBirth", "1 January 1990");
+        expectedEntries.put("knowPartnerNationalInsurance", "Yes");
+        expectedEntries.put("partnerNationalInsurance", "12345678");
+        expectedEntries.put("partnerLastKnownAddress", "address1\nUK");
+        expectedEntries.put("datesPartnerLivedAtLastKnownAddress", "Test date1");
+        expectedEntries.put("knowAdditionalAddressesForPartner", "Yes");
+        expectedEntries.put("additionalAddress1", "Test address1");
+        expectedEntries.put("additionalAddress1DatesLivedThere", "1 Jan 2023");
+        expectedEntries.put("providesAddress2", "Yes");
+        expectedEntries.put("additionalAddress2", "Test address2");
+        expectedEntries.put("additionalAddress2DatesLivedThere", "1 Jan 2024");
+        expectedEntries.put("divorceAndDissolutionHeader","Divorce and Dissolution");
+        expectedEntries.put("phoneAndOpeningTimes","0300 303 0642 (Monday to Friday, 10am to 6pm)");
+        expectedEntries.put("courtsAndTribunalsServiceHeader","HM Courts & Tribunals Service");
+        expectedEntries.put("contactEmail","contactdivorce@justice.gov.uk");
+        expectedEntries.put("isApplicantRepresented", true);
+        expectedEntries.put("applicant1SolicitorName", "Test Solicitor");
+        expectedEntries.put("applicant1SolicitorFirmName", "Test Org");
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }

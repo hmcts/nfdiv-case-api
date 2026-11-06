@@ -20,8 +20,11 @@ import java.util.stream.Collectors;
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
 import static uk.gov.hmcts.divorce.document.DocumentConstants.SEARCH_GOV_RECORDS_APPLICATION_TEMPLATE_ID;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FULL_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_FIRM_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_SOLICITOR_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FULL_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
+import static uk.gov.hmcts.divorce.document.content.GeneralApplicationD11TemplateContent.IS_APP_REPRESENTED;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.formatId;
 import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterForPreferredLanguage;
 
@@ -76,6 +79,11 @@ public class SearchGovRecordsApplicationTemplateContent {
         templateContent.put(
             APPLICATION_DATE, dateTimeFormatter.format(generalApplication.getGeneralApplicationReceivedDate().toLocalDate())
         );
+        templateContent.put(IS_APP_REPRESENTED, applicant.isRepresented());
+        if (applicant.isRepresented()) {
+            templateContent.put(APPLICANT_1_SOLICITOR_NAME, applicant.getSolicitor().getName());
+            templateContent.put(APPLICANT_1_SOLICITOR_FIRM_NAME, applicant.getSolicitor().getPreferredFirmName());
+        }
 
         SearchGovRecordsJourneyOptions applicationAnswers = caseData.getApplicant1().getInterimApplicationOptions()
             .getSearchGovRecordsJourneyOptions();

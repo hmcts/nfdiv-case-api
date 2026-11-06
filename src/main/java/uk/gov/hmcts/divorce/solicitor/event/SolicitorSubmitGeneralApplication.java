@@ -12,9 +12,13 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.GeneralApplicationD11SubmittedNotification;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -54,9 +58,13 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
 
     private final HttpServletRequest request;
 
+    private final GeneralReferralService generalReferralService;
+
     private final GeneralApplicationD11SubmittedNotification generalApplicationD11SubmittedNotification;
 
     private final GeneralApplicationDraftSubmissionService generalApplicationDraftSubmissionService;
+
+    private final CitizenGeneralApplicationSubmissionService citizenGeneralApplicationSubmissionService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -107,24 +115,50 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
 
         GeneralApplication submittedGa = caseData.getGeneralApplication();
 
+        final boolean canBeAutoReferred =
+            citizenGeneralApplicationSubmissionService.canBeAutoReferred(caseData, submittedGa.getGeneralApplicationType());
+
+        if (canBeAutoReferred) {
+            GeneralReferral automaticReferral = generalReferralService.buildGeneralReferral(submittedGa);
+            caseData.setGeneralReferral(automaticReferral);
+            submittedGa.setGeneralApplicationReferredOnDate(caseData.getGeneralReferral().getGeneralApplicationReferralDate());
+        }
+
         OptionalInt activeIndex = generalApplicationDraftSubmissionService.findDraftIndex(caseData, currentApplicant);
         List<ListValue<GeneralApplication>> generalApplications = caseData.getGeneralApplications();
 
         if (activeIndex.isPresent() && generalApplications != null) {
             generalApplications.get(activeIndex.getAsInt()).setValue(submittedGa);
         }
+
         currentApplicant.setActiveGeneralApplication(null);
         currentApplicant.archiveInterimApplicationOptions();
 
-        ServicePaymentMethod paymentMethod = caseData.getGeneralApplication().getGeneralApplicationFee().getPaymentMethod();
-        State targetState = ServicePaymentMethod.FEE_PAY_BY_ACCOUNT.equals(paymentMethod)
-                ? State.GeneralApplicationReceived
-                : State.AwaitingGeneralReferralPayment;
+        State targetState = getTargetState(caseData, submittedGa, canBeAutoReferred);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .state(targetState)
                 .build();
+    }
+
+    private static State getTargetState(CaseData caseData, GeneralApplication generalApplication, boolean canBeAutoReferred) {
+        ServicePaymentMethod paymentMethod = caseData.getGeneralApplication().getGeneralApplicationFee().getPaymentMethod();
+
+        State targetState = ServicePaymentMethod.FEE_PAY_BY_ACCOUNT.equals(paymentMethod)
+            ? State.GeneralApplicationReceived
+            : State.AwaitingGeneralApplicationPayment;
+
+        if (GeneralApplicationType.DISCLOSURE_VIA_DWP.equals(generalApplication.getGeneralApplicationType())) {
+            if (ServicePaymentMethod.FEE_PAY_BY_HWF.equals(paymentMethod)) {
+                targetState = State.AwaitingGeneralReferralPayment;
+            }
+
+            if (ServicePaymentMethod.FEE_PAY_BY_ACCOUNT.equals(paymentMethod) && canBeAutoReferred) {
+                targetState = State.AwaitingGeneralConsideration;
+            }
+        }
+        return targetState;
     }
 
     public SubmittedCallbackResponse submitted(CaseDetails<CaseData, State> details,
@@ -158,19 +192,20 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
 
     private PageBuilder addEventConfig(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         return new PageBuilder(configBuilder
-                .event(SOLICITOR_SUBMIT_GENERAL_APPLICATION)
-                .forStates(State.GENERAL_APPLICATION_STATES)
-                .name("Submit General Application")
-                .description("Submit General Application")
-                .showSummary()
-                .showEventNotes()
-                .showCondition("applicant1InterimApplicationType=\"digitisedGeneralApplicationD11\" "
-                        + "OR applicant2InterimApplicationType=\"digitisedGeneralApplicationD11\"")
-                .endButtonLabel("Submit Application")
-                .aboutToStartCallback(this::aboutToStart)
-                .aboutToSubmitCallback(this::aboutToSubmit)
-                .submittedCallback(this::submitted)
-                .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
-                .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
+            .event(SOLICITOR_SUBMIT_GENERAL_APPLICATION)
+            .forStates(State.GENERAL_APPLICATION_STATES)
+            .name("Submit General Application")
+            .description("Submit General Application")
+            .showSummary()
+            .showEventNotes()
+            .showCondition("applicant1InterimApplicationType=\"digitisedGeneralApplicationD11\" "
+                + "OR applicant2InterimApplicationType=\"digitisedGeneralApplicationD11\" "
+                + "OR applicant1InterimApplicationType=\"searchGovRecords\"")
+            .endButtonLabel("Submit Application")
+            .aboutToStartCallback(this::aboutToStart)
+            .aboutToSubmitCallback(this::aboutToSubmit)
+            .submittedCallback(this::submitted)
+            .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR, APPLICANT_2_SOLICITOR)
+            .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
 }
