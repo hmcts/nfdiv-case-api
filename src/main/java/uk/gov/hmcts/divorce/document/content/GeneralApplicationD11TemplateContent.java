@@ -58,6 +58,7 @@ public class GeneralApplicationD11TemplateContent {
     public static final String GENERAL_APPLICANT_SOLICITOR_FIRM_NAME = "generalApplicantSolicitorFirmName";
     public static final String IS_APP_REPRESENTED = "isApplicantRepresented";
     public static final String URGENT_CASE = "urgentCase";
+    public static final String URGENT_CASE_REASON = "urgentCaseReason";
 
     private static final String CONFIDENTIAL_PARTNER_PLACEHOLDER = "Details are confidential";
 
@@ -133,8 +134,12 @@ public class GeneralApplicationD11TemplateContent {
         templateContent.put(APPLICATION_REASON, applicationAnswers.getReason());
 
         final boolean hasProvidedEvidence = YesOrNo.YES.equals(interimApplicationOptions.getInterimAppsCanUploadEvidence());
+        final boolean hasUploadedEvidenceDocs =
+            interimApplicationOptions.getInterimAppsEvidenceDocs() != null
+                && !interimApplicationOptions.getInterimAppsEvidenceDocs().isEmpty();
+
         final boolean hasUploadedAllSupportingEvidence = hasProvidedEvidence
-            && !YesOrNo.YES.equals(interimApplicationOptions.getInterimAppsCannotUploadDocs());
+            && hasUploadedEvidenceDocs;
         templateContent.put(HAS_PROVIDED_EVIDENCE, YesOrNo.from(hasProvidedEvidence).getValue());
         templateContent.put(
             HAS_PROVIDED_STATEMENT,
@@ -153,6 +158,9 @@ public class GeneralApplicationD11TemplateContent {
         );
         templateContent.put(APPLICATION_TYPE_OTHER_DETAILS, applicationAnswers.getTypeOtherDetails());
         templateContent.put(URGENT_CASE, applicationAnswers.getUrgentCase());
+        if (YesOrNo.YES.equals(applicationAnswers.getUrgentCase())) {
+            templateContent.put(URGENT_CASE_REASON, applicationAnswers.getUrgentCaseReason());
+        }
 
 
         return templateContent;
