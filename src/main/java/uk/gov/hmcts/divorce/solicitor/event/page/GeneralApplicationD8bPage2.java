@@ -2,10 +2,8 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -37,7 +35,7 @@ public class GeneralApplicationD8bPage2 implements CcdPageConfiguration {
             page.showCondition(pageShowCondition);
         }
 
-        page .label("solGenAppD8bEvidenceLabel", DOCUMENT_UPLOAD_LABEL_CONTENT)
+        page.label("solGenAppD8bEvidenceLabel", DOCUMENT_UPLOAD_LABEL_CONTENT)
             .complex(CaseData::getGeneralApplication)
             .optional(GeneralApplication::getSolGeneralApplicationD8bDocuments)
             .done();
