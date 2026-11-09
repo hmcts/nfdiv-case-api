@@ -19,7 +19,6 @@ import uk.gov.hmcts.divorce.solicitor.event.page.SolicitorAmendD8bApplicationAct
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.DraftApplicationAction.AMEND;
 import static uk.gov.hmcts.divorce.divorcecase.model.DraftApplicationAction.WITHDRAW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GENERAL_APPLICATION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
