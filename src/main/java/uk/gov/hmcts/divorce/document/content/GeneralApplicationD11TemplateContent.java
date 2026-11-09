@@ -134,12 +134,8 @@ public class GeneralApplicationD11TemplateContent {
         templateContent.put(APPLICATION_REASON, applicationAnswers.getReason());
 
         final boolean hasProvidedEvidence = YesOrNo.YES.equals(interimApplicationOptions.getInterimAppsCanUploadEvidence());
-        final boolean hasUploadedEvidenceDocs =
-            interimApplicationOptions.getInterimAppsEvidenceDocs() != null
-                && !interimApplicationOptions.getInterimAppsEvidenceDocs().isEmpty();
-
-        final boolean hasUploadedAllSupportingEvidence = hasProvidedEvidence
-            && hasUploadedEvidenceDocs;
+        final boolean hasUploadedAllSupportingEvidence = isHasUploadedAllSupportingEvidence(interimApplicationOptions, applicant,
+            hasProvidedEvidence);
         templateContent.put(HAS_PROVIDED_EVIDENCE, YesOrNo.from(hasProvidedEvidence).getValue());
         templateContent.put(
             HAS_PROVIDED_STATEMENT,
@@ -164,6 +160,17 @@ public class GeneralApplicationD11TemplateContent {
 
 
         return templateContent;
+    }
+
+    private static boolean isHasUploadedAllSupportingEvidence(InterimApplicationOptions interimApplicationOptions, Applicant applicant,
+                                                              boolean hasProvidedEvidence) {
+        final boolean hasUploadedEvidenceDocs = interimApplicationOptions.getInterimAppsEvidenceDocs() != null
+                && !interimApplicationOptions.getInterimAppsEvidenceDocs().isEmpty();
+        boolean isRepresented = applicant.isRepresented();
+        final boolean cannotUploadDocs = !YesOrNo.YES.equals(interimApplicationOptions.getInterimAppsCannotUploadDocs());
+
+        return hasProvidedEvidence
+            && ((isRepresented && hasUploadedEvidenceDocs) || (!isRepresented && cannotUploadDocs));
     }
 
     private String getApplicantOrApplicant1Label(ApplicationType applicationType) {
