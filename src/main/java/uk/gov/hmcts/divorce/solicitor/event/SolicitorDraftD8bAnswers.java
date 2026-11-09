@@ -30,7 +30,7 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class SolicitorSubmitD8bAnswers implements CCDConfig<CaseData, State, UserRole> {
+public class SolicitorDraftD8bAnswers implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_D8B_ANSWER = "solicitor-d8b-answer";
 
