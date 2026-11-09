@@ -21,8 +21,6 @@ public class GeneralApplicationD8bPage1 implements CcdPageConfiguration {
 
             You will need to make an application to the court using Form D11 if you are submitting the answers out of time.
 
-            The fee for the Form D8b Answer to a divorce, dissolution, (judicial) separation application is £245.
-
             """;
 
     public static final String PAYMENT_LABEL = "Choose the method of payment for the application";
