@@ -81,12 +81,12 @@ public class SolicitorAmendSearchGovApplication implements CCDConfig<CaseData, S
             .event(SOLICITOR_AMEND_SEARCH_GOV_APPLICATION)
             .forStates(SOLICITOR_SERVICE_APPLICATION_AND_SEARCH_GOV_STATES)
             .showCondition("applicant1InterimApplicationType=\"searchGovRecords\"")
-            .name("Amend Search Gov")
-            .description("Amend Search Government Records")
+            .name("Amend General Application")
+            .description("Amend General Application")
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .endButtonLabel("Save Application")
+            .endButtonLabel("Submit")
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }

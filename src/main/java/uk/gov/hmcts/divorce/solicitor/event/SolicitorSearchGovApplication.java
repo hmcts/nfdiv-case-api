@@ -38,6 +38,10 @@ public class SolicitorSearchGovApplication implements CCDConfig<CaseData, State,
 
     public static final String SOLICITOR_SEARCH_GOV_APPLICATION = "solicitor-search-gov-application";
 
+    private static final String EVENT_SHOW_CONDITION = "applicant1InterimApplicationType!=\"searchGovRecords\" "
+        + "AND applicant1InterimApplicationType!=\"digitisedGeneralApplicationD11\"";
+
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
@@ -71,7 +75,7 @@ public class SolicitorSearchGovApplication implements CCDConfig<CaseData, State,
         return new PageBuilder(configBuilder
             .event(SOLICITOR_SEARCH_GOV_APPLICATION)
             .forStates(SOLICITOR_SERVICE_APPLICATION_AND_SEARCH_GOV_STATES)
-            .showCondition("applicant1InterimApplicationType!=\"searchGovRecords\"")
+            .showCondition(EVENT_SHOW_CONDITION)
             .name("Draft Search Gov")
             .description("Draft Search Government Records")
             .showSummary()
