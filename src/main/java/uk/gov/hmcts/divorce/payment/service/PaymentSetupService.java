@@ -16,6 +16,7 @@ import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_BAILIFF;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE_ANSWERS;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_NOTICE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_WITHOUT_NOTICE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_DIVORCE;
@@ -44,7 +45,7 @@ public class PaymentSetupService {
     }
 
     public OrderSummary createApplicationFeeOrderSummary(CaseData data, long caseId) {
-        if (data.getApplication() != null && data.getApplication().getApplicationFeeOrderSummary() != null) {
+        if (data.getApplication().getApplicationFeeOrderSummary() != null) {
             return data.getApplication().getApplicationFeeOrderSummary();
         }
 
@@ -134,6 +135,16 @@ public class PaymentSetupService {
             responsibleParty,
             feeDetails.getOrderSummary()
         );
+    }
+
+    public OrderSummary createSolicitorD8bFeeOrderSummary(CaseData data, long caseId) {
+        if (data.getApplication() != null && data.getAcknowledgementOfService().getDisputingFee().getOrderSummary() != null) {
+            return data.getAcknowledgementOfService().getDisputingFee().getOrderSummary();
+        }
+
+        log.info("Disputing application fee order summary not found for case id: {}, creating order summary", caseId);
+
+        return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DIVORCE_ANSWERS);
     }
 
     public static String getPaymentCallbackUrl() {
