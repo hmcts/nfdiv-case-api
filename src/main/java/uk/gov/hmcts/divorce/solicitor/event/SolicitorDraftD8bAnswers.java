@@ -14,11 +14,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationD8bPage1;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationD8bPage2;
 
 import java.util.List;
 
+import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -33,6 +35,8 @@ import static uk.gov.hmcts.divorce.divorcecase.model.access.Permissions.CREATE_R
 public class SolicitorDraftD8bAnswers implements CCDConfig<CaseData, State, UserRole> {
 
     public static final String SOLICITOR_D8B_ANSWER = "solicitor-d8b-answer";
+
+    private final PaymentSetupService paymentSetupService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -55,6 +59,12 @@ public class SolicitorDraftD8bAnswers implements CCDConfig<CaseData, State, User
         final CaseData caseData = details.getData();
         InterimApplicationOptions options = caseData.getApplicant2().getInterimApplicationOptions();
         options.setInterimApplicationType(InterimApplicationType.SOLICITOR_D8B_ANSWERS);
+
+        if (FEE_PAY_BY_ACCOUNT.equals(caseData.getApplicant2().getInterimApplicationOptions().getInterimAppsPaymentMethod())) {
+            caseData.getAcknowledgementOfService().getDisputingFee().setOrderSummary(
+                paymentSetupService.createSolicitorD8bFeeOrderSummary(caseData, details.getId())
+            );
+        }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
