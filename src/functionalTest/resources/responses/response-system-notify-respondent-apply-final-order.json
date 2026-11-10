@@ -6,7 +6,13 @@
     "applicant1FinancialOrder": "No",
     "applicant1FirstName": "test_first_name_male",
     "applicant1Gender": "male",
-    "applicant1Address": {},
+    "applicant1Address": {
+      "AddressLine1": "221a Baker Street",
+      "PostTown": "London",
+      "County": "Greater London",
+      "PostCode": "NW1 6XE",
+      "Country": "United Kingdom"
+    },
     "sentNotifications": {},
     "changeOfRepresentatives": [],
     "coCronRetriesRemindApplicantApplyCo": 0,
@@ -21,7 +27,13 @@
     "applicant2FinancialOrder": "No",
     "applicant2FirstName": "test_first_name_female",
     "applicant2Gender": "female",
-    "applicant2Address": {},
+    "applicant2Address": {
+      "AddressLine1": "221a Baker Street",
+      "PostTown": "London",
+      "County": "Greater London",
+      "PostCode": "NW1 6XE",
+      "Country": "United Kingdom"
+    },
     "applicant2InviteEmailAddress": "simulate-delivered@notifications.service.gov.uk",
     "applicant2LanguagePreferenceWelsh": "No",
     "applicant2LastName": "test_last_name",

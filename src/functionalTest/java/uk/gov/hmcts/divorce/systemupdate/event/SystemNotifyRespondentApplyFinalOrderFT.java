@@ -78,7 +78,7 @@ public class SystemNotifyRespondentApplyFinalOrderFT extends FunctionalTestSuite
 
     @Test
     @EnabledIfEnvironmentVariable(named = "ELASTIC_SEARCH_ENABLED", matches = "true")
-    public void shouldSearchForRespodentEligibleToApplyForFinalOrderCases() {
+    public void shouldSearchForRespondentEligibleToApplyForFinalOrderCases() {
         final BoolQueryBuilder query =
             boolQuery()
                 .must(matchQuery(STATE, AwaitingFinalOrder))

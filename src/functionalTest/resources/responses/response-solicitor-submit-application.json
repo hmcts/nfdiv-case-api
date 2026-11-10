@@ -18,7 +18,13 @@
       ]
     },
     "divorceWho": "wife",
-    "applicant1Address": {},
+    "applicant1Address": {
+      "AddressLine1": "221a Baker Street",
+      "PostTown": "London",
+      "County": "Greater London",
+      "PostCode": "NW1 6XE",
+      "Country": "United Kingdom"
+    },
     "changeOfRepresentatives": [],
     "dataVersion": 5,
     "sentNotifications": {},
