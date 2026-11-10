@@ -63,6 +63,7 @@ public class SolicitorAmendD8bAnswers implements CCDConfig<CaseData, State, User
 
         if (WITHDRAW.equals(interimApplicationOptions.getDraftApplicationAction())) {
             interimApplicationOptions.setInterimAppsPaymentMethod(null);
+            interimApplicationOptions.setInterimApplicationType(null);
             caseData.getGeneralApplication().setSolGeneralApplicationD8bDocuments(null);
         }
 

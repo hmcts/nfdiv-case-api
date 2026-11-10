@@ -22,6 +22,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.divorce.divorcecase.model.DraftApplicationAction.AMEND;
 import static uk.gov.hmcts.divorce.divorcecase.model.DraftApplicationAction.WITHDRAW;
+import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.SOLICITOR_D8B_ANSWERS;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorAmendD8bAnswers.SOLICITOR_AMEND_D8B_ANSWERS;
@@ -58,6 +59,7 @@ class SolicitorAmendD8bAnswersTest {
 
         assertThat(response.getData().getGeneralApplication().getSolGeneralApplicationD8bDocuments()).isNull();
         assertThat(response.getData().getApplicant2().getInterimApplicationOptions().getInterimAppsPaymentMethod()).isNull();
+        assertThat(response.getData().getApplicant2().getInterimApplicationOptions().getInterimApplicationType()).isNull();
     }
 
     @Test
@@ -71,12 +73,16 @@ class SolicitorAmendD8bAnswersTest {
 
         assertThat(response.getData().getGeneralApplication().getSolGeneralApplicationD8bDocuments()).isNotNull();
         assertThat(response.getData().getApplicant2().getInterimApplicationOptions().getInterimAppsPaymentMethod()).isNotNull();
+        assertThat(response.getData().getApplicant2().getInterimApplicationOptions().getInterimApplicationType()).isNotNull();
+
     }
 
     private CaseData buildCaseData(DraftApplicationAction draftApplicationAction) {
         Applicant respondent = respondentWithDigitalSolicitor();
         respondent.setInterimApplicationOptions(InterimApplicationOptions.builder()
-            .interimAppsPaymentMethod(FEE_PAY_BY_ACCOUNT).draftApplicationAction(draftApplicationAction).build());
+            .interimAppsPaymentMethod(FEE_PAY_BY_ACCOUNT)
+            .draftApplicationAction(draftApplicationAction)
+            .interimApplicationType(SOLICITOR_D8B_ANSWERS).build());
 
         final ListValue<DivorceDocument> documentListValue = ListValue.<DivorceDocument>builder()
             .value(DivorceDocument.builder()
