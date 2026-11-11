@@ -15,9 +15,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.DraftApplicationAction;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
+import uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 
 import java.util.List;
 import java.util.OptionalInt;
@@ -45,6 +48,8 @@ public class GeneralApplicationDraftSubmissionService {
 
     private final HttpServletRequest request;
 
+    private final PaymentSetupService paymentSetupService;
+
     public void buildGeneralApplication(CaseDetails<CaseData, State> details, CaseData caseData, Applicant applicant) {
         InterimApplicationOptions options = applicant.getInterimApplicationOptions();
 
@@ -61,8 +66,6 @@ public class GeneralApplicationDraftSubmissionService {
             return;
         }
 
-        boolean isApplicant1 = isApplicant1(details.getId());
-
         log.info("Building general application from interim options for case id: {}", details.getId());
         OptionalInt draftIndex = findDraftIndex(caseData, applicant);
         List<ListValue<GeneralApplication>> generalApplications = caseData.getGeneralApplications();
@@ -72,24 +75,36 @@ public class GeneralApplicationDraftSubmissionService {
             existingDraft = generalApplications.get(draftIndex.getAsInt()).getValue();
         }
 
-        GeneralApplication generalApplication = generalApplicationFactory.createFromJourneyOptions(options, isApplicant1,
-            caseData.getApplicationType());
-        caseData.setGeneralApplication(generalApplication);
-
-        String reusableServiceRequestReference = resolveReusableServiceRequestReference(existingDraft, options, generalApplication);
-
-        paymentPreparationService.prepareDraftGeneralApplicationFee(details.getId(), applicant, options, generalApplication,
-            reusableServiceRequestReference);
-
-        DivorceDocument applicationDocument = submissionService.generateGeneralApplicationAnswerDocument(
-            details.getId(), applicant, caseData, generalApplication);
-
-        generalApplication.setGeneralApplicationDocument(applicationDocument);
-
-        if (draftIndex.isPresent()) {
-            generalApplications.get(draftIndex.getAsInt()).setValue(generalApplication);
+        if (InterimApplicationType.SOLICITOR_D8B_ANSWERS.equals(options.getInterimApplicationType())) {
+            if (SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT.equals(caseData.getApplicant2()
+                .getInterimApplicationOptions().getInterimAppsPaymentMethod())) {
+                caseData.getAcknowledgementOfService().getDisputingFee().setOrderSummary(
+                    paymentSetupService.createSolicitorD8bFeeOrderSummary(caseData, details.getId())
+                );
+            }
         } else {
-            caseData.updateCaseWithGeneralApplication(generalApplication);
+
+            boolean isApplicant1 = isApplicant1(details.getId());
+
+            GeneralApplication generalApplication = generalApplicationFactory.createFromJourneyOptions(options, isApplicant1,
+                caseData.getApplicationType());
+            caseData.setGeneralApplication(generalApplication);
+
+            String reusableServiceRequestReference = resolveReusableServiceRequestReference(existingDraft, options, generalApplication);
+
+            paymentPreparationService.prepareDraftGeneralApplicationFee(details.getId(), applicant, options, generalApplication,
+                reusableServiceRequestReference);
+
+            DivorceDocument applicationDocument = submissionService.generateGeneralApplicationAnswerDocument(
+                details.getId(), applicant, caseData, generalApplication);
+
+            generalApplication.setGeneralApplicationDocument(applicationDocument);
+
+            if (draftIndex.isPresent()) {
+                generalApplications.get(draftIndex.getAsInt()).setValue(generalApplication);
+            } else {
+                caseData.updateCaseWithGeneralApplication(generalApplication);
+            }
         }
         applicant.getInterimApplicationOptions().setDraftApplicationAction(null);
     }
