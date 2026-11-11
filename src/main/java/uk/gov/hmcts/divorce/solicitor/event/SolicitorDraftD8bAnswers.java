@@ -17,6 +17,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationD8bPage1;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationD8bPage2;
+import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationDraftJourneyService;
 
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class SolicitorDraftD8bAnswers implements CCDConfig<CaseData, State, User
     public static final String SOLICITOR_D8B_ANSWER = "solicitor-d8b-answer";
 
     private final PaymentSetupService paymentSetupService;
+    private final GeneralApplicationDraftJourneyService generalApplicationDraftJourneyService;
 
     @Override
     public void configure(ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -57,15 +59,10 @@ public class SolicitorDraftD8bAnswers implements CCDConfig<CaseData, State, User
         log.info("{} about to submit callback invoked for Case Id: {}", SOLICITOR_D8B_ANSWER, details.getId());
 
         final CaseData caseData = details.getData();
-        InterimApplicationOptions options = caseData.getApplicant2().getInterimApplicationOptions();
-        options.setInterimApplicationType(InterimApplicationType.SOLICITOR_D8B_ANSWERS);
 
-        if (FEE_PAY_BY_ACCOUNT.equals(caseData.getApplicant2().getInterimApplicationOptions().getInterimAppsPaymentMethod())) {
-            caseData.getAcknowledgementOfService().getDisputingFee().setOrderSummary(
-                paymentSetupService.createSolicitorD8bFeeOrderSummary(caseData, details.getId())
-            );
-        }
-
+        generalApplicationDraftJourneyService.prepareAboutToSubmit(details,
+            caseData.getApplicant2(), InterimApplicationType.SOLICITOR_D8B_ANSWERS);
+        
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();
