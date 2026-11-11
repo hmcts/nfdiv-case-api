@@ -103,10 +103,8 @@ public class AlternativeServiceApplicationTemplateContent implements TemplateCon
         if (YesOrNo.YES.equals(interimApplicationOptions.getInterimAppsCanUploadEvidence())) {
             templateContent.put(ALTERNATIVE_SERVICE_METHOD_ACTIVE,
                 YesOrNo.YES.equals(applicationAnswers.getAltServiceMethodActive()) ? TRUE : FALSE);
-            templateContent.put(ALTERNATIVE_SERVICE_EVIDENCE_DATE, YesOrNo.YES.equals(applicationAnswers.getAltServiceMethodActive())
-                    ? applicationAnswers.getAltServiceDateOfEvidence().format(
-                        getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference()))
-                    : "");
+            templateContent.put(ALTERNATIVE_SERVICE_EVIDENCE_DATE, applicationAnswers.getAltServiceDateOfEvidence().format(
+                getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
         }
 
         return templateContent;
