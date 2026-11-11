@@ -202,7 +202,9 @@ public class GeneralApplicationD11SubmittedNotification implements GeneralApplic
             GeneralApplicationType.OTHER,
             String.format("Your general application relating to this %s case has been submitted", divorceOrDissolution),
             GeneralApplicationType.WITHDRAW_POST_ISSUE,
-            String.format("Your application to withdraw this %s case has been submitted", divorceOrDissolution)
+            String.format("Your application to withdraw this %s case has been submitted", divorceOrDissolution),
+            GeneralApplicationType.DISCLOSURE_VIA_DWP,
+            "Your application to search government records for the respondent's details has been submitted"
         );
     }
 
