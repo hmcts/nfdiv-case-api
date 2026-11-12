@@ -643,5 +643,26 @@ public enum State {
         Rejected,
         Archived
     ));
+
+    public static final EnumSet<State> SOLICITOR_SERVICE_APPLICATION_AND_SEARCH_GOV_STATES = EnumSet.of(
+        AosOverdue,
+        AwaitingHWFDecision,
+        AwaitingDocuments,
+        AwaitingRequestedInformation,
+        NewPaperCase,
+        RequestedInformationSubmitted,
+        Submitted
+    );
+
+    public static final EnumSet<State> GENERAL_APPLICATION_STATES = EnumSet.complementOf(EnumSet.of(
+        Draft,
+        AwaitingApplicant1Response,
+        AwaitingApplicant2Response,
+        Applicant2Approved,
+        AwaitingPayment,
+        Withdrawn,
+        Rejected,
+        Archived
+    ));
 }
 
