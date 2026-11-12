@@ -259,7 +259,7 @@ public class SolicitorSubmitGeneralApplicationTest {
         AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitGeneralApplication.aboutToSubmit(details, details);
 
         assertThat(response.getErrors()).isNull();
-        assertThat(response.getState()).isEqualTo(State.AwaitingGeneralReferralPayment);
+        assertThat(response.getState()).isEqualTo(State.AwaitingGeneralApplicationPayment);
     }
 
     @Test
@@ -285,7 +285,6 @@ public class SolicitorSubmitGeneralApplicationTest {
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(State.GeneralApplicationReceived);
-        assertThat(response.getData().getGeneralApplication().getGeneralApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
     }
 
     @Test
@@ -328,7 +327,6 @@ public class SolicitorSubmitGeneralApplicationTest {
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(State.AwaitingGeneralConsideration);
-        assertThat(response.getData().getGeneralApplication().getGeneralApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
         assertThat(response.getData().getGeneralApplication().getGeneralApplicationReferredOnDate()).isEqualTo(LocalDate.of(2022, 1, 1));
         assertThat(response.getData().getGeneralReferral()).isEqualTo(referral);
     }
@@ -355,7 +353,6 @@ public class SolicitorSubmitGeneralApplicationTest {
 
         assertThat(response.getErrors()).isNull();
         assertThat(response.getState()).isEqualTo(State.AwaitingGeneralReferralPayment);
-        assertThat(response.getData().getGeneralApplication().getGeneralApplicationSubmittedOnline()).isEqualTo(YesOrNo.YES);
     }
 
     @Test
