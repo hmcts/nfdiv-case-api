@@ -15,7 +15,6 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.RespondentSolicitorAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;

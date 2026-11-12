@@ -37,7 +37,6 @@ public class SolicitorDraftD8bAnswers implements CCDConfig<CaseData, State, User
 
     public static final String SOLICITOR_D8B_ANSWER = "solicitor-d8b-answer";
 
-    private final PaymentSetupService paymentSetupService;
     private final GeneralApplicationDraftJourneyService generalApplicationDraftJourneyService;
 
     @Override
@@ -62,7 +61,7 @@ public class SolicitorDraftD8bAnswers implements CCDConfig<CaseData, State, User
 
         generalApplicationDraftJourneyService.prepareAboutToSubmit(details,
             caseData.getApplicant2(), InterimApplicationType.SOLICITOR_D8B_ANSWERS);
-        
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();

@@ -83,7 +83,7 @@ public class GeneralApplicationDraftSubmissionService {
         String reusableServiceRequestReference = resolveReusableServiceRequestReference(existingDraft, options, generalApplication);
 
         paymentPreparationService.prepareDraftGeneralApplicationFee(details.getId(), applicant, options, generalApplication,
-            reusableServiceRequestReference, caseData);
+            reusableServiceRequestReference);
 
         if (!SOLICITOR_D8B_ANSWERS.equals(options.getInterimApplicationType())) {
             DivorceDocument applicationDocument = submissionService.generateGeneralApplicationAnswerDocument(
@@ -116,7 +116,7 @@ public class GeneralApplicationDraftSubmissionService {
         ServicePaymentMethod oldMethod = existingDraft.getGeneralApplicationFee().getPaymentMethod();
 
         boolean sameAccountMethod = FEE_PAY_BY_ACCOUNT.equals(oldMethod) && FEE_PAY_BY_ACCOUNT.equals(newMethod);
-        boolean sameFeeType = existingDraft.getGeneralApplicationFeeType() == (options.isHearingRequired() ? FEE0227 : FEE0228);
+        boolean sameFeeType = existingDraft.getGeneralApplicationFeeType() == rebuiltDraft.getGeneralApplicationFeeType();
 
         return (sameAccountMethod && sameFeeType)
             ? existingDraft.getGeneralApplicationFee().getServiceRequestReference()

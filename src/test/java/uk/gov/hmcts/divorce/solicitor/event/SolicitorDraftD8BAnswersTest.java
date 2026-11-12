@@ -18,9 +18,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorDraftD8bAnswers.SOLICITOR_D8B_ANSWER;
@@ -59,8 +57,6 @@ class SolicitorDraftD8BAnswersTest {
 
         OrderSummary orderSummary = OrderSummary.builder().paymentTotal("240").build();
 
-        when(paymentSetupService.createSolicitorD8bFeeOrderSummary(caseData, TEST_CASE_ID)).thenReturn(orderSummary);
-
         var response = solicitorDraftD8BAnswers.aboutToSubmit(caseDetails, caseDetails);
 
         assertThat(response.getData().getAcknowledgementOfService()
@@ -68,7 +64,6 @@ class SolicitorDraftD8BAnswersTest {
 
         assertThat(response.getData().getApplicant2().getInterimApplicationOptions()
             .getInterimApplicationType()).isEqualTo(InterimApplicationType.SOLICITOR_D8B_ANSWERS);
-        verify(paymentSetupService).createSolicitorD8bFeeOrderSummary(caseData, TEST_CASE_ID);
     }
 
     @Test

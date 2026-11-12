@@ -289,37 +289,6 @@ class PaymentSetupServiceTest {
     }
 
     @Test
-    void shouldCreateAosDisputingFeeServiceRequestIfDoesNotAlreadyExist() {
-        final CaseData caseData = new CaseData();
-        final OrderSummary orderSummary = OrderSummary.builder().build();
-
-        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DIVORCE_ANSWERS))
-            .thenReturn(orderSummary);
-
-        OrderSummary response = paymentSetupService.createSolicitorD8bFeeOrderSummary(
-            caseData, TEST_CASE_ID
-        );
-
-        verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DIVORCE_ANSWERS);
-        assertThat(response).isEqualTo(orderSummary);
-    }
-
-    @Test
-    void shouldNotCreateAosDisputingFeeServiceRequestIfDoesNotAlreadyExist() {
-        final CaseData caseData = new CaseData();
-        final OrderSummary orderSummary = OrderSummary.builder().build();
-        caseData.getAcknowledgementOfService().getDisputingFee().setOrderSummary(orderSummary);
-
-        OrderSummary response = paymentSetupService.createSolicitorD8bFeeOrderSummary(
-            caseData, TEST_CASE_ID
-        );
-
-        assertThat(response).isEqualTo(orderSummary);
-        verifyNoInteractions(paymentService);
-    }
-
-
-    @Test
     void shouldCreateGeneralApplicationFeeOrderSummary() {
         final CaseData caseData = new CaseData();
         final OrderSummary orderSummary = OrderSummary.builder().build();
