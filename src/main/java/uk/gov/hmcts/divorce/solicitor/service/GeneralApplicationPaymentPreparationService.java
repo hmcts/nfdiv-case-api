@@ -7,9 +7,11 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
+import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
@@ -39,18 +41,48 @@ public class GeneralApplicationPaymentPreparationService {
         String existingServiceRequestReference
     ) {
         generalApplication.setGeneralApplicationFeeType(options.isHearingRequired() ? FEE0227 : FEE0228);
-
         FeeDetails fee = generalApplication.getGeneralApplicationFee();
+        prepareFee(caseId, applicant, options, generalApplication, fee,
+            existingServiceRequestReference, null, InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11);
+    }
+
+    public void prepareDraftD8bAnswersFee(
+        long caseId,
+        CaseData caseData,
+        InterimApplicationOptions options,
+        GeneralApplication generalApplication,
+        String existingServiceRequestReference
+    ) {
+        Applicant applicant = caseData.getApplicant2();
+        FeeDetails fee = caseData.getGeneralApplication().getGeneralApplicationFee();
+        prepareFee(caseId, applicant, options, generalApplication, fee, existingServiceRequestReference, caseData, InterimApplicationType.SOLICITOR_D8B_ANSWERS);
+    }
+
+    private void prepareFee(
+        long caseId,
+        Applicant applicant,
+        InterimApplicationOptions options,
+        GeneralApplication generalApplication,
+        FeeDetails fee,
+        String existingServiceRequestReference,
+        CaseData caseData,
+        InterimApplicationType applicationType
+    ) {
         ServicePaymentMethod paymentMethod =
             FEES_HELP_WITH.equals(options.getInterimAppsPaymentMethod()) ? FEE_PAY_BY_HWF : FEE_PAY_BY_ACCOUNT;
 
         fee.setPaymentMethod(paymentMethod);
 
-        log.info("Preparing draft general application fee for case id: {}, payment method: {}", caseId, paymentMethod);
+        log.info("Preparing draft fee for case id: {}, payment method: {}", caseId, paymentMethod);
 
         if (FEE_PAY_BY_ACCOUNT.equals(paymentMethod)) {
-            OrderSummary orderSummary = paymentSetupService.createGeneralApplicationOrderSummary(caseId, generalApplication
-                .getGeneralApplicationFeeType());
+            OrderSummary orderSummary;
+            if (InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11.equals(applicationType)) {
+                orderSummary = paymentSetupService.createGeneralApplicationOrderSummary(caseId, generalApplication.getGeneralApplicationFeeType());
+            } else {
+                orderSummary = paymentSetupService.createSolicitorD8bFeeOrderSummary(caseData, caseId);
+            }
+
             fee.setOrderSummary(orderSummary);
 
             generalApplication.setSolGeneralApplicationFeeInPounds(

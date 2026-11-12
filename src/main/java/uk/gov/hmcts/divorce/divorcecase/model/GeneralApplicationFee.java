@@ -13,7 +13,10 @@ public enum GeneralApplicationFee implements HasLabel {
     FEE0227("Application on Notice (FEE0227)"),
 
     @JsonProperty("FEE0228")
-    FEE0228("Application without notice (FEE0228)");
+    FEE0228("Application without notice (FEE0228)"),
+
+    @JsonProperty("FEE0233")
+    FEE0233("Answer to application for matrimonial/civil partnership order (FEE0233)");
 
     private final String label;
 }

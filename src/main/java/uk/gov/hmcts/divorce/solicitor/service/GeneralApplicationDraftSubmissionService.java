@@ -66,31 +66,24 @@ public class GeneralApplicationDraftSubmissionService {
             return;
         }
 
-        log.info("Building general application from interim options for case id: {}", details.getId());
-        OptionalInt draftIndex = findDraftIndex(caseData, applicant);
-        List<ListValue<GeneralApplication>> generalApplications = caseData.getGeneralApplications();
-
-        GeneralApplication existingDraft = null;
-        if (draftIndex.isPresent()) {
-            existingDraft = generalApplications.get(draftIndex.getAsInt()).getValue();
-        }
-
         if (InterimApplicationType.SOLICITOR_D8B_ANSWERS.equals(options.getInterimApplicationType())) {
-            if (SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT.equals(caseData.getApplicant2()
-                .getInterimApplicationOptions().getInterimAppsPaymentMethod())) {
-                caseData.getAcknowledgementOfService().getDisputingFee().setOrderSummary(
-                    paymentSetupService.createSolicitorD8bFeeOrderSummary(caseData, details.getId())
-                );
-            }
-        } else {
+            log.info("Building general application for d8b answers for case id: {}", details.getId());
+            GeneralApplication generalApplication = caseData.getGeneralApplication();
 
+            String reusableServiceRequestReference = prepareGeneralApplication(caseData, options, applicant, generalApplication);
+
+            paymentPreparationService.prepareDraftD8bAnswersFee(details.getId(), caseData, options, generalApplication,
+                reusableServiceRequestReference);
+        } else {
             boolean isApplicant1 = isApplicant1(details.getId());
 
             GeneralApplication generalApplication = generalApplicationFactory.createFromJourneyOptions(options, isApplicant1,
                 caseData.getApplicationType());
             caseData.setGeneralApplication(generalApplication);
 
-            String reusableServiceRequestReference = resolveReusableServiceRequestReference(existingDraft, options, generalApplication);
+            log.info("Building general application from interim options for case id: {}", details.getId());
+
+            String reusableServiceRequestReference = prepareGeneralApplication(caseData, options, applicant, generalApplication);
 
             paymentPreparationService.prepareDraftGeneralApplicationFee(details.getId(), applicant, options, generalApplication,
                 reusableServiceRequestReference);
@@ -99,14 +92,29 @@ public class GeneralApplicationDraftSubmissionService {
                 details.getId(), applicant, caseData, generalApplication);
 
             generalApplication.setGeneralApplicationDocument(applicationDocument);
-
-            if (draftIndex.isPresent()) {
-                generalApplications.get(draftIndex.getAsInt()).setValue(generalApplication);
-            } else {
-                caseData.updateCaseWithGeneralApplication(generalApplication);
-            }
         }
+
         applicant.getInterimApplicationOptions().setDraftApplicationAction(null);
+    }
+
+    private String prepareGeneralApplication(CaseData caseData, InterimApplicationOptions options,
+                                           Applicant applicant, GeneralApplication generalApplication) {
+
+        OptionalInt draftIndex = findDraftIndex(caseData, applicant);
+        List<ListValue<GeneralApplication>> generalApplications = caseData.getGeneralApplications();
+
+        GeneralApplication existingDraft = null;
+        if (draftIndex.isPresent()) {
+            existingDraft = generalApplications.get(draftIndex.getAsInt()).getValue();
+        }
+
+        if (draftIndex.isPresent()) {
+            generalApplications.get(draftIndex.getAsInt()).setValue(generalApplication);
+        } else {
+            caseData.updateCaseWithGeneralApplication(generalApplication);
+        }
+
+        return resolveReusableServiceRequestReference(existingDraft, options, generalApplication);
     }
 
     private String resolveReusableServiceRequestReference(
