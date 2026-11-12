@@ -60,6 +60,7 @@ public class GeneralApplicationDraftSubmissionService {
             draftIndex.ifPresent(index -> citizenWithdrawGeneralApplication.handleRemovalOfGeneralApplication(caseData, index));
 
             applicant.setInterimApplicationOptions(null);
+            applicant.setActiveGeneralApplication(null);
             return;
         }
 
