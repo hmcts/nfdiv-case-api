@@ -172,13 +172,6 @@ public class GeneralApplication {
     )
     private String solGeneralApplicationFeeInPounds;
 
-    @CCD(
-        label = "Respondent uploaded documents",
-        access = {RespondentSolicitorAccess.class},
-        searchable = false
-    )
-    private List<ListValue<DivorceDocument>> solGeneralApplicationD8bDocuments;
-
     @JsonIgnore
     public void recordPayment(String paymentReference, LocalDate dateOfPayment) {
 

@@ -68,7 +68,7 @@ public class GeneralApplicationPaymentPreparationServiceTest {
             .build();
 
         generalApplicationPaymentPreparationService.prepareDraftGeneralApplicationFee(TEST_CASE_ID, applicant, options, generalApplication,
-            null);
+            null, null);
 
         assertThat(feeDetails.getPaymentMethod()).isEqualTo(ServicePaymentMethod.FEE_PAY_BY_ACCOUNT);
         assertThat(feeDetails.getServiceRequestReference()).isEqualTo("SR-123");
@@ -98,7 +98,7 @@ public class GeneralApplicationPaymentPreparationServiceTest {
         GeneralApplication generalApplication = GeneralApplication.builder().generalApplicationFee(feeDetails).build();
 
         generalApplicationPaymentPreparationService.prepareDraftGeneralApplicationFee(
-            TEST_CASE_ID, applicant, options, generalApplication, null);
+            TEST_CASE_ID, applicant, options, generalApplication, null, null);
 
         assertThat(generalApplication.getGeneralApplicationFeeType()).isEqualTo(FEE0228);
         assertThat(feeDetails.getPaymentMethod()).isEqualTo(ServicePaymentMethod.FEE_PAY_BY_ACCOUNT);
@@ -119,7 +119,7 @@ public class GeneralApplicationPaymentPreparationServiceTest {
         GeneralApplication generalApplication = GeneralApplication.builder().generalApplicationFee(feeDetails).build();
 
         generalApplicationPaymentPreparationService.prepareDraftGeneralApplicationFee(
-            TEST_CASE_ID, applicant, options, generalApplication, "ref");
+            TEST_CASE_ID, applicant, options, generalApplication, "ref", null);
 
         assertThat(feeDetails.getPaymentMethod()).isEqualTo(ServicePaymentMethod.FEE_PAY_BY_HWF);
         assertThat(feeDetails.getServiceRequestReference()).isNull();
@@ -150,7 +150,7 @@ public class GeneralApplicationPaymentPreparationServiceTest {
         String existingReference = "SR-EXISTING-999";
 
         generalApplicationPaymentPreparationService.prepareDraftGeneralApplicationFee(
-            TEST_CASE_ID, applicant, options, generalApplication, existingReference
+            TEST_CASE_ID, applicant, options, generalApplication, existingReference, null
         );
 
         assertThat(generalApplication.getGeneralApplicationFeeType()).isEqualTo(FEE0228);

@@ -21,6 +21,7 @@ import java.text.NumberFormat;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0228;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0233;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_HWF;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
@@ -38,36 +39,28 @@ public class GeneralApplicationPaymentPreparationService {
         Applicant applicant,
         InterimApplicationOptions options,
         GeneralApplication generalApplication,
-        String existingServiceRequestReference
+        String existingServiceRequestReference,
+        CaseData caseData
     ) {
-        generalApplication.setGeneralApplicationFeeType(options.isHearingRequired() ? FEE0227 : FEE0228);
+        generalApplication.setGeneralApplicationFeeType(
+            InterimApplicationType.SOLICITOR_D8B_ANSWERS.equals(options.getInterimApplicationType())
+                ? FEE0233 : options.isHearingRequired() ? FEE0227 : FEE0228);
+
         FeeDetails fee = generalApplication.getGeneralApplicationFee();
-        prepareFee(caseId, applicant, options, generalApplication, fee,
-            existingServiceRequestReference, null, InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11);
+        prepareDraftFee(caseId, applicant, options, generalApplication, fee,
+            existingServiceRequestReference, options.getInterimApplicationType(), caseData);
     }
 
-    public void prepareDraftD8bAnswersFee(
-        long caseId,
-        CaseData caseData,
-        InterimApplicationOptions options,
-        GeneralApplication generalApplication,
-        String existingServiceRequestReference
-    ) {
-        Applicant applicant = caseData.getApplicant2();
-        FeeDetails fee = caseData.getGeneralApplication().getGeneralApplicationFee();
-        prepareFee(caseId, applicant, options, generalApplication, fee, existingServiceRequestReference, caseData, InterimApplicationType.SOLICITOR_D8B_ANSWERS);
-    }
-
-    private void prepareFee(
+    private void prepareDraftFee(
         long caseId,
         Applicant applicant,
         InterimApplicationOptions options,
         GeneralApplication generalApplication,
         FeeDetails fee,
         String existingServiceRequestReference,
-        CaseData caseData,
-        InterimApplicationType applicationType
-    ) {
+        InterimApplicationType applicationType,
+        CaseData caseData
+        ) {
         ServicePaymentMethod paymentMethod =
             FEES_HELP_WITH.equals(options.getInterimAppsPaymentMethod()) ? FEE_PAY_BY_HWF : FEE_PAY_BY_ACCOUNT;
 

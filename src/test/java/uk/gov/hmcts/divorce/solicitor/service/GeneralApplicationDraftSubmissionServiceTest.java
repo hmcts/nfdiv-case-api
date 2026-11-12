@@ -91,7 +91,7 @@ public class GeneralApplicationDraftSubmissionServiceTest {
 
         verify(generalApplicationFactory).createFromJourneyOptions(options, true, caseData.getApplicationType());
         verify(paymentPreparationService).prepareDraftGeneralApplicationFee(TEST_CASE_ID, applicant, options, generalApplication,
-            null);
+            null, caseData);
         verify(submissionService).generateGeneralApplicationAnswerDocument(TEST_CASE_ID, applicant, caseData, generalApplication);
     }
 
@@ -121,7 +121,7 @@ public class GeneralApplicationDraftSubmissionServiceTest {
 
         verify(generalApplicationFactory).createFromJourneyOptions(options, false, caseData.getApplicationType());
         verify(paymentPreparationService).prepareDraftGeneralApplicationFee(TEST_CASE_ID, applicant, options, generalApplication,
-            null);
+            null, caseData);
         verify(submissionService).generateGeneralApplicationAnswerDocument(TEST_CASE_ID, applicant, caseData, generalApplication);
     }
 
@@ -144,7 +144,7 @@ public class GeneralApplicationDraftSubmissionServiceTest {
             .thenReturn(generalApplication);
         doThrow(new RuntimeException("payment failed"))
             .when(paymentPreparationService).prepareDraftGeneralApplicationFee(TEST_CASE_ID, applicant, options, generalApplication,
-                null);
+                null, caseData);
 
         CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
 
@@ -250,7 +250,7 @@ public class GeneralApplicationDraftSubmissionServiceTest {
         generalApplicationDraftSubmissionService.buildGeneralApplication(details, caseData, applicant);
 
         verify(paymentPreparationService).prepareDraftGeneralApplicationFee(
-            TEST_CASE_ID, applicant, options, rebuiltDraft, existingServiceRequestReference
+            TEST_CASE_ID, applicant, options, rebuiltDraft, existingServiceRequestReference, null
         );
 
         assertEquals(1, caseData.getGeneralApplications().size());
