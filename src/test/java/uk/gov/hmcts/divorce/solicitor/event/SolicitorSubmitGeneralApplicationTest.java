@@ -14,18 +14,28 @@ import uk.gov.hmcts.ccd.sdk.api.Event;
 import uk.gov.hmcts.ccd.sdk.api.Permission;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.GeneralApplicationD11SubmittedNotification;
+import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
+import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralReason;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferralType;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 import uk.gov.hmcts.divorce.solicitor.service.CcdAccessService;
 import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationDraftSubmissionService;
 import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationSubmitPaymentService;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -63,6 +73,12 @@ public class SolicitorSubmitGeneralApplicationTest {
 
     @Mock
     private GeneralApplicationDraftSubmissionService generalApplicationDraftSubmissionService;
+
+    @Mock
+    private CitizenGeneralApplicationSubmissionService citizenGeneralApplicationSubmissionService;
+
+    @Mock
+    private GeneralReferralService generalReferralService;
 
     @Mock
     private GeneralApplicationD11SubmittedNotification generalApplicationD11SubmittedNotification;
@@ -202,6 +218,7 @@ public class SolicitorSubmitGeneralApplicationTest {
     void shouldClearActiveGeneralApplicationAndMoveToReceivedWhenPaymentMethodIsPba() {
         CaseData caseData = CaseData.builder().build();
         final GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationType(GeneralApplicationType.AMEND_APPLICATION)
             .generalApplicationFee(FeeDetails.builder().paymentMethod(ServicePaymentMethod.FEE_PAY_BY_ACCOUNT).build())
             .build();
         caseData.setGeneralApplication(generalApplication);
@@ -225,6 +242,100 @@ public class SolicitorSubmitGeneralApplicationTest {
     void shouldMoveToAwaitingPaymentWhenPaymentMethodIsNotPba() {
         CaseData caseData = CaseData.builder().build();
         final GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationType(GeneralApplicationType.AMEND_APPLICATION)
+            .generalApplicationFee(FeeDetails.builder().paymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF).build())
+            .build();
+        caseData.setGeneralApplication(generalApplication);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(ccdAccessService.isApplicant1(TEST_SERVICE_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(true);
+        when(submitPaymentService.processSubmitPayment(TEST_CASE_ID, caseData, caseData.getApplicant2()))
+            .thenReturn(Optional.empty());
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitGeneralApplication.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getState()).isEqualTo(State.AwaitingGeneralApplicationPayment);
+    }
+
+    @Test
+    void shouldClearActiveGeneralApplicationAndMoveToReceivedWhenPaymentMethodIsPbaAndGeneralReferralAlreadyExists() {
+        CaseData caseData = CaseData.builder().build();
+        final GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationType(GeneralApplicationType.DISCLOSURE_VIA_DWP)
+            .generalApplicationFee(FeeDetails.builder().paymentMethod(ServicePaymentMethod.FEE_PAY_BY_ACCOUNT).build())
+            .build();
+        caseData.setGeneralApplication(generalApplication);
+        caseData.getGeneralReferral().setGeneralReferralReason(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(ccdAccessService.isApplicant1(TEST_SERVICE_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(true);
+        when(submitPaymentService.processSubmitPayment(TEST_CASE_ID, caseData, caseData.getApplicant1()))
+            .thenReturn(Optional.empty());
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitGeneralApplication.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getState()).isEqualTo(State.GeneralApplicationReceived);
+    }
+
+    @Test
+    void shouldAutoReferDWPGenAppAndMoveToAwaitingGeneralConsiderationWhenPaymentMethodIsPba() {
+        CaseData caseData = CaseData.builder().build();
+        final GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationType(GeneralApplicationType.DISCLOSURE_VIA_DWP)
+            .generalApplicationFee(FeeDetails.builder().paymentMethod(ServicePaymentMethod.FEE_PAY_BY_ACCOUNT).build())
+            .build();
+        caseData.setGeneralApplication(generalApplication);
+
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setId(TEST_CASE_ID);
+        details.setData(caseData);
+
+        GeneralReferral referral = GeneralReferral.builder()
+            .generalReferralReason(GeneralReferralReason.GENERAL_APPLICATION_REFERRAL)
+            .generalReferralFraudCase(YesOrNo.NO)
+            .generalReferralUrgentCase(YesOrNo.NO)
+            .generalApplicationFrom(GeneralParties.APPLICANT)
+            .generalApplicationReferralDate(LocalDate.of(2022, 1, 1))
+            .generalReferralDocument(DivorceDocument.builder().build())
+            .generalApplicationAddedDate(LocalDate.of(2022, 1, 1))
+            .generalReferralType(GeneralReferralType.DISCLOSURE_VIA_DWP)
+            .generalReferralFee(generalApplication.getGeneralApplicationFee())
+            .generalReferralJudgeOrLegalAdvisorDetails(
+                "Please refer to the Search Government Records application in the general applications tab"
+            )
+            .build();
+
+        when(request.getHeader(AUTHORIZATION)).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        when(ccdAccessService.isApplicant1(TEST_SERVICE_AUTH_TOKEN, TEST_CASE_ID)).thenReturn(true);
+        when(submitPaymentService.processSubmitPayment(TEST_CASE_ID, caseData, caseData.getApplicant1()))
+            .thenReturn(Optional.empty());
+        when(citizenGeneralApplicationSubmissionService.canBeAutoReferred(caseData, generalApplication.getGeneralApplicationType()))
+            .thenReturn(true);
+        when(generalReferralService.buildGeneralReferral(generalApplication)).thenReturn(referral);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = solicitorSubmitGeneralApplication.aboutToSubmit(details, details);
+
+        assertThat(response.getErrors()).isNull();
+        assertThat(response.getState()).isEqualTo(State.AwaitingGeneralConsideration);
+        assertThat(response.getData().getGeneralApplication().getGeneralApplicationReferredOnDate()).isEqualTo(LocalDate.of(2022, 1, 1));
+        assertThat(response.getData().getGeneralReferral()).isEqualTo(referral);
+    }
+
+    @Test
+    void shouldMoveToAwaitingGeneralReferralPaymentForDWPGenAppWhenPaymentMethodIsNotPba() {
+        CaseData caseData = CaseData.builder().build();
+        final GeneralApplication generalApplication = GeneralApplication.builder()
+            .generalApplicationType(GeneralApplicationType.DISCLOSURE_VIA_DWP)
             .generalApplicationFee(FeeDetails.builder().paymentMethod(ServicePaymentMethod.FEE_PAY_BY_HWF).build())
             .build();
         caseData.setGeneralApplication(generalApplication);

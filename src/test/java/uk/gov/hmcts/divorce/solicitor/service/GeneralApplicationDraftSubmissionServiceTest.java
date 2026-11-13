@@ -17,8 +17,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DraftApplicationAction;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationHearingNotRequired;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
@@ -209,7 +213,10 @@ public class GeneralApplicationDraftSubmissionServiceTest {
     void shouldReuseExistingServiceRequestReferenceWhenAmendingExistingDraft() {
         String existingServiceRequestReference = "SR-EXISTING-123";
 
-        InterimApplicationOptions options = InterimApplicationOptions.builder().build();
+        InterimApplicationOptions options = InterimApplicationOptions.builder()
+            .generalApplicationD11JourneyOptions(GeneralApplicationD11JourneyOptions.builder()
+                .hearingNotRequired(GeneralApplicationHearingNotRequired.NO).build())
+            .interimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11).build();
         Applicant applicant = Applicant.builder()
             .interimApplicationOptions(options)
             .generalAppServiceRequest(existingServiceRequestReference)
@@ -218,6 +225,7 @@ public class GeneralApplicationDraftSubmissionServiceTest {
         GeneralApplication existingDraft = GeneralApplication.builder()
             .generalApplicationSubmittedOnline(YesOrNo.NO)
             .generalApplicationParty(GeneralParties.APPLICANT)
+            .generalApplicationFeeType(GeneralApplicationFee.FEE0227)
             .generalApplicationFee(FeeDetails.builder()
                 .paymentMethod(ServicePaymentMethod.FEE_PAY_BY_ACCOUNT)
                 .serviceRequestReference(existingServiceRequestReference)
