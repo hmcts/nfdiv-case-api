@@ -17,7 +17,6 @@ import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
@@ -169,24 +168,20 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
 
         CaseData caseData = details.getData();
 
-        GeneralApplicationFee feeCode = caseData.getGeneralApplications().getFirst().getValue().getGeneralApplicationFeeType();
+        var generalApps = new ArrayList<>(
+            Optional.ofNullable(caseData.getGeneralApplications())
+                .orElseGet(Collections::emptyList)
+        );
 
-        if (!GeneralApplicationFee.FEE0233.equals(feeCode)) {
-            var generalApps = new ArrayList<>(
-                Optional.ofNullable(caseData.getGeneralApplications())
-                    .orElseGet(Collections::emptyList)
-            );
+        GeneralApplication newGeneralApplication = generalApps.getFirst().getValue();
 
-            GeneralApplication newGeneralApplication = generalApps.getFirst().getValue();
-
-            boolean isApplicant1 = isApplicant1(details.getId());
-            generalApplicationD11SubmittedNotification.sendToSolicitor(
-                caseData,
-                details.getId(),
-                isApplicant1,
-                newGeneralApplication
-            );
-        }
+        boolean isApplicant1 = isApplicant1(details.getId());
+        generalApplicationD11SubmittedNotification.sendToSolicitor(
+            caseData,
+            details.getId(),
+            isApplicant1,
+            newGeneralApplication
+        );
 
         return SubmittedCallbackResponse.builder().build();
     }
@@ -205,6 +200,7 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
             .showEventNotes()
             .showCondition("applicant1InterimApplicationType=\"digitisedGeneralApplicationD11\" "
                 + "OR applicant2InterimApplicationType=\"digitisedGeneralApplicationD11\" "
+                + "OR applicant1InterimApplicationType=\"searchGovRecords\" "
                 + "OR applicant2InterimApplicationType=\"solicitorD8BAnswers\"")
             .endButtonLabel("Submit Application")
             .aboutToStartCallback(this::aboutToStart)
