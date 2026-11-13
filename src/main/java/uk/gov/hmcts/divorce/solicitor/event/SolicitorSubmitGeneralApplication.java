@@ -108,9 +108,9 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
         Optional<String> paymentError = submitPaymentService.processSubmitPayment(details.getId(), caseData, currentApplicant);
         if (paymentError.isPresent()) {
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                    .data(caseData)
-                    .errors(singletonList(paymentError.get()))
-                    .build();
+                .data(caseData)
+                .errors(singletonList(paymentError.get()))
+                .build();
         }
 
         GeneralApplication submittedGa = caseData.getGeneralApplication();
@@ -137,9 +137,9 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
         State targetState = getTargetState(caseData, submittedGa, canBeAutoReferred);
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .state(targetState)
-                .build();
+            .data(caseData)
+            .state(targetState)
+            .build();
     }
 
     private static State getTargetState(CaseData caseData, GeneralApplication generalApplication, boolean canBeAutoReferred) {
@@ -169,18 +169,18 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
         CaseData caseData = details.getData();
 
         var generalApps = new ArrayList<>(
-                Optional.ofNullable(caseData.getGeneralApplications())
-                        .orElseGet(Collections::emptyList)
+            Optional.ofNullable(caseData.getGeneralApplications())
+                .orElseGet(Collections::emptyList)
         );
 
         GeneralApplication newGeneralApplication = generalApps.getFirst().getValue();
 
         boolean isApplicant1 = isApplicant1(details.getId());
         generalApplicationD11SubmittedNotification.sendToSolicitor(
-                caseData,
-                details.getId(),
-                isApplicant1,
-                newGeneralApplication
+            caseData,
+            details.getId(),
+            isApplicant1,
+            newGeneralApplication
         );
 
         return SubmittedCallbackResponse.builder().build();
@@ -200,7 +200,8 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
             .showEventNotes()
             .showCondition("applicant1InterimApplicationType=\"digitisedGeneralApplicationD11\" "
                 + "OR applicant2InterimApplicationType=\"digitisedGeneralApplicationD11\" "
-                + "OR applicant1InterimApplicationType=\"searchGovRecords\"")
+                + "OR applicant1InterimApplicationType=\"searchGovRecords\" "
+                + "OR applicant2InterimApplicationType=\"solicitorD8BAnswers\"")
             .endButtonLabel("Submit Application")
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
