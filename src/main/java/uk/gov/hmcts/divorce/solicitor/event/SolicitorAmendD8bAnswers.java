@@ -10,16 +10,15 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationD8bPage1;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationD8bPage2;
 import uk.gov.hmcts.divorce.solicitor.event.page.SolicitorAmendD8bApplicationActionPage;
+import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationDraftSubmissionService;
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.DraftApplicationAction.WITHDRAW;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.GENERAL_APPLICATION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -36,6 +35,8 @@ public class SolicitorAmendD8bAnswers implements CCDConfig<CaseData, State, User
     public static final String SOLICITOR_AMEND_D8B_ANSWERS = "solicitor-amend-d8b-answers";
 
     private static final String AMEND_SHOW_CONDITION = "applicant2DraftApplicationAction=\"amend\"";
+
+    private final GeneralApplicationDraftSubmissionService generalApplicationDraftSubmissionService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -59,13 +60,7 @@ public class SolicitorAmendD8bAnswers implements CCDConfig<CaseData, State, User
 
         final CaseData caseData = details.getData();
 
-        InterimApplicationOptions interimApplicationOptions = caseData.getApplicant2().getInterimApplicationOptions();
-
-        if (WITHDRAW.equals(interimApplicationOptions.getDraftApplicationAction())) {
-            interimApplicationOptions.setInterimAppsPaymentMethod(null);
-            interimApplicationOptions.setInterimApplicationType(null);
-            caseData.getGeneralApplication().setSolGeneralApplicationD8bDocuments(null);
-        }
+        generalApplicationDraftSubmissionService.buildGeneralApplication(details, caseData, caseData.getApplicant2());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)

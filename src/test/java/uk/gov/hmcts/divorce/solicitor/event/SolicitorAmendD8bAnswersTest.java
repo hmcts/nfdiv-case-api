@@ -1,38 +1,43 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.SetMultimap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
-import uk.gov.hmcts.ccd.sdk.type.ListValue;
+import uk.gov.hmcts.ccd.sdk.api.Permission;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.DraftApplicationAction;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-
-import java.util.List;
+import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationDraftSubmissionService;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.divorce.divorcecase.model.DraftApplicationAction.AMEND;
-import static uk.gov.hmcts.divorce.divorcecase.model.DraftApplicationAction.WITHDRAW;
-import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.SOLICITOR_D8B_ANSWERS;
-import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
-import static uk.gov.hmcts.divorce.document.model.DocumentType.APPLICATION;
+import static org.mockito.Mockito.verify;
+import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
+import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
+import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorAmendD8bAnswers.SOLICITOR_AMEND_D8B_ANSWERS;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigitalSolicitor;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorAmendD8bAnswersTest {
+
+    @Mock
+    private GeneralApplicationDraftSubmissionService generalApplicationDraftSubmissionService;
 
     @InjectMocks
     private SolicitorAmendD8bAnswers solicitorAmendD8bAnswers;
@@ -49,48 +54,40 @@ class SolicitorAmendD8bAnswersTest {
     }
 
     @Test
-    void shouldResetApplicationD8bAnswerOptionsIfActionIsAmendAboutToSubmitCallback() {
+    void shouldGrantCrudToApplicant1SolicitorAndReadOnlyToCaseRoles() {
+        ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        CaseData caseData = buildCaseData(WITHDRAW);
+        solicitorAmendD8bAnswers.configure(configBuilder);
 
-        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
+        SetMultimap<UserRole, Permission> expected = ImmutableSetMultimap.<UserRole, Permission>builder()
+            .put(APPLICANT_2_SOLICITOR, C)
+            .put(APPLICANT_2_SOLICITOR, R)
+            .put(APPLICANT_2_SOLICITOR, U)
+            .put(CASE_WORKER, R)
+            .put(SUPER_USER, R)
+            .put(LEGAL_ADVISOR, R)
+            .put(JUDGE, R)
+            .build();
 
-        var response =  solicitorAmendD8bAnswers.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getData().getGeneralApplication().getSolGeneralApplicationD8bDocuments()).isNull();
-        assertThat(response.getData().getApplicant2().getInterimApplicationOptions().getInterimAppsPaymentMethod()).isNull();
-        assertThat(response.getData().getApplicant2().getInterimApplicationOptions().getInterimApplicationType()).isNull();
+        assertThat(getEventsFrom(configBuilder).values())
+            .extracting(Event::getGrants)
+            .containsExactlyInAnyOrder(expected);
     }
 
     @Test
-    void shouldNotResetApplicationD8bAnswerOptionsIfActionIsAmendAboutToSubmitCallback() {
+    void shouldDelegateAboutToSubmitToJourneyService() {
+        Applicant applicant1 = Applicant.builder().build();
+        CaseData caseData = CaseData.builder().applicant1(applicant1).build();
 
-        CaseData caseData = buildCaseData(AMEND);
-
-        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
-
-        var response =  solicitorAmendD8bAnswers.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getData().getGeneralApplication().getSolGeneralApplicationD8bDocuments()).isNotNull();
-        assertThat(response.getData().getApplicant2().getInterimApplicationOptions().getInterimAppsPaymentMethod()).isNotNull();
-        assertThat(response.getData().getApplicant2().getInterimApplicationOptions().getInterimApplicationType()).isNotNull();
-
-    }
-
-    private CaseData buildCaseData(DraftApplicationAction draftApplicationAction) {
-        Applicant respondent = respondentWithDigitalSolicitor();
-        respondent.setInterimApplicationOptions(InterimApplicationOptions.builder()
-            .interimAppsPaymentMethod(FEE_PAY_BY_ACCOUNT)
-            .draftApplicationAction(draftApplicationAction)
-            .interimApplicationType(SOLICITOR_D8B_ANSWERS).build());
-
-        final ListValue<DivorceDocument> documentListValue = ListValue.<DivorceDocument>builder()
-            .value(DivorceDocument.builder()
-                .documentType(APPLICATION)
-                .build())
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
             .build();
 
-        return CaseData.builder().generalApplication(GeneralApplication.builder()
-            .solGeneralApplicationD8bDocuments(List.of(documentListValue)).build()).applicant2(respondent).build();
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorAmendD8bAnswers.aboutToSubmit(caseDetails, caseDetails);
+
+        assertThat(response.getData()).isEqualTo(caseData);
+        verify(generalApplicationDraftSubmissionService).buildGeneralApplication(caseDetails, caseData, applicant1);
     }
 }
