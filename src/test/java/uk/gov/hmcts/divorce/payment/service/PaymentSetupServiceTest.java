@@ -18,14 +18,12 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ENFORCEMENT;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_BAILIFF;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE;
-import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE_ANSWERS;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_NOTICE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_WITHOUT_NOTICE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_DIVORCE;
@@ -287,37 +285,6 @@ class PaymentSetupServiceTest {
         verify(paymentService).createServiceRequestReference(null, TEST_CASE_ID, TEST_FIRST_NAME, orderSummary);
         assertThat(response).isEqualTo(TEST_SERVICE_REFERENCE);
     }
-
-    @Test
-    void shouldCreateAosDisputingFeeServiceRequestIfDoesNotAlreadyExist() {
-        final CaseData caseData = new CaseData();
-        final OrderSummary orderSummary = OrderSummary.builder().build();
-
-        when(paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DIVORCE_ANSWERS))
-            .thenReturn(orderSummary);
-
-        OrderSummary response = paymentSetupService.createSolicitorD8bFeeOrderSummary(
-            caseData, TEST_CASE_ID
-        );
-
-        verify(paymentService).getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DIVORCE_ANSWERS);
-        assertThat(response).isEqualTo(orderSummary);
-    }
-
-    @Test
-    void shouldNotCreateAosDisputingFeeServiceRequestIfDoesNotAlreadyExist() {
-        final CaseData caseData = new CaseData();
-        final OrderSummary orderSummary = OrderSummary.builder().build();
-        caseData.getAcknowledgementOfService().getDisputingFee().setOrderSummary(orderSummary);
-
-        OrderSummary response = paymentSetupService.createSolicitorD8bFeeOrderSummary(
-            caseData, TEST_CASE_ID
-        );
-
-        assertThat(response).isEqualTo(orderSummary);
-        verifyNoInteractions(paymentService);
-    }
-
 
     @Test
     void shouldCreateGeneralApplicationFeeOrderSummary() {

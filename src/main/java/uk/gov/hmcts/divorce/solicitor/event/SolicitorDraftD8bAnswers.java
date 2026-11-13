@@ -10,18 +10,15 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationD8bPage1;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationD8bPage2;
 import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationDraftJourneyService;
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
@@ -37,7 +34,6 @@ public class SolicitorDraftD8bAnswers implements CCDConfig<CaseData, State, User
 
     public static final String SOLICITOR_D8B_ANSWER = "solicitor-d8b-answer";
 
-    private final PaymentSetupService paymentSetupService;
     private final GeneralApplicationDraftJourneyService generalApplicationDraftJourneyService;
 
     @Override
@@ -62,7 +58,7 @@ public class SolicitorDraftD8bAnswers implements CCDConfig<CaseData, State, User
 
         generalApplicationDraftJourneyService.prepareAboutToSubmit(details,
             caseData.getApplicant2(), InterimApplicationType.SOLICITOR_D8B_ANSWERS);
-        
+
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
             .build();

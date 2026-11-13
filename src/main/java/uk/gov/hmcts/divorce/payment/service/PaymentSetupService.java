@@ -11,6 +11,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee;
 
 import static uk.gov.hmcts.divorce.controller.PaymentCallbackController.PAYMENT_UPDATE_PATH;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0233;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ENFORCEMENT;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
@@ -45,7 +46,7 @@ public class PaymentSetupService {
     }
 
     public OrderSummary createApplicationFeeOrderSummary(CaseData data, long caseId) {
-        if (data.getApplication().getApplicationFeeOrderSummary() != null) {
+        if (data.getApplication() != null && data.getApplication().getApplicationFeeOrderSummary() != null) {
             return data.getApplication().getApplicationFeeOrderSummary();
         }
 
@@ -82,9 +83,8 @@ public class PaymentSetupService {
     public OrderSummary createGeneralApplicationOrderSummary(long caseId, GeneralApplicationFee feeType) {
         log.info("Creating general application order summary for case id: {}", caseId);
 
-        String feeKeyword = FEE0227.equals(feeType)
-            ? KEYWORD_NOTICE
-            : KEYWORD_WITHOUT_NOTICE;
+        String feeKeyword = FEE0233.equals(feeType) ? KEYWORD_DIVORCE_ANSWERS
+            : FEE0227.equals(feeType) ? KEYWORD_NOTICE : KEYWORD_WITHOUT_NOTICE;
 
         return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, feeKeyword);
     }
@@ -135,16 +135,6 @@ public class PaymentSetupService {
             responsibleParty,
             feeDetails.getOrderSummary()
         );
-    }
-
-    public OrderSummary createSolicitorD8bFeeOrderSummary(CaseData data, long caseId) {
-        if (data.getApplication() != null && data.getAcknowledgementOfService().getDisputingFee().getOrderSummary() != null) {
-            return data.getAcknowledgementOfService().getDisputingFee().getOrderSummary();
-        }
-
-        log.info("Disputing application fee order summary not found for case id: {}, creating order summary", caseId);
-
-        return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_ISSUE, KEYWORD_DIVORCE_ANSWERS);
     }
 
     public static String getPaymentCallbackUrl() {

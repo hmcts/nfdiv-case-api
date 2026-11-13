@@ -37,6 +37,9 @@ public class SolicitorApplicant1DraftGeneralApplication implements CCDConfig<Cas
 
     private static final String DRAFT_GENERAL_APPLICATION = "Draft General Application";
 
+    private static final String EVENT_SHOW_CONDITION = "applicant1InterimApplicationType!=\"searchGovRecords\" "
+        + "AND applicant1InterimApplicationType!=\"digitisedGeneralApplicationD11\"";
+
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
@@ -83,7 +86,7 @@ public class SolicitorApplicant1DraftGeneralApplication implements CCDConfig<Cas
             .description(DRAFT_GENERAL_APPLICATION)
             .showSummary()
             .showEventNotes()
-            .showCondition("applicant1InterimApplicationType!=\"digitisedGeneralApplicationD11\"")
+            .showCondition(EVENT_SHOW_CONDITION)
             .aboutToStartCallback(this::aboutToStart)
             .aboutToSubmitCallback(this::aboutToSubmit)
             .endButtonLabel("Save Application")

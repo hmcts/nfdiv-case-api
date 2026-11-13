@@ -15,7 +15,6 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.CaseworkerDeleteAccess;
 import uk.gov.hmcts.divorce.divorcecase.model.access.DefaultAccess;
-import uk.gov.hmcts.divorce.divorcecase.model.access.RespondentSolicitorAccess;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
 
 import java.time.LocalDate;
@@ -171,13 +170,6 @@ public class GeneralApplication {
         searchable = false
     )
     private String solGeneralApplicationFeeInPounds;
-
-    @CCD(
-        label = "Respondent uploaded documents",
-        access = {RespondentSolicitorAccess.class},
-        searchable = false
-    )
-    private List<ListValue<DivorceDocument>> solGeneralApplicationD8bDocuments;
 
     @JsonIgnore
     public void recordPayment(String paymentReference, LocalDate dateOfPayment) {

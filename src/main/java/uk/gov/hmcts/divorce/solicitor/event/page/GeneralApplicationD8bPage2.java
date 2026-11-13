@@ -2,8 +2,10 @@ package uk.gov.hmcts.divorce.solicitor.event.page;
 
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.D8bAnswersJourneyOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -36,8 +38,10 @@ public class GeneralApplicationD8bPage2 implements CcdPageConfiguration {
         }
 
         page.label("solGenAppD8bEvidenceLabel", DOCUMENT_UPLOAD_LABEL_CONTENT)
-            .complex(CaseData::getGeneralApplication)
-            .optional(GeneralApplication::getSolGeneralApplicationD8bDocuments)
+            .complex(CaseData::getApplicant2)
+            .complex(Applicant::getInterimApplicationOptions)
+            .complex(InterimApplicationOptions::getD8BAnswerJourneyOptions)
+            .optional(D8bAnswersJourneyOptions::getSolD8bDocuments)
             .done();
     }
 }

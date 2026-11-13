@@ -15,18 +15,18 @@ import uk.gov.hmcts.divorce.divorcecase.model.DraftApplicationAction;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
-import uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.document.model.DivorceDocument;
-import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 
 import java.util.List;
 import java.util.OptionalInt;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.findActiveGeneralApplicationIndex;
+import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.SOLICITOR_D8B_ANSWERS;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0228;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_HWF;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
@@ -48,8 +48,6 @@ public class GeneralApplicationDraftSubmissionService {
 
     private final HttpServletRequest request;
 
-    private final PaymentSetupService paymentSetupService;
-
     public void buildGeneralApplication(CaseDetails<CaseData, State> details, CaseData caseData, Applicant applicant) {
         InterimApplicationOptions options = applicant.getInterimApplicationOptions();
 
@@ -63,8 +61,11 @@ public class GeneralApplicationDraftSubmissionService {
             draftIndex.ifPresent(index -> citizenWithdrawGeneralApplication.handleRemovalOfGeneralApplication(caseData, index));
 
             applicant.setInterimApplicationOptions(null);
+            applicant.setActiveGeneralApplication(null);
             return;
         }
+
+        boolean isApplicant1 = isApplicant1(details.getId());
 
         log.info("Building general application from interim options for case id: {}", details.getId());
         OptionalInt draftIndex = findDraftIndex(caseData, applicant);
@@ -75,36 +76,25 @@ public class GeneralApplicationDraftSubmissionService {
             existingDraft = generalApplications.get(draftIndex.getAsInt()).getValue();
         }
 
-        if (InterimApplicationType.SOLICITOR_D8B_ANSWERS.equals(options.getInterimApplicationType())) {
-            if (SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT.equals(caseData.getApplicant2()
-                .getInterimApplicationOptions().getInterimAppsPaymentMethod())) {
-                caseData.getAcknowledgementOfService().getDisputingFee().setOrderSummary(
-                    paymentSetupService.createSolicitorD8bFeeOrderSummary(caseData, details.getId())
-                );
-            }
-        } else {
+        GeneralApplication generalApplication = generalApplicationFactory.createFromJourneyOptions(options, isApplicant1,
+            caseData.getApplicationType());
+        caseData.setGeneralApplication(generalApplication);
 
-            boolean isApplicant1 = isApplicant1(details.getId());
+        String reusableServiceRequestReference = resolveReusableServiceRequestReference(existingDraft, options, generalApplication);
 
-            GeneralApplication generalApplication = generalApplicationFactory.createFromJourneyOptions(options, isApplicant1,
-                caseData.getApplicationType());
-            caseData.setGeneralApplication(generalApplication);
+        paymentPreparationService.prepareDraftGeneralApplicationFee(details.getId(), applicant, options, generalApplication,
+            reusableServiceRequestReference);
 
-            String reusableServiceRequestReference = resolveReusableServiceRequestReference(existingDraft, options, generalApplication);
-
-            paymentPreparationService.prepareDraftGeneralApplicationFee(details.getId(), applicant, options, generalApplication,
-                reusableServiceRequestReference);
-
+        if (!SOLICITOR_D8B_ANSWERS.equals(options.getInterimApplicationType())) {
             DivorceDocument applicationDocument = submissionService.generateGeneralApplicationAnswerDocument(
                 details.getId(), applicant, caseData, generalApplication);
-
             generalApplication.setGeneralApplicationDocument(applicationDocument);
+        }
 
-            if (draftIndex.isPresent()) {
-                generalApplications.get(draftIndex.getAsInt()).setValue(generalApplication);
-            } else {
-                caseData.updateCaseWithGeneralApplication(generalApplication);
-            }
+        if (draftIndex.isPresent()) {
+            generalApplications.get(draftIndex.getAsInt()).setValue(generalApplication);
+        } else {
+            caseData.updateCaseWithGeneralApplication(generalApplication);
         }
         applicant.getInterimApplicationOptions().setDraftApplicationAction(null);
     }
@@ -126,7 +116,7 @@ public class GeneralApplicationDraftSubmissionService {
         ServicePaymentMethod oldMethod = existingDraft.getGeneralApplicationFee().getPaymentMethod();
 
         boolean sameAccountMethod = FEE_PAY_BY_ACCOUNT.equals(oldMethod) && FEE_PAY_BY_ACCOUNT.equals(newMethod);
-        boolean sameFeeType = existingDraft.getGeneralApplicationFeeType() == rebuiltDraft.getGeneralApplicationFeeType();
+        boolean sameFeeType = existingDraft.getGeneralApplicationFeeType() == (options.isHearingRequired() ? FEE0227 : FEE0228);
 
         return (sameAccountMethod && sameFeeType)
             ? existingDraft.getGeneralApplicationFee().getServiceRequestReference()
