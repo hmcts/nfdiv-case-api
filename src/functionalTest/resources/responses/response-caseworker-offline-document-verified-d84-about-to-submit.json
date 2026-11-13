@@ -11,6 +11,7 @@
     "applicant1ContactDetailsType": "public",
     "applicant1FinancialOrder": "No",
     "applicant1Offline": "Yes",
+    "issueDate": "2022-01-01",
     "applicant2Offline": "Yes",
     "solServiceTruthStatement": "I believe that the facts stated in the application are true.",
     "coScannedD84Form": {
