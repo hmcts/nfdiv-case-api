@@ -51,10 +51,8 @@ class SolicitorDraftD8bAnswersIT {
     @Captor
     private ArgumentCaptor<Applicant> applicantCaptor;
 
-     @Captor
+    @Captor
     private ArgumentCaptor<InterimApplicationType> interimApplicationTypeCaptor;
-
-
 
     @MockitoBean
     private WebMvcConfig webMvcConfig;
