@@ -33,8 +33,13 @@ public class GeneralApplicationDraftJourneyService {
     }
 
     public void prepareAboutToSubmit(CaseDetails<CaseData, State> details, Applicant applicant) {
+        prepareAboutToSubmit(details, applicant, InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11);
+    }
+
+    public void prepareAboutToSubmit(CaseDetails<CaseData, State> details,
+                                     Applicant applicant, InterimApplicationType interimApplicationType) {
         InterimApplicationOptions options = applicant.getInterimApplicationOptions();
-        options.setInterimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11);
+        options.setInterimApplicationType(interimApplicationType);
         generalApplicationDraftSubmissionService.buildGeneralApplication(
             details,
             details.getData(),

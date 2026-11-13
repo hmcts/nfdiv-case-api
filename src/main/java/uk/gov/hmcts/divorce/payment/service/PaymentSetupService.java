@@ -11,11 +11,13 @@ import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee;
 
 import static uk.gov.hmcts.divorce.controller.PaymentCallbackController.PAYMENT_UPDATE_PATH;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0233;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ENFORCEMENT;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_GENERAL;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.EVENT_ISSUE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_BAILIFF;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE;
+import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_DIVORCE_ANSWERS;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_NOTICE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.KEYWORD_WITHOUT_NOTICE;
 import static uk.gov.hmcts.divorce.payment.service.PaymentService.SERVICE_DIVORCE;
@@ -81,9 +83,8 @@ public class PaymentSetupService {
     public OrderSummary createGeneralApplicationOrderSummary(long caseId, GeneralApplicationFee feeType) {
         log.info("Creating general application order summary for case id: {}", caseId);
 
-        String feeKeyword = FEE0227.equals(feeType)
-            ? KEYWORD_NOTICE
-            : KEYWORD_WITHOUT_NOTICE;
+        String feeKeyword = FEE0233.equals(feeType) ? KEYWORD_DIVORCE_ANSWERS
+            : FEE0227.equals(feeType) ? KEYWORD_NOTICE : KEYWORD_WITHOUT_NOTICE;
 
         return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, feeKeyword);
     }
