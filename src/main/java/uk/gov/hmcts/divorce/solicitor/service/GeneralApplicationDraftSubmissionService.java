@@ -24,8 +24,6 @@ import java.util.OptionalInt;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static uk.gov.hmcts.divorce.caseworker.service.GeneralApplicationUtils.findActiveGeneralApplicationIndex;
-import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
-import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0228;
 import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.SOLICITOR_D8B_ANSWERS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_HWF;

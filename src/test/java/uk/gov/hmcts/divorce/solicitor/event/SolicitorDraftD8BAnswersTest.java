@@ -1,5 +1,7 @@
 package uk.gov.hmcts.divorce.solicitor.event;
 
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.SetMultimap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -8,30 +10,35 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.ccd.sdk.ConfigBuilderImpl;
 import uk.gov.hmcts.ccd.sdk.api.CaseDetails;
 import uk.gov.hmcts.ccd.sdk.api.Event;
-import uk.gov.hmcts.ccd.sdk.type.OrderSummary;
+import uk.gov.hmcts.ccd.sdk.api.Permission;
+import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
+import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationDraftJourneyService;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
-import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
+import static org.mockito.Mockito.verify;
+import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
+import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
+import static uk.gov.hmcts.ccd.sdk.api.Permission.U;
+import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.SOLICITOR_D8B_ANSWERS;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.LEGAL_ADVISOR;
+import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.SUPER_USER;
 import static uk.gov.hmcts.divorce.solicitor.event.SolicitorDraftD8bAnswers.SOLICITOR_D8B_ANSWER;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.createCaseDataConfigBuilder;
 import static uk.gov.hmcts.divorce.testutil.ConfigTestUtil.getEventsFrom;
 import static uk.gov.hmcts.divorce.testutil.TestConstants.TEST_CASE_ID;
-import static uk.gov.hmcts.divorce.testutil.TestDataHelper.respondentWithDigitalSolicitor;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitorDraftD8BAnswersTest {
 
     @Mock
-    private PaymentSetupService paymentSetupService;
+    private GeneralApplicationDraftJourneyService generalApplicationDraftJourneyService;
 
     @InjectMocks
     private SolicitorDraftD8bAnswers solicitorDraftD8BAnswers;
@@ -48,34 +55,41 @@ class SolicitorDraftD8BAnswersTest {
     }
 
     @Test
-    void shouldSetOrderSummaryIfPaymentMethodIsPbaAboutToSubmitCallback() {
-        Applicant respondent = respondentWithDigitalSolicitor();
-        respondent.setInterimApplicationOptions(InterimApplicationOptions.builder().interimAppsPaymentMethod(FEE_PAY_BY_ACCOUNT).build());
-        CaseData caseData = CaseData.builder().applicant2(respondent).build();
+    void shouldGrantCrudToApplicant1SolicitorAndReadOnlyToCaseRoles() {
+        ConfigBuilderImpl<CaseData, State, UserRole> configBuilder = createCaseDataConfigBuilder();
 
-        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
+        solicitorDraftD8BAnswers.configure(configBuilder);
 
-        OrderSummary orderSummary = OrderSummary.builder().paymentTotal("240").build();
+        SetMultimap<UserRole, Permission> expected = ImmutableSetMultimap.<UserRole, Permission>builder()
+            .put(APPLICANT_2_SOLICITOR, C)
+            .put(APPLICANT_2_SOLICITOR, R)
+            .put(APPLICANT_2_SOLICITOR, U)
+            .put(CASE_WORKER, R)
+            .put(SUPER_USER, R)
+            .put(LEGAL_ADVISOR, R)
+            .put(JUDGE, R)
+            .build();
 
-        var response = solicitorDraftD8BAnswers.aboutToSubmit(caseDetails, caseDetails);
-
-        assertThat(response.getData().getAcknowledgementOfService()
-            .getDisputingFee().getOrderSummary()).isEqualTo(orderSummary);
-
-        assertThat(response.getData().getApplicant2().getInterimApplicationOptions()
-            .getInterimApplicationType()).isEqualTo(InterimApplicationType.SOLICITOR_D8B_ANSWERS);
+        assertThat(getEventsFrom(configBuilder).values())
+            .extracting(Event::getGrants)
+            .containsExactlyInAnyOrder(expected);
     }
 
+
     @Test
-    void shouldNotSetOrderSummaryIfPaymentMethodIsHwfAboutToSubmitCallback() {
-        Applicant respondent = respondentWithDigitalSolicitor();
-        respondent.setInterimApplicationOptions(InterimApplicationOptions.builder().interimAppsPaymentMethod(FEES_HELP_WITH).build());
-        CaseData caseData = CaseData.builder().applicant2(respondent).build();
+    void shouldDelegateAboutToSubmitToJourneyService() {
+        Applicant applicant = Applicant.builder().build();
+        CaseData caseData = CaseData.builder().applicant2(applicant).build();
 
-        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder().id(TEST_CASE_ID).data(caseData).build();
+        CaseDetails<CaseData, State> caseDetails = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
+            .build();
 
-        solicitorDraftD8BAnswers.aboutToSubmit(caseDetails, caseDetails);
+        AboutToStartOrSubmitResponse<CaseData, State> response =
+            solicitorDraftD8BAnswers.aboutToSubmit(caseDetails, caseDetails);
 
-        verifyNoInteractions(paymentSetupService);
+        assertThat(response.getData()).isEqualTo(caseData);
+        verify(generalApplicationDraftJourneyService).prepareAboutToSubmit(caseDetails, applicant, SOLICITOR_D8B_ANSWERS);
     }
 }

@@ -10,18 +10,15 @@ import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.common.ccd.CcdPageConfiguration;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
-import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationD8bPage1;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationD8bPage2;
 import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationDraftJourneyService;
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
