@@ -21,6 +21,7 @@ import uk.gov.hmcts.divorce.common.service.GeneralReferralService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
+import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralReferral;
@@ -45,6 +46,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.C;
 import static uk.gov.hmcts.ccd.sdk.api.Permission.R;
@@ -417,6 +419,32 @@ public class SolicitorSubmitGeneralApplicationTest {
                 anyBoolean(),
                 eq(ga)
         );
+        assertThat(response).isNotNull();
+    }
+
+    @Test
+    void shouldNotSendSubmittedNotificationToApplicant2SolicitorForD8bFeeCode() {
+        GeneralApplication ga = GeneralApplication.builder().generalApplicationFeeType(GeneralApplicationFee.FEE0233).build();
+
+        CaseData caseData = CaseData.builder().build();
+        caseData.setGeneralApplications(List.of(ListValue.<GeneralApplication>builder()
+            .id("1")
+            .value(ga)
+            .build()));
+
+        CaseDetails<CaseData, State> details = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(caseData)
+            .build();
+
+        CaseDetails<CaseData, State> beforeDetails = CaseDetails.<CaseData, State>builder()
+            .id(TEST_CASE_ID)
+            .data(CaseData.builder().build())
+            .build();
+
+        SubmittedCallbackResponse response = solicitorSubmitGeneralApplication.submitted(details, beforeDetails);
+
+        verifyNoInteractions(generalApplicationD11SubmittedNotification);
         assertThat(response).isNotNull();
     }
 }
