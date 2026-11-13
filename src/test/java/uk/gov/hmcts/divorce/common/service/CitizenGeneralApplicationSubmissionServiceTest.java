@@ -13,6 +13,7 @@ import uk.gov.hmcts.divorce.citizen.notification.interimapplications.GeneralAppl
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.SearchGovRecordsApplicationSubmittedNotification;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.D8bAnswersJourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
@@ -39,6 +40,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11;
 import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.SEARCH_GOV_RECORDS;
+import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.SOLICITOR_D8B_ANSWERS;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_CARD;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_HWF;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGenAppDocuments;
@@ -60,6 +62,9 @@ class CitizenGeneralApplicationSubmissionServiceTest {
 
     @Mock
     private GeneralApplicationD11Generator d11Generator;
+
+    @Mock
+    private D8bAnswersJourneyOptions journeyOptions;
 
     @InjectMocks
     private CitizenGeneralApplicationSubmissionService submissionService;
@@ -260,6 +265,23 @@ class CitizenGeneralApplicationSubmissionServiceTest {
 
             assertThat(result).hasSize(1);
         }
+    }
+
+    @Test
+    void shouldCollectD8bUploadedDocuments() {
+        DivorceDocument document = DivorceDocument.builder().build();
+        ListValue<DivorceDocument> listValue = ListValue.<DivorceDocument>builder()
+            .value(document)
+            .build();
+
+        InterimApplicationOptions options = mock(InterimApplicationOptions.class);
+        when(options.getInterimApplicationType()).thenReturn(SOLICITOR_D8B_ANSWERS);
+        when(options.getD8BAnswerJourneyOptions()).thenReturn(journeyOptions);
+        when(journeyOptions.getSolD8bDocuments()).thenReturn(List.of(listValue));
+
+        List<ListValue<DivorceDocument>> result = submissionService.collectSupportingDocuments(options);
+
+        assertThat(result).hasSize(1);
     }
 
     @Nested
