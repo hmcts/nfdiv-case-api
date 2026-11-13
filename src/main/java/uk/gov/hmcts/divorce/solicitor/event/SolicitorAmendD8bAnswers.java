@@ -12,14 +12,14 @@ import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
+import uk.gov.hmcts.divorce.solicitor.event.page.AmendGeneralApplicationActionPage;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationD8bPage1;
 import uk.gov.hmcts.divorce.solicitor.event.page.GeneralApplicationD8bPage2;
-import uk.gov.hmcts.divorce.solicitor.event.page.SolicitorAmendD8bApplicationActionPage;
 import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationDraftSubmissionService;
 
 import java.util.List;
 
-import static uk.gov.hmcts.divorce.divorcecase.model.State.GENERAL_APPLICATION_STATES;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AOS_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.APPLICANT_2_SOLICITOR;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -42,7 +42,7 @@ public class SolicitorAmendD8bAnswers implements CCDConfig<CaseData, State, User
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         final PageBuilder pageBuilder = addEventConfig(configBuilder);
 
-        new SolicitorAmendD8bApplicationActionPage().addTo(pageBuilder);
+        new AmendGeneralApplicationActionPage(CaseData::getApplicant2, "D8b Answer").addTo(pageBuilder);
 
         List<CcdPageConfiguration> pages = List.of(
             new GeneralApplicationD8bPage1(),
@@ -72,14 +72,14 @@ public class SolicitorAmendD8bAnswers implements CCDConfig<CaseData, State, User
 
         return new PageBuilder(configBuilder
             .event(SOLICITOR_AMEND_D8B_ANSWERS)
-            .forStates(GENERAL_APPLICATION_STATES)
+            .forStates(AOS_STATES)
             .name("Amend General Application")
             .description("Amend General Application")
             .showSummary()
             .showEventNotes()
             .showCondition("applicant2InterimApplicationType=\"solicitorD8BAnswers\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .endButtonLabel("Submit")
+            .endButtonLabel("Save application")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
