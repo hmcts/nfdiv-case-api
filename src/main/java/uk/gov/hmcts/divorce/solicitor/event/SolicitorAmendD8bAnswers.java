@@ -79,7 +79,7 @@ public class SolicitorAmendD8bAnswers implements CCDConfig<CaseData, State, User
             .showEventNotes()
             .showCondition("applicant2InterimApplicationType=\"solicitorD8BAnswers\"")
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .endButtonLabel("Save application")
+            .endButtonLabel("Submit")
             .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
