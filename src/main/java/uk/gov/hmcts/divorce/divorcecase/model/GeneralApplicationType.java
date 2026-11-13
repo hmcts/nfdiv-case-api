@@ -46,7 +46,10 @@ public enum GeneralApplicationType implements HasLabel {
     DELAY("Delay or pause (or ‘put a stay on’) an application"),
 
     @JsonProperty("extend")
-    EXTEND("More time to serve an application (or ‘extend service’)");
+    EXTEND("More time to serve an application (or ‘extend service’)"),
+
+    @JsonProperty("solicitorD8BAnswers")
+    SOLICITOR_D8B_ANSWERS("D8b Answers");
 
     private final String label;
 }
