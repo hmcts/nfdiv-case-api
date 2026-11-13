@@ -560,7 +560,7 @@ docmosis:
       RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-ENG-Respondent-Started-Drafting-AoS-Application_V2.docx
       DEEMED_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Deemed-Service-Application_V4.docx
       BAILIFF_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Bailiff-Service-Application_V4.docx
-      ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Alternative-Service-Application_V4.docx
+      ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Alternative-Service-Application_V6.docx
       DISPENSE_WITH_SERVICE_APPLICATION: FL-NFD-GOR-ENG-Dispense-With-Service-Application_V3.docx
       SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-ENG-Search-Government-Records-Application_V4.docx
       BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-ENG-Bailiff-Service-Successful-Letter-V3.docx
@@ -666,7 +666,7 @@ docmosis:
       RESPONDENT_DRAFT_AOS_STARTED_APPLICATION: FL-NFD-GOR-WEL-Respondent-Started-Drafting-AoS-Application_V1.docx
       DEEMED_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Deemed-Service-Application_V2.docx
       BAILIFF_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Bailiff-Service-Application_V2.docx
-      ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Alternative-Service-Application_V2.docx
+      ALTERNATIVE_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Alternative-Service-Application_V3.docx
       DISPENSE_WITH_SERVICE_APPLICATION: FL-NFD-GOR-WEL-Dispense-With-Service-Application_V2.docx
       SEARCH_GOV_RECORDS_APPLICATION: FL-NFD-GOR-WEL-Search-Government-Records-Application_V3.docx
       BAILIFF_SERVICE_SUCCESSFUL_LETTER: FL-NFD-GOR-WEL-Bailiff-Service-Successful-Letter-V2.docx
