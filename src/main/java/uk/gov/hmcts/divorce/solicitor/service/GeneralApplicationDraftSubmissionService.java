@@ -141,8 +141,8 @@ public class GeneralApplicationDraftSubmissionService {
             return OptionalInt.empty();
         }
 
-        GeneralParties actingParty =
-            applicant == data.getApplicant1() ? GeneralParties.APPLICANT : GeneralParties.RESPONDENT;
+        GeneralParties actingParty = applicant == data.getApplicant1() ? GeneralParties.APPLICANT
+            : (data.getApplicationType().isSole() ? GeneralParties.RESPONDENT : GeneralParties.APPLICANT2);
 
         for (int i = 0; i < generalApplications.size(); i++) {
             GeneralApplication ga = generalApplications.get(i).getValue();
