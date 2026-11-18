@@ -204,7 +204,9 @@ public class GeneralApplicationD11SubmittedNotification implements GeneralApplic
             GeneralApplicationType.WITHDRAW_POST_ISSUE,
             String.format("Your application to withdraw this %s case has been submitted", divorceOrDissolution),
             GeneralApplicationType.DISCLOSURE_VIA_DWP,
-            "Your application to search government records for the respondent's details has been submitted"
+            "Your application to search government records for the respondent's details has been submitted",
+            GeneralApplicationType.SOLICITOR_D8B_ANSWERS,
+            "Your form D8b Answer has been submitted"
         );
     }
 

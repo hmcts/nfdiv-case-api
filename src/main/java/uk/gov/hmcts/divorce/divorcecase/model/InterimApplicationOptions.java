@@ -27,6 +27,7 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11;
 import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.SEARCH_GOV_RECORDS;
+import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.SOLICITOR_D8B_ANSWERS;
 
 @Data
 @Builder(toBuilder = true)
@@ -239,6 +240,10 @@ public class InterimApplicationOptions {
                     }
                 }
             }
+        }
+
+        if (SOLICITOR_D8B_ANSWERS.equals(interimApplicationType)) {
+            return GeneralApplicationType.SOLICITOR_D8B_ANSWERS;
         }
         return null;
     }
