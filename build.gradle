@@ -400,11 +400,17 @@ application {
   mainClass = 'uk.gov.hmcts.divorce.CaseApiApplication'
 }
 
+interface InjectedExecOps {
+  @javax.inject.Inject
+  ExecOperations getExecOps()
+}
+
 task loadEnvSecrets() {
+  def execOps = project.objects.newInstance(InjectedExecOps).execOps
   doLast {
     if (!project.file('./.aat-env').exists()) {
       new ByteArrayOutputStream().withStream { os ->
-        exec {
+        execOps.exec {
           commandLine 'az', 'keyvault', 'secret', 'show', '--vault-name', 'nfdiv-aat', '-o', 'tsv', '--query', 'value', '--name', 'nfdiv-case-api-dot-env'
           standardOutput = os
         }
@@ -471,8 +477,9 @@ generateTypeScript {
   mapDate = 'asString'
   group = 'ccd tasks'
 
+  def execOps = project.objects.newInstance(InjectedExecOps).execOps
   doLast {
-    exec {
+    execOps.exec {
       commandLine 'yarn', 'prepublishOnly'
     }
   }
