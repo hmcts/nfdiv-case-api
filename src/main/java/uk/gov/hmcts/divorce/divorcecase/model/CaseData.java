@@ -740,7 +740,7 @@ public class CaseData {
         if (isNull(this.getGeneralApplications())) {
             this.setGeneralApplications(singletonList(generalApplicationListValue));
         } else {
-            this.getGeneralApplications().add(0, generalApplicationListValue);
+            this.getGeneralApplications().addFirst(generalApplicationListValue);
         }
     }
 }
