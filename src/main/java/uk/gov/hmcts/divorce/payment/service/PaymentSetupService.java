@@ -83,10 +83,14 @@ public class PaymentSetupService {
     public OrderSummary createGeneralApplicationOrderSummary(long caseId, GeneralApplicationFee feeType) {
         log.info("Creating general application order summary for case id: {}", caseId);
 
-        String feeKeyword = FEE0233.equals(feeType) ? KEYWORD_DIVORCE_ANSWERS
+        boolean isDivAnswerReceived = FEE0233.equals(feeType);
+
+        String feeKeyword = isDivAnswerReceived ? KEYWORD_DIVORCE_ANSWERS
             : FEE0227.equals(feeType) ? KEYWORD_NOTICE : KEYWORD_WITHOUT_NOTICE;
 
-        return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, EVENT_GENERAL, feeKeyword);
+        String event = isDivAnswerReceived ? EVENT_ISSUE : EVENT_GENERAL;
+
+        return paymentService.getOrderSummaryByServiceEvent(SERVICE_OTHER, event, feeKeyword);
     }
 
     public String createGeneralApplicationPaymentServiceRequest(

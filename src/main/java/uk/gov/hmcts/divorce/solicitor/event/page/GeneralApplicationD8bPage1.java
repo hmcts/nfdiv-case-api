@@ -15,7 +15,7 @@ public class GeneralApplicationD8bPage1 implements CcdPageConfiguration {
 
             Use this event to submit the Answer to a divorce, dissolution or judicial separation application.
 
-            This event can only be used by the respondent when the Acknowledgement of Service (Aos) has been submitted, and they have
+            This event can only be used by the respondent when the Acknowledgement of Service (AoS) has been submitted, and they have
              indicated that they want to dispute the application. The form D8b should be submitted within 21 days from the date of
               submission of the AoS.
 
