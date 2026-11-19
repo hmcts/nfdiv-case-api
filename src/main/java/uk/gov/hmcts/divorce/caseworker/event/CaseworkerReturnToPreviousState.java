@@ -38,7 +38,7 @@ public class CaseworkerReturnToPreviousState implements CCDConfig<CaseData, Stat
         = "Return to previous state cannot be used to transfer the case to Awaiting service consideration. "
         + "Please use the response to service application event.";
     private static final String WARNING_LABEL = """
-The state change may impact the due date for ***20 weeks***, AoS, Conditional Order or Final Order timelines.
+The state change may impact the due date for ***20 weeks and 1 day (141 days)***, AoS, Conditional Order or Final Order timelines.
 You **must** review and update any affected due dates before completing this event.
 Failure to do so may result in the case progressing incorrectly.""";
 
