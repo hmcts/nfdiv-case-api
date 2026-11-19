@@ -38,7 +38,7 @@ public class CaseworkerRemoveRespondentAddress implements CCDConfig<CaseData, St
             .grant(CREATE_READ_UPDATE, SUPER_USER)
             .grantHistoryOnly(CASE_WORKER, LEGAL_ADVISOR, JUDGE))
             .page("removeApp2Address")
-            .pageLabel("# Remove respondent address")
+            .pageLabel("Remove respondent address")
             .label("warningWithdrawCase", WARNING_LABEL);;
     }
 
