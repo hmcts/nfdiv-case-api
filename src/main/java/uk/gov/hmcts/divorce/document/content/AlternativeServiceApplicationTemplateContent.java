@@ -22,8 +22,10 @@ import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.AL
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ALTERNATIVE_SERVICE_BY_SOCIAL_MEDIA;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ALTERNATIVE_SERVICE_BY_TEXT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ALTERNATIVE_SERVICE_BY_WHATSAPP;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ALTERNATIVE_SERVICE_EVIDENCE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ALTERNATIVE_SERVICE_EVIDENCE_DETAILS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ALTERNATIVE_SERVICE_EVIDENCE_UPLOADED;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ALTERNATIVE_SERVICE_METHOD_ACTIVE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ALTERNATIVE_SERVICE_METHOD_EMAIL;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ALTERNATIVE_SERVICE_METHOD_EMAIL_AND_DIFFERENT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ALTERNATIVE_SERVICE_PARTNER_EMAIL;
@@ -98,6 +100,12 @@ public class AlternativeServiceApplicationTemplateContent implements TemplateCon
             YesOrNo.YES.equals(interimApplicationOptions.getInterimAppsCanUploadEvidence()));
         templateContent.put(DIVORCE_OR_DISSOLUTION, docmosisCommonContent.getApplicationType(languagePreference, caseData));
         templateContent.put(STATEMENT_OF_TRUTH, LanguagePreference.WELSH.equals(languagePreference) ? "Ydw" : "Yes");
+        if (YesOrNo.YES.equals(interimApplicationOptions.getInterimAppsCanUploadEvidence())) {
+            templateContent.put(ALTERNATIVE_SERVICE_METHOD_ACTIVE,
+                YesOrNo.YES.equals(applicationAnswers.getAltServiceMethodActive()) ? TRUE : FALSE);
+            templateContent.put(ALTERNATIVE_SERVICE_EVIDENCE_DATE, applicationAnswers.getAltServiceDateOfEvidence().format(
+                getDateTimeFormatterForPreferredLanguage(applicant.getLanguagePreference())));
+        }
 
         return templateContent;
     }
