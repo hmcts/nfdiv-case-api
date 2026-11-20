@@ -11,6 +11,7 @@ import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.citizen.notification.interimapplications.ServiceApplicationRejectedNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.AlternativeService;
+import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
@@ -19,7 +20,9 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import java.util.List;
 import java.util.Objects;
 
+import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerRejectGeneralApplication.validateStateTransition;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingAos;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.POST_SUBMISSION_STATES;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.CASE_WORKER;
 import static uk.gov.hmcts.divorce.divorcecase.model.UserRole.JUDGE;
@@ -47,6 +50,7 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
             .event(CASEWORKER_REJECT_SERVICE_APPLICATION)
             .forStates(POST_SUBMISSION_STATES)
             .aboutToSubmitCallback(this::aboutToSubmit)
+            .aboutToStartCallback(this::aboutToStart)
             .name(REJECT_SERVICE_APPLICATION)
             .description(REJECT_SERVICE_APPLICATION)
             .showEventNotes()
@@ -56,14 +60,49 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
                 CASE_WORKER,
                 LEGAL_ADVISOR,
                 JUDGE))
-            .page("rejectServiceApplication")
+            .page("rejectServiceApplication", this::midEvent)
             .pageLabel(REJECT_SERVICE_APPLICATION)
             .complex(CaseData::getAlternativeService)
                 .label("serviceApplicationTypeLabel", "## Note: The following service application will be rejected")
                 .readonly(AlternativeService::getAlternativeServiceType)
                 .readonly(AlternativeService::getReceivedServiceApplicationDate)
                 .readonlyNoSummary(AlternativeService::getServiceApplicationSubmittedOnline, NEVER_SHOW)
+            .done()
+            .complex(CaseData::getApplication)
+            .readonly(Application::getCurrentState)
+            .mandatoryWithLabel(Application::getStateToTransitionApplicationTo, "State to transfer case to")
             .done();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> aboutToStart(final CaseDetails<CaseData, State> details) {
+
+        log.info("{} about to start callback invoked for Case Id: {}", CASEWORKER_REJECT_SERVICE_APPLICATION, details.getId());
+
+        final CaseData caseData = details.getData();
+
+        caseData.getApplication().setCurrentState(details.getState());
+
+        State defaultState = caseData.getApplication().getIssueDate() == null ? AwaitingDocuments : AwaitingAos;
+        caseData.getApplication().setStateToTransitionApplicationTo(defaultState);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .errors(null)
+            .warnings(null)
+            .build();
+    }
+
+    public AboutToStartOrSubmitResponse<CaseData, State> midEvent(final CaseDetails<CaseData, State> details,
+                                                                  final CaseDetails<CaseData, State> detailsBefore) {
+
+        final CaseData caseData = details.getData();
+        State state = caseData.getApplication().getStateToTransitionApplicationTo();
+        List<String> validationErrors = validateStateTransition(caseData, state);
+
+        return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+            .data(caseData)
+            .errors(validationErrors)
+            .build();
     }
 
     public AboutToStartOrSubmitResponse<CaseData, State> aboutToSubmit(
@@ -83,11 +122,13 @@ public class CaseworkerRejectServiceApplication implements CCDConfig<CaseData, S
             notificationDispatcher.send(serviceApplicationRejectedNotification, caseData, details.getId());
         }
 
+        State state =  caseData.getApplication().getStateToTransitionApplicationTo();
+
         caseData.setAlternativeService(new AlternativeService());
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()
             .data(caseData)
-            .state(AwaitingAos)
+            .state(state)
             .build();
     }
 }

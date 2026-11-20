@@ -77,4 +77,16 @@ public final class AddressUtil {
 
         return UK_TERMS.contains(sanitisedCountry);
     }
+
+    public static boolean isBlank(AddressGlobalUK address) {
+        return address == null || Stream.of(
+            address.getAddressLine1(),
+            address.getAddressLine2(),
+            address.getAddressLine3(),
+            address.getCounty(),
+            address.getCountry(),
+            address.getPostCode(),
+            address.getPostTown()
+        ).allMatch(StringUtils::isBlank);
+    }
 }

@@ -20,6 +20,7 @@
         }
       }
     ],
+    "generalApplicationSubmittedBeforeIssue":"Yes",
     "generalApplications": [
       {
         "id": "${json-unit.any-string}",
@@ -38,7 +39,8 @@
                 "documentType": "generalApplication"
               }
             }
-          ]
+          ],
+          "generalApplicationSubmittedBeforeIssue":"Yes"
         }
       }
     ],
