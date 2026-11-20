@@ -26,7 +26,6 @@ import uk.gov.hmcts.divorce.systemupdate.service.CcdUpdateService;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.SubmittedCallbackResponse;
 
-import java.util.Collections;
 import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
@@ -65,10 +64,6 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
     private final IdamService idamService;
 
     private final AuthTokenGenerator authTokenGenerator;
-
-    public static final String ERROR_HAS_BEEN_ISSUED = """
-        This application has already been issued. Use the Reissue event to reissue the application.
-        """;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -135,14 +130,6 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
         if (soleApplicationBeingIssuedWithoutApp2Address) {
             caseData.getApplication().setBeingIssuedWithoutAddress(YesOrNo.YES);
-        }
-
-        final boolean caseHasBeenIssued = details.getData().getApplication().getIssueDate() != null;
-        if (caseHasBeenIssued) {
-            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
-                .data(caseData)
-                .errors(Collections.singletonList(ERROR_HAS_BEEN_ISSUED))
-                .build();
         }
 
         return AboutToStartOrSubmitResponse.<CaseData, State>builder()

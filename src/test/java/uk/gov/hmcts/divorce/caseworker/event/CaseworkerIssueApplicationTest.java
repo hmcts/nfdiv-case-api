@@ -38,7 +38,6 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.NO;
 import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.CASEWORKER_ISSUE_APPLICATION;
-import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerIssueApplication.ERROR_HAS_BEEN_ISSUED;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicantPrayer.DissolveDivorce.DISSOLVE_DIVORCE;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.JOINT_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
@@ -85,20 +84,6 @@ class CaseworkerIssueApplicationTest {
         assertThat(getEventsFrom(configBuilder).values())
             .extracting(Event::getId)
             .contains(CASEWORKER_ISSUE_APPLICATION);
-    }
-
-    @Test
-    void shouldReturnValidationErrorIfTheCaseHasBeenIssued() {
-        final var caseData = CaseData.builder()
-            .application(Application.builder().issueDate(LocalDate.now()).build())
-            .build();
-        final CaseDetails<CaseData, State> details = new CaseDetails<>();
-        details.setData(caseData);
-        details.setId(TEST_CASE_ID);
-
-        final AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerIssueApplication.aboutToStart(details);
-
-        assertThat(response.getErrors()).containsExactly(ERROR_HAS_BEEN_ISSUED);
     }
 
     @Test
