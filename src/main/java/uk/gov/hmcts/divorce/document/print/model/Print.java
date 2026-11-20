@@ -12,6 +12,7 @@ public class Print {
     private final String caseRef;
     private final String letterType;
     private final List<String> recipients;
+    private final String recipientAddress;
     private final Boolean isInternational;
 
     public Print(
@@ -20,6 +21,7 @@ public class Print {
         final String caseRef,
         final String letterType,
         final String recipientName,
+        final String recipientAddress,
         final YesOrNo isInternational
     ) {
         this.letters = letters;
@@ -27,6 +29,7 @@ public class Print {
         this.caseRef = caseRef;
         this.letterType = letterType;
         this.recipients = List.of(caseId, recipientName, letterType);
+        this.recipientAddress = recipientAddress;
         this.isInternational = null != isInternational && isInternational.toBoolean();
     }
 

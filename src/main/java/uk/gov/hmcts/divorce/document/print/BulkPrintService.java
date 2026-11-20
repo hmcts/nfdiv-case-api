@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.divorce.document.CaseDocumentAccessManagement;
@@ -112,6 +113,13 @@ public class BulkPrintService {
     }
 
     private UUID triggerPrintRequest(Print print, String authToken, List<Document> documents) {
+        if (StringUtils.isBlank(print.getRecipientAddress())) {
+            log.info("Skipping bulk print for case {} and letter type {} as recipient address is blank",
+                print.getCaseRef(),
+                print.getLetterType()
+            );
+            return null;
+        }
 
         UUID sendLetterUUID = sendLetterApi.sendLetter(
             authToken,

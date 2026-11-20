@@ -149,6 +149,7 @@ public class NocCitizenToSolsNotifications implements ApplicantNotification {
                 caseIdString,
                 LETTER_TYPE_GRANT_OF_REPRESENTATION,
                 applicant.getFullName(),
+                applicant.getCorrespondenceAddressWithoutConfidentialCheck(),
                 applicant.getAddressOverseas()
         );
 

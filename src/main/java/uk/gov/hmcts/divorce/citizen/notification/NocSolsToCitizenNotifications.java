@@ -120,6 +120,7 @@ public class NocSolsToCitizenNotifications implements ApplicantNotification {
                 caseIdString,
                 LETTER_TYPE_INVITE_CITIZEN,
                 applicant.getFullName(),
+                applicant.getCorrespondenceAddressWithoutConfidentialCheck(),
                 applicant.getAddressOverseas()
         );
 

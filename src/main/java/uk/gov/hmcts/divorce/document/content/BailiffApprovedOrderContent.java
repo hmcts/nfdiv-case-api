@@ -10,8 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference.WELSH;
+import static uk.gov.hmcts.divorce.document.content.BailiffServiceApplicationTemplateContent.CONFIDENTIAL_ADDRESS_CY;
+import static uk.gov.hmcts.divorce.document.content.BailiffServiceApplicationTemplateContent.CONFIDENTIAL_ADDRESS_EN;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
@@ -63,6 +66,16 @@ public class BailiffApprovedOrderContent {
                     ? ENDING_CIVIL_PARTNERSHIP_CY
                     : ENDING_CIVIL_PARTNERSHIP
             );
+        }
+
+        if (caseData.getApplicant2().isConfidentialContactDetails()) {
+            templateContent.put(
+                APPLICANT_2_ADDRESS, WELSH.equals(applicant1LanguagePreference)
+                    ? CONFIDENTIAL_ADDRESS_CY
+                    : CONFIDENTIAL_ADDRESS_EN);
+        } else {
+            templateContent.put(
+                APPLICANT_2_ADDRESS, applicant2.getCorrespondenceAddress());
         }
 
         templateContent.put(CCD_CASE_REFERENCE, ccdCaseReference);

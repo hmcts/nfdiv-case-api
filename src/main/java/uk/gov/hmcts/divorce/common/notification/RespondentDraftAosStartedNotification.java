@@ -81,6 +81,7 @@ public class RespondentDraftAosStartedNotification implements ApplicantNotificat
                 caseIdString,
                 RESPONDENT_DRAFTED_AOS,
                 applicant.getFullName(),
+                applicant.getCorrespondenceAddressWithoutConfidentialCheck(),
                 applicant.getAddressOverseas()
         );
 

@@ -3,24 +3,21 @@ package uk.gov.hmcts.divorce.document.content;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralLetter;
 import uk.gov.hmcts.divorce.divorcecase.model.LanguagePreference;
+import uk.gov.hmcts.divorce.document.GeneralLetterRecipient;
+import uk.gov.hmcts.divorce.document.GeneralLetterRecipientResolver;
 import uk.gov.hmcts.divorce.notification.CommonContent;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Map;
 
-import static uk.gov.hmcts.divorce.divorcecase.util.AddressUtil.getPostalAddress;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CIVIL_PARTNER;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.FEEDBACK;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.HUSBAND_OR_WIFE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.ISSUE_DATE;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.IS_JOINT;
-import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.NAME_FORMAT;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RECIPIENT_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.RELATION;
@@ -35,6 +32,8 @@ public class GeneralLetterTemplateContent {
     private final DocmosisCommonContent docmosisCommonContent;
 
     private final CommonContent commonContent;
+
+    private final GeneralLetterRecipientResolver generalLetterRecipientResolver;
 
     private final Clock clock;
 
@@ -60,26 +59,10 @@ public class GeneralLetterTemplateContent {
     private void mapRecipientDetails(final Map<String, Object> templateContent,
                                      final GeneralLetter generalLetter,
                                      final CaseData caseData) {
-        switch (generalLetter.getGeneralLetterParties()) {
-            case APPLICANT -> {
-                templateContent.put(RECIPIENT_NAME, getRecipientName(caseData.getApplicant1()));
-                templateContent.put(RECIPIENT_ADDRESS, caseData.getApplicant1().getCorrespondenceAddressWithoutConfidentialCheck());
-                templateContent.put(RELATION, commonContent.getPartner(caseData, caseData.getApplicant2()));
-            }
-            case RESPONDENT -> {
-                templateContent.put(RECIPIENT_NAME, getRecipientName(caseData.getApplicant2()));
-                templateContent.put(RECIPIENT_ADDRESS, caseData.getApplicant2().getCorrespondenceAddressWithoutConfidentialCheck());
-                templateContent.put(RELATION, commonContent.getPartner(caseData, caseData.getApplicant2()));
-            }
-            default -> {
-                templateContent.put(RECIPIENT_NAME, generalLetter.getOtherRecipientName());
-                templateContent.put(RECIPIENT_ADDRESS, getPostalAddress(generalLetter.getOtherRecipientAddress()));
-                templateContent.put(RELATION, caseData.isDivorce() ? HUSBAND_OR_WIFE : CIVIL_PARTNER);
-            }
-        }
-    }
+        final GeneralLetterRecipient recipient = generalLetterRecipientResolver.resolve(caseData, generalLetter.getGeneralLetterParties());
 
-    private String getRecipientName(final Applicant applicant) {
-        return String.format(NAME_FORMAT, applicant.getFirstName(), applicant.getLastName());
+        templateContent.put(RECIPIENT_NAME, recipient.recipientName());
+        templateContent.put(RECIPIENT_ADDRESS, recipient.recipientAddress());
+        templateContent.put(RELATION, recipient.partnerRelation());
     }
 }

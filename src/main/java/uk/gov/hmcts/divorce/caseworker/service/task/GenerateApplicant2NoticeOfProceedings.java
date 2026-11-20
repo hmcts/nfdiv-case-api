@@ -102,12 +102,13 @@ public class GenerateApplicant2NoticeOfProceedings implements CaseTask {
     }
 
     private void generateSoleJSNoticeOfProceedings(CaseData caseData, Long caseId) {
+        final Applicant applicant = caseData.getApplicant1();
         final Applicant applicant2 = caseData.getApplicant2();
         log.info("Generating NOP for JS respondent for sole case id {} ", caseId);
 
         var coverSheet = COVERSHEET_APPLICANT;
         var templateId = NFD_NOP_APP2_JS_SOLE;
-        var templateContent = noticeOfProceedingContent.apply(caseData, caseId, applicant2,
+        var templateContent = noticeOfProceedingContent.apply(caseData, caseId, applicant,
                 caseData.getApplicant2().getLanguagePreference());
         var coversheetContent = coversheetApplicantTemplateContent.apply(caseData, caseId, applicant2);
 
