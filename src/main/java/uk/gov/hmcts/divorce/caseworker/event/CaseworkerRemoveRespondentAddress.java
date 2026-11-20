@@ -32,6 +32,7 @@ public class CaseworkerRemoveRespondentAddress implements CCDConfig<CaseData, St
             .event(CASEWORKER_REMOVE_APPLICANT2_ADDRESS)
             .forStates(POST_SUBMISSION_STATES_WITH_WITHDRAWN_AND_REJECTED)
             .showCondition("applicationType=\"soleApplication\"")
+            .aboutToSubmitCallback(this::aboutToSubmit)
             .showEventNotes()
             .name("Remove respondent address")
             .description("Remove respondent address")
