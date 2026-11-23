@@ -5,8 +5,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.AddressGlobalUK;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
+import uk.gov.hmcts.divorce.divorcecase.model.ContactDetailsType;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -18,8 +20,11 @@ import static uk.gov.hmcts.ccd.sdk.type.YesOrNo.YES;
 import static uk.gov.hmcts.divorce.divorcecase.model.ApplicationType.SOLE_APPLICATION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DISSOLUTION;
 import static uk.gov.hmcts.divorce.divorcecase.model.DivorceOrDissolution.DIVORCE;
+import static uk.gov.hmcts.divorce.document.content.BailiffServiceApplicationTemplateContent.CONFIDENTIAL_ADDRESS_CY;
+import static uk.gov.hmcts.divorce.document.content.BailiffServiceApplicationTemplateContent.CONFIDENTIAL_ADDRESS_EN;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_1_LAST_NAME;
+import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_ADDRESS;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_FIRST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.APPLICANT_2_LAST_NAME;
 import static uk.gov.hmcts.divorce.document.content.DocmosisTemplateConstants.CCD_CASE_REFERENCE;
@@ -50,7 +55,7 @@ class BailiffApprovedOrderContentTest {
     private BailiffApprovedOrderContent templateContent;
 
     @Test
-    void shouldSuccessfullyApplyDivorceContent() {
+    void shouldSuccessfullyApplyDivorceContentWhenRespondentIsConfidential() {
         setMockClock(clock);
 
         final Applicant applicant1 = Applicant.builder()
@@ -60,6 +65,7 @@ class BailiffApprovedOrderContentTest {
         final Applicant applicant2 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
             .lastName(TEST_LAST_NAME)
+            .contactDetailsType(ContactDetailsType.PRIVATE)
             .build();
 
         final CaseData caseData = CaseData.builder()
@@ -79,7 +85,8 @@ class BailiffApprovedOrderContentTest {
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_2_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_2_LAST_NAME, TEST_LAST_NAME)
+            entry(APPLICANT_2_LAST_NAME, TEST_LAST_NAME),
+            entry(APPLICANT_2_ADDRESS, CONFIDENTIAL_ADDRESS_EN)
         );
     }
 
@@ -94,6 +101,7 @@ class BailiffApprovedOrderContentTest {
         final Applicant applicant2 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
             .lastName(TEST_LAST_NAME)
+            .address(AddressGlobalUK.builder().country("UK").build())
             .build();
 
         final CaseData caseData = CaseData.builder()
@@ -113,12 +121,13 @@ class BailiffApprovedOrderContentTest {
             entry(APPLICANT_1_FIRST_NAME, TEST_FIRST_NAME),
             entry(APPLICANT_1_LAST_NAME, TEST_LAST_NAME),
             entry(APPLICANT_2_FIRST_NAME, TEST_FIRST_NAME),
-            entry(APPLICANT_2_LAST_NAME, TEST_LAST_NAME)
+            entry(APPLICANT_2_LAST_NAME, TEST_LAST_NAME),
+            entry(APPLICANT_2_ADDRESS, "UK")
         );
     }
 
     @Test
-    void shouldSuccessfullyApplyDivorceWelshContent() {
+    void shouldSuccessfullyApplyDivorceWelshContentWhenRespondentIsConfidential() {
         setMockClock(clock);
 
         final Applicant applicant1 = Applicant.builder()
@@ -129,6 +138,7 @@ class BailiffApprovedOrderContentTest {
         final Applicant applicant2 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
             .lastName(TEST_LAST_NAME)
+            .contactDetailsType(ContactDetailsType.PRIVATE)
             .build();
 
         final CaseData caseData = CaseData.builder()
@@ -142,7 +152,8 @@ class BailiffApprovedOrderContentTest {
 
         assertThat(result).contains(
             entry(THE_APPLICATION, DIVORCE_APPLICATION_CY),
-            entry(DIVORCE_OR_DISSOLUTION, THE_DIVORCE_CY)
+            entry(DIVORCE_OR_DISSOLUTION, THE_DIVORCE_CY),
+            entry(APPLICANT_2_ADDRESS, CONFIDENTIAL_ADDRESS_CY)
         );
     }
 
@@ -158,6 +169,7 @@ class BailiffApprovedOrderContentTest {
         final Applicant applicant2 = Applicant.builder()
             .firstName(TEST_FIRST_NAME)
             .lastName(TEST_LAST_NAME)
+            .address(AddressGlobalUK.builder().country("UK").build())
             .build();
 
         final CaseData caseData = CaseData.builder()
@@ -171,7 +183,8 @@ class BailiffApprovedOrderContentTest {
 
         assertThat(result).contains(
             entry(THE_APPLICATION, END_CIVIL_PARTNERSHIP_CY),
-            entry(DIVORCE_OR_DISSOLUTION, ENDING_CIVIL_PARTNERSHIP_CY)
+            entry(DIVORCE_OR_DISSOLUTION, ENDING_CIVIL_PARTNERSHIP_CY),
+            entry(APPLICANT_2_ADDRESS, "UK")
         );
     }
 }
