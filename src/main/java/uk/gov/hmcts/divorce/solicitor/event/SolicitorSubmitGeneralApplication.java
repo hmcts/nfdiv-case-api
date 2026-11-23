@@ -200,6 +200,7 @@ public class SolicitorSubmitGeneralApplication implements CCDConfig<CaseData, St
             .showEventNotes()
             .showCondition("applicant1InterimApplicationType=\"digitisedGeneralApplicationD11\" "
                 + "OR applicant2InterimApplicationType=\"digitisedGeneralApplicationD11\" "
+                + "OR applicant1InterimApplicationType=\"searchGovRecords\" "
                 + "OR applicant2InterimApplicationType=\"solicitorD8BAnswers\"")
             .endButtonLabel("Submit Application")
             .aboutToStartCallback(this::aboutToStart)

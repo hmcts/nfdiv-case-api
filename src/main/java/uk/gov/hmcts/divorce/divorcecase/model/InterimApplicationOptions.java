@@ -245,6 +245,7 @@ public class InterimApplicationOptions {
         if (SOLICITOR_D8B_ANSWERS.equals(interimApplicationType)) {
             return GeneralApplicationType.SOLICITOR_D8B_ANSWERS;
         }
+
         return null;
     }
 

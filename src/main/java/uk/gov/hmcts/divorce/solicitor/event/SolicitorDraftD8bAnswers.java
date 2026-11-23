@@ -74,7 +74,7 @@ public class SolicitorDraftD8bAnswers implements CCDConfig<CaseData, State, User
                 .showEventNotes()
                 .showCondition("howToRespondApplication=\"disputeDivorce\"")
                 .aboutToSubmitCallback(this::aboutToSubmit)
-                .endButtonLabel("Save General Application")
+                .endButtonLabel("Save Application")
                 .grant(CREATE_READ_UPDATE, APPLICANT_2_SOLICITOR)
                 .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
