@@ -5,16 +5,21 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationHearingNotRequired;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
+import uk.gov.hmcts.divorce.document.model.DivorceDocument;
+import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,7 +49,13 @@ class GeneralApplicationD11TemplateContentTest {
     @Test
     void shouldReturnExpectedTemplateContentForHappyPathApplicant1Application() {
         setupDummyDataAndMocks();
-
+        final InterimApplicationOptions interimApplicationOptions = caseData.getApplicant1().getInterimApplicationOptions();
+        interimApplicationOptions.setInterimAppsEvidenceDocs(List.of(
+            ListValue.<DivorceDocument>builder().value(
+                DivorceDocument.builder()
+                    .documentType(DocumentType.NAME_CHANGE_EVIDENCE)
+                    .build()
+            ).build()));
         final Map<String, Object> result = templateContent.getTemplateContent(
             caseData, TEST_CASE_ID, caseData.getApplicant1(), caseData.getGeneralApplication()
         );
@@ -115,12 +126,14 @@ class GeneralApplicationD11TemplateContentTest {
         expectedEntries.put("generalApplicantFullName", TEST_FIRST_NAME + " " + TEST_MIDDLE_NAME + " " + TEST_LAST_NAME);
         expectedEntries.put("supportingEvidenceUploaded", "Yes");
         expectedEntries.put("partnerDetailsCorrect", "Yes");
-        expectedEntries.put("hearingNotRequiredDetails", "Yes, because my partner agrees to this being dealt with without a hearing");
+        expectedEntries.put("hearingNotRequiredDetails", "Yes, because the other party agrees to this being dealt with without a hearing");
         expectedEntries.put("hasUploadedPartnerAgreesDocs", "Yes");
         expectedEntries.put("divorceAndDissolutionHeader","Divorce and Dissolution");
         expectedEntries.put("phoneAndOpeningTimes","0300 303 0642 (Monday to Friday, 10am to 6pm)");
         expectedEntries.put("courtsAndTribunalsServiceHeader","HM Courts & Tribunals Service");
         expectedEntries.put("contactEmail","contactdivorce@justice.gov.uk");
+        expectedEntries.put("isApplicantRepresented",false);
+        expectedEntries.put("urgentCase", null);
 
         return expectedEntries;
     }
@@ -129,7 +142,9 @@ class GeneralApplicationD11TemplateContentTest {
         caseData = caseData();
         caseData.getGeneralApplication().setGeneralApplicationReceivedDate(LocalDateTime.of(2025, Month.AUGUST, 1, 0, 0));
         caseData.getApplicant1().setLanguagePreferenceWelsh(YesOrNo.NO);
-        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder().build());
+        caseData.getApplicant1().setSolicitorRepresented(YesOrNo.NO);
+        caseData.getApplicant1().setInterimApplicationOptions(InterimApplicationOptions.builder()
+            .interimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11).build());
         caseData.getApplicant2().setFirstName(TEST_FIRST_NAME);
         buildD11GeneralApplication(caseData);
         expectedEntries = buildExpectedTemplateContent(caseData);
