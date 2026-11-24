@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11;
+import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.SOLICITOR_D8B_ANSWERS;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGenAppDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralConsideration;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingGeneralReferralPayment;
@@ -89,19 +90,24 @@ public class CitizenGeneralApplicationSubmissionService {
     }
 
     public List<ListValue<DivorceDocument>> collectSupportingDocuments(InterimApplicationOptions userOptions) {
-        boolean isD11GeneralApplication = DIGITISED_GENERAL_APPLICATION_D11.equals(userOptions.getInterimApplicationType());
-        if (!isD11GeneralApplication) {
-            return Collections.emptyList();
-        }
-
-        final GeneralApplicationD11JourneyOptions d11JourneyOptions = userOptions.getGeneralApplicationD11JourneyOptions();
         List<ListValue<DivorceDocument>> documents = new ArrayList<>();
-        if (d11JourneyOptions.evidenceOfPartnerSupportRequired() && d11JourneyOptions.getPartnerAgreesDocs() != null) {
-            documents.addAll(d11JourneyOptions.getPartnerAgreesDocs());
-        }
 
-        if (userOptions.hasUploadedSupportingDocuments()) {
-            documents.addAll(userOptions.getInterimAppsEvidenceDocs());
+        if (SOLICITOR_D8B_ANSWERS.equals(userOptions.getInterimApplicationType())) {
+            documents.addAll(userOptions.getD8BAnswerJourneyOptions().getSolD8bDocuments());
+        } else {
+            boolean isD11GeneralApplication = DIGITISED_GENERAL_APPLICATION_D11.equals(userOptions.getInterimApplicationType());
+            if (!isD11GeneralApplication) {
+                return Collections.emptyList();
+            }
+
+            final GeneralApplicationD11JourneyOptions d11JourneyOptions = userOptions.getGeneralApplicationD11JourneyOptions();
+            if (d11JourneyOptions.evidenceOfPartnerSupportRequired() && d11JourneyOptions.getPartnerAgreesDocs() != null) {
+                documents.addAll(d11JourneyOptions.getPartnerAgreesDocs());
+            }
+
+            if (userOptions.hasUploadedSupportingDocuments()) {
+                documents.addAll(userOptions.getInterimAppsEvidenceDocs());
+            }
         }
 
         return documents;

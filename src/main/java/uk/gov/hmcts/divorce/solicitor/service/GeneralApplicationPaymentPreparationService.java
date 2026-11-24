@@ -10,6 +10,7 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.FeeDetails;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationOptions;
+import uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
 import uk.gov.hmcts.divorce.payment.service.PaymentSetupService;
 import uk.gov.hmcts.divorce.solicitor.client.pba.PbaService;
@@ -19,6 +20,7 @@ import java.text.NumberFormat;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0227;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0228;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationFee.FEE0233;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_ACCOUNT;
 import static uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod.FEE_PAY_BY_HWF;
 import static uk.gov.hmcts.divorce.divorcecase.model.SolicitorPaymentMethod.FEES_HELP_WITH;
@@ -38,7 +40,9 @@ public class GeneralApplicationPaymentPreparationService {
         GeneralApplication generalApplication,
         String existingServiceRequestReference
     ) {
-        generalApplication.setGeneralApplicationFeeType(options.isHearingRequired() ? FEE0227 : FEE0228);
+        generalApplication.setGeneralApplicationFeeType(
+            InterimApplicationType.SOLICITOR_D8B_ANSWERS.equals(options.getInterimApplicationType())
+                ? FEE0233 : options.isHearingRequired() ? FEE0227 : FEE0228);
 
         FeeDetails fee = generalApplication.getGeneralApplicationFee();
         ServicePaymentMethod paymentMethod =

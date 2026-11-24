@@ -83,6 +83,14 @@ public class InterimApplicationOptions {
     )
     private GeneralApplicationD11JourneyOptions generalApplicationD11JourneyOptions;
 
+    @JsonUnwrapped(prefix = "GenApp")
+    @CCD(
+        label = "D8b Answer Journey Options",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private D8bAnswersJourneyOptions d8BAnswerJourneyOptions;
+
     @CCD(
         label = "Active Interim Application Type",
         typeOverride = FixedList,
