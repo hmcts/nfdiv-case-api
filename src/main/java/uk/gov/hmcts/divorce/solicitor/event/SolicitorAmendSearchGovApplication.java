@@ -86,7 +86,7 @@ public class SolicitorAmendSearchGovApplication implements CCDConfig<CaseData, S
             .showSummary()
             .showEventNotes()
             .aboutToSubmitCallback(this::aboutToSubmit)
-            .endButtonLabel("Submit")
+            .endButtonLabel("Save application")
             .grant(CREATE_READ_UPDATE, APPLICANT_1_SOLICITOR)
             .grantHistoryOnly(CASE_WORKER, SUPER_USER, LEGAL_ADVISOR, JUDGE));
     }
