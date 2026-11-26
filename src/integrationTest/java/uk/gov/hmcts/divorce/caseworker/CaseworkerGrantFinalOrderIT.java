@@ -21,6 +21,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.config.WebMvcConfig;
+import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
@@ -139,6 +140,9 @@ public class CaseworkerGrantFinalOrderIT {
 
     @MockitoBean
     private PaymentService paymentService;
+
+    @MockitoBean
+    private HoldingPeriodService holdingPeriodService;
 
     @MockitoBean
     private Clock clock;
@@ -371,6 +375,9 @@ public class CaseworkerGrantFinalOrderIT {
         final CaseData caseData = caseData();
 
         when(serviceTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 1, 1));
+        when(holdingPeriodService.getDueDateFor(LocalDate.of(2022, 1, 1))).thenReturn(LocalDate.of(2022, 1, 1));
 
         stubForIdamDetails(TEST_SYSTEM_AUTHORISATION_TOKEN, SYSTEM_USER_USER_ID, SYSTEM_USER_ROLE);
         stubForIdamToken(TEST_SYSTEM_AUTHORISATION_TOKEN);

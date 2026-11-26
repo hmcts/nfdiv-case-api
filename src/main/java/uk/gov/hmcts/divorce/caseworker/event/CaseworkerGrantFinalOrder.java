@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
+import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
@@ -26,6 +27,7 @@ import uk.gov.hmcts.divorce.document.DocumentGenerator;
 import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -55,6 +57,9 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
     public static final String CASEWORKER_GRANT_FINAL_ORDER = "caseworker-grant-final-order";
     private static final String ALWAYS_HIDE = "generalOrderDocumentNames=\"ALWAYS_HIDE\"";
     public static final String ERROR_FINAL_ORDER_ALREADY_GRANTED = "Final Order has been granted already. This event cannot be used now.";
+    public static final String ERROR_HOLDING_PERIOD_NOT_ELAPSED =
+        "The final order cannot be granted as the 20-week holding period [20 weeks and 1 day so 141 days] from the date of issue has "
+            + "not yet elapsed.";
     public static final String ERROR_NO_CO_GRANTED_DATE = "No Conditional Order Granted Date found.  Unable to continue.";
     public static final String ERROR_NO_GENERAL_ORDER = "No general order documents found.  Unable to continue.";
 
@@ -62,6 +67,7 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
     private final DocumentGenerator documentGenerator;
     private final FinalOrderGrantedNotification finalOrderGrantedNotification;
     private final NotificationDispatcher notificationDispatcher;
+    private final HoldingPeriodService holdingPeriodService;
 
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
@@ -109,6 +115,13 @@ public class CaseworkerGrantFinalOrder implements CCDConfig<CaseData, State, Use
             return AboutToStartOrSubmitResponse.<CaseData, State>builder()
                 .data(caseData)
                 .errors(Collections.singletonList(ERROR_FINAL_ORDER_ALREADY_GRANTED))
+                .build();
+        }
+
+        if (LocalDate.now(clock).isBefore(holdingPeriodService.getDueDateFor(caseData.getApplication().getIssueDate()))) {
+            return AboutToStartOrSubmitResponse.<CaseData, State>builder()
+                .data(caseData)
+                .errors(Collections.singletonList(ERROR_HOLDING_PERIOD_NOT_ELAPSED))
                 .build();
         }
 

@@ -14,6 +14,7 @@ import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.notification.FinalOrderGrantedNotification;
+import uk.gov.hmcts.divorce.common.service.HoldingPeriodService;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.ConditionalOrder;
 import uk.gov.hmcts.divorce.divorcecase.model.DivorceGeneralOrder;
@@ -29,6 +30,7 @@ import uk.gov.hmcts.divorce.notification.NotificationDispatcher;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +41,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.CASEWORKER_GRANT_FINAL_ORDER;
 import static uk.gov.hmcts.divorce.caseworker.event.CaseworkerGrantFinalOrder.ERROR_NO_CO_GRANTED_DATE;
 import static uk.gov.hmcts.divorce.divorcecase.validation.FinalOrderValidation.ERROR_CASE_NOT_ELIGIBLE;
@@ -66,6 +69,9 @@ class CaseworkerGrantFinalOrderTest {
 
     @Mock
     private NotificationDispatcher notificationDispatcher;
+
+    @Mock
+    private HoldingPeriodService holdingPeriodService;
 
     @InjectMocks
     private CaseworkerGrantFinalOrder caseworkerGrantFinalOrder;
@@ -98,12 +104,38 @@ class CaseworkerGrantFinalOrderTest {
     }
 
     @Test
-    void shouldNullGrantWithCurrentDateTime() {
+    void shouldReturnErrorWhenHoldingPeriodHasNotExpired() {
         final CaseData caseData = caseData();
-        caseData.setFinalOrder(FinalOrder.builder().grantWithCurrentDateTime(YesOrNo.YES).build());
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 1, 1));
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
+
+        LocalDate issueDate = LocalDate.of(2022, 1, 1);
+        LocalDate holdingPeriodEndDate = LocalDate.of(2022, 1, 10);
+        mockCurrentDate(LocalDate.of(2022, 1, 9));
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(holdingPeriodEndDate);
+
+        AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToStart(details);
+
+        assertThat(response.getErrors()).hasSize(1);
+        assertThat(response.getErrors())
+            .isEqualTo(Collections.singletonList(CaseworkerGrantFinalOrder.ERROR_HOLDING_PERIOD_NOT_ELAPSED));
+    }
+
+    @Test
+    void shouldNullGrantWithCurrentDateTime() {
+        final CaseData caseData = caseData();
+        caseData.setFinalOrder(FinalOrder.builder().grantWithCurrentDateTime(YesOrNo.YES).build());
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 1, 1));
+        final CaseDetails<CaseData, State> details = new CaseDetails<>();
+        details.setData(caseData);
+        details.setId(TEST_CASE_ID);
+
+        LocalDate issueDate = LocalDate.of(2022, 1, 1);
+        LocalDate holdingPeriodEndDate = LocalDate.of(2022, 1, 8);
+        mockCurrentDate(LocalDate.of(2022, 1, 9));
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(holdingPeriodEndDate);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToStart(details);
 
@@ -113,6 +145,7 @@ class CaseworkerGrantFinalOrderTest {
     @Test
     void shouldPopulateDynamicListWithGeneralOrderWhenFinalOrderIsOverdue() {
         final CaseData caseData = caseData();
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 1, 1));
         caseData.setConditionalOrder(ConditionalOrder.builder().grantedDate(LocalDate.now()).build());
         caseData.setFinalOrder(FinalOrder.builder()
                 .isFinalOrderOverdue(YesOrNo.YES)
@@ -145,6 +178,11 @@ class CaseworkerGrantFinalOrderTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
+        LocalDate issueDate = LocalDate.of(2022, 1, 1);
+        LocalDate holdingPeriodEndDate = LocalDate.of(2022, 1, 8);
+        mockCurrentDate(LocalDate.of(2022, 1, 9));
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(holdingPeriodEndDate);
+
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToStart(details);
 
         assertThat(response.getErrors()).isNull();
@@ -155,6 +193,7 @@ class CaseworkerGrantFinalOrderTest {
     @Test
     void shouldNotPopulateDynamicListWithGeneralOrderWhenFinalOrderIsNotOverdue() {
         final CaseData caseData = caseData();
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 1, 1));
         caseData.setConditionalOrder(ConditionalOrder.builder().grantedDate(LocalDate.now()).build());
         caseData.setFinalOrder(FinalOrder.builder()
             .dateFinalOrderEligibleFrom(LocalDate.now())
@@ -186,6 +225,11 @@ class CaseworkerGrantFinalOrderTest {
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
 
+        LocalDate issueDate = LocalDate.of(2022, 1, 1);
+        LocalDate holdingPeriodEndDate = LocalDate.of(2022, 1, 8);
+        mockCurrentDate(LocalDate.of(2022, 1, 9));
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(holdingPeriodEndDate);
+
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToStart(details);
 
         assertThat(response.getErrors()).isNull();
@@ -195,10 +239,16 @@ class CaseworkerGrantFinalOrderTest {
     @Test
     void shouldReturnErrorWhenCOGrantedDateIsNotSet() {
         final CaseData caseData = caseData();
+        caseData.getApplication().setIssueDate(LocalDate.of(2022, 1, 1));
 
         final CaseDetails<CaseData, State> details = new CaseDetails<>();
         details.setData(caseData);
         details.setId(TEST_CASE_ID);
+
+        LocalDate issueDate = LocalDate.of(2022, 1, 1);
+        LocalDate holdingPeriodEndDate = LocalDate.of(2022, 1, 8);
+        mockCurrentDate(LocalDate.of(2022, 1, 9));
+        when(holdingPeriodService.getDueDateFor(issueDate)).thenReturn(holdingPeriodEndDate);
 
         AboutToStartOrSubmitResponse<CaseData, State> response = caseworkerGrantFinalOrder.aboutToStart(details);
 
@@ -466,5 +516,11 @@ class CaseworkerGrantFinalOrderTest {
             caseworkerGrantFinalOrder.aboutToSubmit(details, details);
 
         assertThat(response.getData().getFinalOrder().getFinalOrderInsightSurveyStage()).isZero();
+    }
+
+    private void mockCurrentDate(LocalDate currentDate) {
+        Clock fixedClock = Clock.fixed(currentDate.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+        when(clock.instant()).thenReturn(fixedClock.instant());
+        when(clock.getZone()).thenReturn(fixedClock.getZone());
     }
 }
