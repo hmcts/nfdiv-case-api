@@ -27,9 +27,9 @@ public class GeneralApplicationDraftJourneyService {
         InterimApplicationOptions interim = applicant.getInterimApplicationOptions();
         GeneralApplicationD11JourneyOptions journey = interim.getGeneralApplicationD11JourneyOptions();
 
-        DynamicList existing = journey.getSolType();
+        /*DynamicList existing = journey.getSolType();
         DynamicList options = generalApplicationTypeOptionsService.buildOptions(details.getState(), data, existing, isApplicant1);
-        journey.setSolType(options);
+        journey.setSolType(options);*/
     }
 
     public void prepareAboutToSubmit(CaseDetails<CaseData, State> details, Applicant applicant) {

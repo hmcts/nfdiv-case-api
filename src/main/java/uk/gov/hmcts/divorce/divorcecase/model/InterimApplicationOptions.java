@@ -222,14 +222,33 @@ public class InterimApplicationOptions {
             if (null != generalApplicationD11JourneyOptions && null != generalApplicationD11JourneyOptions.getType()) {
                 return generalApplicationD11JourneyOptions.getType();
             }
-            if (null != generalApplicationD11JourneyOptions && null != generalApplicationD11JourneyOptions.getSolType()
-                && null != generalApplicationD11JourneyOptions.getSolType().getValue()) {
-                String label = generalApplicationD11JourneyOptions.getSolType().getValue().getLabel();
-                for (GeneralApplicationType type : GeneralApplicationType.values()) {
-                    if (type.getLabel().equals(label)) {
-                        return type;
-                    }
-                }
+            if (null == generalApplicationD11JourneyOptions) {
+                return null;
+            }
+            if (null != generalApplicationD11JourneyOptions.getApplicantSolePreIssue()) {
+                return GeneralApplicationType.valueOf(
+                    generalApplicationD11JourneyOptions.getApplicantSolePreIssue().name()
+                );
+            }
+            if (null != generalApplicationD11JourneyOptions.getApplicantJointPreIssue()) {
+                return GeneralApplicationType.valueOf(
+                    generalApplicationD11JourneyOptions.getApplicantJointPreIssue().name()
+                );
+            }
+            if (null != generalApplicationD11JourneyOptions.getApplicantSolePostIssue()) {
+                return GeneralApplicationType.valueOf(
+                    generalApplicationD11JourneyOptions.getApplicantSolePostIssue().name()
+                );
+            }
+            if (null != generalApplicationD11JourneyOptions.getApplicantJointPostIssue()) {
+                return GeneralApplicationType.valueOf(
+                    generalApplicationD11JourneyOptions.getApplicantJointPostIssue().name()
+                );
+            }
+            if (null != generalApplicationD11JourneyOptions.getRespondentSolePostIssue()) {
+                return GeneralApplicationType.valueOf(
+                    generalApplicationD11JourneyOptions.getRespondentSolePostIssue().name()
+                );
             }
         }
         return null;

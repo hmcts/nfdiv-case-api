@@ -70,6 +70,46 @@ public class GeneralApplicationD11JourneyOptions implements ApplicationAnswers {
     private GeneralApplicationType type;
 
     @CCD(
+        label = "What application are you making?",
+        hint = "Select the type of application you want to apply for.",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private GenAppTypeApplicantSolePreIssue applicantSolePreIssue;
+
+    @CCD(
+        label = "What application are you making?",
+        hint = "Select the type of application you want to apply for.",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private GenAppTypeApplicantJointPreIssue applicantJointPreIssue;
+
+    @CCD(
+        label = "What application are you making?",
+        hint = "Select the type of application you want to apply for.",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private GenAppTypeApplicantSolePostIssue applicantSolePostIssue;
+
+    @CCD(
+        label = "What application are you making?",
+        hint = "Select the type of application you want to apply for.",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private GenAppTypeApplicantJointPostIssue applicantJointPostIssue;
+
+    @CCD(
+        label = "What application are you making?",
+        hint = "Select the type of application you want to apply for.",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private GenAppTypeRespondentSolePostIssue respondentSolePostIssue;
+
+    @CCD(
             label = "What application are you making?",
             hint = "Select the type of application you want to apply for.",
             access = {DefaultAccess.class},
