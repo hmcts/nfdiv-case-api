@@ -83,6 +83,7 @@ public class CitizenStartInterimApplication implements CCDConfig<CaseData, State
 
         applicant.setInterimApplicationOptions(
             options.toBuilder()
+                .interimAppsIUnderstand(null)
                 .interimAppsUseHelpWithFees(null)
                 .interimAppsHwfRefNumber(null)
                 .interimAppsHaveHwfReference(null)
