@@ -26,7 +26,6 @@ import static uk.gov.hmcts.ccd.sdk.type.FieldType.Collection;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedList;
 import static uk.gov.hmcts.ccd.sdk.type.FieldType.FixedRadioList;
 import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11;
-import static uk.gov.hmcts.divorce.divorcecase.model.InterimApplicationType.SEARCH_GOV_RECORDS;
 
 @Data
 @Builder(toBuilder = true)
@@ -215,42 +214,41 @@ public class InterimApplicationOptions {
 
     @JsonIgnore
     public GeneralApplicationType getGeneralApplicationType() {
-        if (SEARCH_GOV_RECORDS.equals(interimApplicationType)) {
-            return GeneralApplicationType.DISCLOSURE_VIA_DWP;
+        if (interimApplicationType == null) {
+            return null;
         }
-        if (DIGITISED_GENERAL_APPLICATION_D11.equals(interimApplicationType)) {
-            if (null != generalApplicationD11JourneyOptions && null != generalApplicationD11JourneyOptions.getType()) {
-                return generalApplicationD11JourneyOptions.getType();
-            }
-            if (null == generalApplicationD11JourneyOptions) {
-                return null;
-            }
-            if (null != generalApplicationD11JourneyOptions.getApplicantSolePreIssue()) {
-                return GeneralApplicationType.valueOf(
-                    generalApplicationD11JourneyOptions.getApplicantSolePreIssue().name()
-                );
-            }
-            if (null != generalApplicationD11JourneyOptions.getApplicantJointPreIssue()) {
-                return GeneralApplicationType.valueOf(
-                    generalApplicationD11JourneyOptions.getApplicantJointPreIssue().name()
-                );
-            }
-            if (null != generalApplicationD11JourneyOptions.getApplicantSolePostIssue()) {
-                return GeneralApplicationType.valueOf(
-                    generalApplicationD11JourneyOptions.getApplicantSolePostIssue().name()
-                );
-            }
-            if (null != generalApplicationD11JourneyOptions.getApplicantJointPostIssue()) {
-                return GeneralApplicationType.valueOf(
-                    generalApplicationD11JourneyOptions.getApplicantJointPostIssue().name()
-                );
-            }
-            if (null != generalApplicationD11JourneyOptions.getRespondentSolePostIssue()) {
-                return GeneralApplicationType.valueOf(
-                    generalApplicationD11JourneyOptions.getRespondentSolePostIssue().name()
-                );
-            }
+
+        return switch (interimApplicationType) {
+            case SEARCH_GOV_RECORDS -> GeneralApplicationType.DISCLOSURE_VIA_DWP;
+            case DIGITISED_GENERAL_APPLICATION_D11 -> resolveD11Type();
+            default -> null;
+        };
+    }
+
+    private GeneralApplicationType resolveD11Type() {
+        if (generalApplicationD11JourneyOptions == null) {
+            return null;
         }
+
+        if (generalApplicationD11JourneyOptions.getType() != null) {
+            return generalApplicationD11JourneyOptions.getType();
+        }
+        if (generalApplicationD11JourneyOptions.getApplicantSolePreIssue() != null) {
+            return GeneralApplicationType.valueOf(generalApplicationD11JourneyOptions.getApplicantSolePreIssue().name());
+        }
+        if (generalApplicationD11JourneyOptions.getApplicantJointPreIssue() != null) {
+            return GeneralApplicationType.valueOf(generalApplicationD11JourneyOptions.getApplicantJointPreIssue().name());
+        }
+        if (generalApplicationD11JourneyOptions.getApplicantSolePostIssue() != null) {
+            return GeneralApplicationType.valueOf(generalApplicationD11JourneyOptions.getApplicantSolePostIssue().name());
+        }
+        if (generalApplicationD11JourneyOptions.getApplicantJointPostIssue() != null) {
+            return GeneralApplicationType.valueOf(generalApplicationD11JourneyOptions.getApplicantJointPostIssue().name());
+        }
+        if (generalApplicationD11JourneyOptions.getRespondentSolePostIssue() != null) {
+            return GeneralApplicationType.valueOf(generalApplicationD11JourneyOptions.getRespondentSolePostIssue().name());
+        }
+
         return null;
     }
 
