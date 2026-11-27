@@ -14,7 +14,6 @@ import uk.gov.hmcts.ccd.sdk.api.Permission;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
-import uk.gov.hmcts.divorce.divorcecase.model.GeneralParties;
 import uk.gov.hmcts.divorce.divorcecase.model.State;
 import uk.gov.hmcts.divorce.divorcecase.model.UserRole;
 import uk.gov.hmcts.divorce.solicitor.service.GeneralApplicationDraftJourneyService;
@@ -91,7 +90,7 @@ class SolicitorApplicant2DraftGeneralApplicationTest {
             solicitorApplicant2DraftGeneralApplication.aboutToStart(caseDetails);
 
         assertThat(response.getData()).isEqualTo(caseData);
-        verify(generalApplicationDraftJourneyService).prepareAboutToStart(caseDetails, applicant1, GeneralParties.RESPONDENT);
+        verify(generalApplicationDraftJourneyService).prepareAboutToStart(caseDetails);
     }
 
     @Test
