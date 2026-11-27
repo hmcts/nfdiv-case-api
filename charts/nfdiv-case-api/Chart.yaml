@@ -3,12 +3,12 @@ appVersion: "1.0"
 description: A Helm chart for nfdiv-case-api App
 name: nfdiv-case-api
 home: https://github.com/hmcts/nfdiv-case-api
-version: 0.0.110
+version: 0.0.111
 maintainers:
   - name: HMCTS nfdiv team
 dependencies:
   - name: java
-    version: 6.1.1
+    version: 6.1.2
     repository: 'oci://hmctsprod.azurecr.io/helm'
   - name: idam-pr
     version: 2.4.0
