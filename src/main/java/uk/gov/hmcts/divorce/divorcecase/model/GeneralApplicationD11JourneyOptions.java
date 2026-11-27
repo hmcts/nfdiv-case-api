@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.ccd.sdk.api.CCD;
-import uk.gov.hmcts.ccd.sdk.type.DynamicList;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.divorcecase.model.access.Applicant1DeleteAccess;
@@ -70,12 +69,44 @@ public class GeneralApplicationD11JourneyOptions implements ApplicationAnswers {
     private GeneralApplicationType type;
 
     @CCD(
-            label = "What application are you making?",
-            hint = "Select the type of application you want to apply for.",
-            access = {DefaultAccess.class},
-            searchable = false
+        label = "What application are you making?",
+        hint = "Select the type of application you want to apply for.",
+        access = {DefaultAccess.class},
+        searchable = false
     )
-    private DynamicList solType;
+    private GenAppTypeApplicantSolePreIssue applicantSolePreIssue;
+
+    @CCD(
+        label = "What application are you making?",
+        hint = "Select the type of application you want to apply for.",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private GenAppTypeApplicantJointPreIssue applicantJointPreIssue;
+
+    @CCD(
+        label = "What application are you making?",
+        hint = "Select the type of application you want to apply for.",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private GenAppTypeApplicantSolePostIssue applicantSolePostIssue;
+
+    @CCD(
+        label = "What application are you making?",
+        hint = "Select the type of application you want to apply for.",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private GenAppTypeApplicantJointPostIssue applicantJointPostIssue;
+
+    @CCD(
+        label = "What application are you making?",
+        hint = "Select the type of application you want to apply for.",
+        access = {DefaultAccess.class},
+        searchable = false
+    )
+    private GenAppTypeRespondentSolePostIssue respondentSolePostIssue;
 
     @CCD(
         label = "Specify, what other application?",

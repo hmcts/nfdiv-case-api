@@ -20,7 +20,7 @@ public final class GeneralApplicationD11Pages {
 
         List<CcdPageConfiguration> pages = List.of(
             new GeneralApplicationD11Page1(primaryApplicant),
-            new GeneralApplicationD11Page2(primaryApplicant, applicant),
+            new GeneralApplicationD11ApplicantPage2(primaryApplicant, applicant),
             new GeneralApplicationD11Page3(primaryApplicant, applicant),
             new GeneralApplicationD11Page4(primaryApplicant),
             new GeneralApplicationD11Page5(primaryApplicant, applicant),

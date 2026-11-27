@@ -5,11 +5,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.ccd.sdk.type.DynamicList;
-import uk.gov.hmcts.ccd.sdk.type.DynamicListElement;
 import uk.gov.hmcts.ccd.sdk.type.ListValue;
 import uk.gov.hmcts.divorce.common.service.CitizenGeneralApplicationSubmissionService;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
+import uk.gov.hmcts.divorce.divorcecase.model.GenAppTypeApplicantJointPostIssue;
+import uk.gov.hmcts.divorce.divorcecase.model.GenAppTypeApplicantSolePostIssue;
+import uk.gov.hmcts.divorce.divorcecase.model.GenAppTypeRespondentSolePostIssue;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationD11JourneyOptions;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplicationType;
@@ -45,12 +46,8 @@ public class GeneralApplicationFactoryTest {
         when(clock.instant()).thenReturn(fixedNow.atZone(ZoneId.systemDefault()).toInstant());
         when(clock.getZone()).thenReturn(ZoneId.systemDefault());
 
-        DynamicList solType = DynamicList.builder()
-            .value(DynamicListElement.builder().label(GeneralApplicationType.EXPEDITE.getLabel()).build())
-            .build();
-
         GeneralApplicationD11JourneyOptions d11 = GeneralApplicationD11JourneyOptions.builder()
-            .solType(solType)
+            .applicantSolePostIssue(GenAppTypeApplicantSolePostIssue.EXPEDITE)
             .build();
 
         InterimApplicationOptions options = InterimApplicationOptions.builder()
@@ -78,12 +75,8 @@ public class GeneralApplicationFactoryTest {
         when(clock.instant()).thenReturn(fixedNow.atZone(ZoneId.systemDefault()).toInstant());
         when(clock.getZone()).thenReturn(ZoneId.systemDefault());
 
-        DynamicList solType = DynamicList.builder()
-            .value(DynamicListElement.builder().label(GeneralApplicationType.AMEND_APPLICATION.getLabel()).build())
-            .build();
-
         GeneralApplicationD11JourneyOptions d11 = GeneralApplicationD11JourneyOptions.builder()
-            .solType(solType)
+            .applicantJointPostIssue(GenAppTypeApplicantJointPostIssue.AMEND_APPLICATION)
             .build();
 
         InterimApplicationOptions options = InterimApplicationOptions.builder()
@@ -110,12 +103,9 @@ public class GeneralApplicationFactoryTest {
         when(clock.instant()).thenReturn(fixedNow.atZone(ZoneId.systemDefault()).toInstant());
         when(clock.getZone()).thenReturn(ZoneId.systemDefault());
 
-        DynamicList solType = DynamicList.builder()
-            .value(DynamicListElement.builder().label(GeneralApplicationType.DELAY.getLabel()).build())
-            .build();
-
         InterimApplicationOptions options = InterimApplicationOptions.builder()
-            .generalApplicationD11JourneyOptions(GeneralApplicationD11JourneyOptions.builder().solType(solType).build())
+            .generalApplicationD11JourneyOptions(GeneralApplicationD11JourneyOptions.builder()
+                .respondentSolePostIssue(GenAppTypeRespondentSolePostIssue.DELAY).build())
             .interimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11)
             .build();
 
@@ -137,12 +127,7 @@ public class GeneralApplicationFactoryTest {
         when(clock.instant()).thenReturn(Instant.now());
         when(clock.getZone()).thenReturn(ZoneId.systemDefault());
 
-        DynamicList solType = DynamicList.builder()
-            .value(DynamicListElement.builder().label("Unknown type").build())
-            .build();
-
         InterimApplicationOptions options = InterimApplicationOptions.builder()
-            .generalApplicationD11JourneyOptions(GeneralApplicationD11JourneyOptions.builder().solType(solType).build())
             .interimApplicationType(InterimApplicationType.DIGITISED_GENERAL_APPLICATION_D11)
             .build();
 
