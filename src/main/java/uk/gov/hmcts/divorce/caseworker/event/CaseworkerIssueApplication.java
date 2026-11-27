@@ -11,7 +11,6 @@ import uk.gov.hmcts.ccd.sdk.api.ConfigBuilder;
 import uk.gov.hmcts.ccd.sdk.api.callback.AboutToStartOrSubmitResponse;
 import uk.gov.hmcts.ccd.sdk.type.YesOrNo;
 import uk.gov.hmcts.divorce.caseworker.service.IssueApplicationService;
-import uk.gov.hmcts.divorce.caseworker.service.task.SetServiceType;
 import uk.gov.hmcts.divorce.common.ccd.PageBuilder;
 import uk.gov.hmcts.divorce.divorcecase.model.Application;
 import uk.gov.hmcts.divorce.divorcecase.model.ApplicationType;
@@ -31,6 +30,7 @@ import java.util.List;
 
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDocuments;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.AwaitingDwpResponse;
+import static uk.gov.hmcts.divorce.divorcecase.model.State.GeneralConsiderationComplete;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.InformationRequested;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.RequestedInformationSubmitted;
 import static uk.gov.hmcts.divorce.divorcecase.model.State.Submitted;
@@ -65,13 +65,18 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
     private final AuthTokenGenerator authTokenGenerator;
 
-    private final SetServiceType setServiceType;
-
     @Override
     public void configure(final ConfigBuilder<CaseData, State, UserRole> configBuilder) {
         new PageBuilder(configBuilder
             .event(CASEWORKER_ISSUE_APPLICATION)
-            .forStates(Submitted, AwaitingDocuments, InformationRequested, RequestedInformationSubmitted, AwaitingDwpResponse)
+            .forStates(
+                Submitted,
+                AwaitingDocuments,
+                InformationRequested,
+                RequestedInformationSubmitted,
+                AwaitingDwpResponse,
+                GeneralConsiderationComplete
+            )
             .name("Application issue")
             .description("Application issued")
             .showSummary()
@@ -119,7 +124,7 @@ public class CaseworkerIssueApplication implements CCDConfig<CaseData, State, Us
 
         String app2Address = AddressUtil.getPostalAddress(caseData.getApplicant2().getAddress());
 
-        boolean soleApplicationBeingIssuedWithoutApp2Address =
+        final boolean soleApplicationBeingIssuedWithoutApp2Address =
             caseData.getApplicationType() == ApplicationType.SOLE_APPLICATION
             && StringUtils.isEmpty(app2Address);
 

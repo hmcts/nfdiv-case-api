@@ -42,9 +42,11 @@
       "PaymentTotal": "55000"
     },
     "generalApplicationFeePaymentMethod": "feePayByTelephone",
+    "generalApplicationSubmittedBeforeIssue": "Yes",
     "generalApplications": [{
       "id": "${json-unit.any-string}",
       "value": {
+        "generalApplicationSubmittedBeforeIssue": "Yes",
         "generalApplicationDocuments": [
           {
             "id": "${json-unit.any-string}",
