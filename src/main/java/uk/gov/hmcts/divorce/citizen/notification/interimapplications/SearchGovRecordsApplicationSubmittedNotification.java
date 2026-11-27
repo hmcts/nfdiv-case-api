@@ -8,8 +8,8 @@ import uk.gov.hmcts.divorce.divorcecase.model.Applicant;
 import uk.gov.hmcts.divorce.divorcecase.model.CaseData;
 import uk.gov.hmcts.divorce.divorcecase.model.GeneralApplication;
 import uk.gov.hmcts.divorce.divorcecase.model.ServicePaymentMethod;
-import uk.gov.hmcts.divorce.notification.ApplicantNotification;
 import uk.gov.hmcts.divorce.notification.CommonContent;
+import uk.gov.hmcts.divorce.notification.GeneralApplicationNotification;
 import uk.gov.hmcts.divorce.notification.NotificationService;
 
 import java.time.LocalDate;
@@ -24,7 +24,7 @@ import static uk.gov.hmcts.divorce.notification.FormatUtil.getDateTimeFormatterF
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class SearchGovRecordsApplicationSubmittedNotification implements ApplicantNotification {
+public class SearchGovRecordsApplicationSubmittedNotification implements GeneralApplicationNotification {
 
     @Value("${interim_application.response_offset_days}")
     private long interimApplicationResponseOffsetDays;
@@ -32,7 +32,7 @@ public class SearchGovRecordsApplicationSubmittedNotification implements Applica
     private final NotificationService notificationService;
     private final CommonContent commonContent;
 
-    public void sendToApplicant1(final CaseData caseData, final Long caseId, GeneralApplication generalApplication) {
+    public void sendToApplicant(final CaseData caseData, final Long caseId, GeneralApplication generalApplication) {
         log.info("Sending search government records application submitted notification to applicant 1 on case id {}", caseId);
 
         boolean paidByHwf = ServicePaymentMethod.FEE_PAY_BY_HWF.equals(

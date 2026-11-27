@@ -13,10 +13,12 @@ import uk.gov.hmcts.divorce.document.model.DocumentType;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.stream.Stream.ofNullable;
 import static uk.gov.hmcts.divorce.divorcecase.model.CaseDocuments.addDocumentToTop;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT;
+import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.APPLICANT2;
 import static uk.gov.hmcts.divorce.divorcecase.model.GeneralParties.RESPONDENT;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.getConfidentialDocumentType;
 import static uk.gov.hmcts.divorce.document.DocumentUtil.isConfidential;
@@ -86,12 +88,13 @@ public class ProcessConfidentialDocumentsService {
                                                 final DivorceDocument generalLetterDocument,
                                                 boolean isApplicant1) {
 
-        GeneralParties party = isApplicant1 ? APPLICANT : RESPONDENT;
+        Set<GeneralParties> parties = isApplicant1 ? Set.of(APPLICANT) : Set.of(APPLICANT2, RESPONDENT);
 
         return ofNullable(caseData.getGeneralLetters())
             .flatMap(Collection::stream)
             .map(ListValue::getValue)
-            .anyMatch(generalLetterDetail -> party.equals(generalLetterDetail.getGeneralLetterParties())
+            .anyMatch(generalLetterDetail -> generalLetterDetail.getGeneralLetterParties() != null
+                && parties.contains(generalLetterDetail.getGeneralLetterParties())
                 && generalLetterDetail.getGeneralLetterLink().getUrl().equals(generalLetterDocument.getDocumentLink().getUrl()));
     }
 

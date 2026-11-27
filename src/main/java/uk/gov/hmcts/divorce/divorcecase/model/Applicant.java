@@ -439,7 +439,14 @@ public class Applicant {
     @JsonIgnore
     public void setActiveGeneralApplication(String serviceRequest) {
         this.generalAppServiceRequest = serviceRequest;
-        this.generalAppPayments = new ArrayList<>();
+        if (serviceRequest != null) {
+            this.generalAppPayments = new ArrayList<>();
+        }
+    }
+
+    @JsonIgnore
+    public boolean hasUnpaidGeneralApplication() {
+        return this.generalAppServiceRequest != null;
     }
 
     @JsonIgnore
@@ -473,6 +480,13 @@ public class Applicant {
     }
 
     @JsonIgnore
+    public void resetInterimApplications() {
+        setActiveGeneralApplication(null);
+        setInterimApplications(null);
+        setInterimApplicationOptions(new InterimApplicationOptions());
+    }
+
+    @JsonIgnore
     public boolean mustBeServedOverseas() {
         boolean unrepresentedBasedOverseas = !isRepresented() && isBasedOverseas();
         boolean solicitorBasedOverseas = isRepresented() && YesOrNo.YES.equals(
@@ -482,5 +496,10 @@ public class Applicant {
         );
 
         return unrepresentedBasedOverseas || solicitorBasedOverseas;
+    }
+
+    @JsonIgnore
+    public boolean submittedWelshApplication() {
+        return getLanguagePreference().equals(WELSH) || YesOrNo.YES.equals(usedWelshTranslationOnSubmission);
     }
 }

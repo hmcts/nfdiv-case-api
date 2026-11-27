@@ -62,8 +62,24 @@ public class SolicitorIntendsToSwitchToSoleFoNotification implements ApplicantNo
             notificationService.sendEmail(
                 caseData.getApplicant2EmailAddress(),
                 OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_CITIZEN,
-                solicitorTemplateContent.templatevars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
+                solicitorTemplateContent.templatevars(caseData, caseId, caseData.getApplicant2(), caseData.getApplicant1()),
                 caseData.getApplicant2().getLanguagePreference(),
+                caseId
+            );
+        }
+    }
+
+    @Override
+    public void sendToApplicant1(CaseData caseData, Long caseId) {
+
+        if (YES.equals(caseData.getFinalOrder().getDoesApplicant2IntendToSwitchToSole())) {
+            log.info("Notifying applicant 1 that other applicant intends to switch to sole fo : {}", caseId);
+
+            notificationService.sendEmail(
+                caseData.getApplicant1().getEmail(),
+                OTHER_APPLICANT_INTENDS_TO_SWITCH_TO_SOLE_FO_CITIZEN,
+                solicitorTemplateContent.templatevars(caseData, caseId, caseData.getApplicant1(), caseData.getApplicant2()),
+                caseData.getApplicant1().getLanguagePreference(),
                 caseId
             );
         }
