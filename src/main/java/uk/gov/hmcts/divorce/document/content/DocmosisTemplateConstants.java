@@ -170,6 +170,8 @@ public final class DocmosisTemplateConstants {
     public static final String ALTERNATIVE_SERVICE_PARTNER_SOCIAL_DETAILS = "altServicePartnerSocialDetails";
     public static final String ALTERNATIVE_SERVICE_PARTNER_OTHER_DETAILS = "altServicePartnerOtherDetails";
     public static final String ALTERNATIVE_SERVICE_EVIDENCE_DETAILS = "altServiceEvidenceDetails";
+    public static final String ALTERNATIVE_SERVICE_METHOD_ACTIVE = "altServiceMethodActive";
+    public static final String ALTERNATIVE_SERVICE_EVIDENCE_DATE = "altServiceEvidenceDate";
     public static final String STATEMENT_OF_TRUTH = "statementOfTruth";
     public static final String DISPENSED_SERVICE_COST = "dispensedServiceCost";
     public static final String ARRANGE_SERVICE_BY_DATE = "arrangeServiceBeforeDate";

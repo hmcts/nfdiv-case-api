@@ -76,6 +76,8 @@ class AlternativeServiceApplicationTemplateContentTest {
         expectedEntries.put("altServicePartnerOtherDetails", null);
         expectedEntries.put("statementOfTruth", "Yes");
         expectedEntries.put("serviceApplicationReceivedDate", "1 January 2023");
+        expectedEntries.put("altServiceMethodActive", "true");
+        expectedEntries.put("altServiceEvidenceDate", "1 January 2023");
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -112,6 +114,8 @@ class AlternativeServiceApplicationTemplateContentTest {
         expectedEntries.put("altServicePartnerOtherDetails", null);
         expectedEntries.put("statementOfTruth", "Ydw");
         expectedEntries.put("serviceApplicationReceivedDate", "1 Ionawr 2023");
+        expectedEntries.put("altServiceMethodActive", "true");
+        expectedEntries.put("altServiceEvidenceDate", "1 Ionawr 2023");
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -149,6 +153,8 @@ class AlternativeServiceApplicationTemplateContentTest {
         expectedEntries.put("altServicePartnerOtherDetails", null);
         expectedEntries.put("statementOfTruth", "Yes");
         expectedEntries.put("serviceApplicationReceivedDate", "1 January 2023");
+        expectedEntries.put("altServiceMethodActive", "true");
+        expectedEntries.put("altServiceEvidenceDate", "1 January 2023");
 
         assertThat(result).containsExactlyInAnyOrderEntriesOf(expectedEntries);
     }
@@ -179,6 +185,8 @@ class AlternativeServiceApplicationTemplateContentTest {
                         .altServicePartnerOtherDetails(otherDetails)
                         .altServiceDifferentWays(alternativeServiceDifferentWays)
                         .altServiceMethodJustification(ALTERNATIVE_SERVICE_METHOD_JUSTIFICATION)
+                        .altServiceMethodActive(YesOrNo.YES)
+                        .altServiceDateOfEvidence(LocalDate.of(2023, 1, 1))
                         .build()
                 )
                 .build()
